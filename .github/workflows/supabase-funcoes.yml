@@ -1,0 +1,67 @@
+# Publica as funções de pagamento (Mercado Pago) no Supabase do Licitaverso.
+# As chaves ficam em Settings → Secrets and variables → Actions deste repositório:
+#   SUPABASE_ACCESS_TOKEN  (supabase.com/dashboard/account/tokens)
+#   MP_ACCESS_TOKEN        (Mercado Pago → Suas integrações → Licitaverso → Credenciais)
+#   MP_WEBHOOK_SECRET      (Mercado Pago → Webhooks → assinatura secreta)
+name: Publicar funções de pagamento
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, contas-e-pagamentos]
+    paths:
+      - "supabase/functions/**"
+      - "supabase/config.toml"
+      - ".github/workflows/supabase-funcoes.yml"
+      - "ETAPAS.md"
+
+concurrency:
+  group: supabase-funcoes
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      MP_ACCESS_TOKEN: ${{ secrets.MP_ACCESS_TOKEN }}
+      MP_WEBHOOK_SECRET: ${{ secrets.MP_WEBHOOK_SECRET }}
+      PROJECT_REF: umnhhztdqersjfrzqcea
+      SITE_URL: https://renatogarciagestorp-cpu.github.io/licitaverso/
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Conferir chaves cadastradas
+        id: chaves
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "::warning::SUPABASE_ACCESS_TOKEN ainda não foi cadastrado nos Secrets do repositório. Nada foi publicado."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+          [ -n "$MP_ACCESS_TOKEN" ] || echo "::warning::MP_ACCESS_TOKEN ainda não foi cadastrado."
+          [ -n "$MP_WEBHOOK_SECRET" ] || echo "::warning::MP_WEBHOOK_SECRET ainda não foi cadastrado (o webhook funciona, mas sem conferir a assinatura)."
+
+      - uses: supabase/setup-cli@v1
+        if: steps.chaves.outputs.ok == 'true'
+        with:
+          version: latest
+
+      - name: Gravar segredos das funções
+        if: steps.chaves.outputs.ok == 'true'
+        run: |
+          args="SITE_URL=$SITE_URL"
+          [ -n "$MP_ACCESS_TOKEN" ] && args="$args MP_ACCESS_TOKEN=$MP_ACCESS_TOKEN"
+          [ -n "$MP_WEBHOOK_SECRET" ] && args="$args MP_WEBHOOK_SECRET=$MP_WEBHOOK_SECRET"
+          supabase secrets set --project-ref "$PROJECT_REF" $args
+
+      - name: Publicar mp-checkout e mp-webhook
+        if: steps.chaves.outputs.ok == 'true'
+        run: |
+          supabase functions deploy mp-checkout --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+          supabase functions deploy mp-webhook --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+
+      - name: Conferir se a função responde
+        if: steps.chaves.outputs.ok == 'true'
+        run: curl -fsS "https://$PROJECT_REF.supabase.co/functions/v1/mp-webhook"

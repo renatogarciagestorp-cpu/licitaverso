@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Painel · Licitaverso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--tinta:#0A1F2A;--tinta2:#14424F;--verde:#0FA36B;--verde-esc:#0A7A50;--verde-cl:#E7F7EF;--azul:#0F6B7E;--azul-cl:#EAF2F1;--fundo:#F6F8F7;--linha:#E3E9E8;--texto:#0B1F2A;--suave:#6A7B82;--alerta:#8A1230;--alerta-cl:#FDE8ED;--aviso-cl:#FFF8E6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fundo);color:var(--texto);font:15px/1.5 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit}
+:focus-visible{outline:3px solid var(--verde);outline-offset:2px}
+a{color:var(--azul)}
+.topo{background:var(--tinta);color:#fff;position:sticky;top:0;z-index:5}
+.topo .in{max-width:1320px;margin:0 auto;padding:0 20px;height:60px;display:flex;align-items:center;gap:16px}
+.marca{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-weight:800;font-size:17px}
+.marca span{width:28px;height:28px;border-radius:8px;background:linear-gradient(150deg,#0FA36B,#0F6B7E);display:grid;place-items:center;font-size:14px}
+.topo .quem{margin-left:auto;font-size:13.5px;color:#C9D6DB}
+.topo button{background:none;border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:9px;padding:7px 12px;cursor:pointer;font-weight:700;font-size:13px}
+.grade{max-width:1320px;margin:0 auto;padding:22px 20px 60px;display:grid;grid-template-columns:220px 1fr;gap:22px;align-items:start}
+nav.abas{background:#fff;border:1px solid var(--linha);border-radius:14px;padding:8px;position:sticky;top:76px;display:grid;gap:2px}
+nav.abas button{text-align:left;border:0;background:none;border-radius:9px;padding:10px 12px;font-weight:700;color:#3D5058;cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+nav.abas button:hover{background:#F1F6F5}
+nav.abas button[aria-current=true]{background:var(--tinta);color:#fff}
+nav.abas .n{font-size:12px;font-weight:800;background:var(--verde-cl);color:var(--verde-esc);border-radius:999px;padding:1px 8px}
+nav.abas button[aria-current=true] .n{background:rgba(255,255,255,.16);color:#fff}
+main{min-width:0}
+h1{font-size:26px;letter-spacing:-.02em;margin:0 0 4px}
+.sub{color:var(--suave);margin:0 0 18px;font-size:14px}
+.caixa{background:#fff;border:1px solid var(--linha);border-radius:14px;padding:18px 20px;margin-bottom:16px}
+.caixa h2{font-size:17px;margin:0 0 12px;letter-spacing:-.01em}
+.numeros{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:16px}
+.numero{background:#fff;border:1px solid var(--linha);border-radius:14px;padding:16px 18px}
+.numero b{display:block;font-size:28px;letter-spacing:-.03em;line-height:1.1}
+.numero span{font-size:13px;color:var(--suave)}
+.tabela{width:100%;border-collapse:collapse;font-size:14px}
+.tabela th{text-align:left;font-size:12.5px;color:var(--suave);font-weight:700;padding:8px 10px;border-bottom:1px solid var(--linha);white-space:nowrap}
+.tabela td{padding:10px;border-bottom:1px solid #EDF1F0;vertical-align:top}
+.tabela tr:last-child td{border-bottom:0}
+.rolar{overflow-x:auto}
+.etq{display:inline-block;font-size:12px;font-weight:800;border-radius:999px;padding:2px 9px;background:var(--azul-cl);color:var(--azul);white-space:nowrap}
+.etq.ok{background:var(--verde-cl);color:var(--verde-esc)}
+.etq.alerta{background:var(--alerta-cl);color:var(--alerta)}
+.etq.espera{background:var(--aviso-cl);color:#6B4A0A}
+.fraco{color:var(--suave);font-size:13px}
+.barra{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+input[type=text],input[type=search],input[type=number],input[type=url],select,textarea{border:1px solid #DDE4E3;border-radius:10px;padding:9px 11px;background:#FBFCFC;color:var(--texto);min-width:0}
+textarea{width:100%;resize:vertical;line-height:1.55}
+input:focus,select:focus,textarea:focus{border-color:var(--verde);background:#fff;outline:none}
+.btn{border:0;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;background:var(--tinta);color:#fff;font-size:13.5px}
+.btn:hover{background:var(--tinta2)}
+.btn.verde{background:var(--verde);color:#06251A}
+.btn.claro{background:#fff;color:#3D5058;border:1px solid #DDE4E3}
+.btn.perigo{background:#fff;color:var(--alerta);border:1px solid #E7C9D2}
+.btn:disabled{opacity:.5;cursor:default}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.form label{display:grid;gap:5px;font-size:13px;font-weight:700;color:#3D5058}
+.form .larga{grid-column:1/-1}
+.item{border-top:1px solid #EDF1F0;padding:14px 0}
+.item:first-child{border-top:0;padding-top:0}
+.item h3{margin:0;font-size:15.5px}
+.pre{white-space:pre-wrap;font-size:14px;color:#23343B;margin:6px 0 0}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--tinta);color:#fff;border-radius:12px;padding:12px 18px;font-weight:700;box-shadow:0 14px 34px rgba(8,24,33,.3);z-index:20;max-width:90vw}
+.toast.erro{background:var(--alerta)}
+.centro{max-width:520px;margin:80px auto;padding:0 20px;text-align:center}
+.centro .caixa{padding:30px}
+@media (max-width:820px){.grade{grid-template-columns:1fr}nav.abas{position:static;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="topo"><div class="in">
+  <a class="marca" href="index.html"><span>L</span>Licitaverso · painel</a>
+  <span class="quem" id="quem"></span>
+  <button id="sair" hidden>Sair</button>
+</div></header>
+<div id="app"><div class="centro"><div class="caixa">Carregando…</div></div></div>
+
+<script src="licitaverso-auth.js?v=3"></script>
+<script>
+(function(){
+const $app = document.getElementById("app");
+const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const brl = (v) => Number(v || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+const data = (iso) => iso ? new Date(iso).toLocaleDateString("pt-BR") : "—";
+const dataHora = (iso) => iso ? new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" }) : "—";
+const PLANO = { teste: "Teste", basico: "Básico", premium: "Premium", pro: "Pro" };
+const MODAL = { escrita: "Por escrito", video: "Vídeo gravado", reuniao: "Reunião ao vivo" };
+const ST_CONS = { aguardando_pagamento: "Aguardando pagamento", recebida: "Recebida", em_andamento: "Em andamento", entregue: "Entregue", cancelada: "Cancelada" };
+let sb = null, eu = null, aba = "resumo", cache = {};
+
+function toast(msg, erro) {
+  const t = document.createElement("div");
+  t.className = "toast" + (erro ? " erro" : ""); t.textContent = msg; t.setAttribute("role", "status");
+  document.body.appendChild(t); setTimeout(() => t.remove(), 4200);
+}
+function centro(html) { $app.innerHTML = '<div class="centro"><div class="caixa">' + html + "</div></div>"; }
+async function registrar(acao, detalhes) { await sb.from("registro_admin").insert({ acao, detalhes: detalhes || {} }); }
+async function q(promessa) { const r = await promessa; if (r.error) { console.error(r.error); toast(r.error.message || "Erro ao carregar", true); return []; } return r.data || []; }
+
+async function iniciar() {
+  sb = await LV.pronto;
+  if (!sb) { centro("<h1>Contas não configuradas</h1><p class='sub'>Preencha o config.js com os dados do Supabase para usar o painel.</p>"); return; }
+  const { data: s } = await sb.auth.getSession();
+  if (!s.session) { centro("<h1>Entre com a sua conta</h1><p class='sub'>O painel é só para a conta administradora.</p><a class='btn verde' style='display:inline-block;text-decoration:none' href='index.html?p=login&volta=painel'>Entrar</a>"); return; }
+  const { data: p } = await sb.from("perfis").select("nome, email, admin").eq("id", s.session.user.id).maybeSingle();
+  if (!p || !p.admin) { centro("<h1>Acesso restrito</h1><p class='sub'>Esta área é exclusiva da administração do Licitaverso.</p><a href='index.html'>Voltar ao site</a>"); return; }
+  eu = p;
+  document.getElementById("quem").textContent = p.nome || p.email;
+  const sair = document.getElementById("sair"); sair.hidden = false;
+  sair.onclick = async () => { await sb.auth.signOut(); location.href = "index.html"; };
+  const h = location.hash.replace("#", ""); if (ABAS.some((a) => a[0] === h)) aba = h;
+  desenhar();
+}
+
+const ABAS = [
+  ["resumo", "Visão geral"], ["assinantes", "Assinantes"], ["consultorias", "Consultorias"], ["forum", "Fórum"],
+  ["cursos", "Cursos"], ["mensagens", "Mensagens"], ["lgpd", "Pedidos LGPD"], ["espera", "Lista de espera"], ["registro", "Registro"]
+];
+let contagens = {};
+
+async function desenhar() {
+  $app.innerHTML = '<div class="grade"><nav class="abas" aria-label="Seções do painel">' +
+    ABAS.map(([k, n]) => '<button data-aba="' + k + '" aria-current="' + (aba === k) + '"><span>' + n + "</span>" + (contagens[k] ? '<span class="n">' + contagens[k] + "</span>" : "") + "</button>").join("") +
+    '</nav><main id="conteudo"><div class="caixa">Carregando…</div></main></div>';
+  $app.querySelectorAll("[data-aba]").forEach((b) => b.onclick = () => { aba = b.dataset.aba; location.hash = aba; desenhar(); });
+  const alvo = document.getElementById("conteudo");
+  try { await TELAS[aba](alvo); } catch (e) { console.error(e); alvo.innerHTML = '<div class="caixa">Não foi possível carregar esta seção.</div>'; }
+}
+
+async function perfisPorId() {
+  const lista = await q(sb.from("perfis").select("id, nome, email, celular, orgao, cargo, setor, documento, criado_em, admin").order("criado_em", { ascending: false }).limit(2000));
+  const m = {}; lista.forEach((p) => m[p.id] = p); cache.perfis = lista; return m;
+}
+function vigente(assins, uid) {
+  const agora = Date.now(), nivel = { pro: 4, premium: 3, basico: 2, teste: 1 };
+  return assins.filter((a) => a.usuario_id === uid && a.status === "ativa" && a.fim && new Date(a.fim) > agora)
+    .sort((a, b) => nivel[b.plano] - nivel[a.plano])[0];
+}
+
+const TELAS = {
+  async resumo(el) {
+    const [perfis, assins, pags, cons, msgs, lgpd, espera] = await Promise.all([
+      q(sb.from("perfis").select("id, criado_em")),
+      q(sb.from("assinaturas").select("usuario_id, plano, status, fim")),
+      q(sb.from("pagamentos").select("valor, criado_em").gte("criado_em", new Date(Date.now() - 30 * 86400e3).toISOString())),
+      q(sb.from("consultorias").select("status")),
+      q(sb.from("contatos").select("lido")),
+      q(sb.from("solicitacoes_lgpd").select("status")),
+      q(sb.from("lista_espera").select("email"))
+    ]);
+    const ativos = {}; perfis.forEach((p) => { const v = vigente(assins, p.id); if (v) ativos[v.plano] = (ativos[v.plano] || 0) + 1; });
+    const consAbertas = cons.filter((c) => c.status === "recebida" || c.status === "em_andamento").length;
+    const msgNovas = msgs.filter((m) => !m.lido).length;
+    const lgpdAbertos = lgpd.filter((x) => x.status === "aberta").length;
+    contagens = { consultorias: consAbertas || "", mensagens: msgNovas || "", lgpd: lgpdAbertos || "" };
+    const novos7 = perfis.filter((p) => new Date(p.criado_em) > Date.now() - 7 * 86400e3).length;
+    el.innerHTML = '<h1>Visão geral</h1><p class="sub">Atualizado agora · ' + dataHora(new Date().toISOString()) + '</p>' +
+      '<div class="numeros">' +
+      [[perfis.length, "contas cadastradas", novos7 + " nos últimos 7 dias"],
+       [(ativos.basico || 0) + (ativos.premium || 0) + (ativos.pro || 0), "assinantes pagantes", "Básico " + (ativos.basico || 0) + " · Premium " + (ativos.premium || 0) + " · Pro " + (ativos.pro || 0)],
+       [ativos.teste || 0, "em teste grátis", "7 dias, sem cartão"],
+       [brl(pags.reduce((s, p) => s + Number(p.valor || 0), 0)), "recebido em 30 dias", pags.length + " pagamento(s)"],
+       [consAbertas, "consultorias para atender", "recebidas ou em andamento"],
+       [msgNovas, "mensagens não lidas", "contato e cobrança institucional"],
+       [lgpdAbertos, "pedidos LGPD abertos", "prazo legal: 15 dias"],
+       [espera.length, "na lista do agente de IA", ""]].map(([n, r, d]) => '<div class="numero"><b>' + esc(n) + "</b><span>" + esc(r) + (d ? "<br>" + esc(d) : "") + "</span></div>").join("") +
+      "</div>";
+    // atualiza os contadores do menu
+    document.querySelectorAll("[data-aba]").forEach((b) => { const k = b.dataset.aba; if (contagens[k] && !b.querySelector(".n")) b.insertAdjacentHTML("beforeend", '<span class="n">' + contagens[k] + "</span>"); });
+  },
+
+  async assinantes(el) {
+    const [ppid, assins] = await Promise.all([perfisPorId(), q(sb.from("assinaturas").select("*").order("criado_em", { ascending: false }).limit(3000))]);
+    const linhas = (filtro) => cache.perfis.filter((p) => !filtro || (p.nome + " " + p.email + " " + p.orgao).toLowerCase().includes(filtro)).slice(0, 300).map((p) => {
+      const v = vigente(assins, p.id);
+      return "<tr><td><b>" + esc(p.nome || "—") + "</b>" + (p.admin ? ' <span class="etq">admin</span>' : "") + '<br><span class="fraco">' + esc(p.email) + "</span></td>" +
+        "<td>" + esc(p.celular) + "</td><td>" + esc([p.cargo, p.orgao].filter(Boolean).join(" · ")) + '<br><span class="fraco">' + esc(p.setor) + "</span></td>" +
+        "<td>" + (v ? '<span class="etq ok">' + PLANO[v.plano] + '</span><br><span class="fraco">até ' + data(v.fim) + "</span>" : '<span class="fraco">sem plano</span>') + "</td>" +
+        "<td>" + data(p.criado_em) + '</td><td><button class="btn claro" data-conceder="' + p.id + '">Conceder plano</button></td></tr>';
+    }).join("");
+    el.innerHTML = '<h1>Assinantes</h1><p class="sub">' + cache.perfis.length + ' contas. "Conceder plano" serve para empenho de órgão público, cortesia ou ajuste manual.</p>' +
+      '<div class="caixa"><div class="barra"><input type="search" id="busca" placeholder="Buscar por nome, e-mail ou órgão" style="flex:1;min-width:220px"></div>' +
+      '<div class="rolar"><table class="tabela"><thead><tr><th>Pessoa</th><th>Celular</th><th>Vínculo</th><th>Plano</th><th>Cadastro</th><th></th></tr></thead><tbody id="corpo">' + linhas("") + "</tbody></table></div></div>" +
+      '<div class="caixa" id="formConceder" hidden></div>' +
+      '<div class="caixa"><h2>Assinaturas recentes</h2><div class="rolar"><table class="tabela"><thead><tr><th>Quando</th><th>Pessoa</th><th>Plano</th><th>Valor</th><th>Status</th><th>Período</th><th></th></tr></thead><tbody>' +
+      assins.slice(0, 150).map((a) => {
+        const p = ppid[a.usuario_id] || {};
+        const cls = a.status === "ativa" ? "ok" : a.status === "pendente" ? "espera" : "alerta";
+        return "<tr><td>" + dataHora(a.criado_em) + "</td><td>" + esc(p.nome || p.email || a.usuario_id) + "</td><td>" + PLANO[a.plano] + ' <span class="fraco">' + esc(a.ciclo) + " · " + esc(a.origem) + "</span></td><td>" + brl(a.valor) + (a.parcelas > 1 ? ' <span class="fraco">' + a.parcelas + "x</span>" : "") +
+          '</td><td><span class="etq ' + cls + '">' + esc(a.status) + "</span>" + (a.metodo ? '<br><span class="fraco">' + esc(a.metodo) + "</span>" : "") + "</td><td>" + (a.inicio ? data(a.inicio) + " a " + data(a.fim) : "—") +
+          "</td><td>" + (a.status === "ativa" ? '<button class="btn perigo" data-encerrar="' + a.id + '">Encerrar</button>' : "") + "</td></tr>";
+      }).join("") + "</tbody></table></div></div>";
+    const bind = () => el.querySelectorAll("[data-conceder]").forEach((b) => b.onclick = () => abrirConceder(b.dataset.conceder, ppid));
+    bind();
+    document.getElementById("busca").oninput = (e) => { document.getElementById("corpo").innerHTML = linhas(e.target.value.trim().toLowerCase()); bind(); };
+    el.querySelectorAll("[data-encerrar]").forEach((b) => b.onclick = async () => {
+      if (!confirm("Encerrar esta assinatura agora? O acesso termina imediatamente.")) return;
+      const { error } = await sb.from("assinaturas").update({ status: "cancelada", fim: new Date().toISOString() }).eq("id", b.dataset.encerrar);
+      if (error) return toast(error.message, true);
+      await registrar("encerrar_assinatura", { assinatura: b.dataset.encerrar }); toast("Assinatura encerrada."); desenhar();
+    });
+  },
+
+  async consultorias(el) {
+    const [ppid, lista] = await Promise.all([perfisPorId(), q(sb.from("consultorias").select("*").order("criado_em", { ascending: false }).limit(300))]);
+    el.innerHTML = '<h1>Consultorias</h1><p class="sub">Atualize o andamento e escreva a entrega — a pessoa vê tudo na Área do Assinante, em Atividade.</p>' +
+      '<div class="caixa">' + (lista.length ? lista.map((c) => {
+        const p = ppid[c.usuario_id] || {};
+        return '<div class="item"><h3>' + esc(c.assunto) + '</h3><div class="fraco">' + esc(p.nome || "—") + " · " + esc(p.email || "") + (p.celular ? " · " + esc(p.celular) : "") + "<br>" +
+          MODAL[c.modalidade] + " · " + (Number(c.valor) > 0 ? brl(c.valor) : "incluída no plano") + " · pedido em " + dataHora(c.criado_em) + (c.pago_em ? " · pago em " + dataHora(c.pago_em) : "") + "</div>" +
+          '<p class="pre">' + esc(c.descricao) + "</p>" +
+          '<div class="form" style="margin-top:12px"><label>Andamento<select data-st="' + c.id + '">' +
+          Object.keys(ST_CONS).map((k) => '<option value="' + k + '"' + (k === c.status ? " selected" : "") + ">" + ST_CONS[k] + "</option>").join("") +
+          '</select></label><label class="larga">Resposta / entrega<textarea rows="4" data-resp="' + c.id + '">' + esc(c.resposta) + "</textarea></label></div>" +
+          '<div class="barra" style="margin-top:10px"><button class="btn verde" data-salvar="' + c.id + '">Salvar</button></div></div>';
+      }).join("") : '<p class="fraco">Nenhum pedido de consultoria ainda.</p>') + "</div>";
+    el.querySelectorAll("[data-salvar]").forEach((b) => b.onclick = async () => {
+      const id = b.dataset.salvar;
+      const status = el.querySelector('[data-st="' + id + '"]').value, resposta = el.querySelector('[data-resp="' + id + '"]').value;
+      b.disabled = true;
+      const { error } = await sb.from("consultorias").update({ status, resposta }).eq("id", id);
+      b.disabled = false;
+      if (error) return toast(error.message, true);
+      await registrar("atualizar_consultoria", { consultoria: id, status }); toast("Consultoria atualizada.");
+    });
+  },
+
+  async forum(el) {
+    const [topicos, perguntas] = await Promise.all([
+      q(sb.from("forum_topicos").select("*").order("ordem")),
+      q(sb.from("forum_perguntas").select("*, forum_respostas(*), forum_topicos(nome)").order("criado_em", { ascending: false }).limit(60))
+    ]);
+    el.innerHTML = '<h1>Fórum</h1><p class="sub">Suas respostas saem marcadas como “Especialista Licitaverso”. Você também pode escolher a melhor resposta e excluir o que fugir das regras.</p>' +
+      '<div class="caixa"><h2>Perguntas recentes</h2>' + (perguntas.length ? perguntas.map((p) => {
+        const resps = (p.forum_respostas || []).sort((a, b) => a.criado_em < b.criado_em ? -1 : 1);
+        return '<div class="item"><span class="etq">' + esc(p.forum_topicos && p.forum_topicos.nome) + "</span><h3 style='margin-top:6px'>" + esc(p.titulo) + '</h3><div class="fraco">' + esc(p.autor_nome) + " · " + esc(p.autor_papel) + " · " + dataHora(p.criado_em) + "</div>" +
+          (p.contexto ? '<p class="pre">' + esc(p.contexto) + "</p>" : "") +
+          resps.map((r) => '<div style="margin:10px 0 0 14px;padding-left:12px;border-left:3px solid ' + (r.melhor ? "var(--verde)" : "#E3E9E8") + '"><div class="fraco"><b style="color:#172B33">' + esc(r.autor_nome) + "</b> · " + dataHora(r.criado_em) + (r.oficial ? ' <span class="etq ok">oficial</span>' : "") + (r.melhor ? ' <span class="etq ok">melhor</span>' : "") + '</div><p class="pre">' + esc(r.texto) + "</p>" +
+            (r.citacao ? '<p class="fraco">Fundamento: ' + esc(r.citacao) + "</p>" : "") +
+            '<div class="barra" style="margin:6px 0 0"><button class="btn claro" data-melhor="' + r.id + '">Marcar melhor</button><button class="btn claro" data-oficial="' + r.id + '" data-v="' + (!r.oficial) + '">' + (r.oficial ? "Tirar selo oficial" : "Marcar oficial") + '</button><button class="btn perigo" data-apagar-r="' + r.id + '">Excluir resposta</button></div></div>').join("") +
+          '<div style="margin-top:10px"><textarea rows="3" data-resp="' + p.id + '" placeholder="Responder como especialista"></textarea><div class="barra" style="margin-top:8px"><button class="btn verde" data-responder="' + p.id + '">Publicar resposta</button><button class="btn perigo" data-apagar-p="' + p.id + '">Excluir pergunta</button></div></div></div>';
+      }).join("") : '<p class="fraco">Nenhuma pergunta ainda.</p>') + "</div>" +
+      '<div class="caixa"><h2>Tópicos</h2><div class="rolar"><table class="tabela"><thead><tr><th>Ordem</th><th>Nome</th><th>Descrição</th><th>Visível</th></tr></thead><tbody>' +
+      topicos.map((t) => "<tr><td>" + t.ordem + "</td><td><b>" + esc(t.nome) + "</b></td><td>" + esc(t.descricao) + '</td><td><button class="btn claro" data-topico="' + t.id + '" data-v="' + (!t.ativo) + '">' + (t.ativo ? "Ocultar" : "Mostrar") + "</button></td></tr>").join("") +
+      '</tbody></table></div><div class="form" style="margin-top:14px"><label>Novo tópico<input type="text" id="tNome" placeholder="Ex.: Sanções administrativas"></label><label>Descrição<input type="text" id="tDesc"></label><label>&nbsp;<button class="btn" id="tAdd">Adicionar tópico</button></label></div></div>';
+    const recarregar = () => TELAS.forum(el);
+    el.querySelectorAll("[data-responder]").forEach((b) => b.onclick = async () => {
+      const texto = el.querySelector('[data-resp="' + b.dataset.responder + '"]').value.trim();
+      if (texto.length < 2) return toast("Escreva a resposta.", true);
+      const { error } = await sb.from("forum_respostas").insert({ pergunta_id: Number(b.dataset.responder), texto });
+      if (error) return toast(error.message, true);
+      toast("Resposta publicada."); recarregar();
+    });
+    el.querySelectorAll("[data-melhor]").forEach((b) => b.onclick = async () => {
+      const { error } = await sb.rpc("forum_marcar_melhor", { p_resposta: Number(b.dataset.melhor) }); if (error) return toast(error.message, true); recarregar();
+    });
+    el.querySelectorAll("[data-oficial]").forEach((b) => b.onclick = async () => {
+      const { error } = await sb.rpc("forum_marcar_oficial", { p_resposta: Number(b.dataset.oficial), p_oficial: b.dataset.v === "true" }); if (error) return toast(error.message, true); recarregar();
+    });
+    const apagar = (tabela, id) => async () => {
+      if (!confirm("Excluir definitivamente?")) return;
+      const { error } = await sb.from(tabela).delete().eq("id", id); if (error) return toast(error.message, true);
+      await registrar("excluir_" + tabela, { id }); toast("Excluído."); recarregar();
+    };
+    el.querySelectorAll("[data-apagar-r]").forEach((b) => b.onclick = apagar("forum_respostas", Number(b.dataset.apagarR)));
+    el.querySelectorAll("[data-apagar-p]").forEach((b) => b.onclick = apagar("forum_perguntas", Number(b.dataset.apagarP)));
+    el.querySelectorAll("[data-topico]").forEach((b) => b.onclick = async () => {
+      const { error } = await sb.from("forum_topicos").update({ ativo: b.dataset.v === "true" }).eq("id", Number(b.dataset.topico)); if (error) return toast(error.message, true); recarregar();
+    });
+    document.getElementById("tAdd").onclick = async () => {
+      const nome = document.getElementById("tNome").value.trim(); if (nome.length < 3) return toast("Dê um nome ao tópico.", true);
+      const { error } = await sb.from("forum_topicos").insert({ nome, descricao: document.getElementById("tDesc").value.trim(), ordem: topicos.length + 1 });
+      if (error) return toast(error.message, true); await registrar("criar_topico", { nome }); toast("Tópico criado."); recarregar();
+    };
+  },
+
+  async cursos(el) {
+    const [cursos, acessos] = await Promise.all([q(sb.from("cursos").select("*").order("ordem")), q(sb.from("curso_acessos").select("curso_id"))]);
+    const cliques = {}; acessos.forEach((a) => cliques[a.curso_id] = (cliques[a.curso_id] || 0) + 1);
+    const campos = (c) => '<div class="form">' +
+      '<label class="larga">Título<input type="text" name="titulo" value="' + esc(c.titulo) + '"></label>' +
+      '<label class="larga">Ementa<textarea rows="2" name="ementa">' + esc(c.ementa) + "</textarea></label>" +
+      '<label>Instrutor<input type="text" name="instrutor" value="' + esc(c.instrutor || "Renato Garcia") + '"></label>' +
+      '<label>Carga horária<input type="text" name="carga" value="' + esc(c.carga) + '" placeholder="12 h"></label>' +
+      '<label>Nível<select name="nivel">' + ["Iniciante", "Intermediário", "Avançado"].map((n) => "<option" + (n === c.nivel ? " selected" : "") + ">" + n + "</option>").join("") + "</select></label>" +
+      '<label>Preço cheio (R$)<input type="number" step="0.01" min="0" name="valor" value="' + esc(c.valor || 0) + '"></label>' +
+      '<label class="larga">Link de inscrição / acesso<input type="url" name="link" value="' + esc(c.link) + '" placeholder="https://… (vazio = “Em breve”)"></label>' +
+      '<label>Ordem<input type="number" name="ordem" value="' + esc(c.ordem || 0) + '"></label>' +
+      '<label>Visível no site<select name="ativo"><option value="true"' + (c.ativo !== false ? " selected" : "") + '>Sim</option><option value="false"' + (c.ativo === false ? " selected" : "") + ">Não</option></select></label></div>";
+    el.innerHTML = '<h1>Cursos</h1><p class="sub">A vitrine da página Cursos. Sem link, o botão aparece como “Em breve”.</p>' +
+      cursos.map((c) => '<form class="caixa" data-id="' + c.id + '"><h2>' + esc(c.titulo) + ' <span class="fraco">· ' + (cliques[c.id] || 0) + " acesso(s)</span></h2>" + campos(c) +
+        '<div class="barra" style="margin-top:12px"><button class="btn verde" type="submit">Salvar curso</button><button class="btn perigo" type="button" data-excluir="' + c.id + '">Excluir</button></div></form>').join("") +
+      '<form class="caixa" data-id="novo"><h2>Novo curso</h2>' + campos({ ativo: true, ordem: cursos.length + 1 }) + '<div class="barra" style="margin-top:12px"><button class="btn" type="submit">Adicionar curso</button></div></form>';
+    el.querySelectorAll("form").forEach((f) => f.onsubmit = async (e) => {
+      e.preventDefault();
+      const d = Object.fromEntries(new FormData(f).entries());
+      d.valor = Number(d.valor || 0); d.ordem = Number(d.ordem || 0); d.ativo = d.ativo === "true";
+      if (!d.titulo || d.titulo.trim().length < 4) return toast("Informe o título.", true);
+      const r = f.dataset.id === "novo" ? await sb.from("cursos").insert(d) : await sb.from("cursos").update(d).eq("id", Number(f.dataset.id));
+      if (r.error) return toast(r.error.message, true);
+      await registrar(f.dataset.id === "novo" ? "criar_curso" : "editar_curso", { titulo: d.titulo }); toast("Curso salvo."); TELAS.cursos(el);
+    });
+    el.querySelectorAll("[data-excluir]").forEach((b) => b.onclick = async () => {
+      if (!confirm("Excluir este curso da vitrine? Para só esconder, use “Visível no site: Não”.")) return;
+      const { error } = await sb.from("cursos").delete().eq("id", Number(b.dataset.excluir)); if (error) return toast(error.message, true);
+      await registrar("excluir_curso", { id: b.dataset.excluir }); toast("Curso excluído."); TELAS.cursos(el);
+    });
+  },
+
+  async mensagens(el) {
+    const lista = await q(sb.from("contatos").select("*").order("criado_em", { ascending: false }).limit(300));
+    el.innerHTML = '<h1>Mensagens</h1><p class="sub">Contato do site e pedidos de cobrança institucional (empenho, ordem bancária, faturamento). Responda pelo seu e-mail.</p><div class="caixa">' +
+      (lista.length ? lista.map((m) => '<div class="item"' + (m.lido ? ' style="opacity:.6"' : "") + '><h3>' + esc(m.assunto) + (m.lido ? "" : ' <span class="etq espera">nova</span>') + '</h3><div class="fraco">' + esc(m.nome) + " · <a href='mailto:" + esc(m.email) + "'>" + esc(m.email) + "</a> · " + dataHora(m.criado_em) + "</div>" +
+        '<p class="pre">' + esc(m.mensagem) + "</p>" + (m.detalhes && Object.keys(m.detalhes).length ? '<p class="fraco">' + Object.entries(m.detalhes).map(([k, v]) => esc(k) + ": " + esc(v)).join(" · ") + "</p>" : "") +
+        (m.lido ? "" : '<div class="barra" style="margin-top:8px"><button class="btn claro" data-lido="' + m.id + '">Marcar como lida</button></div>') + "</div>").join("") : '<p class="fraco">Nenhuma mensagem.</p>') + "</div>";
+    el.querySelectorAll("[data-lido]").forEach((b) => b.onclick = async () => {
+      const { error } = await sb.from("contatos").update({ lido: true }).eq("id", b.dataset.lido); if (error) return toast(error.message, true); TELAS.mensagens(el);
+    });
+  },
+
+  async lgpd(el) {
+    const [ppid, lista] = await Promise.all([perfisPorId(), q(sb.from("solicitacoes_lgpd").select("*").order("criado_em", { ascending: false }).limit(300))]);
+    const tipo = { exclusao: "Exclusão da conta", portabilidade: "Portabilidade (arquivo baixado pela pessoa)", acesso: "Acesso aos dados (arquivo baixado pela pessoa)" };
+    el.innerHTML = '<h1>Pedidos LGPD</h1><p class="sub">Acesso e portabilidade já são atendidos na hora pelo próprio site. Exclusão: apague o usuário no Supabase (Authentication → Users → Delete user) — os dados ligados a ele saem juntos — e marque como concluído. Prazo legal: 15 dias.</p><div class="caixa"><div class="rolar"><table class="tabela"><thead><tr><th>Quando</th><th>Pessoa</th><th>Pedido</th><th>Status</th><th></th></tr></thead><tbody>' +
+      lista.map((x) => { const p = ppid[x.usuario_id] || {}; return "<tr><td>" + dataHora(x.criado_em) + "</td><td>" + esc(p.nome || "—") + '<br><span class="fraco">' + esc(p.email || x.usuario_id) + "</span></td><td>" + tipo[x.tipo] + '</td><td><span class="etq ' + (x.status === "aberta" ? "espera" : "ok") + '">' + esc(x.status) + "</span></td><td>" + (x.status === "aberta" ? '<button class="btn claro" data-concluir="' + x.id + '">Concluir</button>' : "") + "</td></tr>"; }).join("") +
+      "</tbody></table></div>" + (lista.length ? "" : '<p class="fraco">Nenhum pedido.</p>') + "</div>";
+    el.querySelectorAll("[data-concluir]").forEach((b) => b.onclick = async () => {
+      const { error } = await sb.from("solicitacoes_lgpd").update({ status: "concluida" }).eq("id", b.dataset.concluir); if (error) return toast(error.message, true);
+      await registrar("concluir_lgpd", { id: b.dataset.concluir }); TELAS.lgpd(el);
+    });
+  },
+
+  async espera(el) {
+    const lista = await q(sb.from("lista_espera").select("*").order("criado_em", { ascending: false }));
+    el.innerHTML = '<h1>Lista de espera do agente de IA</h1><p class="sub">' + lista.length + ' e-mail(s).</p><div class="caixa"><div class="barra"><button class="btn" id="csv">Baixar CSV</button></div><div class="rolar"><table class="tabela"><thead><tr><th>E-mail</th><th>Entrou em</th></tr></thead><tbody>' +
+      lista.map((x) => "<tr><td>" + esc(x.email) + "</td><td>" + dataHora(x.criado_em) + "</td></tr>").join("") + "</tbody></table></div></div>";
+    document.getElementById("csv").onclick = () => {
+      const csv = "email,entrou_em\n" + lista.map((x) => x.email + "," + x.criado_em).join("\n");
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" })); a.download = "lista-espera-agente.csv"; a.click();
+    };
+  },
+
+  async registro(el) {
+    const lista = await q(sb.from("registro_admin").select("*").order("criado_em", { ascending: false }).limit(300));
+    el.innerHTML = '<h1>Registro de alterações</h1><p class="sub">O que foi feito neste painel, com data e hora.</p><div class="caixa"><div class="rolar"><table class="tabela"><thead><tr><th>Quando</th><th>Ação</th><th>Detalhes</th></tr></thead><tbody>' +
+      lista.map((x) => "<tr><td>" + dataHora(x.criado_em) + "</td><td>" + esc(x.acao.replace(/_/g, " ")) + '</td><td class="fraco">' + esc(JSON.stringify(x.detalhes)) + "</td></tr>").join("") + "</tbody></table></div>" + (lista.length ? "" : '<p class="fraco">Nada registrado ainda.</p>') + "</div>";
+  }
+};
+
+function abrirConceder(uid, ppid) {
+  const p = ppid[uid] || {};
+  const box = document.getElementById("formConceder");
+  box.hidden = false;
+  box.innerHTML = "<h2>Conceder plano para " + esc(p.nome || p.email) + '</h2><div class="form"><label>Plano<select id="cPlano"><option value="basico">Básico</option><option value="premium" selected>Premium</option><option value="pro">Pro</option></select></label>' +
+    '<label>Duração (meses)<input type="number" id="cMeses" min="1" max="36" value="12"></label><label class="larga">Motivo (fica no registro)<input type="text" id="cObs" placeholder="Ex.: Nota de empenho nº 2026NE000123 — Prefeitura X"></label></div>' +
+    '<div class="barra" style="margin-top:12px"><button class="btn verde" id="cOk">Conceder</button><button class="btn claro" id="cNao">Cancelar</button></div>';
+  box.scrollIntoView({ behavior: "smooth", block: "center" });
+  document.getElementById("cNao").onclick = () => { box.hidden = true; };
+  document.getElementById("cOk").onclick = async () => {
+    const meses = Math.max(1, Math.min(36, Number(document.getElementById("cMeses").value) || 12));
+    const inicio = new Date(), fim = new Date(); fim.setMonth(fim.getMonth() + meses);
+    const plano = document.getElementById("cPlano").value, observacao = document.getElementById("cObs").value.trim();
+    const { error } = await sb.from("assinaturas").insert({ usuario_id: uid, plano, ciclo: meses >= 12 ? "anual" : "mensal", status: "ativa", valor: 0, inicio: inicio.toISOString(), fim: fim.toISOString(), origem: "manual", metodo: "concessão manual", observacao });
+    if (error) return toast(error.message, true);
+    await registrar("conceder_plano", { usuario: p.email, plano, meses, observacao });
+    toast("Plano concedido."); desenhar();
+  };
+}
+
+iniciar();
+})();
+</script>
+</body>
+</html>

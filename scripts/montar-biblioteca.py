@@ -1,7 +1,9 @@
 """Monta biblioteca.html (Biblioteca Jurídica do site) a partir da página do Acervo Licitaverso.
 Uso: python3 scripts/montar-biblioteca.py <acervo-licitaverso.html> [saida=biblioteca.html]
-A página do acervo é usada tal como é; só se acrescentam a barra do site e o shim que troca o Claude
-pelos arquivos estáticos (scripts/biblioteca-shim.js), e se ocultam os recursos que dependem do Claude."""
+A página do acervo é usada tal como é; só se acrescentam a barra do site, a conexão com as contas
+(licitaverso-auth.js) e o shim que troca o Claude pelos arquivos estáticos e pela conta da pessoa
+(scripts/biblioteca-shim.js), e se ocultam os recursos que dependem do Claude.
+Para só atualizar o shim e a barra numa biblioteca.html já montada: python3 scripts/atualizar-biblioteca.py"""
 import sys, pathlib
 src = pathlib.Path(sys.argv[1]).read_text(encoding="utf-8")
 out = pathlib.Path(sys.argv[2] if len(sys.argv) > 2 else "biblioteca.html")
@@ -30,6 +32,7 @@ barra = """<style>
 .lvbar nav a[aria-current]{color:#fff;background:rgba(255,255,255,.1)}
 .lvbar .cta{background:#0FA36B;color:#06251A;text-decoration:none;font-weight:700;font-size:14px;padding:9px 16px;border-radius:10px}
 .lvbar .conta{color:#C9D6DB;text-decoration:none;font-size:14px;font-weight:600}
+.lvbar [hidden]{display:none!important}
 @media (max-width:720px){.lvbar nav{order:3;flex-basis:100%}}
 </style>
 <div class="lvbar"><div class="in">
@@ -39,11 +42,13 @@ barra = """<style>
 <a href="index.html?p=forum">Fórum</a><a href="index.html?p=cursos">Cursos</a><a href="index.html?p=consultoria">Consultoria</a>
 <a href="index.html?p=agente">Agente IA</a><a href="index.html?p=planos">Planos</a>
 </nav>
-<a class="conta" href="index.html?p=conta">Minha conta</a><a class="cta" href="index.html?p=planos">Cadastro gratuito</a>
+<a class="conta" id="lvEntrar" href="index.html?p=login&amp;volta=biblioteca">Entrar</a><a class="cta" id="lvCadastro" href="index.html?p=cadastro&amp;volta=biblioteca">Cadastre-se</a>
+<a class="cta" id="lvConta" href="index.html?p=conta" hidden>Minha conta</a><a class="conta" id="lvSair" href="index.html" hidden>Sair</a>
 </div></div>
 """
 html = ('<!doctype html>\n<html lang="pt-BR"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        '<script src="licitaverso-auth.js?v=3"></script>\n'
         '<script>\n' + shim + '\n</script></head><body>\n' + barra + src + '\n</body></html>\n')
 out.write_text(html, encoding="utf-8")
 print("gravado", out, len(html), "bytes")
