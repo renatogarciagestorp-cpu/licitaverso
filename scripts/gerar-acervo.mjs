@@ -1,5 +1,6 @@
 // Gera acervo.json (formato "licitaverso-acervo" v1) a partir dos documentos do Acervo Licitaverso.
-// Uso: node scripts/gerar-acervo.mjs <pasta-com-os-json-dos-documentos> [saida=acervo.json]
+// Uso: node scripts/gerar-acervo.mjs <pasta-decisoes> [saida=acervo.json] [pasta-meta]
+// Também grava acervo-completo.json (documentos brutos + situação da coleta), usado pela página biblioteca.html.
 // Cada arquivo <id>.json da pasta é um documento da coleção "decisoes" (como gravado pelo ArtifactData com out_dir).
 import fs from "fs"; import path from "path";
 const LEGISLACAO=new Set(["Lei","Decreto","Norma (portaria, IN, resolução)"]);
@@ -46,10 +47,14 @@ function itemPlataforma(d){return {id:d.id,orgao:d.orgao,esfera:ESFERA[d.orgao]|
   natureza:d._nat,tipo:d.tipo,numero:d.numero||"",colegiado:d.colegiado||"",relator:d.relator||"",data:d.data||"",tema:d.tema,titulo:d.titulo,tese:tese(d),
   tags:d.tags||[],legislacao:d._leis,fonte_nome:d.fonte_nome||"",fonte_url:d.fonte_url||"",verificado_em:(d.capturado_em||"").slice(0,10),citacao_abnt:citacao(d,"abnt")}}
 
-const dir=process.argv[2]; const saida=process.argv[3]||"acervo.json";
+const dir=process.argv[2]; const saida=process.argv[3]||"acervo.json"; const metaDir=process.argv[4]||"";
 if(!dir){console.error("Informe a pasta com os documentos.");process.exit(1)}
 const docs=fs.readdirSync(dir).filter(f=>f.endsWith(".json")).map(f=>{const d=JSON.parse(fs.readFileSync(path.join(dir,f),"utf8"));const x={id:f.slice(0,-5),...d};x._leis=leisDe(x);x._nat=natOf(x);return x});
 if(docs.length<100){console.error("Poucos documentos ("+docs.length+"); abortando para não publicar um acervo incompleto.");process.exit(2)}
 const itens=docs.sort((a,b)=>(b.data||"").localeCompare(a.data||"")||a.id.localeCompare(b.id)).map(itemPlataforma);
 fs.writeFileSync(saida,JSON.stringify({formato:"licitaverso-acervo",versao:1,gerado_em:new Date().toISOString(),total:itens.length,itens}));
-console.log(itens.length+" itens gravados em "+saida);
+const limpo=({_leis,_nat,...r})=>r;
+const meta=metaDir&&fs.existsSync(metaDir)?fs.readdirSync(metaDir).filter(f=>f.endsWith(".json")).map(f=>[f.slice(0,-5),JSON.parse(fs.readFileSync(path.join(metaDir,f),"utf8"))]):[];
+const completo=path.join(path.dirname(saida),"acervo-completo.json");
+fs.writeFileSync(completo,JSON.stringify({formato:"licitaverso-acervo-completo",versao:1,gerado_em:new Date().toISOString(),decisoes:docs.map(d=>{const {id,...r}=limpo(d);return [id,r]}),meta}));
+console.log(itens.length+" itens gravados em "+saida+" e em "+completo);

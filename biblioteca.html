@@ -1,0 +1,1165 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script>
+/* Faz a página do Acervo Licitaverso funcionar no site público, sem o Claude:
+   - "decisoes" e "meta" vêm de acervo-completo.json (atualizado nos dias úteis);
+   - anotações, marcadores e dossiês ficam guardados no navegador de cada visitante (localStorage);
+   - recursos que dependem do Claude (perguntar ao acervo, síntese, minuta, conferência de divergência) ficam ocultos. */
+(function(){
+  const DATA_URL = "acervo-completo.json?v=" + Date.now();
+  let carga = null;
+  const carregar = () => carga || (carga = fetch(DATA_URL, {cache:"no-store"}).then(r => { if(!r.ok) throw new Error(r.status); return r.json(); }));
+  const snap = rows => ({ docs: rows.map(([id, d]) => ({ id, data: () => d })) });
+  const LS = "licitaverso:";
+  const ler = p => { try { return JSON.parse(localStorage.getItem(LS + p) || "{}"); } catch(e) { return {}; } };
+  const gravar = (p, o) => { try { localStorage.setItem(LS + p, JSON.stringify(o)); } catch(e) {} };
+  const ouvintes = {};
+  const avisar = p => (ouvintes[p] || []).forEach(cb => cb(snap(Object.entries(ler(p)))));
+  function colecao(p){
+    if (p === "decisoes" || p === "meta") {
+      return {
+        onSnapshot(cb, err){ carregar().then(j => cb(snap(p === "decisoes" ? j.decisoes : (j.meta || [])))).catch(e => err && err(e)); return () => {}; },
+        doc(){ const nega = async () => { throw {code:"not_writer"}; }; return { set: nega, update: nega, delete: nega }; }
+      };
+    }
+    return {
+      onSnapshot(cb){ (ouvintes[p] = ouvintes[p] || []).push(cb); cb(snap(Object.entries(ler(p)))); return () => {}; },
+      doc(id){ return {
+        async set(d){ const o = ler(p); o[id] = JSON.parse(JSON.stringify(d)); gravar(p, o); avisar(p); },
+        async update(d){ const o = ler(p); o[id] = Object.assign({}, o[id] || {}, JSON.parse(JSON.stringify(d))); gravar(p, o); avisar(p); },
+        async delete(){ const o = ler(p); delete o[id]; gravar(p, o); avisar(p); },
+        async get(){ const o = ler(p); return { exists: id in o, data: () => o[id] }; }
+      }; }
+    };
+  }
+  const usuario = { canEdit: async () => false, isOwner: async () => false, id: async () => "visitante", can: () => false };
+  const downloads = { async save({filename, data}){
+    const blob = data instanceof Blob ? data : new Blob([data], {type: /\.json$/.test(filename) ? "application/json" : /\.csv$/.test(filename) ? "text/csv" : "text/markdown"});
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = filename; document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  } };
+  window.claude = { use: async n => n === "db" ? { collection: colecao } : n === "user" ? usuario : n === "downloads" ? downloads : null };
+})();
+
+</script></head><body>
+<style>
+.lvbar{background:#0A1F2A;color:#fff;font-family:"IBM Plex Sans",-apple-system,sans-serif}
+.lvbar .in{max-width:1320px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.lvbar .marca{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-weight:700;font-size:18px}
+.lvbar .marca span{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:#0FA36B;color:#06251A;font-weight:800}
+.lvbar nav{display:flex;gap:4px;flex-wrap:wrap;flex:1}
+.lvbar nav a{color:#C9D6DB;text-decoration:none;font-size:14px;font-weight:600;padding:8px 12px;border-radius:8px}
+.lvbar nav a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.lvbar nav a[aria-current]{color:#fff;background:rgba(255,255,255,.1)}
+.lvbar .cta{background:#0FA36B;color:#06251A;text-decoration:none;font-weight:700;font-size:14px;padding:9px 16px;border-radius:10px}
+.lvbar .conta{color:#C9D6DB;text-decoration:none;font-size:14px;font-weight:600}
+@media (max-width:720px){.lvbar nav{order:3;flex-basis:100%}}
+</style>
+<div class="lvbar"><div class="in">
+<a class="marca" href="index.html"><span>L</span>Licitaverso</a>
+<nav aria-label="Site">
+<a href="biblioteca.html" aria-current="page">Biblioteca Jurídica</a>
+<a href="index.html?p=forum">Fórum</a><a href="index.html?p=cursos">Cursos</a><a href="index.html?p=consultoria">Consultoria</a>
+<a href="index.html?p=agente">Agente IA</a><a href="index.html?p=planos">Planos</a>
+</nav>
+<a class="conta" href="index.html?p=conta">Minha conta</a><a class="cta" href="index.html?p=planos">Cadastro gratuito</a>
+</div></div>
+<title>Biblioteca Jurídica — Licitaverso</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: masthead + filtros de órgão e natureza; rail de filtros à esquerda, ementário cronológico por mês à direita */
+:root{
+  --bg:#F3F5F7; --surface:#FFFFFF; --ink:#16202A; --muted:#5A6775; --rule:#D7DDE3;
+  --accent:#0B5D6B; --accent-soft:#E2EFF1; --warn:#8A5A00; --warn-soft:#FBF0DA;
+  --tcu:#1D3F78; --tcerj:#7A2338; --cgu:#2F6B3A; --stf:#3B3B8F; --stj:#6A3E86; --tcmrj:#8A4B1A; --pgerj:#225E78; --tjrj:#4D5B1F;
+  --tcu-soft:#E5EBF5; --tcerj-soft:#F4E6EA; --cgu-soft:#E6F0E7; --stf-soft:#E8E8F6; --stj-soft:#EFE7F4; --tcmrj-soft:#F6EBE1; --pgerj-soft:#E2EEF3; --tjrj-soft:#EDF0DF;
+  --f-display:"Literata", Georgia, "Times New Roman", serif;
+  --f-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11171D; --surface:#18212A; --ink:#E6ECF1; --muted:#9AA8B5; --rule:#2B3743;
+  --accent:#5CC3D3; --accent-soft:#16343A; --warn:#E8B85C; --warn-soft:#3A2E14;
+  --tcu:#8FB0EA; --tcerj:#E7909F; --cgu:#8CCB97; --stf:#A9A9F0; --stj:#C9A2E3; --tcmrj:#E8AD7E; --pgerj:#86C3DD; --tjrj:#C1CF85;
+  --tcu-soft:#1C2A42; --tcerj-soft:#3A1E26; --cgu-soft:#1D3322; --stf-soft:#23234A; --stj-soft:#2E2140; --tcmrj-soft:#3A2717; --pgerj-soft:#16303B; --tjrj-soft:#2A3016; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11171D; --surface:#18212A; --ink:#E6ECF1; --muted:#9AA8B5; --rule:#2B3743;
+  --accent:#5CC3D3; --accent-soft:#16343A; --warn:#E8B85C; --warn-soft:#3A2E14;
+  --tcu:#8FB0EA; --tcerj:#E7909F; --cgu:#8CCB97; --stf:#A9A9F0; --stj:#C9A2E3; --tcmrj:#E8AD7E; --pgerj:#86C3DD; --tjrj:#C1CF85;
+  --tcu-soft:#1C2A42; --tcerj-soft:#3A1E26; --cgu-soft:#1D3322; --stf-soft:#23234A; --stj-soft:#2E2140; --tcmrj-soft:#3A2717; --pgerj-soft:#16303B; --tjrj-soft:#2A3016; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:1180px;margin:0 auto}
+header.mast{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-block:28px 18px;border-bottom:2px solid var(--ink)}
+.eyebrow{font:500 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+h1{font:650 clamp(26px,4vw,36px)/1.1 var(--f-display);margin:6px 0 0;text-wrap:balance}
+.mast p{margin:6px 0 0;color:var(--muted);max-width:60ch}
+.stamp{font:400 12px/1.4 var(--f-mono);color:var(--muted);text-align:right}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-block:12px;border-bottom:1px solid var(--rule)}
+.bar .lbl{font:600 11px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.chip{font:500 12px/1 var(--f-mono);padding:6px 10px;border-radius:999px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);cursor:pointer}
+.chip b{font-weight:600}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.zero{opacity:.55}
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--surface)}
+.seg button{font:500 13px var(--f-body);border:0;background:none;color:var(--ink);padding:7px 12px;cursor:pointer;border-right:1px solid var(--rule)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--bg)}
+.seg button span{font:12px var(--f-mono);opacity:.8;margin-left:4px}
+.layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px;padding-top:22px}
+@media (max-width:820px){.layout{grid-template-columns:1fr}}
+aside{display:flex;flex-direction:column;gap:18px;min-width:0}
+aside h2{font:600 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+input[type=search],select,textarea,input[type=text],input[type=date],input[type=url]{width:100%;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:8px 10px}
+textarea{resize:vertical}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.list{display:flex;flex-direction:column;gap:2px;max-height:300px;overflow:auto}
+.list button{display:flex;justify-content:space-between;gap:8px;text-align:left;font:inherit;font-size:14px;background:none;border:0;border-radius:4px;padding:5px 8px;color:var(--ink);cursor:pointer}
+.list button span:last-child{font:12px var(--f-mono);color:var(--muted)}
+.list button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.list button:hover{background:var(--accent-soft)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row2>*{min-width:0}
+.ghost{font:500 13px var(--f-body);background:none;border:1px solid var(--rule);border-radius:6px;padding:7px 10px;color:var(--ink);cursor:pointer}
+.primary{font:600 13px var(--f-body);background:var(--accent);border:0;border-radius:6px;padding:9px 14px;color:var(--bg);cursor:pointer}
+.primary:disabled{opacity:.5;cursor:wait}
+main{min-width:0}
+.resultbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.resultbar span{color:var(--muted);font-size:13px}
+.month{font:650 18px/1.2 var(--f-display);margin:26px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--rule);text-transform:capitalize}
+.item{display:grid;grid-template-columns:86px minmax(0,1fr);gap:14px;padding:14px 0;border-bottom:1px dashed var(--rule)}
+.date{font:500 13px/1.3 var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.org{display:inline-block;font:600 11px/1 var(--f-mono);letter-spacing:.06em;padding:4px 7px;border-radius:3px;margin-top:6px;color:var(--muted);background:var(--rule)}
+.org.TCU{color:var(--tcu);background:var(--tcu-soft)} .org.TCE-RJ{color:var(--tcerj);background:var(--tcerj-soft)} .org.CGU{color:var(--cgu);background:var(--cgu-soft)}
+.org.STF{color:var(--stf);background:var(--stf-soft)} .org.STJ{color:var(--stj);background:var(--stj-soft)} .org.TCM-RJ{color:var(--tcmrj);background:var(--tcmrj-soft)}
+.org.PGE-RJ{color:var(--pgerj);background:var(--pgerj-soft)} .org.TJ-RJ{color:var(--tjrj);background:var(--tjrj-soft)}
+.org.GOV-BR,.org.GOV-RJ{color:var(--warn);background:var(--warn-soft)}
+/* Dossiês, relacionadas, painel, status */
+.dosbar{border:1px solid var(--accent);border-radius:10px;background:var(--surface);padding:12px 16px;margin:6px 0 10px}
+.dosbar h2{font:650 17px/1.2 var(--f-display);margin:2px 0 6px}
+.dosbar .btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.rel{margin-top:10px;border:1px solid var(--rule);border-radius:8px;padding:8px 12px;background:var(--surface);font-size:13.5px}
+.rel .ri{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;padding:6px 0;border-top:1px dashed var(--rule)}
+.rel .ri:first-of-type{border-top:0}
+.rel .ri button.t{all:unset;cursor:pointer} .rel .ri button.t:hover{color:var(--accent);text-decoration:underline}
+.flag{font:600 10.5px/1 var(--f-mono);padding:3px 6px;border-radius:3px;margin-left:6px;white-space:nowrap}
+.flag.new{color:var(--accent);background:var(--accent-soft)} .flag.div{color:var(--tcerj);background:var(--tcerj-soft)} .flag.conv{color:var(--cgu);background:var(--cgu-soft)} .flag.comp{color:var(--muted);background:var(--rule)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:8px 0 16px}
+.tile{border:1px solid var(--rule);border-radius:8px;background:var(--surface);padding:12px 14px}
+.tile .v{font:650 28px/1.1 var(--f-display);font-variant-numeric:tabular-nums}
+.tile .l{font-size:12.5px;color:var(--muted);margin-top:4px}
+.chart{border:1px solid var(--rule);border-radius:8px;background:var(--surface);padding:12px 14px;margin-bottom:14px}
+.chart h3{font:600 14px var(--f-body);margin:0 0 10px}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart .bar{fill:var(--accent)} .chart .bar:hover{opacity:.75}
+.chart text{fill:var(--muted);font:11px var(--f-mono)}
+.hb{display:grid;grid-template-columns:minmax(90px,200px) minmax(0,1fr) 44px;gap:8px;align-items:center;font-size:13px;padding:3px 0}
+.hb .track{height:12px;border-radius:0 4px 4px 0;background:transparent}
+.hb .fill{height:12px;border-radius:0 4px 4px 0;background:var(--accent);min-width:2px}
+.hb .n{font:12px var(--f-mono);color:var(--muted);text-align:right}
+.hb button{all:unset;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .hb button:hover{color:var(--accent)}
+.status{display:flex;flex-direction:column;gap:4px;font-size:12.5px}
+.status .ok{color:var(--cgu)} .status .late{color:var(--warn);font-weight:600}
+.chk{display:flex;gap:6px;align-items:flex-start;font-size:13px;padding:2px 0}
+dialog.small{border:1px solid var(--rule);border-radius:10px;padding:16px 18px;width:min(460px,92vw);background:var(--surface);color:var(--ink)}
+dialog.small::backdrop{background:rgba(10,16,22,.35)}
+dialog.small h2{font:650 17px var(--f-display);margin:0 0 8px}
+.minout{white-space:pre-wrap;border:1px solid var(--rule);border-radius:8px;padding:12px 14px;background:var(--bg);font-size:14px;line-height:1.6;max-height:50vh;overflow:auto}
+.ref{font:500 12px/1.4 var(--f-mono);color:var(--muted)}
+.leg{font:600 10.5px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--warn);background:var(--warn-soft);padding:3px 6px;border-radius:3px;margin-right:6px}
+.item h3{font:600 16.5px/1.35 var(--f-display);margin:3px 0 6px;text-wrap:balance}
+.resumo{margin:0;max-width:72ch}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;font-size:12.5px;color:var(--muted)}
+.tag{font-size:12px;color:var(--accent);border:1px solid var(--accent-soft);background:var(--accent-soft);border-radius:999px;padding:2px 8px}
+.tag.law{color:var(--warn);background:var(--warn-soft);border-color:var(--warn-soft)}
+.meta a{color:var(--accent);font-weight:500}
+.empty{padding:40px 20px;border:1px dashed var(--rule);border-radius:8px;color:var(--muted);text-align:center;margin-top:16px}
+details.add{border:1px solid var(--rule);border-radius:8px;background:var(--surface);padding:12px 14px;margin:6px 0 4px}
+details.add summary{cursor:pointer;font-weight:600}
+details.add .sub{color:var(--muted);font-size:13px;margin:6px 0 0}
+.addgrid{display:grid;gap:8px;margin-top:12px}
+.step{font:600 11px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.note{font-size:12.5px;color:var(--muted);line-height:1.5}
+.del{font:500 12px var(--f-body);background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
+/* Anotações pessoais */
+:root{--hl-y:#FFE9A8;--hl-g:#CDEFD3;--hl-r:#F9D3DC;--hl-b:#CFE3FA}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--hl-y:#5A4A12;--hl-g:#1E4A2A;--hl-r:#5A2433;--hl-b:#1E3A5C}}
+:root[data-theme="dark"]{--hl-y:#5A4A12;--hl-g:#1E4A2A;--hl-r:#5A2433;--hl-b:#1E3A5C}
+mark{color:inherit;border-radius:2px;padding:0 1px}
+mark.hl-y{background:var(--hl-y)} mark.hl-g{background:var(--hl-g)} mark.hl-r{background:var(--hl-r)} mark.hl-b{background:var(--hl-b)}
+.acts{display:inline-flex;gap:6px;align-items:center}
+.nbtn{font:500 12.5px var(--f-body);background:var(--surface);border:1px solid var(--rule);border-radius:6px;padding:4px 9px;color:var(--ink);cursor:pointer}
+.nbtn.has{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.fav{font:16px/1 var(--f-body);background:none;border:0;cursor:pointer;color:var(--muted);padding:2px 4px}
+.fav[aria-pressed="true"]{color:#C98A00}
+.mynote{margin:10px 0 0;padding:8px 12px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 6px 6px 0;font-size:13.5px;max-width:72ch;cursor:pointer}
+.mynote b{font:600 10.5px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:4px}
+.mk{font:600 11px/1 var(--f-mono);padding:3px 7px;border-radius:3px;background:var(--ink);color:var(--bg)}
+dialog.notes{border:0;padding:0;margin:0 0 0 auto;height:100dvh;max-height:100dvh;width:min(620px,100vw);max-width:100vw;background:var(--surface);color:var(--ink);box-shadow:-12px 0 40px rgba(0,0,0,.18)}
+dialog.notes::backdrop{background:rgba(10,16,22,.35)}
+.nwrap{display:flex;flex-direction:column;height:100%}
+.nhead{padding:18px 20px 12px;border-bottom:1px solid var(--rule)}
+.nhead h2{font:650 18px/1.3 var(--f-display);margin:6px 0 0;text-wrap:balance}
+.nhead .close{float:right;font:500 13px var(--f-body);background:none;border:1px solid var(--rule);border-radius:6px;padding:5px 10px;color:var(--ink);cursor:pointer}
+.nbody{flex:1;overflow:auto;padding:14px 20px;display:flex;flex-direction:column;gap:12px}
+.marcas{display:flex;flex-wrap:wrap;gap:6px}
+.tb{display:flex;flex-wrap:wrap;gap:4px;padding:6px;border:1px solid var(--rule);border-bottom:0;border-radius:8px 8px 0 0;background:var(--bg);position:sticky;top:0;z-index:1}
+.tb button{font:600 13px var(--f-body);min-width:32px;height:30px;padding:0 8px;border:1px solid transparent;border-radius:5px;background:none;color:var(--ink);cursor:pointer}
+.tb button:hover{background:var(--surface);border-color:var(--rule)}
+.tb .sw{width:22px;min-width:22px;height:22px;padding:0;border:1px solid var(--rule);margin:4px 1px}
+.tb .sep{width:1px;background:var(--rule);margin:4px 3px}
+.ed{min-height:260px;border:1px solid var(--rule);border-radius:0 0 8px 8px;padding:12px 14px;background:var(--surface);line-height:1.6;outline:none}
+.ed:focus{border-color:var(--accent)}
+.ed:empty:before{content:attr(data-ph);color:var(--muted)}
+.ed blockquote{margin:8px 0;padding:4px 12px;border-left:3px solid var(--rule);color:var(--muted)}
+.ed h4{font:600 15px var(--f-display);margin:10px 0 4px}
+.nfoot{padding:10px 20px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.nstat{font:12px var(--f-mono);color:var(--muted)}
+/* Perguntar ao acervo, comparar, citação, integração */
+.ask{border:1px solid var(--rule);border-radius:10px;background:var(--surface);padding:14px 16px;margin:0 0 14px}
+.ask h2{font:650 16px/1.2 var(--f-display);margin:0 0 4px}
+.askrow{display:flex;gap:8px;margin-top:8px}
+.askrow input{flex:1;min-width:0;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--rule);border-radius:6px;padding:9px 11px}
+.answer{margin-top:12px;padding-top:12px;border-top:1px solid var(--rule);max-width:76ch}
+.answer p{margin:0 0 8px}
+.cite{font:600 11px/1 var(--f-mono);color:var(--accent);background:var(--accent-soft);border:0;border-radius:3px;padding:2px 5px;cursor:pointer;vertical-align:1px}
+.srcs{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.src{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;font-size:13px;align-items:start}
+.src b{font:600 11px/1.6 var(--f-mono);color:var(--accent)}
+.src button{all:unset;cursor:pointer;color:var(--ink)} .src button:hover{text-decoration:underline}
+.banner{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--warn-soft);color:var(--warn);border-radius:6px;padding:8px 12px;font-size:13px;margin:6px 0}
+.banner button{font:600 12px var(--f-body);background:none;border:1px solid currentColor;color:inherit;border-radius:5px;padding:3px 8px;cursor:pointer}
+.cmpgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:10px}
+.cmpcol{border:1px solid var(--rule);border-radius:8px;background:var(--surface);padding:10px 12px;min-width:0}
+.cmpcol h3{font:600 12px/1 var(--f-mono);letter-spacing:.06em;margin:0 0 8px;display:flex;justify-content:space-between}
+.cmpit{padding:8px 0;border-top:1px dashed var(--rule);font-size:13.5px}
+.cmpit .date{font-size:11.5px}
+.cmpit button{all:unset;cursor:pointer;display:block;margin-top:2px} .cmpit button:hover{color:var(--accent)}
+.synth{border:1px solid var(--accent);border-radius:10px;padding:12px 16px;margin-top:12px;background:var(--surface)}
+.synth h3{font:650 15px var(--f-display);margin:10px 0 6px}
+.synth ul{margin:0;padding-left:18px} .synth li{margin:4px 0}
+.vbadge{font:500 11px/1 var(--f-mono);color:var(--cgu);background:var(--cgu-soft);border-radius:3px;padding:3px 6px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:var(--bg);font-size:13px;padding:9px 14px;border-radius:8px;z-index:20;max-width:90vw}
+.item.flash{animation:flash 1.6s ease-out}
+@keyframes flash{0%{background:var(--accent-soft)}100%{background:transparent}}
+.ndoc{font-size:13px;color:var(--muted);max-height:120px;overflow:auto;border:1px dashed var(--rule);border-radius:6px;padding:8px 10px}
+@media (max-width:560px){.item{grid-template-columns:1fr;gap:4px}.row2{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div>
+      <div class="eyebrow">Licitaverso · Biblioteca jurídica</div>
+      <h1>Acervo de decisões e normas</h1>
+      <p>TCU, TCE-RJ, CGU, STF, STJ, TCM-RJ, PGE-RJ, TJ-RJ e normas federais e do RJ captados automaticamente em dias úteis. Organizados por órgão, esfera, natureza, tema, lei, artigo, tipo e data.</p>
+    </div>
+    <div class="stamp" id="stamp">Carregando acervo…</div>
+  </header>
+
+  <div class="bar" role="group" aria-label="Filtrar por natureza">
+    <span class="lbl">Natureza</span>
+    <div class="seg" id="natureza"></div>
+  </div>
+  <div class="bar" id="counts" role="group" aria-label="Filtrar por órgão"><span class="lbl">Órgão</span></div>
+
+  <div class="layout">
+    <aside>
+      <div>
+        <h2><label for="q">Buscar</label></h2>
+        <input type="search" id="q" placeholder="Termo, número, relator…">
+      </div>
+      <div id="dosBox" hidden>
+        <h2>Dossiês</h2>
+        <div class="list" id="dossies"></div>
+        <button class="ghost" id="novoDos" type="button" style="margin-top:6px;width:100%">+ Novo dossiê</button>
+      </div>
+      <div id="minhasBox" hidden>
+        <h2>Minhas anotações</h2>
+        <div class="list" id="minhas"></div>
+        <button class="ghost" id="exportar" type="button" style="margin-top:8px;width:100%" hidden>Exportar anotações (.md)</button>
+      </div>
+      <div>
+        <h2>Esfera</h2>
+        <div class="list" id="esferas"></div>
+      </div>
+      <div>
+        <h2>Tema</h2>
+        <div class="list" id="temas"></div>
+      </div>
+      <div>
+        <h2>Legislação citada</h2>
+        <div class="list" id="leis"></div>
+      </div>
+      <div>
+        <h2><label for="artQ">Artigos citados</label></h2>
+        <input type="search" id="artQ" placeholder="Ex.: 74, 62, 14.133" style="margin-bottom:6px">
+        <div class="list" id="arts"></div>
+      </div>
+      <div>
+        <h2><label for="tipo">Tipo de ato</label></h2>
+        <select id="tipo"><option value="">Todos</option></select>
+      </div>
+      <div>
+        <h2>Período</h2>
+        <div class="row2">
+          <input type="date" id="de" aria-label="Data inicial">
+          <input type="date" id="ate" aria-label="Data final">
+        </div>
+      </div>
+      <button class="ghost" id="limpar" type="button">Limpar filtros</button>
+      <div>
+        <h2><label for="fmtCit">Formato da citação</label></h2>
+        <select id="fmtCit">
+          <option value="abnt">ABNT (referência)</option>
+          <option value="peca">Peça / parecer (tese entre aspas)</option>
+          <option value="curta">Curta (entre parênteses)</option>
+        </select>
+      </div>
+      <div>
+        <h2>Situação da coleta</h2>
+        <div class="status" id="statusBox"><span class="note">Carregando…</span></div>
+      </div>
+      <div id="resBox" hidden>
+        <h2>Resumo semanal por e-mail</h2>
+        <p class="note" style="margin:0 0 6px">Toda segunda, 7h, você recebe só as novidades destes temas e órgãos. Sem nada marcado, vai tudo.</p>
+        <label class="chk"><input type="checkbox" id="resAtivo"> Receber o resumo semanal</label>
+        <details><summary class="note" style="cursor:pointer">Temas</summary><div id="resTemas"></div></details>
+        <details><summary class="note" style="cursor:pointer">Órgãos</summary><div id="resOrgs"></div></details>
+        <span class="note" id="resMsg" aria-live="polite"></span>
+      </div>
+      <div id="integBox" hidden>
+        <h2>Plataforma Licitaverso</h2>
+        <p class="note" style="margin:0 0 8px">Exporta o acervo no formato que o site vai importar: esfera, tema, tese, legislação, fonte oficial e data de verificação.</p>
+        <button class="ghost" id="expJson" type="button" style="width:100%">Exportar acervo (JSON)</button>
+        <button class="ghost" id="expCsv" type="button" style="width:100%;margin-top:6px">Exportar acervo (CSV)</button>
+        <span class="note" id="expMsg" aria-live="polite"></span>
+      </div>
+      <p class="note">A coleta roda em dias úteis. TCE-RJ e TCM-RJ são lidos direto dos portais de jurisprudência; STF e STJ, dos informativos semanais; TCU, de dados abertos; CGU, PGE-RJ e TJ-RJ, de publicações oficiais. Cada item traz o link da fonte.</p>
+    </aside>
+
+    <main>
+      <details class="add" id="addBox" hidden>
+        <summary id="addSum">Cadastro manual</summary>
+        <p class="sub">Para algo que a coleta automática não pegou, ou para corrigir um registro (botão “editar” em cada item). Cole o texto e deixe o Claude preencher, ou preencha você mesmo. Confira sempre número, data e relator na fonte oficial.</p>
+        <div class="addgrid">
+          <div class="step">1 · Colar texto (opcional)</div>
+          <textarea id="f_texto" rows="5" placeholder="Cole aqui a ementa, o acórdão, o parecer ou a notícia da decisão"></textarea>
+          <div class="row2">
+            <input type="url" id="f_url" placeholder="Link da fonte (https://…)">
+            <button class="ghost" type="button" id="f_auto">Preencher campos com o Claude</button>
+          </div>
+          <span class="note" id="f_automsg" aria-live="polite"></span>
+        </div>
+        <form id="addForm" class="addgrid">
+          <div class="step">2 · Conferir e salvar</div>
+          <div class="row2">
+            <select id="f_orgao" required aria-label="Órgão"></select>
+            <input type="date" id="f_data" required aria-label="Data da decisão">
+          </div>
+          <div class="row2">
+            <select id="f_tipo" required aria-label="Tipo"></select>
+            <input type="text" id="f_numero" placeholder="Número (ex.: RE 1.234.567, Parecer 12/2026)">
+          </div>
+          <div class="row2">
+            <select id="f_tema" required aria-label="Tema"></select>
+            <input type="text" id="f_relator" placeholder="Relator / autor">
+          </div>
+          <div class="row2">
+            <input type="text" id="f_colegiado" placeholder="Colegiado (ex.: Plenário, 1ª Turma)">
+            <input type="text" id="f_entidade" placeholder="Entidade / órgão envolvido">
+          </div>
+          <input type="text" id="f_titulo" placeholder="Título ou tese" required>
+          <textarea id="f_resumo" rows="3" placeholder="Resumo"></textarea>
+          <input type="text" id="f_leis" placeholder="Leis citadas, separadas por vírgula (ex.: Lei 14.133/2021, Lei 8.429/1992)">
+          <input type="text" id="f_tags" placeholder="Palavras-chave separadas por vírgula">
+          <div class="row2">
+            <button class="primary" type="submit" id="f_salvar">Salvar no acervo</button>
+            <button class="ghost" type="button" id="f_cancelar" hidden>Cancelar edição</button>
+          </div>
+          <span class="note" id="f_msg" aria-live="polite"></span>
+        </form>
+      </details>
+
+      <section class="ask" id="askBox" hidden aria-labelledby="askT">
+        <h2 id="askT">Perguntar ao acervo</h2>
+        <span class="note">A resposta usa só as decisões guardadas aqui (respeitando os filtros ativos) e cita cada uma.</span>
+        <form class="askrow" id="askForm">
+          <input type="text" id="askQ" placeholder="Ex.: o TCU aceita exigir certificação ISO na habilitação?" aria-label="Pergunta">
+          <button class="primary" type="submit" id="askBtn">Perguntar</button>
+        </form>
+        <div class="answer" id="askOut" hidden></div>
+      </section>
+
+      <div class="resultbar">
+        <span id="resumoFiltro"></span>
+        <span style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span class="seg" id="vista">
+            <button type="button" data-v="lista" aria-pressed="true">Lista</button>
+            <button type="button" data-v="comparar" aria-pressed="false">Comparar órgãos</button>
+            <button type="button" data-v="painel" aria-pressed="false">Painel</button>
+          </span>
+          <select id="ordem" aria-label="Ordenar" style="width:auto">
+            <option value="desc">Mais recentes primeiro</option>
+            <option value="asc">Mais antigas primeiro</option>
+          </select>
+        </span>
+      </div>
+      <div id="dosBar"></div>
+      <div id="onlyBar"></div>
+      <div id="lista"></div>
+    </main>
+  </div>
+</div>
+
+<dialog class="notes" id="notas" aria-labelledby="n_titulo">
+  <div class="nwrap">
+    <div class="nhead">
+      <button class="close" type="button" id="n_fechar">Fechar</button>
+      <div class="ref" id="n_ref"></div>
+      <h2 id="n_titulo"></h2>
+    </div>
+    <div class="nbody">
+      <details><summary class="note" style="cursor:pointer">Ver texto da decisão</summary><div class="ndoc" id="n_doc"></div></details>
+      <div>
+        <h2 class="step" style="margin:0 0 6px">Marcadores</h2>
+        <div class="marcas" id="n_marcas"></div>
+      </div>
+      <div>
+        <div class="tb" role="toolbar" aria-label="Formatação">
+          <button type="button" data-cmd="bold" title="Negrito (Ctrl+B)"><b>N</b></button>
+          <button type="button" data-cmd="italic" title="Itálico (Ctrl+I)"><i>I</i></button>
+          <button type="button" data-cmd="underline" title="Sublinhado (Ctrl+U)"><u>S</u></button>
+          <span class="sep"></span>
+          <button type="button" class="sw" data-hl="hl-y" title="Marca-texto amarelo" style="background:var(--hl-y)"></button>
+          <button type="button" class="sw" data-hl="hl-g" title="Marca-texto verde" style="background:var(--hl-g)"></button>
+          <button type="button" class="sw" data-hl="hl-r" title="Marca-texto rosa" style="background:var(--hl-r)"></button>
+          <button type="button" class="sw" data-hl="hl-b" title="Marca-texto azul" style="background:var(--hl-b)"></button>
+          <button type="button" data-hl="" title="Remover marca-texto">⌫</button>
+          <span class="sep"></span>
+          <button type="button" data-cmd="h4" title="Subtítulo">T</button>
+          <button type="button" data-cmd="insertUnorderedList" title="Lista">• Lista</button>
+          <button type="button" data-cmd="insertOrderedList" title="Lista numerada">1. Lista</button>
+          <button type="button" data-cmd="blockquote" title="Citação">❝</button>
+          <button type="button" id="n_citar" title="Inserir a tese da decisão como citação">Citar tese</button>
+          <button type="button" data-cmd="removeFormat" title="Limpar formatação">Limpar</button>
+        </div>
+        <div class="ed" id="n_ed" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Anotação" data-ph="Escreva sua anotação: como usar a tese, pontos de atenção, casos parecidos…"></div>
+      </div>
+    </div>
+    <div class="nfoot">
+      <span class="nstat" id="n_stat" aria-live="polite">Suas anotações são privadas: só você vê.</span>
+      <button class="del" type="button" id="n_apagar">apagar anotação</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog class="small" id="dlgDos" aria-labelledby="dlgDosT">
+  <h2 id="dlgDosT">Guardar em dossiê</h2>
+  <p class="note" id="dlgDosRef" style="margin:0 0 8px"></p>
+  <div id="dlgDosList"></div>
+  <div class="row2" style="margin-top:10px"><input type="text" id="dlgDosNovo" placeholder="Novo dossiê (nome)"><button class="ghost" type="button" id="dlgDosCriar">Criar e incluir</button></div>
+  <div style="display:flex;justify-content:flex-end;margin-top:12px"><button class="primary" type="button" id="dlgDosOk">Pronto</button></div>
+</dialog>
+
+<dialog class="small" id="dlgMin" aria-labelledby="dlgMinT" style="width:min(760px,96vw)">
+  <h2 id="dlgMinT">Gerar minuta a partir do dossiê</h2>
+  <p class="note" id="dlgMinRef" style="margin:0 0 10px"></p>
+  <div class="addgrid" style="margin-top:0">
+    <select id="minTipo" aria-label="Tipo de peça">
+      <option>Parecer jurídico</option><option>Nota técnica</option><option>Despacho / decisão administrativa</option>
+      <option>Defesa ou justificativa ao Tribunal de Contas</option><option>Impugnação ou recurso em licitação</option><option>Resposta a impugnação / recurso</option>
+    </select>
+    <textarea id="minObj" rows="3" placeholder="Descreva o caso e a pergunta a responder. Ex.: Pode o município exigir certificação ISO 9001 como requisito de habilitação no pregão de limpeza hospitalar?"></textarea>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="primary" type="button" id="minGerar">Gerar minuta</button><button class="ghost" type="button" id="minParar" hidden>Parar</button></div>
+    <div class="minout" id="minOut" hidden></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap" id="minAcoes" hidden>
+      <button class="ghost" type="button" id="minCopiar">Copiar</button>
+      <button class="ghost" type="button" id="minBaixar">Baixar (.md)</button>
+      <button class="ghost" type="button" id="minSalvar">Salvar no dossiê</button>
+    </div>
+    <p class="note" style="margin:0">Rascunho gerado pelo Claude só com as decisões e anotações do dossiê. Revise, confira o inteiro teor na fonte e ajuste antes de usar.</p>
+  </div>
+  <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="ghost" type="button" id="minFechar">Fechar</button></div>
+</dialog>
+
+<script>
+const ORGAOS=["TCU","TCE-RJ","CGU","STF","STJ","TCM-RJ","PGE-RJ","TJ-RJ","GOV-BR","GOV-RJ"];
+const ORG_LBL={"GOV-BR":"Normas federais","GOV-RJ":"Normas RJ"};const lbl=o=>ORG_LBL[o]||o;
+const TEMAS=["Planejamento e ETP","Licitações (geral)","Habilitação e qualificação técnica","Julgamento de propostas","Pesquisa de preços e sobrepreço","Contratação direta","Registro de preços","Execução e alteração contratual","Obras e engenharia","Concessões e PPP","Estatais (Lei 13.303)","Sanções e responsabilização","Integridade e anticorrupção","Controle e auditoria","Orçamento e finanças públicas","Pessoal","Outros"];
+const TIPOS=["Acórdão","Decisão monocrática","Decisão cautelar","Súmula/Enunciado","Tema de repercussão geral/repetitivo","Parecer/orientação","Resposta a consulta","Lei","Decreto","Norma (portaria, IN, resolução)","Sanção administrativa","Acordo de leniência/termo","Operação/fiscalização","Boletim/informativo"];
+const LEGISLACAO=new Set(["Lei","Decreto","Norma (portaria, IN, resolução)"]);
+const ORIENT=new Set(["Parecer/orientação","Resposta a consulta","Súmula/Enunciado","Boletim/informativo"]);
+const NATS=[["","Tudo"],["decisoes","Decisões"],["legislacao","Legislação"],["orientacoes","Pareceres e orientações"]];
+const natOf=d=>LEGISLACAO.has(d.tipo)?"legislacao":ORIENT.has(d.tipo)?"orientacoes":"decisoes";
+const S={docs:[],nat:"",orgao:"",tema:"",lei:"",tipo:"",q:"",de:"",ate:"",ordem:"desc",notes:{},nf:"",canNote:false,esf:"",view:"lista",only:null,art:"",artQ:"",dos:"",dossies:{},prefs:null,meta:{},rel:{}};
+const ESFERA={"TCU":"União","CGU":"União","STF":"União","STJ":"União","GOV-BR":"União","TCE-RJ":"Estado do RJ","PGE-RJ":"Estado do RJ","TJ-RJ":"Estado do RJ","GOV-RJ":"Estado do RJ","TCM-RJ":"Município do Rio de Janeiro"};
+const ESFERAS=["União","Estado do RJ","Município do Rio de Janeiro"];
+const ORG_NOME={"TCU":["BRASIL","Tribunal de Contas da União"],"CGU":["BRASIL","Controladoria-Geral da União"],"STF":["BRASIL","Supremo Tribunal Federal"],"STJ":["BRASIL","Superior Tribunal de Justiça"],
+  "TCE-RJ":["RIO DE JANEIRO (Estado)","Tribunal de Contas do Estado do Rio de Janeiro"],"PGE-RJ":["RIO DE JANEIRO (Estado)","Procuradoria-Geral do Estado"],"TJ-RJ":["RIO DE JANEIRO (Estado)","Tribunal de Justiça"],"TCM-RJ":["RIO DE JANEIRO (Município)","Tribunal de Contas do Município do Rio de Janeiro"],"GOV-BR":["BRASIL",""],"GOV-RJ":["RIO DE JANEIRO (Estado)",""]};
+const MESES=["jan.","fev.","mar.","abr.","maio","jun.","jul.","ago.","set.","out.","nov.","dez."];
+const dAbnt=iso=>{if(!iso)return"";const[y,m,d]=iso.slice(0,10).split("-");return `${+d} ${MESES[+m-1]} ${y}`};
+function tese(d){let t=d.resumo||d.titulo||"";for(const k of [" Publicado em:"," (Boletim"," (Informativo"," Decisões de 2026"," Informativo STF"]){const i=t.indexOf(k);if(i>40)t=t.slice(0,i)}return t.trim()}
+function citacao(d,fmtc){
+  const [ente,org]=ORG_NOME[d.orgao]||["",d.orgao];const rel=(d.relator||"").replace(/^(Min\.|Cons\.|Des\.)\s*/,"");
+  const cargo=/^Cons\./.test(d.relator||"")?"Conselheiro":/^Des\./.test(d.relator||"")?"Desembargador(a)":/^Min/.test(d.relator||"")?"Ministro(a)":"";
+  const num=d.numero||d.tipo;const hoje=dAbnt(new Date().toISOString());
+  if(d._nat==="legislacao"&&fmtc==="abnt")return `${ente}. ${num}${d.titulo?". "+d.titulo.replace(/\.$/,""):""}. ${d.fonte_nome?d.fonte_nome+", ":""}${d.data?dAbnt(d.data)+". ":""}${d.fonte_url?`Disponível em: ${d.fonte_url}. Acesso em: ${hoje}.`:""}`.replace(/\s+/g," ").trim();
+  if(fmtc==="curta")return `(${d.orgao}, ${num}${d.relator?", Rel. "+d.relator:""}${d.data?", j. "+fmt(d.data):""})`;
+  if(fmtc==="peca")return `“${tese(d)}” (${d.orgao}, ${num}${d.relator?", Rel. "+d.relator:""}${d.data?", j. "+fmt(d.data):""}).`;
+  return `${ente}. ${org}${d.colegiado?" ("+d.colegiado+")":""}. ${num}. ${rel?`Relator: ${cargo?cargo+" ":""}${rel}. `:""}${d.data?`Julgado em ${dAbnt(d.data)}. `:""}${d.fonte_nome?d.fonte_nome+". ":""}${d.fonte_url?`Disponível em: ${d.fonte_url}. Acesso em: ${hoje}.`:""}`.replace(/\s+/g," ").trim();
+}
+function toast(msg){const t=document.createElement("div");t.className="toast";t.setAttribute("role","status");t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2600)}
+async function copiar(txt){
+  try{await navigator.clipboard.writeText(txt);return true}catch(e){}
+  try{const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();const ok=document.execCommand("copy");ta.remove();if(ok)return true}catch(e){}
+  return false;
+}
+let FMT="abnt";try{FMT=localStorage.getItem("lv_fmtcit")||"abnt"}catch(e){}
+const MARCAS=[["fav","★ Favorito"],["imp","Importante"],["rev","Revisar"],["uso","Usar em peça/parecer"],["div","Atenção / divergente"]];
+const MARCA_L=Object.fromEntries(MARCAS);
+const $=id=>document.getElementById(id);
+const fmt=d=>{if(!d)return"";const[y,m,dd]=d.split("-");return `${dd}/${m}/${y}`};
+const mes=d=>new Date(d+"T12:00:00").toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
+const norm=s=>(s||"").toString().normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+function esc(s){return (s??"").toString().replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+/* Legislação citada: extrai referências a leis e normas do texto de cada registro */
+const LEIS_CONHECIDAS={"14.133/2021":"Lei 14.133/2021 (Licitações)","8.666/1993":"Lei 8.666/1993","13.303/2016":"Lei 13.303/2016 (Estatais)","12.846/2013":"Lei 12.846/2013 (Anticorrupção)","10.520/2002":"Lei 10.520/2002 (Pregão)","8.987/1995":"Lei 8.987/1995 (Concessões)","11.079/2004":"Lei 11.079/2004 (PPP)","12.527/2011":"Lei 12.527/2011 (LAI)","8.429/1992":"Lei 8.429/1992 (Improbidade)","101/2000":"LC 101/2000 (LRF)","123/2006":"LC 123/2006 (ME/EPP)"};
+function leisDe(d){
+  const txt=[d.titulo,d.resumo,d.numero,(d.tags||[]).join(" "),(d.leis||[]).join(" ")].join(" ");
+  const out=new Set(d.leis||[]);
+  const re=/\b(?:Lei|LC|Lei Complementar)\s*(?:n[º°o.]*\s*)?(\d{1,2}\.?\d{3}|\d{2,3})(?:\s*\/\s*(\d{2,4}))?/gi;let m;
+  while((m=re.exec(txt))){let n=m[1];if(/^\d{4,5}$/.test(n))n=n.replace(/(\d+)(\d{3})$/,"$1.$2");let y=m[2]||"";if(y.length===2)y=(+y>30?"19":"20")+y;
+    const key=Object.keys(LEIS_CONHECIDAS).find(k=>k.startsWith(n+"/")&&(!y||k.endsWith(y)));
+    out.add(key?LEIS_CONHECIDAS[key]:`Lei ${n}${y?"/"+y:""}`)}
+  if(/nova lei de licita/i.test(txt))out.add(LEIS_CONHECIDAS["14.133/2021"]);
+  if(/lei das estatais/i.test(txt))out.add(LEIS_CONHECIDAS["13.303/2016"]);
+  if(/lei anticorrup/i.test(txt))out.add(LEIS_CONHECIDAS["12.846/2013"]);
+  if(/\bLRF\b|responsabilidade fiscal/i.test(txt))out.add(LEIS_CONHECIDAS["101/2000"]);
+  if(/\bart\.?\s*\d+[^.]*\b(CF|Constitui)/i.test(txt)||/\bCF\b/.test(txt))out.add("Constituição Federal");
+  return [...out];
+}
+
+TIPOS.forEach(t=>{$("tipo").add(new Option(t,t));$("f_tipo").add(new Option(t,t))});
+TEMAS.filter(t=>t!=="Pessoal").forEach(t=>$("f_tema").add(new Option(t,t)));
+ORGAOS.forEach(o=>$("f_orgao").add(new Option(o,o)));
+
+function base(){return S.docs.filter(d=>!S.nat||d._nat===S.nat)}
+function filtered(){
+  const q=norm(S.q);
+  return base().filter(d=>{const n=S.notes[d.id];
+    if(S.only&&!S.only.has(d.id))return false;
+    if(S.dos&&!((S.dossies[S.dos]||{}).itens||[]).includes(d.id))return false;
+    if(S.art&&!d._arts.includes(S.art))return false;
+    if(S.esf&&ESFERA[d.orgao]!==S.esf)return false;
+    if(S.nf==="any"&&!(n&&(n.texto||(n.marcas||[]).length)))return false;
+    if(S.nf&&S.nf!=="any"&&!(n&&(n.marcas||[]).includes(S.nf)))return false;
+    return (!S.orgao||d.orgao===S.orgao)&&(!S.tema||d.tema===S.tema)&&(!S.lei||d._leis.includes(S.lei))&&(!S.tipo||d.tipo===S.tipo)
+    &&(!S.de||d.data>=S.de)&&(!S.ate||d.data<=S.ate)
+    &&(!q||norm([d.titulo,d.resumo,d.numero,d.relator,d.colegiado,d.entidade,(d.tags||[]).join(" "),d._leis.join(" "),n?n.texto:""].join(" ")).includes(q))})
+   .sort((a,b)=>S.ordem==="desc"?(b.data||"").localeCompare(a.data||""):(a.data||"").localeCompare(b.data||""));
+}
+function listButtons(el,rows,cur,set){
+  el.innerHTML="";rows.forEach(([v,l,n])=>{const b=document.createElement("button");b.type="button";b.setAttribute("aria-pressed",cur===v);
+    b.innerHTML=`<span>${esc(l)}</span><span>${n}</span>`;b.onclick=()=>{set(v);render()};el.appendChild(b)});
+}
+function render(){
+  const nt=$("natureza");nt.innerHTML="";
+  NATS.forEach(([v,l])=>{const n=v?S.docs.filter(d=>d._nat===v).length:S.docs.length;const b=document.createElement("button");b.type="button";b.setAttribute("aria-pressed",S.nat===v);
+    b.innerHTML=`${esc(l)}<span>${n}</span>`;b.onclick=()=>{S.nat=v;S.lei="";render()};nt.appendChild(b)});
+  const B=base();
+  const c=$("counts");c.querySelectorAll(".chip").forEach(x=>x.remove());
+  [["","Todos",B.length],...ORGAOS.map(o=>[o,lbl(o),B.filter(d=>d.orgao===o).length])].forEach(([v,l,n])=>{
+    const b=document.createElement("button");b.className="chip"+(n===0&&v?" zero":"");b.type="button";b.setAttribute("aria-pressed",S.orgao===v);
+    b.innerHTML=`${esc(l)} <b>${n}</b>`;b.onclick=()=>{S.orgao=v;render()};c.appendChild(b)});
+  listButtons($("esferas"),[["","Todas",B.length],...ESFERAS.map(e=>[e,e,B.filter(d=>ESFERA[d.orgao]===e).length])],S.esf,v=>S.esf=v);
+  const pool=B.filter(d=>(!S.orgao||d.orgao===S.orgao)&&(!S.esf||ESFERA[d.orgao]===S.esf));
+  $("vista").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.view));
+  $("onlyBar").innerHTML=S.only?`<div class="banner"><span>Mostrando só as ${S.only.size} decisões citadas na resposta.</span><button type="button" id="onlyX">Ver todo o acervo</button></div>`:"";
+  if(S.only)$("onlyX").onclick=()=>{S.only=null;render()};
+  listButtons($("temas"),[["","Todos os temas",pool.length],...TEMAS.map(x=>[x,x,pool.filter(d=>d.tema===x).length]).filter(r=>r[2]>0)],S.tema,v=>S.tema=v);
+  const lc={};pool.forEach(d=>d._leis.forEach(l=>lc[l]=(lc[l]||0)+1));
+  const leis=Object.entries(lc).sort((a,b)=>b[1]-a[1]);
+  if(leis.length)listButtons($("leis"),[["","Todas",pool.length],...leis.map(([l,n])=>[l,l,n])],S.lei,v=>S.lei=v);
+  else $("leis").innerHTML=`<span class="note">Nenhuma lei identificada nos registros deste recorte.</span>`;
+  const ac={};pool.filter(d=>!S.lei||d._leis.includes(S.lei)).forEach(d=>d._arts.forEach(a=>ac[a]=(ac[a]||0)+1));
+  const aq=norm(S.artQ);let arts=Object.entries(ac).filter(([a])=>!aq||norm(a).includes(aq)).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],"pt",{numeric:true}));
+  if(arts.length)listButtons($("arts"),[["","Todos",0],...arts.slice(0,60).map(([a,n])=>[a,a,n])].map(r=>r[0]===""?["","Todos os artigos",""]:r),S.art,v=>S.art=v);
+  else $("arts").innerHTML=`<span class="note">${aq?"Nenhum artigo com esse termo.":"Nenhum artigo identificado neste recorte."}</span>`;
+  if(S.canNote){const ds=Object.entries(S.dossies).sort((a,b)=>(a[1].nome||"").localeCompare(b[1].nome||""));
+    if(ds.length)listButtons($("dossies"),[["","Nenhum (todo o acervo)",""],...ds.map(([k,v])=>[k,v.nome||"Sem nome",(v.itens||[]).length])],S.dos,v=>S.dos=v);
+    else $("dossies").innerHTML=`<span class="note">Crie um dossiê para juntar decisões de um caso, parecer ou cliente.</span>`;}
+  renderDosBar();
+  if(S.canNote){const ns=Object.values(S.notes);
+    listButtons($("minhas"),[["","Todo o acervo",S.docs.length],["any","Com anotação ou marcador",ns.filter(n=>n.texto||(n.marcas||[]).length).length],
+      ...MARCAS.map(([k,l])=>[k,l,ns.filter(n=>(n.marcas||[]).includes(k)).length]).filter(r=>r[2]>0)],S.nf,v=>S.nf=v);}
+  const list=filtered();const L=$("lista");L.innerHTML="";
+  $("resumoFiltro").textContent=`${list.length} ${list.length===1?"registro":"registros"}`;
+  if(!S.docs.length){L.innerHTML=`<div class="empty">O acervo ainda está vazio. As decisões aparecem aqui assim que a coleta automática gravar a primeira leva.</div>`;return}
+  if(!list.length){L.innerHTML=`<div class="empty">Nenhum registro com esses filtros. ${S.nat==="legislacao"?"A legislação entra pela coleta (normas da CGU, por exemplo) ou pela captação manual.":"Tente outro tema ou limpe os filtros."}</div>`;return}
+  if(S.view==="comparar"){renderComparar(list,L);return}
+  if(S.view==="painel"){renderPainel(list,L);return}
+  let cur="";
+  list.forEach(d=>{
+    const m=d.data?mes(d.data):"Sem data";
+    if(m!==cur){cur=m;const h=document.createElement("h2");h.className="month";h.textContent=m;L.appendChild(h)}
+    const el=document.createElement("article");el.className="item";el.id="it-"+d.id;
+    const n=S.notes[d.id];const mk=(n&&n.marcas)||[];const temTexto=!!(n&&n.texto);
+    el.innerHTML=`<div><div class="date">${fmt(d.data)}</div><span class="org ${esc(d.orgao)}">${esc(lbl(d.orgao))}</span></div>
+      <div><div class="ref">${d._nat==="legislacao"?'<span class="leg">Legislação</span>':''}${esc(d.tipo)}${d.numero?" · "+esc(d.numero):""}${d.colegiado?" · "+esc(d.colegiado):""}</div>
+      <h3>${esc(d.titulo)}</h3><p class="resumo">${esc(d.resumo)}</p>
+      ${temTexto?`<div class="mynote" data-note="${esc(d.id)}"><b>Minha anotação</b>${esc(n.texto.length>220?n.texto.slice(0,220)+"…":n.texto)}</div>`:""}
+      <div class="meta">${S.canNote?`<span class="acts"><button class="fav" type="button" data-fav="${esc(d.id)}" aria-pressed="${mk.includes("fav")}" aria-label="Favorito" title="Favorito">★</button><button class="nbtn${temTexto||mk.length?" has":""}" type="button" data-note="${esc(d.id)}">${temTexto?"Editar anotação":"Anotar"}</button></span>`:""}
+      ${mk.filter(k=>k!=="fav").map(k=>`<span class="mk">${esc(MARCA_L[k]||k)}</span>`).join("")}
+      <span class="tag">${esc(d.tema)}</span>${d._leis.slice(0,3).map(l=>`<span class="tag law">${esc(l)}</span>`).join("")}
+      ${d.relator?`<span>Relator: ${esc(d.relator)}</span>`:""}${d.entidade?`<span>${esc(d.entidade)}</span>`:""}
+      ${d.fonte_url?`<a href="${esc(d.fonte_url)}" target="_blank" rel="noopener">Fonte: ${esc(d.fonte_nome||"abrir")}</a>`:""}
+      ${d.capturado_em?`<span class="vbadge" title="Data em que o item foi conferido na fonte oficial">Verificado em ${new Date(d.capturado_em).toLocaleDateString("pt-BR")}</span>`:""}
+      <button class="nbtn" type="button" data-cit="${esc(d.id)}">Copiar citação</button>
+      ${S.canNote?`<button class="nbtn${dossiesDe(d.id).length?" has":""}" type="button" data-dos="${esc(d.id)}">${dossiesDe(d.id).length?"Em "+dossiesDe(d.id).length+" dossiê"+(dossiesDe(d.id).length>1?"s":""):"+ Dossiê"}</button>`:""}
+      <button class="nbtn" type="button" data-rel="${esc(d.id)}" aria-expanded="${!!S.rel[d.id]}">Relacionadas</button>
+      ${d._arts.length?`<span class="ref">${d._arts.slice(0,3).map(esc).join(" · ")}</span>`:""}
+      ${S.canEdit?`<button class="del" type="button" data-edit="${esc(d.id)}">editar</button><button class="del" type="button" data-id="${esc(d.id)}">remover</button>`:""}</div>
+      ${S.rel[d.id]?`<div class="rel" id="rel-${esc(d.id)}">${relHtml(d)}</div>`:""}</div>`;
+    L.appendChild(el)});
+  L.querySelectorAll("[data-note]").forEach(b=>b.onclick=()=>abrirNota(b.dataset.note));
+  L.querySelectorAll("[data-fav]").forEach(b=>b.onclick=()=>alternarMarca(b.dataset.fav,"fav"));
+  ligarCitar(L);
+  L.querySelectorAll("[data-dos]").forEach(b=>b.onclick=()=>abrirDlgDos(b.dataset.dos));
+  L.querySelectorAll("[data-rel]").forEach(b=>b.onclick=()=>{const id=b.dataset.rel;if(S.rel[id])delete S.rel[id];else S.rel[id]={};render()});
+  ligarRel(L);
+  L.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editarItem(b.dataset.edit));
+  L.querySelectorAll(".del[data-id]").forEach(b=>b.onclick=async()=>{if(b.dataset.armed){await S.col.doc(b.dataset.id).delete().catch(()=>{});}else{b.dataset.armed=1;b.textContent="confirmar remoção"}});
+}
+$("q").oninput=e=>{S.q=e.target.value;render()};
+$("tipo").onchange=e=>{S.tipo=e.target.value;render()};
+$("de").onchange=e=>{S.de=e.target.value;render()};
+$("ate").onchange=e=>{S.ate=e.target.value;render()};
+$("ordem").onchange=e=>{S.ordem=e.target.value;render()};
+function ligarCitar(root){root.querySelectorAll("[data-cit]").forEach(b=>b.onclick=async()=>{const d=docDe(b.dataset.cit);if(!d)return;
+  const txt=citacao(d,FMT);const ok=await copiar(txt);
+  if(ok)toast("Citação copiada ("+$("fmtCit").selectedOptions[0].text+").");else{window.prompt("Copie a citação:",txt)}})}
+$("fmtCit").value=FMT;$("fmtCit").onchange=e=>{FMT=e.target.value;try{localStorage.setItem("lv_fmtcit",FMT)}catch(x){}};
+$("vista").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.view=b.dataset.v;render()});
+
+/* ===== Comparar entendimentos entre órgãos ===== */
+const CMP={key:"",out:null};
+function renderComparar(list,L){
+  if(!S.tema&&!S.q&&!S.lei&&!S.only){L.innerHTML=`<div class="empty">Para comparar, escolha um <b>tema</b> ou uma <b>lei</b> na barra lateral, ou digite um termo na busca (ex.: “certificação ISO”, “reequilíbrio”).</div>`;return}
+  const por={};list.forEach(d=>(por[d.orgao]=por[d.orgao]||[]).push(d));
+  const orgs=ORGAOS.filter(o=>por[o]);const key=[S.tema,S.q,S.lei,S.nat,S.esf,S.de,S.ate,list.length].join("|");
+  const rotulo=[S.tema,S.lei,S.q&&"“"+S.q+"”"].filter(Boolean).join(" · ");
+  L.innerHTML=`<div class="resultbar" style="margin-top:4px"><span>Comparando <b>${esc(rotulo||"recorte atual")}</b> em ${orgs.length} ${orgs.length===1?"órgão":"órgãos"}</span>
+    ${S.sample?`<button class="primary" type="button" id="cmpSint">Sintetizar convergências e divergências</button>`:""}</div>
+    <div id="cmpOut"></div>
+    <div class="cmpgrid">${orgs.map(o=>`<div class="cmpcol"><h3><span class="org ${esc(o)}" style="margin:0">${esc(o)}</span><span class="ref">${por[o].length}</span></h3>
+      ${por[o].slice(0,8).map(d=>`<div class="cmpit"><span class="date">${fmt(d.data)}</span><button type="button" data-go="${esc(d.id)}">${esc(d.titulo)}</button></div>`).join("")}
+      ${por[o].length>8?`<div class="note" style="padding-top:6px">+ ${por[o].length-8} na lista</div>`:""}</div>`).join("")}</div>`;
+  L.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>irPara(b.dataset.go));
+  if(CMP.key===key&&CMP.out)mostrarSintese(CMP.out);
+  const bt=$("cmpSint");if(bt)bt.onclick=async()=>{
+    if(orgs.length<2){$("cmpOut").innerHTML=`<p class="note">Há decisões de um só órgão neste recorte; amplie os filtros para comparar.</p>`;return}
+    const amostra=[];orgs.forEach(o=>por[o].slice(0,10).forEach(d=>amostra.push(d)));
+    bt.disabled=true;bt.textContent="Comparando…";$("cmpOut").innerHTML=`<p class="note">Lendo ${amostra.length} decisões…</p>`;
+    const lista=amostra.map((d,i)=>`[${i+1}] ${d.orgao} | ${d.numero||d.tipo} | ${fmt(d.data)} | ${tese(d).slice(0,700)}`).join("\n");
+    try{
+      const r=await S.sample.json(`Você é um assistente jurídico brasileiro. Compare os entendimentos dos órgãos abaixo sobre o assunto "${rotulo}". Use SOMENTE as decisões listadas; não acrescente nada de memória.
+Devolva SOMENTE JSON: {"panorama":"2-3 frases","convergencias":[{"ponto":"...","refs":[números]}],"divergencias":[{"ponto":"...","posicoes":[{"orgao":"...","entendimento":"...","refs":[números]}]}],"lacunas":"o que os dados não permitem concluir"}.
+Se não houver divergência real, devolva divergencias vazio. Escreva em português claro.
+
+DECISÕES:
+${lista}`,{modelTier:"default"});
+      r._ids=amostra.map(d=>d.id);CMP.key=key;CMP.out=r;mostrarSintese(r);
+    }catch(e){$("cmpOut").innerHTML=`<p class="note">${e&&e.code==="not_granted"?"A síntese automática não foi autorizada nesta página.":e&&e.code==="rate_limited"?"Muitas solicitações seguidas; tente de novo em alguns minutos.":"Não consegui gerar a síntese agora. Tente de novo."}</p>`}
+    finally{bt.disabled=false;bt.textContent="Sintetizar convergências e divergências"}};
+}
+function refsHtml(refs,ids){return (refs||[]).filter(n=>ids[n-1]).map(n=>`<button class="cite" type="button" data-go="${esc(ids[n-1])}" title="${esc((docDe(ids[n-1])||{}).numero||"")}">${n}</button>`).join(" ")}
+function mostrarSintese(r){
+  const o=$("cmpOut");if(!o)return;const ids=r._ids||[];
+  o.innerHTML=`<div class="synth"><div class="eyebrow">Síntese gerada pelo Claude a partir das decisões ao lado — confira nas fontes</div>
+    ${r.panorama?`<p style="margin:8px 0 0">${esc(r.panorama)}</p>`:""}
+    ${(r.convergencias||[]).length?`<h3>Onde os órgãos convergem</h3><ul>${r.convergencias.map(c=>`<li>${esc(c.ponto)} ${refsHtml(c.refs,ids)}</li>`).join("")}</ul>`:""}
+    ${(r.divergencias||[]).length?`<h3>Onde divergem</h3><ul>${r.divergencias.map(dv=>`<li><b>${esc(dv.ponto)}</b><ul>${(dv.posicoes||[]).map(p=>`<li><b>${esc(p.orgao)}:</b> ${esc(p.entendimento)} ${refsHtml(p.refs,ids)}</li>`).join("")}</ul></li>`).join("")}</ul>`:`<h3>Onde divergem</h3><p class="note">Nenhuma divergência real identificada nesta amostra.</p>`}
+    ${r.lacunas?`<p class="note" style="margin-top:8px">${esc(r.lacunas)}</p>`:""}</div>`;
+  o.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>irPara(b.dataset.go));
+}
+function irPara(id){
+  if(S.view!=="lista"){S.view="lista"}
+  if(!filtered().some(d=>d.id===id)){S.only=new Set([id])}
+  render();const el=document.getElementById("it-"+id);if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.classList.add("flash");setTimeout(()=>el.classList.remove("flash"),1700)}
+}
+
+/* ===== Perguntar ao acervo ===== */
+const STOP=new Set("a o e é de do da dos das em no na nos nas um uma uns umas para por com sem que se ao aos as os ou como qual quais quando onde pode podem ser sobre entre mais menos não sim isso esta este essa esse tcu stf stj cgu".split(" "));
+function termos(q){return norm(q).replace(/[^a-z0-9.\/ ]/g," ").split(/\s+/).filter(w=>w.length>2&&!STOP.has(w))}
+function relevantes(q,n){
+  const ts=termos(q);if(!ts.length)return [];
+  return filtered().map(d=>{const t=norm([d.titulo,d.resumo,d.tema,(d.tags||[]).join(" "),d.numero,d._leis.join(" "),(S.notes[d.id]||{}).texto||""].join(" "));const tt=norm(d.titulo+" "+(d.tags||[]).join(" "));
+    let s=0;ts.forEach(w=>{const stem=w.length>5?w.slice(0,w.length-2):w;if(t.includes(stem)){s+=2;if(tt.includes(stem))s+=2}});return [s,d]})
+   .filter(x=>x[0]>0).sort((a,b)=>b[0]-a[0]||(b[1].data||"").localeCompare(a[1].data||"")).slice(0,n).map(x=>x[1]);
+}
+$("askForm").onsubmit=async ev=>{
+  ev.preventDefault();const q=$("askQ").value.trim();const out=$("askOut");if(!q||!S.sample)return;
+  const cands=relevantes(q,40);out.hidden=false;
+  if(!cands.length){out.innerHTML=`<p class="note">Não encontrei decisões no acervo (com os filtros atuais) que tratem desses termos. Tente outras palavras ou limpe os filtros.</p>`;return}
+  $("askBtn").disabled=true;out.innerHTML=`<p class="note">Lendo ${cands.length} decisões relacionadas…</p>`;
+  const lista=cands.map((d,i)=>`[${i+1}] ${d.orgao} | ${d.tipo} | ${d.numero||""} | ${fmt(d.data)} | tema: ${d.tema} | ${tese(d).slice(0,800)}`).join("\n");
+  try{
+    const r=await S.sample.json(`Você é um assistente jurídico brasileiro especializado em licitações e controle da administração pública. Responda à pergunta usando SOMENTE as decisões numeradas abaixo, que são o acervo do usuário. Não use conhecimento externo; se as decisões não respondem, diga isso claramente.
+Devolva SOMENTE JSON: {"resposta":["parágrafo 1","parágrafo 2", ...],"citadas":[números usados]}. Em cada parágrafo, cite as decisões no formato [n] logo após a afirmação que elas sustentam. Indique divergências entre órgãos quando houver. Máximo de 4 parágrafos, linguagem clara.
+
+PERGUNTA: ${q}
+
+DECISÕES:
+${lista}`,{modelTier:"default"});
+    const ids=cands.map(d=>d.id);const cit=[...new Set((r.citadas||[]).filter(n=>ids[n-1]))];
+    const par=(Array.isArray(r.resposta)?r.resposta:[String(r.resposta||"")]).map(p=>`<p>${esc(p).replace(/\[(\d+)\]/g,(m,n)=>ids[n-1]?`<button class="cite" type="button" data-go="${esc(ids[n-1])}">${n}</button>`:"")}</p>`).join("");
+    out.innerHTML=`${par}<div class="eyebrow" style="margin-top:6px">Decisões citadas</div><div class="srcs">${cit.map(n=>{const d=docDe(ids[n-1]);return `<div class="src"><b>[${n}]</b><button type="button" data-go="${esc(d.id)}">${esc(d.orgao)} · ${esc(d.numero||d.tipo)} · ${fmt(d.data)} — ${esc(d.titulo)}</button></div>`}).join("")}</div>
+      ${cit.length?`<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="ghost" type="button" id="askOnly">Mostrar só as citadas na lista</button><button class="ghost" type="button" id="askCopy">Copiar resposta com citações</button></div>`:""}
+      <p class="note" style="margin-top:8px">Resposta gerada pelo Claude a partir do acervo. Confira o inteiro teor na fonte antes de usar.</p>`;
+    out.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>irPara(b.dataset.go));
+    if($("askOnly"))$("askOnly").onclick=()=>{S.only=new Set(cit.map(n=>ids[n-1]));S.view="lista";render();$("lista").scrollIntoView({behavior:"smooth"})};
+    if($("askCopy"))$("askCopy").onclick=async()=>{const corpo=(Array.isArray(r.resposta)?r.resposta:[String(r.resposta||"")]).join("\n\n");
+      const refs=cit.map(n=>`[${n}] ${citacao(docDe(ids[n-1]),"abnt")}`).join("\n");const ok=await copiar(`${corpo}\n\nReferências:\n${refs}`);toast(ok?"Resposta copiada com as referências.":"Não foi possível copiar.")};
+  }catch(e){out.innerHTML=`<p class="note">${e&&e.code==="not_granted"?"O uso do Claude não foi autorizado nesta página.":e&&e.code==="rate_limited"?"Muitas perguntas seguidas; aguarde alguns minutos.":"Não consegui responder agora. Tente de novo."}</p>`}
+  finally{$("askBtn").disabled=false}
+};
+
+/* ===== Exportação para a plataforma Licitaverso ===== */
+function itemPlataforma(d){return {id:d.id,orgao:d.orgao,esfera:ESFERA[d.orgao]||"",uf:ESFERA[d.orgao]==="União"?"":"RJ",municipio:d.orgao==="TCM-RJ"?"Rio de Janeiro":"",
+  natureza:d._nat,tipo:d.tipo,numero:d.numero||"",colegiado:d.colegiado||"",relator:d.relator||"",data:d.data||"",tema:d.tema,titulo:d.titulo,tese:tese(d),
+  tags:d.tags||[],legislacao:d._leis,fonte_nome:d.fonte_nome||"",fonte_url:d.fonte_url||"",verificado_em:(d.capturado_em||"").slice(0,10),citacao_abnt:citacao(d,"abnt")}}
+function csvDe(rows){const cols=["id","orgao","esfera","uf","municipio","natureza","tipo","numero","colegiado","relator","data","tema","titulo","tese","tags","legislacao","fonte_nome","fonte_url","verificado_em","citacao_abnt"];
+  const q=v=>{v=Array.isArray(v)?v.join("; "):(v??"").toString();return /[",\n;]/.test(v)?`"${v.replace(/"/g,'""')}"`:v};
+  return "﻿"+cols.join(",")+"\n"+rows.map(r=>cols.map(c=>q(r[c])).join(",")).join("\n")}
+async function exportar(tipo){
+  const dl=S.downloads;if(!dl){$("expMsg").textContent="Download indisponível nesta visualização.";return}
+  const rows=S.docs.slice().sort((a,b)=>(b.data||"").localeCompare(a.data||"")).map(itemPlataforma);const hoje=new Date().toISOString().slice(0,10);
+  const data=tipo==="json"?JSON.stringify({formato:"licitaverso-acervo",versao:1,gerado_em:new Date().toISOString(),total:rows.length,itens:rows},null,2):csvDe(rows);
+  try{await dl.save({filename:`acervo-licitaverso-${hoje}.${tipo}`,data});$("expMsg").textContent=`${rows.length} itens exportados.`}
+  catch(e){$("expMsg").textContent=e&&e.code==="declined"?"Download cancelado.":"Não foi possível gerar o arquivo agora."}
+}
+$("expJson").onclick=()=>exportar("json");$("expCsv").onclick=()=>exportar("csv");
+
+/* ===== Artigos citados ===== */
+const LEI_ALIAS={"cf":"Constituição Federal","constituição":"Constituição Federal","constituicao":"Constituição Federal","lindb":"LINDB (Decreto-Lei 4.657/1942)","lia":"Lei 8.429/1992 (Improbidade)","lei de improbidade":"Lei 8.429/1992 (Improbidade)","lei anticorrupção":"Lei 12.846/2013 (Anticorrupção)","nova lei de licitações":"Lei 14.133/2021 (Licitações)"};
+function nomeLei(tipo,n,y){if(!n)return "";if(/^\d{4,5}$/.test(n))n=n.replace(/(\d+)(\d{3})$/,"$1.$2");if(y&&y.length===2)y=(+y>30?"19":"20")+y;
+  const key=Object.keys(LEIS_CONHECIDAS).find(k=>k.startsWith(n+"/")&&(!y||k.endsWith(y)));if(key)return LEIS_CONHECIDAS[key];
+  return `${/comp|LC/i.test(tipo)?"LC":"Lei"} ${n}${y?"/"+y:""}`}
+function artigosDe(d){
+  const txt=[d.titulo,d.resumo,d.numero].join(" ").replace(/\s+/g," ");const out=new Set();
+  const re=/\barts?\.\s*(\d{1,3})(?:\s*[ºo°])?((?:[^.;()]|\.(?=\s*\d)|\.(?=\s*[ºo°]))*?)\s(?:da|do)\s+(?:(Lei Complementar|LC|Lei)\s*(?:n[º°o.]*\s*)?(\d{1,2}\.?\d{3}|\d{2,3})(?:\s*\/\s*(\d{2,4}))?|(CF\b|Constitui[çc][ãa]o|LINDB|Lei de Improbidade|LIA\b|Lei Anticorrup[çc][ãa]o|Nova Lei de Licita[çc][õo]es))/gi;let m;
+  while((m=re.exec(txt))){ if(m[2].length>90)continue;
+    const lei=m[4]?nomeLei(m[3],m[4],m[5]||""):LEI_ALIAS[norm(m[6]).replace("constituicao","constituicao")]||LEI_ALIAS[m[6].toLowerCase()]||"Constituição Federal";
+    out.add(`${lei.replace(/ \(.*\)$/,"")} · art. ${m[1]}`)}
+  return [...out];
+}
+$("artQ").oninput=e=>{S.artQ=e.target.value;render()};
+
+/* ===== Decisões relacionadas ===== */
+const tok=s=>new Set(termos(s||""));
+function relacionadas(d,n=5){
+  const ta=tok(d.titulo+" "+(d.tags||[]).join(" "));
+  return S.docs.filter(x=>x.id!==d.id&&x._nat!=="legislacao").map(x=>{
+    let s=0;const sa=x._arts.filter(a=>d._arts.includes(a)).length;s+=sa*3;if(x.tema===d.tema)s+=2;s+=x._leis.filter(l=>d._leis.includes(l)).length*0.5;
+    const tb=tok(x.titulo+" "+(x.tags||[]).join(" "));let inter=0;tb.forEach(w=>{if(ta.has(w))inter++});s+=ta.size?6*inter/Math.max(ta.size,tb.size):0;
+    if(x.orgao!==d.orgao)s+=0.5;return [s,x]}).filter(r=>r[0]>=3).sort((a,b)=>b[0]-a[0]).slice(0,n).map(r=>r[1]);
+}
+const REL_LBL={converge:["conv","Mesmo entendimento"],diverge:["div","Entendimento contrário"],complementa:["comp","Complementa"],sem_relacao:["comp","Pouca relação"]};
+function relHtml(d){
+  const st=S.rel[d.id]||{};const rs=st.lista||(st.lista=relacionadas(d));
+  if(!rs.length)return `<span class="note">Nenhuma decisão relacionada encontrada no acervo.</span>`;
+  return `<div class="eyebrow" style="margin-bottom:4px">Relacionadas no acervo</div>${rs.map((x,i)=>{const an=(st.analise||{})[i+1];
+    return `<div class="ri"><span class="org ${esc(x.orgao)}" style="margin:0">${esc(lbl(x.orgao))}</span><div><button class="t" type="button" data-go="${esc(x.id)}">${esc(x.titulo)}</button>
+      <span class="date" style="font-size:11.5px"> · ${fmt(x.data)}</span>${x.data>d.data?`<span class="flag new">mais recente</span>`:""}${an&&REL_LBL[an.relacao]?`<span class="flag ${REL_LBL[an.relacao][0]}">${REL_LBL[an.relacao][1]}</span>`:""}
+      ${an&&an.explicacao?`<div class="note">${esc(an.explicacao)}</div>`:""}</div></div>`}).join("")}
+    ${S.sample&&!st.analise?`<button class="ghost" type="button" data-chk="${esc(d.id)}" style="margin-top:8px">${st.carregando?"Analisando…":"Checar se há entendimento contrário"}</button>`:""}`;
+}
+function ligarRel(root){
+  root.querySelectorAll(".rel [data-go]").forEach(b=>b.onclick=()=>irPara(b.dataset.go));
+  root.querySelectorAll("[data-chk]").forEach(b=>b.onclick=async()=>{const d=docDe(b.dataset.chk);const st=S.rel[d.id];if(!st||st.carregando)return;st.carregando=true;b.textContent="Analisando…";b.disabled=true;
+    try{const r=await S.sample.json(`Compare a DECISÃO BASE com cada decisão numerada. Para cada número, diga se ela converge (mesmo entendimento), diverge (entendimento contrário), complementa (trata de aspecto próximo) ou sem_relacao. Use só os textos dados.
+Devolva SOMENTE JSON: {"itens":[{"n":1,"relacao":"converge|diverge|complementa|sem_relacao","explicacao":"1 frase"}]}
+
+DECISÃO BASE: ${d.orgao} | ${d.numero||d.tipo} | ${fmt(d.data)} | ${tese(d).slice(0,900)}
+
+${st.lista.map((x,i)=>`[${i+1}] ${x.orgao} | ${x.numero||x.tipo} | ${fmt(x.data)} | ${tese(x).slice(0,700)}`).join("\n")}`,{modelTier:"default"});
+      st.analise={};(r.itens||[]).forEach(it=>{if(it&&it.n)st.analise[it.n]=it});}
+    catch(e){toast(e&&e.code==="not_granted"?"O uso do Claude não foi autorizado nesta página.":"Não consegui analisar agora.")}
+    finally{st.carregando=false;render();const el=document.getElementById("rel-"+d.id);if(el)el.scrollIntoView({block:"nearest"})}})}
+
+/* ===== Dossiês ===== */
+function dossiesDe(id){return Object.entries(S.dossies).filter(([k,v])=>(v.itens||[]).includes(id)).map(([k])=>k)}
+const DQ={};
+async function salvarDos(k,dados){
+  if(DQ[k]){DQ[k].p=dados;return}DQ[k]={};S.dossies[k]=dados;
+  try{await S.notesCol.doc(k).set(dados)}catch(e){toast("Não foi possível salvar o dossiê agora.")}
+  finally{const p=DQ[k].p;delete DQ[k];if(p)salvarDos(k,p)}
+}
+async function criarDos(nome,itens=[]){
+  nome=(nome||"").trim();if(!nome)return null;const k="dossie-"+slug(nome).slice(0,30)+"-"+Math.random().toString(36).slice(2,7);
+  await salvarDos(k,{nome,itens,criado_em:new Date().toISOString(),atualizado_em:new Date().toISOString()});return k;
+}
+let DLG_ID=null;
+function listarDlgDos(){
+  const box=$("dlgDosList");const ds=Object.entries(S.dossies).sort((a,b)=>(a[1].nome||"").localeCompare(b[1].nome||""));
+  box.innerHTML=ds.length?ds.map(([k,v])=>`<label class="chk"><input type="checkbox" data-k="${esc(k)}" ${(v.itens||[]).includes(DLG_ID)?"checked":""}> ${esc(v.nome)} <span class="ref">(${(v.itens||[]).length})</span></label>`).join(""):`<p class="note">Você ainda não tem dossiês. Crie o primeiro abaixo.</p>`;
+  box.querySelectorAll("input").forEach(c=>c.onchange=()=>{const v={...S.dossies[c.dataset.k]};const it=new Set(v.itens||[]);c.checked?it.add(DLG_ID):it.delete(DLG_ID);
+    v.itens=[...it];v.atualizado_em=new Date().toISOString();salvarDos(c.dataset.k,v)});
+}
+function abrirDlgDos(id){const d=docDe(id);if(!d)return;DLG_ID=id;$("dlgDosRef").textContent=[lbl(d.orgao),d.numero,fmt(d.data)].filter(Boolean).join(" · ")+" — "+d.titulo;$("dlgDosNovo").value="";listarDlgDos();$("dlgDos").showModal()}
+$("dlgDosCriar").onclick=async()=>{const k=await criarDos($("dlgDosNovo").value,[DLG_ID]);if(k){$("dlgDosNovo").value="";listarDlgDos();toast("Dossiê criado.")}};
+$("dlgDosOk").onclick=()=>{$("dlgDos").close();render()};
+$("dlgDos").addEventListener("close",()=>render());
+$("novoDos").onclick=async()=>{const nome=window.prompt("Nome do novo dossiê (ex.: Parecer pregão limpeza hospitalar):");const k=await criarDos(nome);if(k){S.dos=k;render()}};
+function renderDosBar(){
+  const bar=$("dosBar");const v=S.dos&&S.dossies[S.dos];if(!v){bar.innerHTML="";return}
+  bar.innerHTML=`<div class="dosbar"><div class="eyebrow">Dossiê</div><h2>${esc(v.nome)}</h2><span class="note">${(v.itens||[]).length} decisões${v.minuta?` · minuta salva em ${new Date(v.minuta_em).toLocaleDateString("pt-BR")}`:""}</span>
+    <div class="btns">${S.sample?`<button class="primary" type="button" id="dosMin">Gerar minuta</button>`:""}<button class="ghost" type="button" id="dosExp">Exportar dossiê (.md)</button>
+    ${v.minuta?`<button class="ghost" type="button" id="dosVerMin">Ver minuta salva</button>`:""}<button class="ghost" type="button" id="dosRen">Renomear</button><button class="ghost" type="button" id="dosSair">Ver todo o acervo</button><button class="del" type="button" id="dosDel">excluir dossiê</button></div></div>`;
+  if($("dosMin"))$("dosMin").onclick=()=>abrirMinuta(false);if($("dosVerMin"))$("dosVerMin").onclick=()=>abrirMinuta(true);
+  $("dosExp").onclick=()=>exportarDossie();$("dosSair").onclick=()=>{S.dos="";render()};
+  $("dosRen").onclick=()=>{const nome=window.prompt("Novo nome do dossiê:",v.nome);if(nome&&nome.trim())salvarDos(S.dos,{...v,nome:nome.trim(),atualizado_em:new Date().toISOString()}).then(render)};
+  $("dosDel").onclick=async()=>{const b=$("dosDel");if(!b.dataset.armed){b.dataset.armed=1;b.textContent="confirmar: excluir dossiê (as decisões continuam no acervo)";return}
+    const k=S.dos;S.dos="";delete S.dossies[k];try{await S.notesCol.doc(k).delete()}catch(e){}render()};
+}
+function itensDossie(){const v=S.dossies[S.dos]||{};return (v.itens||[]).map(docDe).filter(Boolean).sort((a,b)=>(b.data||"").localeCompare(a.data||""))}
+async function exportarDossie(){
+  const v=S.dossies[S.dos];if(!v)return;const its=itensDossie();
+  let md=`# Dossiê: ${v.nome}\n\nGerado em ${new Date().toLocaleString("pt-BR")} — ${its.length} decisões\n`;
+  its.forEach((d,i)=>{const n=S.notes[d.id];md+=`\n---\n\n## ${i+1}. ${d.titulo}\n\n**${[lbl(d.orgao),d.tipo,d.numero,fmt(d.data)].filter(Boolean).join(" · ")}**${d.relator?` — Relator: ${d.relator}`:""}\n\n> ${tese(d)}\n\nCitação: ${citacao(d,FMT)}\n`;
+    if(n&&n.texto)md+=`\n**Minha anotação:**\n\n${n.texto}\n`;});
+  if(v.minuta)md+=`\n---\n\n# Minuta salva\n\n${v.minuta}\n`;
+  if(!S.downloads){const ok=await copiar(md);toast(ok?"Dossiê copiado (download indisponível aqui).":"Não foi possível exportar.");return}
+  try{await S.downloads.save({filename:`dossie-${slug(v.nome)}.md`,data:md})}catch(e){}
+}
+
+/* ===== Minuta ===== */
+const MIN={ctrl:null,texto:""};
+function abrirMinuta(ver){
+  const v=S.dossies[S.dos];if(!v)return;const its=itensDossie();
+  $("dlgMinRef").textContent=`Dossiê “${v.nome}” · ${its.length} decisões${its.length>25?" (serão usadas as 25 mais recentes)":""}`;
+  $("minObj").value=v.objeto||"";$("minTipo").value=v.tipo_peca||"Parecer jurídico";
+  if(ver&&v.minuta){MIN.texto=v.minuta;$("minOut").textContent=v.minuta;$("minOut").hidden=false;$("minAcoes").hidden=false}else{$("minOut").hidden=true;$("minAcoes").hidden=true}
+  $("dlgMin").showModal();
+}
+$("minGerar").onclick=async()=>{
+  const v=S.dossies[S.dos];if(!v||!S.sample){toast("Geração indisponível nesta página.");return}
+  const its=itensDossie().slice(0,25);if(!its.length){toast("O dossiê está vazio. Inclua decisões com o botão “+ Dossiê”.");return}
+  const obj=$("minObj").value.trim();if(obj.length<15){toast("Descreva o caso e a pergunta (algumas linhas).");return}
+  const tipo=$("minTipo").value;
+  const lista=its.map((d,i)=>{const n=S.notes[d.id];return `[${i+1}] ${lbl(d.orgao)} | ${d.tipo} | ${d.numero||""} | ${fmt(d.data)}${d.relator?" | Rel. "+d.relator:""}
+TESE: ${tese(d).slice(0,1200)}
+CITAÇÃO: ${citacao(d,FMT)}${n&&n.texto?`\nANOTAÇÃO DO USUÁRIO: ${n.texto.slice(0,800)}`:""}`}).join("\n\n");
+  const prompt=`Você é um advogado público brasileiro experiente em licitações, contratos e controle externo. Redija uma minuta de ${tipo} em português, com linguagem técnica e clara.
+REGRAS:
+- Use como fundamentação jurisprudencial SOMENTE as decisões numeradas abaixo (o dossiê do usuário). Não invente decisões, números, datas ou trechos.
+- Ao usar uma decisão, cite-a no corpo com a CITAÇÃO fornecida (pode abreviar para órgão, número e data) e, quando útil, transcreva a tese entre aspas.
+- Considere as anotações do usuário como orientação de como ele quer usar cada decisão.
+- Se houver entendimentos divergentes, exponha-os e indique qual se aplica ao caso e por quê.
+- Dispositivos legais podem ser mencionados quando aparecerem nas teses; se precisar de outro dispositivo, escreva [VERIFICAR: dispositivo] em vez de afirmar.
+- Dados do caso que faltarem: use [PREENCHER: ...].
+- Estrutura: Ementa; I – Relatório; II – Fundamentação (com subtítulos); III – Conclusão. Termine com "Referências" listando as decisões usadas no formato da CITAÇÃO.
+- Texto puro, sem markdown pesado (pode usar títulos simples e listas com hífen).
+
+CASO E PERGUNTA:
+${obj}
+
+DECISÕES DO DOSSIÊ:
+${lista}`;
+  $("minOut").hidden=false;$("minOut").textContent="Escrevendo…";$("minAcoes").hidden=true;$("minGerar").disabled=true;$("minParar").hidden=false;
+  MIN.ctrl=new AbortController();
+  try{const r=await S.sample(prompt,{modelTier:"complex",cache:false,signal:MIN.ctrl.signal,onText:({text})=>{$("minOut").textContent=text||"Escrevendo…"}});
+    MIN.texto=r.text||$("minOut").textContent;$("minOut").textContent=MIN.texto+(r.truncated?"\n\n[Texto interrompido pelo limite de tamanho — peça uma parte de cada vez.]":"");$("minAcoes").hidden=false;
+    salvarDos(S.dos,{...S.dossies[S.dos],objeto:obj,tipo_peca:tipo,atualizado_em:new Date().toISOString()});}
+  catch(e){const t=e&&e.text;MIN.texto=t||"";$("minOut").textContent=(t?t+"\n\n":"")+(e&&e.name==="AbortError"||e&&e.code==="aborted"?"[Geração interrompida.]":e&&e.code==="not_granted"?"O uso do Claude não foi autorizado nesta página.":e&&e.code==="rate_limited"?"Muitas solicitações seguidas; aguarde alguns minutos.":"Não consegui gerar a minuta agora.");if(t)$("minAcoes").hidden=false}
+  finally{$("minGerar").disabled=false;$("minParar").hidden=true;MIN.ctrl=null}
+};
+$("minParar").onclick=()=>{if(MIN.ctrl)MIN.ctrl.abort()};
+$("minCopiar").onclick=async()=>toast(await copiar(MIN.texto)?"Minuta copiada.":"Não foi possível copiar.");
+$("minBaixar").onclick=async()=>{const v=S.dossies[S.dos]||{};if(!S.downloads){toast("Download indisponível aqui; use Copiar.");return}
+  try{await S.downloads.save({filename:`minuta-${slug(v.nome||"dossie")}.md`,data:MIN.texto})}catch(e){}};
+$("minSalvar").onclick=()=>{const v=S.dossies[S.dos];if(!v)return;salvarDos(S.dos,{...v,minuta:MIN.texto,minuta_em:new Date().toISOString(),objeto:$("minObj").value.trim(),tipo_peca:$("minTipo").value}).then(()=>{toast("Minuta salva no dossiê.");renderDosBar()})};
+$("minFechar").onclick=()=>{if(MIN.ctrl)MIN.ctrl.abort();$("dlgMin").close()};
+
+/* ===== Painel ===== */
+function renderPainel(list,L){
+  const hoje=new Date();const d30=new Date(hoje-30*864e5).toISOString().slice(0,10);
+  const novos=list.filter(d=>(d.capturado_em||"").slice(0,10)>=d30).length;
+  const porMes={};list.forEach(d=>{if(d.data){const k=d.data.slice(0,7);porMes[k]=(porMes[k]||0)+1}});
+  const ks=Object.keys(porMes).sort();const meses=[];
+  if(ks.length){let [y,m]=ks[0].split("-").map(Number);const [y2,m2]=ks[ks.length-1].split("-").map(Number);
+    while(y<y2||(y===y2&&m<=m2)){meses.push(`${y}-${String(m).padStart(2,"0")}`);m++;if(m>12){m=1;y++}}
+    meses.splice(0,Math.max(0,meses.length-24));meses.forEach(k=>porMes[k]=porMes[k]||0)}
+  const cnt=(f)=>{const c={};list.forEach(d=>{const k=f(d);if(k)c[k]=(c[k]||0)+1});return Object.entries(c).sort((a,b)=>b[1]-a[1])};
+  const org=cnt(d=>d.orgao),tem=cnt(d=>d.tema),art=cnt(()=>null);const ac={};list.forEach(d=>d._arts.forEach(a=>ac[a]=(ac[a]||0)+1));const arts=Object.entries(ac).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const W=720,H=180,pad=24,max=Math.max(1,...meses.map(m=>porMes[m])),bw=meses.length?Math.min(36,Math.max(4,(W-pad)/meses.length-4)):0;
+  const mesLbl=k=>{const[y,m]=k.split("-");return MESES[+m-1].replace(".","")+"/"+y.slice(2)};
+  const svg=`<svg viewBox="0 0 ${W} ${H+28}" role="img" aria-label="Decisões por mês">
+    <line x1="${pad}" y1="${H}" x2="${W}" y2="${H}" stroke="var(--rule)"/>
+    <text x="0" y="12">${max}</text><text x="0" y="${H}">0</text>
+    ${meses.map((m,i)=>{const h=Math.round((porMes[m]/max)*(H-16));const x=pad+i*(bw+4)+2;return `<g><rect class="bar" x="${x}" y="${H-h}" width="${bw}" height="${h}" rx="3"><title>${mesLbl(m)}: ${porMes[m]} registros</title></rect>
+      ${meses.length<=14||i%2===0?`<text x="${x+bw/2}" y="${H+16}" text-anchor="middle">${mesLbl(m)}</text>`:""}</g>`}).join("")}</svg>`;
+  const hb=(rows,tot,clk)=>{const mx=Math.max(1,...rows.map(r=>r[1]));return rows.map(([k,n])=>`<div class="hb"><button type="button" data-${clk}="${esc(k)}" title="Filtrar: ${esc(k)}">${esc(clk==="o"?lbl(k):k)}</button><div class="track"><div class="fill" style="width:${(n/mx*100).toFixed(1)}%" title="${n} registros"></div></div><span class="n">${n}</span></div>`).join("")};
+  L.innerHTML=`<div class="tiles">
+    <div class="tile"><div class="v">${list.length}</div><div class="l">registros no recorte</div></div>
+    <div class="tile"><div class="v">${novos}</div><div class="l">captados nos últimos 30 dias</div></div>
+    <div class="tile"><div class="v">${org.length}</div><div class="l">órgãos com registros</div></div>
+    <div class="tile"><div class="v">${Object.keys(S.notes).length}</div><div class="l">decisões com anotação ou marcador</div></div></div>
+    <div class="chart"><h3>Registros por mês da decisão${meses.length===24?" (últimos 24 meses)":""}</h3>${meses.length?svg:`<p class="note">Sem datas neste recorte.</p>`}</div>
+    <div class="chart"><h3>Por órgão</h3>${hb(org,list.length,"o")}</div>
+    <div class="chart"><h3>Por tema</h3>${hb(tem,list.length,"t")}</div>
+    ${arts.length?`<div class="chart"><h3>Artigos mais citados</h3>${hb(arts,list.length,"a")}</div>`:""}
+    <p class="note">Clique num órgão, tema ou artigo para filtrar a lista. Os números respeitam os filtros ativos.</p>`;
+  L.querySelectorAll("[data-o]").forEach(b=>b.onclick=()=>{S.orgao=b.dataset.o;S.view="lista";render()});
+  L.querySelectorAll("[data-t]").forEach(b=>b.onclick=()=>{S.tema=b.dataset.t;S.view="lista";render()});
+  L.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{S.art=b.dataset.a;S.view="lista";render()});
+}
+
+/* ===== Situação da coleta ===== */
+const AGENDA=[["coleta","TCU, CGU, STF, STJ, PGE-RJ, TJ-RJ e normas",7,7,false],["coleta_tcerj","TCE-RJ",8,23,true],["coleta_tcmrj","TCM-RJ",8,41,true]];
+function ultimoPrevisto(h,mi){const agora=new Date();for(let i=0;i<10;i++){const t=new Date(Date.UTC(agora.getUTCFullYear(),agora.getUTCMonth(),agora.getUTCDate()-i,h+3,mi));const wd=new Date(t.getTime()-3*36e5).getUTCDay();
+  if(wd>0&&wd<6&&t.getTime()<=agora.getTime()-60*6e4)return t}return null}
+function renderStatus(){
+  const box=$("statusBox");box.innerHTML=AGENDA.map(([k,nome,h,mi,pc])=>{const m=S.meta[k]||{};const ult=m.ultima_execucao?new Date(m.ultima_execucao):null;const prev=ultimoPrevisto(h,mi);
+    const atrasada=prev&&(!ult||ult.getTime()<prev.getTime()-40*6e4);
+    return `<div class="${atrasada?"late":"ok"}">${atrasada?"⚠":"✓"} ${esc(nome)}: ${atrasada?`atrasada — não rodou em ${prev.toLocaleDateString("pt-BR")}${ult?"; última em "+ult.toLocaleDateString("pt-BR"):""}`:`em dia${ult?" · "+ult.toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"}):""}`}</div>`}).join("")
+    +`<span class="note">Coletas atrasadas são recuperadas na próxima execução: elas buscam tudo o que entrou desde o último item gravado.</span>`;
+}
+
+/* ===== Preferências do resumo semanal ===== */
+function prefsUI(){
+  if($("resBox").hidden)return;const p=(S.prefs&&S.prefs.resumo_semanal)||{ativo:false,temas:[],orgaos:[]};
+  $("resAtivo").checked=!!p.ativo;
+  const mk=(el,arr,sel,key)=>{if(!el.dataset.built){el.innerHTML=arr.map(x=>`<label class="chk"><input type="checkbox" data-${key}="${esc(x)}"> ${esc(key==="o"?lbl(x):x)}</label>`).join("");el.dataset.built=1;
+    el.querySelectorAll("input").forEach(c=>c.onchange=salvarPrefs)}el.querySelectorAll("input").forEach(c=>c.checked=sel.includes(c.dataset[key]))};
+  mk($("resTemas"),TEMAS,p.temas||[],"t");mk($("resOrgs"),ORGAOS,p.orgaos||[],"o");
+}
+let PREF_SAVING=false;
+async function salvarPrefs(){
+  const dados={...(S.prefs||{}),resumo_semanal:{ativo:$("resAtivo").checked,temas:[...$("resTemas").querySelectorAll("input:checked")].map(c=>c.dataset.t),orgaos:[...$("resOrgs").querySelectorAll("input:checked")].map(c=>c.dataset.o)},atualizado_em:new Date().toISOString()};
+  S.prefs=dados;if(PREF_SAVING){PREF_SAVING="again";return}PREF_SAVING=true;
+  try{await S.notesCol.doc("preferencias").set(S.prefs);$("resMsg").textContent="Preferências salvas."}catch(e){$("resMsg").textContent="Não foi possível salvar agora."}
+  finally{const again=PREF_SAVING==="again";PREF_SAVING=false;if(again)salvarPrefs()}
+}
+$("resAtivo").onchange=salvarPrefs;
+
+$("limpar").onclick=()=>{$("artQ").value="";Object.assign(S,{nat:"",orgao:"",tema:"",lei:"",tipo:"",q:"",de:"",ate:"",nf:"",esf:"",only:null,art:"",artQ:"",dos:""});["q","tipo","de","ate"].forEach(i=>$(i).value="");render()};
+render();
+
+function slug(s){return norm(s).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40)}
+
+/* ===== Anotações pessoais (privadas, em data/users/<id>) ===== */
+const OK_TAGS=new Set(["B","STRONG","I","EM","U","MARK","UL","OL","LI","BLOCKQUOTE","P","DIV","BR","H4"]);
+function limpar(html){
+  const t=document.createElement("template");t.innerHTML=html||"";
+  (function walk(node){[...node.childNodes].forEach(c=>{
+    if(c.nodeType===3)return;
+    if(c.nodeType!==1||!OK_TAGS.has(c.tagName)){if(c.nodeType===1&&!["SCRIPT","STYLE","IFRAME","OBJECT"].includes(c.tagName)){walk(c);c.replaceWith(...c.childNodes)}else c.remove();return}
+    const cls=c.tagName==="MARK"&&/^hl-[ygrb]$/.test(c.className)?c.className:"";
+    [...c.attributes].forEach(a=>c.removeAttribute(a.name));if(cls)c.className=cls;walk(c)})})(t.content);
+  return t.innerHTML;
+}
+const N={atual:null,timer:null,salvando:{},pendente:{}};
+const docDe=id=>S.docs.find(d=>d.id===id);
+const chave=id=>"nota-"+id;
+async function gravar(id,dados){
+  if(N.salvando[id]){N.pendente[id]=dados;return}
+  N.salvando[id]=true;
+  try{
+    const vazio=!dados.texto&&!(dados.marcas||[]).length;
+    if(vazio){await S.notesCol.doc(chave(id)).delete();delete S.notes[id]}
+    else{await S.notesCol.doc(chave(id)).set(dados);S.notes[id]=dados}
+    if(N.atual===id)$("n_stat").textContent=vazio?"Anotação vazia — nada guardado.":"Salvo às "+new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})+". Só você vê.";
+  }catch(e){if(N.atual===id)$("n_stat").textContent="Não foi possível salvar agora. Seu texto continua aqui; tente digitar de novo em instantes."}
+  finally{N.salvando[id]=false;if(N.pendente[id]){const p=N.pendente[id];delete N.pendente[id];gravar(id,p)}}
+}
+function coletar(id){
+  const ed=$("n_ed");const d=docDe(id)||{};
+  return {decisao_id:id,html:limpar(ed.innerHTML),texto:ed.innerText.replace(/\s+\n/g,"\n").trim(),
+    marcas:[...$("n_marcas").querySelectorAll('[aria-pressed="true"]')].map(b=>b.dataset.m),
+    orgao:d.orgao||"",numero:d.numero||"",titulo_decisao:d.titulo||"",data_decisao:d.data||"",atualizado_em:new Date().toISOString()};
+}
+function agendar(){const id=N.atual;if(!id)return;$("n_stat").textContent="Salvando…";clearTimeout(N.timer);N.timer=setTimeout(()=>gravar(id,coletar(id)),700)}
+function abrirNota(id){
+  const d=docDe(id);if(!d)return;N.atual=id;const n=S.notes[id]||{};
+  $("n_ref").textContent=[d.orgao,d.tipo,d.numero,fmt(d.data)].filter(Boolean).join(" · ");
+  $("n_titulo").textContent=d.titulo||"";
+  $("n_doc").innerHTML=`${esc(d.resumo)}${d.fonte_url?`<br><a href="${esc(d.fonte_url)}" target="_blank" rel="noopener">Abrir na fonte</a>`:""}`;
+  $("n_ed").innerHTML=limpar(n.html||"");
+  const m=$("n_marcas");m.innerHTML="";
+  MARCAS.forEach(([k,l])=>{const b=document.createElement("button");b.type="button";b.className="chip";b.dataset.m=k;b.textContent=l;
+    b.setAttribute("aria-pressed",(n.marcas||[]).includes(k));b.onclick=()=>{b.setAttribute("aria-pressed",b.getAttribute("aria-pressed")!=="true");agendar()};m.appendChild(b)});
+  $("n_stat").textContent=n.atualizado_em?"Última edição: "+new Date(n.atualizado_em).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})+". Só você vê.":"Suas anotações são privadas: só você vê.";
+  $("notas").showModal();setTimeout(()=>$("n_ed").focus(),50);
+}
+async function fecharNota(){
+  const id=N.atual;if(!id)return;clearTimeout(N.timer);
+  const novo=coletar(id),velho=S.notes[id]||{};
+  if(novo.html!==(velho.html||"")||novo.marcas.join()!==(velho.marcas||[]).join())gravar(id,novo);
+  N.atual=null;if($("notas").open)$("notas").close();render();
+}
+function alternarMarca(id,k){
+  const n=S.notes[id]||{decisao_id:id,html:"",texto:"",marcas:[]};const d=docDe(id)||{};
+  const marcas=(n.marcas||[]).includes(k)?n.marcas.filter(x=>x!==k):[...(n.marcas||[]),k];
+  const dados={...n,marcas,orgao:d.orgao||"",numero:d.numero||"",titulo_decisao:d.titulo||"",data_decisao:d.data||"",atualizado_em:new Date().toISOString()};
+  S.notes[id]=dados;render();gravar(id,dados);
+}
+function marcaTexto(cls){
+  const ed=$("n_ed"),sel=getSelection();if(!sel.rangeCount)return;const r=sel.getRangeAt(0);
+  if(!ed.contains(r.commonAncestorContainer)||r.collapsed)return;
+  if(!cls){const frag=r.extractContents();frag.querySelectorAll("mark").forEach(x=>x.replaceWith(...x.childNodes));
+    let p=r.commonAncestorContainer;p=p.nodeType===1?p:p.parentElement;const anc=p.closest("mark");
+    if(anc&&ed.contains(anc)){r.insertNode(frag);anc.replaceWith(...anc.childNodes)}else r.insertNode(frag);
+  }else{const mk=document.createElement("mark");mk.className=cls;const frag=r.extractContents();frag.querySelectorAll("mark").forEach(x=>x.replaceWith(...x.childNodes));mk.appendChild(frag);r.insertNode(mk);sel.removeAllRanges()}
+  agendar();
+}
+document.querySelectorAll(".tb [data-cmd]").forEach(b=>{b.onmousedown=e=>e.preventDefault();b.onclick=()=>{
+  const c=b.dataset.cmd;$("n_ed").focus();
+  if(c==="h4"||c==="blockquote")document.execCommand("formatBlock",false,c);else document.execCommand(c,false,null);agendar()}});
+document.querySelectorAll(".tb [data-hl]").forEach(b=>{b.onmousedown=e=>e.preventDefault();b.onclick=()=>marcaTexto(b.dataset.hl)});
+$("n_citar").onmousedown=e=>e.preventDefault();
+$("n_citar").onclick=()=>{const d=docDe(N.atual);if(!d)return;const ed=$("n_ed");ed.focus();
+  const q=document.createElement("blockquote");q.textContent=d.resumo||d.titulo||"";const p=document.createElement("p");p.appendChild(document.createElement("br"));
+  const sel=getSelection();if(sel.rangeCount&&ed.contains(sel.getRangeAt(0).commonAncestorContainer)){const r=sel.getRangeAt(0);r.collapse(false);r.insertNode(p);r.insertNode(q)}else{ed.append(q,p)}
+  agendar()};
+$("n_ed").addEventListener("input",agendar);
+$("n_ed").addEventListener("paste",e=>{e.preventDefault();const t=(e.clipboardData||window.clipboardData).getData("text/plain");document.execCommand("insertText",false,t)});
+$("n_fechar").onclick=fecharNota;
+$("notas").addEventListener("cancel",e=>{e.preventDefault();fecharNota()});
+$("notas").addEventListener("click",e=>{if(e.target===$("notas"))fecharNota()});
+$("n_apagar").onclick=async()=>{const b=$("n_apagar");if(!b.dataset.armed){b.dataset.armed=1;b.textContent="confirmar: apagar anotação e marcadores";return}
+  delete b.dataset.armed;b.textContent="apagar anotação";const id=N.atual;clearTimeout(N.timer);$("n_ed").innerHTML="";
+  $("n_marcas").querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed","false"));await gravar(id,coletar(id));fecharNota()};
+function exportarMd(){
+  const ids=Object.keys(S.notes).filter(id=>S.notes[id].texto||(S.notes[id].marcas||[]).length)
+    .sort((a,b)=>(S.notes[b].data_decisao||"").localeCompare(S.notes[a].data_decisao||""));
+  let md=`# Minhas anotações — Acervo Licitaverso\n\nExportado em ${new Date().toLocaleString("pt-BR")}\n`;
+  ids.forEach(id=>{const n=S.notes[id],d=docDe(id)||{};
+    md+=`\n---\n\n## ${d.titulo||n.titulo_decisao||id}\n\n**${[d.orgao||n.orgao,d.tipo,d.numero||n.numero,fmt(d.data||n.data_decisao)].filter(Boolean).join(" · ")}**\n`;
+    if((n.marcas||[]).length)md+=`\nMarcadores: ${n.marcas.map(k=>MARCA_L[k]||k).join(", ")}\n`;
+    if(d.fonte_url)md+=`\nFonte: ${d.fonte_url}\n`;
+    if(n.texto)md+=`\n${n.texto}\n`});
+  return {md,qtd:ids.length};
+}
+
+(async()=>{
+  const db=await claude.use("db");
+  if(!db){$("stamp").textContent="Abra pelo claude.ai com sua conta para ver o acervo.";return}
+  const user=await claude.use("user");
+  S.canEdit=user?await user.canEdit():false;
+  if(S.canEdit)$("addBox").hidden=false;
+  S.col=db.collection("decisoes");
+  S.col.onSnapshot(snap=>{
+    S.docs=snap.docs.map(d=>{const x={id:d.id,...d.data()};x._leis=leisDe(x);x._nat=natOf(x);x._arts=artigosDe(x);return x});
+    S.byId=new Map(S.docs.map(d=>[d.id,d]));
+    const last=S.docs.map(d=>d.capturado_em||"").sort().pop();
+    $("stamp").innerHTML=`${S.docs.length} registros<br>Última captação: ${last?new Date(last).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"}):"—"}`;
+    render();
+  },e=>{$("stamp").textContent="Não foi possível carregar o acervo agora. Recarregue a página."});
+
+  S.downloads=await claude.use("downloads");
+  if(S.canEdit&&S.downloads)$("integBox").hidden=false;
+  const uid=user?await user.id():null;S.uid=uid;
+  if(uid){
+    S.notesCol=db.collection("data/users/"+uid);S.canNote=true;$("minhasBox").hidden=false;
+    $("dosBox").hidden=false;
+    S.notesCol.onSnapshot(snap=>{const m={},ds={};snap.docs.forEach(x=>{const v=x.data();if(x.id.startsWith("nota-")){m[v.decisao_id||x.id.slice(5)]=v}
+        else if(x.id.startsWith("dossie-"))ds[x.id]=v;else if(x.id==="preferencias")S.prefs=v});
+      if(N.atual&&S.notes[N.atual])m[N.atual]=S.notes[N.atual];S.notes=m;S.dossies=ds;if(S.dos&&!ds[S.dos])S.dos="";
+      if(!N.atual&&!$("dlgDos").open)render();if($("dlgDos").open)listarDlgDos();prefsUI()},()=>{});
+    if(user&&await user.isOwner())$("resBox").hidden=false;
+    db.collection("meta").onSnapshot(snap=>{const m={};snap.docs.forEach(x=>m[x.id]=x.data());S.meta=m;renderStatus()},()=>{$("statusBox").innerHTML=`<span class="note">Situação indisponível.</span>`});
+    render();
+    const downloads=S.downloads;
+    if(downloads){$("exportar").hidden=false;$("exportar").onclick=async()=>{const {md,qtd}=exportarMd();
+      if(!qtd){$("exportar").textContent="Nenhuma anotação para exportar";setTimeout(()=>$("exportar").textContent="Exportar anotações (.md)",2500);return}
+      try{await downloads.save({filename:"minhas-anotacoes-licitaverso.md",data:md})}catch(e){}}}
+  }
+
+  const sample=await claude.use("sample");
+  S.sample=sample;if(sample){$("askBox").hidden=false;if(S.view==="comparar")render()}
+  if(!sample){$("f_auto").hidden=true}
+  else $("f_auto").onclick=async()=>{
+    const texto=$("f_texto").value.trim();
+    if(texto.length<40){$("f_automsg").textContent="Cole um trecho maior (ementa ou parte do texto) para o preenchimento automático.";return}
+    $("f_auto").disabled=true;$("f_automsg").textContent="Lendo o texto…";
+    const prompt=`Você cataloga decisões e normas para uma biblioteca jurídica brasileira sobre administração pública. Leia o texto abaixo e devolva SOMENTE um objeto JSON com os campos:
+orgao: um de ${JSON.stringify(ORGAOS)} (o órgão que proferiu/editou);
+tipo: um de ${JSON.stringify(TIPOS)};
+numero: identificação (ex.: "RE 1.234.567", "REsp 2.000.000/RJ", "Parecer 05/2026-PGE", "Proc. 040.123-4/2026"), ou "";
+data: "AAAA-MM-DD" do julgamento/assinatura/publicação, ou "" se não houver;
+relator: nome do relator ou autor, ou "";
+colegiado: órgão julgador (ex.: "Plenário", "Primeira Turma", "Segunda Câmara"), ou "";
+entidade: órgão ou entidade pública envolvida, ou "";
+tema: um de ${JSON.stringify(TEMAS.filter(t=>t!=="Pessoal"))};
+titulo: a tese em uma frase, com suas palavras (máx. 160 caracteres);
+resumo: 2 a 4 frases com suas palavras, citando os dispositivos legais mencionados;
+tags: lista de 2 a 5 palavras-chave;
+leis: lista das leis/normas citadas no formato "Lei 14.133/2021", "LC 101/2000", "Decreto 10.024/2019".
+Não invente dados que não estão no texto. Link informado: ${$("f_url").value||"(nenhum)"}.
+
+TEXTO:
+"""${texto.slice(0,12000)}"""`;
+    try{
+      const r=await sample.json(prompt,{modelTier:"default"});
+      if(r.orgao&&ORGAOS.includes(r.orgao))$("f_orgao").value=r.orgao;
+      if(r.tipo&&TIPOS.includes(r.tipo))$("f_tipo").value=r.tipo;
+      if(r.tema&&TEMAS.includes(r.tema)&&r.tema!=="Pessoal")$("f_tema").value=r.tema;
+      $("f_colegiado").value=r.colegiado||"";$("f_entidade").value=r.entidade||"";
+      if(/^\d{4}-\d{2}-\d{2}$/.test(r.data||""))$("f_data").value=r.data;
+      $("f_numero").value=r.numero||"";$("f_relator").value=r.relator||"";$("f_titulo").value=r.titulo||"";$("f_resumo").value=r.resumo||"";
+      $("f_tags").value=(r.tags||[]).join(", ");$("f_leis").value=(Array.isArray(r.leis)?r.leis:[]).join(", ");S.leisAuto=[];
+      $("f_automsg").textContent="Campos preenchidos. Confira, ajuste o que precisar e salve.";
+    }catch(e){
+      $("f_automsg").textContent=e&&e.code==="not_granted"?"O preenchimento automático não foi autorizado. Preencha os campos manualmente.":"Não consegui ler o texto agora. Tente de novo ou preencha manualmente.";
+    }finally{$("f_auto").disabled=false}
+  };
+
+  const lista=s=>s.split(",").map(x=>x.trim()).filter(Boolean);
+  const normNum=s=>(s||"").toLowerCase().replace(/[^a-z0-9]/g,"");
+  const limparForm=()=>{$("addForm").reset();$("f_texto").value="";$("f_url").value="";S.leisAuto=[];$("f_automsg").textContent="";
+    S.editId="";S.dupOk="";$("f_salvar").textContent="Salvar no acervo";$("f_cancelar").hidden=true;$("addSum").textContent="Cadastro manual"};
+  $("f_cancelar").onclick=()=>{limparForm();$("f_msg").textContent="Edição cancelada."};
+  window.editarItem=id=>{const d=S.byId.get(id);if(!d)return;
+    S.editId=id;$("addBox").open=true;
+    if(ORGAOS.includes(d.orgao))$("f_orgao").value=d.orgao;if(TIPOS.includes(d.tipo))$("f_tipo").value=d.tipo;
+    if([...$("f_tema").options].some(o=>o.value===d.tema))$("f_tema").value=d.tema;
+    $("f_data").value=d.data||"";$("f_numero").value=d.numero||"";$("f_relator").value=d.relator||"";
+    $("f_colegiado").value=d.colegiado||"";$("f_entidade").value=d.entidade||"";$("f_titulo").value=d.titulo||"";$("f_resumo").value=d.resumo||"";
+    $("f_leis").value=(d.leis||[]).join(", ");$("f_tags").value=(d.tags||[]).join(", ");$("f_url").value=d.fonte_url||"";
+    $("f_salvar").textContent="Salvar alterações";$("f_cancelar").hidden=false;$("addSum").textContent="Editando: "+(d.numero||d.titulo||"registro").slice(0,60);
+    $("f_msg").textContent="Altere o que precisar e salve. A mudança vale para todos que usam o acervo.";
+    $("addBox").scrollIntoView({behavior:"smooth",block:"start"})};
+  $("addForm").onsubmit=async ev=>{
+    ev.preventDefault();
+    const url=$("f_url").value.trim();let host="";try{host=url?new URL(url).hostname.replace(/^www\./,""):""}catch(e){$("f_msg").textContent="O link da fonte não é válido. Confira o endereço (começa com https://).";return}
+    const d={orgao:$("f_orgao").value,data:$("f_data").value,tipo:$("f_tipo").value,numero:$("f_numero").value.trim(),tema:$("f_tema").value,
+      relator:$("f_relator").value.trim(),colegiado:$("f_colegiado").value.trim(),entidade:$("f_entidade").value.trim(),
+      titulo:$("f_titulo").value.trim(),resumo:$("f_resumo").value.trim(),
+      tags:lista($("f_tags").value),leis:[...new Set([...lista($("f_leis").value),...(S.leisAuto||[])])],
+      fonte_url:url};
+    const agora=new Date().toISOString();
+    if(S.editId){
+      const old=S.byId.get(S.editId)||{};
+      try{await S.col.doc(S.editId).update({...d,fonte_nome:host?(old.fonte_url===url&&old.fonte_nome?old.fonte_nome:host):(old.fonte_nome||"cadastro manual"),
+          atualizado_em:agora,...(S.uid?{atualizado_por:S.uid}:{})});
+        limparForm();$("f_msg").textContent="Alterações salvas."}
+      catch(e){$("f_msg").textContent="Não foi possível salvar. Verifique sua permissão de edição."}
+      return}
+    if(!d.numero&&S.dupOk!=="semnum"){S.dupOk="semnum";$("f_msg").textContent="Sem número oficial o registro fica difícil de citar e conferir. Se não houver número, clique em salvar de novo.";return}
+    const dup=d.numero?S.docs.find(x=>x.orgao===d.orgao&&normNum(x.numero).includes(normNum(d.numero))):null;
+    if(dup&&S.dupOk!==dup.id){S.dupOk=dup.id;$("f_msg").textContent=`Já existe no acervo: ${dup.numero} — “${(dup.titulo||"").slice(0,90)}”. Se for outra tese do mesmo julgado, clique em salvar de novo; se for o mesmo item, use “editar” nele.`;return}
+    Object.assign(d,{fonte_nome:host||"cadastro manual",capturado_em:agora,origem:"cadastro manual",...(S.uid?{cadastrado_por:S.uid}:{})});
+    let id=`${slug(d.orgao)}-${d.data}-${slug(d.numero||d.titulo)}`.slice(0,110);
+    if(S.byId.has(id))id+="-"+Math.random().toString(36).slice(2,6);
+    try{await S.col.doc(id).set(d);limparForm();$("f_msg").textContent="Salvo no acervo."}
+    catch(e){$("f_msg").textContent="Não foi possível salvar. Verifique sua permissão de edição."}
+  };
+})();
+</script>
+
+</body></html>
