@@ -5,6 +5,6 @@
 //                     são as regras de acesso do banco; NUNCA coloque aqui a chave "service_role"/"secret").
 // Enquanto estiver vazio, o site funciona em modo demonstração (sem contas).
 window.LICITAVERSO_CONFIG = {
-  supabaseUrl: "",
-  supabaseAnonKey: ""
+  supabaseUrl: "https://umnhhztdqersjfrzqcea.supabase.co",
+  supabaseAnonKey: "sb_publishable_8nhINIJ76iix1902VoqGcg_cELL4u3e"
 };
