@@ -23,7 +23,8 @@ Fica para a etapa 4: o Renato cria a conta pelo site publicado e roda `update pe
 3. Claude: aplica o banco, preenche `config.js`, configura e-mails de confirmação e endereços de retorno.
 4. Você marca sua conta como administradora (um comando que o Claude passa).
 
-## Etapa 3 — Mercado Pago
+## Etapa 3 — Mercado Pago (em andamento)
+Aplicação Licitaverso criada no Mercado Pago (Checkout Pro, credenciais de teste). Secrets no GitHub: SUPABASE_ACCESS_TOKEN e MP_ACCESS_TOKEN. Webhook ainda não configurado.
 1. Criar a aplicação no painel de desenvolvedor do Mercado Pago (credenciais de teste primeiro).
 2. Cadastrar o Access Token e o segredo do webhook direto no Supabase (Claude mostra onde).
 3. Claude publica as funções de pagamento e fazemos uma compra de teste.
