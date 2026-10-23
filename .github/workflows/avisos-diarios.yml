@@ -1,0 +1,18 @@
+# Todo dia às 9h17 (Brasília): envia por e-mail o aviso de fim de plano (7 dias antes; teste grátis, 2 dias antes).
+name: Avisos diários por e-mail
+
+on:
+  schedule:
+    - cron: "17 12 * * *"
+  workflow_dispatch:
+
+jobs:
+  avisar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chamar a função de avisos
+        env:
+          AVISOS_SECRET: ${{ secrets.AVISOS_SECRET }}
+        run: |
+          curl -fsS -X POST "https://umnhhztdqersjfrzqcea.supabase.co/functions/v1/avisos" \
+            -H "Content-Type: application/json" -H "x-avisos: $AVISOS_SECRET" -d '{}'

@@ -3,6 +3,11 @@
 #   SUPABASE_ACCESS_TOKEN  (supabase.com/dashboard/account/tokens)
 #   MP_ACCESS_TOKEN        (Mercado Pago → Suas integrações → Licitaverso → Credenciais)
 #   MP_WEBHOOK_SECRET      (Mercado Pago → Webhooks → assinatura secreta)
+#   BREVO_SMTP_USER        (Brevo → SMTP e API → aba SMTP → "Login")
+#   BREVO_SMTP_KEY         (Brevo → SMTP e API → aba SMTP → chave SMTP)
+#   BREVO_API_KEY          (Brevo → SMTP e API → aba Chaves API)
+#   EMAIL_REMETENTE        (e-mail verificado como remetente na Brevo)
+#   AVISOS_SECRET          (qualquer senha longa; protege a função de avisos)
 name: Publicar funções de pagamento
 
 on:
@@ -12,6 +17,9 @@ on:
     paths:
       - "supabase/functions/**"
       - "supabase/config.toml"
+      - "supabase/sql/**"
+      - "supabase/emails/**"
+      - "scripts/configurar-emails.py"
       - ".github/workflows/supabase-funcoes.yml"
       - "ETAPAS.md"
 
@@ -26,6 +34,9 @@ jobs:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       MP_ACCESS_TOKEN: ${{ secrets.MP_ACCESS_TOKEN }}
       MP_WEBHOOK_SECRET: ${{ secrets.MP_WEBHOOK_SECRET }}
+      BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+      EMAIL_REMETENTE: ${{ secrets.EMAIL_REMETENTE }}
+      AVISOS_SECRET: ${{ secrets.AVISOS_SECRET }}
       PROJECT_REF: umnhhztdqersjfrzqcea
       SITE_URL: https://renatogarciagestorp-cpu.github.io/licitaverso/
     steps:
@@ -54,13 +65,34 @@ jobs:
           args="SITE_URL=$SITE_URL"
           [ -n "$MP_ACCESS_TOKEN" ] && args="$args MP_ACCESS_TOKEN=$MP_ACCESS_TOKEN"
           [ -n "$MP_WEBHOOK_SECRET" ] && args="$args MP_WEBHOOK_SECRET=$MP_WEBHOOK_SECRET"
+          [ -n "$BREVO_API_KEY" ] && args="$args BREVO_API_KEY=$BREVO_API_KEY"
+          [ -n "$EMAIL_REMETENTE" ] && args="$args EMAIL_REMETENTE=$EMAIL_REMETENTE"
+          [ -n "$AVISOS_SECRET" ] && args="$args AVISOS_SECRET=$AVISOS_SECRET"
           supabase secrets set --project-ref "$PROJECT_REF" $args
 
-      - name: Publicar mp-checkout e mp-webhook
+      - name: Atualizar o banco (ajustes idempotentes)
+        if: steps.chaves.outputs.ok == 'true'
+        run: |
+          for f in supabase/sql/*.sql; do
+            python3 -c 'import json,sys;print(json.dumps({"query":open(sys.argv[1]).read()}))' "$f" > /tmp/q.json
+            curl -fsS -X POST "https://api.supabase.com/v1/projects/$PROJECT_REF/database/query" \
+              -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" --data @/tmp/q.json >/dev/null
+            echo "aplicado: $f"
+          done
+
+      - name: Configurar e-mails de login (português + SMTP próprio)
+        if: steps.chaves.outputs.ok == 'true'
+        env:
+          SMTP_USER: ${{ secrets.BREVO_SMTP_USER }}
+          SMTP_PASS: ${{ secrets.BREVO_SMTP_KEY }}
+        run: python3 scripts/configurar-emails.py
+
+      - name: Publicar funções (pagamentos e avisos)
         if: steps.chaves.outputs.ok == 'true'
         run: |
           supabase functions deploy mp-checkout --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
           supabase functions deploy mp-webhook --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+          supabase functions deploy avisos --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
 
       - name: Conferir se a função responde
         if: steps.chaves.outputs.ok == 'true'

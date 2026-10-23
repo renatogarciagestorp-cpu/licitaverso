@@ -33,6 +33,11 @@ Aplicação Licitaverso (Checkout Pro). Funções publicadas pelo GitHub Actions
 Publicado no main. Conta do Renato criada e marcada como admin. Credenciais de PRODUÇÃO do Mercado Pago ativas: o site já recebe pagamentos reais.
 Revisão final, juntar no `main` (o GitHub Pages publica sozinho) e trocar para as credenciais de produção.
 
+## E-mails (23/10/2026)
+- Textos de login em português: `supabase/emails/` (aplicados pelo workflow via `scripts/configurar-emails.py`).
+- SMTP próprio pela Brevo: secrets BREVO_SMTP_USER, BREVO_SMTP_KEY, BREVO_API_KEY, EMAIL_REMETENTE (e opcional AVISOS_SECRET).
+- Aviso de fim de plano: função `avisos` + workflow `avisos-diarios.yml` (todo dia 9h17; pagos 7 dias antes, teste 2 dias antes).
+
 ## Depois — domínio próprio
 Registro.br → DNS A 185.199.108.153/109/110/111 e CNAME www → renatogarciagestorp-cpu.github.io → CNAME no repositório → Enforce HTTPS.
 Lembrar de atualizar SITE_URL no Supabase e os endereços de retorno do login.
