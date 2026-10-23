@@ -35,7 +35,9 @@ if user and senha and remetente:
     })
     print("SMTP próprio será configurado.")
 else:
-    print("::warning::BREVO_SMTP_USER, BREVO_SMTP_KEY ou EMAIL_REMETENTE ausentes: aplicando só os textos em português.")
+    # No plano gratuito, o Supabase só aceita textos próprios com SMTP próprio configurado.
+    print("::warning::BREVO_SMTP_USER, BREVO_SMTP_KEY ou EMAIL_REMETENTE ausentes: e-mails de login ficam no padrão do Supabase até cadastrar a Brevo.")
+    sys.exit(0)
 
 req = urllib.request.Request(
     f"https://api.supabase.com/v1/projects/{os.environ['PROJECT_REF']}/config/auth",
