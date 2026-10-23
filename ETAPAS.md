@@ -14,9 +14,9 @@ Os arquivos novos estão no branch `contas-e-pagamentos`; o site no ar (branch `
 - Banco: `supabase/migrations/…_licitaverso_inicial.sql`. Pagamentos: `supabase/functions/mp-checkout` e `mp-webhook`.
 - Testado localmente (banco + funções + navegador): cadastro, teste, pagamento anual, webhook, fórum, consultoria, LGPD, painel.
 
-## Etapa 2 — Supabase (em andamento)
-Projeto criado: https://umnhhztdqersjfrzqcea.supabase.co — `config.js` preenchido em 23/10/2026.
-Falta confirmar: banco aplicado no SQL Editor, URLs de login configuradas, conta admin.
+## Etapa 2 — Supabase (concluída em 23/10/2026)
+Projeto: https://umnhhztdqersjfrzqcea.supabase.co — `config.js` preenchido; banco aplicado no SQL Editor; Site URL e Redirect URLs configuradas.
+Fica para a etapa 4: o Renato cria a conta pelo site publicado e roda `update perfis set admin = true where email = '...';`.
 
 1. Criar conta grátis em supabase.com e um projeto (região São Paulo).
 2. Passar ao Claude: Project URL e a chave pública (anon/publishable). Nunca a chave secreta.
