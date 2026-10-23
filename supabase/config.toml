@@ -1,0 +1,9 @@
+# Configuração usada pela publicação automática (GitHub Actions → Supabase).
+# As duas funções conferem o login por conta própria, por isso o gateway não exige JWT.
+project_id = "licitaverso"
+
+[functions.mp-checkout]
+verify_jwt = false
+
+[functions.mp-webhook]
+verify_jwt = false
