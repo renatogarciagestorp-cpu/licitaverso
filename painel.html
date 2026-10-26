@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>Painel · Licitaverso</title>
+<title>Painel · Licitacon</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -74,7 +74,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--verde);background:#ff
 </head>
 <body>
 <header class="topo"><div class="in">
-  <a class="marca" href="index.html"><span>L</span>Licitaverso · painel</a>
+  <a class="marca" href="index.html"><span>L</span>Licitacon · painel</a>
   <span class="quem" id="quem"></span>
   <button id="sair" hidden>Sair</button>
 </div></header>
@@ -108,7 +108,7 @@ async function iniciar() {
   const { data: s } = await sb.auth.getSession();
   if (!s.session) { centro("<h1>Entre com a sua conta</h1><p class='sub'>O painel é só para a conta administradora.</p><a class='btn verde' style='display:inline-block;text-decoration:none' href='index.html?p=login&volta=painel'>Entrar</a>"); return; }
   const { data: p } = await sb.from("perfis").select("nome, email, admin").eq("id", s.session.user.id).maybeSingle();
-  if (!p || !p.admin) { centro("<h1>Acesso restrito</h1><p class='sub'>Esta área é exclusiva da administração do Licitaverso.</p><a href='index.html'>Voltar ao site</a>"); return; }
+  if (!p || !p.admin) { centro("<h1>Acesso restrito</h1><p class='sub'>Esta área é exclusiva da administração do Licitacon.</p><a href='index.html'>Voltar ao site</a>"); return; }
   eu = p;
   document.getElementById("quem").textContent = p.nome || p.email;
   const sair = document.getElementById("sair"); sair.hidden = false;
@@ -235,7 +235,7 @@ const TELAS = {
       q(sb.from("forum_topicos").select("*").order("ordem")),
       q(sb.from("forum_perguntas").select("*, forum_respostas(*), forum_topicos(nome)").order("criado_em", { ascending: false }).limit(60))
     ]);
-    el.innerHTML = '<h1>Fórum</h1><p class="sub">Suas respostas saem marcadas como “Especialista Licitaverso”. Você também pode escolher a melhor resposta e excluir o que fugir das regras.</p>' +
+    el.innerHTML = '<h1>Fórum</h1><p class="sub">Suas respostas saem marcadas como “Especialista Licitacon”. Você também pode escolher a melhor resposta e excluir o que fugir das regras.</p>' +
       '<div class="caixa"><h2>Perguntas recentes</h2>' + (perguntas.length ? perguntas.map((p) => {
         const resps = (p.forum_respostas || []).sort((a, b) => a.criado_em < b.criado_em ? -1 : 1);
         return '<div class="item"><span class="etq">' + esc(p.forum_topicos && p.forum_topicos.nome) + "</span><h3 style='margin-top:6px'>" + esc(p.titulo) + '</h3><div class="fraco">' + esc(p.autor_nome) + " · " + esc(p.autor_papel) + " · " + dataHora(p.criado_em) + "</div>" +

@@ -1,4 +1,4 @@
-"""Monta biblioteca.html (Biblioteca Jurídica do site) a partir da página do Acervo Licitaverso.
+"""Monta biblioteca.html (Biblioteca Jurídica do site) a partir da página do Acervo Licitacon.
 Uso: python3 scripts/montar-biblioteca.py <acervo-licitaverso.html> [saida=biblioteca.html]
 A página do acervo é usada tal como é; só se acrescentam a barra do site, a conexão com as contas
 (licitaverso-auth.js) e o shim que troca o Claude pelos arquivos estáticos e pela conta da pessoa
@@ -19,7 +19,7 @@ src = troca(src, '<button class="primary" type="button" id="dosMin">Gerar minuta
             '${S.sample?`<button class="primary" type="button" id="dosMin">Gerar minuta</button>`:""}')
 src = troca(src, '$("dosMin").onclick=()=>abrirMinuta(false);', 'if($("dosMin"))$("dosMin").onclick=()=>abrirMinuta(false);')
 src = troca(src, '${pc?" (computador desligado ou app fechado?)":""}', '')
-src = troca(src, '<title>Acervo Licitaverso</title>', '<title>Biblioteca Jurídica — Licitaverso</title>')
+src = troca(src, '<title>Acervo Licitacon</title>', '<title>Biblioteca Jurídica — Licitacon</title>')
 
 barra = """<style>
 .lvbar{background:#0A1F2A;color:#fff;font-family:"IBM Plex Sans",-apple-system,sans-serif}
@@ -36,7 +36,7 @@ barra = """<style>
 @media (max-width:720px){.lvbar nav{order:3;flex-basis:100%}}
 </style>
 <div class="lvbar"><div class="in">
-<a class="marca" href="index.html"><span>L</span>Licitaverso</a>
+<a class="marca" href="index.html"><span>L</span>Licitacon</a>
 <nav aria-label="Site">
 <a href="biblioteca.html" aria-current="page">Biblioteca Jurídica</a>
 <a href="index.html?p=forum">Fórum</a><a href="index.html?p=cursos">Cursos</a><a href="index.html?p=consultoria">Consultoria</a>

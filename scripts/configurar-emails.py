@@ -29,7 +29,7 @@ if user and senha and remetente:
         "smtp_host": os.environ.get("SMTP_HOST", "smtp-relay.brevo.com"),
         "smtp_port": os.environ.get("SMTP_PORT", "587"),
         "smtp_user": user, "smtp_pass": senha,
-        "smtp_admin_email": remetente, "smtp_sender_name": "Licitaverso",
+        "smtp_admin_email": remetente, "smtp_sender_name": "Licitacon",
         "smtp_max_frequency": 30,
         "rate_limit_email_sent": 100,
     })

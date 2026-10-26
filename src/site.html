@@ -9,7 +9,7 @@
 <x-dc>
 <helmet>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Licitaverso — Ecossistema de licitações e contratos</title>
+<title>Licitacon — Tudo sobre licitações. Em um só lugar.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <style>/* cyrillic-ext */
@@ -408,9 +408,9 @@
 
   <header style="position: sticky; top: 0; z-index: 40; background: rgba(10,31,42,0.97); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.09)">
     <div style="max-width: 1240px; margin: 0 auto; padding: 0 24px; height: 68px; display: flex; align-items: center; gap: 28px">
-      <button sc-camel-on-click="{{ goHome }}" aria-label="Licitaverso — página inicial" style="display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 0; cursor: pointer">
+      <button sc-camel-on-click="{{ goHome }}" aria-label="Licitacon — página inicial" style="display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 0; cursor: pointer">
         <span style="width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(150deg, #0FA36B, #0F6B7E); display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 15px">L</span>
-        <span style="color: #fff; font-weight: 800; font-size: 18px; letter-spacing: -0.02em">Licitaverso</span>
+        <span style="color: #fff; font-weight: 800; font-size: 18px; letter-spacing: -0.02em">Licitacon</span>
       </button>
       <nav aria-label="Navegação principal" style="display: flex; align-items: center; gap: 2px; margin-left: 8px; flex-wrap: wrap">
         <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="7">
@@ -454,7 +454,7 @@
       <section style="background: linear-gradient(168deg, #17414F 0%, #103241 55%, #0D2937 100%); padding: 64px 20px 96px; min-height: calc(100vh - 68px)">
         <div style="max-width: 480px; margin: 0 auto">
           <div style="background: #fff; border-radius: 22px; box-shadow: 0 30px 70px rgba(2,9,13,0.45); padding: 34px 32px 30px">
-            <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: #0A7A50; background: #E7F7EF; padding: 6px 11px; border-radius: 999px">Licitaverso</span>
+            <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: #0A7A50; background: #E7F7EF; padding: 6px 11px; border-radius: 999px">Licitacon</span>
             <h1 style="margin: 16px 0 0; font-size: 28px; line-height: 1.15; letter-spacing: -0.03em; font-weight: 800; color: #0B1F2A">{{ authTitulo }}</h1>
             <p style="margin: 10px 0 0; font-size: 14.5px; line-height: 1.6; color: #55666D">{{ authSub }}</p>
             <sc-if value="{{ voltaTexto }}" hint-placeholder-val="{{ false }}">
@@ -535,7 +535,7 @@
         <div style="max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 56px; align-items: center">
           <div>
             <span style="display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(15,163,107,0.45); background: rgba(15,163,107,0.12); color: #7FE3B6; font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 7px 12px; border-radius: 999px">Base atualizada semanalmente</span>
-            <h1 style="font-size: 58px; line-height: 1.04; letter-spacing: -0.035em; font-weight: 800; margin: 22px 0 0; text-wrap: balance">Todo o universo das licitações em um só lugar.</h1>
+            <h1 style="font-size: 58px; line-height: 1.04; letter-spacing: -0.035em; font-weight: 800; margin: 22px 0 0; text-wrap: balance">Tudo sobre licitações. Em um só lugar.</h1>
             <p style="font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; line-height: 1.55; color: #BCCDD4; margin: 22px 0 0; max-width: 560px; text-wrap: pretty">Jurisprudência confiável, comunidade organizada por tema, capacitação acessível e consultoria técnica especializada — para quem trabalha com licitações e contratos administrativos, dos dois lados do balcão.</p>
             <div style="display: flex; gap: 12px; margin-top: 34px; flex-wrap: wrap">
               <button sc-camel-on-click="{{ goBiblioteca }}" style="background: #0FA36B; color: #06251A; border: 0; padding: 15px 24px; border-radius: 12px; font-size: 15.5px; font-weight: 700; cursor: pointer; box-shadow: 0 10px 26px rgba(15,163,107,0.3)" style-hover="background: #14B978">Pesquisar jurisprudência</button>
@@ -771,7 +771,7 @@
       <section style="background: #0A1F2A; color: #fff; padding: 48px 24px 32px">
         <div style="max-width: 1240px; margin: 0 auto">
           <h1 style="font-size: 40px; letter-spacing: -0.03em; font-weight: 800; margin: 0">Fórum da Comunidade</h1>
-          <p style="font-size: 16.5px; color: #A9BEC6; margin: 10px 0 0; max-width: 680px">Organizado por tema, não por ordem cronológica. Escolha o tema, publique sua pergunta e receba respostas de quem trabalha com licitações dos dois lados do balcão — e do especialista do Licitaverso.</p>
+          <p style="font-size: 16.5px; color: #A9BEC6; margin: 10px 0 0; max-width: 680px">Organizado por tema, não por ordem cronológica. Escolha o tema, publique sua pergunta e receba respostas de quem trabalha com licitações dos dois lados do balcão — e do especialista do Licitacon.</p>
         </div>
       </section>
       <div style="max-width: 1240px; margin: 0 auto; padding: 28px 24px 80px; display: grid; grid-template-columns: 300px 1fr; gap: 28px; align-items: start">
@@ -872,7 +872,7 @@
                           <span style="font-size: 11.5px; font-weight: 800; background: #0FA36B; color: #06251A; padding: 4px 9px; border-radius: 999px">✓ Melhor resposta</span>
                         </sc-if>
                         <sc-if value="{{ rp.oficial }}" hint-placeholder-val="{{ false }}">
-                          <span style="font-size: 11.5px; font-weight: 800; background: #0A1F2A; color: #7FE3B6; padding: 4px 9px; border-radius: 999px">Especialista Licitaverso</span>
+                          <span style="font-size: 11.5px; font-weight: 800; background: #0A1F2A; color: #7FE3B6; padding: 4px 9px; border-radius: 999px">Especialista Licitacon</span>
                         </sc-if>
                         <span style="flex: 1"></span>
                         <sc-if value="{{ rp.podeMarcar }}" hint-placeholder-val="{{ false }}">
@@ -928,7 +928,7 @@
       <section style="background: #0A1F2A; color: #fff; padding: 48px 24px 32px">
         <div style="max-width: 1240px; margin: 0 auto">
           <h1 style="font-size: 40px; letter-spacing: -0.03em; font-weight: 800; margin: 0">Cursos</h1>
-          <p style="font-size: 16.5px; color: #A9BEC6; margin: 10px 0 0; max-width: 680px">Nesta primeira fase, todos os cursos são ministrados por Renato Garcia. As aulas ficam na plataforma do instrutor; a curadoria e as avaliações são da comunidade Licitaverso — e a estrutura já está pronta para receber outros instrutores parceiros.</p>
+          <p style="font-size: 16.5px; color: #A9BEC6; margin: 10px 0 0; max-width: 680px">Nesta primeira fase, todos os cursos são ministrados por Renato Garcia. As aulas ficam na plataforma do instrutor; a curadoria e as avaliações são da comunidade Licitacon — e a estrutura já está pronta para receber outros instrutores parceiros.</p>
         </div>
       </section>
       <section style="max-width: 1240px; margin: 0 auto; padding: 30px 24px 0">
@@ -1440,7 +1440,7 @@
                 </sc-for>
               </div>
               <p style="margin: 20px 0 0; font-size: 13.5px; font-weight: 700; color: #0A7A50">{{ lgpdMsg }}</p>
-              <p style="margin: 18px 0 0; font-size: 13px; line-height: 1.6; color: #7A8B91; border-top: 1px solid #EDF1F0; padding-top: 16px">Cookies: preferência atual <strong style="color: #3D5058">{{ cookiesEstado }}</strong>. Encarregado de dados (DPO): dpo@licitaverso.com.br.</p>
+              <p style="margin: 18px 0 0; font-size: 13px; line-height: 1.6; color: #7A8B91; border-top: 1px solid #EDF1F0; padding-top: 16px">Cookies: preferência atual <strong style="color: #3D5058">{{ cookiesEstado }}</strong>. Encarregado de dados (DPO): dpo@licitacon.com.br.</p>
             </section>
           </sc-if>
 
@@ -1464,7 +1464,7 @@
           <sc-for list="{{ institTabs }}" as="t" hint-placeholder-count="6">
             <button sc-camel-on-click="{{ t.abrir }}" aria-current="{{ t.ativo }}" style="text-align: left; border: 0; border-radius: 11px; padding: 11px 13px; font-size: 14.5px; font-weight: 700; cursor: pointer; background: {{ t.bg }}; color: {{ t.cor }}" style-hover="background: #F1F6F5">{{ t.label }}</button>
           </sc-for>
-          <p style="font-size: 12.5px; line-height: 1.55; color: #7A8B91; margin: 12px 4px 4px; border-top: 1px solid #EDF1F0; padding-top: 12px">Documentos redigidos em linguagem clara. Dúvidas sobre qualquer cláusula: dpo@licitaverso.com.br.</p>
+          <p style="font-size: 12.5px; line-height: 1.55; color: #7A8B91; margin: 12px 4px 4px; border-top: 1px solid #EDF1F0; padding-top: 12px">Documentos redigidos em linguagem clara. Dúvidas sobre qualquer cláusula: dpo@licitacon.com.br.</p>
         </aside>
 
         <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 32px 36px; max-width: 820px">
@@ -1530,9 +1530,9 @@
         <div>
           <div style="display: flex; align-items: center; gap: 10px">
             <span style="width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(150deg, #0FA36B, #0F6B7E); display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 14px">L</span>
-            <span style="color: #fff; font-weight: 800; font-size: 17px">Licitaverso</span>
+            <span style="color: #fff; font-weight: 800; font-size: 17px">Licitacon</span>
           </div>
-          <p style="font-size: 14px; line-height: 1.6; margin: 14px 0 0">O ecossistema digital de referência para o universo das licitações públicas no Brasil.</p>
+          <p style="font-size: 14px; line-height: 1.6; margin: 14px 0 0">Tudo sobre licitações. Em um só lugar.</p>
           <div style="display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap">
             <span style="font-size: 11.5px; font-weight: 700; color: #7FE3B6; border: 1px solid rgba(127,227,182,0.35); border-radius: 999px; padding: 6px 11px">Conforme LGPD</span>
             <span style="font-size: 11.5px; font-weight: 700; color: #7FE3B6; border: 1px solid rgba(127,227,182,0.35); border-radius: 999px; padding: 6px 11px">WCAG 2.1 AA · eMAG</span>
@@ -1560,9 +1560,9 @@
         </div>
       </div>
       <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 44px; padding-top: 20px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center">
-        <span style="font-size: 13px">© 2026 Licitaverso. Todos os direitos reservados.</span>
+        <span style="font-size: 13px">© 2026 Licitacon. Todos os direitos reservados.</span>
         <span style="flex: 1"></span>
-        <span style="font-size: 13px">Encarregado de dados (DPO): dpo@licitaverso.com.br</span>
+        <span style="font-size: 13px">Encarregado de dados (DPO): dpo@licitacon.com.br</span>
       </div>
     </div>
   </footer>
@@ -1691,7 +1691,7 @@
             <sc-if value="{{ pagamentoErro }}" hint-placeholder-val="{{ false }}">
               <p role="alert" style="margin: 8px 0 0; font-size: 13px; font-weight: 700; color: #8A1230; line-height: 1.5">{{ pagamentoErro }}</p>
             </sc-if>
-            <p style="margin-top: auto; padding-top: 18px; font-size: 12px; color: #7A8B91; line-height: 1.55">Pagamento concluído no ambiente seguro do Mercado Pago, com antifraude. O Licitaverso não recebe nem armazena dados de cartão.</p>
+            <p style="margin-top: auto; padding-top: 18px; font-size: 12px; color: #7A8B91; line-height: 1.55">Pagamento concluído no ambiente seguro do Mercado Pago, com antifraude. O Licitacon não recebe nem armazena dados de cartão.</p>
           </div>
         </div>
       </div>
@@ -1960,7 +1960,7 @@ function contagem(lista) {
 function corpoDe(d) {
   const blocos = [
     { titulo: d.tipo === "Súmula" ? "Enunciado oficial" : "Ementa oficial", texto: d.ementa },
-    { titulo: "Nota editorial Licitaverso", texto: d.nota }
+    { titulo: "Nota editorial Licitacon", texto: d.nota }
   ];
   if (!d.verificado) {
     blocos.push({ titulo: "Aviso de curadoria", texto: "Este registro está em conferência editorial. Confirme o teor no link da fonte oficial antes de citá-lo em instrução processual." });
@@ -1978,11 +1978,11 @@ const RISCOS = {
 const INSTITUCIONAL = {
   sobre: {
     label: "Sobre nós",
-    titulo: "Sobre o Licitaverso",
+    titulo: "Sobre o Licitacon",
     intro: "Um ecossistema digital dedicado a quem trabalha com licitações e contratos administrativos no Brasil — dos dois lados do balcão.",
     vigencia: "Página institucional · atualizada em agosto de 2026",
     blocos: [
-      { titulo: "Por que existimos", texto: "Profissionais de licitações trabalham hoje com informação dispersa: jurisprudência espalhada por dezenas de portais oficiais com padrões diferentes, dúvidas técnicas resolvidas em grupos de mensagem desorganizados, capacitação caríssima e consultoria difícil de encontrar com credibilidade verificável. O custo desse improviso não é pequeno: instrução processual frágil, apontamento do controle interno e externo, contratação anulada e, no limite, dano ao erário. O Licitaverso reúne em um único ambiente profissional as ferramentas que hoje precisam ser buscadas separadamente.", itens: [] },
+      { titulo: "Por que existimos", texto: "Profissionais de licitações trabalham hoje com informação dispersa: jurisprudência espalhada por dezenas de portais oficiais com padrões diferentes, dúvidas técnicas resolvidas em grupos de mensagem desorganizados, capacitação caríssima e consultoria difícil de encontrar com credibilidade verificável. O custo desse improviso não é pequeno: instrução processual frágil, apontamento do controle interno e externo, contratação anulada e, no limite, dano ao erário. O Licitacon reúne em um único ambiente profissional as ferramentas que hoje precisam ser buscadas separadamente.", itens: [] },
       { titulo: "Missão", texto: "Democratizar o acesso a informação jurídica confiável, capacitação de qualidade e inteligência artificial especializada para profissionais de licitações e contratos públicos e privados no Brasil.", itens: [] },
       { titulo: "Visão", texto: "Ser o principal ecossistema digital de referência para o universo das licitações públicas no Brasil.", itens: [] },
       { titulo: "Valores", texto: "Nossos valores não são declarações de parede: cada um deles corresponde a uma decisão concreta de produto.", itens: [
@@ -1993,20 +1993,20 @@ const INSTITUCIONAL = {
         "Ética e integridade na gestão pública — recusamos qualquer uso da plataforma para burlar controles ou fabricar fundamentação."
       ] },
       { titulo: "Como a base é construída", texto: "A Biblioteca Jurídica é alimentada por um ciclo semanal automatizado que consome APIs oficiais de dados abertos (como as do Tribunal de Contas da União) e conectores dedicados para órgãos sem interface de dados estruturada, sempre respeitando os termos de uso de cada portal e a Lei de Acesso à Informação (Lei nº 12.527/2011) como fundamento do uso de informação pública. Um classificador de linguagem natural organiza os documentos por tema, e todo item marcado como de baixa confiança pelo robô passa por curadoria editorial humana antes de ser publicado.", itens: [] },
-      { titulo: "Limites do que oferecemos", texto: "O Licitaverso é uma plataforma de informação, comunidade, capacitação e consultoria técnica. Não somos escritório de advocacia e não prestamos consultoria jurídica nem emitimos parecer jurídico. Conteúdo da Biblioteca, respostas do fórum e análises geradas por inteligência artificial são material de apoio à decisão — a responsabilidade pelo ato administrativo ou pela decisão empresarial permanece integralmente com o profissional e o órgão ou empresa a que ele se vincula.", itens: [] },
-      { titulo: "Quem somos", texto: "Licitaverso Tecnologia e Informação Ltda. · CNPJ 00.000.000/0001-00 · sede em Brasília/DF. Contato institucional: contato@licitaverso.com.br. Encarregado de proteção de dados (DPO): dpo@licitaverso.com.br.", itens: [] }
+      { titulo: "Limites do que oferecemos", texto: "O Licitacon é uma plataforma de informação, comunidade, capacitação e consultoria técnica. Não somos escritório de advocacia e não prestamos consultoria jurídica nem emitimos parecer jurídico. Conteúdo da Biblioteca, respostas do fórum e análises geradas por inteligência artificial são material de apoio à decisão — a responsabilidade pelo ato administrativo ou pela decisão empresarial permanece integralmente com o profissional e o órgão ou empresa a que ele se vincula.", itens: [] },
+      { titulo: "Quem somos", texto: "Licitacon Tecnologia e Informação Ltda. · CNPJ 00.000.000/0001-00 · sede em Brasília/DF. Contato institucional: contato@licitacon.com.br. Encarregado de proteção de dados (DPO): dpo@licitacon.com.br.", itens: [] }
     ]
   },
   termos: {
     label: "Termos de Uso",
     titulo: "Termos de Uso",
-    intro: "As regras do contrato entre você e o Licitaverso, escritas para serem lidas — sem parágrafos indecifráveis.",
+    intro: "As regras do contrato entre você e o Licitacon, escritas para serem lidas — sem parágrafos indecifráveis.",
     vigencia: "Versão 1.0 · vigente desde 1º de agosto de 2026",
     blocos: [
-      { titulo: "1. Aceitação e capacidade", texto: "Ao criar uma conta ou usar a plataforma, você declara ter pelo menos 18 anos, ter capacidade civil e concordar com estes Termos e com a Política de Privacidade. Se você usa o Licitaverso em nome de um órgão público ou de uma empresa, declara ter autorização para isso.", itens: [] },
-      { titulo: "2. O que a plataforma é — e o que não é", texto: "O Licitaverso oferece: (a) busca em base de jurisprudência, normas e pareceres de fontes oficiais; (b) fórum de comunidade profissional; (c) vitrine de cursos de instrutores parceiros, hospedados fora da plataforma; (d) intermediação de consultoria técnica e administrativa com especialistas cadastrados; (e) futuramente, agente de inteligência artificial de análise de procedimentos. Nada disso constitui consultoria jurídica, parecer jurídico, representação processual ou garantia de resultado em processo administrativo ou judicial.", itens: [] },
+      { titulo: "1. Aceitação e capacidade", texto: "Ao criar uma conta ou usar a plataforma, você declara ter pelo menos 18 anos, ter capacidade civil e concordar com estes Termos e com a Política de Privacidade. Se você usa o Licitacon em nome de um órgão público ou de uma empresa, declara ter autorização para isso.", itens: [] },
+      { titulo: "2. O que a plataforma é — e o que não é", texto: "O Licitacon oferece: (a) busca em base de jurisprudência, normas e pareceres de fontes oficiais; (b) fórum de comunidade profissional; (c) vitrine de cursos de instrutores parceiros, hospedados fora da plataforma; (d) intermediação de consultoria técnica e administrativa com especialistas cadastrados; (e) futuramente, agente de inteligência artificial de análise de procedimentos. Nada disso constitui consultoria jurídica, parecer jurídico, representação processual ou garantia de resultado em processo administrativo ou judicial.", itens: [] },
       { titulo: "3. Cadastro, conta e segurança", texto: "Você é responsável pela veracidade dos dados informados e pela guarda das suas credenciais. Contas são pessoais e intransferíveis: o compartilhamento de login com terceiros é motivo de suspensão. Recomendamos ativar a autenticação em dois fatores. Comunique imediatamente qualquer uso não autorizado.", itens: [] },
-      { titulo: "4. Planos, cobrança e cancelamento", texto: "A Biblioteca Jurídica tem camada de acesso gratuito permanente. Os planos pagos são cobrados por meio do Mercado Pago Ltda., nosso processador de pagamentos, em ambiente PCI-DSS: o Licitaverso não recebe nem armazena o número completo do seu cartão. As formas de pagamento e o próprio regime de renovação variam conforme quem contrata — pessoa física, empresa privada ou órgão da administração pública:", itens: [
+      { titulo: "4. Planos, cobrança e cancelamento", texto: "A Biblioteca Jurídica tem camada de acesso gratuito permanente. Os planos pagos são cobrados por meio do Mercado Pago Ltda., nosso processador de pagamentos, em ambiente PCI-DSS: o Licitacon não recebe nem armazena o número completo do seu cartão. As formas de pagamento e o próprio regime de renovação variam conforme quem contrata — pessoa física, empresa privada ou órgão da administração pública:", itens: [
         "Duas formas de contratar: por 1 mês, sem compromisso de renovação; ou por 12 meses, com mensalidade menor e acesso contínuo durante todo o período, à vista ou em até 12x sem juros — o total é o mesmo nas duas hipóteses de parcelamento.",
         "Pessoa física (CPF): Pix, cartão de crédito, débito ou saldo Mercado Pago e boleto. No ciclo de 12 meses parcelado em Pix ou boleto, cada parcela é uma cobrança mensal do mesmo valor, sem juros.",
         "Empresa privada (CNPJ): Pix e cartão corporativo com recorrência, boleto registrado com NFS-e anexa e, para volumes maiores ou exigência de pedido de compra, faturamento mensal fora do checkout.",
@@ -2017,9 +2017,9 @@ const INSTITUCIONAL = {
         "Reajustes de preço são comunicados com no mínimo 30 dias de antecedência e nunca retroagem ao ciclo vigente."
       ] },
       { titulo: "5. Conduta no fórum", texto: "O fórum é um ambiente profissional. É proibido publicar dados pessoais de terceiros, informação sigilosa, documento sob restrição de acesso, conteúdo ofensivo, discriminatório, publicidade não autorizada ou qualquer pedido de auxílio para fraudar procedimento licitatório. Moderadores podem editar a classificação de tópicos, mesclar conversas, remover conteúdo e suspender contas reincidentes. Você mantém a titularidade do que escreve e nos concede licença não exclusiva para exibir esse conteúdo na plataforma.", itens: [] },
-      { titulo: "6. Cursos e consultoria de parceiros", texto: "Cursos são ministrados e hospedados por instrutores parceiros: a relação de consumo do curso é entre você e o instrutor, e o Licitaverso atua como vitrine e canal de divulgação, podendo receber comissão pela indicação. Na consultoria, o escopo, o prazo (SLA) e o preço são acordados antes do pagamento, com repasse automático ao especialista. As três modalidades estão incluídas no plano Pro, sem custo por atendimento; assinantes Básico têm 10% de desconto e assinantes Premium 15% de desconto sobre o valor de cada modalidade, aplicado automaticamente no checkout. Serviços de natureza jurídica, quando houver, são prestados exclusivamente por profissionais inscritos na OAB, identificados como tal no perfil.", itens: [] },
-      { titulo: "7. Inteligência artificial e revisão humana", texto: "As análises do agente de IA são minutas de apoio, geradas a partir da base curada da plataforma e sempre acompanhadas da fonte citada. A revisão por profissional humano é obrigatória antes de qualquer decisão administrativa ou contratual. O Licitaverso não responde por decisão tomada com base exclusiva em saída de IA sem revisão.", itens: [] },
-      { titulo: "8. Propriedade intelectual", texto: "Textos normativos, acórdãos, súmulas e pareceres são documentos públicos e não nos pertencem. Já a organização da base, a taxonomia de temas, as notas editoriais, a marca, o software e o design da plataforma são protegidos. É vedada a extração automatizada em massa (scraping, mirroring ou revenda) do conteúdo do Licitaverso sem autorização escrita.", itens: [] },
+      { titulo: "6. Cursos e consultoria de parceiros", texto: "Cursos são ministrados e hospedados por instrutores parceiros: a relação de consumo do curso é entre você e o instrutor, e o Licitacon atua como vitrine e canal de divulgação, podendo receber comissão pela indicação. Na consultoria, o escopo, o prazo (SLA) e o preço são acordados antes do pagamento, com repasse automático ao especialista. As três modalidades estão incluídas no plano Pro, sem custo por atendimento; assinantes Básico têm 10% de desconto e assinantes Premium 15% de desconto sobre o valor de cada modalidade, aplicado automaticamente no checkout. Serviços de natureza jurídica, quando houver, são prestados exclusivamente por profissionais inscritos na OAB, identificados como tal no perfil.", itens: [] },
+      { titulo: "7. Inteligência artificial e revisão humana", texto: "As análises do agente de IA são minutas de apoio, geradas a partir da base curada da plataforma e sempre acompanhadas da fonte citada. A revisão por profissional humano é obrigatória antes de qualquer decisão administrativa ou contratual. O Licitacon não responde por decisão tomada com base exclusiva em saída de IA sem revisão.", itens: [] },
+      { titulo: "8. Propriedade intelectual", texto: "Textos normativos, acórdãos, súmulas e pareceres são documentos públicos e não nos pertencem. Já a organização da base, a taxonomia de temas, as notas editoriais, a marca, o software e o design da plataforma são protegidos. É vedada a extração automatizada em massa (scraping, mirroring ou revenda) do conteúdo do Licitacon sem autorização escrita.", itens: [] },
       { titulo: "9. Disponibilidade e limitação de responsabilidade", texto: "Trabalhamos com meta de disponibilidade de 99,5% e backups diários, mas não garantimos operação ininterrupta nem ausência de erro em documento coletado de fonte oficial. Nossa responsabilidade, nos limites da lei aplicável, fica restrita ao valor pago por você nos 12 meses anteriores ao evento. Nada aqui afasta direitos do consumidor previstos em lei.", itens: [] },
       { titulo: "10. Alterações, encerramento e foro", texto: "Mudanças relevantes nestes Termos são avisadas por e-mail e na plataforma com 30 dias de antecedência; o uso continuado após esse prazo significa aceitação. Você pode encerrar a conta quando quiser. Aplica-se a lei brasileira, com foro do domicílio do consumidor, e buscamos resolver conflitos primeiro por canal direto ou plataformas de mediação antes de qualquer medida judicial.", itens: [] }
     ]
@@ -2028,7 +2028,7 @@ const INSTITUCIONAL = {
     label: "Política de Privacidade",
     titulo: "Política de Privacidade",
     intro: "Como coletamos, usamos, protegemos e devolvemos seus dados pessoais — em conformidade com a LGPD e alinhada aos princípios do GDPR europeu.",
-    vigencia: "Versão 1.0 · vigente desde 1º de agosto de 2026 · Controlador: Licitaverso Tecnologia e Informação Ltda.",
+    vigencia: "Versão 1.0 · vigente desde 1º de agosto de 2026 · Controlador: Licitacon Tecnologia e Informação Ltda.",
     blocos: [
       { titulo: "1. Princípios que seguimos", texto: "Tratamos dados pessoais conforme a Lei nº 13.709/2018 (LGPD) e, para usuários no Espaço Econômico Europeu, conforme o Regulamento (UE) 2016/679 (GDPR): finalidade específica, necessidade e minimização, transparência, segurança, prevenção, não discriminação e responsabilização. Só pedimos o dado que a função exige e mantemos apenas pelo tempo necessário.", itens: [] },
       { titulo: "2. Dados que coletamos e por quê", texto: "A coleta é organizada por finalidade, cada uma com sua base legal:", itens: [
@@ -2056,7 +2056,7 @@ const INSTITUCIONAL = {
       ] },
       { titulo: "8. Segurança", texto: "Criptografia em trânsito (TLS) e em repouso, controle de acesso por perfil com privilégio mínimo, autenticação em dois fatores disponível, registro de acessos a dados sensíveis, backups diários com teste periódico de restauração, ambiente de homologação separado da produção e avaliação de risco antes de lançar funcionalidade que trate dado novo. Em caso de incidente com risco relevante, comunicamos os titulares afetados e a ANPD em prazo razoável, com descrição do ocorrido e das medidas adotadas.", itens: [] },
       { titulo: "9. Menores de idade", texto: "A plataforma é destinada a profissionais e não coleta intencionalmente dados de menores de 18 anos. Identificado esse caso, a conta é encerrada e os dados eliminados.", itens: [] },
-      { titulo: "10. Contato e mudanças", texto: "Encarregado de proteção de dados (DPO): dpo@licitaverso.com.br. Alterações materiais nesta política são comunicadas por e-mail e na plataforma com 30 dias de antecedência, e o histórico de versões fica disponível para consulta.", itens: [] }
+      { titulo: "10. Contato e mudanças", texto: "Encarregado de proteção de dados (DPO): dpo@licitacon.com.br. Alterações materiais nesta política são comunicadas por e-mail e na plataforma com 30 dias de antecedência, e o histórico de versões fica disponível para consulta.", itens: [] }
     ]
   },
   cookies: {
@@ -2085,15 +2085,15 @@ const INSTITUCIONAL = {
     vigencia: "Atendimento em dias úteis, das 9h às 18h (horário de Brasília)",
     blocos: [
       { titulo: "Canais por assunto", texto: "Cada tema tem um endereço próprio para não haver mensagem perdida em caixa genérica:", itens: [
-        "Suporte à conta e assinatura: suporte@licitaverso.com.br — resposta em até 1 dia útil (prioritária para assinantes Pro).",
-        "Privacidade e direitos de titular de dados: dpo@licitaverso.com.br — prazo legal de até 15 dias, normalmente muito menos.",
-        "Acessibilidade e barreiras de uso: acessibilidade@licitaverso.com.br — resposta em até 5 dias úteis, com plano de correção.",
-        "Correção de conteúdo da Biblioteca Jurídica: curadoria@licitaverso.com.br — informe o número do documento; erros de classificação são corrigidos em até 3 dias úteis.",
-        "Parcerias, cursos e consultoria: parcerias@licitaverso.com.br.",
-        "Imprensa e institucional: contato@licitaverso.com.br."
+        "Suporte à conta e assinatura: suporte@licitacon.com.br — resposta em até 1 dia útil (prioritária para assinantes Pro).",
+        "Privacidade e direitos de titular de dados: dpo@licitacon.com.br — prazo legal de até 15 dias, normalmente muito menos.",
+        "Acessibilidade e barreiras de uso: acessibilidade@licitacon.com.br — resposta em até 5 dias úteis, com plano de correção.",
+        "Correção de conteúdo da Biblioteca Jurídica: curadoria@licitacon.com.br — informe o número do documento; erros de classificação são corrigidos em até 3 dias úteis.",
+        "Parcerias, cursos e consultoria: parcerias@licitacon.com.br.",
+        "Imprensa e institucional: contato@licitacon.com.br."
       ] },
-      { titulo: "Denúncias e moderação", texto: "Conteúdo impróprio no fórum pode ser denunciado pelo botão em cada mensagem — o caminho mais rápido, porque já leva o contexto do tópico. Denúncias de conduta grave, uso indevido de dados pessoais de terceiros ou tentativa de burlar procedimento licitatório podem ser enviadas a integridade@licitaverso.com.br, com apuração confidencial.", itens: [] },
-      { titulo: "Endereço", texto: "Licitaverso Tecnologia e Informação Ltda. · CNPJ 00.000.000/0001-00 · SCS Quadra 1, Brasília/DF, CEP 70300-000. Não temos atendimento presencial: todo o suporte é digital, para manter o custo da assinatura baixo.", itens: [] }
+      { titulo: "Denúncias e moderação", texto: "Conteúdo impróprio no fórum pode ser denunciado pelo botão em cada mensagem — o caminho mais rápido, porque já leva o contexto do tópico. Denúncias de conduta grave, uso indevido de dados pessoais de terceiros ou tentativa de burlar procedimento licitatório podem ser enviadas a integridade@licitacon.com.br, com apuração confidencial.", itens: [] },
+      { titulo: "Endereço", texto: "Licitacon Tecnologia e Informação Ltda. · CNPJ 00.000.000/0001-00 · SCS Quadra 1, Brasília/DF, CEP 70300-000. Não temos atendimento presencial: todo o suporte é digital, para manter o custo da assinatura baixo.", itens: [] }
     ]
   },
   acessibilidade: {
@@ -2102,7 +2102,7 @@ const INSTITUCIONAL = {
     intro: "Nosso compromisso, o padrão que seguimos, o que já está pronto, o que ainda não está — e como cobrar de nós.",
     vigencia: "Última avaliação: agosto de 2026 · próxima revisão: fevereiro de 2027",
     blocos: [
-      { titulo: "1. Compromisso e padrão adotado", texto: "Acessibilidade é valor declarado do Licitaverso, não item de conformidade. Buscamos atender integralmente às WCAG 2.1 no nível AA e, por atender profissionais da administração pública, seguimos também o eMAG (Modelo de Acessibilidade em Governo Eletrônico), padrão brasileiro para ambientes digitais ligados ao governo. Onde as WCAG 2.2 acrescentam critérios relevantes — como alvos de toque maiores e ajuda consistente — já os aplicamos.", itens: [] },
+      { titulo: "1. Compromisso e padrão adotado", texto: "Acessibilidade é valor declarado do Licitacon, não item de conformidade. Buscamos atender integralmente às WCAG 2.1 no nível AA e, por atender profissionais da administração pública, seguimos também o eMAG (Modelo de Acessibilidade em Governo Eletrônico), padrão brasileiro para ambientes digitais ligados ao governo. Onde as WCAG 2.2 acrescentam critérios relevantes — como alvos de toque maiores e ajuda consistente — já os aplicamos.", itens: [] },
       { titulo: "2. Estado atual de conformidade", texto: "Declaramos conformidade parcial com WCAG 2.1 AA: a plataforma atende aos critérios do nível AA nas telas principais, com as exceções listadas no item 4.", itens: [] },
       { titulo: "3. O que já está implementado", texto: "Medidas presentes em toda a plataforma:", itens: [
         "Contraste mínimo de 4,5:1 para texto corrido e 3:1 para texto grande e componentes de interface.",
@@ -2122,7 +2122,7 @@ const INSTITUCIONAL = {
         "Tabelas comparativas muito largas exigem rolagem horizontal em telas pequenas; uma visão alternativa em lista está em desenvolvimento."
       ] },
       { titulo: "5. Como avaliamos", texto: "Cada entrega passa por verificação automatizada (axe e Lighthouse) no fluxo de publicação, revisão manual de teclado e contraste, e teste periódico com leitor de tela. Auditoria externa independente com participação de pessoas com deficiência está programada com periodicidade anual.", itens: [] },
-      { titulo: "6. Encontrou uma barreira? Cobre de nós", texto: "Escreva para acessibilidade@licitaverso.com.br descrevendo a página, o que você tentou fazer e a tecnologia assistiva usada. Confirmamos o recebimento em até 2 dias úteis e retornamos com diagnóstico e prazo de correção em até 5 dias úteis. Barreiras que impedem completamente o uso de uma função essencial são tratadas como incidente crítico, com correção prioritária. Se a resposta não resolver, você pode recorrer à ANPD, ao Ministério Público ou aos órgãos de defesa dos direitos da pessoa com deficiência.", itens: [] }
+      { titulo: "6. Encontrou uma barreira? Cobre de nós", texto: "Escreva para acessibilidade@licitacon.com.br descrevendo a página, o que você tentou fazer e a tecnologia assistiva usada. Confirmamos o recebimento em até 2 dias úteis e retornamos com diagnóstico e prazo de correção em até 5 dias úteis. Barreiras que impedem completamente o uso de uma função essencial são tratadas como incidente crítico, com correção prioritária. Se a resposta não resolver, você pode recorrer à ANPD, ao Ministério Público ou aos órgãos de defesa dos direitos da pessoa com deficiência.", itens: [] }
     ]
   }
 };
@@ -2222,7 +2222,7 @@ const COMPRADORES = {
       { id: "pix", sigla: "PIX", nome: "Pix", desc: "Aprovação em segundos, sem taxa para você. O QR Code aparece no checkout do Mercado Pago.", prazo: "Confirmação imediata", checkout: true,
         passos: ["Pague com o QR Code ou o código copia e cola no checkout do Mercado Pago.", "A confirmação libera o acesso em instantes, sem precisar enviar comprovante."] },
       { id: "cartao", sigla: "CC", nome: "Cartão de crédito", desc: "Pagamento do período escolhido. No plano anual, parcelamento em até 12x.", prazo: "Confirmação imediata", checkout: true,
-        passos: ["Os dados do cartão são digitados no ambiente seguro do Mercado Pago — o Licitaverso não recebe o número do cartão.", "No anual, o valor pode ser dividido em até 12 parcelas."] },
+        passos: ["Os dados do cartão são digitados no ambiente seguro do Mercado Pago — o Licitacon não recebe o número do cartão.", "No anual, o valor pode ser dividido em até 12 parcelas."] },
       { id: "debito", sigla: "MP", nome: "Débito ou saldo Mercado Pago", desc: "Pague com cartão de débito virtual ou com o saldo da sua conta Mercado Pago.", prazo: "Confirmação imediata", checkout: true,
         passos: ["Requer login na conta Mercado Pago no momento do pagamento."] },
       { id: "boleto", sigla: "BOL", nome: "Boleto bancário", desc: "Indicado para o plano anual. O acesso é liberado após a compensação.", prazo: "Compensação em 1 a 3 dias úteis", checkout: true,
@@ -2264,7 +2264,7 @@ const COMPRADORES = {
     ],
     metodos: [
       { id: "empenho", sigla: "NE", nome: "Nota de empenho + boleto ou Pix", desc: "Caminho padrão. Após o empenho, emitimos a nota fiscal e o boleto ou QR Pix no CNPJ do órgão, com número do empenho e do processo administrativo impressos no documento.", prazo: "Acesso liberado no empenho", checkout: false,
-        passos: ["Envie a nota de empenho para financeiro@licitaverso.com.br com o número do processo.", "Emitimos a nota fiscal eletrônica e o documento de cobrança em até 1 dia útil.", "O acesso das licenças é liberado imediatamente após o empenho, antes mesmo da liquidação.", "Pagamento por boleto registrado ou Pix institucional, conforme a rotina do órgão."] },
+        passos: ["Envie a nota de empenho para financeiro@licitacon.com.br com o número do processo.", "Emitimos a nota fiscal eletrônica e o documento de cobrança em até 1 dia útil.", "O acesso das licenças é liberado imediatamente após o empenho, antes mesmo da liquidação.", "Pagamento por boleto registrado ou Pix institucional, conforme a rotina do órgão."] },
       { id: "ordem", sigla: "OB", nome: "Ordem bancária mediante atesto", desc: "Liquidação pelo procedimento ordinário: nota fiscal atestada pelo fiscal do contrato e pagamento por ordem bancária, com as retenções na fonte.", prazo: "Até 30 dias do atesto", checkout: false,
         passos: ["Nota fiscal enviada ao fiscal do contrato com o relatório de uso do período.", "Retenções calculadas e destacadas na própria nota fiscal.", "Comprovante de retenção disponível para a contabilidade do órgão."] },
       { id: "cpgf", sigla: "CPGF", nome: "Cartão de pagamento do governo (CPGF)", desc: "Aceito quando o órgão adota o CPGF para pequenas compras. Cobrança única, sem recorrência automática — o suprimento de fundos não admite débito continuado.", prazo: "Confirmação imediata", checkout: true,
@@ -2653,7 +2653,7 @@ class Component extends DCLogic {
       this.u = data.user;
       const volta = this.state.volta || "conta";
       this.setState({ auth: AUTH_VAZIO, volta: null });
-      this.aviso("✓ Conta criada. Bem-vindo(a) ao Licitaverso!");
+      this.aviso("✓ Conta criada. Bem-vindo(a) ao Licitacon!");
       this.irPara(volta);
       return;
     }
@@ -2950,7 +2950,7 @@ class Component extends DCLogic {
     resultado.forum_respostas = resp.data || [];
     if (formato === "portabilidade") await this.sb.from("solicitacoes_lgpd").insert({ tipo: "portabilidade" });
     else await this.sb.from("solicitacoes_lgpd").insert({ tipo: "acesso" });
-    baixarArquivo("licitaverso-meus-dados-" + new Date().toISOString().slice(0, 10) + ".json", JSON.stringify(resultado, null, 2));
+    baixarArquivo("licitacon-meus-dados-" + new Date().toISOString().slice(0, 10) + ".json", JSON.stringify(resultado, null, 2));
     this.setState({ lgpdMsg: "✓ Arquivo gerado e baixado (formato aberto JSON)." });
   }
 
@@ -3078,7 +3078,7 @@ class Component extends DCLogic {
         respostas: [
           { autor: "Eduardo Prado", papel: "Analista de contratação · TRE", quando: "há 6 min", melhor: true,
             texto: "Não. A periodicidade mínima é anual, contada da data-base do orçamento estimado — não da assinatura, salvo se o edital fixar a assinatura como data-base. Se o orçamento é de novembro/2024, o direito nasce em novembro/2025.", citacao: "" },
-          { autor: "Renato Garcia", papel: "Consultor e instrutor responsável · Licitaverso", quando: "há 3 min", melhor: false,
+          { autor: "Renato Garcia", papel: "Consultor e instrutor responsável · Licitacon", quando: "há 3 min", melhor: false,
             texto: "Complemento: verifique se o pedido não é, na verdade, de repactuação (variação de custos de mão de obra por CCT). O enquadramento muda o procedimento e a documentação exigida.", citacao: "" }
         ] }
     ] : [
@@ -3205,7 +3205,7 @@ class Component extends DCLogic {
       fecharAviso: () => this.setState({ aviso: "" }),
 
       // páginas de login / cadastro / senha
-      authTitulo: p("cadastro") ? "Crie sua conta gratuita" : p("recuperar") ? "Recuperar senha" : p("nova-senha") ? "Criar nova senha" : "Entrar no Licitaverso",
+      authTitulo: p("cadastro") ? "Crie sua conta gratuita" : p("recuperar") ? "Recuperar senha" : p("nova-senha") ? "Criar nova senha" : "Entrar no Licitacon",
       authSub: p("cadastro")
         ? "O cadastro é gratuito e libera a Biblioteca Jurídica completa. Depois, se quiser, comece o teste de 7 dias ou escolha um plano."
         : p("recuperar") ? "Informe o e-mail da sua conta. Enviaremos um link para você criar uma nova senha."
@@ -3267,7 +3267,7 @@ class Component extends DCLogic {
       ferramentas: [
         { icon: "⌕", tag: "Núcleo da plataforma", tagColor: "#0A7A50", titulo: "Biblioteca Jurídica", desc: "Busca com filtros por órgão, estado, tipo de norma, tema e ano. Acervo em carga progressiva, com mais de 40 fontes mapeadas para coleta: tribunais de contas, controle interno, tribunais de justiça e ministérios públicos.", cta: "Pesquisar agora", go: this.nav("biblioteca") },
         { icon: "◍", tag: "Comunidade", tagColor: "#0F6B7E", titulo: "Fórum por tema", desc: "Perguntas organizadas por tema, com resposta oficial do especialista e escolha da melhor resposta. Setor público e privado conversando no mesmo lugar.", cta: "Ver tópicos", go: this.nav("forum") },
-        { icon: "▤", tag: "Capacitação", tagColor: "#0F6B7E", titulo: "Vitrine de cursos", desc: "Cursos com curadoria do Licitaverso, com desconto para assinantes e catálogo incluído no plano Pro.", cta: "Explorar cursos", go: this.nav("cursos") },
+        { icon: "▤", tag: "Capacitação", tagColor: "#0F6B7E", titulo: "Vitrine de cursos", desc: "Cursos com curadoria do Licitacon, com desconto para assinantes e catálogo incluído no plano Pro.", cta: "Explorar cursos", go: this.nav("cursos") },
         { icon: "◈", tag: "Especialistas", tagColor: "#0F6B7E", titulo: "Consultoria técnica", desc: "Por escrito, em vídeo gravado ou reunião ao vivo — incluída no plano Pro e com desconto de assinante nos demais.", cta: "Ver especialistas", go: this.nav("consultoria") },
         { icon: "✦", tag: "Em breve", tagColor: "#8A4A12", titulo: "Agente de IA analista", desc: "Envie um edital ou minuta de aditivo e receba a análise de conformidade com fundamento citado e nível de risco.", cta: "Entrar na lista", go: this.nav("agente") }
       ],
@@ -3276,7 +3276,7 @@ class Component extends DCLogic {
         { titulo: "Classificação por tema, não por data", desc: "Jurisprudência e perguntas do fórum organizadas pelo vocabulário de licitações: reajuste vai para reajuste, adesão a ata vai para adesão a ata." },
         { titulo: "Revisão humana antes de publicar", desc: "Itens marcados como baixa confiança pelo robô passam por curadoria editorial — conteúdo jurídico não admite erro de classificação." },
         { titulo: "Os dois lados do balcão", desc: "Pregoeiros, agentes de contratação e controle interno lado a lado com fornecedores e consultores." },
-        { titulo: "IA com fonte obrigatória", desc: "O agente busca só na base curada do Licitaverso e cita o documento exato em cada afirmação." }
+        { titulo: "IA com fonte obrigatória", desc: "O agente busca só na base curada do Licitacon e cita o documento exato em cada afirmação." }
       ],
       depoimentos: [
         { texto: "Antes eu abria seis abas e ainda ficava insegura na fundamentação do parecer. Hoje resolvo na busca por tema e cito o acórdão com link.", nome: "Ana Lúcia Ribeiro", cargo: "Agente de contratação · prefeitura do interior de SP", iniciais: "AL" },
@@ -3514,7 +3514,7 @@ class Component extends DCLogic {
       temPendentes: pendentes.length > 0,
       cancelar: () => this.setState({ cancelado: true }),
       cancelamentoMsg: s.cancelado
-        ? (vig ? "Não há cobrança automática no Licitaverso: o acesso " + PLANO_NOME[vig.plano] + " segue até " + dataBR(vig.fim) + " e nada mais é cobrado depois disso." : "Você não tem plano ativo — não há nada a cancelar.")
+        ? (vig ? "Não há cobrança automática no Licitacon: o acesso " + PLANO_NOME[vig.plano] + " segue até " + dataBR(vig.fim) + " e nada mais é cobrado depois disso." : "Você não tem plano ativo — não há nada a cancelar.")
         : "Nenhum plano renova sozinho. Para continuar depois do fim do período, basta contratar de novo — o tempo restante é somado.",
 
       favoritosList: s.sb

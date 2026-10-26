@@ -1,4 +1,4 @@
-// Configuração pública do Licitaverso.
+// Configuração pública do Licitacon.
 // Preencha com os dados do seu projeto Supabase (Project Settings → API):
 //   supabaseUrl     → "Project URL"           (ex.: https://abcdxyz.supabase.co)
 //   supabaseAnonKey → chave "anon" / "publishable" (é pública por natureza: quem protege os dados

@@ -1,4 +1,4 @@
-/* Licitaverso — conexão com o Supabase, compartilhada por index.html, biblioteca.html e painel.html.
+/* Licitacon — conexão com o Supabase, compartilhada por index.html, biblioteca.html e painel.html.
    Expõe window.LV:
      LV.pronto   → Promise que resolve com o cliente Supabase (ou null em modo demonstração)
      LV.sessao() → Promise com a sessão atual (ou null)
@@ -41,7 +41,7 @@
       auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storageKey: "licitaverso-auth" }
     });
   })().catch(function (e) {
-    console.error("[Licitaverso] Não foi possível conectar ao Supabase:", e);
+    console.error("[Licitacon] Não foi possível conectar ao Supabase:", e);
     return null;
   });
 

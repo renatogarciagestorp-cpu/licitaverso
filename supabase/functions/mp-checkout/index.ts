@@ -104,7 +104,7 @@ Deno.serve(async (req) => {
       valor = precoPlano(plano, ciclo);
       const cartao = metodo === "cartao" || metodo === "cpgf";
       parcelas = ciclo === "anual" && cartao ? Math.max(1, Math.min(12, Number(corpo.parcelas) || 1)) : 1;
-      titulo = `Licitaverso · Plano ${PLANOS[plano].nome} · ${ciclo === "anual" ? "12 meses" : "1 mês"}`;
+      titulo = `Licitacon · Plano ${PLANOS[plano].nome} · ${ciclo === "anual" ? "12 meses" : "1 mês"}`;
 
       const { data: nova, error } = await admin.from("assinaturas").insert({
         usuario_id: usuario.id, plano, ciclo, status: "pendente", valor, parcelas, contratante, metodo,
@@ -120,7 +120,7 @@ Deno.serve(async (req) => {
       const descricao = String(corpo.descricao ?? "").trim().slice(0, 10000);
       if (assunto.length < 4) return erro("Descreva o assunto da consultoria.");
       valor = precoConsultoria(modalidade, vigente ?? null);
-      titulo = `Licitaverso · ${CONSULTORIA[modalidade].nome}`;
+      titulo = `Licitacon · ${CONSULTORIA[modalidade].nome}`;
 
       const gratuita = valor <= 0;
       const { data: nova, error } = await admin.from("consultorias").insert({
@@ -150,7 +150,7 @@ Deno.serve(async (req) => {
           failure: voltar(retorno, referencia, "falhou"),
         },
         auto_return: "approved",
-        statement_descriptor: "LICITAVERSO",
+        statement_descriptor: "LICITACON",
         payment_methods: {
           excluded_payment_types: excluir,
           installments: parcelas,

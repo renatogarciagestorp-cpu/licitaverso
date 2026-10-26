@@ -49,12 +49,12 @@ Deno.serve(async (req) => {
     const primeiro = (p.nome || "").trim().split(/\s+/)[0] || "Olá";
     const teste = a.plano === "teste";
     const assunto = teste
-      ? `Seu teste grátis do Licitaverso termina em ${dias} dia${dias > 1 ? "s" : ""}`
+      ? `Seu teste grátis do Licitacon termina em ${dias} dia${dias > 1 ? "s" : ""}`
       : `Seu plano ${nomePlano(a.plano)} termina em ${dias} dia${dias > 1 ? "s" : ""}`;
     const html = moldura(
       teste ? "Seu teste está acabando" : "Seu plano está perto do fim",
       [
-        `${primeiro}, ${teste ? "o seu teste grátis" : `o seu plano <strong>${nomePlano(a.plano)}</strong>`} no Licitaverso vale até <strong>${dataBR(a.fim)}</strong>.`,
+        `${primeiro}, ${teste ? "o seu teste grátis" : `o seu plano <strong>${nomePlano(a.plano)}</strong>`} no Licitacon vale até <strong>${dataBR(a.fim)}</strong>.`,
         teste
           ? "Para continuar com o fórum, os descontos em cursos e consultoria e a Biblioteca completa, escolha um plano. Nada é cobrado automaticamente."
           : "Não há renovação automática: para não perder o acesso ao fórum e aos descontos, renove quando quiser. O tempo que ainda resta é somado ao novo período.",

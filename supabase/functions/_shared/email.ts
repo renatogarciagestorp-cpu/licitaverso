@@ -12,10 +12,10 @@ export function moldura(titulo: string, paragrafos: string[], botao?: { texto: s
   <div style="max-width:520px;margin:0 auto;background:#ffffff;border:1px solid #E3E9E8;border-radius:16px;overflow:hidden">
     <div style="background:#0A1F2A;padding:18px 24px">
       <span style="display:inline-block;width:28px;height:28px;border-radius:8px;background:#0FA36B;color:#06251A;font-weight:bold;text-align:center;line-height:28px;font-size:15px">L</span>
-      <span style="color:#ffffff;font-weight:bold;font-size:17px;vertical-align:middle;margin-left:8px">Licitaverso</span>
+      <span style="color:#ffffff;font-weight:bold;font-size:17px;vertical-align:middle;margin-left:8px">Licitacon</span>
     </div>
     <div style="padding:26px 24px 8px"><h1 style="margin:0 0 14px;font-size:21px;line-height:1.3">${titulo}</h1>${ps}${b}${r}</div>
-    <div style="padding:14px 24px;border-top:1px solid #EDF1F0;font-size:12px;color:#7A8B91">Você recebe este aviso porque tem conta no Licitaverso. Para deixar de receber, desligue "Cobrança e recibos" em Minha conta → Notificações: <a href="${SITE}index.html?p=conta&tab=notificacoes" style="color:#0F6B7E">${SITE.replace(/^https?:\/\//, "")}</a></div>
+    <div style="padding:14px 24px;border-top:1px solid #EDF1F0;font-size:12px;color:#7A8B91">Você recebe este aviso porque tem conta no Licitacon. Para deixar de receber, desligue "Cobrança e recibos" em Minha conta → Notificações: <a href="${SITE}index.html?p=conta&tab=notificacoes" style="color:#0F6B7E">${SITE.replace(/^https?:\/\//, "")}</a></div>
   </div>
 </div>`;
 }
@@ -28,7 +28,7 @@ export async function enviarEmail(para: { email: string; nome?: string }, assunt
     method: "POST",
     headers: { "api-key": chave, "Content-Type": "application/json", Accept: "application/json" },
     body: JSON.stringify({
-      sender: { name: "Licitaverso", email: remetente },
+      sender: { name: "Licitacon", email: remetente },
       to: [{ email: para.email, name: para.nome || undefined }],
       subject: assunto,
       htmlContent: html,

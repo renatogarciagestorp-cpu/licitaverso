@@ -1,4 +1,4 @@
-# Licitaverso — etapas até o site final
+# Licitacon — etapas até o site final
 
 Trabalho dividido para caber no limite de uso. Cada etapa é uma conversa curta.
 Os arquivos novos estão no branch `contas-e-pagamentos`; o site no ar (branch `main`) só muda na etapa 4.
@@ -24,7 +24,7 @@ Fica para a etapa 4: o Renato cria a conta pelo site publicado e roda `update pe
 4. Você marca sua conta como administradora (um comando que o Claude passa).
 
 ## Etapa 3 — Mercado Pago (concluída em 23/10/2026)
-Aplicação Licitaverso (Checkout Pro). Funções publicadas pelo GitHub Actions (secrets SUPABASE_ACCESS_TOKEN e MP_ACCESS_TOKEN, de produção desde 23/10/2026). Compra de teste do Básico mensal aprovada e plano ativado. Webhook configurado (evento Pagamentos) com MP_WEBHOOK_SECRET no GitHub.
+Aplicação Licitacon (Checkout Pro). Funções publicadas pelo GitHub Actions (secrets SUPABASE_ACCESS_TOKEN e MP_ACCESS_TOKEN, de produção desde 23/10/2026). Compra de teste do Básico mensal aprovada e plano ativado. Webhook configurado (evento Pagamentos) com MP_WEBHOOK_SECRET no GitHub.
 1. Criar a aplicação no painel de desenvolvedor do Mercado Pago (credenciais de teste primeiro).
 2. Cadastrar o Access Token e o segredo do webhook direto no Supabase (Claude mostra onde).
 3. Claude publica as funções de pagamento e fazemos uma compra de teste.

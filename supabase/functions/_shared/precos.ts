@@ -1,4 +1,4 @@
-// Tabela de preços do Licitaverso — a única fonte de verdade para cobrança.
+// Tabela de preços do Licitacon — a única fonte de verdade para cobrança.
 // O site mostra os mesmos valores (src/site.html), mas quem decide o preço
 // cobrado é sempre esta função, no servidor.
 

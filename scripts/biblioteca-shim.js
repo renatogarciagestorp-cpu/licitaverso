@@ -1,4 +1,4 @@
-/* Faz a página do Acervo Licitaverso funcionar no site público, sem o Claude:
+/* Faz a página do Acervo Licitacon funcionar no site público, sem o Claude:
    - "decisoes" e "meta" vêm de acervo-completo.json (atualizado nos dias úteis);
    - com as contas ativas (config.js preenchido), a Biblioteca exige login e as anotações,
      marcadores, dossiês e preferências ficam salvos na conta da pessoa (Supabase),

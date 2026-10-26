@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><script src="licitaverso-auth.js?v=3"></script>
 <script>
-/* Faz a página do Acervo Licitaverso funcionar no site público, sem o Claude:
+/* Faz a página do Acervo Licitacon funcionar no site público, sem o Claude:
    - "decisoes" e "meta" vêm de acervo-completo.json (atualizado nos dias úteis);
    - com as contas ativas (config.js preenchido), a Biblioteca exige login e as anotações,
      marcadores, dossiês e preferências ficam salvos na conta da pessoa (Supabase),
@@ -137,7 +137,7 @@
 @media (max-width:720px){.lvbar nav{order:3;flex-basis:100%}}
 </style>
 <div class="lvbar"><div class="in">
-<a class="marca" href="index.html"><span>L</span>Licitaverso</a>
+<a class="marca" href="index.html"><span>L</span>Licitacon</a>
 <nav aria-label="Site">
 <a href="biblioteca.html" aria-current="page">Biblioteca Jurídica</a>
 <a href="index.html?p=forum">Fórum</a><a href="index.html?p=cursos">Cursos</a><a href="index.html?p=consultoria">Consultoria</a>
@@ -146,7 +146,7 @@
 <a class="conta" id="lvEntrar" href="index.html?p=login&amp;volta=biblioteca">Entrar</a><a class="cta" id="lvCadastro" href="index.html?p=cadastro&amp;volta=biblioteca">Cadastre-se</a>
 <a class="cta" id="lvConta" href="index.html?p=conta" hidden>Minha conta</a><a class="conta" id="lvSair" href="index.html" hidden>Sair</a>
 </div></div>
-<title>Biblioteca Jurídica — Licitaverso</title>
+<title>Biblioteca Jurídica — Licitacon</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -335,7 +335,7 @@ dialog.notes::backdrop{background:rgba(10,16,22,.35)}
 <div class="wrap">
   <header class="mast">
     <div>
-      <div class="eyebrow">Licitaverso · Biblioteca jurídica</div>
+      <div class="eyebrow">Licitacon · Biblioteca jurídica</div>
       <h1>Acervo de decisões e normas</h1>
       <p>TCU, TCE-RJ, CGU, STF, STJ, TCM-RJ, PGE-RJ, TJ-RJ e normas federais e do RJ captados automaticamente em dias úteis. Organizados por órgão, esfera, natureza, tema, lei, artigo, tipo e data.</p>
     </div>
@@ -414,7 +414,7 @@ dialog.notes::backdrop{background:rgba(10,16,22,.35)}
         <span class="note" id="resMsg" aria-live="polite"></span>
       </div>
       <div id="integBox" hidden>
-        <h2>Plataforma Licitaverso</h2>
+        <h2>Plataforma Licitacon</h2>
         <p class="note" style="margin:0 0 8px">Exporta o acervo no formato que o site vai importar: esfera, tema, tese, legislação, fonte oficial e data de verificação.</p>
         <button class="ghost" id="expJson" type="button" style="width:100%">Exportar acervo (JSON)</button>
         <button class="ghost" id="expCsv" type="button" style="width:100%;margin-top:6px">Exportar acervo (CSV)</button>
@@ -811,7 +811,7 @@ ${lista}`,{modelTier:"default"});
   finally{$("askBtn").disabled=false}
 };
 
-/* ===== Exportação para a plataforma Licitaverso ===== */
+/* ===== Exportação para a plataforma Licitacon ===== */
 function itemPlataforma(d){return {id:d.id,orgao:d.orgao,esfera:ESFERA[d.orgao]||"",uf:ESFERA[d.orgao]==="União"?"":"RJ",municipio:d.orgao==="TCM-RJ"?"Rio de Janeiro":"",
   natureza:d._nat,tipo:d.tipo,numero:d.numero||"",colegiado:d.colegiado||"",relator:d.relator||"",data:d.data||"",tema:d.tema,titulo:d.titulo,tese:tese(d),
   tags:d.tags||[],legislacao:d._leis,fonte_nome:d.fonte_nome||"",fonte_url:d.fonte_url||"",verificado_em:(d.capturado_em||"").slice(0,10),citacao_abnt:citacao(d,"abnt")}}
@@ -822,7 +822,7 @@ async function exportar(tipo){
   const dl=S.downloads;if(!dl){$("expMsg").textContent="Download indisponível nesta visualização.";return}
   const rows=S.docs.slice().sort((a,b)=>(b.data||"").localeCompare(a.data||"")).map(itemPlataforma);const hoje=new Date().toISOString().slice(0,10);
   const data=tipo==="json"?JSON.stringify({formato:"licitaverso-acervo",versao:1,gerado_em:new Date().toISOString(),total:rows.length,itens:rows},null,2):csvDe(rows);
-  try{await dl.save({filename:`acervo-licitaverso-${hoje}.${tipo}`,data});$("expMsg").textContent=`${rows.length} itens exportados.`}
+  try{await dl.save({filename:`acervo-licitacon-${hoje}.${tipo}`,data});$("expMsg").textContent=`${rows.length} itens exportados.`}
   catch(e){$("expMsg").textContent=e&&e.code==="declined"?"Download cancelado.":"Não foi possível gerar o arquivo agora."}
 }
 $("expJson").onclick=()=>exportar("json");$("expCsv").onclick=()=>exportar("csv");
@@ -1120,7 +1120,7 @@ $("n_apagar").onclick=async()=>{const b=$("n_apagar");if(!b.dataset.armed){b.dat
 function exportarMd(){
   const ids=Object.keys(S.notes).filter(id=>S.notes[id].texto||(S.notes[id].marcas||[]).length)
     .sort((a,b)=>(S.notes[b].data_decisao||"").localeCompare(S.notes[a].data_decisao||""));
-  let md=`# Minhas anotações — Acervo Licitaverso\n\nExportado em ${new Date().toLocaleString("pt-BR")}\n`;
+  let md=`# Minhas anotações — Acervo Licitacon\n\nExportado em ${new Date().toLocaleString("pt-BR")}\n`;
   ids.forEach(id=>{const n=S.notes[id],d=docDe(id)||{};
     md+=`\n---\n\n## ${d.titulo||n.titulo_decisao||id}\n\n**${[d.orgao||n.orgao,d.tipo,d.numero||n.numero,fmt(d.data||n.data_decisao)].filter(Boolean).join(" · ")}**\n`;
     if((n.marcas||[]).length)md+=`\nMarcadores: ${n.marcas.map(k=>MARCA_L[k]||k).join(", ")}\n`;
@@ -1160,7 +1160,7 @@ function exportarMd(){
     const downloads=S.downloads;
     if(downloads){$("exportar").hidden=false;$("exportar").onclick=async()=>{const {md,qtd}=exportarMd();
       if(!qtd){$("exportar").textContent="Nenhuma anotação para exportar";setTimeout(()=>$("exportar").textContent="Exportar anotações (.md)",2500);return}
-      try{await downloads.save({filename:"minhas-anotacoes-licitaverso.md",data:md})}catch(e){}}}
+      try{await downloads.save({filename:"minhas-anotacoes-licitacon.md",data:md})}catch(e){}}}
   }
 
   const sample=await claude.use("sample");
