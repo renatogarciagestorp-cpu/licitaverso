@@ -1011,7 +1011,7 @@
         <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap">
           <div style="flex: 1; min-width: 260px">
             <h2 style="margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -0.01em">Preços com desconto de assinante</h2>
-            <p style="margin: 6px 0 0; font-size: 13.5px; line-height: 1.55; color: #6A7B82; text-wrap: pretty">Básico tem 10% de desconto, Premium 15%, e no Pro o catálogo de cursos está incluído. Veja os preços pela ótica de cada plano.</p>
+            <p style="margin: 6px 0 0; font-size: 13.5px; line-height: 1.55; color: #6A7B82; text-wrap: pretty">Assinantes têm cupom de desconto no Hotmart: Básico 10%, Premium 15% e Pro 50%. Veja os preços pela ótica de cada plano.</p>
           </div>
           <div role="group" aria-label="Ver preços como" style="display: flex; gap: 8px; flex-wrap: wrap">
             <sc-for list="{{ visoesCurso }}" as="v" hint-placeholder-count="4">
@@ -1055,7 +1055,7 @@
             </article>
           </sc-for>
         </div>
-        <p style="font-size: 13px; color: #7A8B91; margin-top: 22px">Os cursos são realizados na plataforma Hotmart: o botão “Matricule-se” leva direto à página de pagamento. O clique fica registrado na sua Área do Assinante e ajuda a curadoria a saber quais cursos interessam mais.</p>
+        <p style="font-size: 13px; color: #7A8B91; margin-top: 22px">Os cursos são realizados na plataforma Hotmart: o botão “Matricule-se” leva direto à página de pagamento, já com o cupom do seu plano quando você é assinante. O clique fica registrado na sua Área do Assinante e ajuda a curadoria a saber quais cursos interessam mais.</p>
       </section>
     </sc-if>
 
@@ -2352,7 +2352,7 @@ const VISOES = [
   { key: "sem", label: "Sem assinatura", curto: "", off: 0 },
   { key: "basico", label: "Básico · −10%", curto: "Básico", off: 0.1 },
   { key: "premium", label: "Premium · −15%", curto: "Premium", off: 0.15 },
-  { key: "pro", label: "Pro · incluído", curto: "Pro", off: 1 }
+  { key: "pro", label: "Pro · −50%", curto: "Pro", off: 0.5 }
 ];
 
 const CURSOS = [
@@ -2730,7 +2730,7 @@ class Component extends DCLogic {
   async carregarDados() {
     const sb = this.sb, u = this.state.usuario;
     if (!sb || !u) return;
-    const [perfil, plano, assin, pags, cons, acessos, seg, bib] = await Promise.all([
+    const [perfil, plano, assin, pags, cons, acessos, seg, bib, cupom] = await Promise.all([
       sb.from("perfis").select("*").eq("id", u.id).maybeSingle(),
       sb.rpc("meu_plano"),
       sb.from("assinaturas").select("*").order("criado_em", { ascending: false }).limit(50),
@@ -2738,7 +2738,8 @@ class Component extends DCLogic {
       sb.from("consultorias").select("*").order("criado_em", { ascending: false }).limit(50),
       sb.from("curso_acessos").select("criado_em, plano, cursos(titulo)").order("criado_em", { ascending: false }).limit(20),
       sb.from("forum_seguindo").select("topico_id, forum_topicos(nome)"),
-      sb.from("biblioteca_pessoal").select("chave, dados, atualizado_em").like("chave", "nota-%").limit(1000)
+      sb.from("biblioteca_pessoal").select("chave, dados, atualizado_em").like("chave", "nota-%").limit(1000),
+      sb.rpc("meu_cupom_curso")
     ]);
     const p = perfil.data || {};
     const planoVig = plano.data || null;
@@ -2747,6 +2748,7 @@ class Component extends DCLogic {
       admin: !!p.admin,
       plano: planoVig,
       planoVisao: visao,
+      cupomCurso: (cupom && !cupom.error && cupom.data) || "",
       perfil: { nome: p.nome || "", celular: p.celular || "", email: p.email || u.email || "", doc: p.documento || "", orgao: p.orgao || "", cargo: p.cargo || "" },
       setor: p.setor || "Setor Público",
       notif: { ...NOTIF_PADRAO, ...(p.notificacoes || {}) },
@@ -3014,8 +3016,11 @@ class Component extends DCLogic {
   // ------------------------------------------------------------ cursos e consultoria
   acessarCurso = (c) => async () => {
     if (!c.link) { this.aviso("As matrículas deste curso abrem em breve, na plataforma Hotmart. Avisaremos os assinantes por e-mail assim que abrirem.", "ok"); return; }
-    const janela = window.open(c.link, "_blank");
-    if (janela) janela.opener = null; else { window.location.href = c.link; }
+    const cupom = this.state.cupomCurso;
+    const destino = cupom && /hotmart\.com/i.test(c.link) ? c.link + (c.link.includes("?") ? "&" : "?") + "offDiscount=" + encodeURIComponent(cupom) : c.link;
+    if (cupom) this.aviso("Cupom de assinante " + cupom + " aplicado. Se não aparecer no pagamento do Hotmart, digite o código no campo de cupom.", "ok");
+    const janela = window.open(destino, "_blank");
+    if (janela) janela.opener = null; else { window.location.href = destino; }
     if (this.sb && this.state.usuario && c.id) await this.sb.from("curso_acessos").insert({ curso_id: c.id });
   };
 
@@ -3569,7 +3574,7 @@ class Component extends DCLogic {
       ferramentas: [
         { icon: "⌕", tag: "Núcleo da plataforma", tagColor: "#0A7A50", titulo: "Biblioteca Jurídica", desc: "Busca com filtros por órgão, estado, tipo de norma, tema e ano. Acervo em carga progressiva, com mais de 40 fontes mapeadas para coleta: tribunais de contas, controle interno, tribunais de justiça e ministérios públicos.", cta: "Pesquisar agora", go: this.nav("biblioteca") },
         { icon: "◍", tag: "Comunidade", tagColor: "#0F6B7E", titulo: "Fórum por tema", desc: "Perguntas organizadas por tema, com resposta oficial do especialista e escolha da melhor resposta. Setor público e privado conversando no mesmo lugar.", cta: "Ver tópicos", go: this.nav("forum") },
-        { icon: "▤", tag: "Capacitação", tagColor: "#0F6B7E", titulo: "Vitrine de cursos", desc: "Cursos com curadoria do Licitacon, com desconto para assinantes e catálogo incluído no plano Pro.", cta: "Explorar cursos", go: this.nav("cursos") },
+        { icon: "▤", tag: "Capacitação", tagColor: "#0F6B7E", titulo: "Vitrine de cursos", desc: "Cursos com curadoria do Licitacon e desconto para assinantes — até 50% no plano Pro.", cta: "Explorar cursos", go: this.nav("cursos") },
         { icon: "◈", tag: "Especialistas", tagColor: "#0F6B7E", titulo: "Consultoria técnica", desc: "Por escrito, em vídeo gravado ou reunião ao vivo, com desconto de assinante — e 1 consultoria por escrito por mês incluída no Pro.", cta: "Ver especialistas", go: this.nav("consultoria") },
         { icon: "✦", tag: "Em breve", tagColor: "#8A4A12", titulo: "Agente de IA analista", desc: "Envie um edital ou minuta de aditivo e receba a análise de conformidade com fundamento citado e nível de risco.", cta: "Entrar na lista", go: this.nav("agente") }
       ],
@@ -3661,7 +3666,7 @@ class Component extends DCLogic {
       }),
       cursos: listaCursos.map((c) => {
         const v = VISOES.find((x) => x.key === s.planoVisao) || VISOES[0];
-        const incluido = v.key === "pro";
+        const incluido = false;
         const valor = Number(c.valor || 0);
         return {
           ...c,
@@ -3670,7 +3675,7 @@ class Component extends DCLogic {
           precoCor: incluido ? "#0A7A50" : "#0B1F2A",
           precoCheio: v.off > 0 || incluido ? brl(valor) : "",
           desconto: incluido ? "Plano Pro" : (v.off > 0 ? "assinante " + v.curto : ""),
-          obs: incluido ? "Sem custo adicional no seu plano" : (v.off > 0 ? "Desconto aplicado na inscrição" : "Assinantes pagam menos"),
+          obs: s.cupomCurso && v.key === s.plano ? "Seu cupom " + s.cupomCurso + " entra no pagamento" : (v.off > 0 ? "Com o cupom de assinante, no Hotmart" : "Assinantes pagam menos"),
           cta: "Matricule-se ↗",
           acessar: this.acessarCurso(c),
           saberMais: () => this.setState({ cursoAberto: c.titulo })
@@ -3705,7 +3710,7 @@ class Component extends DCLogic {
       cursoInfo: cursoSel ? (() => {
         const v = VISOES.find((x) => x.key === s.planoVisao) || VISOES[0];
         const valor = Number(cursoSel.valor || 0);
-        const incluido = v.key === "pro";
+        const incluido = false;
         return {
           titulo: cursoSel.titulo, nivel: cursoSel.nivel || "", ementa: cursoSel.ementa || "",
           fichas: [
@@ -3717,7 +3722,9 @@ class Component extends DCLogic {
           avisoHotmart: cursoSel.link
             ? "As aulas, os materiais e o certificado ficam na área do aluno do Hotmart. Ao clicar em “Matricule-se”, você será direcionado automaticamente para a página de pagamento do curso no Hotmart, onde conclui a matrícula e recebe o acesso por e-mail."
             : "As aulas, os materiais e o certificado ficarão na área do aluno do Hotmart. As matrículas abrem em breve: quando abrirem, o botão “Matricule-se” levará você automaticamente para a página de pagamento do curso no Hotmart.",
-          obs: incluido ? "Assinantes Pro têm o catálogo de cursos incluído." : "Assinantes Básico têm 10% de desconto e Premium 15%; no plano Pro o catálogo de cursos está incluído.",
+          obs: s.cupomCurso
+            ? "Seu cupom de assinante é " + s.cupomCurso + ": ele já vai aplicado ao clicar em “Matricule-se”. Se não aparecer, digite o código no campo de cupom do Hotmart."
+            : "Assinantes têm cupom de desconto no Hotmart: Básico 10%, Premium 15% e Pro 50%. O código aparece aqui quando você entra na sua conta.",
           acessar: this.acessarCurso(cursoSel)
         };
       })() : { fichas: [] },
@@ -3799,7 +3806,7 @@ class Component extends DCLogic {
         { nome: "Premium", base: 199.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(199.9), unidade: unidadePlano, nota: notaPlano(199.9), detalhePreco: detalhePlano(199.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
           itens: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Prioridade na agenda do especialista"] },
         { nome: "Pro", base: 479.9, publico: "Profissionais avançados e empresas.", preco: precoPlano(479.9), unidade: unidadePlano, nota: notaPlano(479.9), detalhePreco: detalhePlano(479.9), destaque: destaque === "Pro", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Tudo do Premium", "Catálogo de cursos incluído, sem custo adicional", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "Cota mensal do Agente de IA Analista (quando lançado)", "Selo de resposta oficial no fórum para o especialista", "Suporte prioritário"] }
+          itens: ["Tudo do Premium", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "Cota mensal do Agente de IA Analista (quando lançado)", "Selo de resposta oficial no fórum para o especialista", "Suporte prioritário"] }
       ]),
 
       // área do assinante

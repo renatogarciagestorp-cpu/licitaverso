@@ -309,7 +309,8 @@ const TELAS = {
   },
 
   async cursos(el) {
-    const [cursos, acessos] = await Promise.all([q(sb.from("cursos").select("*").order("ordem")), q(sb.from("curso_acessos").select("curso_id"))]);
+    const [cursos, acessos, cupons] = await Promise.all([q(sb.from("cursos").select("*").order("ordem")), q(sb.from("curso_acessos").select("curso_id")), q(sb.from("cupons_cursos").select("*"))]);
+    const cupom = (pl) => (cupons.find((x) => x.plano === pl) || {}).codigo || "";
     const cliques = {}; acessos.forEach((a) => cliques[a.curso_id] = (cliques[a.curso_id] || 0) + 1);
     const campos = (c) => '<div class="form">' +
       '<label class="larga">Título<input type="text" name="titulo" value="' + esc(c.titulo) + '"></label>' +
@@ -322,10 +323,24 @@ const TELAS = {
       '<label>Ordem<input type="number" name="ordem" value="' + esc(c.ordem || 0) + '"></label>' +
       '<label>Visível no site<select name="ativo"><option value="true"' + (c.ativo !== false ? " selected" : "") + '>Sim</option><option value="false"' + (c.ativo === false ? " selected" : "") + ">Não</option></select></label></div>";
     el.innerHTML = '<h1>Cursos</h1><p class="sub">A vitrine da página Cursos. Sem link, o botão aparece como “Em breve”.</p>' +
+      '<form class="caixa" id="formCupons"><h2>Cupons de assinante (Hotmart)</h2>' +
+      '<p class="fraco">Crie no Hotmart, em cada curso (Cupons → Adicionar), um cupom com o <strong>mesmo código</strong> e o desconto do plano: Básico 10%, Premium 15%, Pro 50%. O site mostra a cada assinante só o código do plano dele e já aplica o cupom ao clicar em “Matricule-se”. Para trocar um código, crie o novo no Hotmart, atualize aqui e depois encerre o antigo.</p>' +
+      '<div class="form"><label>Básico (10%)<input type="text" name="basico" maxlength="40" value="' + esc(cupom("basico")) + '" placeholder="ex.: BASICO10"></label>' +
+      '<label>Premium (15%)<input type="text" name="premium" maxlength="40" value="' + esc(cupom("premium")) + '" placeholder="ex.: PREMIUM15"></label>' +
+      '<label>Pro (50%)<input type="text" name="pro" maxlength="40" value="' + esc(cupom("pro")) + '" placeholder="ex.: PRO50"></label></div>' +
+      '<div class="barra" style="margin-top:12px"><button class="btn verde" type="submit">Salvar cupons</button></div></form>' +
       cursos.map((c) => '<form class="caixa" data-id="' + c.id + '"><h2>' + esc(c.titulo) + ' <span class="fraco">· ' + (cliques[c.id] || 0) + " acesso(s)</span></h2>" + campos(c) +
         '<div class="barra" style="margin-top:12px"><button class="btn verde" type="submit">Salvar curso</button><button class="btn perigo" type="button" data-excluir="' + c.id + '">Excluir</button></div></form>').join("") +
       '<form class="caixa" data-id="novo"><h2>Novo curso</h2>' + campos({ ativo: true, ordem: cursos.length + 1 }) + '<div class="barra" style="margin-top:12px"><button class="btn" type="submit">Adicionar curso</button></div></form>';
-    el.querySelectorAll("form").forEach((f) => f.onsubmit = async (e) => {
+    el.querySelector("#formCupons").onsubmit = async (e) => {
+      e.preventDefault(); e.stopPropagation();
+      const d = Object.fromEntries(new FormData(e.target).entries());
+      const linhas = ["basico", "premium", "pro"].map((pl) => ({ plano: pl, codigo: String(d[pl] || "").trim().toUpperCase().replace(/\s+/g, ""), atualizado_em: new Date().toISOString() }));
+      const { error } = await sb.from("cupons_cursos").upsert(linhas);
+      if (error) return toast(error.message, true);
+      await registrar("editar_cupons_cursos", {}); toast("Cupons salvos."); TELAS.cursos(el);
+    };
+    el.querySelectorAll("form[data-id]").forEach((f) => f.onsubmit = async (e) => {
       e.preventDefault();
       const d = Object.fromEntries(new FormData(f).entries());
       d.valor = Number(d.valor || 0); d.ordem = Number(d.ordem || 0); d.ativo = d.ativo === "true";
