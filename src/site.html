@@ -954,6 +954,9 @@
                         <sc-if value="{{ rp.podeApagar }}" hint-placeholder-val="{{ false }}">
                           <button sc-camel-on-click="{{ rp.apagar }}" style="background: none; border: 0; color: #8A1230; font-size: 12.5px; font-weight: 700; cursor: pointer">Excluir</button>
                         </sc-if>
+                        <sc-if value="{{ rp.podeDenunciar }}" hint-placeholder-val="{{ false }}">
+                          <button sc-camel-on-click="{{ rp.denunciar }}" aria-label="Denunciar esta resposta" style="background: none; border: 0; color: #7A8B91; font-size: 12.5px; font-weight: 600; cursor: pointer">⚑ Denunciar</button>
+                        </sc-if>
                       </div>
                       <p style="font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; line-height: 1.62; color: #23343B; margin: 9px 0 0; text-wrap: pretty">{{ rp.texto }}</p>
                       <sc-if value="{{ rp.citacao }}" hint-placeholder-val="{{ false }}">
@@ -986,6 +989,9 @@
                     </sc-if>
                     <sc-if value="{{ th.podeApagar }}" hint-placeholder-val="{{ false }}">
                       <button sc-camel-on-click="{{ th.apagar }}" style="background: none; border: 0; color: #8A1230; font-size: 13px; font-weight: 700; cursor: pointer">Excluir pergunta</button>
+                    </sc-if>
+                    <sc-if value="{{ th.podeDenunciar }}" hint-placeholder-val="{{ false }}">
+                      <button sc-camel-on-click="{{ th.denunciar }}" aria-label="Denunciar esta pergunta" style="background: none; border: 0; color: #7A8B91; font-size: 13px; font-weight: 600; cursor: pointer">⚑ Denunciar</button>
                     </sc-if>
                   </div>
                 </div>
@@ -1816,6 +1822,45 @@
     </div>
   </sc-if>
 
+  <sc-if value="{{ denunciaAberta }}" hint-placeholder-val="{{ false }}">
+    <div role="dialog" aria-modal="true" aria-label="Denunciar conteúdo do fórum" style="position: fixed; inset: 0; z-index: 90; background: rgba(6,18,25,0.66); backdrop-filter: blur(3px); display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto">
+      <div style="background: #fff; width: 100%; max-width: 560px; border-radius: 20px; box-shadow: 0 40px 90px rgba(0,0,0,0.42); overflow: hidden">
+        <div style="background: #0A1F2A; color: #fff; padding: 18px 24px; display: flex; align-items: center; gap: 14px">
+          <h2 style="flex: 1; margin: 0; font-size: 19px; font-weight: 800">⚑ Denunciar {{ denunciaAlvo }}</h2>
+          <button sc-camel-on-click="{{ fecharDenuncia }}" aria-label="Fechar" style="flex: none; background: rgba(255,255,255,0.12); border: 0; color: #fff; width: 34px; height: 34px; border-radius: 9px; font-size: 17px; cursor: pointer">✕</button>
+        </div>
+        <div style="padding: 22px 24px 24px; display: grid; gap: 16px">
+          <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #55666D">“{{ denunciaTitulo }}”</p>
+          <sc-if value="{{ denunciaEnviado }}" hint-placeholder-val="{{ false }}">
+            <p role="status" style="margin: 0; font-size: 14.5px; font-weight: 700; color: #0A7A50; line-height: 1.5">{{ denunciaOk }}</p>
+          </sc-if>
+          <sc-if value="{{ denunciaForm }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Motivo</span>
+              <div role="radiogroup" aria-label="Motivo da denúncia" style="display: flex; flex-wrap: wrap; gap: 8px">
+                <sc-for list="{{ denunciaMotivos }}" as="dm" hint-placeholder-count="6">
+                  <button sc-camel-on-click="{{ dm.escolher }}" role="radio" aria-checked="{{ dm.ativo }}" style="border-radius: 999px; padding: 8px 14px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ dm.borda }}; background: {{ dm.fundo }}; color: {{ dm.cor }}">{{ dm.m }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <label style="display: grid; gap: 6px">
+              <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E">Detalhes (opcional)</span>
+              <textarea rows="3" value="{{ denunciaDetalhe }}" sc-camel-on-input="{{ onDenunciaDetalhe }}" placeholder="Conte o que está errado, se quiser." style="border: 1px solid #DDE4E3; border-radius: 11px; padding: 11px 13px; font-size: 14.5px; line-height: 1.55; color: #0B1F2A; background: #FBFCFC; resize: vertical"></textarea>
+            </label>
+            <sc-if value="{{ denunciaErro }}" hint-placeholder-val="{{ false }}">
+              <p role="alert" style="margin: 0; font-size: 13.5px; font-weight: 700; color: #8A1230">{{ denunciaErro }}</p>
+            </sc-if>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap">
+              <button sc-camel-on-click="{{ fecharDenuncia }}" style="background: #fff; border: 1px solid #DDE4E3; color: #3D5058; border-radius: 11px; padding: 12px 18px; font-size: 14px; font-weight: 700; cursor: pointer">Cancelar</button>
+              <button sc-camel-on-click="{{ enviarDenuncia }}" style="background: #8A1230; color: #fff; border: 0; border-radius: 11px; padding: 12px 18px; font-size: 14px; font-weight: 800; cursor: pointer">{{ denunciaBotao }}</button>
+            </div>
+            <p style="margin: 0; font-size: 12.5px; color: #7A8B91; line-height: 1.5">A denúncia é confidencial: o autor do conteúdo não sabe quem denunciou.</p>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
   <sc-if value="{{ consultoriaAberta }}" hint-placeholder-val="{{ false }}">
     <div role="dialog" aria-modal="true" aria-label="Solicitar consultoria" style="position: fixed; inset: 0; z-index: 90; background: rgba(6,18,25,0.66); backdrop-filter: blur(3px); display: flex; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto">
       <div style="background: #fff; width: 100%; max-width: 760px; border-radius: 20px; box-shadow: 0 40px 90px rgba(0,0,0,0.42); overflow: hidden">
@@ -2258,7 +2303,7 @@ const INSTITUCIONAL = {
         "Correção de conteúdo da Biblioteca Jurídica: assunto Correção na Biblioteca — informe o número do documento.",
         "Parcerias, cursos e consultoria: assunto Parcerias."
       ] },
-      { titulo: "Denúncias e moderação", texto: "Conteúdo impróprio no fórum pode ser denunciado pelo botão em cada mensagem — o caminho mais rápido, porque já leva o contexto do tópico. Denúncias de conduta grave, uso indevido de dados pessoais de terceiros ou tentativa de burlar procedimento licitatório podem ser enviadas pelo formulário abaixo, com apuração confidencial.", itens: [] },
+      { titulo: "Denúncias e moderação", texto: "Conteúdo impróprio no fórum pode ser denunciado pelo botão ⚑ Denunciar, presente em cada pergunta e resposta — o caminho mais rápido, porque já leva o contexto do tópico. Denúncias de conduta grave, uso indevido de dados pessoais de terceiros ou tentativa de burlar procedimento licitatório podem ser enviadas pelo formulário abaixo, com apuração confidencial.", itens: [] },
       { titulo: "Atendimento", texto: "Não temos atendimento presencial nem por telefone: todo o suporte é digital, para manter o custo da assinatura baixo. As respostas chegam no e-mail informado no formulário.", itens: [] }
     ]
   },
@@ -2466,7 +2511,7 @@ const EXIGE_LOGIN = ["forum", "cursos", "conta"];
 const PLANO_NOME = { teste: "Teste", basico: "Básico", premium: "Premium", pro: "Pro" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "1";
+const CHAT_VERSAO = "2";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
 // Pro: 1 consultoria por escrito por mês incluída (mês do calendário, horário de Brasília)
 const inicioMesBR = () => { const d = new Date(Date.now() - 3 * 3600000); return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1, 3)); };
@@ -2614,6 +2659,7 @@ class Component extends DCLogic {
     cursosDb: null,
 
     // consultoria
+    denuncia: { aberta: false, tipo: "", id: null, titulo: "", motivo: "", detalhe: "", enviando: false, erro: "", ok: "" },
     consultoria: { aberta: false, orgao: false, modalidade: "escrita", assunto: "", descricao: "", metodo: "pix", aceite: false, anexos: [], enviando: false, erro: "", ok: "" },
     cursoAberto: null,
     menuAberto: false,
@@ -3004,6 +3050,26 @@ class Component extends DCLogic {
     if (error) { this.aviso(error.message || "Não foi possível marcar a melhor resposta.", "erro"); return; }
     this.carregarPerguntas();
   };
+
+  abrirDenuncia = (tipo, id, titulo) => () => {
+    this.setState({ denuncia: { aberta: true, tipo, id, titulo: titulo || "", motivo: "", detalhe: "", enviando: false, erro: "", ok: "" } });
+  };
+
+  async enviarDenuncia() {
+    const d = this.state.denuncia, s = this.state;
+    if (!d.motivo) { this.setState({ denuncia: { ...d, erro: "Escolha o motivo da denúncia." } }); return; }
+    if (!this.sb || !s.usuario) { this.setState({ denuncia: { ...d, erro: "Entre na sua conta para denunciar." } }); return; }
+    this.setState({ denuncia: { ...d, enviando: true, erro: "" } });
+    const p = s.perfil || {};
+    const { error } = await this.sb.from("contatos").insert({
+      nome: p.nome || "Participante do fórum", email: p.email || s.usuario.email || "",
+      assunto: "Denúncia no fórum",
+      mensagem: "Motivo: " + d.motivo + "\n" + (d.tipo === "resposta" ? "Resposta na pergunta" : "Pergunta") + ": “" + d.titulo + "”" + (d.detalhe.trim() ? "\n\nDetalhes: " + d.detalhe.trim() : ""),
+      detalhes: { tipo: "denuncia_forum", alvo: d.tipo, id: d.id, topico: s.topico || "" }
+    });
+    if (error) { this.setState({ denuncia: { ...this.state.denuncia, enviando: false, erro: "Não foi possível enviar agora. Tente de novo em instantes." } }); return; }
+    this.setState({ denuncia: { ...this.state.denuncia, enviando: false, ok: "✓ Denúncia enviada. A moderação analisa e remove o conteúdo se ele violar as regras. Obrigado por ajudar a manter o fórum útil e respeitoso." } });
+  }
 
   apagar = (tabela, id) => async () => {
     if (!window.confirm("Excluir definitivamente?")) return;
@@ -3411,7 +3477,8 @@ class Component extends DCLogic {
               id: r.id, autor: r.autor_nome || "Participante", papel: (r.oficial ? "Resposta oficial · " : "") + (r.autor_papel || "Participante"),
               quando: haQuanto(r.criado_em), melhor: !!r.melhor, oficial: !!r.oficial, texto: r.texto, citacao: r.citacao || "",
               podeMarcar: (dono || s.admin) && !r.melhor, marcar: this.marcarMelhor(r.id),
-              podeApagar: r.autor_id === meuId || s.admin, apagar: this.apagar("forum_respostas", r.id)
+              podeApagar: r.autor_id === meuId || s.admin, apagar: this.apagar("forum_respostas", r.id),
+              podeDenunciar: r.autor_id !== meuId, denunciar: this.abrirDenuncia("resposta", r.id, q.titulo)
             }))
           };
         })
@@ -3419,8 +3486,9 @@ class Component extends DCLogic {
     const threads = threadsBase.map((t) => ({
       ...t, ...setorStyle(t.setor),
       responder: this.responder(t.id), respondendo: s.respondendo !== null && s.respondendo === t.id,
-      respostas: t.respostas.map((r) => ({ podeMarcar: false, podeApagar: false, marcar: () => {}, apagar: () => {}, ...r })),
+      respostas: t.respostas.map((r) => ({ podeMarcar: false, podeApagar: false, marcar: () => {}, apagar: () => {}, podeDenunciar: false, denunciar: () => {}, ...r })),
       podeApagar: !!t.podeApagar, apagar: t.apagar || (() => {}),
+      podeDenunciar: forumReal && !t.souAutor, denunciar: this.abrirDenuncia("pergunta", t.id, t.pergunta),
       souAutor: !!t.souAutor, avisoLabel: t.avisoLabel || "", alternarAviso: t.alternarAviso || (() => {})
     }));
     const forumBloqueado = s.sb && logado && !this.podeLerForum();
@@ -3742,6 +3810,20 @@ class Component extends DCLogic {
       fecharCurso: () => this.setState({ cursoAberto: null }),
       consultoriaAberta: cons.aberta,
       fecharConsultoria: () => this.setState({ consultoria: { ...cons, aberta: false } }),
+      denunciaAberta: s.denuncia.aberta,
+      denunciaTitulo: s.denuncia.titulo,
+      denunciaAlvo: s.denuncia.tipo === "resposta" ? "uma resposta da pergunta" : "a pergunta",
+      denunciaMotivos: ["Ofensa ou desrespeito", "Dados pessoais de terceiros", "Propaganda ou spam", "Informação falsa ou perigosa", "Documento sigiloso", "Outro motivo"].map((m) => {
+        const ativo = s.denuncia.motivo === m;
+        return { m, ativo, escolher: () => this.setState((st) => ({ denuncia: { ...st.denuncia, motivo: m, erro: "" } })),
+          borda: ativo ? "#8A1230" : "#DDE4E3", fundo: ativo ? "#FCEEF1" : "#fff", cor: ativo ? "#8A1230" : "#3D5058" };
+      }),
+      denunciaDetalhe: s.denuncia.detalhe,
+      onDenunciaDetalhe: (e) => { const v = e.target.value; this.setState((st) => ({ denuncia: { ...st.denuncia, detalhe: v } })); },
+      denunciaErro: s.denuncia.erro, denunciaOk: s.denuncia.ok, denunciaEnviado: !!s.denuncia.ok, denunciaForm: !s.denuncia.ok,
+      denunciaBotao: s.denuncia.enviando ? "Enviando…" : "Enviar denúncia",
+      enviarDenuncia: () => { if (!s.denuncia.enviando && !s.denuncia.ok) this.enviarDenuncia(); },
+      fecharDenuncia: () => this.setState((st) => ({ denuncia: { ...st.denuncia, aberta: false } })),
       consModalidades: CONSULTORIA.map((c, i) => {
         const ativo = cons.modalidade === MODALIDADES[i];
         const preco = cons.orgao ? c.valor : this.precoConsultoria(i);

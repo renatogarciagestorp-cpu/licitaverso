@@ -40,7 +40,7 @@ if 'rel="manifest"' not in html:
 
 # 3) assistente de dúvidas
 if "chatbot.js" not in html:
-    html = html.replace('<script src="licitaverso-auth.js?v=3"></script>', '<script src="licitaverso-auth.js?v=3"></script><script src="chatbot.js?v=1" defer></script>', 1)
+    html = html.replace('<script src="licitaverso-auth.js?v=3"></script>', '<script src="licitaverso-auth.js?v=3"></script><script src="chatbot.js?v=2" defer></script>', 1)
 
 alvo.write_text(html, encoding="utf-8")
 print("atualizado", alvo, len(html), "bytes")

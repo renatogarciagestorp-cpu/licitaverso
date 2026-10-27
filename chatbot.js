@@ -146,11 +146,13 @@
     btn.innerHTML = "<span aria-hidden='true'>💬</span><em style='font-style:normal'>Dúvidas?</em>";
     btn.onclick = abrir;
     document.body.appendChild(btn);
-    setInterval(ajustarPosicao, 1500);
+    setInterval(ajustarPosicao, 500);
     if (estado.aberto) abrir();
   }
   function ajustarPosicao() {
     if (!btn) return;
+    // Esconde o botão enquanto uma janela do site (pagamento, denúncia, consultoria…) estiver aberta
+    btn.style.visibility = document.querySelector('[aria-modal="true"]') ? "hidden" : "";
     var banner = document.querySelector('[aria-label="Instalar o aplicativo"], [aria-label="Aviso de cookies"], [role="region"][aria-label*="ookies"]');
     var h = 0;
     if (banner) { var r = banner.getBoundingClientRect(); if (r.height && r.top < window.innerHeight) h = window.innerHeight - r.top + 8; }
