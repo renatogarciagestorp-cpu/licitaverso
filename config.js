@@ -9,5 +9,5 @@ window.LICITAVERSO_CONFIG = {
   supabaseAnonKey: "sb_publishable_8nhINIJ76iix1902VoqGcg_cELL4u3e",
   // Medição de visitas (Cloudflare Web Analytics, gratuita e sem cookies). Cole aqui o "token" do
   // trecho que o Cloudflare mostra ao adicionar o site. Só é carregada para quem aceita cookies de análise.
-  cloudflareAnalytics: ""
+  cloudflareAnalytics: "77af40fc4d7f494ab442d9b51274788c"
 };
