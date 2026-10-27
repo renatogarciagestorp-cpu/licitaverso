@@ -45,3 +45,8 @@ Lembrar de atualizar SITE_URL no Supabase e os endereços de retorno do login.
 ## Como editar o site
 O código fica em `src/site.html`. Depois de mudar: `python3 scripts/empacotar-site.py` (gera o `index.html`).
 Biblioteca: `python3 scripts/atualizar-biblioteca.py` reaplica o shim e a barra.
+
+## Fórum: aviso por e-mail e perguntas iniciais (27/10/2026)
+- Ao criar uma pergunta, o site pergunta se a pessoa quer receber e-mail quando alguém responder (Sim/Não, obrigatório). Dá para ligar/desligar depois, na própria pergunta.
+- Função `forum-aviso` envia o e-mail (Brevo) ao autor; respeita "Resposta na minha pergunta" em Notificações; um e-mail por resposta.
+- `supabase/sql/forum-perguntas-iniciais.sql`: 11 perguntas frequentes com resposta oficial (Lei 14.133/2021 e TCU). Editar/apagar em Painel → Fórum.

@@ -2,7 +2,7 @@
 
 export const SITE = (Deno.env.get("SITE_URL") || "https://renatogarciagestorp-cpu.github.io/licitaverso/").split(",")[0].trim();
 
-export function moldura(titulo: string, paragrafos: string[], botao?: { texto: string; url: string }, rodape?: string) {
+export function moldura(titulo: string, paragrafos: string[], botao?: { texto: string; url: string }, rodape?: string, preferencia = "Cobrança e recibos") {
   const ps = paragrafos.map((p) => `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3D5058">${p}</p>`).join("");
   const b = botao
     ? `<p style="margin:8px 0 22px"><a href="${botao.url}" style="display:inline-block;background:#0FA36B;color:#06251A;text-decoration:none;font-weight:bold;font-size:15px;padding:13px 22px;border-radius:10px">${botao.texto}</a></p>`
@@ -15,7 +15,7 @@ export function moldura(titulo: string, paragrafos: string[], botao?: { texto: s
       <span style="color:#ffffff;font-weight:bold;font-size:17px;vertical-align:middle;margin-left:8px">Licitacon</span>
     </div>
     <div style="padding:26px 24px 8px"><h1 style="margin:0 0 14px;font-size:21px;line-height:1.3">${titulo}</h1>${ps}${b}${r}</div>
-    <div style="padding:14px 24px;border-top:1px solid #EDF1F0;font-size:12px;color:#7A8B91">Você recebe este aviso porque tem conta no Licitacon. Para deixar de receber, desligue "Cobrança e recibos" em Minha conta → Notificações: <a href="${SITE}index.html?p=conta&tab=notificacoes" style="color:#0F6B7E">${SITE.replace(/^https?:\/\//, "")}</a></div>
+    <div style="padding:14px 24px;border-top:1px solid #EDF1F0;font-size:12px;color:#7A8B91">Você recebe este aviso porque tem conta no Licitacon. Para deixar de receber, desligue "${preferencia}" em Minha conta → Notificações: <a href="${SITE}index.html?p=conta&tab=notificacoes" style="color:#0F6B7E">${SITE.replace(/^https?:\/\//, "")}</a></div>
   </div>
 </div>`;
 }

@@ -93,6 +93,7 @@ jobs:
           supabase functions deploy mp-checkout --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
           supabase functions deploy mp-webhook --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
           supabase functions deploy avisos --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+          supabase functions deploy forum-aviso --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
 
       - name: Conferir se a função responde
         if: steps.chaves.outputs.ok == 'true'

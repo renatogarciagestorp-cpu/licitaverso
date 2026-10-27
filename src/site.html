@@ -877,6 +877,15 @@
                 <span style="font-size: 12.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: #0F6B7E">Contexto (opcional)</span>
                 <textarea rows="4" value="{{ novaContexto }}" sc-camel-on-input="{{ onNovaContexto }}" placeholder="Tipo de contrato, datas, o que o edital prevê… Não inclua dados pessoais nem sigilosos." style="border: 1px solid #DDE4E3; border-radius: 11px; padding: 12px 14px; font-size: 15px; line-height: 1.6; color: #0B1F2A; background: #FBFCFC; resize: vertical" style-focus="border-color: #0FA36B; background: #fff"></textarea>
               </label>
+              <div style="margin-top: 14px; background: #F1F6F5; border: 1px solid #DCE8E6; border-radius: 12px; padding: 14px 16px">
+                <div style="font-size: 14.5px; font-weight: 700; color: #172B33">🔔 Quer receber um e-mail quando alguém responder à sua pergunta?</div>
+                <div style="font-size: 12.5px; color: #6A7B82; margin-top: 3px">Enviamos para o e-mail da sua conta. Você pode mudar isso depois, na própria pergunta.</div>
+                <div role="radiogroup" aria-label="Aviso de respostas por e-mail" style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap">
+                  <sc-for list="{{ opcoesAviso }}" as="o" hint-placeholder-count="2">
+                    <button sc-camel-on-click="{{ o.escolher }}" role="radio" aria-checked="{{ o.ativo }}" style="border-radius: 999px; padding: 9px 16px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ o.borda }}; background: {{ o.fundo }}; color: {{ o.cor }}">{{ o.rotulo }}</button>
+                  </sc-for>
+                </div>
+              </div>
               <sc-if value="{{ novaErro }}" hint-placeholder-val="{{ false }}">
                 <p role="alert" style="margin: 12px 0 0; font-size: 13.5px; font-weight: 700; color: #8A1230">{{ novaErro }}</p>
               </sc-if>
@@ -972,6 +981,9 @@
                     <button sc-camel-on-click="{{ th.responder }}" style="background: #0A1F2A; color: #fff; border: 0; border-radius: 9px; padding: 10px 16px; font-size: 13.5px; font-weight: 700; cursor: pointer" style-hover="background: #14424F">Responder pergunta</button>
                     <button sc-camel-on-click="{{ goBiblioteca }}" style="background: #fff; border: 1px solid #DDE4E3; color: #3D5058; border-radius: 9px; padding: 10px 16px; font-size: 13.5px; font-weight: 700; cursor: pointer" style-hover="border-color: #0FA36B">Buscar jurisprudência</button>
                     <span style="flex: 1"></span>
+                    <sc-if value="{{ th.souAutor }}" hint-placeholder-val="{{ false }}">
+                      <button sc-camel-on-click="{{ th.alternarAviso }}" style="background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 9px; padding: 8px 12px; font-size: 12.5px; font-weight: 700; cursor: pointer">{{ th.avisoLabel }}</button>
+                    </sc-if>
                     <sc-if value="{{ th.podeApagar }}" hint-placeholder-val="{{ false }}">
                       <button sc-camel-on-click="{{ th.apagar }}" style="background: none; border: 0; color: #8A1230; font-size: 13px; font-weight: 700; cursor: pointer">Excluir pergunta</button>
                     </sc-if>
@@ -2536,7 +2548,7 @@ class Component extends DCLogic {
     forumPerguntas: [],
     forumCarregando: false,
     forumErro: "",
-    nova: { aberta: false, titulo: "", contexto: "", enviando: false, erro: "" },
+    nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
     respondendo: null, resposta: "", citacao: "", respEnviando: false, respErro: "",
 
     // cursos
@@ -2555,6 +2567,8 @@ class Component extends DCLogic {
     const qsIni = new URLSearchParams(window.location.search);
     const tabIni = qsIni.get("tab");
     if (tabIni) this.setState({ contaTab: tabIni });
+    const topicoIni = qsIni.get("topico");
+    if (topicoIni) this.setState({ topico: topicoIni });
     const voltaIni = qsIni.get("volta");
     if (voltaIni && (PAGINAS.includes(voltaIni) || voltaIni === "biblioteca" || voltaIni === "painel")) this.setState({ volta: voltaIni });
     fetch("acervo.json?v=" + Date.now(), { cache: "no-store" }).then((r) => r.ok ? r.json() : Promise.reject(r.status)).then((j) => {
@@ -2887,11 +2901,12 @@ class Component extends DCLogic {
     const t = (this.state.forumTopicos || []).find((x) => x.nome === this.state.topico);
     if (!this.sb || !t) { this.setState({ nova: { ...n, erro: "O fórum ainda não está conectado (modo demonstração)." } }); return; }
     if (n.titulo.trim().length < 8) { this.setState({ nova: { ...n, erro: "Escreva a pergunta com pelo menos 8 caracteres." } }); return; }
+    if (n.avisar === null) { this.setState({ nova: { ...n, erro: "Responda se quer receber um e-mail quando alguém responder à sua pergunta." } }); return; }
     this.setState({ nova: { ...n, enviando: true, erro: "" } });
-    const { error } = await this.sb.from("forum_perguntas").insert({ topico_id: t.id, titulo: n.titulo.trim(), contexto: n.contexto.trim() });
+    const { error } = await this.sb.from("forum_perguntas").insert({ topico_id: t.id, titulo: n.titulo.trim(), contexto: n.contexto.trim(), avisar_respostas: n.avisar });
     if (error) { this.setState({ nova: { ...this.state.nova, enviando: false, erro: "Não foi possível publicar. Confira se o seu plano permite participar do fórum." } }); return; }
-    this.setState({ nova: { aberta: false, titulo: "", contexto: "", enviando: false, erro: "" } });
-    this.aviso("✓ Pergunta publicada em " + t.nome + ".");
+    this.setState({ nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" } });
+    this.aviso("✓ Pergunta publicada em " + t.nome + "." + (n.avisar ? " Você receberá um e-mail quando alguém responder." : ""));
     this.carregarForum();
   }
 
@@ -2905,8 +2920,10 @@ class Component extends DCLogic {
     if (!this.sb) { this.setState({ respErro: "O fórum ainda não está conectado (modo demonstração)." }); return; }
     if (s.resposta.trim().length < 2) { this.setState({ respErro: "Escreva a resposta." }); return; }
     this.setState({ respEnviando: true, respErro: "" });
-    const { error } = await this.sb.from("forum_respostas").insert({ pergunta_id: s.respondendo, texto: s.resposta.trim(), citacao: s.citacao.trim() });
+    const { data: nova, error } = await this.sb.from("forum_respostas")
+      .insert({ pergunta_id: s.respondendo, texto: s.resposta.trim(), citacao: s.citacao.trim() }).select("id").single();
     if (error) { this.setState({ respEnviando: false, respErro: "Não foi possível enviar a resposta agora." }); return; }
+    if (nova && nova.id) this.sb.functions.invoke("forum-aviso", { body: { resposta_id: nova.id } }).catch(() => {});
     this.setState({ respEnviando: false, respondendo: null, resposta: "", citacao: "" });
     this.carregarForum();
   }
@@ -3252,6 +3269,13 @@ class Component extends DCLogic {
             id: q.id, iniciais: iniciaisDe(q.autor_nome), autor: q.autor_nome || "Participante", papel: q.autor_papel || "Participante",
             quando: haQuanto(q.criado_em), setor: q.autor_setor || "Setor Público", pergunta: q.titulo, contexto: q.contexto,
             podeApagar: dono || s.admin, apagar: this.apagar("forum_perguntas", q.id),
+            souAutor: dono, avisoLabel: q.avisar_respostas ? "🔔 Aviso de respostas por e-mail: ligado" : "🔕 Aviso de respostas por e-mail: desligado",
+            alternarAviso: async () => {
+              const { error } = await this.sb.from("forum_perguntas").update({ avisar_respostas: !q.avisar_respostas }).eq("id", q.id);
+              if (error) { this.aviso("Não foi possível mudar o aviso agora.", "erro"); return; }
+              this.aviso(q.avisar_respostas ? "Aviso por e-mail desligado para esta pergunta." : "✓ Você receberá um e-mail quando alguém responder.");
+              this.carregarPerguntas();
+            },
             respostas: respostas.map((r) => ({
               id: r.id, autor: r.autor_nome || "Participante", papel: (r.oficial ? "Resposta oficial · " : "") + (r.autor_papel || "Participante"),
               quando: haQuanto(r.criado_em), melhor: !!r.melhor, oficial: !!r.oficial, texto: r.texto, citacao: r.citacao || "",
@@ -3265,7 +3289,8 @@ class Component extends DCLogic {
       ...t, ...setorStyle(t.setor),
       responder: this.responder(t.id), respondendo: s.respondendo !== null && s.respondendo === t.id,
       respostas: t.respostas.map((r) => ({ podeMarcar: false, podeApagar: false, marcar: () => {}, apagar: () => {}, ...r })),
-      podeApagar: !!t.podeApagar, apagar: t.apagar || (() => {})
+      podeApagar: !!t.podeApagar, apagar: t.apagar || (() => {}),
+      souAutor: !!t.souAutor, avisoLabel: t.avisoLabel || "", alternarAviso: t.alternarAviso || (() => {})
     }));
     const forumBloqueado = s.sb && logado && !this.podeLerForum();
     const topicoSeguido = forumReal && s.seguindo.some((x) => x.topico_id === topicoAtual.id);
@@ -3493,6 +3518,11 @@ class Component extends DCLogic {
       novaPergunta: () => this.abrirNovaPergunta(),
       novaAberta: s.nova.aberta,
       novaTitulo: s.nova.titulo, novaContexto: s.nova.contexto, novaErro: s.nova.erro,
+      opcoesAviso: [[true, "Sim, quero receber"], [false, "Não, obrigado"]].map(([v, rotulo]) => {
+        const ativo = s.nova.avisar === v;
+        return { rotulo, ativo, escolher: () => this.setState((st) => ({ nova: { ...st.nova, avisar: v, erro: "" } })),
+          borda: ativo ? "#0FA36B" : "#DDE4E3", fundo: ativo ? "#0FA36B" : "#fff", cor: ativo ? "#06251A" : "#3D5058" };
+      }),
       onNovaTitulo: (e) => { const v = e.target.value; this.setState((st) => ({ nova: { ...st.nova, titulo: v, erro: "" } })); },
       onNovaContexto: (e) => { const v = e.target.value; this.setState((st) => ({ nova: { ...st.nova, contexto: v, erro: "" } })); },
       publicarPergunta: () => { if (!s.nova.enviando) this.publicarPergunta(); },
