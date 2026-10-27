@@ -2,15 +2,16 @@
 // e confere pagamentos quando a pessoa volta do checkout.
 //
 // POST { acao: "criar", tipo: "plano", plano, ciclo, parcelas, contratante, metodo, retorno }
-// POST { acao: "criar", tipo: "consultoria", modalidade, assunto, descricao, metodo, retorno }
+// POST { acao: "criar", tipo: "consultoria", modalidade, assunto, descricao, metodo, aceite, termo_versao, anexos, retorno }
 // POST { acao: "conferir", referencia: "assinatura:<id>" | "consultoria:<id>" }
 
 import {
   aplicarPagamento, clienteServico, CORS, env, erro, mp, resposta, usuarioDaRequisicao,
 } from "../_shared/comum.ts";
 import {
-  CONSULTORIA, type Ciclo, type Modalidade, type Plano, PLANOS, precoConsultoria, precoPlano,
+  CONSULTORIA, type Ciclo, inicioMesBR, type Modalidade, type Plano, PLANOS, precoConsultoria, precoPlano,
 } from "../_shared/precos.ts";
+import { avisarEquipeNovaConsultoria } from "../_shared/consultoria.ts";
 
 const SITE_PADRAO = "https://renatogarciagestorp-cpu.github.io/licitaverso/";
 
@@ -119,16 +120,34 @@ Deno.serve(async (req) => {
       const assunto = String(corpo.assunto ?? "").trim().slice(0, 200);
       const descricao = String(corpo.descricao ?? "").trim().slice(0, 10000);
       if (assunto.length < 4) return erro("Descreva o assunto da consultoria.");
-      valor = precoConsultoria(modalidade, vigente ?? null);
+      if (corpo.aceite !== true) return erro("Aceite as condições da consultoria para continuar.");
+      // Anexos: só arquivos que a própria pessoa enviou para a pasta dela
+      const anexos = (Array.isArray(corpo.anexos) ? corpo.anexos : []).slice(0, 5)
+        .filter((a: any) => a && typeof a.caminho === "string" && a.caminho.startsWith(usuario.id + "/") && !a.caminho.includes(".."))
+        .map((a: any) => ({ caminho: a.caminho.slice(0, 300), nome: String(a.nome ?? "").slice(0, 160), tamanho: Number(a.tamanho) || 0 }));
+
+      // Pro: 1 consultoria por escrito por mês incluída
+      let franquiaLivre = false;
+      if (vigente === "pro" && modalidade === "escrita") {
+        const { count } = await admin.from("consultorias").select("id", { count: "exact", head: true })
+          .eq("usuario_id", usuario.id).eq("modalidade", "escrita").eq("valor", 0).neq("status", "cancelada")
+          .gte("criado_em", inicioMesBR().toISOString());
+        franquiaLivre = (count ?? 0) === 0;
+      }
+      valor = precoConsultoria(modalidade, vigente ?? null, franquiaLivre);
       titulo = `Licitacon · ${CONSULTORIA[modalidade].nome}`;
 
       const gratuita = valor <= 0;
       const { data: nova, error } = await admin.from("consultorias").insert({
-        usuario_id: usuario.id, modalidade, assunto, descricao, plano: vigente ?? null, valor,
+        usuario_id: usuario.id, modalidade, assunto, descricao, plano: vigente ?? null, valor, anexos,
+        termo_aceito_em: new Date().toISOString(), termo_versao: String(corpo.termo_versao ?? "").slice(0, 20),
         status: gratuita ? "recebida" : "aguardando_pagamento",
       }).select("id").single();
       if (error) throw error;
-      if (gratuita) return resposta({ gratuito: true, referencia: `consultoria:${nova.id}` });
+      if (gratuita) {
+        await avisarEquipeNovaConsultoria(admin, nova.id);
+        return resposta({ gratuito: true, referencia: `consultoria:${nova.id}` });
+      }
       referencia = `consultoria:${nova.id}`;
     } else {
       return erro("Tipo de compra inválido.");

@@ -1011,7 +1011,7 @@
         <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap">
           <div style="flex: 1; min-width: 260px">
             <h2 style="margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -0.01em">Preços com desconto de assinante</h2>
-            <p style="margin: 6px 0 0; font-size: 13.5px; line-height: 1.55; color: #6A7B82; text-wrap: pretty">A mesma política da consultoria: Básico tem 10% de desconto, Premium 15%, e no Pro o catálogo de cursos está incluído. Veja os preços pela ótica de cada plano.</p>
+            <p style="margin: 6px 0 0; font-size: 13.5px; line-height: 1.55; color: #6A7B82; text-wrap: pretty">Básico tem 10% de desconto, Premium 15%, e no Pro o catálogo de cursos está incluído. Veja os preços pela ótica de cada plano.</p>
           </div>
           <div role="group" aria-label="Ver preços como" style="display: flex; gap: 8px; flex-wrap: wrap">
             <sc-for list="{{ visoesCurso }}" as="v" hint-placeholder-count="4">
@@ -1064,7 +1064,7 @@
       <section style="background: #0A1F2A; color: #fff; padding: 48px 24px 32px">
         <div style="max-width: 1240px; margin: 0 auto">
           <h1 style="font-size: 40px; letter-spacing: -0.03em; font-weight: 800; margin: 0">Consultoria técnica</h1>
-          <p style="font-size: 16.5px; color: #A9BEC6; margin: 10px 0 0; max-width: 720px">Análise de conformidade processual, orientação sobre procedimentos e boas práticas de gestão em licitações e contratos — com especialistas reais, histórico e avaliações. Incluída no plano Pro; com desconto de assinante nos demais planos.</p>
+          <p style="font-size: 16.5px; color: #A9BEC6; margin: 10px 0 0; max-width: 720px">Análise de conformidade processual, orientação sobre procedimentos e boas práticas de gestão em licitações e contratos, feita por especialista em gestão pública. Assinantes têm desconto, e o plano Pro inclui 1 consultoria por escrito por mês.</p>
         </div>
       </section>
       <section style="max-width: 1240px; margin: 0 auto; padding: 32px 24px 0">
@@ -1079,7 +1079,8 @@
                 <span style="font-size: 13px; color: #7A8B91">por atendimento</span>
               </div>
               <div style="font-size: 12.5px; font-weight: 700; color: #0A7A50; background: #E7F7EF; border-radius: 9px; padding: 8px 11px">{{ m.incluido }}</div>
-              <div style="font-size: 13px; font-weight: 700; color: #0F6B7E">SLA {{ m.sla }}</div>
+              <div style="font-size: 13px; font-weight: 700; color: #0F6B7E">Prazo: {{ m.sla }}</div>
+              <div style="font-size: 12.5px; color: #6A7B82">{{ m.escopo }}</div>
               <button sc-camel-on-click="{{ m.solicitar }}" style="margin-top: 6px; background: #0FA36B; color: #06251A; border: 0; border-radius: 10px; padding: 11px 16px; font-size: 13.5px; font-weight: 700; cursor: pointer" style-hover="background: #14B978">Solicitar</button>
             </article>
           </sc-for>
@@ -1089,14 +1090,14 @@
       <section style="max-width: 1240px; margin: 0 auto; padding: 34px 24px 0">
         <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 30px 32px">
           <h2 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em">Quanto custa em cada plano</h2>
-          <p style="margin: 8px 0 24px; font-size: 14.5px; line-height: 1.6; color: #55666D; max-width: 700px; text-wrap: pretty">No plano Pro a consultoria técnica já está incluída, nas três modalidades, sem custo por atendimento. Nos demais planos o atendimento é cobrado à parte, com desconto de assinante.</p>
+          <p style="margin: 8px 0 24px; font-size: 14.5px; line-height: 1.6; color: #55666D; max-width: 700px; text-wrap: pretty">O desconto de assinante é aplicado automaticamente no pedido. No Pro, a primeira consultoria por escrito de cada mês sai sem custo; as demais têm 30% de desconto. A franquia não acumula de um mês para o outro.</p>
           <div style="display: grid; gap: 2px; min-width: 0">
             <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1.1fr; gap: 12px; padding: 0 4px 10px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: #7A8B91">
               <span>Modalidade</span>
               <span>Sem assinatura</span>
               <span>Básico · −10%</span>
               <span>Premium · −15%</span>
-              <span>Pro</span>
+              <span>Pro · −30%</span>
             </div>
             <sc-for list="{{ tabelaConsultoria }}" as="r" hint-placeholder-count="3">
               <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1.1fr; gap: 12px; align-items: center; border-top: 1px solid #EDF1F0; padding: 15px 4px">
@@ -1109,7 +1110,8 @@
             </sc-for>
           </div>
           <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; border-top: 1px solid #EDF1F0; margin-top: 18px; padding-top: 18px">
-            <p style="margin: 0; flex: 1; min-width: 260px; font-size: 13.5px; line-height: 1.6; color: #6A7B82; text-wrap: pretty">Assinantes Pro pagam apenas o plano: as três modalidades ficam disponíveis conforme a agenda do especialista. O desconto de assinante é aplicado automaticamente no pedido.</p>
+            <p style="margin: 0; flex: 1; min-width: 260px; font-size: 13.5px; line-height: 1.6; color: #6A7B82; text-wrap: pretty">Órgãos públicos podem contratar por dispensa de licitação, com proposta, certidões, empenho e nota fiscal: use o botão “Sou órgão público” abaixo.</p>
+            <button sc-camel-on-click="{{ pedirProposta }}" style="background: #fff; color: #0A1F2A; border: 1px solid #0A1F2A; border-radius: 11px; padding: 13px 20px; font-size: 14.5px; font-weight: 700; cursor: pointer" style-hover="background: #F1F6F5">Sou órgão público: pedir proposta</button>
             <button sc-camel-on-click="{{ goPlanos }}" style="background: #0FA36B; color: #06251A; border: 0; border-radius: 11px; padding: 13px 20px; font-size: 14.5px; font-weight: 700; cursor: pointer" style-hover="background: #14B978">Ver planos</button>
           </div>
         </div>
@@ -1147,7 +1149,7 @@
             </article>
           </sc-for>
         </div>
-        <p style="font-size: 13px; line-height: 1.6; color: #7A8B91; margin-top: 22px; max-width: 820px">Serviço de natureza técnica e administrativa. Pareceres e consultoria jurídica são prestados exclusivamente por profissionais inscritos na OAB, quando aplicável e identificados como tal no perfil do especialista.</p>
+        <p style="font-size: 13px; line-height: 1.6; color: #7A8B91; margin-top: 22px; max-width: 820px">Consultoria técnica em gestão de licitações e contratos. Não é consultoria jurídica nem parecer jurídico — atividades privativas de advogado (Lei 8.906/1994, art. 1º, II) — e não substitui a manifestação da assessoria jurídica do órgão (Lei 14.133/2021, art. 53).</p>
       </section>
     </sc-if>
 
@@ -1206,7 +1208,7 @@
       <section style="background: #0A1F2A; color: #fff; padding: 48px 24px 96px">
         <div style="max-width: 1240px; margin: 0 auto; text-align: center">
           <h1 style="font-size: 42px; letter-spacing: -0.035em; font-weight: 800; margin: 0">Planos e preços</h1>
-          <p style="font-size: 16.5px; color: #A9BEC6; margin: 12px auto 0; max-width: 620px">Todos os planos incluem a Biblioteca Jurídica. O que muda é a comunidade, as condições em cursos, o custo da consultoria técnica — incluída no Pro — e a cota do agente de IA.</p>
+          <p style="font-size: 16.5px; color: #A9BEC6; margin: 12px auto 0; max-width: 620px">Todos os planos incluem a Biblioteca Jurídica. O que muda é a comunidade, as condições em cursos, o desconto na consultoria técnica e a cota do agente de IA.</p>
           <div role="group" aria-label="Ciclo de contratação" style="display: inline-flex; margin-top: 26px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 4px; gap: 4px">
             <sc-for list="{{ ciclos }}" as="c" hint-placeholder-count="2">
               <button sc-camel-on-click="{{ c.escolher }}" aria-pressed="{{ c.ativo }}" style="border: 0; font-size: 14px; font-weight: 700; padding: 10px 20px; border-radius: 999px; cursor: pointer; background: {{ c.fundo }}; color: {{ c.cor }}">{{ c.label }}</button>
@@ -1453,6 +1455,9 @@
                     <div style="font-size: 14.5px; font-weight: 800; color: #172B33">{{ rc.titulo }}</div>
                     <div style="font-size: 12.5px; color: #7A8B91; margin-top: 2px">atualizado em {{ rc.data }}</div>
                     <p style="margin: 8px 0 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 15.5px; line-height: 1.6; color: #23343B; white-space: pre-wrap">{{ rc.texto }}</p>
+                    <sc-if value="{{ rc.temLink }}" hint-placeholder-val="{{ false }}">
+                      <a href="{{ rc.link }}" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-top: 10px; background: #0FA36B; color: #06251A; text-decoration: none; font-weight: 700; font-size: 14px; padding: 10px 16px; border-radius: 10px">{{ rc.rotuloLink }}</a>
+                    </sc-if>
                   </article>
                 </sc-for>
               </section>
@@ -1817,7 +1822,7 @@
         <div style="background: #0A1F2A; color: #fff; padding: 20px 26px; display: flex; align-items: center; gap: 16px">
           <div style="flex: 1">
             <div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #7FE3B6">Consultoria técnica</div>
-            <h2 style="margin: 7px 0 0; font-size: 21px; font-weight: 800; letter-spacing: -0.02em">Solicitar atendimento</h2>
+            <h2 style="margin: 7px 0 0; font-size: 21px; font-weight: 800; letter-spacing: -0.02em">{{ consTitulo }}</h2>
           </div>
           <button sc-camel-on-click="{{ fecharConsultoria }}" aria-label="Fechar" style="flex: none; background: rgba(255,255,255,0.12); border: 0; color: #fff; width: 34px; height: 34px; border-radius: 9px; font-size: 17px; cursor: pointer" style-hover="background: rgba(255,255,255,0.24)">✕</button>
         </div>
@@ -1840,8 +1845,42 @@
           </label>
           <label style="display: grid; gap: 6px">
             <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E">Contexto e o que você precisa</span>
-            <textarea rows="6" value="{{ consDescricao }}" sc-camel-on-input="{{ onConsDescricao }}" placeholder="Descreva o caso, as datas e o que espera da análise. Documentos podem ser enviados depois, quando o especialista confirmar o escopo." style="border: 1px solid #DDE4E3; border-radius: 11px; padding: 12px 14px; font-size: 15px; line-height: 1.6; color: #0B1F2A; background: #FBFCFC; resize: vertical" style-focus="border-color: #0FA36B; background: #fff"></textarea>
+            <textarea rows="6" value="{{ consDescricao }}" sc-camel-on-input="{{ onConsDescricao }}" placeholder="Descreva o caso, as datas, o número do processo (se houver) e o que espera da análise." style="border: 1px solid #DDE4E3; border-radius: 11px; padding: 12px 14px; font-size: 15px; line-height: 1.6; color: #0B1F2A; background: #FBFCFC; resize: vertical" style-focus="border-color: #0FA36B; background: #fff"></textarea>
           </label>
+          <div>
+            <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 8px">Documentos (opcional)</span>
+            <label style="display: flex; align-items: center; gap: 10px; border: 1px dashed #B9C9C6; border-radius: 12px; padding: 13px 15px; cursor: pointer; background: #FBFCFC">
+              <span style="font-size: 18px">📎</span>
+              <span style="flex: 1">
+                <span style="display: block; font-size: 14px; font-weight: 700; color: #172B33">Anexar edital, contrato, planilha…</span>
+                <span style="display: block; font-size: 12px; color: #7A8B91; margin-top: 2px">{{ consAnexoDica }}</span>
+              </span>
+              <input type="file" multiple accept="{{ consAnexoTipos }}" sc-camel-on-change="{{ onConsAnexos }}" style="position: absolute; width: 1px; height: 1px; opacity: 0">
+            </label>
+            <sc-if value="{{ temConsAnexos }}" hint-placeholder-val="{{ false }}">
+              <ul style="list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px">
+                <sc-for list="{{ consAnexos }}" as="a" hint-placeholder-count="1">
+                  <li style="display: flex; align-items: center; gap: 10px; background: #F1F6F5; border-radius: 9px; padding: 8px 12px; font-size: 13.5px">
+                    <span style="flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #172B33">{{ a.nome }}</span>
+                    <span style="color: #7A8B91; font-size: 12px">{{ a.tam }}</span>
+                    <button sc-camel-on-click="{{ a.remover }}" aria-label="Remover arquivo" style="background: none; border: 0; color: #8A1230; font-size: 15px; cursor: pointer">✕</button>
+                  </li>
+                </sc-for>
+              </ul>
+            </sc-if>
+          </div>
+          <div style="background: #F6F8F7; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px">
+            <details>
+              <summary style="cursor: pointer; font-size: 14px; font-weight: 700; color: #0F6B7E">Condições da consultoria (leia antes de aceitar)</summary>
+              <ol style="margin: 10px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 13px; line-height: 1.5; color: #3D5058">
+                <sc-for list="{{ consTermo }}" as="t" hint-placeholder-count="3"><li>{{ t }}</li></sc-for>
+              </ol>
+            </details>
+            <label style="display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; cursor: pointer">
+              <input type="checkbox" checked="{{ consAceite }}" sc-camel-on-change="{{ onConsAceite }}" style="width: 18px; height: 18px; margin-top: 1px; accent-color: #0FA36B; flex: none">
+              <span style="font-size: 14px; font-weight: 700; color: #172B33">Li e aceito as condições da consultoria.</span>
+            </label>
+          </div>
           <sc-if value="{{ consPaga }}" hint-placeholder-val="{{ true }}">
             <div>
               <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Forma de pagamento</span>
@@ -1865,7 +1904,7 @@
           <sc-if value="{{ consOk }}" hint-placeholder-val="{{ false }}">
             <p role="status" style="margin: 0; font-size: 14px; font-weight: 700; color: #0A7A50">{{ consOk }}</p>
           </sc-if>
-          <p style="margin: 0; font-size: 12.5px; line-height: 1.55; color: #7A8B91">Serviço de natureza técnica e administrativa. O andamento e a entrega ficam na sua Área do Assinante, em Atividade.</p>
+          <p style="margin: 0; font-size: 12.5px; line-height: 1.55; color: #7A8B91">Consultoria técnica em gestão de licitações e contratos — não é consultoria jurídica. O andamento e a entrega ficam na sua Área do Assinante, em Atividade, com aviso por e-mail.</p>
         </div>
       </div>
     </div>
@@ -2131,7 +2170,7 @@ const INSTITUCIONAL = {
     vigencia: "Versão 1.0 · vigente desde 1º de agosto de 2026",
     blocos: [
       { titulo: "1. Aceitação e capacidade", texto: "Ao criar uma conta ou usar a plataforma, você declara ter pelo menos 18 anos, ter capacidade civil e concordar com estes Termos e com a Política de Privacidade. Se você usa o Licitacon em nome de um órgão público ou de uma empresa, declara ter autorização para isso.", itens: [] },
-      { titulo: "2. O que a plataforma é — e o que não é", texto: "O Licitacon oferece: (a) busca em base de jurisprudência, normas e pareceres de fontes oficiais; (b) fórum de comunidade profissional; (c) vitrine de cursos de instrutores parceiros, hospedados fora da plataforma; (d) intermediação de consultoria técnica e administrativa com especialistas cadastrados; (e) futuramente, agente de inteligência artificial de análise de procedimentos. Nada disso constitui consultoria jurídica, parecer jurídico, representação processual ou garantia de resultado em processo administrativo ou judicial.", itens: [] },
+      { titulo: "2. O que a plataforma é — e o que não é", texto: "O Licitacon oferece: (a) busca em base de jurisprudência, normas e pareceres de fontes oficiais; (b) fórum de comunidade profissional; (c) vitrine de cursos de instrutores parceiros, hospedados fora da plataforma; (d) consultoria técnica em gestão de licitações e contratos, prestada por especialista em gestão pública; (e) futuramente, agente de inteligência artificial de análise de procedimentos. Nada disso constitui consultoria jurídica, parecer jurídico, representação processual ou garantia de resultado em processo administrativo ou judicial.", itens: [] },
       { titulo: "3. Cadastro, conta e segurança", texto: "Você é responsável pela veracidade dos dados informados e pela guarda das suas credenciais. Contas são pessoais e intransferíveis: o compartilhamento de login com terceiros é motivo de suspensão. Recomendamos ativar a autenticação em dois fatores. Comunique imediatamente qualquer uso não autorizado.", itens: [] },
       { titulo: "4. Planos, cobrança e cancelamento", texto: "A Biblioteca Jurídica tem camada de acesso gratuito permanente. Os planos pagos são cobrados por meio do Mercado Pago Ltda., nosso processador de pagamentos, em ambiente PCI-DSS: o Licitacon não recebe nem armazena o número completo do seu cartão. As formas de pagamento e o próprio regime de renovação variam conforme quem contrata — pessoa física, empresa privada ou órgão da administração pública:", itens: [
         "Duas formas de contratar: por 1 mês, sem compromisso de renovação; ou por 12 meses, com mensalidade menor e acesso contínuo durante todo o período, à vista ou em até 12x sem juros — o total é o mesmo nas duas hipóteses de parcelamento.",
@@ -2144,7 +2183,7 @@ const INSTITUCIONAL = {
         "Reajustes de preço são comunicados com no mínimo 30 dias de antecedência e nunca retroagem ao ciclo vigente."
       ] },
       { titulo: "5. Conduta no fórum", texto: "O fórum é um ambiente profissional. É proibido publicar dados pessoais de terceiros, informação sigilosa, documento sob restrição de acesso, conteúdo ofensivo, discriminatório, publicidade não autorizada ou qualquer pedido de auxílio para fraudar procedimento licitatório. Moderadores podem editar a classificação de tópicos, mesclar conversas, remover conteúdo e suspender contas reincidentes. Você mantém a titularidade do que escreve e nos concede licença não exclusiva para exibir esse conteúdo na plataforma.", itens: [] },
-      { titulo: "6. Cursos e consultoria de parceiros", texto: "Cursos são ministrados e hospedados por instrutores parceiros: a relação de consumo do curso é entre você e o instrutor, e o Licitacon atua como vitrine e canal de divulgação, podendo receber comissão pela indicação. Na consultoria, o escopo, o prazo (SLA) e o preço são acordados antes do pagamento, com repasse automático ao especialista. As três modalidades estão incluídas no plano Pro, sem custo por atendimento; assinantes Básico têm 10% de desconto e assinantes Premium 15% de desconto sobre o valor de cada modalidade, aplicado automaticamente no checkout. Serviços de natureza jurídica, quando houver, são prestados exclusivamente por profissionais inscritos na OAB, identificados como tal no perfil.", itens: [] },
+      { titulo: "6. Cursos e consultoria", texto: "Cursos são hospedados na plataforma Hotmart, onde ficam as aulas, os materiais e o certificado. A consultoria técnica é prestada pelo Licitacon nas modalidades por escrito, vídeo gravado e reunião ao vivo, com escopo, prazo e preço informados antes do pagamento e condições aceitas no pedido. Assinantes Básico têm 10% de desconto, Premium 15% e Pro 30%; o Pro inclui ainda 1 consultoria por escrito por mês, sem acúmulo. A consultoria não é consultoria jurídica nem parecer jurídico e não substitui a assessoria jurídica do órgão.", itens: [] },
       { titulo: "7. Inteligência artificial e revisão humana", texto: "As análises do agente de IA são minutas de apoio, geradas a partir da base curada da plataforma e sempre acompanhadas da fonte citada. A revisão por profissional humano é obrigatória antes de qualquer decisão administrativa ou contratual. O Licitacon não responde por decisão tomada com base exclusiva em saída de IA sem revisão.", itens: [] },
       { titulo: "8. Propriedade intelectual", texto: "Textos normativos, acórdãos, súmulas e pareceres são documentos públicos e não nos pertencem. Já a organização da base, a taxonomia de temas, as notas editoriais, a marca, o software e o design da plataforma são protegidos. É vedada a extração automatizada em massa (scraping, mirroring ou revenda) do conteúdo do Licitacon sem autorização escrita.", itens: [] },
       { titulo: "9. Disponibilidade e limitação de responsabilidade", texto: "Trabalhamos com meta de disponibilidade de 99,5% e backups diários, mas não garantimos operação ininterrupta nem ausência de erro em documento coletado de fonte oficial. Nossa responsabilidade, nos limites da lei aplicável, fica restrita ao valor pago por você nos 12 meses anteriores ao evento. Nada aqui afasta direitos do consumidor previstos em lei.", itens: [] },
@@ -2326,13 +2365,30 @@ const CURSOS = [
 ];
 
 const CONSULTORIA = [
-  { icon: "✎", titulo: "Consultoria por escrito", valor: 500, sla: "até 3 dias úteis",
-    desc: "Você envia a dúvida ou o documento por formulário estruturado; o especialista devolve um relatório técnico fundamentado." },
-  { icon: "▷", titulo: "Vídeo gravado", valor: 900, sla: "até 5 dias úteis",
-    desc: "O especialista grava a resposta explicando o raciocínio passo a passo. Você assiste quando quiser, quantas vezes quiser." },
-  { icon: "◉", titulo: "Reunião ao vivo", valor: 1500, sla: "agenda em 7 dias",
-    desc: "Agenda integrada com a disponibilidade real do especialista e link de videoconferência automático." }
+  { icon: "✎", titulo: "Consultoria por escrito", valor: 390, sla: "até 5 dias úteis",
+    escopo: "1 questão · documentos de até 30 páginas",
+    desc: "Você descreve o caso e anexa os documentos; o especialista devolve um relatório técnico fundamentado na lei, na jurisprudência e nas boas práticas." },
+  { icon: "▷", titulo: "Vídeo gravado", valor: 590, sla: "até 7 dias úteis",
+    escopo: "1 questão · vídeo de até 20 minutos",
+    desc: "O especialista analisa os documentos e grava a explicação passo a passo, com a tela compartilhada. Você assiste quando quiser, quantas vezes quiser." },
+  { icon: "◉", titulo: "Reunião ao vivo", valor: 490, sla: "agendada em até 7 dias úteis",
+    escopo: "60 minutos por videoconferência",
+    desc: "Conversa pelo Google Meet para tirar dúvidas e discutir o caso. Depois do pagamento, você escolhe o horário na agenda do especialista." }
 ];
+const CONS_TERMO_VERSAO = "2026-10-27";
+const CONS_TERMO = [
+  "Natureza do serviço: consultoria técnica em gestão de licitações e contratos. Não é consultoria jurídica nem parecer jurídico — atividades privativas de advogado (Lei 8.906/1994, art. 1º, II) — e não substitui a manifestação da assessoria jurídica do órgão (Lei 14.133/2021, art. 53).",
+  "Escopo: por escrito, 1 questão com documentos de até 30 páginas; vídeo gravado, 1 questão com vídeo de até 20 minutos; reunião ao vivo, 60 minutos. Casos maiores recebem orçamento à parte.",
+  "Prazos em dias úteis, contados da confirmação do pagamento e do recebimento dos documentos necessários.",
+  "Triagem: em até 1 dia útil o especialista confirma se o caso cabe no escopo. Se não couber, o pedido é cancelado com reembolso integral.",
+  "Depois da entrega, você tem 1 rodada de esclarecimento por escrito, em até 7 dias.",
+  "Reunião: remarcação gratuita com 24 horas de antecedência; ausência sem aviso conta como atendimento realizado.",
+  "A análise é apoio à decisão: não há garantia de resultado, e a decisão final cabe ao órgão ou à empresa.",
+  "Confidencialidade: documentos e informações são usados só neste atendimento, com acesso restrito ao especialista (LGPD).",
+  "Desistência em até 7 dias da contratação, com reembolso integral (art. 49 do Código de Defesa do Consumidor)."
+];
+const CONS_ANEXO_MAX = 5, CONS_ANEXO_MB = 10;
+const CONS_ANEXO_TIPOS = ".pdf,.doc,.docx,.xls,.xlsx,.odt,.ods,.csv,.txt,.png,.jpg,.jpeg";
 
 const COMPRADORES = {
   fisica: {
@@ -2410,7 +2466,9 @@ const EXIGE_LOGIN = ["forum", "cursos", "conta"];
 const PLANO_NOME = { teste: "Teste", basico: "Básico", premium: "Premium", pro: "Pro" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 1 };
+const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
+// Pro: 1 consultoria por escrito por mês incluída (mês do calendário, horário de Brasília)
+const inicioMesBR = () => { const d = new Date(Date.now() - 3 * 3600000); return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1, 3)); };
 const STATUS_CONSULTORIA = {
   aguardando_pagamento: "aguardando pagamento", recebida: "recebida · na fila do especialista",
   em_andamento: "em andamento", entregue: "entregue", cancelada: "cancelada"
@@ -2555,7 +2613,7 @@ class Component extends DCLogic {
     cursosDb: null,
 
     // consultoria
-    consultoria: { aberta: false, modalidade: "escrita", assunto: "", descricao: "", metodo: "pix", enviando: false, erro: "", ok: "" },
+    consultoria: { aberta: false, orgao: false, modalidade: "escrita", assunto: "", descricao: "", metodo: "pix", aceite: false, anexos: [], enviando: false, erro: "", ok: "" },
     cursoAberto: null,
     menuAberto: false,
     instalar: null
@@ -2740,7 +2798,7 @@ class Component extends DCLogic {
       const st = data && data.status;
       if (st === "ativa" || st === "recebida" || st === "em_andamento" || st === "entregue") {
         await this.carregarDados();
-        this.aviso(ref.startsWith("assinatura:") ? "✓ Pagamento confirmado. Seu plano já está ativo." : "✓ Pagamento confirmado. Sua consultoria entrou na fila do especialista.");
+        this.aviso(ref.startsWith("assinatura:") ? "✓ Pagamento confirmado. Seu plano já está ativo." : "✓ Pagamento confirmado. Em até 1 dia útil o especialista confirma o escopo por e-mail.");
         return;
       }
       await new Promise((r) => setTimeout(r, 2500));
@@ -2961,14 +3019,50 @@ class Component extends DCLogic {
     if (this.sb && this.state.usuario && c.id) await this.sb.from("curso_acessos").insert({ curso_id: c.id });
   };
 
-  abrirConsultoria = (modalidade) => () => {
+  abrirConsultoria = (modalidade, orgao) => () => {
     if (this.sb && !this.u) { this.setState({ volta: "consultoria" }); this.irPara("login"); return; }
-    this.setState({ consultoria: { aberta: true, modalidade: modalidade || "escrita", assunto: "", descricao: "", metodo: "pix", enviando: false, erro: "", ok: "" } });
+    this.setState({ consultoria: { aberta: true, orgao: !!orgao, modalidade: modalidade || "escrita", assunto: "", descricao: "", metodo: "pix", aceite: false, anexos: [], enviando: false, erro: "", ok: "" } });
   };
 
+  franquiaProLivre() {
+    if (this.state.plano !== "pro") return false;
+    const ini = inicioMesBR().getTime();
+    return !(this.state.consultorias || []).some((c) => c.modalidade === "escrita" && Number(c.valor) === 0 && c.status !== "cancelada" && new Date(c.criado_em).getTime() >= ini);
+  }
+
   precoConsultoria(i) {
+    if (MODALIDADES[i] === "escrita" && this.franquiaProLivre()) return 0;
     const desc = DESC_CONSULTORIA[this.state.plano] || 0;
-    return CONSULTORIA[i].valor * (1 - desc);
+    return Math.round(CONSULTORIA[i].valor * (1 - desc) * 100) / 100;
+  }
+
+  escolherAnexos(e) {
+    const c = this.state.consultoria;
+    const novos = Array.from((e.target && e.target.files) || []);
+    if (e.target) e.target.value = "";
+    const lista = [...c.anexos];
+    let erro = "";
+    for (const f of novos) {
+      if (lista.length >= CONS_ANEXO_MAX) { erro = "Envie no máximo " + CONS_ANEXO_MAX + " arquivos. Se precisar de mais, junte-os em um PDF."; break; }
+      if (f.size > CONS_ANEXO_MB * 1048576) { erro = "“" + f.name + "” passa de " + CONS_ANEXO_MB + " MB."; continue; }
+      if (!lista.some((x) => x.name === f.name && x.size === f.size)) lista.push(f);
+    }
+    this.setState({ consultoria: { ...c, anexos: lista, erro } });
+  }
+
+  async enviarAnexos() {
+    const arquivos = this.state.consultoria.anexos;
+    if (!arquivos.length) return [];
+    const pasta = this.state.usuario.id + "/" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    const enviados = [];
+    for (const f of arquivos) {
+      const limpo = f.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9._-]+/g, "-").slice(-90) || "arquivo";
+      const caminho = pasta + "/" + limpo;
+      const { error } = await this.sb.storage.from("consultorias").upload(caminho, f, { upsert: false, contentType: f.type || undefined });
+      if (error) throw new Error("Não foi possível enviar “" + f.name + "”. Tente de novo.");
+      enviados.push({ caminho, nome: f.name, tamanho: f.size });
+    }
+    return enviados;
   }
 
   async enviarConsultoria() {
@@ -2976,13 +3070,34 @@ class Component extends DCLogic {
     if (!this.sb) { this.setState({ consultoria: { ...c, erro: "Pedidos de consultoria ainda não estão ativos neste site (modo demonstração)." } }); return; }
     if (c.assunto.trim().length < 4) { this.setState({ consultoria: { ...c, erro: "Descreva o assunto em poucas palavras." } }); return; }
     if (c.descricao.trim().length < 20) { this.setState({ consultoria: { ...c, erro: "Conte o contexto com um pouco mais de detalhe (pelo menos 20 caracteres)." } }); return; }
+    if (!c.aceite) { this.setState({ consultoria: { ...c, erro: "Leia e aceite as condições da consultoria para continuar." } }); return; }
     this.setState({ consultoria: { ...c, enviando: true, erro: "" } });
+    let anexos = [];
+    try { anexos = await this.enviarAnexos(); }
+    catch (e) { this.setState({ consultoria: { ...this.state.consultoria, enviando: false, erro: e.message } }); return; }
+
+    // Órgão público: vira pedido de proposta (contratação direta, empenho e nota fiscal)
+    if (c.orgao) {
+      const p = this.state.perfil || {};
+      const modNome = CONSULTORIA[MODALIDADES.indexOf(c.modalidade)].titulo;
+      const { error: e2 } = await this.sb.from("contatos").insert({
+        nome: p.nome || "Órgão público", email: p.email || (this.state.usuario && this.state.usuario.email) || "",
+        assunto: "Consultoria · proposta para órgão público",
+        mensagem: modNome + " — " + c.assunto.trim() + "\n\n" + c.descricao.trim(),
+        detalhes: { tipo: "consultoria_orgao", modalidade: c.modalidade, assunto: c.assunto.trim(), anexos, orgao: p.orgao || "", cargo: p.cargo || "", celular: p.celular || "", termo_versao: CONS_TERMO_VERSAO }
+      });
+      if (e2) { this.setState({ consultoria: { ...this.state.consultoria, enviando: false, erro: "Não foi possível registrar o pedido agora." } }); return; }
+      this.sb.functions.invoke("consultoria-aviso", { body: { tipo: "proposta" } }).catch(() => {});
+      this.setState({ consultoria: { ...this.state.consultoria, enviando: false, ok: "✓ Pedido registrado. Em até 1 dia útil enviamos ao e-mail da sua conta a proposta, as certidões e os dados para a contratação direta e o empenho." } });
+      return;
+    }
+
     const { data, error } = await this.sb.functions.invoke("mp-checkout", {
-      body: { acao: "criar", tipo: "consultoria", modalidade: c.modalidade, assunto: c.assunto.trim(), descricao: c.descricao.trim(), metodo: c.metodo, retorno: baseSite() + "index.html" }
+      body: { acao: "criar", tipo: "consultoria", modalidade: c.modalidade, assunto: c.assunto.trim(), descricao: c.descricao.trim(), metodo: c.metodo, aceite: true, termo_versao: CONS_TERMO_VERSAO, anexos, retorno: baseSite() + "index.html" }
     });
     if (error) { this.setState({ consultoria: { ...this.state.consultoria, enviando: false, erro: await erroDaFuncao(error) } }); return; }
     if (data && data.gratuito) {
-      this.setState({ consultoria: { ...this.state.consultoria, enviando: false, ok: "✓ Pedido recebido — incluído no seu plano Pro. O especialista confirma o escopo e o prazo por e-mail." } });
+      this.setState({ consultoria: { ...this.state.consultoria, enviando: false, ok: "✓ Pedido recebido — é a consultoria por escrito incluída no seu plano Pro deste mês. Em até 1 dia útil o especialista confirma o escopo por e-mail." } });
       this.carregarDados();
       return;
     }
@@ -3455,7 +3570,7 @@ class Component extends DCLogic {
         { icon: "⌕", tag: "Núcleo da plataforma", tagColor: "#0A7A50", titulo: "Biblioteca Jurídica", desc: "Busca com filtros por órgão, estado, tipo de norma, tema e ano. Acervo em carga progressiva, com mais de 40 fontes mapeadas para coleta: tribunais de contas, controle interno, tribunais de justiça e ministérios públicos.", cta: "Pesquisar agora", go: this.nav("biblioteca") },
         { icon: "◍", tag: "Comunidade", tagColor: "#0F6B7E", titulo: "Fórum por tema", desc: "Perguntas organizadas por tema, com resposta oficial do especialista e escolha da melhor resposta. Setor público e privado conversando no mesmo lugar.", cta: "Ver tópicos", go: this.nav("forum") },
         { icon: "▤", tag: "Capacitação", tagColor: "#0F6B7E", titulo: "Vitrine de cursos", desc: "Cursos com curadoria do Licitacon, com desconto para assinantes e catálogo incluído no plano Pro.", cta: "Explorar cursos", go: this.nav("cursos") },
-        { icon: "◈", tag: "Especialistas", tagColor: "#0F6B7E", titulo: "Consultoria técnica", desc: "Por escrito, em vídeo gravado ou reunião ao vivo — incluída no plano Pro e com desconto de assinante nos demais.", cta: "Ver especialistas", go: this.nav("consultoria") },
+        { icon: "◈", tag: "Especialistas", tagColor: "#0F6B7E", titulo: "Consultoria técnica", desc: "Por escrito, em vídeo gravado ou reunião ao vivo, com desconto de assinante — e 1 consultoria por escrito por mês incluída no Pro.", cta: "Ver especialistas", go: this.nav("consultoria") },
         { icon: "✦", tag: "Em breve", tagColor: "#8A4A12", titulo: "Agente de IA analista", desc: "Envie um edital ou minuta de aditivo e receba a análise de conformidade com fundamento citado e nível de risco.", cta: "Entrar na lista", go: this.nav("agente") }
       ],
       diferenciais: [
@@ -3564,27 +3679,28 @@ class Component extends DCLogic {
 
       // consultoria
       modalidades: CONSULTORIA.map((c, i) => ({
-        icon: c.icon, titulo: c.titulo, desc: c.desc, sla: c.sla,
-        preco: brl(c.valor), incluido: "Incluída no plano Pro",
+        icon: c.icon, titulo: c.titulo, desc: c.desc, sla: c.sla, escopo: c.escopo,
+        preco: brl(c.valor), incluido: i === 0 ? "Pro: 1 por mês incluída" : "Pro: 30% de desconto",
         solicitar: this.abrirConsultoria(MODALIDADES[i])
       })),
-      tabelaConsultoria: CONSULTORIA.map((c) => ({
+      tabelaConsultoria: CONSULTORIA.map((c, i) => ({
         modalidade: c.titulo,
         sem: brl(c.valor),
         basico: brl(c.valor * 0.9),
         premium: brl(c.valor * 0.85),
-        pro: "Incluída"
+        pro: i === 0 ? "1/mês incluída · extra " + brl(c.valor * 0.7) : brl(c.valor * 0.7)
       })),
       fluxo: [
-        { n: "1", titulo: "Solicitação", desc: "Formulário com o assunto e o contexto do caso." },
-        { n: "2", titulo: "Pagamento", desc: "Pix, cartão ou boleto pelo Mercado Pago — no Pro, sem custo." },
-        { n: "3", titulo: "Escopo e prazo", desc: "O especialista confirma o que será analisado e em quanto tempo." },
-        { n: "4", titulo: "Entrega", desc: "Relatório, vídeo ou reunião, conforme a modalidade escolhida." },
-        { n: "5", titulo: "Acompanhamento", desc: "Status e entrega ficam registrados na sua Área do Assinante." }
+        { n: "1", titulo: "Pedido", desc: "Você escolhe a modalidade, descreve o caso, anexa os documentos e aceita as condições." },
+        { n: "2", titulo: "Pagamento", desc: "Pix, cartão ou boleto pelo Mercado Pago. No Pro, a 1ª consultoria por escrito do mês sai sem custo." },
+        { n: "3", titulo: "Triagem", desc: "Em até 1 dia útil o especialista confirma o escopo por e-mail. Fora do escopo? Reembolso integral." },
+        { n: "4", titulo: "Análise e entrega", desc: "Relatório, vídeo ou link de agendamento da reunião — tudo fica na sua Área do Assinante, com aviso por e-mail." },
+        { n: "5", titulo: "Esclarecimento", desc: "Ficou alguma dúvida? Você tem 1 rodada de esclarecimento por escrito em até 7 dias." }
       ],
       consultores: [
-        { iniciais: "RG", nome: "Renato Garcia", titulacao: "Especialista em licitações e contratos administrativos · instrutor e consultor responsável", especialidade: "Planejamento da contratação, reajuste e repactuação, registro de preços e adesão a ata, aditivos e prorrogações, e defesa da instrução processual perante o controle interno e externo.", preco: "R$ 500", iniciaisCor: "", solicitar: this.abrirConsultoria("escrita") }
+        { iniciais: "RG", nome: "Renato Garcia", titulacao: "Graduado em Gestão Pública (FGV EBAPE) · pós-graduado em Licitações e Contratações Públicas e em Direito Administrativo e Anticorrupção", especialidade: "Planejamento da contratação, pesquisa de preços, reajuste, repactuação e reequilíbrio, registro de preços e adesão a ata, aditivos e prorrogações, e instrução processual diante do controle interno e externo.", preco: brl(CONSULTORIA[0].valor), iniciaisCor: "", solicitar: this.abrirConsultoria("escrita") }
       ],
+      pedirProposta: this.abrirConsultoria("escrita", true),
       cursoAberto: !!cursoSel,
       cursoInfo: cursoSel ? (() => {
         const v = VISOES.find((x) => x.key === s.planoVisao) || VISOES[0];
@@ -3610,8 +3726,8 @@ class Component extends DCLogic {
       fecharConsultoria: () => this.setState({ consultoria: { ...cons, aberta: false } }),
       consModalidades: CONSULTORIA.map((c, i) => {
         const ativo = cons.modalidade === MODALIDADES[i];
-        const preco = this.precoConsultoria(i);
-        return { titulo: c.titulo, sla: c.sla, preco: preco <= 0 ? "Incluída no Pro" : brl(preco), ativo,
+        const preco = cons.orgao ? c.valor : this.precoConsultoria(i);
+        return { titulo: c.titulo, sla: c.sla + " · " + c.escopo, preco: preco <= 0 ? "Incluída no seu Pro deste mês" : (cons.orgao ? "proposta: " : "") + brl(preco), ativo,
           escolher: () => this.setState({ consultoria: { ...cons, modalidade: MODALIDADES[i], erro: "" } }),
           borda: ativo ? "#0FA36B" : "#E6EBEA", fundo: ativo ? "#F1FBF6" : "#fff" };
       }),
@@ -3621,10 +3737,23 @@ class Component extends DCLogic {
       consMetodos: [["pix", "Pix"], ["cartao", "Cartão"], ["boleto", "Boleto"]].map(([id, nome]) => ({
         nome, ativo: cons.metodo === id, escolher: () => this.setState({ consultoria: { ...cons, metodo: id } }), ...corBotao(cons.metodo === id)
       })),
-      consPaga: precoCons > 0,
-      consTotal: precoCons <= 0 ? "Incluída no seu plano" : brl(precoCons),
-      consDesconto: s.plano && DESC_CONSULTORIA[s.plano] && precoCons > 0 ? "Desconto de assinante " + PLANO_NOME[s.plano] + " aplicado" : (precoCons > 0 ? "Assinantes Básico têm 10% de desconto; Premium, 15%; no Pro é incluída." : ""),
-      consBotao: cons.enviando ? "Aguarde…" : (precoCons <= 0 ? "Enviar pedido" : "Pagar com Mercado Pago"),
+      consOrgao: cons.orgao,
+      consTitulo: cons.orgao ? "Pedir proposta para órgão público" : "Solicitar atendimento",
+      consPaga: precoCons > 0 && !cons.orgao,
+      consTotal: cons.orgao ? brl(CONSULTORIA[iMod].valor) : (precoCons <= 0 ? "Incluída no seu plano" : brl(precoCons)),
+      consDesconto: cons.orgao ? "Valor de referência. A proposta formal segue por e-mail, para contratação direta com empenho e nota fiscal."
+        : (precoCons <= 0 ? "1 consultoria por escrito por mês incluída no Pro"
+        : (s.plano && DESC_CONSULTORIA[s.plano] ? "Desconto de assinante " + PLANO_NOME[s.plano] + " aplicado" : "Assinantes têm desconto: Básico 10%, Premium 15%, Pro 30% (e 1 consultoria por escrito por mês incluída).")),
+      consBotao: cons.enviando ? (cons.anexos.length ? "Enviando arquivos…" : "Aguarde…") : (cons.orgao ? "Pedir proposta" : (precoCons <= 0 ? "Enviar pedido" : "Pagar com Mercado Pago")),
+      consTermo: CONS_TERMO,
+      consAceite: cons.aceite,
+      onConsAceite: (e) => { const v = !!e.target.checked; this.setState((st) => ({ consultoria: { ...st.consultoria, aceite: v, erro: "" } })); },
+      consAnexoTipos: CONS_ANEXO_TIPOS,
+      consAnexoDica: "Até " + CONS_ANEXO_MAX + " arquivos de até " + CONS_ANEXO_MB + " MB cada (PDF, Word, Excel, imagens).",
+      onConsAnexos: (e) => this.escolherAnexos(e),
+      consAnexos: cons.anexos.map((f, i) => ({ nome: f.name, tam: f.size >= 1048576 ? (f.size / 1048576).toFixed(1).replace(".", ",") + " MB" : Math.max(1, Math.round(f.size / 1024)) + " KB",
+        remover: () => this.setState((st) => ({ consultoria: { ...st.consultoria, anexos: st.consultoria.anexos.filter((_, j) => j !== i) } })) })),
+      temConsAnexos: cons.anexos.length > 0,
       enviarConsultoria: () => { if (!cons.enviando && !cons.ok) this.enviarConsultoria(); },
 
       // agente
@@ -3670,7 +3799,7 @@ class Component extends DCLogic {
         { nome: "Premium", base: 149.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(149.9), unidade: unidadePlano, nota: notaPlano(149.9), detalhePreco: detalhePlano(149.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
           itens: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Prioridade na agenda do especialista"] },
         { nome: "Pro", base: 399.9, publico: "Profissionais avançados e empresas.", preco: precoPlano(399.9), unidade: unidadePlano, nota: notaPlano(399.9), detalhePreco: detalhePlano(399.9), destaque: destaque === "Pro", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Tudo do Premium", "Catálogo de cursos incluído, sem custo adicional", "Consultoria técnica incluída: escrita, vídeo gravado e reunião ao vivo", "Cota mensal do Agente de IA Analista (quando lançado)", "Selo de resposta oficial no fórum para o especialista", "Suporte prioritário"] }
+          itens: ["Tudo do Premium", "Catálogo de cursos incluído, sem custo adicional", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "Cota mensal do Agente de IA Analista (quando lançado)", "Selo de resposta oficial no fórum para o especialista", "Suporte prioritário"] }
       ]),
 
       // área do assinante
@@ -3761,8 +3890,10 @@ class Component extends DCLogic {
         { titulo: "Consultorias", itens: [{ titulo: "Vantajosidade em prorrogação contratual", meta: "exemplo de demonstração" }] },
         { titulo: "Cursos acessados", itens: [{ titulo: "Gestão Contratual Sem Erros: Aprenda a Realizar Reequilíbrios e Repactuações", meta: "exemplo de demonstração" }] }
       ],
-      respostasConsultoria: s.consultorias.filter((c) => c.resposta).map((c) => ({ titulo: c.assunto, texto: c.resposta, data: dataBR(c.atualizado_em) })),
-      temRespostasConsultoria: s.consultorias.some((c) => c.resposta),
+      respostasConsultoria: s.consultorias.filter((c) => c.resposta || c.entrega_link).map((c) => ({ titulo: c.assunto, texto: c.resposta || "", data: dataBR(c.atualizado_em),
+        temLink: !!c.entrega_link, link: c.entrega_link || "",
+        rotuloLink: c.modalidade === "reuniao" ? "Abrir link da reunião ↗" : (c.modalidade === "video" ? "Assistir ao vídeo ↗" : "Abrir material ↗") })),
+      temRespostasConsultoria: s.consultorias.some((c) => c.resposta || c.entrega_link),
 
       notificacoes: notifs.map((n) => ({
         titulo: n.titulo, desc: n.desc,

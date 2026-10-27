@@ -50,3 +50,10 @@ Biblioteca: `python3 scripts/atualizar-biblioteca.py` reaplica o shim e a barra.
 - Ao criar uma pergunta, o site pergunta se a pessoa quer receber e-mail quando alguém responder (Sim/Não, obrigatório). Dá para ligar/desligar depois, na própria pergunta.
 - Função `forum-aviso` envia o e-mail (Brevo) ao autor; respeita "Resposta na minha pergunta" em Notificações; um e-mail por resposta.
 - `supabase/sql/forum-perguntas-iniciais.sql`: 11 perguntas frequentes com resposta oficial (Lei 14.133/2021 e TCU). Editar/apagar em Painel → Fórum.
+
+## Consultoria v2 (27/10/2026)
+- Preços: por escrito R$ 390 (até 5 dias úteis), vídeo gravado R$ 590 (até 7 dias úteis, até 20 min), reunião ao vivo R$ 490 (60 min, agendada em até 7 dias úteis).
+- Descontos: Básico 10%, Premium 15%, Pro 30% + 1 consultoria por escrito por mês incluída (sem acúmulo).
+- Pedido com anexos (bucket privado `consultorias`), aceite das condições (versão registrada) e opção "Sou órgão público: pedir proposta" (vai para Mensagens).
+- E-mail à equipe quando chega pedido pago/incluído ou pedido de proposta; Painel → Consultorias: link de entrega/agenda e "Avisar o cliente por e-mail" (função `consultoria-aviso`).
+- Textos: consultoria técnica, não jurídica (Lei 8.906/1994, art. 1º, II); perfil do especialista atualizado.

@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
+import { avisarEquipeNovaConsultoria } from "./consultoria.ts";
 
 // MP_API_URL só existe para testes locais; em produção fica a API oficial.
 export const MP_API = Deno.env.get("MP_API_URL") || "https://api.mercadopago.com";
@@ -92,6 +93,7 @@ export async function aplicarPagamento(admin: SupabaseClient, pagamento: any): P
       p_parcelas: Number(pagamento.installments ?? 1),
     });
     if (error) throw error;
+    if (String(data) === "consultoria_paga") await avisarEquipeNovaConsultoria(admin, ref.split(":")[1]);
     return String(data);
   }
   // Cartão recusado não encerra o pedido: a pessoa pode tentar de novo no mesmo checkout.
