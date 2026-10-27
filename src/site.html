@@ -2466,6 +2466,7 @@ const EXIGE_LOGIN = ["forum", "cursos", "conta"];
 const PLANO_NOME = { teste: "Teste", basico: "Básico", premium: "Premium", pro: "Pro" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
+const CHAT_VERSAO = "1";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
 // Pro: 1 consultoria por escrito por mês incluída (mês do calendário, horário de Brasília)
 const inicioMesBR = () => { const d = new Date(Date.now() - 3 * 3600000); return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1, 3)); };
@@ -2627,6 +2628,15 @@ class Component extends DCLogic {
     if (tabIni) this.setState({ contaTab: tabIni });
     const topicoIni = qsIni.get("topico");
     if (topicoIni) this.setState({ topico: topicoIni });
+    const instIni = qsIni.get("inst");
+    if (instIni && INSTITUCIONAL[instIni]) this.setState({ institTab: instIni });
+    // Navegação usada pelo assistente de dúvidas (chatbot.js)
+    window.LV_NAV = (pagina, op) => {
+      const o = op || {};
+      if (o.tab) this.setState({ contaTab: o.tab });
+      if (o.inst && INSTITUCIONAL[o.inst]) this.setState({ institTab: o.inst });
+      this.irPara(PAGINAS.includes(pagina) || pagina === "biblioteca" ? pagina : "home");
+    };
     const voltaIni = qsIni.get("volta");
     if (voltaIni && (PAGINAS.includes(voltaIni) || voltaIni === "biblioteca" || voltaIni === "painel")) this.setState({ volta: voltaIni });
     fetch("acervo.json?v=" + Date.now(), { cache: "no-store" }).then((r) => r.ok ? r.json() : Promise.reject(r.status)).then((j) => {
@@ -2691,6 +2701,7 @@ class Component extends DCLogic {
       if (!window.LV) await carregarScript(baseSite() + "licitaverso-auth.js?v=3");
       sb = await window.LV.pronto;
     } catch (e) { sb = null; }
+    if (!window.LV_CHAT) carregarScript(baseSite() + "chatbot.js?v=" + CHAT_VERSAO).catch(() => {});
     this.sb = sb;
     if (!sb) {
       this.setState({ sb: false, sessaoPronta: true });

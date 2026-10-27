@@ -133,7 +133,7 @@ async function iniciar() {
 
 const ABAS = [
   ["resumo", "Visão geral"], ["assinantes", "Assinantes"], ["consultorias", "Consultorias"], ["forum", "Fórum"],
-  ["cursos", "Cursos"], ["mensagens", "Mensagens"], ["lgpd", "Pedidos LGPD"], ["espera", "Lista de espera"], ["registro", "Registro"]
+  ["cursos", "Cursos"], ["mensagens", "Mensagens"], ["assistente", "Assistente"], ["lgpd", "Pedidos LGPD"], ["espera", "Lista de espera"], ["registro", "Registro"]
 ];
 let contagens = {};
 
@@ -366,6 +366,29 @@ const TELAS = {
       const { error } = await sb.from("contatos").update({ lido: true }).eq("id", b.dataset.lido); if (error) return toast(error.message, true); TELAS.mensagens(el);
     });
     ligarAnexos(el);
+  },
+
+  async assistente(el) {
+    const lista = await q(sb.from("chatbot_registros").select("*").order("criado_em", { ascending: false }).limit(1000));
+    const semResp = lista.filter((r) => r.pergunta && (!r.resposta_id || r.resposta_id.startsWith("?")));
+    const ruins = lista.filter((r) => r.util === false);
+    const boas = lista.filter((r) => r.util === true).length;
+    const perguntas = lista.filter((r) => r.pergunta && r.util === null);
+    const cont = {}; perguntas.filter((r) => r.resposta_id && !r.resposta_id.startsWith("?")).forEach((r) => cont[r.resposta_id] = (cont[r.resposta_id] || 0) + 1);
+    const top = Object.entries(cont).sort((a, b) => b[1] - a[1]).slice(0, 12);
+    const linha = (r) => "<tr><td>" + dataHora(r.criado_em) + "</td><td>" + esc(r.pergunta || "—") + '</td><td class="fraco">' + esc(r.resposta_id || "sem resposta") + '</td><td class="fraco">' + esc(r.pagina) + "</td></tr>";
+    const tabela = (rows, vazio) => rows.length ? '<table><thead><tr><th>Quando</th><th>Pergunta</th><th>Resposta dada</th><th>Página</th></tr></thead><tbody>' + rows.slice(0, 200).map(linha).join("") + "</tbody></table>" : '<p class="fraco">' + vazio + "</p>";
+    el.innerHTML = '<h1>Assistente de dúvidas</h1><p class="sub">O que as pessoas perguntam ao assistente do site. Use as perguntas sem resposta e as avaliações 👎 para melhorar a base (arquivo <code>chatbot-base.js</code> — peça ao Claude para incluir as novas respostas).</p>' +
+      '<div class="numeros">' + [[perguntas.length, "perguntas digitadas", "últimos 1.000 registros"], [semResp.length, "sem resposta certa", "não entendeu ou ficou em dúvida"], [boas, "avaliações 👍", ""], [ruins.length, "avaliações 👎", "respostas a melhorar"]]
+        .map(([n, r, d]) => '<div class="numero"><b>' + esc(n) + "</b><span>" + esc(r) + (d ? "<br>" + esc(d) : "") + "</span></div>").join("") + "</div>" +
+      '<div class="caixa"><h2>Perguntas sem resposta certa</h2>' + tabela(semResp, "Nenhuma — ótimo sinal.") + "</div>" +
+      '<div class="caixa"><h2>Respostas avaliadas como “não ajudou”</h2>' + tabela(ruins, "Nenhuma avaliação negativa.") + "</div>" +
+      '<div class="caixa"><h2>Assuntos mais procurados</h2>' + (top.length ? "<table><tbody>" + top.map(([id, n]) => "<tr><td>" + esc(id) + "</td><td>" + n + "</td></tr>").join("") + "</tbody></table>" : '<p class="fraco">Ainda sem dados.</p>') + "</div>" +
+      '<div class="barra"><button class="btn perigo" id="limparAssist">Apagar registros com mais de 90 dias</button></div>';
+    el.querySelector("#limparAssist").onclick = async () => {
+      const { error } = await sb.from("chatbot_registros").delete().lt("criado_em", new Date(Date.now() - 90 * 864e5).toISOString());
+      if (error) return toast(error.message, true); toast("Registros antigos apagados."); TELAS.assistente(el);
+    };
   },
 
   async lgpd(el) {

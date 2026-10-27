@@ -57,3 +57,10 @@ Biblioteca: `python3 scripts/atualizar-biblioteca.py` reaplica o shim e a barra.
 - Pedido com anexos (bucket privado `consultorias`), aceite das condições (versão registrada) e opção "Sou órgão público: pedir proposta" (vai para Mensagens).
 - E-mail à equipe quando chega pedido pago/incluído ou pedido de proposta; Painel → Consultorias: link de entrega/agenda e "Avisar o cliente por e-mail" (função `consultoria-aviso`).
 - Textos: consultoria técnica, não jurídica (Lei 8.906/1994, art. 1º, II); perfil do especialista atualizado.
+
+## Assistente de dúvidas (27/10/2026)
+- `chatbot.js` (widget) + `chatbot-base.js` (63 respostas, 10 temas) no site e na Biblioteca; sem custo de IA.
+- Busca por palavras com peso pela raridade; em dúvida, oferece opções; sem resposta, encaminha à equipe (grava em contatos).
+- Respostas personalizadas para quem está logado (plano e validade, cupom dos cursos).
+- Registro de perguntas e avaliações 👍/👎 em `chatbot_registros`; Painel → Assistente mostra o que falta responder.
+- Testes: 68/68 perguntas da base e 30/30 perguntas novas.
