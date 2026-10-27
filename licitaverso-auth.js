@@ -45,8 +45,27 @@
     return null;
   });
 
+  // Medição de visitas: só com o consentimento "todos" e fora do painel administrativo.
+  var analiseCarregada = false;
+  function analise() {
+    if (analiseCarregada || /painel\.html/.test(location.pathname)) return;
+    var consentimento = null;
+    try { consentimento = localStorage.getItem("licitaverso:cookies"); } catch (e) {}
+    if (consentimento !== "todos") return;
+    var token = (window.LICITAVERSO_CONFIG || {}).cloudflareAnalytics;
+    if (!token) return;
+    analiseCarregada = true;
+    var s = document.createElement("script");
+    s.defer = true;
+    s.src = "https://static.cloudflareinsights.com/beacon.min.js";
+    s.setAttribute("data-cf-beacon", JSON.stringify({ token: token }));
+    document.head.appendChild(s);
+  }
+  pronto.then(analise);
+
   window.LV = {
     pronto: pronto,
+    analise: analise,
     base: base,
     sessao: function () {
       return pronto.then(function (sb) {

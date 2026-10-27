@@ -64,3 +64,10 @@ Biblioteca: `python3 scripts/atualizar-biblioteca.py` reaplica o shim e a barra.
 - Respostas personalizadas para quem está logado (plano e validade, cupom dos cursos).
 - Registro de perguntas e avaliações 👍/👎 em `chatbot_registros`; Painel → Assistente mostra o que falta responder.
 - Testes: 68/68 perguntas da base e 30/30 perguntas novas.
+
+## Revisão para o lançamento (27/10/2026)
+- Retiradas promessas sem lastro: SICAF, certidões, nota fiscal, faturamento mensal, "+40 fontes", classificador com curadoria humana, instrutores/especialistas parceiros, backups diários e meta de disponibilidade.
+- Endereço no site: Estrada Henfil, Maricá, Rio de Janeiro (sem CPF, por decisão do Renato).
+- Busca e compartilhamento: descrição, Open Graph (icones/compartilhar.png), robots.txt e sitemap.xml.
+- Medição de visitas: Cloudflare Web Analytics, carregada só com consentimento "todos" (falta o token em config.js).
+- E-mails: boas-vindas no primeiro acesso (função boas-vindas), dica no 3º dia do teste e aviso na véspera do fim (avisos).

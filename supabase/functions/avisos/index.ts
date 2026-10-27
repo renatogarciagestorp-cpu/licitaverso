@@ -2,7 +2,7 @@
 // Chamada uma vez por dia pelo GitHub Actions (workflow avisos-diarios.yml).
 // Idempotente: cada assinatura recebe o aviso uma única vez (coluna aviso_fim_em).
 //  - planos pagos: aviso quando faltam 7 dias ou menos;
-//  - teste grátis: aviso quando faltam 2 dias ou menos.
+//  - teste grátis: dica de uso no 3º dia e aviso na véspera do fim ("termina amanhã").
 
 import { clienteServico, CORS, resposta } from "../_shared/comum.ts";
 import { enviarEmail, moldura, SITE } from "../_shared/email.ts";
@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
 
   for (const a of lista ?? []) {
     const restante = new Date(a.fim).getTime() - agora;
-    if (a.plano === "teste" && restante > 2 * DIA) continue; // ainda cedo para o teste
+    if (a.plano === "teste" && restante > 1.5 * DIA) continue; // teste: só na véspera do fim
 
     // Já renovou ou tem outro plano que vai além desta data? Não avisa.
     const { data: outros } = await admin.from("assinaturas").select("id")
@@ -49,10 +49,10 @@ Deno.serve(async (req) => {
     const primeiro = (p.nome || "").trim().split(/\s+/)[0] || "Olá";
     const teste = a.plano === "teste";
     const assunto = teste
-      ? `Seu teste grátis do Licitacon termina em ${dias} dia${dias > 1 ? "s" : ""}`
+      ? "Seu teste grátis do Licitacon termina amanhã"
       : `Seu plano ${nomePlano(a.plano)} termina em ${dias} dia${dias > 1 ? "s" : ""}`;
     const html = moldura(
-      teste ? "Seu teste está acabando" : "Seu plano está perto do fim",
+      teste ? "Seu teste termina amanhã" : "Seu plano está perto do fim",
       [
         `${primeiro}, ${teste ? "o seu teste grátis" : `o seu plano <strong>${nomePlano(a.plano)}</strong>`} no Licitacon vale até <strong>${dataBR(a.fim)}</strong>.`,
         teste
@@ -71,6 +71,33 @@ Deno.serve(async (req) => {
       resultado.falhas++;
     }
   }
+  // ---------------------------------------------------------------- dica do teste (3º dia)
+  const { data: testes } = await admin.from("assinaturas")
+    .select("id, usuario_id, inicio, fim")
+    .eq("plano", "teste").eq("status", "ativa").is("dica_teste_em", null)
+    .lte("inicio", new Date(agora - 2 * DIA).toISOString())
+    .gt("fim", new Date(agora + 2 * DIA).toISOString())
+    .limit(500);
+  for (const t of testes ?? []) {
+    await admin.from("assinaturas").update({ dica_teste_em: new Date().toISOString() }).eq("id", t.id);
+    const { data: p } = await admin.from("perfis").select("nome, email, notificacoes").eq("id", t.usuario_id).maybeSingle();
+    if (!p?.email || p?.notificacoes?.cobranca?.email === false) { resultado.pulados++; continue; }
+    const primeiro = (p.nome || "").trim().split(/\s+/)[0] || "Olá";
+    const html = moldura(
+      "Aproveite seu teste: 3 dicas rápidas",
+      [
+        `${primeiro}, seu teste grátis vale até <strong>${dataBR(t.fim)}</strong>. Três jeitos de tirar proveito dele:`,
+        "<strong>1. Leia as perguntas frequentes do fórum</strong> — reajuste, repactuação, adesão a ata, aditivos e mais, com resposta fundamentada na lei e na jurisprudência.",
+        "<strong>2. Pesquise com filtros na Biblioteca</strong> — combine tema, órgão e artigo da lei e copie a citação pronta (ABNT, peça ou curta).",
+        "<strong>3. Veja o que um plano libera</strong> — perguntar e responder no fórum, desconto em cursos e consultoria; no Pro, 1 consultoria por escrito por mês.",
+      ],
+      { texto: "Abrir o fórum", url: `${SITE}index.html?p=forum` },
+      "Nada é cobrado quando o teste termina.",
+    );
+    try { await enviarEmail({ email: p.email, nome: p.nome }, "3 dicas para aproveitar seu teste no Licitacon", html); resultado.enviados++; }
+    catch (e) { console.error("avisos: dica do teste", t.id, e); resultado.falhas++; }
+  }
+
   console.log("avisos", resultado);
   return resposta({ ok: true, ...resultado });
 });

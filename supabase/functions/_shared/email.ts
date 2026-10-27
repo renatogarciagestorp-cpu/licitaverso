@@ -2,7 +2,7 @@
 
 export const SITE = (Deno.env.get("SITE_URL") || "https://renatogarciagestorp-cpu.github.io/licitaverso/").split(",")[0].trim();
 
-export function moldura(titulo: string, paragrafos: string[], botao?: { texto: string; url: string }, rodape?: string, preferencia = "Cobrança e recibos") {
+export function moldura(titulo: string, paragrafos: string[], botao?: { texto: string; url: string }, rodape?: string, preferencia = "Plano e cobrança") {
   const ps = paragrafos.map((p) => `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#3D5058">${p}</p>`).join("");
   const b = botao
     ? `<p style="margin:8px 0 22px"><a href="${botao.url}" style="display:inline-block;background:#0FA36B;color:#06251A;text-decoration:none;font-weight:bold;font-size:15px;padding:13px 22px;border-radius:10px">${botao.texto}</a></p>`

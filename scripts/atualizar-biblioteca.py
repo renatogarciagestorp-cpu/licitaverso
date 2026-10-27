@@ -18,7 +18,7 @@ if not m:
     sys.exit("shim não encontrado no <head>")
 cab = cab[:m.start()] + "<script>\n" + shim + "\n</script>" + cab[m.end():]
 if "licitaverso-auth.js" not in cab:
-    cab = cab.replace("<script>\n" + shim, '<script src="licitaverso-auth.js?v=3"></script>\n<script>\n' + shim, 1)
+    cab = cab.replace("<script>\n" + shim, '<script src="licitaverso-auth.js?v=4"></script>\n<script>\n' + shim, 1)
 html = cab + sep + corpo
 
 # 2) barra: links de conta
@@ -40,7 +40,19 @@ if 'rel="manifest"' not in html:
 
 # 3) assistente de dúvidas
 if "chatbot.js" not in html:
-    html = html.replace('<script src="licitaverso-auth.js?v=3"></script>', '<script src="licitaverso-auth.js?v=3"></script><script src="chatbot.js?v=2" defer></script>', 1)
+    html = html.replace('<script src="licitaverso-auth.js?v=4"></script>', '<script src="licitaverso-auth.js?v=4"></script><script src="chatbot.js?v=2" defer></script>', 1)
+
+# 4) busca e compartilhamento
+SITE = "https://renatogarciagestorp-cpu.github.io/licitaverso/"
+DESC = "Biblioteca Jurídica gratuita do Licitacon: decisões do TCU, CGU, STF, STJ e de órgãos do Rio de Janeiro sobre licitações e contratos, com tema, tese e link para a fonte oficial."
+SEO = ('<!-- seo --><meta name="description" content="' + DESC + '">'
+       '<link rel="canonical" href="' + SITE + 'biblioteca.html">'
+       '<meta property="og:type" content="website"><meta property="og:site_name" content="Licitacon"><meta property="og:locale" content="pt_BR">'
+       '<meta property="og:title" content="Biblioteca Jurídica — Licitacon"><meta property="og:description" content="' + DESC + '">'
+       '<meta property="og:url" content="' + SITE + 'biblioteca.html"><meta property="og:image" content="' + SITE + 'icones/compartilhar.png">'
+       '<meta name="twitter:card" content="summary_large_image"><!-- /seo -->')
+html = re.sub(r"<!-- seo -->.*?<!-- /seo -->", "", html, count=1, flags=re.S)
+html = html.replace("</title>", "</title>" + SEO, 1)
 
 alvo.write_text(html, encoding="utf-8")
 print("atualizado", alvo, len(html), "bytes")

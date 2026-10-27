@@ -55,7 +55,7 @@ export async function avisarEquipeProposta(admin: SupabaseClient, contato: any) 
       `<span style="display:block;border-left:3px solid #0FA36B;padding:4px 0 4px 12px">${esc(trecho(contato.mensagem || "")).replace(/\n/g, "<br>")}</span>`,
       `Contato: ${esc(contato.nome)} · ${esc(contato.email)}${d.celular ? " · " + esc(d.celular) : ""}${d.orgao ? "<br>" + esc([d.cargo, d.orgao].filter(Boolean).join(" · ")) : ""}`,
       Array.isArray(d.anexos) && d.anexos.length ? `${d.anexos.length} arquivo(s) anexado(s) — veja no Painel → Mensagens.` : "Sem arquivos anexados.",
-      "Envie em até 1 dia útil: proposta com valor e prazo, certidões de regularidade e dados bancários para empenho.",
+      "Envie em até 1 dia útil a proposta com valor, prazo e escopo.",
     ],
     { texto: "Abrir no Painel", url: `${SITE}painel.html` },
     undefined,
