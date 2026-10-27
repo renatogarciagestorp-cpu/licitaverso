@@ -19,3 +19,9 @@ returns text language sql stable security definer set search_path = public as $$
 $$;
 revoke execute on function public.meu_cupom_curso() from public, anon;
 grant execute on function public.meu_cupom_curso() to authenticated;
+
+-- Códigos padrão (os mesmos a criar em cada curso no Hotmart). Só preenche se ainda estiver vazio:
+-- o que for salvo depois no Painel → Cursos prevalece.
+update public.cupons_cursos set codigo = 'BASICO10', atualizado_em = now() where plano = 'basico' and codigo = '';
+update public.cupons_cursos set codigo = 'PREMIUM15', atualizado_em = now() where plano = 'premium' and codigo = '';
+update public.cupons_cursos set codigo = 'PRO50', atualizado_em = now() where plano = 'pro' and codigo = '';
