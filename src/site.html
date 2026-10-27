@@ -978,7 +978,7 @@
             </article>
           </sc-for>
         </div>
-        <p style="font-size: 13px; color: #7A8B91; margin-top: 22px">O clique em “Acessar curso” fica registrado na sua Área do Assinante e ajuda a curadoria a saber quais cursos interessam mais.</p>
+        <p style="font-size: 13px; color: #7A8B91; margin-top: 22px">O clique em “Matricule-se” leva à página do curso no Hotmart e fica registrado na sua Área do Assinante e ajuda a curadoria a saber quais cursos interessam mais.</p>
       </section>
     </sc-if>
 
@@ -2191,7 +2191,7 @@ const VISOES = [
 
 const CURSOS = [
   { titulo: "Nova Lei de Licitações na prática: do planejamento à assinatura", ementa: "Estudo técnico preliminar, termo de referência, modalidades e julgamento — com modelos aplicáveis.", instrutor: "Renato Garcia", carga: "24 h", nivel: "Intermediário", nota: "4,8", avaliacoes: 312, valor: 297 },
-  { titulo: "Reajuste, repactuação e reequilíbrio sem erro", ementa: "Como enquadrar cada pedido, montar a planilha e fundamentar a decisão diante do controle.", instrutor: "Renato Garcia", carga: "12 h", nivel: "Avançado", nota: "4,9", avaliacoes: 187, valor: 189 },
+  { titulo: "Gestão Contratual Sem Erros: Aprenda a Realizar Reequilíbrios e Repactuações", link: "https://hotmart.com/PT_BR/club/renato-lopes-garcia-junior/products/8817419", ementa: "Como enquadrar cada pedido, montar a planilha e fundamentar a decisão diante do controle.", instrutor: "Renato Garcia", carga: "12 h", nivel: "Avançado", nota: "4,9", avaliacoes: 187, valor: 189 },
   { titulo: "Pregoeiro iniciante: condução de sessão pública", ementa: "Sistema, atas, diligências, recursos e as armadilhas mais comuns na condução do pregão eletrônico.", instrutor: "Renato Garcia", carga: "16 h", nivel: "Iniciante", nota: "4,7", avaliacoes: 243, valor: 149 },
   { titulo: "Fornecedor competitivo: como participar e ganhar", ementa: "Leitura de edital, habilitação, formação de preço e impugnações bem fundamentadas.", instrutor: "Renato Garcia", carga: "10 h", nivel: "Iniciante", nota: "4,6", avaliacoes: 129, valor: 129 },
   { titulo: "Fiscalização de contratos de serviços contínuos", ementa: "Rotinas do fiscal, sanções, glosas e a instrução do processo de pagamento.", instrutor: "Renato Garcia", carga: "14 h", nivel: "Intermediário", nota: "4,8", avaliacoes: 96, valor: 197 },
@@ -2791,9 +2791,9 @@ class Component extends DCLogic {
   // ------------------------------------------------------------ cursos e consultoria
   acessarCurso = (c) => async () => {
     if (!c.link) { this.aviso("As inscrições deste curso abrem em breve. Avisaremos os assinantes por e-mail.", "ok"); return; }
-    const janela = window.open(c.link, "_blank", "noopener");
+    const janela = window.open(c.link, "_blank");
+    if (janela) janela.opener = null; else { window.location.href = c.link; }
     if (this.sb && this.state.usuario && c.id) await this.sb.from("curso_acessos").insert({ curso_id: c.id });
-    if (!janela) window.location.href = c.link;
   };
 
   abrirConsultoria = (modalidade) => () => {
@@ -3174,7 +3174,7 @@ class Component extends DCLogic {
     ];
 
     // ---------------------------------------------------------------- cursos
-    const listaCursos = (s.cursosDb || CURSOS.map((c) => ({ ...c, nota: "", avaliacoes: 0, link: "" })));
+    const listaCursos = (s.cursosDb || CURSOS.map((c) => ({ nota: "", avaliacoes: 0, link: "", ...c })));
 
     // ---------------------------------------------------------------- consultoria (modal)
     const cons = s.consultoria;
@@ -3364,7 +3364,7 @@ class Component extends DCLogic {
           precoCheio: v.off > 0 || incluido ? brl(valor) : "",
           desconto: incluido ? "Plano Pro" : (v.off > 0 ? "assinante " + v.curto : ""),
           obs: incluido ? "Sem custo adicional no seu plano" : (v.off > 0 ? "Desconto aplicado na inscrição" : "Assinantes pagam menos"),
-          cta: c.link ? (incluido ? "Acessar agora ↗" : "Acessar curso ↗") : "Em breve",
+          cta: c.link ? "Matricule-se ↗" : "Em breve",
           acessar: this.acessarCurso(c)
         };
       }),
@@ -3545,7 +3545,7 @@ class Component extends DCLogic {
       ] : [
         { titulo: "Tópicos que você segue", itens: [{ titulo: "Reajuste de Preços", meta: "exemplo de demonstração" }] },
         { titulo: "Consultorias", itens: [{ titulo: "Vantajosidade em prorrogação contratual", meta: "exemplo de demonstração" }] },
-        { titulo: "Cursos acessados", itens: [{ titulo: "Reajuste, repactuação e reequilíbrio sem erro", meta: "exemplo de demonstração" }] }
+        { titulo: "Cursos acessados", itens: [{ titulo: "Gestão Contratual Sem Erros: Aprenda a Realizar Reequilíbrios e Repactuações", meta: "exemplo de demonstração" }] }
       ],
       respostasConsultoria: s.consultorias.filter((c) => c.resposta).map((c) => ({ titulo: c.assunto, texto: c.resposta, data: dataBR(c.atualizado_em) })),
       temRespostasConsultoria: s.consultorias.some((c) => c.resposta),
