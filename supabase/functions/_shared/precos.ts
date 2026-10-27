@@ -7,9 +7,9 @@ export type Ciclo = "mensal" | "anual";
 export type Modalidade = "escrita" | "video" | "reuniao";
 
 export const PLANOS: Record<Plano, { nome: string; mensal: number }> = {
-  basico: { nome: "Básico", mensal: 89.9 },
-  premium: { nome: "Premium", mensal: 149.9 },
-  pro: { nome: "Pro", mensal: 399.9 },
+  basico: { nome: "Básico", mensal: 119.9 },
+  premium: { nome: "Premium", mensal: 199.9 },
+  pro: { nome: "Pro", mensal: 479.9 },
 };
 
 /** No anual, a mensalidade tem 20% de desconto e o ano é pago de uma vez (à vista ou parcelado). */
