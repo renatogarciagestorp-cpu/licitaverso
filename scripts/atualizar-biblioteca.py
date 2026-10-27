@@ -33,5 +33,10 @@ css = ".lvbar .conta{color:#C9D6DB;text-decoration:none;font-size:14px;font-weig
 if css in html and ".lvbar [hidden]" not in html:
     html = html.replace(css, css + "\n.lvbar [hidden]{display:none!important}", 1)
 
+TAGS_APP = ('<meta name="theme-color" content="#0A1F2A"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><link rel="icon" type="image/png" href="icones/icone-192.png">')
+if 'rel="manifest"' not in html:
+    html = html.replace('<meta name="viewport" content="width=device-width,initial-scale=1">',
+                        '<meta name="viewport" content="width=device-width,initial-scale=1">' + TAGS_APP, 1)
+
 alvo.write_text(html, encoding="utf-8")
 print("atualizado", alvo, len(html), "bytes")
