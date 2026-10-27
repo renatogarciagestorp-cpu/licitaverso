@@ -19,6 +19,8 @@ src = troca(src, '<button class="primary" type="button" id="dosMin">Gerar minuta
             '${S.sample?`<button class="primary" type="button" id="dosMin">Gerar minuta</button>`:""}')
 src = troca(src, '$("dosMin").onclick=()=>abrirMinuta(false);', 'if($("dosMin"))$("dosMin").onclick=()=>abrirMinuta(false);')
 src = troca(src, '${pc?" (computador desligado ou app fechado?)":""}', '')
+# A situação da coleta só aparece no Acervo, não na Biblioteca do site
+src = troca(src, '<div>\n        <h2>Situação da coleta</h2>', '<div hidden>\n        <h2>Situação da coleta</h2>')
 src = troca(src, '<title>Acervo Licitacon</title>', '<title>Biblioteca Jurídica — Licitacon</title>')
 
 barra = """<style>
