@@ -598,7 +598,7 @@
       <section style="background: linear-gradient(168deg, #17414F 0%, #103241 55%, #0D2937 100%); color: #fff; padding: 88px 24px 96px">
         <div style="max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 56px; align-items: center">
           <div>
-            <span style="display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(15,163,107,0.45); background: rgba(15,163,107,0.12); color: #7FE3B6; font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 7px 12px; border-radius: 999px">Base atualizada semanalmente</span>
+            <span style="display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(15,163,107,0.45); background: rgba(15,163,107,0.12); color: #7FE3B6; font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 7px 12px; border-radius: 999px">Base atualizada nos dias úteis</span>
             <h1 style="font-size: 58px; line-height: 1.04; letter-spacing: -0.035em; font-weight: 800; margin: 22px 0 0; text-wrap: balance">Tudo sobre licitações. Em um só lugar.</h1>
             <p style="font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; line-height: 1.55; color: #BCCDD4; margin: 22px 0 0; max-width: 560px; text-wrap: pretty">Jurisprudência confiável, comunidade organizada por tema, capacitação acessível e consultoria técnica especializada — para quem trabalha com licitações e contratos administrativos, dos dois lados do balcão.</p>
             <div style="display: flex; gap: 12px; margin-top: 34px; flex-wrap: wrap">
@@ -611,7 +611,7 @@
                 <div style="font-size: 13px; color: #93A9B2; margin-top: 4px">mapeadas para coleta: TCU, CGU, AGU, STF, STJ, TCEs, TJs, MPs</div>
               </div>
               <div>
-                <div style="font-size: 26px; font-weight: 800; letter-spacing: -0.02em">Semanal</div>
+                <div style="font-size: 26px; font-weight: 800; letter-spacing: -0.02em">Dias úteis</div>
                 <div style="font-size: 13px; color: #93A9B2; margin-top: 4px">Ciclo de atualização automática</div>
               </div>
               <div>
@@ -1522,7 +1522,7 @@
                 </sc-for>
               </div>
               <p style="margin: 20px 0 0; font-size: 13.5px; font-weight: 700; color: #0A7A50">{{ lgpdMsg }}</p>
-              <p style="margin: 18px 0 0; font-size: 13px; line-height: 1.6; color: #7A8B91; border-top: 1px solid #EDF1F0; padding-top: 16px">Cookies: preferência atual <strong style="color: #3D5058">{{ cookiesEstado }}</strong>. Encarregado de dados (DPO): dpo@licitacon.com.br.</p>
+              <p style="margin: 18px 0 0; font-size: 13px; line-height: 1.6; color: #7A8B91; border-top: 1px solid #EDF1F0; padding-top: 16px">Cookies: preferência atual <strong style="color: #3D5058">{{ cookiesEstado }}</strong>. Encarregado de dados: Renato Garcia, pelo Fale Conosco (assunto Privacidade).</p>
             </section>
           </sc-if>
 
@@ -1546,7 +1546,7 @@
           <sc-for list="{{ institTabs }}" as="t" hint-placeholder-count="6">
             <button sc-camel-on-click="{{ t.abrir }}" aria-current="{{ t.ativo }}" style="text-align: left; border: 0; border-radius: 11px; padding: 11px 13px; font-size: 14.5px; font-weight: 700; cursor: pointer; background: {{ t.bg }}; color: {{ t.cor }}" style-hover="background: #F1F6F5">{{ t.label }}</button>
           </sc-for>
-          <p style="font-size: 12.5px; line-height: 1.55; color: #7A8B91; margin: 12px 4px 4px; border-top: 1px solid #EDF1F0; padding-top: 12px">Documentos redigidos em linguagem clara. Dúvidas sobre qualquer cláusula: dpo@licitacon.com.br.</p>
+          <p style="font-size: 12.5px; line-height: 1.55; color: #7A8B91; margin: 12px 4px 4px; border-top: 1px solid #EDF1F0; padding-top: 12px">Documentos redigidos em linguagem clara. Dúvidas sobre qualquer cláusula: use o Fale Conosco.</p>
         </aside>
 
         <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 32px 36px; max-width: 820px">
@@ -1644,7 +1644,7 @@
       <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 44px; padding-top: 20px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center">
         <span style="font-size: 13px">© 2026 Licitacon. Todos os direitos reservados.</span>
         <span style="flex: 1"></span>
-        <span style="font-size: 13px">Encarregado de dados (DPO): dpo@licitacon.com.br</span>
+        <span style="font-size: 13px">Encarregado de dados: Renato Garcia · contato pelo Fale Conosco</span>
       </div>
     </div>
   </footer>
@@ -2158,9 +2158,9 @@ const INSTITUCIONAL = {
         "Colaboração entre pares — setor público e setor privado no mesmo fórum, com identificação de perfil profissional.",
         "Ética e integridade na gestão pública — recusamos qualquer uso da plataforma para burlar controles ou fabricar fundamentação."
       ] },
-      { titulo: "Como a base é construída", texto: "A Biblioteca Jurídica é alimentada por um ciclo semanal automatizado que consome APIs oficiais de dados abertos (como as do Tribunal de Contas da União) e conectores dedicados para órgãos sem interface de dados estruturada, sempre respeitando os termos de uso de cada portal e a Lei de Acesso à Informação (Lei nº 12.527/2011) como fundamento do uso de informação pública. Um classificador de linguagem natural organiza os documentos por tema, e todo item marcado como de baixa confiança pelo robô passa por curadoria editorial humana antes de ser publicado.", itens: [] },
+      { titulo: "Como a base é construída", texto: "A Biblioteca Jurídica é alimentada por coletas automáticas nos dias úteis que consome APIs oficiais de dados abertos (como as do Tribunal de Contas da União) e conectores dedicados para órgãos sem interface de dados estruturada, sempre respeitando os termos de uso de cada portal e a Lei de Acesso à Informação (Lei nº 12.527/2011) como fundamento do uso de informação pública. Um classificador de linguagem natural organiza os documentos por tema, e todo item marcado como de baixa confiança pelo robô passa por curadoria editorial humana antes de ser publicado.", itens: [] },
       { titulo: "Limites do que oferecemos", texto: "O Licitacon é uma plataforma de informação, comunidade, capacitação e consultoria técnica. Não somos escritório de advocacia e não prestamos consultoria jurídica nem emitimos parecer jurídico. Conteúdo da Biblioteca, respostas do fórum e análises geradas por inteligência artificial são material de apoio à decisão — a responsabilidade pelo ato administrativo ou pela decisão empresarial permanece integralmente com o profissional e o órgão ou empresa a que ele se vincula.", itens: [] },
-      { titulo: "Quem somos", texto: "Licitacon Tecnologia e Informação Ltda. · CNPJ 00.000.000/0001-00 · sede em Brasília/DF. Contato institucional: contato@licitacon.com.br. Encarregado de proteção de dados (DPO): dpo@licitacon.com.br.", itens: [] }
+      { titulo: "Quem somos", texto: "O Licitacon é mantido por Renato Garcia, graduado em Gestão Pública (FGV EBAPE) e pós-graduado em Licitações e Contratações Públicas e em Direito Administrativo e Anticorrupção. O atendimento é 100% digital, pelo Fale Conosco e pelo assistente de dúvidas do site. Renato Garcia é também o encarregado de proteção de dados.", itens: [] }
     ]
   },
   termos: {
@@ -2194,7 +2194,7 @@ const INSTITUCIONAL = {
     label: "Política de Privacidade",
     titulo: "Política de Privacidade",
     intro: "Como coletamos, usamos, protegemos e devolvemos seus dados pessoais — em conformidade com a LGPD e alinhada aos princípios do GDPR europeu.",
-    vigencia: "Versão 1.0 · vigente desde 1º de agosto de 2026 · Controlador: Licitacon Tecnologia e Informação Ltda.",
+    vigencia: "Versão 1.0 · vigente desde 1º de agosto de 2026 · Controlador: Renato Garcia, responsável pelo Licitacon.",
     blocos: [
       { titulo: "1. Princípios que seguimos", texto: "Tratamos dados pessoais conforme a Lei nº 13.709/2018 (LGPD) e, para usuários no Espaço Econômico Europeu, conforme o Regulamento (UE) 2016/679 (GDPR): finalidade específica, necessidade e minimização, transparência, segurança, prevenção, não discriminação e responsabilização. Só pedimos o dado que a função exige e mantemos apenas pelo tempo necessário.", itens: [] },
       { titulo: "2. Dados que coletamos e por quê", texto: "A coleta é organizada por finalidade, cada uma com sua base legal:", itens: [
@@ -2222,7 +2222,7 @@ const INSTITUCIONAL = {
       ] },
       { titulo: "8. Segurança", texto: "Criptografia em trânsito (TLS) e em repouso, controle de acesso por perfil com privilégio mínimo, autenticação em dois fatores disponível, registro de acessos a dados sensíveis, backups diários com teste periódico de restauração, ambiente de homologação separado da produção e avaliação de risco antes de lançar funcionalidade que trate dado novo. Em caso de incidente com risco relevante, comunicamos os titulares afetados e a ANPD em prazo razoável, com descrição do ocorrido e das medidas adotadas.", itens: [] },
       { titulo: "9. Menores de idade", texto: "A plataforma é destinada a profissionais e não coleta intencionalmente dados de menores de 18 anos. Identificado esse caso, a conta é encerrada e os dados eliminados.", itens: [] },
-      { titulo: "10. Contato e mudanças", texto: "Encarregado de proteção de dados (DPO): dpo@licitacon.com.br. Alterações materiais nesta política são comunicadas por e-mail e na plataforma com 30 dias de antecedência, e o histórico de versões fica disponível para consulta.", itens: [] }
+      { titulo: "10. Contato e mudanças", texto: "Encarregado de proteção de dados: Renato Garcia. Pedidos e dúvidas sobre seus dados: Fale Conosco, assunto Privacidade (LGPD), ou Minha conta → Privacidade. Alterações materiais nesta política são comunicadas por e-mail e na plataforma com 30 dias de antecedência, e o histórico de versões fica disponível para consulta.", itens: [] }
     ]
   },
   cookies: {
@@ -2251,15 +2251,15 @@ const INSTITUCIONAL = {
     vigencia: "Atendimento em dias úteis, das 9h às 18h (horário de Brasília)",
     blocos: [
       { titulo: "Canais por assunto", texto: "Cada tema tem um endereço próprio para não haver mensagem perdida em caixa genérica:", itens: [
-        "Suporte à conta e assinatura: suporte@licitacon.com.br — resposta em até 1 dia útil (prioritária para assinantes Pro).",
-        "Privacidade e direitos de titular de dados: dpo@licitacon.com.br — prazo legal de até 15 dias, normalmente muito menos.",
-        "Acessibilidade e barreiras de uso: acessibilidade@licitacon.com.br — resposta em até 5 dias úteis, com plano de correção.",
-        "Correção de conteúdo da Biblioteca Jurídica: curadoria@licitacon.com.br — informe o número do documento; erros de classificação são corrigidos em até 3 dias úteis.",
-        "Parcerias, cursos e consultoria: parcerias@licitacon.com.br.",
-        "Imprensa e institucional: contato@licitacon.com.br."
+        "Dúvidas rápidas: o assistente de dúvidas (botão 💬 no canto da tela) responde na hora, a qualquer hora.",
+        "Suporte à conta e assinatura: formulário abaixo, assunto Suporte à conta ou Assinatura e cobrança — resposta por e-mail em dias úteis.",
+        "Privacidade e direitos de titular de dados: assunto Privacidade (LGPD) — prazo legal de até 15 dias. Cópia e exclusão dos dados também em Minha conta → Privacidade.",
+        "Acessibilidade e barreiras de uso: assunto Acessibilidade.",
+        "Correção de conteúdo da Biblioteca Jurídica: assunto Correção na Biblioteca — informe o número do documento.",
+        "Parcerias, cursos e consultoria: assunto Parcerias."
       ] },
-      { titulo: "Denúncias e moderação", texto: "Conteúdo impróprio no fórum pode ser denunciado pelo botão em cada mensagem — o caminho mais rápido, porque já leva o contexto do tópico. Denúncias de conduta grave, uso indevido de dados pessoais de terceiros ou tentativa de burlar procedimento licitatório podem ser enviadas a integridade@licitacon.com.br, com apuração confidencial.", itens: [] },
-      { titulo: "Endereço", texto: "Licitacon Tecnologia e Informação Ltda. · CNPJ 00.000.000/0001-00 · SCS Quadra 1, Brasília/DF, CEP 70300-000. Não temos atendimento presencial: todo o suporte é digital, para manter o custo da assinatura baixo.", itens: [] }
+      { titulo: "Denúncias e moderação", texto: "Conteúdo impróprio no fórum pode ser denunciado pelo botão em cada mensagem — o caminho mais rápido, porque já leva o contexto do tópico. Denúncias de conduta grave, uso indevido de dados pessoais de terceiros ou tentativa de burlar procedimento licitatório podem ser enviadas pelo formulário abaixo, com apuração confidencial.", itens: [] },
+      { titulo: "Atendimento", texto: "Não temos atendimento presencial nem por telefone: todo o suporte é digital, para manter o custo da assinatura baixo. As respostas chegam no e-mail informado no formulário.", itens: [] }
     ]
   },
   acessibilidade: {
@@ -2288,7 +2288,7 @@ const INSTITUCIONAL = {
         "Tabelas comparativas muito largas exigem rolagem horizontal em telas pequenas; uma visão alternativa em lista está em desenvolvimento."
       ] },
       { titulo: "5. Como avaliamos", texto: "Cada entrega passa por verificação automatizada (axe e Lighthouse) no fluxo de publicação, revisão manual de teclado e contraste, e teste periódico com leitor de tela. Auditoria externa independente com participação de pessoas com deficiência está programada com periodicidade anual.", itens: [] },
-      { titulo: "6. Encontrou uma barreira? Cobre de nós", texto: "Escreva para acessibilidade@licitacon.com.br descrevendo a página, o que você tentou fazer e a tecnologia assistiva usada. Confirmamos o recebimento em até 2 dias úteis e retornamos com diagnóstico e prazo de correção em até 5 dias úteis. Barreiras que impedem completamente o uso de uma função essencial são tratadas como incidente crítico, com correção prioritária. Se a resposta não resolver, você pode recorrer à ANPD, ao Ministério Público ou aos órgãos de defesa dos direitos da pessoa com deficiência.", itens: [] }
+      { titulo: "6. Encontrou uma barreira? Cobre de nós", texto: "Escreva pelo Fale Conosco, assunto Acessibilidade, descrevendo a página, o que você tentou fazer e a tecnologia assistiva usada. Confirmamos o recebimento em até 2 dias úteis e retornamos com diagnóstico e prazo de correção em até 5 dias úteis. Barreiras que impedem completamente o uso de uma função essencial são tratadas como incidente crítico, com correção prioritária. Se a resposta não resolver, você pode recorrer à ANPD, ao Ministério Público ou aos órgãos de defesa dos direitos da pessoa com deficiência.", itens: [] }
     ]
   }
 };
@@ -2300,7 +2300,7 @@ const SLIDES = [
     texto: "Órgão, estado, tipo de norma, tema e ano combinados na mesma consulta, com destaque do termo na ementa e link para a fonte oficial. Acervo em carga progressiva, com mais de 40 fontes mapeadas para coleta. Gratuito e ilimitado.",
     chips: ["TCU · AGU · CGU", "STF e STJ", "TCEs, TJs e MPs"],
     cta: "Pesquisar jurisprudência", destino: "biblioteca",
-    painelTitulo: "Coleta automática", numero: "Semanal", numeroLabel: "ciclo de atualização, com trilha de auditoria da origem",
+    painelTitulo: "Coleta automática", numero: "Dias úteis", numeroLabel: "coleta automática, com trilha de auditoria da origem",
     linhas: [
       { rotulo: "API oficial", texto: "Dados abertos do TCU consumidos direto da fonte, sem intermediário." },
       { rotulo: "Conectores dedicados", texto: "Um robô por órgão para portais sem dados estruturados, com curadoria humana no que vem com baixa confiança." },
@@ -2447,7 +2447,7 @@ const COMPRADORES = {
     ],
     metodos: [
       { id: "empenho", sigla: "NE", nome: "Nota de empenho + boleto ou Pix", desc: "Caminho padrão. Após o empenho, emitimos a nota fiscal e o boleto ou QR Pix no CNPJ do órgão, com número do empenho e do processo administrativo impressos no documento.", prazo: "Acesso liberado no empenho", checkout: false,
-        passos: ["Envie a nota de empenho para financeiro@licitacon.com.br com o número do processo.", "Emitimos a nota fiscal eletrônica e o documento de cobrança em até 1 dia útil.", "O acesso das licenças é liberado imediatamente após o empenho, antes mesmo da liquidação.", "Pagamento por boleto registrado ou Pix institucional, conforme a rotina do órgão."] },
+        passos: ["Envie a nota de empenho pelo Fale Conosco, assunto Assinatura e cobrança, com o número do processo.", "Emitimos a nota fiscal eletrônica e o documento de cobrança em até 1 dia útil.", "O acesso das licenças é liberado imediatamente após o empenho, antes mesmo da liquidação.", "Pagamento por boleto registrado ou Pix institucional, conforme a rotina do órgão."] },
       { id: "ordem", sigla: "OB", nome: "Ordem bancária mediante atesto", desc: "Liquidação pelo procedimento ordinário: nota fiscal atestada pelo fiscal do contrato e pagamento por ordem bancária, com as retenções na fonte.", prazo: "Até 30 dias do atesto", checkout: false,
         passos: ["Nota fiscal enviada ao fiscal do contrato com o relatório de uso do período.", "Retenções calculadas e destacadas na própria nota fiscal.", "Comprovante de retenção disponível para a contabilidade do órgão."] },
       { id: "cpgf", sigla: "CPGF", nome: "Cartão de pagamento do governo (CPGF)", desc: "Aceito quando o órgão adota o CPGF para pequenas compras. Cobrança única, sem recorrência automática — o suprimento de fundos não admite débito continuado.", prazo: "Confirmação imediata", checkout: true,
