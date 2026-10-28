@@ -111,6 +111,11 @@ def estruturar(linhas, norma):
         # continuação do dispositivo anterior (texto quebrado em duas linhas)
         if art["dispositivos"] and not ln.isupper():
             art["dispositivos"][-1]["texto"] += " " + ln
+    # artigo repetido (versão antiga não riscada seguida da nova redação): fica a última
+    vistos = {}
+    for a in artigos:
+        vistos[a["num"]] = a
+    artigos = [a for a in artigos if vistos[a["num"]] is a]
     for a in artigos:
         for d in a["dispositivos"]:
             notas = R_NOTA.findall(d["texto"])
