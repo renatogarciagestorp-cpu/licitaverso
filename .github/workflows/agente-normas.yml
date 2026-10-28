@@ -2,16 +2,10 @@ name: Agente — atualizar base normativa
 
 # Baixa o texto oficial das leis (Planalto) e grava agente/normas/*.json.
 # Roda quando a lista de fontes ou o robô mudam, no dia 1º de cada mês e quando acionado à mão.
+# Hoje o Planalto bloqueia os servidores do GitHub: a base é atualizada a partir de páginas salvas
+# pelo navegador (scripts/agente/baixar-normas.py --arquivo). Fica só o acionamento manual.
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "23 9 1 * *"
-  push:
-    branches: [main]
-    paths:
-      - "agente/normas/fontes.json"
-      - "scripts/agente/baixar-normas.py"
-      - ".github/workflows/agente-normas.yml"
 
 permissions:
   contents: write

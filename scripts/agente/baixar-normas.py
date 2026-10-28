@@ -5,8 +5,8 @@ agente/normas/<id>.json com a estrutura: artigos → dispositivos (caput, inciso
 - Texto riscado no site oficial (<strike>, <s>, <del>) é descartado: fica só a redação vigente.
 - Notas como "(Incluído pela Lei nº 14.770, de 2023)" são mantidas no fim do dispositivo.
 - Só usa a biblioteca padrão do Python.
-Uso: python3 scripts/agente/baixar-normas.py [id ...]     (sem id = todas)
-     python3 scripts/agente/baixar-normas.py --arquivo pagina.html --id teste   (testar com HTML local)
+Uso: python3 scripts/agente/baixar-normas.py [id ...]     (sem id = todas; o Planalto bloqueia servidores na nuvem)
+     python3 scripts/agente/baixar-normas.py --arquivo pagina.html --id lei-14133   (página salva pelo navegador)
 """
 import datetime, hashlib, html.parser, json, pathlib, re, sys, urllib.request
 
@@ -153,6 +153,8 @@ def gravar(norma, html_txt):
              "hash_fonte": hashlib.sha256(html_txt.encode()).hexdigest()[:16],
              "total_artigos": len(artigos), "artigos": artigos}
     destino = PASTA / (norma["id"] + ".json")
+    if len(artigos) < 10:
+        return artigos  # página bloqueada ou formato inesperado: mantém a versão já gravada
     destino.write_text(json.dumps(dados, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"{norma['id']}: {len(artigos)} artigos → {destino.relative_to(RAIZ)}")
     return artigos
@@ -161,8 +163,17 @@ def gravar(norma, html_txt):
 def main(args):
     fontes = json.loads((PASTA / "fontes.json").read_text(encoding="utf-8"))["normas"]
     if args[:1] == ["--arquivo"]:
-        gravar({"id": args[3], "nome": args[3], "url": args[1]}, pathlib.Path(args[1]).read_text(encoding="utf-8"))
-        return 0
+        bruto = pathlib.Path(args[1]).read_bytes()
+        texto = None
+        for cod in ("utf-8", "windows-1252"):
+            try:
+                texto = bruto.decode(cod); break
+            except UnicodeDecodeError:
+                continue
+        norma = next((n for n in fontes if n["id"] == args[3]), {"id": args[3], "nome": args[3], "url": args[1]})
+        arts = gravar(norma, texto)
+        print("artigos:", len(arts))
+        return 0 if len(arts) >= 10 else 1
     falhas, log = 0, []
     for n in fontes:
         if args and n["id"] not in args:
@@ -176,14 +187,6 @@ def main(args):
             falhas += 1
             log.append(f"{n['id']}: FALHOU — {type(e).__name__}: {e}")
             print(log[-1], file=sys.stderr)
-    if falhas:
-        try:
-            t = baixar("https://normas.leg.br/main.d77ca558be6c3a0a.js")
-            achados = sorted(set(re.findall(r'["\'`]((?:https?:)?//[^"\'`\s]{4,120}|/api[^"\'`\s]{0,120})["\'`]', t)))
-            ctx = [t[m.start():m.end()+260] for m in re.finditer(r'publicApiUrl', t)][1:12]
-            DIAG.append("--- normas.leg.br main.js: " + str(len(t)) + " bytes\n  urls: " + " | ".join(achados[:60]) + "\n  urn ctx: " + " ### ".join(ctx))
-        except Exception as e:
-            DIAG.append(f"--- normas.leg.br main.js: {type(e).__name__}: {e}")
     # relatório da última execução (vai para o repositório junto com as normas)
     (PASTA / "_ultima-execucao.txt").write_text(
         datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds") + "\n" + "\n".join(log) + "\n\n" + "\n".join(DIAG) + "\n", encoding="utf-8")
