@@ -124,7 +124,10 @@ def estruturar(linhas, norma):
 
 
 def baixar(url):
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (Licitacon; base normativa)"})
+    req = urllib.request.Request(url, headers={
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "pt-BR,pt;q=0.9"})
     bruto = urllib.request.urlopen(req, timeout=60).read()
     m = re.search(rb'charset=["\']?([\w-]+)', bruto[:3000])
     for cod in ([m.group(1).decode()] if m else []) + ["utf-8", "windows-1252"]:
@@ -173,6 +176,15 @@ def main(args):
             falhas += 1
             log.append(f"{n['id']}: FALHOU — {type(e).__name__}: {e}")
             print(log[-1], file=sys.stderr)
+    if falhas:
+        for u in ["https://normas.leg.br/?urn=urn:lex:br:federal:lei:2021-04-01;14133",
+                  "https://normas.leg.br/api/normas?urn=urn:lex:br:federal:lei:2021-04-01;14133&tipo_documento=maior-detalhe",
+                  "https://www.lexml.gov.br/urn/urn:lex:br:federal:lei:2021-04-01;14133"]:
+            try:
+                t = baixar(u)
+                DIAG.append(f"--- sonda {u}: {len(t)} bytes · {re.sub(r'\\s+', ' ', t[:600])}")
+            except Exception as e:
+                DIAG.append(f"--- sonda {u}: {type(e).__name__}: {e}")
     # relatório da última execução (vai para o repositório junto com as normas)
     (PASTA / "_ultima-execucao.txt").write_text(
         datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds") + "\n" + "\n".join(log) + "\n\n" + "\n".join(DIAG) + "\n", encoding="utf-8")
