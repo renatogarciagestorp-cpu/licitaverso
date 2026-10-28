@@ -1,0 +1,39 @@
+name: Agente — atualizar base normativa
+
+# Baixa o texto oficial das leis (Planalto) e grava agente/normas/*.json.
+# Roda quando a lista de fontes ou o robô mudam, no dia 1º de cada mês e quando acionado à mão.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 9 1 * *"
+  push:
+    branches: [main]
+    paths:
+      - "agente/normas/fontes.json"
+      - "scripts/agente/baixar-normas.py"
+      - ".github/workflows/agente-normas.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: agente-normas
+  cancel-in-progress: false
+
+jobs:
+  baixar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Baixar e estruturar as normas
+        run: python3 scripts/agente/baixar-normas.py
+      - name: Gravar no repositório (só se algo mudou)
+        run: |
+          git config user.name "Licitacon — base normativa"
+          git config user.email "actions@users.noreply.github.com"
+          git add agente/normas/*.json
+          if git diff --cached --quiet; then echo "Nada mudou."; exit 0; fi
+          git commit -m "Agente: base normativa atualizada a partir do texto oficial"
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 5; done
+          exit 1
