@@ -135,9 +135,16 @@ def baixar(url):
     return bruto.decode("latin-1")
 
 
+DIAG = []
+
+
 def gravar(norma, html_txt):
     p = Texto(); p.feed(html_txt)
-    artigos = estruturar(p.fim(), norma)
+    linhas = p.fim()
+    artigos = estruturar(linhas, norma)
+    if len(artigos) < 10:  # diagnóstico para ajustar o leitor
+        arts = [l for l in linhas if l.lower().startswith("art")][:5]
+        DIAG.append(f"--- {norma['id']}: html={len(html_txt)} linhas={len(linhas)}\n  início: {re.sub(r'\s+', ' ', html_txt[:400])}\n  linhas: {linhas[:15]}\n  'Art': {arts}")
     dados = {"id": norma["id"], "nome": norma["nome"], "apelido": norma.get("apelido", ""), "fonte": norma["url"],
              "baixado_em": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
              "hash_fonte": hashlib.sha256(html_txt.encode()).hexdigest()[:16],
@@ -168,7 +175,7 @@ def main(args):
             print(log[-1], file=sys.stderr)
     # relatório da última execução (vai para o repositório junto com as normas)
     (PASTA / "_ultima-execucao.txt").write_text(
-        datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds") + "\n" + "\n".join(log) + "\n", encoding="utf-8")
+        datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds") + "\n" + "\n".join(log) + "\n\n" + "\n".join(DIAG) + "\n", encoding="utf-8")
     return 0
 
 
