@@ -180,8 +180,7 @@ def main(args):
         try:
             t = baixar("https://normas.leg.br/main.d77ca558be6c3a0a.js")
             achados = sorted(set(re.findall(r'["\'`]((?:https?:)?//[^"\'`\s]{4,120}|/api[^"\'`\s]{0,120})["\'`]', t)))
-            ctx = [t[max(0, m.start()-200):m.end()+300] for m in re.finditer(r'api/public', t)][:4]
-            ctx += sorted(set(re.findall(r'["\'`](?:normas|norma|texto|documento|dispositivo|versao|versoes|lexml|urn)[\w/\-{}.]*["\'`]', t)))[:60]
+            ctx = [t[m.start():m.end()+260] for m in re.finditer(r'publicApiUrl', t)][1:12]
             DIAG.append("--- normas.leg.br main.js: " + str(len(t)) + " bytes\n  urls: " + " | ".join(achados[:60]) + "\n  urn ctx: " + " ### ".join(ctx))
         except Exception as e:
             DIAG.append(f"--- normas.leg.br main.js: {type(e).__name__}: {e}")
