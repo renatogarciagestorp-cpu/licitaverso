@@ -177,18 +177,13 @@ def main(args):
             log.append(f"{n['id']}: FALHOU — {type(e).__name__}: {e}")
             print(log[-1], file=sys.stderr)
     if falhas:
-        for u in ["http://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/l14133.htm",
-                  "https://planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/L14133.htm",
-                  "https://legis.senado.leg.br/norma/33895473",
-                  "https://legislacao.presidencia.gov.br/atos/?tipo=LEI&numero=14133&ano=2021&ato=",
-                  "https://normas.leg.br/?urn=urn:lex:br:federal:lei:2021-04-01;14133"]:
-            try:
-                t = baixar(u)
-                scripts = re.findall(r'(?:src|href)="([^"]+\.js[^"]*)"', t)[:8]
-                apis = sorted(set(re.findall(r'https?://[\w./-]*api[\w./-]*', t)))[:10]
-                DIAG.append(f"--- sonda {u}: {len(t)} bytes · titulo={re.findall(r'<title>(.*?)</title>', t, re.S)[:1]} · tem 'Art. 18'={'Art. 18' in t} · js={scripts} · apis={apis}")
-            except Exception as e:
-                DIAG.append(f"--- sonda {u}: {type(e).__name__}: {e}")
+        try:
+            t = baixar("https://normas.leg.br/main.d77ca558be6c3a0a.js")
+            achados = sorted(set(re.findall(r'["\'`]((?:https?:)?//[^"\'`\s]{4,120}|/api[^"\'`\s]{0,120})["\'`]', t)))
+            ctx = [t[max(0, m.start()-120):m.end()+120] for m in re.finditer(r'urn', t)][:6]
+            DIAG.append("--- normas.leg.br main.js: " + str(len(t)) + " bytes\n  urls: " + " | ".join(achados[:60]) + "\n  urn ctx: " + " ### ".join(ctx))
+        except Exception as e:
+            DIAG.append(f"--- normas.leg.br main.js: {type(e).__name__}: {e}")
     # relatório da última execução (vai para o repositório junto com as normas)
     (PASTA / "_ultima-execucao.txt").write_text(
         datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds") + "\n" + "\n".join(log) + "\n\n" + "\n".join(DIAG) + "\n", encoding="utf-8")
