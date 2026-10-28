@@ -21,5 +21,7 @@ Base normativa: Leis 14.133, 13.303, 13.019, 10.192 e 4.320 carregadas em 28/10/
 salvas pelo navegador. Todas as citações dos roteiros conferidas contra o texto vigente (`conferir-roteiro.py`).
 Pendência: a Lei 13.019 tem muitos artigos com redação antiga e nova na página; conferir a leitura antes de usar (Fase 4).
 
+Escopo da fase de testes (decisão de 28/10/2026): somente a Lei 14.133/2021. As demais normas ficam na base para a ampliação futura.
+
 Próximas etapas: base com as instruções normativas (IN 05/2017, 58/2022, 81/2022, 65/2021, 98/2022);
 primeiras análises reais feitas em conjunto; depois o protótipo automático (Fase 2).
