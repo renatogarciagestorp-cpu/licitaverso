@@ -153,7 +153,7 @@ def main(args):
     if args[:1] == ["--arquivo"]:
         gravar({"id": args[3], "nome": args[3], "url": args[1]}, pathlib.Path(args[1]).read_text(encoding="utf-8"))
         return 0
-    falhas = 0
+    falhas, log = 0, []
     for n in fontes:
         if args and n["id"] not in args:
             continue
@@ -161,10 +161,15 @@ def main(args):
             arts = gravar(n, baixar(n["url"]))
             if len(arts) < 10:
                 raise ValueError("poucos artigos reconhecidos — conferir o formato da página")
+            log.append(f"{n['id']}: ok, {len(arts)} artigos")
         except Exception as e:
             falhas += 1
-            print(f"{n['id']}: FALHOU — {e}", file=sys.stderr)
-    return 1 if falhas else 0
+            log.append(f"{n['id']}: FALHOU — {type(e).__name__}: {e}")
+            print(log[-1], file=sys.stderr)
+    # relatório da última execução (vai para o repositório junto com as normas)
+    (PASTA / "_ultima-execucao.txt").write_text(
+        datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds") + "\n" + "\n".join(log) + "\n", encoding="utf-8")
+    return 0
 
 
 if __name__ == "__main__":
