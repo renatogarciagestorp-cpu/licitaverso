@@ -15,8 +15,8 @@ def get(url):
     except Exception as e:
         return {"_erro": f"{type(e).__name__}: {e}"[:200], "_url": url}
 
-def tcu_js(termo, n=10):
-    url = ("https://pesquisa.apps.tcu.gov.br/rest/publico/base/jurisprudencia-selecionada/documentosResumidos?"
+def tcu_js(termo, n=10, base="jurisprudencia-selecionada"):
+    url = (f"https://pesquisa.apps.tcu.gov.br/rest/publico/base/{base}/documentosResumidos?"
            + urllib.parse.urlencode({"termo": termo, "ordenacao": "score desc", "quantidade": n, "inicio": 0}))
     return get(url), url
 
@@ -27,8 +27,15 @@ def main():
     args = [a for a in args if a != str(n)]
     out = {"gerado_em": datetime.datetime.utcnow().isoformat() + "Z", "buscas": []}
     for termo in args:
-        d, url = tcu_js(termo, n)
-        out["buscas"].append({"fonte": "TCU-JS", "termo": termo, "url": url, "resposta": d})
+        base = "jurisprudencia-selecionada"
+        if termo.startswith("AC:"):
+            base, termo = "acordao-completo", termo[3:]
+        d, url = tcu_js(termo, n, base)
+        if base == "acordao-completo" and isinstance(d, dict):  # resumo menor: só metadados e trecho
+            for x in d.get("documentos", []):
+                for k in list(x):
+                    if isinstance(x[k], str) and len(x[k]) > 1500: x[k] = x[k][:1500]
+        out["buscas"].append({"fonte": "TCU-" + base, "termo": termo, "url": url, "resposta": d})
     json.dump(out, open(saida, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
 
 if __name__ == "__main__":
