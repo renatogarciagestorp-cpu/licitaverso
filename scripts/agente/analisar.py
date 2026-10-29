@@ -147,7 +147,7 @@ FERRAMENTA = {
 }
 
 
-def chamar(system, usuario, max_tokens=24000):
+def chamar(system, usuario, max_tokens=56000):
     chave = os.environ.get("ANTHROPIC_API_KEY")
     if not chave:
         sys.exit("ANTHROPIC_API_KEY ausente")
