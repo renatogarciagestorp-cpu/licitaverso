@@ -24,7 +24,7 @@ jobs:
       - name: Preparar
         run: |
           sudo apt-get update -qq >/dev/null
-          sudo apt-get install -y -qq poppler-utils libreoffice-writer-nogui fonts-liberation >/dev/null
+          sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-por libreoffice-writer-nogui fonts-liberation >/dev/null
           pip install -q python-docx matplotlib
           L="${{ inputs.link }}"
           read CNPJ ANO SEQ < <(python3 -c "import re,sys;m=re.search(r'(\d{14})/(\d{4})/(\d+)',sys.argv[1]);print(*m.groups()) if m else sys.exit('link inválido')" "$L")
@@ -58,7 +58,7 @@ jobs:
           print(max(pdfs, key=lambda p: p.stat().st_size))
           PY
           ) || erro "Escolha do arquivo"
-          TXT="${PDF%.pdf}.txt"; [ -f "$TXT" ] || pdftotext -layout "$PDF" "$TXT"
+          TXT="/tmp/documento.txt"; python3 scripts/agente/extrair-texto.py "$PDF" "$TXT" 2>/tmp/err.txt || erro "Leitura do PDF (nem o OCR encontrou texto)"
           PAGS=$(pdfinfo "$PDF" | awk '/^Pages/{print $2}')
           OUT="$D/auto-${{ inputs.documento }}-$(date +%Y%m%d-%H%M)"; mkdir -p "$OUT"
           echo "OUT=$OUT" >> "$GITHUB_ENV"

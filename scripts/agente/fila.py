@@ -130,9 +130,11 @@ def processar(a):
             if paginas > MAX_PAGINAS:
                 raise ErroCliente(f"O documento tem {paginas} páginas; o limite por análise é {MAX_PAGINAS}. Envie só o documento a analisar.")
             txt = pasta / "documento.txt"
-            rodar(["pdftotext", "-layout", str(pdf), str(txt)], timeout=300)
-            if len(re.sub(r"\s+", "", txt.read_text(encoding="utf-8", errors="replace"))) < 1500:
-                raise ErroCliente("O PDF parece ser digitalizado (imagem), sem texto pesquisável. Envie uma versão em PDF pesquisável.")
+            r = subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-texto.py"), str(pdf), str(txt)], capture_output=True, text=True, timeout=1800)
+            if r.returncode == 3 or not txt.exists():
+                raise ErroCliente("Não foi possível ler o texto do PDF, nem por reconhecimento óptico (OCR). Envie uma versão com melhor qualidade ou em PDF pesquisável.")
+            if r.returncode != 0:
+                raise RuntimeError(r.stderr[-500:])
             saida = pasta / "analise.json"
             args = [sys.executable, str(RAIZ / "scripts/agente/analisar.py"), "--doc", a["documento"], "--texto", str(txt),
                     "--paginas", str(paginas), "--saida", str(saida),

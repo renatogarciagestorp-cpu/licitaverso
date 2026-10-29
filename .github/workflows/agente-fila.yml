@@ -34,7 +34,7 @@ jobs:
         if: steps.fila.outputs.tem == 'true'
         run: |
           sudo apt-get update -qq >/dev/null
-          sudo apt-get install -y -qq poppler-utils libreoffice-writer-nogui fonts-liberation unzip >/dev/null
+          sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-por libreoffice-writer-nogui fonts-liberation unzip >/dev/null
           pip install -q python-docx matplotlib
       - name: Processar
         if: steps.fila.outputs.tem == 'true'
