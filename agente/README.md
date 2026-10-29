@@ -23,5 +23,11 @@ Pendência: a Lei 13.019 tem muitos artigos com redação antiga e nova na pági
 
 Escopo da fase de testes (decisão de 28/10/2026): somente a Lei 14.133/2021. As demais normas ficam na base para a ampliação futura.
 
+Análise automática (Fase 2, desde 29/10/2026): `scripts/agente/analisar.py` com o Claude Sonnet 5.5
+(chave no segredo ANTHROPIC_API_KEY). Workflow manual "Agente — analisar documento": recebe o link do PNCP e o tipo
+de documento, baixa, analisa, gera o parecer (Word e PDF) e grava no ramo agente-testes. Fatos objetivos (contagem do
+art. 183, dados do PNCP) são calculados por programa; trechos citados são conferidos literalmente; jurisprudência só entre
+os candidatos da Biblioteca. Primeiro teste (Campo Maior): 191 s, US$ 0,49, todas as 8 falhas do gabarito encontradas.
+
 Próximas etapas: base com as instruções normativas (IN 05/2017, 58/2022, 81/2022, 65/2021, 98/2022);
 primeiras análises reais feitas em conjunto; depois o protótipo automático (Fase 2).
