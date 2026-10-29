@@ -64,8 +64,16 @@ R_NOTA = re.compile(r"\((?:Incluíd[oa]|Redação dada|Revogad[oa]|Vide|Promulga
 
 def estruturar(linhas, norma):
     artigos, art, caminho, ctx = [], None, [], {}
+    nome_secao = False  # a linha logo após "Seção I" / "CAPÍTULO II" é o nome da divisão, não texto de dispositivo
     for ln in linhas:
+        if nome_secao and not (R_ART.match(ln) or R_PAR.match(ln) or R_INC.match(ln) or R_ALI.match(ln)) and len(ln) < 160 and not ln.rstrip().endswith((".", ";", ":")):
+            if caminho:
+                caminho[-1] = (caminho[-1][0], caminho[-1][1] + " — " + ln)
+            nome_secao = False
+            continue
+        nome_secao = False
         if R_TITULO.match(ln) and len(ln) < 160:
+            nome_secao = True
             nivel = ln.split()[0].upper()
             ordem = ["LIVRO", "TÍTULO", "CAPÍTULO", "SEÇÃO", "SUBSEÇÃO"]
             n = ordem.index(nivel) if nivel in ordem else 4

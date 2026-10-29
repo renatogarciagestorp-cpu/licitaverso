@@ -1,14 +1,14 @@
 {
   "_sobre": "Roteiros de verificação do Agente Licitacon para contratações regidas pela Lei 14.133/2021. Cada item aponta o dispositivo legal (norma, art, disp) conferido automaticamente contra agente/normas/<norma>.json. disp usa os ids do arquivo da norma: caput, I, II, p1 (§ 1º), p1.I (§ 1º, inciso I), pu (parágrafo único), XXIII.a (inciso XXIII, alínea a). gravidade: alta = vício que compromete a legalidade ou a competitividade; media = falha que exige correção ou motivação; baixa = boa prática ou melhoria. obrigatorio: sim | condicional (ver 'quando') | recomendado. Fase de testes: somente a Lei 14.133/2021 é usada como fundamento.",
   "regime": "lei-14133",
-  "versao": "2026-10-28.2",
+  "versao": "2026-10-29",
   "revisado_por_especialista": false,
   "documentos": {
     "etp": "Estudo Técnico Preliminar",
     "tr": "Termo de Referência",
     "riscos": "Mapa / Matriz de Riscos",
     "planilha": "Planilha de custos e formação de preços (dedicação exclusiva de mão de obra)",
-    "edital": "Edital e minuta de contrato",
+    "edital": "Edital e minutas (ata e contrato)",
     "cruzado": "Coerência entre os documentos"
   },
   "itens": [
@@ -1085,12 +1085,22 @@
       "id": "ed-05",
       "doc": "edital",
       "titulo": "Prazo mínimo para apresentação de propostas",
-      "verificar": "O prazo entre a divulgação e a abertura respeita o mínimo legal para o objeto e o critério de julgamento (dias úteis).",
+      "verificar": "O prazo entre a divulgação e o fim do recebimento de propostas respeita o mínimo legal para o objeto e o critério de julgamento, contado em dias úteis com exclusão do dia do começo, que é o primeiro dia útil seguinte à divulgação na internet.",
       "fundamento": [
         {
           "norma": "lei-14133",
           "art": "55",
           "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "183",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "183",
+          "disp": "p1.I"
         }
       ],
       "obrigatorio": "sim",
@@ -1575,6 +1585,185 @@
       "temas": [
         "matriz de riscos",
         "equilíbrio econômico-financeiro"
+      ]
+    },
+    {
+      "id": "srp-01",
+      "doc": "edital",
+      "titulo": "Registro de preços: julgamento por lote (grupo de itens)",
+      "verificar": "Se o registro de preços adota menor preço por grupo/lote, o processo demonstra a inviabilidade de adjudicar por item e a vantagem técnica e econômica do agrupamento, e o edital indica o critério de aceitabilidade dos preços unitários máximos.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "p1"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "p2"
+        }
+      ],
+      "obrigatorio": "condicional",
+      "quando": "Registro de preços com julgamento por grupo de itens ou lote.",
+      "gravidade": "alta",
+      "risco": "Agrupamento sem a demonstração exigida restringe a competição (afasta quem fornece só parte dos itens) e permite registrar itens individualmente caros dentro de um lote barato no total (jogo de planilha); sem preço unitário máximo, não há como recusar itens com sobrepreço.",
+      "dica": "Demonstre no ETP por que cada item não pode ser licitado isoladamente e qual a vantagem do lote; indique no edital o preço unitário máximo aceitável de cada item (ou o critério para aferi-lo).",
+      "temas": [
+        "registro de preços",
+        "adjudicação por lote",
+        "menor preço global",
+        "adjudicação por item",
+        "parcelamento do objeto"
+      ]
+    },
+    {
+      "id": "srp-02",
+      "doc": "edital",
+      "titulo": "Registro de preços: quem pode aderir à ata",
+      "verificar": "As regras de adesão por não participantes respeitam a esfera do gerenciador: ata municipal só admite adesão de órgãos municipais (e desde que o registro tenha sido feito por licitação); órgãos federais não podem aderir a atas estaduais, distritais ou municipais; os limites de 50% por órgão e do dobro no total estão previstos.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "86",
+          "disp": "p3"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "86",
+          "disp": "p3.II"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "86",
+          "disp": "p8"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "86",
+          "disp": "p4"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "86",
+          "disp": "p5"
+        }
+      ],
+      "obrigatorio": "condicional",
+      "quando": "Registro de preços que admite adesão (carona).",
+      "gravidade": "media",
+      "risco": "Cláusula que admite adesões vedadas pela lei induz órgãos de outras esferas a contratações irregulares, com risco de nulidade e responsabilização de quem autorizar a adesão.",
+      "dica": "Restrinja a adesão aos órgãos e entidades municipais (art. 86, § 3º, II) e mantenha os limites dos §§ 4º e 5º.",
+      "temas": [
+        "adesão à ata de registro de preços",
+        "carona",
+        "órgão não participante"
+      ]
+    },
+    {
+      "id": "srp-03",
+      "doc": "edital",
+      "titulo": "Registro de preços: quantidades e vigência da ata",
+      "verificar": "O edital fixa a quantidade máxima de cada item compatível com a vigência da ata (1 ano, prorrogável por igual período) e o planejamento não estima consumo para período maior que o da ata.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "I"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "84",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "18",
+          "disp": "p1.IV"
+        }
+      ],
+      "obrigatorio": "condicional",
+      "quando": "Registro de preços.",
+      "gravidade": "media",
+      "risco": "Quantidades dimensionadas para mais anos que a validade da ata superestimam o registro, inflam o limite das adesões (que é calculado sobre esse quantitativo) e distorcem a economia de escala ofertada.",
+      "dica": "Dimensione a quantidade máxima para a vigência da ata, com memória de cálculo; planeje os anos seguintes em novo registro de preços.",
+      "temas": [
+        "registro de preços",
+        "estimativa de quantitativos",
+        "superdimensionamento"
+      ]
+    },
+    {
+      "id": "srp-04",
+      "doc": "edital",
+      "titulo": "Registro de preços: regras obrigatórias do edital",
+      "verificar": "O edital dispõe sobre: quantidade mínima a ser cotada; possibilidade de cotar quantitativo inferior ao máximo; condições para alteração dos preços registrados; registro de mais de um fornecedor (cadastro de reserva); vedação de o órgão participar de mais de uma ata com o mesmo objeto; hipóteses de cancelamento da ata.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "II"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "IV"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "VI"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "VII"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "VIII"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "IX"
+        }
+      ],
+      "obrigatorio": "condicional",
+      "quando": "Registro de preços.",
+      "gravidade": "media",
+      "risco": "A omissão de regras que a lei manda o edital prever gera insegurança na formação das propostas e na gestão da ata, e pode ser apontada em impugnação ou pelo controle.",
+      "dica": "Inclua uma seção do edital com cada um dos incisos do art. 82, mesmo que para declarar a opção adotada (ex.: 'não será admitida cotação de quantitativo inferior ao máximo').",
+      "temas": [
+        "registro de preços",
+        "edital de registro de preços"
+      ]
+    },
+    {
+      "id": "ed-18",
+      "doc": "edital",
+      "titulo": "Coerência interna do edital e dos anexos",
+      "verificar": "Datas, critério de julgamento, forma de adjudicação e demais regras são os mesmos no corpo do edital, no termo de referência, no ETP e nas minutas, sem disposições contraditórias.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "25",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "18",
+          "disp": "IX"
+        }
+      ],
+      "obrigatorio": "sim",
+      "gravidade": "media",
+      "risco": "Regras contraditórias geram dúvida sobre como competir e julgar, motivam impugnações e recursos e podem anular atos do certame.",
+      "dica": "Revise o edital e os anexos juntos antes da publicação, com uma tabela única de datas, critério de julgamento e forma de adjudicação.",
+      "temas": [
+        "divergência entre edital e termo de referência",
+        "vinculação ao instrumento convocatório"
       ]
     }
   ]

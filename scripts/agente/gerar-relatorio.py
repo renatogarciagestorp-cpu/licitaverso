@@ -172,7 +172,7 @@ def gerar(analise, saida):
     falhas = [r for r in resultados if r["resultado"] in ("nao_conforme", "parcial")]
     cont = {g: sum(1 for r in falhas if itens[r["item"]]["gravidade"] == g) for g in ("alta", "media", "baixa")}
     doc.add_heading("1. Resumo executivo", level=1)
-    sit = "Há falhas graves que recomendam correção antes da publicação." if cont["alta"] else (
+    sit = "Há falhas graves que recomendam correção." if cont["alta"] else (
           "Há ajustes recomendados, sem falha grave identificada." if falhas else "Nenhuma não conformidade identificada nos itens verificados.")
     par(doc, sit, True, COR["alta"] if cont["alta"] else (COR["media"] if falhas else COR["ok"]), 12)
     t = doc.add_table(rows=1, cols=4); t.alignment = WD_TABLE_ALIGNMENT.CENTER; t.style = "Table Grid"
@@ -213,7 +213,12 @@ def gerar(analise, saida):
         rotulo_valor(doc, "Como corrigir", r.get("correcao") or it["dica"])
         if r.get("redacao_sugerida"):
             p = par(doc, "Redação sugerida: " + r["redacao_sugerida"], cor=COR["ok"]); p.paragraph_format.left_indent = Cm(0.8)
-        js = jurisprudencia(r.get("temas") or it.get("temas"))
+        if "jurisprudencia_ids" in r:  # escolhida pela análise (o agente seleciona entre os candidatos da Biblioteca)
+            jurisprudencia([])  # garante a Biblioteca carregada
+            por_id = {j.get("id"): j for j in _acervo}
+            js = [por_id[i] for i in r["jurisprudencia_ids"] if i in por_id]
+        else:
+            js = jurisprudencia(r.get("temas") or it.get("temas"))
         p = doc.add_paragraph(); p.paragraph_format.space_after = Pt(2)
         x = p.add_run("Jurisprudência na Biblioteca Licitacon: "); x.bold = True; x.font.color.rgb = RGBColor.from_string(COR["titulo"])
         if not js:
