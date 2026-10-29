@@ -18,7 +18,7 @@ import argparse, datetime, json, re, statistics, sys, time, unicodedata, urllib.
 H = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36",
      "Accept": "application/json, text/plain, */*", "Referer": "https://pncp.gov.br/app/editais", "Accept-Language": "pt-BR,pt;q=0.9"}
 LIMIAR_INDICIO, LIMIAR_ATENCAO, MIN_COMPARAVEIS = 0.25, 0.10, 3
-MAX_ITENS, MAX_BUSCA, MAX_COMPARAVEIS = 25, 20, 8
+MAX_ITENS, MAX_BUSCA, MAX_COMPARAVEIS, PAGINAS_BUSCA = 20, 30, 10, 2
 SIMILARIDADE = 0.55
 STOP = set("de da do das dos e em para com sem a o as os ou por tipo cor material marca modelo minimo maximo unidade un und aprox cerca "
            "conforme termo referencia especificacao especificacoes item itens nao sim ate no na nos nas um uma".split())
@@ -111,7 +111,13 @@ def _comparaveis(item, uf, data_ref, excluir, n_palavras):
     cat_alvo = str(item.get("catalogoCodigoItem") or "").strip()
     inicio = data_ref - datetime.timedelta(days=365)
     achados = []
-    for r in consulta_busca(q, uf):
+    resultados = []
+    for pg in range(1, PAGINAS_BUSCA + 1):
+        lote = consulta_busca(q, uf, pg)
+        resultados += lote
+        if len(lote) < MAX_BUSCA:
+            break
+    for r in resultados:
         chave = f"{r.get('orgao_cnpj')}-{r.get('ano')}-{r.get('numero_sequencial')}"
         if chave == excluir:
             continue

@@ -2523,6 +2523,7 @@ const AN_TERMO = [
   "Prazo: em geral, o parecer fica pronto em até 1 hora; você recebe um aviso por e-mail e baixa o parecer em PDF e Word nesta página.",
   "Plano Pro: 2 análises por semana incluídas (de segunda a domingo, sem acúmulo). A partir da 3ª análise na semana, a análise avulsa sai com 30% de desconto. Análise que não puder ser concluída não consome a cota; a avulsa paga é reprocessada ou estornada.",
   "Dados: o documento é processado por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos. O arquivo e o parecer ficam na sua conta, acessíveis só a você e à equipe do Licitacon. Não envie documento cuja divulgação a prestadores de serviço seja vedada.",
+  "Análise de preços: quando o documento traz o orçamento estimado, o sistema compara os valores com preços homologados em contratações equivalentes publicadas no PNCP (órgãos do mesmo estado, últimos 12 meses, Lei 14.133/2021). O resultado é indicativo e depende da equivalência das especificações; não substitui a pesquisa de preços do processo.",
   "Limitações: a inteligência artificial pode errar ou deixar de identificar pontos. Confira cada apontamento no documento e na fonte oficial antes de decidir."
 ];
 const STATUS_ANALISE = {
@@ -4039,6 +4040,7 @@ class Component extends DCLogic {
         "Trechos do documento citados literalmente e conferidos por programa; prazos do art. 183 calculados pelo sistema.",
         "Todos os aspectos apontados, dos críticos aos leves, com risco, providência e redação sugerida.",
         "Lê PDF pesquisável e também documento digitalizado (OCR em português).",
+        "Análise de preços: compara o orçamento estimado com preços homologados em contratações iguais do mesmo estado, no último ano, pela Lei 14.133 (art. 23, § 1º, II).",
         "Trilhas automáticas inspiradas nas tipologias do ALICE (CGU/TCU) procuram cláusulas restritivas, que o agente confirma ou descarta.",
         "Parecer em PDF e Word, no formato ABNT, pronto para juntar ao processo."
       ],

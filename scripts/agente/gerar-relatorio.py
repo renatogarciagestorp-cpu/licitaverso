@@ -488,7 +488,8 @@ def gerar(analise, saida, paginas=None):
     lst = sorted(falhas, key=lambda x: ordem[itens[x["item"]]["gravidade"]])
     entradas = ["1 Painel executivo", "2 Relatório"] + ["3 Fundamentação"] + \
                [f"3.{n} {itens[r['item']]['titulo']}" for n, r in enumerate(lst, 1)] + \
-               ["4 Recomendações de melhoria", "5 Conclusão", "Referências", "Apêndice A – Lista de verificação", "Apêndice B – Metodologia e limites"]
+               (["4 Análise de preços"] if analise.get("precos") else []) + \
+               [f"{5 if analise.get('precos') else 4} Recomendações de melhoria", f"{6 if analise.get('precos') else 5} Conclusão", "Referências", "Apêndice A – Lista de verificação", "Apêndice B – Metodologia e limites"]
     sumario(doc, entradas, paginas or {})
     quebra_pagina(doc)
 
@@ -601,8 +602,13 @@ def gerar(analise, saida, paginas=None):
                 if j.get("fonte_url"):
                     run(pc, " ", tam=10); link(pc, "[fonte oficial]", j["fonte_url"], tam=9)
 
-    # 4 RECOMENDAÇÕES
-    titulo(doc, "4 Recomendações de melhoria")
+    # 4 ANÁLISE DE PREÇOS (sobrepreço)
+    if analise.get("precos"):
+        secao_precos(doc, analise["precos"])
+    n_rec = 5 if analise.get("precos") else 4
+
+    # RECOMENDAÇÕES
+    titulo(doc, f"{n_rec} Recomendações de melhoria")
     dicas = [r for r in resultados if r["resultado"] == "conforme" and r.get("dica")]
     paragrafo(doc, "Os pontos a seguir não configuram irregularidade, mas podem ser aperfeiçoados para dar mais segurança ao processo:"
               if dicas else "Não há recomendações adicionais.", depois=6)
@@ -614,7 +620,7 @@ def gerar(analise, saida, paginas=None):
         run(p, r["dica"] + " (" + "; ".join(rotulo(f) for f in it["fundamento"]) + ").")
 
     # 5 CONCLUSÃO
-    titulo(doc, "5 Conclusão")
+    titulo(doc, f"{n_rec + 1} Conclusão")
     if analise.get("conclusao"):
         paragrafo(doc, analise["conclusao"], depois=6)
     else:
@@ -710,6 +716,62 @@ def gerar(analise, saida, paginas=None):
 
     doc.save(saida)
     return entradas
+
+
+def _brl(v):
+    return ("R$ " + f"{float(v):,.2f}").replace(",", "X").replace(".", ",").replace("X", ".")
+
+SIT_PRECO = {"indicio": ("Indício de sobrepreço", "alta"), "atencao": ("Ponto de atenção", "media"), "compativel": ("Compatível", "ok"),
+             "amostra_insuficiente": ("Amostra insuficiente", "na"), "amostra_heterogenea": ("Amostra heterogênea", "na")}
+
+def secao_precos(doc, pr):
+    cr = pr.get("criterios", {})
+    titulo(doc, "4 Análise de preços")
+    itens = pr.get("itens", [])
+    ind = [r for r in itens if r["situacao"] == "indicio"]
+    paragrafo(doc, f"O orçamento estimado foi confrontado com preços de contratações similares publicadas no Portal Nacional de Contratações "
+                   f"Públicas (PNCP), conforme o parâmetro do art. 23, § 1º, II, da Lei nº 14.133/2021. Critérios adotados: objeto equivalente "
+                   f"(descrição compatível e mesma unidade de medida); contratações homologadas nos 365 dias anteriores a "
+                   f"{'/'.join(reversed(cr.get('data_referencia', '').split('-')))}; órgãos e entidades localizados no estado ({cr.get('uf', '')}); "
+                   f"contratações regidas pela Lei nº 14.133/2021; preço de comparação igual ao valor unitário homologado. Calcula-se a mediana de, "
+                   f"no mínimo, {cr.get('minimo_comparaveis', 3)} preços, após o descarte de valores extremos pelo intervalo interquartil. "
+                   f"Considera-se indício de sobrepreço o valor estimado superior à mediana em mais de 25%, e ponto de atenção o excesso entre 10% e 25%.",
+              depois=6)
+    paragrafo(doc, f"Foram analisados {pr.get('itens_analisados', 0)} dos {pr.get('itens_no_orcamento', 0)} itens do orçamento, que representam "
+                   f"{pr.get('cobertura_valor', 0):.0%} do valor estimado. " + (
+                   f"Há indício de sobrepreço em {len(ind)} item(ns), com excesso estimado de {_brl(pr.get('excesso_total', 0))} em relação à mediana."
+                   if ind else "Não foi identificado indício de sobrepreço nos itens com amostra suficiente."), depois=6)
+    t = tabela_sem_bordas(doc, len(itens) + 1, 6, [1.0, 6.2, 2.4, 2.4, 1.4, 2.6])
+    for i, h in enumerate(["Item", "Descrição", "Estimado", "Mediana", "Desvio", "Situação"]):
+        c = t.rows[0].cells[i]; sombrear(c, C["marinho"]); margens_celula(c, 0.1)
+        p = c.paragraphs[0]; fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT); run(p, h.upper(), negrito=True, tam=7.5, hexa="FFFFFF")
+    for k, r in enumerate(itens, 1):
+        rot, cor_ = SIT_PRECO.get(r["situacao"], (r["situacao"], "na"))
+        vals = [str(r.get("numero", "")), r["descricao"][:110], _brl(r["valor_estimado"]), _brl(r["mediana"]) if r.get("mediana") else "—",
+                f"{r['desvio']:+.0%}" if r.get("desvio") is not None else "—", f"{rot} ({r['n']})"]
+        for i, v in enumerate(vals):
+            c = t.rows[k].cells[i]; bordas(c, bottom=(C["linha"], 4)); margens_celula(c, 0.1)
+            if k % 2 == 0: sombrear(c, "FAFBFC")
+            p = c.paragraphs[0]; fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+            run(p, v, tam=8, negrito=(i == 5), hexa=C[cor_] if i == 5 else None)
+    paragrafo(doc, "Entre parênteses, o número de preços comparáveis encontrados. Amostra insuficiente (menos de três preços) ou heterogênea "
+                   "(coeficiente de variação acima de 0,5, o que sugere especificações diferentes) não permite concluir sobre sobrepreço.",
+              recuo1=0, tam=8.5, hexa=C["fraco"], italico=True, antes=4, depois=8)
+    for r in [x for x in itens if x["situacao"] in ("indicio", "atencao")]:
+        rot, cor_ = SIT_PRECO[r["situacao"]]
+        p = fmt(doc.add_paragraph(), recuo1=0, depois=4, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+        run(p, f"Item {r['numero']} — {rot}: ", negrito=True, hexa=C[cor_])
+        run(p, f"estimado {_brl(r['valor_estimado'])} por {r.get('unidade') or 'unidade'}, contra mediana de {_brl(r['mediana'])} "
+               f"({r['desvio']:+.0%}); excesso de {_brl(r.get('excesso_estimado', 0))} para {r['quantidade']:g} unidade(s). Preços comparáveis:")
+        for cpa in r["comparaveis"]:
+            q = fmt(doc.add_paragraph(), recuo1=0, esq=0.8, depois=2, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+            run(q, f"{_brl(cpa['valor_unitario'])} · {cpa.get('orgao', '')} ({cpa.get('municipio', '')}/{cpa.get('uf', '')}) · "
+                   f"{'/'.join(reversed(cpa.get('data', '').split('-')))}" + (" · descartado (valor extremo)" if cpa.get("descartado") else "") + " ",
+                tam=9, hexa=C["fraco"] if cpa.get("descartado") else None)
+            link(q, "[PNCP]", cpa["link"], tam=8.5)
+    paragrafo(doc, "A análise de preços é indicativa e calculada por programa a partir de dados públicos do PNCP; a comparação depende da "
+                   "equivalência das especificações e não substitui a pesquisa de preços do processo (art. 23 da Lei nº 14.133/2021).",
+              recuo1=0, tam=8.5, hexa=C["fraco"], italico=True, antes=6, depois=6)
 
 
 def _painel_corpo(doc, itens, resultados, lst, cont, cont_res, indice):

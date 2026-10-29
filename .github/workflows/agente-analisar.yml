@@ -63,7 +63,11 @@ jobs:
           PAGS=$(pdfinfo "$PDF" | awk '/^Pages/{print $2}')
           OUT="$D/auto-${{ inputs.documento }}-$(date +%Y%m%d-%H%M)"; mkdir -p "$OUT"
           echo "OUT=$OUT" >> "$GITHUB_ENV"
-          python3 scripts/agente/analisar.py --doc "${{ inputs.documento }}" --texto "$TXT" --compra "$D/compra.json" \
+          PASTA_PNCP=""; [ "${{ inputs.documento }}" = "edital" ] && PASTA_PNCP="$D"
+          python3 scripts/agente/precos-do-processo.py --texto "$TXT" ${PASTA_PNCP:+--pasta-pncp "$PASTA_PNCP"} --excluir "$CNPJ-$ANO-$SEQ" --saida "$OUT/precos.json" > /tmp/pr.txt 2>&1 || true
+          echo "::notice title=Preços::$(tail -c 400 /tmp/pr.txt | tr '\n' ' ')"
+          PRECOS=""; [ -f "$OUT/precos.json" ] && PRECOS="--precos $OUT/precos.json"
+          python3 scripts/agente/analisar.py --doc "${{ inputs.documento }}" --texto "$TXT" --compra "$D/compra.json" $PRECOS \
             --fonte "${{ inputs.link }}" --paginas "$PAGS" --saida "$OUT/analise.json" > /tmp/out.txt 2>/tmp/err.txt || erro "Análise"
           echo "::notice title=Análise::$(cat /tmp/out.txt | tr '\n' ' ')"
           python3 scripts/agente/gerar-relatorio.py "$OUT/analise.json" "$OUT/parecer.docx" --pdf > /tmp/out.txt 2>/tmp/err.txt || erro "Relatório"

@@ -141,6 +141,17 @@ def processar(a):
                     "--fonte", a.get("pncp_link") or a.get("nome_arquivo") or "documento enviado"]
             if compra:
                 args += ["--compra", str(compra)]
+            # análise de preços (sobrepreço): itens do PNCP no edital; nos demais casos, extraídos do documento
+            precos = pasta / "precos.json"
+            cmd = [sys.executable, str(RAIZ / "scripts/agente/precos-do-processo.py"), "--texto", str(txt), "--saida", str(precos)]
+            if compra and a["documento"] == "edital":
+                cmd += ["--pasta-pncp", str(compra.parent)]
+            m2 = re.search(r"(\d{14})/(\d{4})/(\d+)", a.get("pncp_link") or "")
+            if m2:
+                cmd += ["--excluir", "-".join(m2.groups())]
+            subprocess.run(cmd, capture_output=True, text=True, timeout=2700)
+            if precos.exists():
+                args += ["--precos", str(precos)]
             try:
                 rodar(args, timeout=1500)
             except RuntimeError as e:

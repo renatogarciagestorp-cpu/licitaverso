@@ -191,7 +191,11 @@ Regras obrigatórias:
     do ALICE, da CGU/TCU). Avalie CADA indício no contexto: confirme quando a irregularidade de fato existe (registre-a no item do roteiro
     indicado ou em outros_apontamentos) ou descarte quando for falso positivo (por exemplo, texto que proíbe a prática, ou percentual que
     não se refere à exigência). Informe a decisão em "trilhas_avaliadas" ({id, confirmado, motivo}).
-16. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
+16. ANÁLISE DE PREÇOS: quando os fatos do sistema trouxerem "INDÍCIO DE SOBREPREÇO", registre-o como irregularidade de gravidade ALTA
+    no item de estimativa de valor do roteiro (ou em outros_apontamentos, se o documento não tiver item correspondente), com fundamento
+    no art. 23 da Lei 14.133/2021, citando o desvio calculado; recomende revisar a pesquisa de preços. "Ponto de atenção" é gravidade média.
+    Amostra insuficiente ou heterogênea não permite concluir: não aponte sobrepreço nesses casos.
+17. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
     ementa_texto (síntese de 2–3 frases), resumo (um parágrafo de visão geral) e conclusao (um parágrafo)."""
 
 FERRAMENTA = {
@@ -370,6 +374,7 @@ def main():
     ap.add_argument("--compra")
     ap.add_argument("--fonte", default="")
     ap.add_argument("--paginas", type=int)
+    ap.add_argument("--precos", help="resultado de sobrepreco.py (análise de preços)")
     ap.add_argument("--saida", required=True)
     a = ap.parse_args()
 
@@ -382,6 +387,23 @@ def main():
     compra = json.loads(pathlib.Path(a.compra).read_text(encoding="utf-8")) if a.compra else None
     fatos = fatos_pncp(compra)
     trilhas = rodar_trilhas(bruto)
+    precos = None
+    if a.precos and pathlib.Path(a.precos).exists():
+        precos = json.loads(pathlib.Path(a.precos).read_text(encoding="utf-8"))
+        brl = lambda v: ("R$ " + f"{v:,.2f}").replace(",", "X").replace(".", ",").replace("X", ".")
+        sit = {"indicio": "INDÍCIO DE SOBREPREÇO", "atencao": "ponto de atenção", "compativel": "compatível",
+               "amostra_insuficiente": "amostra insuficiente", "amostra_heterogenea": "amostra heterogênea"}
+        linhas = [f"Análise de preços calculada pelo sistema (critérios: mesma UF {precos['criterios']['uf']}, contratações homologadas em até 1 ano, "
+                  f"Lei 14.133/2021, objeto equivalente; mediana de no mínimo {precos['criterios']['minimo_comparaveis']} preços; indício acima de 25%):"]
+        for r in precos.get("itens", []):
+            if r["situacao"] in ("indicio", "atencao"):
+                linhas.append(f"item {r['numero']} — {r['descricao'][:120]}: estimado {brl(r['valor_estimado'])} × mediana {brl(r['mediana'])} "
+                              f"({r['n']} comparáveis) = {r['desvio']:+.0%} → {sit[r['situacao']]}")
+        resto = [r for r in precos.get("itens", []) if r["situacao"] not in ("indicio", "atencao")]
+        linhas.append(f"Demais itens analisados: {sum(1 for r in resto if r['situacao']=='compativel')} compatíveis, "
+                      f"{sum(1 for r in resto if r['situacao']=='amostra_insuficiente')} sem amostra suficiente, "
+                      f"{sum(1 for r in resto if r['situacao']=='amostra_heterogenea')} com amostra heterogênea.")
+        fatos.append("\n  ".join(linhas))
 
     system = [
         {"type": "text", "text": INSTRUCOES},
@@ -424,6 +446,7 @@ def main():
         "resumo": dados.get("resumo"), "conclusao": dados.get("conclusao"),
         "resultados": resultados,
         "outros_apontamentos": outros,
+        "precos": precos,
         "_execucao": {"modelo": resp.get("model"), "segundos": round(time.time() - t0), "uso": resp.get("usage"),
                       "custo_usd": custo(resp.get("usage", {})), "parada": resp.get("stop_reason"), "avisos": avisos, "fatos": fatos,
                       "trilhas": [{"id": t["id"], "ocorrencias": len(t["ocorrencias"])} for t in trilhas],
