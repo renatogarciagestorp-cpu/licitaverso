@@ -1,0 +1,50 @@
+name: Agente - verificar chave da IA
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_REF: umnhhztdqersjfrzqcea
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agente-testes
+      - name: Testar chave e segredo no Supabase (sem expor valores)
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request, datetime
+          r = {"quando": datetime.datetime.utcnow().isoformat() + "Z"}
+          k = os.environ.get("ANTHROPIC_API_KEY", "")
+          r["github_tem_chave"] = bool(k)
+          if k:
+              req = urllib.request.Request("https://api.anthropic.com/v1/messages", method="POST",
+                  data=json.dumps({"model": "claude-sonnet-5-5", "max_tokens": 20,
+                                   "messages": [{"role": "user", "content": "Responda apenas: ok"}]}).encode(),
+                  headers={"x-api-key": k, "anthropic-version": "2023-06-01", "content-type": "application/json"})
+              try:
+                  d = json.load(urllib.request.urlopen(req, timeout=60))
+                  r["api"] = {"ok": True, "modelo": d.get("model"), "resposta": d["content"][0]["text"][:40], "uso": d.get("usage")}
+              except urllib.error.HTTPError as e:
+                  r["api"] = {"ok": False, "status": e.code, "erro": e.read().decode()[:300]}
+          t = os.environ.get("SUPABASE_ACCESS_TOKEN", "")
+          if t:
+              req = urllib.request.Request(f"https://api.supabase.com/v1/projects/{os.environ['PROJECT_REF']}/secrets",
+                                           headers={"Authorization": "Bearer " + t})
+              try:
+                  nomes = [s["name"] for s in json.load(urllib.request.urlopen(req, timeout=60))]
+                  r["supabase_tem_chave"] = "ANTHROPIC_API_KEY" in nomes
+              except Exception as e:
+                  r["supabase_erro"] = str(e)[:200]
+          os.makedirs("testes", exist_ok=True)
+          json.dump(r, open("testes/verificacao-chave.json", "w"), ensure_ascii=False, indent=2)
+          print(json.dumps(r, ensure_ascii=False))
+          PY
+      - name: Gravar resultado
+        run: |
+          git config user.name "agente-licitacon"; git config user.email "agente@users.noreply.github.com"
+          git add testes/verificacao-chave.json && git commit -m "Verificação da chave da IA" && git push || true
