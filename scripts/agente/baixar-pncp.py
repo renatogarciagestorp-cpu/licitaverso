@@ -15,7 +15,7 @@ def get(url, binario=False):
         return (dados, r.headers.get("Content-Disposition", ""), r.headers.get("Content-Type", "")) if binario else json.loads(dados)
 
 base = f"https://pncp.gov.br/api/pncp/v1/orgaos/{cnpj}/compras/{ano}/{seq}"
-for nome, url in [("compra.json", base), ("arquivos.json", base + "/arquivos"), ("itens.json", base + "/itens?pagina=1&tamanhoPagina=500")]:
+for nome, url in [("compra.json", f"https://pncp.gov.br/api/consulta/v1/orgaos/{cnpj}/compras/{ano}/{seq}"), ("arquivos.json", base + "/arquivos"), ("itens.json", base + "/itens?pagina=1&tamanhoPagina=500")]:
     try:
         d = get(url)
         (pasta / nome).write_text(json.dumps(d, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -31,6 +31,7 @@ for a in arquivos if isinstance(arquivos, list) else []:
     url = a.get("url") or a.get("uri")
     if not url:
         continue
+    url = re.sub(r"^https://pncp\.gov\.br:\d+/", "https://pncp.gov.br/", url)  # a API devolve uma porta interna que não responde
     try:
         dados, disp, tipo = get(url, binario=True)
         m = re.search(r'filename\*?=(?:UTF-8\'\')?"?([^";]+)', disp)
