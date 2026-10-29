@@ -1,0 +1,38 @@
+name: Agente — fila de análises do site
+
+# Processa as análises de documentos pedidas no site (pagas ou incluídas no Pro).
+# Roda a cada 5 minutos; quando a fila está vazia, termina em segundos (sem instalar nada).
+# Repositório público: o log só mostra o id da análise, nunca dados do cliente.
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency: { group: agente-fila, cancel-in-progress: false }
+
+jobs:
+  fila:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      AVISOS_SECRET: ${{ secrets.AVISOS_SECRET }}
+      PROJECT_REF: umnhhztdqersjfrzqcea
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verificar a fila
+        id: fila
+        run: python3 scripts/agente/fila.py --verificar
+      - name: Preparar ferramentas
+        if: steps.fila.outputs.tem == 'true'
+        run: |
+          sudo apt-get update -qq >/dev/null
+          sudo apt-get install -y -qq poppler-utils libreoffice-writer-nogui fonts-liberation unzip >/dev/null
+          pip install -q python-docx matplotlib
+      - name: Processar
+        if: steps.fila.outputs.tem == 'true'
+        run: python3 scripts/agente/fila.py

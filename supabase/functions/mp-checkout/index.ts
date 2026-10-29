@@ -3,13 +3,16 @@
 //
 // POST { acao: "criar", tipo: "plano", plano, ciclo, parcelas, contratante, metodo, retorno }
 // POST { acao: "criar", tipo: "consultoria", modalidade, assunto, descricao, metodo, aceite, termo_versao, anexos, retorno }
-// POST { acao: "conferir", referencia: "assinatura:<id>" | "consultoria:<id>" }
+// POST { acao: "criar", tipo: "analise", documento, origem: "pdf"|"pncp", arquivo, nome_arquivo, pncp_link, aceite, termo_versao, metodo, retorno }
+//      Pro com cota na semana: entra direto na fila (sem pagamento). Demais: análise avulsa paga.
+// POST { acao: "conferir", referencia: "assinatura:<id>" | "consultoria:<id>" | "analise:<id>" }
 
 import {
   aplicarPagamento, clienteServico, CORS, env, erro, mp, resposta, usuarioDaRequisicao,
 } from "../_shared/comum.ts";
 import {
-  CONSULTORIA, type Ciclo, inicioMesBR, type Modalidade, type Plano, PLANOS, precoConsultoria, precoPlano,
+  CONSULTORIA, type Ciclo, DOC_ANALISE, type DocAnalise, FRANQUIA_PRO_SEMANA, inicioMesBR, type Modalidade, type Plano, PLANOS,
+  precoAnalise, precoConsultoria, precoPlano,
 } from "../_shared/precos.ts";
 import { avisarEquipeNovaConsultoria } from "../_shared/consultoria.ts";
 
@@ -63,9 +66,9 @@ Deno.serve(async (req) => {
     // ---------------------------------------------------------------- conferir
     if (acao === "conferir") {
       const ref = String(corpo.referencia ?? "");
-      const m = ref.match(/^(assinatura|consultoria):([0-9a-f-]{36})$/);
+      const m = ref.match(/^(assinatura|consultoria|analise):([0-9a-f-]{36})$/);
       if (!m) return erro("Referência inválida.");
-      const tabela = m[1] === "assinatura" ? "assinaturas" : "consultorias";
+      const tabela = m[1] === "assinatura" ? "assinaturas" : m[1] === "consultoria" ? "consultorias" : "analises";
       const { data: linha } = await admin.from(tabela).select("id, usuario_id, status").eq("id", m[2]).maybeSingle();
       if (!linha || linha.usuario_id !== usuario.id) return erro("Pedido não encontrado.", 404);
 
@@ -149,6 +152,40 @@ Deno.serve(async (req) => {
         return resposta({ gratuito: true, referencia: `consultoria:${nova.id}` });
       }
       referencia = `consultoria:${nova.id}`;
+    // ---------------------------------------------------------------- análise
+    } else if (corpo.tipo === "analise") {
+      const documento = corpo.documento as DocAnalise;
+      if (!DOC_ANALISE[documento]) return erro("Tipo de documento inválido.");
+      if (corpo.aceite !== true) return erro("Aceite as condições da análise para continuar.");
+      const origem = corpo.origem === "pncp" ? "pncp" : "pdf";
+      let arquivo: string | null = null, pncp: string | null = null;
+      if (origem === "pdf") {
+        arquivo = String(corpo.arquivo ?? "");
+        if (!arquivo.startsWith(usuario.id + "/") || arquivo.includes("..") || arquivo.includes("/pareceres/") || !/\.pdf$/i.test(arquivo)) {
+          return erro("Envie o documento em PDF.");
+        }
+      } else {
+        pncp = String(corpo.pncp_link ?? "").trim();
+        if (!/^https:\/\/(www\.)?pncp\.gov\.br\/.*\d{14}\/\d{4}\/\d+/.test(pncp)) return erro("Informe o link da contratação no PNCP.");
+      }
+      // Pro: 2 análises por semana incluídas; a partir da 3ª, avulsa com desconto
+      let franquia = false;
+      if (vigente === "pro") {
+        const { data: usadas } = await admin.rpc("analises_usadas_semana", { uid: usuario.id });
+        franquia = Number(usadas ?? 0) < FRANQUIA_PRO_SEMANA;
+      }
+      valor = franquia ? 0 : precoAnalise(vigente ?? null);
+      titulo = `Licitacon · Análise de documento (${DOC_ANALISE[documento]})`;
+      const { data: nova, error } = await admin.from("analises").insert({
+        usuario_id: usuario.id, documento, origem, arquivo, pncp_link: pncp,
+        nome_arquivo: String(corpo.nome_arquivo ?? "").slice(0, 160),
+        cobranca: franquia ? "franquia_pro" : "avulsa", plano: vigente ?? null, valor,
+        termo_aceito_em: new Date().toISOString(), termo_versao: String(corpo.termo_versao ?? "").slice(0, 20),
+        status: franquia ? "na_fila" : "aguardando_pagamento",
+      }).select("id").single();
+      if (error) throw error;
+      if (franquia) return resposta({ gratuito: true, referencia: `analise:${nova.id}` });
+      referencia = `analise:${nova.id}`;
     } else {
       return erro("Tipo de compra inválido.");
     }
@@ -181,7 +218,7 @@ Deno.serve(async (req) => {
       }),
     });
 
-    const tabela = referencia.startsWith("assinatura:") ? "assinaturas" : "consultorias";
+    const tabela = referencia.startsWith("assinatura:") ? "assinaturas" : referencia.startsWith("consultoria:") ? "consultorias" : "analises";
     await admin.from(tabela).update({ mp_preferencia: preferencia.id }).eq("id", referencia.split(":")[1]);
 
     const producao = !String(Deno.env.get("MP_ACCESS_TOKEN") ?? "").startsWith("TEST-");

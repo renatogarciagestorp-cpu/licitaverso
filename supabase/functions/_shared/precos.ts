@@ -28,6 +28,22 @@ export const DESCONTO_CONSULTORIA: Record<string, number> = {
   pro: 0.3,
 };
 
+/** Análise de documento pelo agente (parecer técnico opinativo). */
+export type DocAnalise = "edital" | "etp" | "tr" | "riscos" | "planilha";
+export const DOC_ANALISE: Record<DocAnalise, string> = {
+  edital: "Edital", etp: "Estudo Técnico Preliminar", tr: "Termo de Referência", riscos: "Matriz de Riscos", planilha: "Planilha de custos",
+};
+export const ANALISE_AVULSA = 147;
+/** Desconto na avulsa: Básico 10%, Premium 15%; Pro paga 30% a menos a partir da 3ª análise da semana. */
+export const DESCONTO_ANALISE: Record<string, number> = { basico: 0.1, premium: 0.15, pro: 0.3 };
+export const FRANQUIA_PRO_SEMANA = 2;
+export const MAX_PAGINAS_ANALISE = 200;
+
+export function precoAnalise(planoVigente: string | null): number {
+  const desconto = planoVigente ? DESCONTO_ANALISE[planoVigente] ?? 0 : 0;
+  return centavos(ANALISE_AVULSA * (1 - desconto));
+}
+
 /** Início do mês corrente no horário de Brasília (UTC-3), para a franquia mensal do Pro. */
 export function inicioMesBR(agora = Date.now()): Date {
   const d = new Date(agora - 3 * 3600000);

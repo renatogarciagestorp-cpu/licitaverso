@@ -82,7 +82,7 @@ const NOME_METODO: Record<string, string> = {
  */
 export async function aplicarPagamento(admin: SupabaseClient, pagamento: any): Promise<string> {
   const ref: string = pagamento?.external_reference ?? "";
-  if (!/^(assinatura|consultoria):[0-9a-f-]{36}$/.test(ref)) return "referencia_ignorada";
+  if (!/^(assinatura|consultoria|analise):[0-9a-f-]{36}$/.test(ref)) return "referencia_ignorada";
   const status: string = pagamento.status;
   if (status === "approved") {
     const { data, error } = await admin.rpc("registrar_pagamento_aprovado", {
