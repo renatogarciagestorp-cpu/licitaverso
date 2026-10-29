@@ -58,7 +58,8 @@ jobs:
           print(max(pdfs, key=lambda p: p.stat().st_size))
           PY
           ) || erro "Escolha do arquivo"
-          TXT="/tmp/documento.txt"; python3 scripts/agente/extrair-texto.py "$PDF" "$TXT" 2>/tmp/err.txt || erro "Leitura do PDF (nem o OCR encontrou texto)"
+          TXT="/tmp/documento.txt"; python3 scripts/agente/extrair-texto.py "$PDF" "$TXT" > /tmp/ocr.txt 2>/tmp/err.txt || erro "Leitura do PDF (nem o OCR encontrou texto)"
+          [ -s /tmp/ocr.txt ] && echo "::notice title=Leitura::$(cat /tmp/ocr.txt)"
           PAGS=$(pdfinfo "$PDF" | awk '/^Pages/{print $2}')
           OUT="$D/auto-${{ inputs.documento }}-$(date +%Y%m%d-%H%M)"; mkdir -p "$OUT"
           echo "OUT=$OUT" >> "$GITHUB_ENV"

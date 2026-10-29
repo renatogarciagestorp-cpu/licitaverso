@@ -228,24 +228,62 @@ FERRAMENTA = {
 }
 
 
+def _ler_stream(resp):
+    """Lê a resposta em streaming (SSE) e remonta a mensagem no mesmo formato da resposta comum."""
+    msg = {"content": [], "usage": {}, "stop_reason": None, "model": None}
+    blocos = {}
+    evento = None
+    for bruta in resp:
+        linha = bruta.decode("utf-8", errors="replace").rstrip("\r\n")
+        if linha.startswith("event:"):
+            evento = linha[6:].strip(); continue
+        if not linha.startswith("data:"):
+            continue
+        d = json.loads(linha[5:].strip() or "{}")
+        t = d.get("type", evento)
+        if t == "message_start":
+            m = d.get("message", {}); msg["model"] = m.get("model"); msg["usage"].update(m.get("usage") or {})
+        elif t == "content_block_start":
+            cb = dict(d["content_block"]); cb["_json"] = ""; blocos[d["index"]] = cb
+        elif t == "content_block_delta":
+            cb = blocos[d["index"]]; dl = d["delta"]
+            if dl.get("type") == "input_json_delta": cb["_json"] += dl.get("partial_json", "")
+            elif dl.get("type") == "text_delta": cb["text"] = cb.get("text", "") + dl.get("text", "")
+        elif t == "message_delta":
+            msg["stop_reason"] = d.get("delta", {}).get("stop_reason") or msg["stop_reason"]
+            for k, v in (d.get("usage") or {}).items():
+                msg["usage"][k] = v
+        elif t == "error":
+            raise ConnectionError("erro no streaming: " + json.dumps(d)[:300])
+    for i in sorted(blocos):
+        cb = blocos[i]
+        if cb.get("type") == "tool_use":
+            cb["input"] = json.loads(cb["_json"] or "{}")
+        cb.pop("_json", None)
+        msg["content"].append(cb)
+    return msg
+
+
 def chamar(system, usuario, max_tokens=56000):
     chave = os.environ.get("ANTHROPIC_API_KEY")
     if not chave:
         sys.exit("ANTHROPIC_API_KEY ausente")
     corpo = {"model": MODELO, "max_tokens": max_tokens, "system": system, "tools": [FERRAMENTA],
              "tool_choice": {"type": "auto"},  # o Sonnet 5.5 não aceita escolha forçada de ferramenta
+             "stream": True,  # mantém a conexão ativa enquanto o modelo raciocina (evita queda em análises longas)
              "messages": [{"role": "user", "content": usuario}]}
     for tentativa in range(4):
         req = urllib.request.Request("https://api.anthropic.com/v1/messages", method="POST", data=json.dumps(corpo).encode(),
                                      headers={"x-api-key": chave, "anthropic-version": "2023-06-01", "content-type": "application/json"})
         try:
-            return json.load(urllib.request.urlopen(req, timeout=900))
+            with urllib.request.urlopen(req, timeout=300) as r:
+                return _ler_stream(r)
         except urllib.error.HTTPError as e:
             msg = e.read().decode()[:500]
             if e.code in (429, 500, 502, 503, 529) and tentativa < 3:
                 time.sleep(20 * (tentativa + 1)); continue
             sys.exit(f"Erro da API ({e.code}): {msg}")
-        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as e:
+        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError, json.JSONDecodeError) as e:
             if tentativa < 3:
                 time.sleep(20 * (tentativa + 1)); continue
             sys.exit(f"Falha de conexão com a API: {type(e).__name__}")
