@@ -51,8 +51,9 @@ jobs:
           d, nome = pathlib.Path(sys.argv[1]), sys.argv[2].strip()
           pdfs = [p for p in d.rglob("*") if p.suffix.lower() == ".pdf" and "auto-" not in str(p)]
           if nome:
-              alvo = nome.lower().removesuffix(".pdf")
-              pdfs = [p for p in pdfs if alvo in p.stem.lower()]
+              norm = lambda t: "".join(ch for ch in t.lower() if ch.isalnum())
+              alvo = norm(nome.lower().removesuffix(".pdf"))
+              pdfs = [p for p in pdfs if alvo in norm(p.stem)]
           if not pdfs: sys.exit("arquivo não encontrado; disponíveis: " + ", ".join(p.name for p in d.rglob("*") if p.suffix.lower() == ".pdf"))
           print(max(pdfs, key=lambda p: p.stat().st_size))
           PY
