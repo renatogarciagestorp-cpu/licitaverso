@@ -1,0 +1,66 @@
+name: Agente — analisar documento (Claude Sonnet 5.5)
+
+# Analisa um documento de uma contratação do PNCP e grava a análise e o parecer (Word e PDF)
+# no ramo "agente-testes" (fora do site). Fase de testes: um documento por vez.
+on:
+  workflow_dispatch:
+    inputs:
+      link: { description: "Link do PNCP (ex.: https://pncp.gov.br/app/editais/06716880000183/2026/22)", required: true }
+      documento: { description: "Tipo do documento", required: true, default: "edital", type: choice, options: [edital, etp, tr, riscos, planilha] }
+      arquivo: { description: "Nome do arquivo (opcional; padrão: o maior PDF da contratação)", required: false, default: "" }
+
+permissions:
+  contents: write
+
+concurrency: { group: agente-analisar, cancel-in-progress: false }
+
+jobs:
+  analisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar
+        run: |
+          sudo apt-get update -qq >/dev/null
+          sudo apt-get install -y -qq poppler-utils libreoffice-writer-nogui fonts-liberation >/dev/null
+          pip install -q python-docx matplotlib
+          L="${{ inputs.link }}"
+          read CNPJ ANO SEQ < <(python3 -c "import re,sys;m=re.search(r'(\d{14})/(\d{4})/(\d+)',sys.argv[1]);print(*m.groups()) if m else sys.exit('link inválido')" "$L")
+          echo "PASTA=testes/pncp-$CNPJ-$ANO-$SEQ" >> "$GITHUB_ENV"
+          echo "CNPJ=$CNPJ" >> "$GITHUB_ENV"; echo "ANO=$ANO" >> "$GITHUB_ENV"; echo "SEQ=$SEQ" >> "$GITHUB_ENV"
+          git fetch -q origin agente-testes
+          git worktree add -q /tmp/testes origin/agente-testes
+      - name: Baixar do PNCP (se ainda não baixado)
+        run: |
+          D="/tmp/testes/$PASTA"
+          if [ ! -f "$D/compra.json" ]; then
+            python3 scripts/agente/baixar-pncp.py "$CNPJ" "$ANO" "$SEQ" "$D"
+            cd "$D"
+            for f in *.pdf; do [ -f "$f" ] && pdftotext -layout "$f" "${f%.pdf}.txt" || true; done
+            for z in *.zip; do [ -f "$z" ] && mkdir -p "${z%.zip}" && unzip -qo "$z" -d "${z%.zip}" || true; done
+            find . -path "./*/*.pdf" -exec sh -c 'pdftotext -layout "$1" "${1%.pdf}.txt"' _ {} \; || true
+          fi
+      - name: Analisar
+        run: |
+          D="/tmp/testes/$PASTA"
+          ARQ="${{ inputs.arquivo }}"
+          if [ -n "$ARQ" ]; then PDF=$(find "$D" -name "${ARQ%.pdf}.pdf" | head -1); else PDF=$(find "$D" -name "*.pdf" -printf "%s\t%p\n" | sort -nr | head -1 | cut -f2); fi
+          [ -n "$PDF" ] || { echo "arquivo não encontrado"; exit 1; }
+          TXT="${PDF%.pdf}.txt"; [ -f "$TXT" ] || pdftotext -layout "$PDF" "$TXT"
+          PAGS=$(pdfinfo "$PDF" | awk '/^Pages/{print $2}')
+          OUT="$D/auto-${{ inputs.documento }}-$(date +%Y%m%d-%H%M)"; mkdir -p "$OUT"
+          python3 scripts/agente/analisar.py --doc "${{ inputs.documento }}" --texto "$TXT" --compra "$D/compra.json" \
+            --fonte "${{ inputs.link }}" --paginas "$PAGS" --saida "$OUT/analise.json"
+          python3 scripts/agente/gerar-relatorio.py "$OUT/analise.json" "$OUT/parecer.docx" --pdf
+          echo "OUT=$OUT" >> "$GITHUB_ENV"
+      - name: Gravar no ramo agente-testes
+        run: |
+          cd /tmp/testes
+          git config user.name "Licitacon — agente"; git config user.email "actions@users.noreply.github.com"
+          git checkout -q -B agente-testes
+          git add "$PASTA"
+          git commit -q -m "Agente: análise automática $PASTA (${{ inputs.documento }})"
+          git push -q origin agente-testes
