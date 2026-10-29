@@ -9,7 +9,9 @@
   "minimo_comparaveis": 3,
   "limiar_indicio": 0.25,
   "limiar_atencao": 0.1,
-  "similaridade_minima": 0.55
+  "similaridade_minima": 0.55,
+  "extremos": "intervalo interquartil (1,5 x IQR)",
+  "heterogeneidade": "coeficiente de variação acima de 0,5"
  },
  "itens": [
   {
@@ -31,7 +33,8 @@
      "similaridade": 0.812,
      "mesmo_catalogo": false,
      "link": "https://pncp.gov.br/app/editais/00394502000144/2026/12384",
-     "amparo": "Lei 14.133/2021, Art. 74, I"
+     "amparo": "Lei 14.133/2021, Art. 74, I",
+     "descartado": false
     },
     {
      "orgao": "COMANDO DA MARINHA",
@@ -42,9 +45,10 @@
      "descricao": "Aparelho Ultrassonografia material gabinete: led/lcd, sensível toque, mínimo 20\", aplicação: diagnóstico, características adicionais: doppler colorido, cego, pulsado, bidirecional, b/m, componentes: linear, convexo, setorial, elastografia, outros componentes: transesofágico, endocavitário, intra ope",
      "unidade": "Unidade",
      "similaridade": 1.0,
-     "mesmo_catalogo": true,
+     "mesmo_catalogo": false,
      "link": "https://pncp.gov.br/app/editais/00394502000144/2026/9669",
-     "amparo": "Lei 14.133/2021, Art. 28, I"
+     "amparo": "Lei 14.133/2021, Art. 28, I",
+     "descartado": false
     },
     {
      "orgao": "COMANDO DO EXERCITO",
@@ -55,9 +59,10 @@
      "descricao": "Aparelho Ultrassonografia material gabinete: led/lcd, sensível toque, mínimo 20\", aplicação: diagnóstico, características adicionais: doppler colorido, cego, pulsado, bidirecional, b/m, componentes: linear, convexo, setorial, elastografia, outros componentes: transesofágico, endocavitário, intra ope",
      "unidade": "Unidade",
      "similaridade": 1.0,
-     "mesmo_catalogo": true,
+     "mesmo_catalogo": false,
      "link": "https://pncp.gov.br/app/editais/00394452000103/2026/12835",
-     "amparo": "Lei 14.133/2021, Art. 28, I"
+     "amparo": "Lei 14.133/2021, Art. 28, I",
+     "descartado": false
     },
     {
      "orgao": "COMANDO DA MARINHA",
@@ -68,9 +73,10 @@
      "descricao": "Aparelho Ultrassonografia material gabinete: led/lcd, sensível toque, mínimo 20\", aplicação: diagnóstico, características adicionais: doppler colorido, cego, pulsado, bidirecional, b/m, componentes: linear, convexo, setorial, elastografia, outros componentes: transesofágico, endocavitário, intra ope",
      "unidade": "Unidade",
      "similaridade": 1.0,
-     "mesmo_catalogo": true,
+     "mesmo_catalogo": false,
      "link": "https://pncp.gov.br/app/editais/00394502000144/2026/5011",
-     "amparo": "Lei 14.133/2021, Art. 75, II"
+     "amparo": "Lei 14.133/2021, Art. 75, II",
+     "descartado": false
     },
     {
      "orgao": "COMANDO DA MARINHA",
@@ -81,18 +87,21 @@
      "descricao": "Aparelho Ultrassonografia material gabinete: led/lcd, sensível toque, mínimo 20\", aplicação: diagnóstico, características adicionais: doppler colorido, cego, pulsado, bidirecional, b/m, componentes: linear, convexo, setorial, elastografia, outros componentes: transesofágico, endocavitário, intra ope",
      "unidade": "Unidade",
      "similaridade": 1.0,
-     "mesmo_catalogo": true,
+     "mesmo_catalogo": false,
      "link": "https://pncp.gov.br/app/editais/00394502000144/2026/3856",
-     "amparo": "Lei 14.133/2021, Art. 75, II"
+     "amparo": "Lei 14.133/2021, Art. 75, II",
+     "descartado": false
     }
    ],
    "n": 5,
+   "descartados": 0,
    "mediana": 6530.7,
    "minimo": 2883.0,
    "maximo": 889000.0,
    "desvio": 50.7556,
-   "situacao": "indicio",
-   "excesso_estimado": 662938.6
+   "coef_variacao": 1.611,
+   "excesso_estimado": 662938.6,
+   "situacao": "amostra_heterogenea"
   },
   {
    "numero": 2,
@@ -113,7 +122,8 @@
      "similaridade": 0.615,
      "mesmo_catalogo": false,
      "link": "https://pncp.gov.br/app/editais/39223581000166/2026/104",
-     "amparo": "Lei 14.133/2021, Art. 75, VIII"
+     "amparo": "Lei 14.133/2021, Art. 75, VIII",
+     "descartado": false
     },
     {
      "orgao": "COMANDO DA MARINHA",
@@ -124,18 +134,20 @@
      "descricao": "Mesa Ginecológica estrutura: tubo aço, acabamento superficial estrutura: esmaltado, material leito: chapa aço inox, estofado em courvin, tipo movimento: assento fixo,encosto e apoio pernas reclináveis, acabamento pés: pés c/ rodízios e freios, características adicionais: 3 gavetas e 2 portas laterai",
      "unidade": "Unidade",
      "similaridade": 1.0,
-     "mesmo_catalogo": true,
+     "mesmo_catalogo": false,
      "link": "https://pncp.gov.br/app/editais/00394502000144/2026/8295",
-     "amparo": "Lei 14.133/2021, Art. 28, I"
+     "amparo": "Lei 14.133/2021, Art. 28, I",
+     "descartado": false
     }
    ],
    "n": 2,
+   "descartados": 0,
    "situacao": "amostra_insuficiente"
   }
  ],
  "itens_no_orcamento": 2,
  "itens_analisados": 2,
  "cobertura_valor": 1.0,
- "com_indicio": 1,
- "excesso_total": 662938.6
+ "com_indicio": 0,
+ "excesso_total": 0
 }
