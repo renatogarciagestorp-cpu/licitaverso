@@ -152,7 +152,7 @@ def chamar(system, usuario, max_tokens=24000):
     if not chave:
         sys.exit("ANTHROPIC_API_KEY ausente")
     corpo = {"model": MODELO, "max_tokens": max_tokens, "system": system, "tools": [FERRAMENTA],
-             "tool_choice": {"type": "tool", "name": "registrar_analise"},
+             "tool_choice": {"type": "auto"},  # o Sonnet 5.5 não aceita escolha forçada de ferramenta
              "messages": [{"role": "user", "content": usuario}]}
     for tentativa in range(4):
         req = urllib.request.Request("https://api.anthropic.com/v1/messages", method="POST", data=json.dumps(corpo).encode(),
@@ -239,13 +239,21 @@ def main():
     usuario = (f"Data da análise: {datetime.date.today():%d/%m/%Y}.\n\n"
                + ("FATOS CALCULADOS PELO SISTEMA (confiáveis):\n" + "\n".join("- " + f for f in fatos) + "\n\n" if fatos else "")
                + f"DOCUMENTO ({roteiro['documentos'].get(a.doc, a.doc)}; {npags or 'sem marcação de'} páginas):\n<documento>\n{texto}\n</documento>\n\n"
-               "Verifique todos os itens do roteiro e registre com a ferramenta registrar_analise.")
+               "Verifique todos os itens do roteiro e registre o resultado chamando a ferramenta registrar_analise uma única vez, com todos os itens. Não responda em texto.")
     t0 = time.time()
     resp = chamar(system, usuario)
     bloco = next((c for c in resp.get("content", []) if c.get("type") == "tool_use"), None)
-    if not bloco:
-        sys.exit("O modelo não devolveu a análise: " + json.dumps(resp)[:500])
-    dados = bloco["input"]
+    if bloco:
+        dados = bloco["input"]
+    else:  # sem chamada de ferramenta: tenta ler um JSON no texto
+        txt = "".join(c.get("text", "") for c in resp.get("content", []) if c.get("type") == "text")
+        m = re.search(r"\{.*\}", txt, re.S)
+        try:
+            dados = json.loads(m.group(0)) if m else None
+        except Exception:
+            dados = None
+        if not dados or "resultados" not in dados:
+            sys.exit("O modelo não devolveu a análise (parada: " + str(resp.get("stop_reason")) + "): " + txt[:600])
     resultados, avisos = validar(dados, itens, bruto)
 
     analise = {
