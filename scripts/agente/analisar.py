@@ -180,6 +180,10 @@ def chamar(system, usuario, max_tokens=56000):
             if e.code in (429, 500, 502, 503, 529) and tentativa < 3:
                 time.sleep(20 * (tentativa + 1)); continue
             sys.exit(f"Erro da API ({e.code}): {msg}")
+        except (urllib.error.URLError, TimeoutError, ConnectionError, OSError) as e:
+            if tentativa < 3:
+                time.sleep(20 * (tentativa + 1)); continue
+            sys.exit(f"Falha de conexão com a API: {type(e).__name__}")
 
 
 def custo(uso):
