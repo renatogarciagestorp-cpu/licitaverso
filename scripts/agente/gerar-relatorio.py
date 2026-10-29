@@ -446,7 +446,7 @@ def gerar(analise, saida, paginas=None):
     docs_nome = roteiro["documentos"]
     DOCS_ROTULO.update({"edital": "Edital", "etp": "Estudo Técnico Preliminar", "tr": "Termo de Referência",
                         "riscos": "Matriz de Riscos", "planilha": "Planilha de Custos"})
-    resultados = list(analise["resultados"])
+    resultados = [dict(r, resultado=r["resultado"] if r.get("resultado") in RESULT else "nao_verificavel") for r in analise["resultados"]]
     for r in resultados:
         if r["item"] not in itens:
             raise SystemExit(f"Item desconhecido no roteiro: {r['item']}")

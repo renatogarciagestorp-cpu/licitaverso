@@ -329,6 +329,9 @@ def validar(dados, itens, texto):
             r["jurisprudencia_ids"] = [j for j in r["jurisprudencia_ids"] if j in cands]
         else:
             r["jurisprudencia_ids"] = []
+        if r.get("resultado") not in ("conforme", "parcial", "nao_conforme", "nao_aplicavel", "nao_verificavel"):
+            avisos.append(f"{iid}: resultado inválido '{r.get('resultado')}' tratado como não verificável")
+            r["resultado"] = "nao_verificavel"
         if r.get("gravidade") not in (None, "alta", "media", "baixa"): r.pop("gravidade")
         if r["resultado"] in ("parcial", "nao_conforme") and not r.get("constatacao"):
             r["constatacao"] = "Ver análise."
