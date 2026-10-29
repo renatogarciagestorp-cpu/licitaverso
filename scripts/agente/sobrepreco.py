@@ -86,11 +86,27 @@ def amparo_14133(cnpj, ano, seq):
     return ("14.133" in nome), c
 
 def comparaveis_do_item(item, uf, data_ref, excluir):
+    achados = _comparaveis(item, uf, data_ref, excluir, 5)
+    if len(achados) < MIN_COMPARAVEIS:  # busca mais ampla (3 palavras), mantendo a exigência de descrição equivalente
+        vistos = {c["link"] for c in achados}
+        achados += [c for c in _comparaveis(item, uf, data_ref, excluir, 3) if c["link"] not in vistos]
+    return achados[:MAX_COMPARAVEIS]
+
+def filtrar_extremos(vals):
+    """Descarta preços inexequíveis ou excessivamente elevados pelo critério do intervalo interquartil (n >= 4)."""
+    if len(vals) < 4:
+        return vals, []
+    q = statistics.quantiles(vals, n=4)
+    iqr = q[2] - q[0]
+    lo, hi = q[0] - 1.5 * iqr, q[2] + 1.5 * iqr
+    return [v for v in vals if lo <= v <= hi], [v for v in vals if v < lo or v > hi]
+
+def _comparaveis(item, uf, data_ref, excluir, n_palavras):
     desc = item.get("descricao") or ""
     toks = tokens(desc)
     if not toks:
         return []
-    q = " ".join(toks[:5])
+    q = " ".join(toks[:n_palavras])
     un_alvo = unidade(item.get("unidadeMedida"))
     cat_alvo = str(item.get("catalogoCodigoItem") or "").strip()
     inicio = data_ref - datetime.timedelta(days=365)
@@ -116,7 +132,9 @@ def comparaveis_do_item(item, uf, data_ref, excluir):
             if un_alvo and unidade(it.get("unidadeMedida")) != un_alvo:
                 continue
             cat = str(it.get("catalogoCodigoItem") or "").strip()
-            s = 1.0 if (cat_alvo and cat and cat == cat_alvo) else similaridade(desc, it.get("descricao"))
+            s = similaridade(desc, it.get("descricao"))
+            if cat_alvo and cat and cat == cat_alvo:
+                s = min(1.0, s + 0.15)  # mesmo código de catálogo reforça, mas a descrição precisa ser equivalente
             if s > nota:
                 melhor, nota = it, s
         if not melhor or nota < SIMILARIDADE:
@@ -132,7 +150,8 @@ def comparaveis_do_item(item, uf, data_ref, excluir):
         achados.append({
             "orgao": r.get("orgao_nome"), "municipio": r.get("municipio_nome") or uo.get("municipioNome"), "uf": r.get("uf"),
             "data": dpub.isoformat(), "valor_unitario": round(min(valores), 4), "descricao": (melhor.get("descricao") or "")[:300],
-            "unidade": melhor.get("unidadeMedida"), "similaridade": nota, "mesmo_catalogo": nota == 1.0,
+            "unidade": melhor.get("unidadeMedida"), "similaridade": nota,
+            "mesmo_catalogo": bool(cat_alvo and str(melhor.get("catalogoCodigoItem") or "").strip() == cat_alvo),
             "link": f"https://pncp.gov.br/app/editais/{cnpj}/{ano}/{seq}", "amparo": ((compra or {}).get("amparoLegal") or {}).get("nome")})
         if len(achados) >= MAX_COMPARAVEIS:
             break
@@ -148,13 +167,21 @@ def analisar(itens, uf, data_ref, excluir=""):
         est = float(it["valorUnitarioEstimado"]); qtd = float(it.get("quantidade") or 1)
         reg = {"numero": it.get("numeroItem"), "descricao": (it.get("descricao") or "")[:300], "unidade": it.get("unidadeMedida"),
                "quantidade": qtd, "valor_estimado": est, "valor_total": round(est * qtd, 2), "comparaveis": comp, "n": len(comp)}
-        if len(comp) >= MIN_COMPARAVEIS:
-            vals = [c["valor_unitario"] for c in comp]
+        vals_todos = [c["valor_unitario"] for c in comp]
+        vals, fora = filtrar_extremos(vals_todos)
+        for c in comp:
+            c["descartado"] = c["valor_unitario"] in fora
+        reg["descartados"] = len(fora)
+        if len(vals) >= MIN_COMPARAVEIS:
             med = statistics.median(vals)
+            cv = statistics.pstdev(vals) / statistics.mean(vals) if statistics.mean(vals) else 0
             desvio = (est - med) / med if med else 0
             reg.update({"mediana": round(med, 4), "minimo": min(vals), "maximo": max(vals), "desvio": round(desvio, 4),
-                        "situacao": "indicio" if desvio > LIMIAR_INDICIO else ("atencao" if desvio > LIMIAR_ATENCAO else "compativel"),
-                        "excesso_estimado": round(max(0.0, est - med) * qtd, 2)})
+                        "coef_variacao": round(cv, 3), "excesso_estimado": round(max(0.0, est - med) * qtd, 2)})
+            if cv > 0.5:
+                reg["situacao"] = "amostra_heterogenea"  # preços muito dispersos: especificações provavelmente diferentes
+            else:
+                reg["situacao"] = "indicio" if desvio > LIMIAR_INDICIO else ("atencao" if desvio > LIMIAR_ATENCAO else "compativel")
         else:
             reg["situacao"] = "amostra_insuficiente"
         saida.append(reg)
@@ -163,7 +190,8 @@ def analisar(itens, uf, data_ref, excluir=""):
     return {
         "criterios": {"uf": uf, "data_referencia": data_ref.isoformat(), "janela_dias": 365, "lei": "Lei 14.133/2021",
                       "preco": "valor unitário homologado", "estatistica": "mediana", "minimo_comparaveis": MIN_COMPARAVEIS,
-                      "limiar_indicio": LIMIAR_INDICIO, "limiar_atencao": LIMIAR_ATENCAO, "similaridade_minima": SIMILARIDADE},
+                      "limiar_indicio": LIMIAR_INDICIO, "limiar_atencao": LIMIAR_ATENCAO, "similaridade_minima": SIMILARIDADE,
+                      "extremos": "intervalo interquartil (1,5 x IQR)", "heterogeneidade": "coeficiente de variação acima de 0,5"},
         "itens": saida, "itens_no_orcamento": len(itens), "itens_analisados": len(saida),
         "cobertura_valor": round(analisados / total_orc, 4) if total_orc else 0,
         "com_indicio": sum(1 for r in saida if r["situacao"] == "indicio"),
