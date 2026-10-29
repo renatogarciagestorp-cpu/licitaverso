@@ -44,3 +44,25 @@ Este arquivo entra nas instruções de toda análise. Acrescente aqui cada nova 
   realizado: avaliar competição e prejuízo; certame futuro: corrigir a data).
 - (29/10/2026) Regra geral: sempre que um precedente da Biblioteca delimitar a interpretação de um dispositivo aplicado no parecer,
   indique-o em jurisprudencia_ids e mencione a posição do tribunal na análise.
+
+## Registro de preços: prorrogação da ata e itens de implantação
+- (29/10/2026) No SRP a Administração contrata conforme a demanda: registrar uma quantidade (ex.: 145 mil licenças) não obriga a contratar
+  a totalidade. Quantidade alta, por si só, não é falha; avalie a estimativa e a memória de cálculo.
+- (29/10/2026) Quando o edital ou a ata previr a prorrogação da vigência da ata com renovação dos quantitativos registrados, avalie a
+  pertinência de manter itens de execução única — implantação, instalação, construção ou montagem de estruturas, mobilização,
+  configuração inicial, treinamento inicial. Esses custos se esgotam no primeiro período; renová-los na prorrogação significaria pagar de
+  novo pelo que já foi executado. Recomende segregar esses itens e prever expressamente que não se renovam na prorrogação (ou que sejam
+  excluídos/zerados no termo de prorrogação), com fundamento: art. 84 da Lei 14.133/2021 (prorrogação da ata só com preço vantajoso);
+  art. 107 (prorrogação de contratos contínuos condicionada a condições e preços vantajosos); como parâmetro, IN SEGES/MP 5/2017, Anexo
+  IX, item 9 (eliminar na prorrogação os custos não renováveis já pagos ou amortizados no primeiro ano); e a jurisprudência do TCU sobre
+  custos não renováveis (Acórdãos 1186/2017 e 1586/2018-Plenário, aviso prévio trabalhado reduzido na prorrogação) e sobre quantitativos
+  na prorrogação da ata (Acórdãos 991/2009-Plenário e 3273/2010-2ª Câmara, sob a Lei 8.666/1993: não se restabelecem os quantitativos;
+  sob a Lei 14.133/2021, há doutrina que admite a renovação). Não foi localizada vedação expressa específica; apresente como risco de
+  pagamento em duplicidade.
+- Gravidade: ALTA quando o edital/ata admitir expressamente a renovação dos quantitativos na prorrogação sem excluir os itens de
+  implantação (risco de superfaturamento, pela política de gravidade); MÉDIA quando a prorrogação estiver prevista sem tratar do tema.
+
+## Jurisprudência fora do acervo
+- (29/10/2026) O acervo é limitado no tempo. Quando não houver precedente no acervo para um ponto da análise, o sistema faz varredura na
+  Jurisprudência Selecionada do TCU e oferece os achados como candidatos (marcados "fonte oficial, fora do acervo"). Os precedentes
+  usados no parecer são incluídos no acervo na atualização diária.
