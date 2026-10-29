@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Sonda os formatos da API do PNCP (busca, itens, resultados) e grava amostras para o desenvolvimento."""
 import json, sys, urllib.parse, urllib.request
-H = {"User-Agent": "Mozilla/5.0 (Licitacon; agente)", "Accept": "application/json"}
+H = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36",
+     "Accept": "application/json, text/plain, */*", "Referer": "https://pncp.gov.br/app/editais", "Accept-Language": "pt-BR,pt;q=0.9"}
 def get(u):
     try:
         with urllib.request.urlopen(urllib.request.Request(u, headers=H), timeout=60) as r:
@@ -10,12 +11,14 @@ def get(u):
         return {"_erro": f"{type(e).__name__}: {e}"[:300], "_url": u}
 out = {}
 q = urllib.parse.quote("ultrassom doppler")
-out["busca"] = get(f"https://pncp.gov.br/api/search/?q={q}&tipos_documento=edital&ordenacao=-data&pagina=1&tam_pagina=5&ufs=RJ")
+out["busca"] = get(f"https://pncp.gov.br/api/search/?q={q}&tipos_documento=edital&ordenacao=-data&pagina=1&tam_pagina=5&status=todos&ufs=RJ")
+out["busca2"] = get(f"https://pncp.gov.br/api/search/?q={q}&tipos_documento=edital&ordenacao=-data&pagina=1&tam_pagina=5&status=todos")
+out["precos_catmat"] = get("https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=5&codigoItemCatalogo=446436")
 out["itens_428"] = get("https://pncp.gov.br/api/pncp/v1/orgaos/29131075000193/compras/2026/428/itens?pagina=1&tamanhoPagina=5")
 out["compra_428"] = get("https://pncp.gov.br/api/consulta/v1/orgaos/29131075000193/compras/2026/428")
 # um item com resultado: pega a primeira compra da busca que tenha resultado
 alvos = []
-for it in (out["busca"] or {}).get("items", [])[:5] if isinstance(out["busca"], dict) else []:
+for it in ((out["busca"] if isinstance(out["busca"], dict) and out["busca"].get("items") else out["busca2"]) or {}).get("items", [])[:5]:
     alvos.append((it.get("orgao_cnpj"), it.get("ano"), it.get("numero_sequencial")))
 out["alvos"] = alvos
 for cnpj, ano, seq in alvos[:3]:
