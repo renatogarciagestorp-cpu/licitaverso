@@ -9,8 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          IFS=';' read -ra T <<< "${{ inputs.termos }}"
+      - env:
+          TERMOS: ${{ inputs.termos }}
+        run: |
+          IFS=';' read -ra T <<< "$TERMOS"
           python3 scripts/agente/buscar-jurisprudencia.py "${T[@]}" --saida /tmp/juris.json --max 15
       - run: |
           git fetch -q origin agente-testes && git worktree add -q /tmp/t origin/agente-testes
