@@ -1,29 +1,51 @@
 #!/usr/bin/env python3
-"""Gera o relatório do Agente Licitacon em Word (.docx) a partir do resultado de uma análise (JSON).
+"""Gera o Parecer Técnico do Agente Licitacon (Word .docx e, se houver LibreOffice, PDF) a partir de uma análise (JSON).
+
+Formato: parecer técnico com capa, painel executivo (indicadores e gráficos), sumário paginado,
+ementa, relatório, fundamentação, recomendações, conclusão, referências (NBR 6023) e apêndices.
+Apresentação conforme a ABNT (NBR 14724 / 6024 / 10520 / 6023): A4, margens 3-2-3-2 cm, Arial 12,
+entrelinha 1,5, citações longas recuadas 4 cm em corpo 10, numeração progressiva sem ponto, paginação no alto à direita.
 
 - O texto literal de cada dispositivo citado vem da base oficial (agente/normas/<norma>.json).
-  Se a norma ainda não estiver na base, o relatório marca "[texto a conferir na fonte oficial]".
-- Fundamento, gravidade, risco e dica de cada item vêm do roteiro (agente/roteiros/<regime>.json);
-  a análise só precisa informar o resultado, o trecho do documento e a explicação do caso concreto.
+- Fundamento, gravidade, risco e dica de cada item vêm do roteiro (agente/roteiros/<regime>.json).
 - A jurisprudência vem exclusivamente da Biblioteca (acervo.json), com link para a fonte oficial.
 
-Uso: python3 scripts/agente/gerar-relatorio.py analise.json saida.docx
+Uso: python3 scripts/agente/gerar-relatorio.py analise.json saida.docx [--pdf]
 Estrutura do JSON de análise: ver agente/relatorio/estrutura.md
 """
-import datetime, json, pathlib, re, sys, unicodedata
+import datetime, hashlib, io, json, pathlib, re, shutil, subprocess, sys, tempfile, unicodedata
 from docx import Document
-from docx.enum.table import WD_TABLE_ALIGNMENT
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.section import WD_SECTION
+from docx.enum.table import WD_TABLE_ALIGNMENT, WD_CELL_VERTICAL_ALIGNMENT
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING, WD_BREAK
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
-from docx.shared import Cm, Pt, RGBColor
+from docx.shared import Cm, Pt, RGBColor, Emu
 
 RAIZ = pathlib.Path(__file__).resolve().parents[2]
-COR = {"alta": "8A1230", "media": "8A4A12", "baixa": "0F6B7E", "ok": "0A7A50", "titulo": "0A1F2A", "fraco": "6A7B82"}
-FUNDO = {"alta": "FCEEF1", "media": "FDF1E3", "baixa": "E9F3F5"}
+
+# paleta (sóbria, boa leitura impressa e em tela)
+C = {"marinho": "12324A", "petroleo": "1F7A8C", "areia": "F5F1EA", "linha": "D9DEE2", "texto": "1E2A32", "fraco": "66757F",
+     "alta": "B23A48", "media": "C9781E", "baixa": "3D8FA6", "ok": "2E8B57", "na": "B8C2C8", "nv": "8C7AA9",
+     "alta_f": "F8E6E8", "media_f": "FBEEDD", "baixa_f": "E3F1F5", "ok_f": "E3F2EA", "claro": "EEF4F6"}
 GRAV = {"alta": "Alta", "media": "Média", "baixa": "Baixa"}
 RESULT = {"nao_conforme": "Não conforme", "conforme": "Conforme", "parcial": "Parcialmente conforme",
-          "nao_aplicavel": "Não se aplica", "nao_verificavel": "Não verificável (documento ausente ou ilegível)"}
+          "nao_aplicavel": "Não se aplica", "nao_verificavel": "Não verificável"}
+MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
+MESES_ABNT = ["jan.", "fev.", "mar.", "abr.", "maio", "jun.", "jul.", "ago.", "set.", "out.", "nov.", "dez."]
+FONTE = "Arial"
+LOCAL = "Maricá (RJ)"
+
+NOME_CURTO = {"lei-14133": "Lei 14.133/2021", "lei-13303": "Lei 13.303/2016", "lei-13019": "Lei 13.019/2014",
+              "lei-10192": "Lei 10.192/2001", "lei-4320": "Lei 4.320/1964"}
+REF_NORMA = {
+    "lei-14133": ("BRASIL. Lei nº 14.133, de 1º de abril de 2021. Lei de Licitações e Contratos Administrativos. "
+                  "Diário Oficial da União: seção 1, Brasília, DF, 1 abr. 2021. Disponível em: "
+                  "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/l14133.htm. Acesso em: {acesso}.", "BRASIL, 2021"),
+    "lei-13303": ("BRASIL. Lei nº 13.303, de 30 de junho de 2016. Dispõe sobre o estatuto jurídico da empresa pública, "
+                  "da sociedade de economia mista e de suas subsidiárias. Diário Oficial da União: seção 1, Brasília, DF, 1 jul. 2016. "
+                  "Disponível em: https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2016/lei/l13303.htm. Acesso em: {acesso}.", "BRASIL, 2016"),
+}
 
 
 # ------------------------------------------------------------------ base normativa e Biblioteca
@@ -34,10 +56,7 @@ def norma(nid):
         _normas[nid] = json.loads(p.read_text(encoding="utf-8")) if p.exists() else None
     return _normas[nid]
 
-NOME_CURTO = {"lei-14133": "Lei 14.133/2021", "lei-13303": "Lei 13.303/2016", "lei-13019": "Lei 13.019/2014",
-              "lei-10192": "Lei 10.192/2001", "lei-4320": "Lei 4.320/1964"}
-
-def rotulo(f):
+def rotulo(f, com_norma=True):
     n = norma(f["norma"])
     disp = f.get("disp", "caput")
     rot = None
@@ -45,7 +64,7 @@ def rotulo(f):
         art = next((a for a in n["artigos"] if a["num"] == f["art"]), None)
         d = next((x for x in (art or {}).get("dispositivos", []) if x["id"] == disp), None)
         rot = d["rotulo"] if d else None
-    if not rot:  # monta o rótulo a partir do id (p1.I.a → § 1º, inciso I, alínea a)
+    if not rot:
         partes = []
         for p in disp.split("."):
             if p == "caput": partes.append("caput")
@@ -56,7 +75,16 @@ def rotulo(f):
             else: partes.append("item " + p)
         rot = ", ".join(partes)
     rot = "" if rot == "caput" else ", " + rot
-    return f"art. {f['art']}{rot}, da {NOME_CURTO.get(f['norma'], f['norma'])}"
+    return f"art. {f['art']}{rot}" + (f", da {NOME_CURTO.get(f['norma'], f['norma'])}" if com_norma else "")
+
+def citar_fundamentos(fs):
+    """'pelo art. 82, inciso II, e pelo art. 86, § 3º, da Lei 14.133/2021' — a norma aparece uma vez quando é a mesma."""
+    normas_ = {f["norma"] for f in fs}
+    if len(normas_) == 1:
+        partes = ["pelo " + rotulo(f, com_norma=False) for f in fs]
+        txt = partes[0] if len(partes) == 1 else ", ".join(partes[:-1]) + " e " + partes[-1]
+        return txt + ", da " + NOME_CURTO.get(fs[0]["norma"], fs[0]["norma"])
+    return "; ".join("pelo " + rotulo(f) for f in fs)
 
 def texto_legal(f):
     n = norma(f["norma"])
@@ -70,7 +98,6 @@ def texto_legal(f):
     if not d:
         return None
     t = d["texto"]
-    # inciso de um caput/parágrafo: mostra também o enunciado ao qual pertence
     if "." in disp or re.fullmatch(r"[IVXLCDM]+(-[A-Z])?", disp):
         pai_id = disp.rsplit(".", 1)[0] if "." in disp else "caput"
         pai = next((x for x in art["dispositivos"] if x["id"] == pai_id), None)
@@ -82,218 +109,644 @@ _acervo = None
 def _norm(s):
     return unicodedata.normalize("NFD", (s or "").lower()).encode("ascii", "ignore").decode()
 
-def jurisprudencia(temas, n=3):
-    """Busca simples na Biblioteca: pontua pela presença dos termos do tema em título, tese, tags e tema."""
+def acervo():
     global _acervo
     if _acervo is None:
         p = RAIZ / "acervo.json"
         _acervo = json.loads(p.read_text(encoding="utf-8")).get("itens", []) if p.exists() else []
+    return _acervo
+
+def jurisprudencia(temas, n=3):
     termos = [_norm(t) for t in temas or [] if t]
     res = []
-    for it in _acervo:
+    for it in acervo():
         campo = _norm(" ".join([it.get("titulo", ""), it.get("tese", ""), " ".join(it.get("tags") or []), it.get("tema", "")]))
         achados = [t for t in termos if t in campo]
         s = sum((3 if len(t.split()) > 1 else 1) for t in achados)
         contexto = any(k in campo for k in ("licita", "contrat", "edital", "pregao", "registro de precos", "termo de referencia"))
-        # exige contexto de licitação/contrato e mais de um termo (ou uma expressão composta)
         if contexto and s >= 2:
             res.append((s, it.get("data", ""), it))
     res.sort(key=lambda x: (x[0], x[1]), reverse=True)
     return [r[2] for r in res[:n]]
 
 
-# ------------------------------------------------------------------ formatação
-def sombrear(celula, cor):
+# ------------------------------------------------------------------ utilidades de formatação
+def cor(run, hexa): run.font.color.rgb = RGBColor.from_string(hexa)
+
+def sombrear(celula, hexa):
     tcpr = celula._tc.get_or_add_tcPr()
-    shd = OxmlElement("w:shd"); shd.set(qn("w:val"), "clear"); shd.set(qn("w:color"), "auto"); shd.set(qn("w:fill"), cor)
+    for s in tcpr.findall(qn("w:shd")): tcpr.remove(s)
+    shd = OxmlElement("w:shd"); shd.set(qn("w:val"), "clear"); shd.set(qn("w:color"), "auto"); shd.set(qn("w:fill"), hexa)
     tcpr.append(shd)
 
-def par(doc, texto="", negrito=False, cor=None, tam=None, italico=False, alinhamento=None, depois=6):
-    p = doc.add_paragraph()
-    if texto:
-        r = p.add_run(texto); r.bold = negrito; r.italic = italico
-        if cor: r.font.color.rgb = RGBColor.from_string(cor)
-        if tam: r.font.size = Pt(tam)
-    if alinhamento: p.alignment = alinhamento
-    p.paragraph_format.space_after = Pt(depois)
+def bordas(celula, **lados):
+    """lados: top/left/bottom/right = (cor, espessura_em_oitavos_de_ponto) ou None para sem borda."""
+    tcpr = celula._tc.get_or_add_tcPr()
+    b = tcpr.find(qn("w:tcBorders"))
+    if b is None:
+        b = OxmlElement("w:tcBorders"); tcpr.append(b)
+    for lado in ("top", "left", "bottom", "right"):
+        v = lados.get(lado, None)
+        e = OxmlElement(f"w:{lado}")
+        if v is None:
+            e.set(qn("w:val"), "nil")
+        else:
+            e.set(qn("w:val"), "single"); e.set(qn("w:sz"), str(v[1])); e.set(qn("w:color"), v[0]); e.set(qn("w:space"), "0")
+        b.append(e)
+
+def margens_celula(celula, cm=0.25):
+    tcpr = celula._tc.get_or_add_tcPr()
+    m = OxmlElement("w:tcMar")
+    for lado in ("top", "left", "bottom", "right"):
+        e = OxmlElement(f"w:{lado}"); e.set(qn("w:w"), str(int(cm * 567))); e.set(qn("w:type"), "dxa"); m.append(e)
+    tcpr.append(m)
+
+def tabela_sem_bordas(doc, linhas, colunas, larguras=None):
+    t = doc.add_table(rows=linhas, cols=colunas)
+    t.alignment = WD_TABLE_ALIGNMENT.CENTER
+    tblpr = t._tbl.tblPr
+    lay = OxmlElement("w:tblLayout"); lay.set(qn("w:type"), "fixed"); tblpr.append(lay)
+    for row in t.rows:
+        for i, c in enumerate(row.cells):
+            bordas(c)
+            if larguras: c.width = Cm(larguras[i])
+    if larguras:
+        for i, col in enumerate(t.columns): col.width = Cm(larguras[i])
+        grade = t._tbl.tblGrid
+        for i, gc in enumerate(grade.findall(qn("w:gridCol"))): gc.set(qn("w:w"), str(int(larguras[i] * 567)))
+    return t
+
+def fmt(p, recuo1=1.25, antes=0, depois=0, entre=1.5, alinh=WD_ALIGN_PARAGRAPH.JUSTIFY, esq=None, dir_=None):
+    pf = p.paragraph_format
+    pf.first_line_indent = Cm(recuo1) if recuo1 else Cm(0)
+    pf.space_before = Pt(antes); pf.space_after = Pt(depois)
+    pf.line_spacing = entre
+    if alinh is not None: p.alignment = alinh
+    if esq is not None: pf.left_indent = Cm(esq)
+    if dir_ is not None: pf.right_indent = Cm(dir_)
     return p
 
-def rotulo_valor(doc, rot, valor, cor=None):
-    p = doc.add_paragraph(); p.paragraph_format.space_after = Pt(3)
-    a = p.add_run(rot + ": "); a.bold = True; a.font.color.rgb = RGBColor.from_string(COR["titulo"])
-    b = p.add_run(valor)
-    if cor: b.font.color.rgb = RGBColor.from_string(cor)
+def run(p, texto, negrito=False, italico=False, tam=None, hexa=None, caixa_alta=False):
+    r = p.add_run(texto.upper() if caixa_alta else texto)
+    r.bold = negrito; r.italic = italico
+    if tam: r.font.size = Pt(tam)
+    if hexa: cor(r, hexa)
+    return r
+
+def paragrafo(doc_ou_celula, texto="", **kw):
+    p = doc_ou_celula.add_paragraph()
+    estilo = {k: kw.pop(k) for k in list(kw) if k in ("negrito", "italico", "tam", "hexa", "caixa_alta")}
+    fmt(p, **kw)
+    if texto: run(p, texto, **estilo)
     return p
 
-def link(paragrafo, texto, url):
-    rid = paragrafo.part.relate_to(url, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink", is_external=True)
+def run_in(doc, rotulo_txt, texto, hexa_rotulo=None):
+    """Parágrafo com rótulo em negrito no início (ex.: 'Constatação. ...')."""
+    p = fmt(doc.add_paragraph(), antes=0, depois=6)
+    run(p, rotulo_txt + " ", negrito=True, hexa=hexa_rotulo or C["marinho"])
+    run(p, texto)
+    return p
+
+def citacao_longa(doc, texto, fonte=None):
+    """NBR 10520: recuo de 4 cm, corpo menor, entrelinha simples, sem aspas."""
+    p = fmt(doc.add_paragraph(), recuo1=0, esq=4, antes=4, depois=10, entre=1.0)
+    run(p, texto, tam=10)
+    if fonte: run(p, f" ({fonte})", tam=10)
+    return p
+
+def link(paragrafo_, texto, url, tam=None):
+    rid = paragrafo_.part.relate_to(url, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink", is_external=True)
     h = OxmlElement("w:hyperlink"); h.set(qn("r:id"), rid)
     r = OxmlElement("w:r"); rpr = OxmlElement("w:rPr")
-    c = OxmlElement("w:color"); c.set(qn("w:val"), "0F6B7E"); rpr.append(c)
+    c = OxmlElement("w:color"); c.set(qn("w:val"), C["petroleo"]); rpr.append(c)
     u = OxmlElement("w:u"); u.set(qn("w:val"), "single"); rpr.append(u)
-    r.append(rpr); t = OxmlElement("w:t"); t.text = texto; r.append(t); h.append(r)
-    paragrafo._p.append(h)
+    if tam:
+        s = OxmlElement("w:sz"); s.set(qn("w:val"), str(int(tam * 2))); rpr.append(s)
+    r.append(rpr); t = OxmlElement("w:t"); t.text = texto; t.set(qn("xml:space"), "preserve"); r.append(t); h.append(r)
+    paragrafo_._p.append(h)
+
+def campo(paragrafo_, instrucao, tam=None, hexa=None):
+    r = paragrafo_.add_run()
+    if tam: r.font.size = Pt(tam)
+    if hexa: cor(r, hexa)
+    f1 = OxmlElement("w:fldChar"); f1.set(qn("w:fldCharType"), "begin")
+    it = OxmlElement("w:instrText"); it.set(qn("xml:space"), "preserve"); it.text = instrucao
+    f2 = OxmlElement("w:fldChar"); f2.set(qn("w:fldCharType"), "separate")
+    t = OxmlElement("w:t"); t.text = "1"
+    f3 = OxmlElement("w:fldChar"); f3.set(qn("w:fldCharType"), "end")
+    for e in (f1, it, f2, t, f3): r._r.append(e)
+
+def quebra_pagina(doc):
+    doc.add_paragraph().add_run().add_break(WD_BREAK.PAGE)
+
+def titulo(doc, texto, nivel=1, marcador=None):
+    """NBR 6024: seção primária em negrito e caixa alta; secundária em negrito; numeração sem ponto final."""
+    p = doc.add_paragraph(style=f"Heading {nivel}")
+    fmt(p, recuo1=0, antes=18 if nivel == 1 else 12, depois=8, entre=1.5, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+    p.paragraph_format.keep_with_next = True
+    r = run(p, texto.upper() if nivel == 1 else texto, negrito=True, tam=12, hexa=C["marinho"])
+    r.font.name = FONTE
+    if marcador is not None:
+        marcador.append(texto)
+    return p
+
+def data_extenso(d):
+    return f"{d.day} de {MESES[d.month - 1]} de {d.year}"
+
+def data_abnt(d):
+    return f"{d.day} {MESES_ABNT[d.month - 1]} {d.year}"
+
+def ler_data(s):
+    try:
+        return datetime.datetime.strptime(s, "%d/%m/%Y").date()
+    except Exception:
+        return datetime.date.today()
 
 
-# ------------------------------------------------------------------ relatório
-def gerar(analise, saida):
+# ------------------------------------------------------------------ gráficos do painel
+def graficos(cont_res, indice):
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib import font_manager
+    familia = "Liberation Sans" if any("Liberation Sans" in f.name for f in font_manager.fontManager.ttflist) else "DejaVu Sans"
+    plt.rcParams.update({"font.family": familia, "font.size": 9})
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(6.4, 2.5), dpi=220)
+    fig.patch.set_facecolor("white")
+
+    # rosca: distribuição dos resultados
+    ordem = [("conforme", "Conforme", C["ok"]), ("parcial", "Parcial", C["media"]), ("nao_conforme", "Não conforme", C["alta"]),
+             ("nao_aplicavel", "Não se aplica", C["na"]), ("nao_verificavel", "Não verificável", C["nv"])]
+    dados = [(rot, cont_res.get(k, 0), "#" + c) for k, rot, c in ordem if cont_res.get(k, 0)]
+    total = sum(v for _, v, _ in dados)
+    a1.pie([v for _, v, _ in dados], colors=[c for *_, c in dados], startangle=90, counterclock=False,
+           wedgeprops=dict(width=0.32, edgecolor="white", linewidth=2))
+    a1.text(0, 0.08, str(total), ha="center", va="center", fontsize=20, fontweight="bold", color="#" + C["marinho"])
+    a1.text(0, -0.25, "itens verificados", ha="center", va="center", fontsize=7.5, color="#" + C["fraco"])
+    a1.legend([f"{r} ({v})" for r, v, _ in dados], loc="center left", bbox_to_anchor=(0.98, 0.5), frameon=False, fontsize=7.5,
+              handlelength=0.9, handleheight=0.9)
+    a1.set_title("Resultado da verificação", fontsize=9.5, fontweight="bold", color="#" + C["marinho"], loc="left", pad=6)
+    a1.set_aspect("equal")
+
+    # medidor: índice de conformidade
+    import numpy as np
+    faixas = [(0, 50, C["alta"]), (50, 75, C["media"]), (75, 100, C["ok"])]
+    for ini, fim, c in faixas:
+        th = np.linspace(np.pi * (1 - ini / 100), np.pi * (1 - fim / 100), 60)
+        a2.fill_between(np.cos(th), np.sin(th) * 0 + 0, 0, color="white")
+        for r0 in [1.0]:
+            xs = np.concatenate([np.cos(th) * r0, np.cos(th[::-1]) * 0.72])
+            ys = np.concatenate([np.sin(th) * r0, np.sin(th[::-1]) * 0.72])
+            a2.fill(xs, ys, color="#" + c, alpha=0.22, linewidth=0)
+    th = np.linspace(np.pi, np.pi * (1 - indice / 100), 80)
+    xs = np.concatenate([np.cos(th), np.cos(th[::-1]) * 0.72]); ys = np.concatenate([np.sin(th), np.sin(th[::-1]) * 0.72])
+    ccor = C["ok"] if indice >= 75 else (C["media"] if indice >= 50 else C["alta"])
+    a2.fill(xs, ys, color="#" + ccor, linewidth=0)
+    a2.text(0, 0.18, f"{indice:.0f}%", ha="center", va="center", fontsize=22, fontweight="bold", color="#" + ccor)
+    a2.text(0, -0.12, "índice de conformidade", ha="center", va="center", fontsize=7.5, color="#" + C["fraco"])
+    a2.text(-0.86, -0.12, "0", ha="center", fontsize=7, color="#" + C["fraco"])
+    a2.text(0.86, -0.12, "100", ha="center", fontsize=7, color="#" + C["fraco"])
+    a2.set_xlim(-1.1, 1.1); a2.set_ylim(-0.3, 1.1); a2.set_aspect("equal"); a2.axis("off")
+    a2.set_title("Conformidade dos itens aplicáveis", fontsize=9.5, fontweight="bold", color="#" + C["marinho"], loc="left", pad=6)
+
+    fig.tight_layout(w_pad=2.5)
+    buf = io.BytesIO(); fig.savefig(buf, format="png", facecolor="white"); plt.close(fig); buf.seek(0)
+    return buf
+
+
+# ------------------------------------------------------------------ documento
+def preparar(doc):
+    st = doc.styles["Normal"]
+    st.font.name = FONTE; st.font.size = Pt(12); cor_ = st.font.color; cor_.rgb = RGBColor.from_string(C["texto"])
+    st.element.rPr.rFonts.set(qn("w:eastAsia"), FONTE)
+    st.paragraph_format.line_spacing = 1.5; st.paragraph_format.space_after = Pt(0)
+    for n in (1, 2, 3):
+        h = doc.styles[f"Heading {n}"]; h.font.name = FONTE; h.font.size = Pt(12); h.font.bold = True
+        h.font.color.rgb = RGBColor.from_string(C["marinho"])
+        rpr = h.element.get_or_add_rPr(); rf = rpr.find(qn("w:rFonts"))
+        if rf is None:
+            rf = OxmlElement("w:rFonts"); rpr.append(rf)
+        for a in ("w:ascii", "w:hAnsi", "w:eastAsia", "w:cs"): rf.set(qn(a), FONTE)
+    for s in doc.sections:
+        s.page_height = Cm(29.7); s.page_width = Cm(21)
+        s.top_margin = Cm(3); s.left_margin = Cm(3); s.bottom_margin = Cm(2); s.right_margin = Cm(2)
+        s.header_distance = Cm(1.5); s.footer_distance = Cm(1)
+
+
+def cabecalho_rodape(doc, numero, verificador):
+    s = doc.sections[0]
+    s.different_first_page_header_footer = True  # capa sem cabeçalho nem número
+    h = s.header
+    t = h.add_table(rows=1, cols=2, width=Cm(16))
+    t.alignment = WD_TABLE_ALIGNMENT.CENTER
+    a, b = t.rows[0].cells
+    a.width = Cm(12); b.width = Cm(4)
+    for c in (a, b): bordas(c, bottom=(C["linha"], 6))
+    pa = a.paragraphs[0]; fmt(pa, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+    run(pa, "LICITACON", negrito=True, tam=8, hexa=C["petroleo"]); run(pa, f"  ·  Parecer Técnico nº {numero}", tam=8, hexa=C["fraco"])
+    pb = b.paragraphs[0]; fmt(pb, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.RIGHT)
+    campo(pb, "PAGE", tam=10, hexa=C["marinho"])
+    h.paragraphs[0].text = ""
+    f = s.footer
+    pf = f.paragraphs[0]; fmt(pf, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.CENTER)
+    run(pf, f"Análise técnica de apoio à instrução processual · não substitui o parecer jurídico do art. 53 da Lei 14.133/2021 · código de verificação {verificador}",
+        tam=7, hexa=C["fraco"])
+
+
+def capa(doc, a, numero, data, situacao, cor_sit):
+    proc = a["processo"]
+    # faixa superior
+    t = tabela_sem_bordas(doc, 1, 1, [16])
+    c = t.rows[0].cells[0]; sombrear(c, C["marinho"]); margens_celula(c, 0.6)
+    p = c.paragraphs[0]; fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT, depois=2)
+    run(p, "LICITACON", negrito=True, tam=11, hexa="9FD3DC"); run(p, "   ANÁLISE TÉCNICA EM LICITAÇÕES E CONTRATOS", tam=8, hexa="C9D6DE")
+    p = c.add_paragraph(); fmt(p, recuo1=0, entre=1.0, antes=40, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+    run(p, "PARECER TÉCNICO", negrito=True, tam=26, hexa="FFFFFF")
+    p = c.add_paragraph(); fmt(p, recuo1=0, entre=1.0, antes=2, depois=30, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+    run(p, f"nº {numero}", tam=13, hexa="9FD3DC")
+    # faixa de destaque
+    t2 = tabela_sem_bordas(doc, 1, 1, [16])
+    c2 = t2.rows[0].cells[0]; sombrear(c2, C["petroleo"]); margens_celula(c2, 0.35)
+    p = c2.paragraphs[0]; fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+    run(p, "Conformidade do " + ", ".join(sorted({d.get('nome') or DOCS_ROTULO.get(d['tipo'], d['tipo']) for d in a['documentos']})).lower()
+        + " com a " + NOME_CURTO.get(a["regime"], a["regime"]), negrito=True, tam=10.5, hexa="FFFFFF")
+
+    p = paragrafo(doc, "", recuo1=0, antes=36, depois=6, entre=1.15, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+    run(p, "OBJETO", negrito=True, tam=8, hexa=C["petroleo"])
+    paragrafo(doc, proc.get("objeto", ""), recuo1=0, entre=1.2, depois=18, alinh=WD_ALIGN_PARAGRAPH.LEFT, tam=15, hexa=C["marinho"], negrito=True)
+
+    linhas = [("Interessado", proc.get("orgao", "")), ("Processo", proc.get("numero", "")), ("Modalidade", proc.get("modalidade", "")),
+              ("Base legal", a.get("regime_texto", NOME_CURTO.get(a["regime"], ""))), ("Data", data_extenso(data))]
+    tb = tabela_sem_bordas(doc, len(linhas), 2, [3.3, 12.7])
+    for i, (k, v) in enumerate(linhas):
+        k_c, v_c = tb.rows[i].cells
+        for cc in (k_c, v_c): bordas(cc, bottom=(C["linha"], 4)); margens_celula(cc, 0.12)
+        pk = k_c.paragraphs[0]; fmt(pk, recuo1=0, entre=1.1, alinh=WD_ALIGN_PARAGRAPH.LEFT); run(pk, k.upper(), negrito=True, tam=7.5, hexa=C["fraco"])
+        pv = v_c.paragraphs[0]; fmt(pv, recuo1=0, entre=1.1, alinh=WD_ALIGN_PARAGRAPH.LEFT); run(pv, v, tam=9.5)
+
+    p = paragrafo(doc, "", recuo1=0, antes=26, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+    t3 = tabela_sem_bordas(doc, 1, 1, [16])
+    c3 = t3.rows[0].cells[0]; sombrear(c3, cor_sit[1]); bordas(c3, left=(cor_sit[0], 36)); margens_celula(c3, 0.3)
+    p = c3.paragraphs[0]; fmt(p, recuo1=0, entre=1.1, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+    run(p, "SITUAÇÃO GERAL  ", negrito=True, tam=7.5, hexa=cor_sit[0]); run(p, situacao, negrito=True, tam=10.5, hexa=cor_sit[0])
+
+    p = paragrafo(doc, "", recuo1=0, antes=60, entre=1.15, alinh=WD_ALIGN_PARAGRAPH.CENTER)
+    run(p, LOCAL.replace(" (RJ)", " – RJ"), negrito=True, tam=11)
+    p = paragrafo(doc, "", recuo1=0, entre=1.15, alinh=WD_ALIGN_PARAGRAPH.CENTER)
+    run(p, str(data.year), negrito=True, tam=11)
+
+
+DOCS_ROTULO = {}
+
+def sumario(doc, entradas, paginas):
+    titulo(doc, "Sumário")
+    for e in entradas:
+        nivel = 2 if re.match(r"^\d+\.\d+", e) else 1
+        p = doc.add_paragraph(); fmt(p, recuo1=0, entre=1.5, alinh=WD_ALIGN_PARAGRAPH.LEFT, esq=0 if nivel == 1 else 0.6)
+        tabs = p.paragraph_format.tab_stops
+        from docx.enum.text import WD_TAB_ALIGNMENT, WD_TAB_LEADER
+        tabs.add_tab_stop(Cm(16), WD_TAB_ALIGNMENT.RIGHT, WD_TAB_LEADER.DOTS)
+        txt = e.upper() if nivel == 1 else e
+        run(p, txt, negrito=(nivel == 1), tam=11 if nivel == 1 else 10.5)
+        run(p, "\t" + str(paginas.get(e, "")), negrito=(nivel == 1), tam=11 if nivel == 1 else 10.5)
+
+
+def caixa(doc, rotulo_txt, texto, borda, fundo):
+    t = tabela_sem_bordas(doc, 1, 1, [16])
+    c = t.rows[0].cells[0]; sombrear(c, fundo); bordas(c, left=(borda, 30)); margens_celula(c, 0.25)
+    p = c.paragraphs[0]; fmt(p, recuo1=0, entre=1.15, alinh=WD_ALIGN_PARAGRAPH.JUSTIFY)
+    run(p, rotulo_txt.upper() + "  ", negrito=True, tam=8, hexa=borda); run(p, texto, tam=10)
+    paragrafo(doc, "", recuo1=0, entre=1.0, depois=4)
+
+
+def gerar(analise, saida, paginas=None):
     roteiro = json.loads((RAIZ / "agente" / "roteiros" / f"{analise['regime']}.json").read_text(encoding="utf-8"))
     itens = {i["id"]: i for i in roteiro["itens"]}
     docs_nome = roteiro["documentos"]
+    DOCS_ROTULO.update({"edital": "Edital", "etp": "Estudo Técnico Preliminar", "tr": "Termo de Referência",
+                        "riscos": "Matriz de Riscos", "planilha": "Planilha de Custos"})
     resultados = analise["resultados"]
     for r in resultados:
         if r["item"] not in itens:
             raise SystemExit(f"Item desconhecido no roteiro: {r['item']}")
-
-    doc = Document()
-    st = doc.styles["Normal"]; st.font.name = "Calibri"; st.font.size = Pt(10.5)
-    for s in doc.sections:
-        s.left_margin = s.right_margin = Cm(2.2); s.top_margin = s.bottom_margin = Cm(2)
-
-    # cabeçalho
-    par(doc, "LICITACON · AGENTE DE ANÁLISE", True, COR["ok"], 9, depois=2)
-    par(doc, "Relatório de análise da fase preparatória", True, COR["titulo"], 20, depois=4)
-    par(doc, analise["processo"].get("objeto", ""), False, COR["fraco"], 12, depois=12)
-    for rot, chave in [("Órgão", "orgao"), ("Processo", "numero"), ("Modalidade / critério", "modalidade")]:
-        if analise["processo"].get(chave):
-            rotulo_valor(doc, rot, analise["processo"][chave])
-    rotulo_valor(doc, "Regime jurídico identificado", analise.get("regime_texto", NOME_CURTO.get(analise["regime"], analise["regime"])))
-    rotulo_valor(doc, "Documentos analisados", "; ".join(f"{docs_nome.get(d['tipo'], d['tipo'])} ({d.get('arquivo', '')}{', ' + str(d['paginas']) + ' p.' if d.get('paginas') else ''})" for d in analise["documentos"]))
-    rotulo_valor(doc, "Data da análise", analise.get("data", datetime.date.today().strftime("%d/%m/%Y")))
-    rotulo_valor(doc, "Versão do roteiro", f"{roteiro['regime']} · {roteiro['versao']}")
-
-    aviso = doc.add_paragraph(); aviso.paragraph_format.space_before = Pt(10)
-    r = aviso.add_run("Natureza deste relatório: análise técnica automatizada de apoio à instrução do processo, em gestão de licitações e contratos. "
-                      "Não é parecer jurídico e não substitui a análise jurídica prévia obrigatória (art. 53 da Lei 14.133/2021) nem a decisão da autoridade competente. "
-                      "Confira cada apontamento no documento e na fonte oficial antes de adotá-lo.")
-    r.italic = True; r.font.size = Pt(9); r.font.color.rgb = RGBColor.from_string(COR["fraco"])
-
-    # resumo executivo
+    data = ler_data(analise.get("data", ""))
     falhas = [r for r in resultados if r["resultado"] in ("nao_conforme", "parcial")]
     cont = {g: sum(1 for r in falhas if itens[r["item"]]["gravidade"] == g) for g in ("alta", "media", "baixa")}
-    doc.add_heading("1. Resumo executivo", level=1)
-    sit = "Há falhas graves que recomendam correção." if cont["alta"] else (
-          "Há ajustes recomendados, sem falha grave identificada." if falhas else "Nenhuma não conformidade identificada nos itens verificados.")
-    par(doc, sit, True, COR["alta"] if cont["alta"] else (COR["media"] if falhas else COR["ok"]), 12)
-    t = doc.add_table(rows=1, cols=4); t.alignment = WD_TABLE_ALIGNMENT.CENTER; t.style = "Table Grid"
-    for i, (rot, val, g) in enumerate([("Gravidade alta", cont["alta"], "alta"), ("Gravidade média", cont["media"], "media"),
-                                       ("Gravidade baixa", cont["baixa"], "baixa"), ("Itens verificados", len(resultados), None)]):
-        c = t.rows[0].cells[i]; c.text = ""
-        p = c.paragraphs[0]; p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        a = p.add_run(str(val) + "\n"); a.bold = True; a.font.size = Pt(18)
-        if g: a.font.color.rgb = RGBColor.from_string(COR[g]); sombrear(c, FUNDO[g])
-        b = p.add_run(rot); b.font.size = Pt(9)
-    if analise.get("resumo"):
-        par(doc, ""); par(doc, analise["resumo"])
+    cont_res = {}
+    for r in resultados: cont_res[r["resultado"]] = cont_res.get(r["resultado"], 0) + 1
+    aplic = cont_res.get("conforme", 0) + cont_res.get("parcial", 0) + cont_res.get("nao_conforme", 0)
+    indice = 100 * (cont_res.get("conforme", 0) + 0.5 * cont_res.get("parcial", 0)) / aplic if aplic else 100
+    if cont["alta"]:
+        situacao, cor_sit = "Há falhas graves que recomendam correção.", (C["alta"], C["alta_f"])
+    elif falhas:
+        situacao, cor_sit = "Há ajustes recomendados, sem falha grave identificada.", (C["media"], C["media_f"])
+    else:
+        situacao, cor_sit = "Nenhuma não conformidade identificada nos itens verificados.", (C["ok"], C["ok_f"])
+    bruto = json.dumps(analise, ensure_ascii=False, sort_keys=True).encode()
+    verificador = hashlib.sha256(bruto).hexdigest()[:10].upper()
+    numero = analise.get("numero_parecer") or f"{verificador[:4]}/{data.year}"
 
-    # achados
-    doc.add_heading("2. Falhas identificadas", level=1)
-    if not falhas:
-        par(doc, "Nenhuma falha identificada nos itens aplicáveis.", italico=True)
+    doc = Document(); preparar(doc)
+    cabecalho_rodape(doc, numero, verificador)
+    capa(doc, analise, numero, data, situacao, cor_sit)
+    quebra_pagina(doc)
+
+    entradas = []  # títulos para o sumário (na ordem)
+    # sumário (2ª página) — paginação obtida na primeira passagem
     ordem = {"alta": 0, "media": 1, "baixa": 2}
-    for n, r in enumerate(sorted(falhas, key=lambda x: ordem[itens[x["item"]]["gravidade"]]), 1):
+    lst = sorted(falhas, key=lambda x: ordem[itens[x["item"]]["gravidade"]])
+    entradas = ["1 Painel executivo", "2 Relatório"] + ["3 Fundamentação"] + \
+               [f"3.{n} {itens[r['item']]['titulo']}" for n, r in enumerate(lst, 1)] + \
+               ["4 Recomendações de melhoria", "5 Conclusão", "Referências", "Apêndice A – Lista de verificação", "Apêndice B – Metodologia e limites"]
+    sumario(doc, entradas, paginas or {})
+    quebra_pagina(doc)
+
+    # 1 PAINEL
+    titulo(doc, "1 Painel executivo")
+    paragrafo(doc, "Visão geral do resultado. O detalhamento, com o texto legal e os precedentes, está na seção 3.", recuo1=0,
+              depois=8, tam=10, hexa=C["fraco"], italico=True)
+    _painel_corpo(doc, itens, resultados, lst, cont, cont_res, indice)
+    quebra_pagina(doc)
+
+    # EMENTA + identificação
+    proc = analise["processo"]
+    t = tabela_sem_bordas(doc, 4, 2, [3.2, 12.8])
+    for i, (k, v) in enumerate([("Parecer técnico", f"nº {numero}"), ("Interessado", proc.get("orgao", "")),
+                                ("Assunto", "Análise de conformidade — " + proc.get("objeto", "")), ("Referência", proc.get("numero", ""))]):
+        kc, vc = t.rows[i].cells
+        for cc in (kc, vc): bordas(cc, bottom=(C["linha"], 4)); margens_celula(cc, 0.1)
+        pk = kc.paragraphs[0]; fmt(pk, recuo1=0, entre=1.1, alinh=WD_ALIGN_PARAGRAPH.LEFT); run(pk, k.upper(), negrito=True, tam=8, hexa=C["fraco"])
+        pv = vc.paragraphs[0]; fmt(pv, recuo1=0, entre=1.1, alinh=WD_ALIGN_PARAGRAPH.LEFT); run(pv, v, tam=10)
+    paragrafo(doc, "", recuo1=0, entre=1.0, depois=10)
+    ementa_chaves = analise.get("ementa") or ("LICITAÇÃO. " + NOME_CURTO.get(analise["regime"], "").upper() + ". ANÁLISE DE CONFORMIDADE.")
+    ementa_txt = analise.get("ementa_texto") or (situacao + " " + (analise.get("resumo", "").split(". ")[0] + "." if analise.get("resumo") else ""))
+    p = fmt(doc.add_paragraph(), recuo1=0, esq=6, entre=1.0, depois=4)
+    run(p, "EMENTA: ", negrito=True, tam=10, hexa=C["marinho"]); run(p, ementa_chaves + " ", negrito=True, tam=10); run(p, ementa_txt, tam=10)
+    paragrafo(doc, "", recuo1=0, entre=1.0, depois=6)
+
+    # 2 RELATÓRIO
+    titulo(doc, "2 Relatório")
+    docs_txt = "; ".join(f"{docs_nome.get(d['tipo'], d['tipo'])} ({d.get('arquivo', '')}{', ' + str(d['paginas']) + ' páginas' if d.get('paginas') else ''})"
+                         for d in analise["documentos"])
+    paragrafo(doc, f"Trata-se de análise técnica de conformidade solicitada em relação ao processo {proc.get('numero', '')}, "
+                   f"do {proc.get('orgao', '')}, cujo objeto é: {proc.get('objeto', '').rstrip('.')}.", depois=6)
+    paragrafo(doc, f"Foram examinados os seguintes documentos: {docs_txt}. O exame teve por parâmetro a "
+                   f"{analise.get('regime_texto', NOME_CURTO.get(analise['regime'], ''))}, aplicando-se o roteiro de verificação "
+                   f"Licitacon (versão {roteiro['versao']}), com {len(resultados)} itens pertinentes ao caso.", depois=6)
+    if analise.get("resumo"):
+        paragrafo(doc, analise["resumo"], depois=6)
+    paragrafo(doc, "É o relatório. Passa-se à fundamentação.", depois=6)
+
+    # 3 FUNDAMENTAÇÃO
+    titulo(doc, "3 Fundamentação")
+    paragrafo(doc, "Cada apontamento indica a constatação no documento, o dispositivo legal aplicável (transcrito do texto oficial vigente), "
+                   "a análise do caso, o risco de manutenção, a providência recomendada e os precedentes localizados na Biblioteca Licitacon.", depois=6)
+    referencias_juris = {}
+    normas_usadas = set()
+    for n, r in enumerate(lst, 1):
         it = itens[r["item"]]; g = it["gravidade"]
-        h = doc.add_heading(level=2)
-        a = h.add_run(f"2.{n}. {it['titulo']}  "); a.font.color.rgb = RGBColor.from_string(COR["titulo"])
-        b = h.add_run(f"[{GRAV[g]} · {RESULT[r['resultado']]}]"); b.font.color.rgb = RGBColor.from_string(COR[g]); b.font.size = Pt(10)
-        rotulo_valor(doc, "Documento", f"{docs_nome.get(it['doc'], it['doc'])}" + (f", {r['local']}" if r.get("local") else ""))
+        titulo(doc, f"3.{n} {it['titulo']}", nivel=2)
+        # selo
+        t = tabela_sem_bordas(doc, 1, 1, [16])
+        c = t.rows[0].cells[0]; sombrear(c, C[g + "_f"]); bordas(c, left=(C[g], 30)); margens_celula(c, 0.15)
+        p = c.paragraphs[0]; fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+        run(p, f"GRAVIDADE {GRAV[g].upper()}", negrito=True, tam=8, hexa=C[g])
+        run(p, f"   ·   {RESULT[r['resultado']]}   ·   {docs_nome.get(it['doc'], it['doc'])}" + (f", {r['local']}" if r.get("local") else ""), tam=8, hexa=C["texto"])
+        paragrafo(doc, "", recuo1=0, entre=1.0, depois=2)
+
+        run_in(doc, "Constatação.", r["constatacao"])
         if r.get("trecho"):
-            p = par(doc, "“" + r["trecho"] + "”", italico=True, cor=COR["fraco"]); p.paragraph_format.left_indent = Cm(0.8)
-        rotulo_valor(doc, "O que está em desacordo", r["constatacao"])
-        p = doc.add_paragraph(); p.paragraph_format.space_after = Pt(3)
-        x = p.add_run("Fundamento legal: "); x.bold = True; x.font.color.rgb = RGBColor.from_string(COR["titulo"])
-        p.add_run("; ".join(rotulo(f) for f in it["fundamento"]) + ".")
+            if len(r["trecho"]) > 240:
+                citacao_longa(doc, r["trecho"], "documento analisado" + (f", {r['local']}" if r.get("local") else ""))
+            else:
+                p = fmt(doc.add_paragraph(), depois=6)
+                run(p, "O documento dispõe: “" + r["trecho"] + "”" + (f" ({r['local']})." if r.get("local") else "."), italico=False)
+        p = fmt(doc.add_paragraph(), depois=4)
+        run(p, "Dispositivo aplicável. ", negrito=True, hexa=C["marinho"])
+        run(p, "A matéria é disciplinada " + citar_fundamentos(it["fundamento"]) + ", que assim dispõe" + (":" if len(it["fundamento"]) == 1 else "m:"))
         for f in it["fundamento"]:
+            normas_usadas.add(f["norma"])
             tl = texto_legal(f)
-            q = par(doc, (rotulo(f)[0].upper() + rotulo(f)[1:] + ": “" + tl + "”") if tl else (rotulo(f) + ": [texto a conferir na fonte oficial]"),
-                    cor=COR["fraco"], tam=9, italico=True, depois=3)
-            q.paragraph_format.left_indent = Cm(0.8)
-        rotulo_valor(doc, "Por que está errado", r.get("porque") or it["verificar"])
-        rotulo_valor(doc, "Risco de manter", r.get("risco") or it["risco"], COR[g])
-        rotulo_valor(doc, "Como corrigir", r.get("correcao") or it["dica"])
+            ano = (REF_NORMA.get(f["norma"], (None, "BRASIL"))[1])
+            if tl and tl.rstrip().endswith(":"): tl = tl.rstrip() + " […]"
+            citacao_longa(doc, tl if tl else "[texto a conferir na fonte oficial]", f"{ano}, {rotulo(f, com_norma=False)}")
+        run_in(doc, "Análise.", r.get("porque") or it["verificar"])
+        run_in(doc, "Risco de manutenção.", r.get("risco") or it["risco"], hexa_rotulo=C[g])
+        run_in(doc, "Providência recomendada.", r.get("correcao") or it["dica"])
         if r.get("redacao_sugerida"):
-            p = par(doc, "Redação sugerida: " + r["redacao_sugerida"], cor=COR["ok"]); p.paragraph_format.left_indent = Cm(0.8)
-        if "jurisprudencia_ids" in r:  # escolhida pela análise (o agente seleciona entre os candidatos da Biblioteca)
-            jurisprudencia([])  # garante a Biblioteca carregada
-            por_id = {j.get("id"): j for j in _acervo}
+            caixa(doc, "Redação sugerida", r["redacao_sugerida"], C["ok"], C["ok_f"])
+
+        if "jurisprudencia_ids" in r:
+            por_id = {j.get("id"): j for j in acervo()}
             js = [por_id[i] for i in r["jurisprudencia_ids"] if i in por_id]
         else:
             js = jurisprudencia(r.get("temas") or it.get("temas"))
-        p = doc.add_paragraph(); p.paragraph_format.space_after = Pt(2)
-        x = p.add_run("Jurisprudência na Biblioteca Licitacon: "); x.bold = True; x.font.color.rgb = RGBColor.from_string(COR["titulo"])
+        p = fmt(doc.add_paragraph(), depois=4)
+        run(p, "Precedentes. ", negrito=True, hexa=C["marinho"])
         if not js:
-            p.add_run("nenhuma decisão sobre o tema localizada na Biblioteca até esta data.")
-        # agrupa enunciados da mesma decisão (o TCU publica várias teses de um mesmo acórdão em separado)
+            run(p, "Não foram localizadas decisões sobre o tema na Biblioteca Licitacon até esta data, o que não significa inexistência de jurisprudência.")
+            continue
         grupos = {}
         for j in js:
             grupos.setdefault((j.get("orgao", ""), j.get("numero", "")), []).append(j)
-        for (orgao, numero), lista in grupos.items():
-            q = doc.add_paragraph(style="List Bullet"); q.paragraph_format.space_after = Pt(2)
-            data = (lista[0].get("data") or "")[:10]
-            if data:
-                data = "/".join(reversed(data.split("-")))
-            cab = f"{orgao} · {numero}" + (f" ({data})" if data else "")
-            if len(lista) > 1:
-                cab += f" — {len(lista)} enunciados distintos da mesma decisão"
-            q.add_run(cab + (":" if len(lista) == 1 else "")).bold = True
+        run(p, "Na Biblioteca Licitacon foram localizados os seguintes entendimentos" + (":" if grupos else "."))
+        for (orgao, numero_dec), lista in grupos.items():
+            ano = (lista[0].get("data") or "")[:4]
             for k, j in enumerate(lista, 1):
-                alvo = q if len(lista) == 1 else doc.add_paragraph()
-                if alvo is not q:
-                    alvo.paragraph_format.left_indent = Cm(1.2); alvo.paragraph_format.space_after = Pt(2)
-                    alvo.add_run(f"Enunciado {k}: ").bold = True
-                else:
-                    alvo.add_run(" ")
-                alvo.add_run((j.get("tese") or j.get("titulo") or "").strip() + " ")
+                referencias_juris[j["id"]] = j
+                tese = (j.get("tese") or j.get("titulo") or "").strip()
+                fonte = f"{orgao}, {numero_dec}" + (f", enunciado {k}" if len(lista) > 1 else "")
+                pc = citacao_longa(doc, tese, fonte)
                 if j.get("fonte_url"):
-                    link(alvo, "abrir na fonte oficial", j["fonte_url"])
+                    run(pc, " ", tam=10); link(pc, "[fonte oficial]", j["fonte_url"], tam=9)
 
-    # dicas
+    # 4 RECOMENDAÇÕES
+    titulo(doc, "4 Recomendações de melhoria")
     dicas = [r for r in resultados if r["resultado"] == "conforme" and r.get("dica")]
-    doc.add_heading("3. Recomendações de melhoria", level=1)
-    par(doc, "Pontos sem irregularidade, mas que podem ser aperfeiçoados:", italico=True, cor=COR["fraco"])
-    if not dicas:
-        par(doc, "Nenhuma recomendação adicional.", italico=True)
-    for r in dicas:
+    paragrafo(doc, "Os pontos a seguir não configuram irregularidade, mas podem ser aperfeiçoados para dar mais segurança ao processo:"
+              if dicas else "Não há recomendações adicionais.", depois=6)
+    for k, r in enumerate(dicas, 1):
         it = itens[r["item"]]
-        q = doc.add_paragraph(style="List Bullet")
-        q.add_run(it["titulo"] + ": ").bold = True
-        q.add_run(r["dica"] + " (" + "; ".join(rotulo(f) for f in it["fundamento"]) + ")")
+        p = fmt(doc.add_paragraph(), recuo1=0, esq=0.75, depois=6)
+        p.paragraph_format.first_line_indent = Cm(-0.75)
+        run(p, f"{chr(96 + k)}) ", negrito=True, hexa=C["petroleo"]); run(p, it["titulo"] + ": ", negrito=True)
+        run(p, r["dica"] + " (" + "; ".join(rotulo(f) for f in it["fundamento"]) + ").")
 
-    # lista de verificação completa
-    doc.add_heading("4. Lista de verificação", level=1)
-    par(doc, "Todos os itens do roteiro aplicados a este processo.", italico=True, cor=COR["fraco"])
-    t = doc.add_table(rows=1, cols=4); t.style = "Table Grid"
+    # 5 CONCLUSÃO
+    titulo(doc, "5 Conclusão")
+    if analise.get("conclusao"):
+        paragrafo(doc, analise["conclusao"], depois=6)
+    else:
+        paragrafo(doc, f"Diante do exposto, dos {aplic} itens aplicáveis e verificáveis, {cont_res.get('conforme', 0)} estão conformes, "
+                       f"{cont_res.get('parcial', 0)} parcialmente conformes e {cont_res.get('nao_conforme', 0)} não conformes. "
+                       + situacao, depois=6)
+    if lst:
+        paragrafo(doc, "Recomendam-se, por ordem de prioridade, as seguintes providências:", depois=4)
+        for n, r in enumerate(lst, 1):
+            it = itens[r["item"]]; g = it["gravidade"]
+            prov = r.get("providencia") or (r.get("correcao") or it["dica"]).strip()
+            p = fmt(doc.add_paragraph(), recuo1=0, esq=0.75, depois=4)
+            p.paragraph_format.first_line_indent = Cm(-0.75)
+            run(p, f"{n}. ", negrito=True, hexa=C[g]); run(p, it["titulo"] + " ", negrito=True)
+            run(p, f"(gravidade {GRAV[g].lower()}, item 3.{n}): ", hexa=C[g]); run(p, prov)
+    paragrafo(doc, "O presente parecer tem natureza técnica, de apoio à instrução do processo, e não substitui a análise jurídica prévia "
+                   "obrigatória (art. 53 da Lei 14.133/2021) nem a decisão da autoridade competente.", antes=6, depois=6)
+    paragrafo(doc, "É o parecer técnico.", depois=18)
+    paragrafo(doc, f"{LOCAL}, {data_extenso(data)}.", recuo1=0, alinh=WD_ALIGN_PARAGRAPH.RIGHT, depois=36)
+    p = paragrafo(doc, "", recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.CENTER)
+    run(p, "_" * 42, hexa=C["linha"])
+    resp = analise.get("responsavel")
+    p = paragrafo(doc, "", recuo1=0, entre=1.15, alinh=WD_ALIGN_PARAGRAPH.CENTER)
+    run(p, resp.get("nome") if resp else "Agente Licitacon", negrito=True, tam=11)
+    p = paragrafo(doc, "", recuo1=0, entre=1.15, alinh=WD_ALIGN_PARAGRAPH.CENTER)
+    run(p, resp.get("qualificacao") if resp else "Análise técnica automatizada em licitações e contratos", tam=9.5, hexa=C["fraco"])
+
+    # REFERÊNCIAS (NBR 6023) — sem indicativo numérico, centralizado
+    quebra_pagina(doc)
+    p = titulo(doc, "Referências"); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    acesso = data_abnt(data)
+    refs = []
+    for nid in sorted(normas_usadas):
+        if nid in REF_NORMA: refs.append(REF_NORMA[nid][0].format(acesso=acesso))
+    if analise.get("referencia_documento"):
+        refs.append(analise["referencia_documento"].format(acesso=acesso))
+    for j in referencias_juris.values():
+        refs.append(j.get("citacao_abnt") or f"{j.get('orgao', '')}. {j.get('numero', '')}. Disponível em: {j.get('fonte_url', '')}.")
+    vistos = []
+    for rtxt in sorted(set(refs), key=lambda s: _norm(s)):
+        p = fmt(doc.add_paragraph(), recuo1=0, entre=1.0, depois=12, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+        run(p, rtxt, tam=11)
+
+    # APÊNDICE A
+    quebra_pagina(doc)
+    p = titulo(doc, "Apêndice A – Lista de verificação"); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    paragrafo(doc, "Todos os itens do roteiro aplicados a este processo.", recuo1=0, depois=6, tam=10, hexa=C["fraco"], italico=True)
+    t = doc.add_table(rows=1, cols=4); t.alignment = WD_TABLE_ALIGNMENT.CENTER
+    larg = [6.2, 3.0, 2.8, 4.0]
     for i, h in enumerate(["Item", "Documento", "Resultado", "Fundamento"]):
-        c = t.rows[0].cells[i]; c.text = h; c.paragraphs[0].runs[0].bold = True; sombrear(c, "EAF2F1")
-    for r in resultados:
+        c = t.rows[0].cells[i]; sombrear(c, C["marinho"]); c.width = Cm(larg[i]); margens_celula(c, 0.1); bordas(c)
+        p = c.paragraphs[0]; fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT); run(p, h.upper(), negrito=True, tam=8, hexa="FFFFFF")
+    for i, col in enumerate(t.columns): col.width = Cm(larg[i])
+    for i, gc in enumerate(t._tbl.tblGrid.findall(qn("w:gridCol"))): gc.set(qn("w:w"), str(int(larg[i] * 567)))
+    cores_res = {"conforme": C["ok"], "parcial": C["media"], "nao_conforme": C["alta"], "nao_aplicavel": C["fraco"], "nao_verificavel": C["nv"]}
+    for k, r in enumerate(sorted(resultados, key=lambda x: ["nao_conforme", "parcial", "conforme", "nao_verificavel", "nao_aplicavel"].index(x["resultado"]))):
         it = itens[r["item"]]; row = t.add_row().cells
-        row[0].text = it["titulo"]; row[1].text = docs_nome.get(it["doc"], it["doc"])
-        row[2].text = RESULT[r["resultado"]]
-        row[3].text = "; ".join(rotulo(f) for f in it["fundamento"])
-        if r["resultado"] in ("nao_conforme", "parcial"):
-            sombrear(row[2], FUNDO[it["gravidade"]])
-    for row in t.rows:
-        row.cells[0].width = Cm(5.5); row.cells[1].width = Cm(3.2); row.cells[2].width = Cm(3.2); row.cells[3].width = Cm(5)
-        for c in row.cells:
-            for p in c.paragraphs:
-                for rr in p.runs: rr.font.size = Pt(8.5)
+        vals = [it["titulo"], docs_nome.get(it["doc"], it["doc"]), RESULT[r["resultado"]], "; ".join(rotulo(f, com_norma=False) for f in it["fundamento"])]
+        for i, v in enumerate(vals):
+            c = row[i]; c.width = Cm(larg[i]); margens_celula(c, 0.1); bordas(c, bottom=(C["linha"], 4))
+            if k % 2: sombrear(c, "FAFBFC")
+            p = c.paragraphs[0]; fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+            if i == 2:
+                run(p, "● ", tam=8, hexa=cores_res[r["resultado"]]); run(p, v, tam=8, negrito=True, hexa=cores_res[r["resultado"]])
+            else:
+                run(p, v, tam=8)
 
-    # metodologia
-    doc.add_heading("5. Metodologia e limites", level=1)
-    for txt in [
-        "Cada item do roteiro foi verificado nos documentos enviados; o trecho citado indica onde a constatação foi feita.",
-        "Os dispositivos legais citados reproduzem o texto oficial vigente na base do Licitacon na data da análise.",
-        "A jurisprudência indicada vem exclusivamente da Biblioteca Licitacon, com link para a fonte oficial; a ausência de decisão listada não significa ausência de jurisprudência sobre o tema.",
-        "Cálculos de planilha são conferidos por programa, a partir do arquivo em Excel; planilhas em PDF não permitem conferir fórmulas.",
-        "Normas estaduais e municipais, regulamentos internos e orientações locais só são considerados quando enviados com os documentos.",
-    ]:
-        doc.add_paragraph(txt, style="List Bullet")
+    # APÊNDICE B
+    paragrafo(doc, "", recuo1=0, depois=6)
+    p = titulo(doc, "Apêndice B – Metodologia e limites"); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    for k, txt in enumerate([
+        "Cada item do roteiro de verificação foi conferido nos documentos enviados; o trecho transcrito indica onde a constatação foi feita.",
+        "Os dispositivos legais reproduzem o texto oficial vigente constante da base normativa do Licitacon na data da análise, conferido automaticamente quanto à existência, revogação e veto.",
+        "Os precedentes provêm exclusivamente da Biblioteca Licitacon, com indicação da fonte oficial; a ausência de precedente listado não significa ausência de jurisprudência.",
+        "Cálculos de planilha são conferidos por programa a partir de arquivo em Excel; planilhas em PDF não permitem conferir fórmulas.",
+        "Normas estaduais e municipais, regulamentos internos e orientações locais somente são considerados quando enviados com os documentos.",
+        f"O código de verificação {verificador} identifica o conteúdo desta análise; qualquer alteração no resultado gera código diferente.",
+    ], 1):
+        p = fmt(doc.add_paragraph(), recuo1=0, esq=0.75, depois=6)
+        p.paragraph_format.first_line_indent = Cm(-0.75)
+        run(p, f"{chr(96 + k)}) ", negrito=True, hexa=C["petroleo"]); run(p, txt)
 
     doc.save(saida)
+    return entradas
+
+
+def _painel_corpo(doc, itens, resultados, lst, cont, cont_res, indice):
+    cartoes = [("Gravidade alta", cont["alta"], "alta"), ("Gravidade média", cont["media"], "media"),
+               ("Gravidade baixa", cont["baixa"], "baixa"), ("Melhorias", sum(1 for r in resultados if r["resultado"] == "conforme" and r.get("dica")), "ok")]
+    t = tabela_sem_bordas(doc, 1, 7, [3.55, 0.6, 3.55, 0.6, 3.55, 0.6, 3.55])
+    for i, (rot, val, g) in enumerate(cartoes):
+        c = t.rows[0].cells[i * 2]; sombrear(c, C[g + "_f"]); bordas(c, top=(C[g], 24)); margens_celula(c, 0.2)
+        p = c.paragraphs[0]; fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+        run(p, str(val), negrito=True, tam=24, hexa=C[g])
+        p = c.add_paragraph(); fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT, depois=2)
+        run(p, rot.upper(), negrito=True, tam=7, hexa=C["texto"])
+    paragrafo(doc, "", recuo1=0, entre=1.0, depois=4)
+    p = paragrafo(doc, "", recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.CENTER, depois=2)
+    p.add_run().add_picture(graficos(cont_res, indice), width=Cm(16))
+    p = paragrafo(doc, "", recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT, depois=12)
+    run(p, "Índice de conformidade: ", negrito=True, tam=7.5, hexa=C["fraco"])
+    run(p, "itens conformes mais metade dos parcialmente conformes, divididos pelos itens aplicáveis e verificáveis. "
+           "Indicador de leitura rápida; não substitui o exame de cada apontamento.", tam=7.5, hexa=C["fraco"])
+    paragrafo(doc, "PRINCIPAIS ACHADOS", recuo1=0, entre=1.0, depois=6, negrito=True, tam=9, hexa=C["petroleo"])
+    if not lst:
+        paragrafo(doc, "Nenhuma falha identificada nos itens aplicáveis.", recuo1=0, tam=10, italico=True)
+        return
+    t = tabela_sem_bordas(doc, len(lst) + 1, 4, [1.0, 8.6, 2.6, 3.8])
+    for i, h in enumerate(["Item", "Achado", "Gravidade", "Dispositivo"]):
+        c = t.rows[0].cells[i]; sombrear(c, C["marinho"]); margens_celula(c, 0.12)
+        p = c.paragraphs[0]; fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT); run(p, h.upper(), negrito=True, tam=7.5, hexa="FFFFFF")
+    for n, r in enumerate(lst, 1):
+        it = itens[r["item"]]; g = it["gravidade"]; row = t.rows[n].cells
+        for c in row:
+            bordas(c, bottom=(C["linha"], 4)); margens_celula(c, 0.12)
+            if n % 2 == 0: sombrear(c, "FAFBFC")
+        vals = [f"3.{n}", it["titulo"], GRAV[g], rotulo(it["fundamento"][0], com_norma=False) + (" e outros" if len(it["fundamento"]) > 1 else "")]
+        for i, v in enumerate(vals):
+            p = row[i].paragraphs[0]; fmt(p, recuo1=0, entre=1.05, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+            if i == 2:
+                run(p, "● ", tam=9, hexa=C[g]); run(p, v, negrito=True, tam=8.5, hexa=C[g])
+                p2 = row[i].add_paragraph(); fmt(p2, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+                run(p2, RESULT[r["resultado"]], tam=7, hexa=C["fraco"])
+            else:
+                run(p, v, tam=8.5, negrito=(i == 0), hexa=C["marinho"] if i == 0 else None)
+
+
+# ------------------------------------------------------------------ paginação do sumário e PDF
+def para_pdf(docx, pasta):
+    soffice = shutil.which("soffice") or shutil.which("libreoffice")
+    if not soffice:
+        return None
+    subprocess.run([soffice, "--headless", "--convert-to", "pdf", "--outdir", str(pasta), str(docx)],
+                   check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=180)
+    pdf = pathlib.Path(pasta) / (pathlib.Path(docx).stem + ".pdf")
+    return pdf if pdf.exists() else None
+
+def paginas_dos_titulos(pdf, entradas):
+    out = subprocess.run(["pdftotext", "-layout", str(pdf), "-"], capture_output=True, text=True).stdout
+    pags = out.split("\f")
+    achou = {}
+    def chave(s): return re.sub(r"\s+", " ", _norm(s)).strip()
+    inicio = 2  # índice da página a partir da qual procurar (ignora capa e sumário); avança em ordem
+    for e in entradas:
+        alvo = chave(e)[:40]
+        for i in range(inicio, len(pags)):
+            linhas = [chave(l) for l in pags[i].splitlines()]
+            if any(l.startswith(alvo) for l in linhas if l):
+                achou[e] = i + 1; inicio = i
+                if e.startswith("1 "): inicio = i + 1  # o painel repete os títulos dos achados
+                break
+    return achou
+
+def main():
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if len(args) != 2:
+        sys.exit(__doc__)
+    analise = json.loads(pathlib.Path(args[0]).read_text(encoding="utf-8"))
+    saida = pathlib.Path(args[1])
+    entradas = gerar(analise, saida)
+    with tempfile.TemporaryDirectory() as tmp:
+        pdf = para_pdf(saida, tmp)
+        if pdf:
+            pags = paginas_dos_titulos(pdf, entradas)
+            gerar(analise, saida, pags)
+            if "--pdf" in sys.argv:
+                pdf2 = para_pdf(saida, tmp)
+                shutil.copy(pdf2, saida.with_suffix(".pdf"))
+                print("PDF gravado:", saida.with_suffix(".pdf"))
+        else:
+            print("aviso: LibreOffice ausente; sumário sem paginação")
     print("relatório gravado:", saida)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        sys.exit(__doc__)
-    gerar(json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8")), sys.argv[2])
+    main()
