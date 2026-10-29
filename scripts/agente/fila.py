@@ -59,7 +59,9 @@ def avisar(aid):
         http("POST", f"{SUPA}/functions/v1/analise-aviso", {"id": aid},
              {"Content-Type": "application/json", "x-avisos": os.environ.get("AVISOS_SECRET", ""), "apikey": chave_servico()})
     except Exception as e:
-        print(f"aviso por e-mail falhou ({aid}): {type(e).__name__}")
+        print(f"::warning title=Fila::aviso por e-mail falhou ({aid}): {type(e).__name__} {str(e)[:120]}")
+        return
+    print(f"::notice title=Fila::análise {aid}: e-mail de aviso enviado")
 
 
 class ErroCliente(Exception):
@@ -152,18 +154,18 @@ def processar(a):
             atualizar(aid, {"status": "concluida", "concluido_em": datetime.datetime.now(datetime.timezone.utc).isoformat(), "paginas": paginas,
                             "parecer_pdf": base + ".pdf", "parecer_docx": base + ".docx", "resumo": resumo_de(analise),
                             "custo_usd": analise.get("_execucao", {}).get("custo_usd"), "erro_msg": None})
-            print(f"análise {aid}: concluída · US$ {analise.get('_execucao', {}).get('custo_usd')}")
+            print(f"::notice title=Fila::análise {aid}: concluída · US$ {analise.get('_execucao', {}).get('custo_usd')}")
         except ErroCliente as e:
             atualizar(aid, {"status": "erro", "erro_msg": str(e)})
-            print(f"análise {aid}: recusada ({type(e).__name__})")
+            print(f"::notice title=Fila::análise {aid}: recusada ({type(e).__name__})")
         except Exception as e:
             # tentativas 1 e 2: volta para a fila; na 3ª, erro definitivo
             if int(a.get("tentativas") or 1) < 3:
                 atualizar(aid, {"status": "na_fila"})
-                print(f"análise {aid}: falhou, volta à fila ({type(e).__name__})")
+                print(f"::notice title=Fila::análise {aid}: falhou, volta à fila ({type(e).__name__}: {str(e)[:200]})")
                 return
             atualizar(aid, {"status": "erro", "erro_msg": "Falha técnica no processamento automático."})
-            print(f"análise {aid}: erro definitivo ({type(e).__name__})")
+            print(f"::notice title=Fila::análise {aid}: erro definitivo ({type(e).__name__})")
     avisar(aid)
 
 
