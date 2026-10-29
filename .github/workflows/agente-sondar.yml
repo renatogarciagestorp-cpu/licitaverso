@@ -1,0 +1,14 @@
+name: Agente — sondar API do PNCP
+on: { workflow_dispatch: {} }
+permissions: { contents: write }
+jobs:
+  sondar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/agente/sondar-pncp.py /tmp/sonda.json
+      - run: |
+          git fetch -q origin agente-testes && git worktree add -q /tmp/t origin/agente-testes
+          cp /tmp/sonda.json /tmp/t/testes/sonda-pncp.json && cd /tmp/t
+          git config user.name "Licitacon — agente" && git config user.email "actions@users.noreply.github.com"
+          git checkout -q -B agente-testes && git add testes/sonda-pncp.json && git commit -q -m "sonda PNCP" && git push -q origin agente-testes
