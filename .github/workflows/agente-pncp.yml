@@ -1,0 +1,46 @@
+name: Agente — baixar contratação do PNCP
+
+# Baixa dados e arquivos públicos de uma contratação do PNCP e grava no ramo "agente-testes"
+# (fora do ramo main, para não publicar os arquivos no site).
+on:
+  workflow_dispatch:
+    inputs:
+      cnpj: { description: "CNPJ do órgão (só números)", required: true }
+      ano: { description: "Ano da compra", required: true }
+      sequencial: { description: "Sequencial da compra no PNCP", required: true }
+
+permissions:
+  contents: write
+
+jobs:
+  baixar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Baixar do PNCP
+        run: |
+          DEST="testes/pncp-${{ inputs.cnpj }}-${{ inputs.ano }}-${{ inputs.sequencial }}"
+          python3 scripts/agente/baixar-pncp.py "${{ inputs.cnpj }}" "${{ inputs.ano }}" "${{ inputs.sequencial }}" "/tmp/saida/$DEST"
+          echo "DEST=$DEST" >> "$GITHUB_ENV"
+      - name: Extrair o texto dos PDFs
+        run: |
+          sudo apt-get install -y -qq poppler-utils >/dev/null
+          cd "/tmp/saida/$DEST"
+          for f in *.pdf; do [ -f "$f" ] && pdftotext -layout "$f" "${f%.pdf}.txt" || true; done
+          for z in *.zip; do [ -f "$z" ] && mkdir -p "${z%.zip}" && unzip -qo "$z" -d "${z%.zip}" || true; done
+          find . -path "./*/*.pdf" -exec sh -c 'pdftotext -layout "$1" "${1%.pdf}.txt"' _ {} \; || true
+      - name: Gravar no ramo agente-testes
+        run: |
+          git config user.name "Licitacon — agente"
+          git config user.email "actions@users.noreply.github.com"
+          git fetch origin agente-testes || true
+          if git rev-parse --verify origin/agente-testes >/dev/null 2>&1; then
+            git checkout -B agente-testes origin/agente-testes
+          else
+            git checkout --orphan agente-testes && git rm -rf -q . && echo "# Arquivos de teste do agente (não publicados no site)" > README.md && git add README.md
+          fi
+          mkdir -p "$DEST" && cp -r "/tmp/saida/$DEST/." "$DEST/"
+          git add "$DEST"
+          git commit -m "Agente: contratação do PNCP $DEST" || echo "nada novo"
+          git push origin agente-testes
