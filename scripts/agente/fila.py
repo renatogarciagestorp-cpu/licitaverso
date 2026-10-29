@@ -178,6 +178,14 @@ def main():
         if os.environ.get("GITHUB_OUTPUT"):
             open(os.environ["GITHUB_OUTPUT"], "a").write(f"tem={'true' if (tem or stuck) else 'false'}\n")
         return
+    if "--teste" in sys.argv:  # teste interno: põe na fila uma análise do PNCP para o primeiro administrador
+        link = sys.argv[sys.argv.index("--teste") + 1]
+        adm = rest("GET", "perfis?admin=eq.true&select=id&limit=1")[0]["id"]
+        rest("POST", "analises", {"usuario_id": adm, "documento": "edital", "origem": "pncp", "pncp_link": link, "nome_arquivo": "teste interno",
+                                  "cobranca": "avulsa", "valor": 0, "status": "na_fila",
+                                  "termo_aceito_em": datetime.datetime.now(datetime.timezone.utc).isoformat(), "termo_versao": "teste"},
+             {"Prefer": "return=minimal"})
+        print("análise de teste incluída na fila")
     for _ in range(MAX_POR_EXECUCAO):
         lista = rest("POST", "rpc/analise_proxima", {}) or []
         if not lista:

@@ -7,6 +7,8 @@ on:
   schedule:
     - cron: "*/5 * * * *"
   workflow_dispatch:
+    inputs:
+      teste: { description: "Teste interno: link do PNCP para analisar em nome do administrador (opcional)", required: false, default: "" }
 
 permissions:
   contents: read
@@ -26,7 +28,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verificar a fila
         id: fila
-        run: python3 scripts/agente/fila.py --verificar
+        run: |
+          if [ -n "${{ inputs.teste }}" ]; then echo "tem=true" >> "$GITHUB_OUTPUT"; else python3 scripts/agente/fila.py --verificar; fi
       - name: Preparar ferramentas
         if: steps.fila.outputs.tem == 'true'
         run: |
@@ -35,4 +38,7 @@ jobs:
           pip install -q python-docx matplotlib
       - name: Processar
         if: steps.fila.outputs.tem == 'true'
-        run: python3 scripts/agente/fila.py
+        env:
+          TESTE: ${{ inputs.teste }}
+        run: |
+          if [ -n "$TESTE" ]; then python3 scripts/agente/fila.py --teste "$TESTE"; else python3 scripts/agente/fila.py; fi
