@@ -1,1770 +1,1782 @@
 {
-  "_sobre": "Roteiros de verificação do Agente Licitacon para contratações regidas pela Lei 14.133/2021. Cada item aponta o dispositivo legal (norma, art, disp) conferido automaticamente contra agente/normas/<norma>.json. disp usa os ids do arquivo da norma: caput, I, II, p1 (§ 1º), p1.I (§ 1º, inciso I), pu (parágrafo único), XXIII.a (inciso XXIII, alínea a). gravidade: alta = vício que compromete a legalidade ou a competitividade; media = falha que exige correção ou motivação; baixa = boa prática ou melhoria. obrigatorio: sim | condicional (ver 'quando') | recomendado. Fase de testes: somente a Lei 14.133/2021 é usada como fundamento.",
-  "regime": "lei-14133",
-  "versao": "2026-10-29",
-  "revisado_por_especialista": false,
-  "documentos": {
-    "etp": "Estudo Técnico Preliminar",
-    "tr": "Termo de Referência",
-    "riscos": "Mapa / Matriz de Riscos",
-    "planilha": "Planilha de custos e formação de preços (dedicação exclusiva de mão de obra)",
-    "edital": "Edital e minutas (ata e contrato)",
-    "cruzado": "Coerência entre os documentos"
-  },
-  "itens": [
-    {
-      "id": "etp-01",
-      "doc": "etp",
-      "titulo": "Descrição da necessidade e do problema a resolver",
-      "verificar": "O ETP descreve a necessidade da contratação a partir do problema a ser resolvido, sob a perspectiva do interesse público — e não apenas o objeto que se pretende comprar.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.I"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p2"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Sem a necessidade bem caracterizada, todo o planejamento perde lastro: o objeto, os quantitativos e a escolha da solução ficam sem motivação, o que expõe o processo a questionamento pelo controle e pode levar à anulação.",
-      "dica": "Descreva a situação atual, o problema concreto, quem é afetado e o resultado esperado para o interesse público; só depois apresente a solução.",
-      "temas": [
-        "estudo técnico preliminar",
-        "necessidade da contratação",
-        "planejamento"
-      ]
-    },
-    {
-      "id": "etp-02",
-      "doc": "etp",
-      "titulo": "Alinhamento com o plano de contratações anual",
-      "verificar": "Há demonstração de que a contratação está prevista no plano de contratações anual (quando o órgão o elabora), ou justificativa para a ausência.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.II"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "12",
-          "disp": "VII"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Quando o órgão elabora plano de contratações anual; se o elemento for omitido, o ETP deve justificar (art. 18, § 2º).",
-      "gravidade": "baixa",
-      "risco": "Contratação fora do plano sem justificativa indica falha de planejamento e pode ser apontada pelo controle interno.",
-      "dica": "Cite o item do plano de contratações anual correspondente ou registre por que a demanda não estava prevista.",
-      "temas": [
-        "plano de contratações anual",
-        "planejamento"
-      ]
-    },
-    {
-      "id": "etp-03",
-      "doc": "etp",
-      "titulo": "Requisitos da contratação",
-      "verificar": "Os requisitos necessários ao atendimento da necessidade estão definidos (padrões mínimos de qualidade, desempenho, sustentabilidade), sem restringir a competição além do necessário.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.III"
-        }
-      ],
-      "obrigatorio": "recomendado",
-      "gravidade": "media",
-      "risco": "Requisitos ausentes geram objeto mal definido; requisitos excessivos ou sem justificativa restringem a competitividade.",
-      "dica": "Relacione cada requisito à necessidade descrita e justifique os que possam limitar o número de fornecedores.",
-      "temas": [
-        "requisitos da contratação",
-        "restrição à competitividade"
-      ]
-    },
-    {
-      "id": "etp-04",
-      "doc": "etp",
-      "titulo": "Estimativa das quantidades com memória de cálculo",
-      "verificar": "As quantidades estão estimadas com memória de cálculo e documentos de suporte (histórico de consumo, dimensionamento), considerando interdependências com outras contratações e economia de escala.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.IV"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p2"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Quantitativos sem memória de cálculo favorecem superdimensionamento (dano ao erário) ou subdimensionamento (aditivos e nova contratação), e são falha recorrente apontada pelos tribunais de contas.",
-      "dica": "Anexe a memória de cálculo: série histórica, critério de projeção e premissas. Explique a relação com contratos correlatos.",
-      "temas": [
-        "estimativa de quantitativos",
-        "memória de cálculo",
-        "superdimensionamento"
-      ]
-    },
-    {
-      "id": "etp-05",
-      "doc": "etp",
-      "titulo": "Levantamento de mercado e escolha da solução",
-      "verificar": "O ETP analisa as alternativas possíveis de solução (inclusive formas diferentes de contratar) e justifica técnica e economicamente a escolha.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.V"
-        }
-      ],
-      "obrigatorio": "recomendado",
-      "quando": "Se omitido, exige justificativa (art. 18, § 2º).",
-      "gravidade": "media",
-      "risco": "Sem comparação de alternativas, não se demonstra que a solução escolhida é a mais vantajosa, fragilizando a motivação da contratação.",
-      "dica": "Compare ao menos duas alternativas (ex.: compra × locação × serviço), com custos e vantagens, e registre a conclusão.",
-      "temas": [
-        "levantamento de mercado",
-        "solução mais vantajosa",
-        "vantajosidade"
-      ]
-    },
-    {
-      "id": "etp-06",
-      "doc": "etp",
-      "titulo": "Estimativa do valor da contratação",
-      "verificar": "Há estimativa do valor com preços unitários referenciais, memórias de cálculo e documentos de suporte (que podem estar em anexo classificado, se o orçamento for sigiloso).",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.VI"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p2"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "23",
-          "disp": "caput"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Estimativa sem parâmetros válidos compromete o critério de aceitabilidade de preços e é a principal causa de sobrepreço apontada pelo controle.",
-      "dica": "Use os parâmetros do art. 23 (painel de preços, contratações similares, mídia especializada, fornecedores, notas fiscais) e registre a metodologia (média, mediana ou menor preço).",
-      "temas": [
-        "pesquisa de preços",
-        "estimativa de valor",
-        "sobrepreço"
-      ]
-    },
-    {
-      "id": "etp-07",
-      "doc": "etp",
-      "titulo": "Descrição da solução como um todo",
-      "verificar": "A solução é descrita por inteiro, inclusive manutenção e assistência técnica quando for o caso.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.VII"
-        }
-      ],
-      "obrigatorio": "recomendado",
-      "gravidade": "baixa",
-      "risco": "Solução descrita pela metade gera contratações complementares não planejadas.",
-      "dica": "Inclua tudo o que é necessário para a solução funcionar durante todo o ciclo de vida: instalação, manutenção, treinamento, suporte.",
-      "temas": [
-        "ciclo de vida",
-        "solução como um todo"
-      ]
-    },
-    {
-      "id": "etp-08",
-      "doc": "etp",
-      "titulo": "Justificativa do parcelamento ou não",
-      "verificar": "O ETP justifica o parcelamento do objeto (itens/lotes) ou a contratação em lote único.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.VIII"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p2"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "47",
-          "disp": "II"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "47",
-          "disp": "p1"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "40",
-          "disp": "V.b"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Agrupar itens divisíveis sem justificativa restringe a competição e afasta pequenas empresas — é um dos vícios mais apontados pelos tribunais de contas e pode levar à suspensão do certame.",
-      "dica": "Demonstre técnica e economicamente por que dividir (ou não dividir) é melhor: economia de escala, gestão, padronização, responsabilidade técnica única.",
-      "temas": [
-        "parcelamento do objeto",
-        "lote único",
-        "adjudicação por item",
-        "competitividade"
-      ]
-    },
-    {
-      "id": "etp-09",
-      "doc": "etp",
-      "titulo": "Resultados pretendidos",
-      "verificar": "Há demonstrativo dos resultados pretendidos em economicidade e melhor aproveitamento dos recursos.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.IX"
-        }
-      ],
-      "obrigatorio": "recomendado",
-      "gravidade": "baixa",
-      "risco": "Sem resultados definidos, não há como avaliar depois se a contratação valeu a pena.",
-      "dica": "Defina indicadores simples (economia esperada, prazo, nível de serviço) que poderão ser acompanhados na gestão do contrato.",
-      "temas": [
-        "economicidade",
-        "resultados"
-      ]
-    },
-    {
-      "id": "etp-10",
-      "doc": "etp",
-      "titulo": "Providências prévias e capacitação de fiscais",
-      "verificar": "O ETP lista as providências a adotar antes do contrato, inclusive capacitação de servidores para fiscalização e gestão.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.X"
-        }
-      ],
-      "obrigatorio": "recomendado",
-      "gravidade": "baixa",
-      "risco": "Contrato assinado sem estrutura de fiscalização tende a ter falhas de execução e de pagamento.",
-      "dica": "Indique adequações físicas, sistemas, designação e capacitação dos fiscais antes da assinatura.",
-      "temas": [
-        "fiscalização de contratos",
-        "gestão contratual"
-      ]
-    },
-    {
-      "id": "etp-11",
-      "doc": "etp",
-      "titulo": "Contratações correlatas e interdependentes",
-      "verificar": "São identificadas as contratações correlatas ou interdependentes.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.XI"
-        }
-      ],
-      "obrigatorio": "recomendado",
-      "gravidade": "baixa",
-      "risco": "Ignorar dependências causa descompasso entre contratos (ex.: equipamento sem instalação contratada).",
-      "dica": "Liste contratos vigentes ou futuros que dependem desta contratação, ou dos quais ela depende.",
-      "temas": [
-        "contratações correlatas"
-      ]
-    },
-    {
-      "id": "etp-12",
-      "doc": "etp",
-      "titulo": "Impactos ambientais e medidas mitigadoras",
-      "verificar": "São descritos possíveis impactos ambientais e medidas mitigadoras, incluindo baixo consumo de energia e logística reversa, quando aplicável.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.XII"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "11",
-          "disp": "IV"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Quando o objeto tiver impacto ambiental relevante.",
-      "gravidade": "baixa",
-      "risco": "Omissão de critérios de sustentabilidade contraria o objetivo de desenvolvimento nacional sustentável do processo licitatório.",
-      "dica": "Inclua critérios de sustentabilidade proporcionais ao objeto (eficiência energética, descarte, materiais).",
-      "temas": [
-        "sustentabilidade",
-        "licitação sustentável"
-      ]
-    },
-    {
-      "id": "etp-13",
-      "doc": "etp",
-      "titulo": "Posicionamento conclusivo",
-      "verificar": "O ETP termina com posicionamento conclusivo sobre a adequação da contratação para atender à necessidade.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.XIII"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p2"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "media",
-      "risco": "Sem conclusão, o ETP não cumpre sua função de subsidiar a decisão da autoridade.",
-      "dica": "Feche com uma declaração clara: a contratação é viável e adequada, ou não é, e por quê.",
-      "temas": [
-        "estudo técnico preliminar",
-        "viabilidade"
-      ]
-    },
-    {
-      "id": "etp-14",
-      "doc": "etp",
-      "titulo": "Justificativa dos elementos não contemplados",
-      "verificar": "Se algum elemento do art. 18, § 1º (além dos obrigatórios I, IV, VI, VIII e XIII) não foi tratado, o ETP apresenta a justificativa.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p2"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "media",
-      "risco": "Omissão silenciosa de elementos é tratada como falha de instrução processual.",
-      "dica": "Para cada elemento não aplicável, escreva uma linha explicando por que não se aplica ao caso.",
-      "temas": [
-        "estudo técnico preliminar",
-        "instrução processual"
-      ]
-    },
-    {
-      "id": "tr-01",
-      "doc": "tr",
-      "titulo": "Definição do objeto",
-      "verificar": "O TR define o objeto com natureza, quantitativos, prazo do contrato e, se for o caso, possibilidade de prorrogação.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XXIII.a"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Objeto impreciso impede a formulação de propostas comparáveis, gera impugnações e aditivos.",
-      "dica": "Descreva o objeto de forma precisa e suficiente, sem marcas (salvo exceção justificada), com quantidades e prazo.",
-      "temas": [
-        "definição do objeto",
-        "especificação"
-      ]
-    },
-    {
-      "id": "tr-02",
-      "doc": "tr",
-      "titulo": "Fundamentação com referência ao ETP",
-      "verificar": "O TR faz referência ao ETP correspondente (ou ao extrato das partes não sigilosas).",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XXIII.b"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "media",
-      "risco": "TR desconectado do ETP sugere que o planejamento não foi considerado.",
-      "dica": "Cite o ETP (número/data no processo) e resuma a justificativa da contratação.",
-      "temas": [
-        "termo de referência",
-        "estudo técnico preliminar"
-      ]
-    },
-    {
-      "id": "tr-03",
-      "doc": "tr",
-      "titulo": "Descrição da solução considerando o ciclo de vida",
-      "verificar": "A solução é descrita como um todo, considerando todo o ciclo de vida do objeto.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XXIII.c"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "media",
-      "risco": "Custos de manutenção, operação e descarte ficam fora da decisão.",
-      "dica": "Considere custos indiretos e de ciclo de vida quando relevantes (art. 11, I).",
-      "temas": [
-        "ciclo de vida"
-      ]
-    },
-    {
-      "id": "tr-04",
-      "doc": "tr",
-      "titulo": "Requisitos da contratação",
-      "verificar": "Os requisitos estão definidos e são compatíveis com os do ETP.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XXIII.d"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "media",
-      "risco": "Requisitos divergentes entre ETP e TR geram insegurança e impugnações.",
-      "dica": "Replique e detalhe os requisitos do ETP, sem acrescentar exigências não justificadas.",
-      "temas": [
-        "requisitos da contratação"
-      ]
-    },
-    {
-      "id": "tr-05",
-      "doc": "tr",
-      "titulo": "Modelo de execução",
-      "verificar": "O TR define como o contrato produzirá os resultados do início ao encerramento (rotinas, prazos, locais, horários, materiais).",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XXIII.e"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Sem modelo de execução, a fiscalização não tem parâmetro e o contratado não sabe exatamente o que entregar.",
-      "dica": "Detalhe etapas, prazos de entrega, locais, horários e condições de recebimento provisório e definitivo (art. 140).",
-      "temas": [
-        "modelo de execução",
-        "recebimento do objeto"
-      ]
-    },
-    {
-      "id": "tr-06",
-      "doc": "tr",
-      "titulo": "Modelo de gestão e fiscalização",
-      "verificar": "O TR descreve como a execução será acompanhada e fiscalizada (fiscais, comunicação, registros, ocorrências).",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XXIII.f"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "117",
-          "disp": "caput"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Fiscalização sem método aumenta o risco de pagamento por serviço não prestado e de responsabilização subsidiária trabalhista.",
-      "dica": "Defina papéis (gestor, fiscal técnico, administrativo), instrumentos de registro e rotina de verificação.",
-      "temas": [
-        "fiscalização de contratos",
-        "gestão contratual",
-        "fiscal do contrato"
-      ]
-    },
-    {
-      "id": "tr-07",
-      "doc": "tr",
-      "titulo": "Critérios de medição e pagamento",
-      "verificar": "Há critérios objetivos de medição e pagamento (preferencialmente vinculados a resultados/níveis de serviço) e prazo de pagamento.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XXIII.g"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "92",
-          "disp": "V"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Pagamento sem critério de medição gera pagamentos indevidos ou glosas contestadas.",
-      "dica": "Use instrumento de medição de resultado (IMR/nível de serviço) com faixas de ajuste no pagamento.",
-      "temas": [
-        "medição",
-        "pagamento",
-        "instrumento de medição de resultado"
-      ]
-    },
-    {
-      "id": "tr-08",
-      "doc": "tr",
-      "titulo": "Forma e critérios de seleção do fornecedor",
-      "verificar": "O TR indica modalidade, critério de julgamento e exigências de habilitação, com justificativa das exigências técnicas e econômicas.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XXIII.h"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "IX"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Exigências de habilitação sem motivação são a principal causa de restrição indevida à competitividade.",
-      "dica": "Para cada exigência de qualificação técnica, indique a parcela de maior relevância ou valor significativo que a justifica.",
-      "temas": [
-        "qualificação técnica",
-        "habilitação",
-        "restrição à competitividade"
-      ]
-    },
-    {
-      "id": "tr-09",
-      "doc": "tr",
-      "titulo": "Estimativa de valor com parâmetros",
-      "verificar": "O TR traz a estimativa do valor com preços unitários referenciais, memórias de cálculo e parâmetros utilizados (podendo constar de documento separado e classificado).",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XXIII.i"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "23",
-          "disp": "p1"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Sem parâmetros, não se demonstra a compatibilidade do preço com o mercado.",
-      "dica": "Mostre fontes, datas, metodologia estatística e tratamento de valores discrepantes.",
-      "temas": [
-        "pesquisa de preços",
-        "orçamento estimado"
-      ]
-    },
-    {
-      "id": "tr-10",
-      "doc": "tr",
-      "titulo": "Adequação orçamentária",
-      "verificar": "O TR indica a adequação orçamentária (dotação/programa de trabalho).",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XXIII.j"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "150",
-          "disp": "caput"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Contratação sem indicação de recursos orçamentários é nula e gera responsabilidade de quem lhe deu causa (art. 150).",
-      "dica": "Informe a dotação orçamentária e, para contratos plurianuais, a previsão nos exercícios seguintes (art. 105).",
-      "temas": [
-        "adequação orçamentária",
-        "dotação orçamentária"
-      ]
-    },
-    {
-      "id": "tr-11",
-      "doc": "tr",
-      "titulo": "Compras: especificação, entrega e garantia",
-      "verificar": "Em compras, o TR traz especificação do produto, locais e condições de entrega e garantia/assistência técnica exigidas.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "40",
-          "disp": "p1"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Aquisição de bens.",
-      "gravidade": "media",
-      "risco": "Especificação incompleta permite entrega de produto inadequado sem base para recusa.",
-      "dica": "Inclua especificação, prazo e local de entrega, garantia mínima e assistência técnica.",
-      "temas": [
-        "compras",
-        "especificação do produto"
-      ]
-    },
-    {
-      "id": "tr-12",
-      "doc": "tr",
-      "titulo": "Indicação de marca ou vedação de marca",
-      "verificar": "Se houver indicação de marca/modelo, há justificativa nas hipóteses legais; se houver vedação de marca, há processo administrativo que a fundamente.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "41",
-          "disp": "I"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "41",
-          "disp": "III"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Quando o TR indicar ou vedar marca.",
-      "gravidade": "alta",
-      "risco": "Indicação de marca sem justificativa direciona a licitação e é causa frequente de anulação.",
-      "dica": "Use 'ou equivalente/similar' e justifique tecnicamente qualquer indicação de marca (padronização, compatibilidade).",
-      "temas": [
-        "indicação de marca",
-        "direcionamento"
-      ]
-    },
-    {
-      "id": "tr-13",
-      "doc": "tr",
-      "titulo": "Vistoria prévia substituível por declaração",
-      "verificar": "Se o TR exige vistoria prévia, permite que ela seja substituída por declaração formal de conhecimento das condições do local.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "63",
-          "disp": "p2"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "63",
-          "disp": "p3"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Quando houver vistoria.",
-      "gravidade": "media",
-      "risco": "Vistoria obrigatória sem alternativa restringe a participação e é vício reconhecido pelo controle.",
-      "dica": "Torne a vistoria facultativa ou admita a declaração do licitante, com agendamento em datas e horários diferentes.",
-      "temas": [
-        "vistoria técnica",
-        "visita técnica",
-        "restrição à competitividade"
-      ]
-    },
-    {
-      "id": "risco-01",
-      "doc": "riscos",
-      "titulo": "Análise de riscos na fase preparatória",
-      "verificar": "Existe análise dos riscos que possam comprometer o sucesso da licitação e a boa execução contratual (identificação, probabilidade, impacto, ações e responsáveis).",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "X"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "media",
-      "risco": "Sem análise de riscos, eventos previsíveis (deserção, atraso, falha de fornecedor) não têm resposta planejada.",
-      "dica": "Para cada risco: descrição, probabilidade, impacto, ação preventiva, ação de contingência e responsável.",
-      "temas": [
-        "gestão de riscos",
-        "mapa de riscos"
-      ]
-    },
-    {
-      "id": "risco-02",
-      "doc": "riscos",
-      "titulo": "Conteúdo mínimo da matriz de riscos",
-      "verificar": "A matriz lista eventos supervenientes que podem afetar o equilíbrio econômico-financeiro e prevê a eventual necessidade de termo aditivo; trata das frações do objeto com ou sem liberdade de inovação, conforme obrigações de resultado ou de meio.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XXVII.a"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XXVII.b"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XXVII.c"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Quando houver matriz de alocação de riscos.",
-      "gravidade": "alta",
-      "risco": "Matriz incompleta deixa sem regra a solução de pleitos de reequilíbrio, gerando litígios.",
-      "dica": "Inclua os eventos típicos do objeto e diga, para cada um, quem suporta e se cabe aditivo.",
-      "temas": [
-        "matriz de riscos",
-        "equilíbrio econômico-financeiro"
-      ]
-    },
-    {
-      "id": "risco-03",
-      "doc": "riscos",
-      "titulo": "Matriz obrigatória em grande vulto e contratação integrada/semi-integrada",
-      "verificar": "Nas contratações de grande vulto ou com regime de contratação integrada ou semi-integrada, o edital contém matriz de alocação de riscos.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "22",
-          "disp": "p3"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Grande vulto (art. 6º, XXII) ou regimes integrado/semi-integrado.",
-      "gravidade": "alta",
-      "risco": "A ausência da matriz nessas hipóteses viola exigência legal expressa.",
-      "dica": "Confirme o enquadramento do valor e do regime e inclua a matriz como anexo do edital e do contrato.",
-      "temas": [
-        "matriz de riscos",
-        "contratação integrada",
-        "grande vulto"
-      ]
-    },
-    {
-      "id": "risco-04",
-      "doc": "riscos",
-      "titulo": "Alocação eficiente e quantificada",
-      "verificar": "A alocação considera a natureza do risco, quem se beneficia e quem tem melhor capacidade de gerenciá-lo; riscos seguráveis vão preferencialmente ao contratado; a alocação é quantificada no valor estimado.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "22",
-          "disp": "p1"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "103",
-          "disp": "p1"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "103",
-          "disp": "p2"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "103",
-          "disp": "p3"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Quando houver matriz de alocação de riscos.",
-      "gravidade": "media",
-      "risco": "Riscos atribuídos a quem não pode gerenciá-los encarecem as propostas ou geram inexecução.",
-      "dica": "Justifique cada alocação e reflita o custo dos riscos do contratado na estimativa de preço.",
-      "temas": [
-        "alocação de riscos",
-        "matriz de riscos"
-      ]
-    },
-    {
-      "id": "risco-05",
-      "doc": "riscos",
-      "titulo": "Contrato reflete a matriz",
-      "verificar": "A minuta de contrato reflete a matriz: hipóteses de reequilíbrio, possibilidade de resolução e seguros obrigatórios.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "22",
-          "disp": "p2"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "103",
-          "disp": "p4"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "103",
-          "disp": "p5"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Quando houver matriz de alocação de riscos.",
-      "gravidade": "alta",
-      "risco": "Contrato divergente da matriz anula o efeito da alocação e reabre discussões sobre quem arca com o evento.",
-      "dica": "Inclua cláusula expressa remetendo à matriz e repetindo as hipóteses de reequilíbrio e de resolução.",
-      "temas": [
-        "matriz de riscos",
-        "reequilíbrio econômico-financeiro"
-      ]
-    },
-    {
-      "id": "plan-01",
-      "doc": "planilha",
-      "titulo": "Enquadramento como dedicação exclusiva de mão de obra",
-      "verificar": "O objeto se enquadra como serviço contínuo com regime de dedicação exclusiva de mão de obra (empregados à disposição nas dependências do contratante, sem compartilhamento, com fiscalização da distribuição e da jornada).",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XVI"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Enquadramento errado leva a critério de reajuste errado (índice × repactuação) e a obrigações trabalhistas mal dimensionadas.",
-      "dica": "Confirme as características do art. 6º, XVI, e reflita o enquadramento no TR, na planilha e no edital.",
-      "temas": [
-        "dedicação exclusiva de mão de obra",
-        "terceirização",
-        "serviços contínuos"
-      ]
-    },
-    {
-      "id": "plan-02",
-      "doc": "planilha",
-      "titulo": "Convenção coletiva de referência",
-      "verificar": "A planilha indica a convenção/acordo coletivo usado (sindicato, vigência, data-base) e os salários e benefícios conferem com ela.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "135",
-          "disp": "II"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "63",
-          "disp": "p1"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Salário abaixo do piso torna a proposta inexequível e gera passivo trabalhista; convenção errada distorce todo o custo e a futura repactuação.",
-      "dica": "Identifique a CCT da categoria preponderante no local de execução, com número de registro e data-base.",
-      "temas": [
-        "convenção coletiva",
-        "repactuação",
-        "piso salarial"
-      ]
-    },
-    {
-      "id": "plan-03",
-      "doc": "planilha",
-      "titulo": "Itens de convenção que não vinculam a Administração",
-      "verificar": "A planilha não inclui, como custo obrigatório, cláusulas de convenção sobre matéria não trabalhista, participação nos lucros, ou que fixem valores/índices de encargos sociais e preços de insumos.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "135",
-          "disp": "p1"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "media",
-      "risco": "Custos indevidos elevam o preço e criam precedente para repactuações irregulares.",
-      "dica": "Revise as cláusulas da CCT e exclua da planilha o que se enquadra nas vedações do art. 135, § 1º.",
-      "temas": [
-        "convenção coletiva",
-        "repactuação"
-      ]
-    },
-    {
-      "id": "plan-04",
-      "doc": "planilha",
-      "titulo": "Declaração de custos trabalhistas integrais",
-      "verificar": "O edital exige declaração do licitante de que a proposta cobre integralmente os custos dos direitos trabalhistas (Constituição, leis, normas infralegais, convenções e TACs vigentes).",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "63",
-          "disp": "p1"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "media",
-      "risco": "Sem a declaração, enfraquece-se a base para recusar propostas com custos trabalhistas subdimensionados.",
-      "dica": "Inclua a declaração no modelo de proposta e cite o art. 63, § 1º.",
-      "temas": [
-        "exequibilidade",
-        "custos trabalhistas"
-      ]
-    },
-    {
-      "id": "plan-05",
-      "doc": "planilha",
-      "titulo": "Garantias do cumprimento das obrigações trabalhistas",
-      "verificar": "O edital/contrato prevê ao menos uma das medidas para assegurar o pagamento das verbas trabalhistas (garantia com cobertura trabalhista, conta vinculada, pagamento direto em caso de inadimplemento, entre outras).",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "121",
-          "disp": "p2"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "121",
-          "disp": "p3"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Sem essas medidas e com fiscalização falha, a Administração pode responder solidariamente por encargos previdenciários e subsidiariamente por verbas trabalhistas.",
-      "dica": "Preveja conta-depósito vinculada (bloqueada para movimentação) para férias, 13º e rescisórias e a comprovação mensal das obrigações.",
-      "temas": [
-        "conta vinculada",
-        "responsabilidade subsidiária",
-        "obrigações trabalhistas"
-      ]
-    },
-    {
-      "id": "plan-06",
-      "doc": "planilha",
-      "titulo": "Conferência aritmética da planilha",
-      "verificar": "Somatórios, percentuais e totais da planilha estão corretos e consistentes entre módulos (conferência feita por programa, não pela IA).",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "IV"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Erros de cálculo distorcem o valor estimado e o critério de aceitabilidade de preços.",
-      "dica": "Envie a planilha em Excel (com fórmulas) para conferência automática.",
-      "temas": [
-        "planilha de custos",
-        "formação de preços"
-      ]
-    },
-    {
-      "id": "ed-01",
-      "doc": "edital",
-      "titulo": "Conteúdo mínimo do edital",
-      "verificar": "O edital traz objeto e regras de convocação, julgamento, habilitação, recursos, penalidades, fiscalização e gestão do contrato, entrega do objeto e condições de pagamento.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "25",
-          "disp": "caput"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Edital lacunoso gera impugnações, insegurança aos licitantes e nulidade de atos.",
-      "dica": "Use o roteiro do art. 25 como checklist e, quando houver, a minuta padronizada do órgão.",
-      "temas": [
-        "edital",
-        "conteúdo do edital"
-      ]
-    },
-    {
-      "id": "ed-02",
-      "doc": "edital",
-      "titulo": "Índice de reajuste com data-base no orçamento",
-      "verificar": "O edital prevê índice de reajustamento de preço com data-base vinculada à data do orçamento estimado, independentemente do prazo do contrato.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "25",
-          "disp": "p7"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "92",
-          "disp": "p3"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Sem índice e data-base, o contratado pode pleitear reajuste por critério não previsto; data-base contada da assinatura ou da proposta contraria a lei e gera reajustes indevidos ou negados de forma ilegal.",
-      "dica": "Escreva: 'os preços serão reajustados pelo [índice], com data-base na data do orçamento estimado ([mês/ano]), observado o interregno mínimo de um ano'.",
-      "temas": [
-        "reajuste",
-        "data-base",
-        "índice de reajuste",
-        "anualidade"
-      ]
-    },
-    {
-      "id": "ed-03",
-      "doc": "edital",
-      "titulo": "Critério de reajuste em serviços contínuos",
-      "verificar": "Em serviços contínuos, o critério de reajuste é reajustamento em sentido estrito (por índice) quando não há dedicação exclusiva/predominância de mão de obra, e repactuação quando há.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "25",
-          "disp": "p8.I"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "25",
-          "disp": "p8.II"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "92",
-          "disp": "p4.II"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "135",
-          "disp": "caput"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Serviços contínuos.",
-      "gravidade": "alta",
-      "risco": "Prever reajuste por índice em contrato com dedicação exclusiva de mão de obra (ou o inverso) gera pagamentos desconectados dos custos reais e disputas na execução.",
-      "dica": "Com dedicação exclusiva: repactuação para mão de obra (data-base da convenção) e índice/repactuação para insumos, conforme o caso, com interregno mínimo de um ano.",
-      "temas": [
-        "repactuação",
-        "reajuste",
-        "serviços contínuos",
-        "dedicação exclusiva de mão de obra"
-      ]
-    },
-    {
-      "id": "ed-04",
-      "doc": "edital",
-      "titulo": "Divulgação de todos os anexos",
-      "verificar": "Edital, minuta de contrato, TR, projetos e demais anexos são divulgados no sítio oficial na mesma data, sem exigência de cadastro para acesso.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "25",
-          "disp": "p3"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "54",
-          "disp": "caput"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Anexo não divulgado ou acesso condicionado a cadastro restringe a competitividade e pode anular o certame.",
-      "dica": "Publique tudo no PNCP e no sítio do órgão no mesmo dia, com acesso livre.",
-      "temas": [
-        "publicidade",
-        "PNCP",
-        "divulgação do edital"
-      ]
-    },
-    {
-      "id": "ed-05",
-      "doc": "edital",
-      "titulo": "Prazo mínimo para apresentação de propostas",
-      "verificar": "O prazo entre a divulgação e o fim do recebimento de propostas respeita o mínimo legal para o objeto e o critério de julgamento, contado em dias úteis com exclusão do dia do começo, que é o primeiro dia útil seguinte à divulgação na internet.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "55",
-          "disp": "caput"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "183",
-          "disp": "caput"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "183",
-          "disp": "p1.I"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Prazo inferior ao mínimo é vício que leva à republicação ou anulação.",
-      "dica": "Conte em dias úteis a partir da divulgação e, se o edital for alterado com impacto nas propostas, reabra o prazo (art. 55, § 1º).",
-      "temas": [
-        "prazo de publicação",
-        "prazo mínimo de propostas"
-      ]
-    },
-    {
-      "id": "ed-06",
-      "doc": "edital",
-      "titulo": "Qualificação técnica proporcional",
-      "verificar": "As exigências de capacidade técnica se limitam às parcelas de maior relevância ou valor significativo (valor individual igual ou superior a 4% do total) e os quantitativos mínimos não passam de 50% dessas parcelas.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "67",
-          "disp": "p1"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "67",
-          "disp": "p2"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Exigências desproporcionais restringem a competição e são das irregularidades mais apontadas em representações e impugnações.",
-      "dica": "Liste as parcelas de maior relevância com seu percentual no orçamento e limite os quantitativos a 50% delas.",
-      "temas": [
-        "qualificação técnica",
-        "atestado de capacidade técnica",
-        "parcela de maior relevância"
-      ]
-    },
-    {
-      "id": "ed-07",
-      "doc": "edital",
-      "titulo": "Qualificação econômico-financeira",
-      "verificar": "Os índices contábeis exigidos estão justificados no processo; não se exige faturamento mínimo anterior nem índices de rentabilidade ou lucratividade; capital ou patrimônio líquido mínimo não passa de 10% do valor estimado.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "69",
-          "disp": "caput"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "69",
-          "disp": "p2"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "69",
-          "disp": "p4"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "69",
-          "disp": "p5"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Exigências econômicas vedadas ou desproporcionais restringem a competição e levam à anulação do certame.",
-      "dica": "Justifique os índices escolhidos e seus valores com base no mercado do objeto.",
-      "temas": [
-        "qualificação econômico-financeira",
-        "índices contábeis",
-        "patrimônio líquido"
-      ]
-    },
-    {
-      "id": "ed-08",
-      "doc": "edital",
-      "titulo": "Garantia de proposta e garantia contratual",
-      "verificar": "A garantia de proposta, se exigida, não passa de 1% do valor estimado; a garantia contratual respeita os limites legais (até 5%, ou até 10% com justificativa de complexidade e riscos).",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "58",
-          "disp": "p1"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "98",
-          "disp": "caput"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Quando houver exigência de garantia.",
-      "gravidade": "media",
-      "risco": "Garantias acima do limite legal restringem a participação.",
-      "dica": "Fixe percentuais dentro do limite e justifique quando usar o percentual majorado.",
-      "temas": [
-        "garantia contratual",
-        "garantia de proposta"
-      ]
-    },
-    {
-      "id": "ed-09",
-      "doc": "edital",
-      "titulo": "Participação em consórcio",
-      "verificar": "Se o edital veda a participação de consórcios, a vedação está justificada no processo.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "15",
-          "disp": "caput"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Quando houver vedação a consórcio.",
-      "gravidade": "media",
-      "risco": "Vedação sem motivação pode restringir a competição em objetos de maior porte ou complexidade.",
-      "dica": "Registre no ETP/TR por que o consórcio não é adequado ao objeto (ou admita-o com as regras do art. 15).",
-      "temas": [
-        "consórcio",
-        "participação em licitação"
-      ]
-    },
-    {
-      "id": "ed-10",
-      "doc": "edital",
-      "titulo": "Tratamento diferenciado a ME e EPP",
-      "verificar": "O edital aplica o tratamento favorecido às microempresas e empresas de pequeno porte (LC 123/2006), observados os limites do art. 4º da Lei 14.133.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "4",
-          "disp": "caput"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "4",
-          "disp": "p1"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "media",
-      "risco": "Omitir ou aplicar mal o tratamento diferenciado gera impugnações e nulidade de etapas.",
-      "dica": "Inclua as regras de empate ficto, regularidade fiscal tardia e, quando cabível, itens exclusivos ou cota reservada.",
-      "temas": [
-        "microempresa",
-        "empresa de pequeno porte",
-        "tratamento diferenciado"
-      ]
-    },
-    {
-      "id": "ed-11",
-      "doc": "edital",
-      "titulo": "Impugnação e esclarecimentos",
-      "verificar": "O edital prevê pedidos de esclarecimento e impugnação até 3 dias úteis antes da abertura, com resposta em até 3 dias úteis (limitada ao último dia útil antes da abertura), e divulgação das respostas.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "164",
-          "disp": "caput"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "164",
-          "disp": "pu"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "media",
-      "risco": "Prazos divergentes da lei cerceiam o direito de impugnar e podem anular o certame.",
-      "dica": "Copie os prazos do art. 164 e indique o meio eletrônico para envio.",
-      "temas": [
-        "impugnação ao edital",
-        "esclarecimentos"
-      ]
-    },
-    {
-      "id": "ed-12",
-      "doc": "edital",
-      "titulo": "Recursos administrativos",
-      "verificar": "O edital prevê recurso no prazo de 3 dias úteis, com as regras de intenção e de contrarrazões.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "165",
-          "disp": "I"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "165",
-          "disp": "p1"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "media",
-      "risco": "Regras recursais em desacordo com a lei geram nulidade da fase de julgamento.",
-      "dica": "Reproduza os prazos e o rito do art. 165.",
-      "temas": [
-        "recurso administrativo",
-        "intenção de recurso"
-      ]
-    },
-    {
-      "id": "ed-13",
-      "doc": "edital",
-      "titulo": "Sanções e multas",
-      "verificar": "As sanções seguem o rol do art. 156 e a multa está entre 0,5% e 30% do valor do contrato ou da contratação direta.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "156",
-          "disp": "caput"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "156",
-          "disp": "p3"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "media",
-      "risco": "Multas fora dos limites legais são inaplicáveis e enfraquecem a gestão do contrato.",
-      "dica": "Gradue as multas por tipo de infração dentro do intervalo legal.",
-      "temas": [
-        "sanções administrativas",
-        "multa contratual"
-      ]
-    },
-    {
-      "id": "ed-14",
-      "doc": "edital",
-      "titulo": "Orçamento sigiloso motivado",
-      "verificar": "Se o orçamento estimado é sigiloso, há motivação e o sigilo não alcança os órgãos de controle; o valor é divulgado após o julgamento.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "24",
-          "disp": "caput"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "XI"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Quando o orçamento for sigiloso.",
-      "gravidade": "media",
-      "risco": "Sigilo sem motivação, ou com valor divulgado indevidamente, compromete a estratégia de preços e a transparência.",
-      "dica": "Registre no processo o motivo do sigilo e o momento da divulgação.",
-      "temas": [
-        "orçamento sigiloso",
-        "sigilo do orçamento"
-      ]
-    },
-    {
-      "id": "ed-15",
-      "doc": "edital",
-      "titulo": "Minuta de contrato como anexo e cláusulas necessárias",
-      "verificar": "A minuta de contrato é anexo do edital e contém as cláusulas necessárias (objeto, regime, preço e reajuste, prazos, pagamento, garantias, direitos e responsabilidades, sanções, extinção, matriz de riscos quando houver).",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "VI"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "92",
-          "disp": "caput"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Cláusula essencial ausente gera lacuna na execução e dificulta a aplicação de sanções e reajustes.",
-      "dica": "Confira a minuta contra os incisos do art. 92.",
-      "temas": [
-        "minuta de contrato",
-        "cláusulas necessárias"
-      ]
-    },
-    {
-      "id": "ed-16",
-      "doc": "edital",
-      "titulo": "Vigência e prorrogação de serviços contínuos",
-      "verificar": "Em serviços e fornecimentos contínuos, a vigência é de até 5 anos e a possibilidade de prorrogação (até 10 anos) está prevista no edital, condicionada à vantajosidade.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "106",
-          "disp": "caput"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "107",
-          "disp": "caput"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Serviços e fornecimentos contínuos.",
-      "gravidade": "media",
-      "risco": "Sem previsão no edital, a prorrogação futura fica juridicamente frágil.",
-      "dica": "Preveja expressamente a prorrogação e as condições para atestar a vantajosidade.",
-      "temas": [
-        "prorrogação contratual",
-        "serviços contínuos",
-        "vigência"
-      ]
-    },
-    {
-      "id": "ed-17",
-      "doc": "edital",
-      "titulo": "Parecer jurídico",
-      "verificar": "Há registro de que o processo foi submetido à análise jurídica prévia do órgão de assessoramento jurídico.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "53",
-          "disp": "caput"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "A ausência da análise jurídica prévia é vício de procedimento.",
-      "dica": "Junte o parecer jurídico e registre o atendimento das recomendações (ou a motivação para não atendê-las).",
-      "temas": [
-        "parecer jurídico",
-        "assessoria jurídica"
-      ]
-    },
-    {
-      "id": "cx-01",
-      "doc": "cruzado",
-      "titulo": "Objeto e quantitativos iguais nos documentos",
-      "verificar": "Objeto, itens e quantidades coincidem no ETP, no TR, no edital e na planilha.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "caput"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Divergências entre documentos geram dúvida sobre o que está sendo contratado, impugnações e propostas incomparáveis.",
-      "dica": "Mantenha uma tabela única de itens e quantidades e replique-a em todos os documentos.",
-      "temas": [
-        "definição do objeto",
-        "divergência entre edital e termo de referência"
-      ]
-    },
-    {
-      "id": "cx-02",
-      "doc": "cruzado",
-      "titulo": "Reajuste coerente em edital, TR e minuta",
-      "verificar": "Índice, data-base e critério (reajuste ou repactuação) são os mesmos no TR, no edital e na minuta de contrato.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "25",
-          "disp": "p7"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "92",
-          "disp": "p3"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Critérios conflitantes geram disputa na execução sobre qual regra vale.",
-      "dica": "Centralize a cláusula de reajuste na minuta e faça os demais documentos remeterem a ela.",
-      "temas": [
-        "reajuste",
-        "repactuação",
-        "data-base"
-      ]
-    },
-    {
-      "id": "cx-03",
-      "doc": "cruzado",
-      "titulo": "Parcelamento: justificativa × forma de adjudicação",
-      "verificar": "A forma de adjudicação no edital (item, lote, global) corresponde à justificativa de parcelamento do ETP.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.VIII"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "47",
-          "disp": "II"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "alta",
-      "risco": "Edital com lote único quando o ETP recomenda parcelar (ou sem justificativa) restringe a competição.",
-      "dica": "Alinhe o edital ao que o ETP concluiu e, se mudou de ideia, atualize o ETP.",
-      "temas": [
-        "parcelamento do objeto",
-        "lote único"
-      ]
-    },
-    {
-      "id": "cx-04",
-      "doc": "cruzado",
-      "titulo": "Valor estimado consistente",
-      "verificar": "O valor estimado é o mesmo (ou a diferença está explicada) no ETP, no TR, na planilha e no edital.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "IV"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XXIII.i"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "media",
-      "risco": "Valores divergentes fragilizam o critério de aceitabilidade e o enquadramento da modalidade.",
-      "dica": "Use a planilha/pesquisa de preços como fonte única do valor e atualize os demais documentos.",
-      "temas": [
-        "orçamento estimado",
-        "valor estimado"
-      ]
-    },
-    {
-      "id": "cx-05",
-      "doc": "cruzado",
-      "titulo": "Regime de mão de obra coerente",
-      "verificar": "Se o TR caracteriza dedicação exclusiva de mão de obra, há planilha de custos, o critério é repactuação e o edital exige as garantias trabalhistas.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "6",
-          "disp": "XVI"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "92",
-          "disp": "p4.II"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "121",
-          "disp": "p3"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Serviços com dedicação exclusiva de mão de obra.",
-      "gravidade": "alta",
-      "risco": "Incoerência no regime leva a reajuste indevido e a responsabilização trabalhista da Administração.",
-      "dica": "Revise TR, planilha, edital e minuta juntos sempre que houver dedicação exclusiva de mão de obra.",
-      "temas": [
-        "dedicação exclusiva de mão de obra",
-        "repactuação",
-        "responsabilidade subsidiária"
-      ]
-    },
-    {
-      "id": "cx-06",
-      "doc": "cruzado",
-      "titulo": "Matriz de riscos refletida no contrato",
-      "verificar": "Os riscos alocados na matriz aparecem com o mesmo tratamento na minuta de contrato.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "22",
-          "disp": "p2"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Quando houver matriz de alocação de riscos.",
-      "gravidade": "alta",
-      "risco": "Contrato e matriz contraditórios anulam a segurança da alocação.",
-      "dica": "Faça a minuta remeter expressamente à matriz anexa.",
-      "temas": [
-        "matriz de riscos",
-        "equilíbrio econômico-financeiro"
-      ]
-    },
-    {
-      "id": "srp-01",
-      "doc": "edital",
-      "titulo": "Registro de preços: julgamento por lote (grupo de itens)",
-      "verificar": "Se o registro de preços adota menor preço por grupo/lote, o processo demonstra a inviabilidade de adjudicar por item e a vantagem técnica e econômica do agrupamento, e o edital indica o critério de aceitabilidade dos preços unitários máximos.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "82",
-          "disp": "p1"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "82",
-          "disp": "p2"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Registro de preços com julgamento por grupo de itens ou lote.",
-      "gravidade": "alta",
-      "risco": "Agrupamento sem a demonstração exigida restringe a competição (afasta quem fornece só parte dos itens) e permite registrar itens individualmente caros dentro de um lote barato no total (jogo de planilha); sem preço unitário máximo, não há como recusar itens com sobrepreço.",
-      "dica": "Demonstre no ETP por que cada item não pode ser licitado isoladamente e qual a vantagem do lote; indique no edital o preço unitário máximo aceitável de cada item (ou o critério para aferi-lo).",
-      "temas": [
-        "registro de preços",
-        "adjudicação por lote",
-        "menor preço global",
-        "adjudicação por item",
-        "parcelamento do objeto"
-      ]
-    },
-    {
-      "id": "srp-02",
-      "doc": "edital",
-      "titulo": "Registro de preços: quem pode aderir à ata",
-      "verificar": "As regras de adesão por não participantes respeitam a esfera do gerenciador: ata municipal só admite adesão de órgãos municipais (e desde que o registro tenha sido feito por licitação); órgãos federais não podem aderir a atas estaduais, distritais ou municipais; os limites de 50% por órgão e do dobro no total estão previstos.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "86",
-          "disp": "p3"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "86",
-          "disp": "p3.II"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "86",
-          "disp": "p8"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "86",
-          "disp": "p4"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "86",
-          "disp": "p5"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Registro de preços que admite adesão (carona).",
-      "gravidade": "media",
-      "risco": "Cláusula que admite adesões vedadas pela lei induz órgãos de outras esferas a contratações irregulares, com risco de nulidade e responsabilização de quem autorizar a adesão.",
-      "dica": "Restrinja a adesão aos órgãos e entidades municipais (art. 86, § 3º, II) e mantenha os limites dos §§ 4º e 5º.",
-      "temas": [
-        "adesão à ata de registro de preços",
-        "carona",
-        "órgão não participante"
-      ]
-    },
-    {
-      "id": "srp-03",
-      "doc": "edital",
-      "titulo": "Registro de preços: quantidades e vigência da ata",
-      "verificar": "O edital fixa a quantidade máxima de cada item compatível com a vigência da ata (1 ano, prorrogável por igual período) e o planejamento não estima consumo para período maior que o da ata.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "82",
-          "disp": "I"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "84",
-          "disp": "caput"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "p1.IV"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Registro de preços.",
-      "gravidade": "media",
-      "risco": "Quantidades dimensionadas para mais anos que a validade da ata superestimam o registro, inflam o limite das adesões (que é calculado sobre esse quantitativo) e distorcem a economia de escala ofertada.",
-      "dica": "Dimensione a quantidade máxima para a vigência da ata, com memória de cálculo; planeje os anos seguintes em novo registro de preços.",
-      "temas": [
-        "registro de preços",
-        "estimativa de quantitativos",
-        "superdimensionamento"
-      ]
-    },
-    {
-      "id": "srp-04",
-      "doc": "edital",
-      "titulo": "Registro de preços: regras obrigatórias do edital",
-      "verificar": "O edital dispõe sobre: quantidade mínima a ser cotada; possibilidade de cotar quantitativo inferior ao máximo; condições para alteração dos preços registrados; registro de mais de um fornecedor (cadastro de reserva); vedação de o órgão participar de mais de uma ata com o mesmo objeto; hipóteses de cancelamento da ata.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "82",
-          "disp": "II"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "82",
-          "disp": "IV"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "82",
-          "disp": "VI"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "82",
-          "disp": "VII"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "82",
-          "disp": "VIII"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "82",
-          "disp": "IX"
-        }
-      ],
-      "obrigatorio": "condicional",
-      "quando": "Registro de preços.",
-      "gravidade": "media",
-      "risco": "A omissão de regras que a lei manda o edital prever gera insegurança na formação das propostas e na gestão da ata, e pode ser apontada em impugnação ou pelo controle.",
-      "dica": "Inclua uma seção do edital com cada um dos incisos do art. 82, mesmo que para declarar a opção adotada (ex.: 'não será admitida cotação de quantitativo inferior ao máximo').",
-      "temas": [
-        "registro de preços",
-        "edital de registro de preços"
-      ]
-    },
-    {
-      "id": "ed-18",
-      "doc": "edital",
-      "titulo": "Coerência interna do edital e dos anexos",
-      "verificar": "Datas, critério de julgamento, forma de adjudicação e demais regras são os mesmos no corpo do edital, no termo de referência, no ETP e nas minutas, sem disposições contraditórias.",
-      "fundamento": [
-        {
-          "norma": "lei-14133",
-          "art": "25",
-          "disp": "caput"
-        },
-        {
-          "norma": "lei-14133",
-          "art": "18",
-          "disp": "IX"
-        }
-      ],
-      "obrigatorio": "sim",
-      "gravidade": "media",
-      "risco": "Regras contraditórias geram dúvida sobre como competir e julgar, motivam impugnações e recursos e podem anular atos do certame.",
-      "dica": "Revise o edital e os anexos juntos antes da publicação, com uma tabela única de datas, critério de julgamento e forma de adjudicação.",
-      "temas": [
-        "divergência entre edital e termo de referência",
-        "vinculação ao instrumento convocatório"
-      ]
+ "_sobre": "Roteiros de verificação do Agente Licitacon para contratações regidas pela Lei 14.133/2021. Cada item aponta o dispositivo legal (norma, art, disp) conferido automaticamente contra agente/normas/<norma>.json. disp usa os ids do arquivo da norma: caput, I, II, p1 (§ 1º), p1.I (§ 1º, inciso I), pu (parágrafo único), XXIII.a (inciso XXIII, alínea a). gravidade: alta = vício que compromete a legalidade ou a competitividade; media = falha que exige correção ou motivação; baixa = boa prática ou melhoria. obrigatorio: sim | condicional (ver 'quando') | recomendado. Fase de testes: somente a Lei 14.133/2021 é usada como fundamento.",
+ "regime": "lei-14133",
+ "versao": "2026-10-29b",
+ "revisado_por_especialista": false,
+ "documentos": {
+  "etp": "Estudo Técnico Preliminar",
+  "tr": "Termo de Referência",
+  "riscos": "Mapa / Matriz de Riscos",
+  "planilha": "Planilha de custos e formação de preços (dedicação exclusiva de mão de obra)",
+  "edital": "Edital e minutas (ata e contrato)",
+  "cruzado": "Coerência entre os documentos"
+ },
+ "itens": [
+  {
+   "id": "etp-01",
+   "doc": "etp",
+   "titulo": "Descrição da necessidade e do problema a resolver",
+   "verificar": "O ETP descreve a necessidade da contratação a partir do problema a ser resolvido, sob a perspectiva do interesse público — e não apenas o objeto que se pretende comprar.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.I"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p2"
     }
-  ]
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem a necessidade bem caracterizada, todo o planejamento perde lastro: o objeto, os quantitativos e a escolha da solução ficam sem motivação, o que expõe o processo a questionamento pelo controle e pode levar à anulação.",
+   "dica": "Descreva a situação atual, o problema concreto, quem é afetado e o resultado esperado para o interesse público; só depois apresente a solução.",
+   "temas": [
+    "estudo técnico preliminar",
+    "necessidade da contratação",
+    "planejamento"
+   ]
+  },
+  {
+   "id": "etp-02",
+   "doc": "etp",
+   "titulo": "Alinhamento com o plano de contratações anual",
+   "verificar": "Há demonstração de que a contratação está prevista no plano de contratações anual (quando o órgão o elabora), ou justificativa para a ausência.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.II"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "12",
+     "disp": "VII"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Quando o órgão elabora plano de contratações anual; se o elemento for omitido, o ETP deve justificar (art. 18, § 2º).",
+   "gravidade": "baixa",
+   "risco": "Contratação fora do plano sem justificativa indica falha de planejamento e pode ser apontada pelo controle interno.",
+   "dica": "Cite o item do plano de contratações anual correspondente ou registre por que a demanda não estava prevista.",
+   "temas": [
+    "plano de contratações anual",
+    "planejamento"
+   ]
+  },
+  {
+   "id": "etp-03",
+   "doc": "etp",
+   "titulo": "Requisitos da contratação",
+   "verificar": "Os requisitos necessários ao atendimento da necessidade estão definidos (padrões mínimos de qualidade, desempenho, sustentabilidade), sem restringir a competição além do necessário.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.III"
+    }
+   ],
+   "obrigatorio": "recomendado",
+   "gravidade": "media",
+   "risco": "Requisitos ausentes geram objeto mal definido; requisitos excessivos ou sem justificativa restringem a competitividade.",
+   "dica": "Relacione cada requisito à necessidade descrita e justifique os que possam limitar o número de fornecedores.",
+   "temas": [
+    "requisitos da contratação",
+    "restrição à competitividade"
+   ]
+  },
+  {
+   "id": "etp-04",
+   "doc": "etp",
+   "titulo": "Estimativa das quantidades com memória de cálculo",
+   "verificar": "As quantidades estão estimadas com memória de cálculo e documentos de suporte (histórico de consumo, dimensionamento), considerando interdependências com outras contratações e economia de escala.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.IV"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p2"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Quantitativos sem memória de cálculo favorecem superdimensionamento (dano ao erário) ou subdimensionamento (aditivos e nova contratação), e são falha recorrente apontada pelos tribunais de contas.",
+   "dica": "Anexe a memória de cálculo: série histórica, critério de projeção e premissas. Explique a relação com contratos correlatos.",
+   "temas": [
+    "estimativa de quantitativos",
+    "memória de cálculo",
+    "superdimensionamento"
+   ]
+  },
+  {
+   "id": "etp-05",
+   "doc": "etp",
+   "titulo": "Levantamento de mercado e escolha da solução",
+   "verificar": "O ETP analisa as alternativas possíveis de solução (inclusive formas diferentes de contratar) e justifica técnica e economicamente a escolha.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.V"
+    }
+   ],
+   "obrigatorio": "recomendado",
+   "quando": "Se omitido, exige justificativa (art. 18, § 2º).",
+   "gravidade": "media",
+   "risco": "Sem comparação de alternativas, não se demonstra que a solução escolhida é a mais vantajosa, fragilizando a motivação da contratação.",
+   "dica": "Compare ao menos duas alternativas (ex.: compra × locação × serviço), com custos e vantagens, e registre a conclusão.",
+   "temas": [
+    "levantamento de mercado",
+    "solução mais vantajosa",
+    "vantajosidade"
+   ]
+  },
+  {
+   "id": "etp-06",
+   "doc": "etp",
+   "titulo": "Estimativa do valor da contratação",
+   "verificar": "Há estimativa do valor com preços unitários referenciais, memórias de cálculo e documentos de suporte (que podem estar em anexo classificado, se o orçamento for sigiloso).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.VI"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p2"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "23",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Estimativa sem parâmetros válidos compromete o critério de aceitabilidade de preços e é a principal causa de sobrepreço apontada pelo controle.",
+   "dica": "Use os parâmetros do art. 23 (painel de preços, contratações similares, mídia especializada, fornecedores, notas fiscais) e registre a metodologia (média, mediana ou menor preço).",
+   "temas": [
+    "pesquisa de preços",
+    "estimativa de valor",
+    "sobrepreço"
+   ]
+  },
+  {
+   "id": "etp-07",
+   "doc": "etp",
+   "titulo": "Descrição da solução como um todo",
+   "verificar": "A solução é descrita por inteiro, inclusive manutenção e assistência técnica quando for o caso.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.VII"
+    }
+   ],
+   "obrigatorio": "recomendado",
+   "gravidade": "baixa",
+   "risco": "Solução descrita pela metade gera contratações complementares não planejadas.",
+   "dica": "Inclua tudo o que é necessário para a solução funcionar durante todo o ciclo de vida: instalação, manutenção, treinamento, suporte.",
+   "temas": [
+    "ciclo de vida",
+    "solução como um todo"
+   ]
+  },
+  {
+   "id": "etp-08",
+   "doc": "etp",
+   "titulo": "Justificativa do parcelamento ou não",
+   "verificar": "O ETP justifica o parcelamento do objeto (itens/lotes) ou a contratação em lote único.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.VIII"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p2"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "47",
+     "disp": "II"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "47",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "40",
+     "disp": "V.b"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Agrupar itens divisíveis sem justificativa restringe a competição e afasta pequenas empresas — é um dos vícios mais apontados pelos tribunais de contas e pode levar à suspensão do certame.",
+   "dica": "Demonstre técnica e economicamente por que dividir (ou não dividir) é melhor: economia de escala, gestão, padronização, responsabilidade técnica única.",
+   "temas": [
+    "parcelamento do objeto",
+    "lote único",
+    "adjudicação por item",
+    "competitividade"
+   ]
+  },
+  {
+   "id": "etp-09",
+   "doc": "etp",
+   "titulo": "Resultados pretendidos",
+   "verificar": "Há demonstrativo dos resultados pretendidos em economicidade e melhor aproveitamento dos recursos.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.IX"
+    }
+   ],
+   "obrigatorio": "recomendado",
+   "gravidade": "baixa",
+   "risco": "Sem resultados definidos, não há como avaliar depois se a contratação valeu a pena.",
+   "dica": "Defina indicadores simples (economia esperada, prazo, nível de serviço) que poderão ser acompanhados na gestão do contrato.",
+   "temas": [
+    "economicidade",
+    "resultados"
+   ]
+  },
+  {
+   "id": "etp-10",
+   "doc": "etp",
+   "titulo": "Providências prévias e capacitação de fiscais",
+   "verificar": "O ETP lista as providências a adotar antes do contrato, inclusive capacitação de servidores para fiscalização e gestão.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.X"
+    }
+   ],
+   "obrigatorio": "recomendado",
+   "gravidade": "baixa",
+   "risco": "Contrato assinado sem estrutura de fiscalização tende a ter falhas de execução e de pagamento.",
+   "dica": "Indique adequações físicas, sistemas, designação e capacitação dos fiscais antes da assinatura.",
+   "temas": [
+    "fiscalização de contratos",
+    "gestão contratual"
+   ]
+  },
+  {
+   "id": "etp-11",
+   "doc": "etp",
+   "titulo": "Contratações correlatas e interdependentes",
+   "verificar": "São identificadas as contratações correlatas ou interdependentes.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.XI"
+    }
+   ],
+   "obrigatorio": "recomendado",
+   "gravidade": "baixa",
+   "risco": "Ignorar dependências causa descompasso entre contratos (ex.: equipamento sem instalação contratada).",
+   "dica": "Liste contratos vigentes ou futuros que dependem desta contratação, ou dos quais ela depende.",
+   "temas": [
+    "contratações correlatas"
+   ]
+  },
+  {
+   "id": "etp-12",
+   "doc": "etp",
+   "titulo": "Impactos ambientais e medidas mitigadoras",
+   "verificar": "São descritos possíveis impactos ambientais e medidas mitigadoras, incluindo baixo consumo de energia e logística reversa, quando aplicável.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.XII"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "11",
+     "disp": "IV"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Quando o objeto tiver impacto ambiental relevante.",
+   "gravidade": "baixa",
+   "risco": "Omissão de critérios de sustentabilidade contraria o objetivo de desenvolvimento nacional sustentável do processo licitatório.",
+   "dica": "Inclua critérios de sustentabilidade proporcionais ao objeto (eficiência energética, descarte, materiais).",
+   "temas": [
+    "sustentabilidade",
+    "licitação sustentável"
+   ]
+  },
+  {
+   "id": "etp-13",
+   "doc": "etp",
+   "titulo": "Posicionamento conclusivo",
+   "verificar": "O ETP termina com posicionamento conclusivo sobre a adequação da contratação para atender à necessidade.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.XIII"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p2"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Sem conclusão, o ETP não cumpre sua função de subsidiar a decisão da autoridade.",
+   "dica": "Feche com uma declaração clara: a contratação é viável e adequada, ou não é, e por quê.",
+   "temas": [
+    "estudo técnico preliminar",
+    "viabilidade"
+   ]
+  },
+  {
+   "id": "etp-14",
+   "doc": "etp",
+   "titulo": "Justificativa dos elementos não contemplados",
+   "verificar": "Se algum elemento do art. 18, § 1º (além dos obrigatórios I, IV, VI, VIII e XIII) não foi tratado, o ETP apresenta a justificativa.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p2"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Omissão silenciosa de elementos é tratada como falha de instrução processual.",
+   "dica": "Para cada elemento não aplicável, escreva uma linha explicando por que não se aplica ao caso.",
+   "temas": [
+    "estudo técnico preliminar",
+    "instrução processual"
+   ]
+  },
+  {
+   "id": "tr-01",
+   "doc": "tr",
+   "titulo": "Definição do objeto",
+   "verificar": "O TR define o objeto com natureza, quantitativos, prazo do contrato e, se for o caso, possibilidade de prorrogação.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XXIII.a"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Objeto impreciso impede a formulação de propostas comparáveis, gera impugnações e aditivos.",
+   "dica": "Descreva o objeto de forma precisa e suficiente, sem marcas (salvo exceção justificada), com quantidades e prazo.",
+   "temas": [
+    "definição do objeto",
+    "especificação"
+   ]
+  },
+  {
+   "id": "tr-02",
+   "doc": "tr",
+   "titulo": "Fundamentação com referência ao ETP",
+   "verificar": "O TR faz referência ao ETP correspondente (ou ao extrato das partes não sigilosas).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XXIII.b"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "TR desconectado do ETP sugere que o planejamento não foi considerado.",
+   "dica": "Cite o ETP (número/data no processo) e resuma a justificativa da contratação.",
+   "temas": [
+    "termo de referência",
+    "estudo técnico preliminar"
+   ]
+  },
+  {
+   "id": "tr-03",
+   "doc": "tr",
+   "titulo": "Descrição da solução considerando o ciclo de vida",
+   "verificar": "A solução é descrita como um todo, considerando todo o ciclo de vida do objeto.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XXIII.c"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Custos de manutenção, operação e descarte ficam fora da decisão.",
+   "dica": "Considere custos indiretos e de ciclo de vida quando relevantes (art. 11, I).",
+   "temas": [
+    "ciclo de vida"
+   ]
+  },
+  {
+   "id": "tr-04",
+   "doc": "tr",
+   "titulo": "Requisitos da contratação",
+   "verificar": "Os requisitos estão definidos e são compatíveis com os do ETP.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XXIII.d"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Requisitos divergentes entre ETP e TR geram insegurança e impugnações.",
+   "dica": "Replique e detalhe os requisitos do ETP, sem acrescentar exigências não justificadas.",
+   "temas": [
+    "requisitos da contratação"
+   ]
+  },
+  {
+   "id": "tr-05",
+   "doc": "tr",
+   "titulo": "Modelo de execução",
+   "verificar": "O TR define como o contrato produzirá os resultados do início ao encerramento (rotinas, prazos, locais, horários, materiais).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XXIII.e"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem modelo de execução, a fiscalização não tem parâmetro e o contratado não sabe exatamente o que entregar.",
+   "dica": "Detalhe etapas, prazos de entrega, locais, horários e condições de recebimento provisório e definitivo (art. 140).",
+   "temas": [
+    "modelo de execução",
+    "recebimento do objeto"
+   ]
+  },
+  {
+   "id": "tr-06",
+   "doc": "tr",
+   "titulo": "Modelo de gestão e fiscalização",
+   "verificar": "O TR descreve como a execução será acompanhada e fiscalizada (fiscais, comunicação, registros, ocorrências).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XXIII.f"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "117",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Fiscalização sem método aumenta o risco de pagamento por serviço não prestado e de responsabilização subsidiária trabalhista.",
+   "dica": "Defina papéis (gestor, fiscal técnico, administrativo), instrumentos de registro e rotina de verificação.",
+   "temas": [
+    "fiscalização de contratos",
+    "gestão contratual",
+    "fiscal do contrato"
+   ]
+  },
+  {
+   "id": "tr-07",
+   "doc": "tr",
+   "titulo": "Critérios de medição e pagamento",
+   "verificar": "Há critérios objetivos de medição e pagamento (preferencialmente vinculados a resultados/níveis de serviço) e prazo de pagamento.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XXIII.g"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "92",
+     "disp": "V"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Pagamento sem critério de medição gera pagamentos indevidos ou glosas contestadas.",
+   "dica": "Use instrumento de medição de resultado (IMR/nível de serviço) com faixas de ajuste no pagamento.",
+   "temas": [
+    "medição",
+    "pagamento",
+    "instrumento de medição de resultado"
+   ]
+  },
+  {
+   "id": "tr-08",
+   "doc": "tr",
+   "titulo": "Forma e critérios de seleção do fornecedor",
+   "verificar": "O TR indica modalidade, critério de julgamento e exigências de habilitação, com justificativa das exigências técnicas e econômicas.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XXIII.h"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "IX"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Exigências de habilitação sem motivação são a principal causa de restrição indevida à competitividade.",
+   "dica": "Para cada exigência de qualificação técnica, indique a parcela de maior relevância ou valor significativo que a justifica.",
+   "temas": [
+    "qualificação técnica",
+    "habilitação",
+    "restrição à competitividade"
+   ]
+  },
+  {
+   "id": "tr-09",
+   "doc": "tr",
+   "titulo": "Estimativa de valor com parâmetros",
+   "verificar": "O TR traz a estimativa do valor com preços unitários referenciais, memórias de cálculo e parâmetros utilizados (podendo constar de documento separado e classificado).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XXIII.i"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "23",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem parâmetros, não se demonstra a compatibilidade do preço com o mercado.",
+   "dica": "Mostre fontes, datas, metodologia estatística e tratamento de valores discrepantes.",
+   "temas": [
+    "pesquisa de preços",
+    "orçamento estimado"
+   ]
+  },
+  {
+   "id": "tr-10",
+   "doc": "tr",
+   "titulo": "Adequação orçamentária",
+   "verificar": "O TR indica a adequação orçamentária (dotação/programa de trabalho).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XXIII.j"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "150",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Contratação sem indicação de recursos orçamentários é nula e gera responsabilidade de quem lhe deu causa (art. 150).",
+   "dica": "Informe a dotação orçamentária e, para contratos plurianuais, a previsão nos exercícios seguintes (art. 105).",
+   "temas": [
+    "adequação orçamentária",
+    "dotação orçamentária"
+   ]
+  },
+  {
+   "id": "tr-11",
+   "doc": "tr",
+   "titulo": "Compras: especificação, entrega e garantia",
+   "verificar": "Em compras, o TR traz especificação do produto, locais e condições de entrega e garantia/assistência técnica exigidas.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "40",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Aquisição de bens.",
+   "gravidade": "media",
+   "risco": "Especificação incompleta permite entrega de produto inadequado sem base para recusa.",
+   "dica": "Inclua especificação, prazo e local de entrega, garantia mínima e assistência técnica.",
+   "temas": [
+    "compras",
+    "especificação do produto"
+   ]
+  },
+  {
+   "id": "tr-12",
+   "doc": "tr",
+   "titulo": "Indicação de marca ou vedação de marca",
+   "verificar": "Se houver indicação de marca/modelo, há justificativa nas hipóteses legais; se houver vedação de marca, há processo administrativo que a fundamente.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "41",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "41",
+     "disp": "III"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Quando o TR indicar ou vedar marca.",
+   "gravidade": "alta",
+   "risco": "Indicação de marca sem justificativa direciona a licitação e é causa frequente de anulação.",
+   "dica": "Use 'ou equivalente/similar' e justifique tecnicamente qualquer indicação de marca (padronização, compatibilidade).",
+   "temas": [
+    "indicação de marca",
+    "direcionamento"
+   ]
+  },
+  {
+   "id": "tr-13",
+   "doc": "tr",
+   "titulo": "Vistoria prévia substituível por declaração",
+   "verificar": "Se o TR exige vistoria prévia, permite que ela seja substituída por declaração formal de conhecimento das condições do local.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "63",
+     "disp": "p2"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "63",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Quando houver vistoria.",
+   "gravidade": "media",
+   "risco": "Vistoria obrigatória sem alternativa restringe a participação e é vício reconhecido pelo controle.",
+   "dica": "Torne a vistoria facultativa ou admita a declaração do licitante, com agendamento em datas e horários diferentes.",
+   "temas": [
+    "vistoria técnica",
+    "visita técnica",
+    "restrição à competitividade"
+   ]
+  },
+  {
+   "id": "risco-01",
+   "doc": "riscos",
+   "titulo": "Análise de riscos na fase preparatória",
+   "verificar": "Existe análise dos riscos que possam comprometer o sucesso da licitação e a boa execução contratual (identificação, probabilidade, impacto, ações e responsáveis).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "X"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Sem análise de riscos, eventos previsíveis (deserção, atraso, falha de fornecedor) não têm resposta planejada.",
+   "dica": "Para cada risco: descrição, probabilidade, impacto, ação preventiva, ação de contingência e responsável.",
+   "temas": [
+    "gestão de riscos",
+    "mapa de riscos"
+   ]
+  },
+  {
+   "id": "risco-02",
+   "doc": "riscos",
+   "titulo": "Conteúdo mínimo da matriz de riscos",
+   "verificar": "A matriz lista eventos supervenientes que podem afetar o equilíbrio econômico-financeiro e prevê a eventual necessidade de termo aditivo; trata das frações do objeto com ou sem liberdade de inovação, conforme obrigações de resultado ou de meio.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XXVII.a"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XXVII.b"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XXVII.c"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Quando houver matriz de alocação de riscos.",
+   "gravidade": "alta",
+   "risco": "Matriz incompleta deixa sem regra a solução de pleitos de reequilíbrio, gerando litígios.",
+   "dica": "Inclua os eventos típicos do objeto e diga, para cada um, quem suporta e se cabe aditivo.",
+   "temas": [
+    "matriz de riscos",
+    "equilíbrio econômico-financeiro"
+   ]
+  },
+  {
+   "id": "risco-03",
+   "doc": "riscos",
+   "titulo": "Matriz obrigatória em grande vulto e contratação integrada/semi-integrada",
+   "verificar": "Nas contratações de grande vulto ou com regime de contratação integrada ou semi-integrada, o edital contém matriz de alocação de riscos.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "22",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Grande vulto (art. 6º, XXII) ou regimes integrado/semi-integrado.",
+   "gravidade": "alta",
+   "risco": "A ausência da matriz nessas hipóteses viola exigência legal expressa.",
+   "dica": "Confirme o enquadramento do valor e do regime e inclua a matriz como anexo do edital e do contrato.",
+   "temas": [
+    "matriz de riscos",
+    "contratação integrada",
+    "grande vulto"
+   ]
+  },
+  {
+   "id": "risco-04",
+   "doc": "riscos",
+   "titulo": "Alocação eficiente e quantificada",
+   "verificar": "A alocação considera a natureza do risco, quem se beneficia e quem tem melhor capacidade de gerenciá-lo; riscos seguráveis vão preferencialmente ao contratado; a alocação é quantificada no valor estimado.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "22",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "103",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "103",
+     "disp": "p2"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "103",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Quando houver matriz de alocação de riscos.",
+   "gravidade": "media",
+   "risco": "Riscos atribuídos a quem não pode gerenciá-los encarecem as propostas ou geram inexecução.",
+   "dica": "Justifique cada alocação e reflita o custo dos riscos do contratado na estimativa de preço.",
+   "temas": [
+    "alocação de riscos",
+    "matriz de riscos"
+   ]
+  },
+  {
+   "id": "risco-05",
+   "doc": "riscos",
+   "titulo": "Contrato reflete a matriz",
+   "verificar": "A minuta de contrato reflete a matriz: hipóteses de reequilíbrio, possibilidade de resolução e seguros obrigatórios.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "22",
+     "disp": "p2"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "103",
+     "disp": "p4"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "103",
+     "disp": "p5"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Quando houver matriz de alocação de riscos.",
+   "gravidade": "alta",
+   "risco": "Contrato divergente da matriz anula o efeito da alocação e reabre discussões sobre quem arca com o evento.",
+   "dica": "Inclua cláusula expressa remetendo à matriz e repetindo as hipóteses de reequilíbrio e de resolução.",
+   "temas": [
+    "matriz de riscos",
+    "reequilíbrio econômico-financeiro"
+   ]
+  },
+  {
+   "id": "plan-01",
+   "doc": "planilha",
+   "titulo": "Enquadramento como dedicação exclusiva de mão de obra",
+   "verificar": "O objeto se enquadra como serviço contínuo com regime de dedicação exclusiva de mão de obra (empregados à disposição nas dependências do contratante, sem compartilhamento, com fiscalização da distribuição e da jornada).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XVI"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Enquadramento errado leva a critério de reajuste errado (índice × repactuação) e a obrigações trabalhistas mal dimensionadas.",
+   "dica": "Confirme as características do art. 6º, XVI, e reflita o enquadramento no TR, na planilha e no edital.",
+   "temas": [
+    "dedicação exclusiva de mão de obra",
+    "terceirização",
+    "serviços contínuos"
+   ]
+  },
+  {
+   "id": "plan-02",
+   "doc": "planilha",
+   "titulo": "Convenção coletiva da categoria correta",
+   "verificar": "A planilha/orçamento usa a convenção ou acordo coletivo da categoria profissional que corresponde às atribuições do posto (sindicato, vigência e data-base indicados) e os salários, benefícios e adicionais conferem com ela. Convenção de categoria diversa da profissional a ser contratada (por exemplo, asseio e conservação para auxiliar de educação infantil) é falha GRAVE, porque altera piso salarial, benefícios, adicionais e encargos — toda a composição do custo do posto.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "135",
+     "disp": "II"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "135",
+     "disp": "p5"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "23",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "63",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Orçamento com convenção de outra categoria distorce o custo do posto (para mais ou para menos), compromete a aceitabilidade das propostas e a repactuação futura (que se vincula à convenção da proposta), e expõe a Administração a sobrepreço, inexequibilidade ou passivo trabalhista subsidiário.",
+   "dica": "Identifique a categoria pela CBO e pelas atribuições do posto, confirme no Mediador/MTE a convenção aplicável ao sindicato da categoria na base territorial e refaça a planilha; registre no processo a justificativa do enquadramento sindical.",
+   "temas": [
+    "convenção coletiva",
+    "repactuação",
+    "piso salarial",
+    "categoria profissional",
+    "enquadramento sindical"
+   ]
+  },
+  {
+   "id": "plan-03",
+   "doc": "planilha",
+   "titulo": "Itens de convenção que não vinculam a Administração",
+   "verificar": "A planilha não inclui, como custo obrigatório, cláusulas de convenção sobre matéria não trabalhista, participação nos lucros, ou que fixem valores/índices de encargos sociais e preços de insumos.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "135",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Custos indevidos elevam o preço e criam precedente para repactuações irregulares.",
+   "dica": "Revise as cláusulas da CCT e exclua da planilha o que se enquadra nas vedações do art. 135, § 1º.",
+   "temas": [
+    "convenção coletiva",
+    "repactuação"
+   ]
+  },
+  {
+   "id": "plan-04",
+   "doc": "planilha",
+   "titulo": "Declaração de custos trabalhistas integrais",
+   "verificar": "O edital exige declaração do licitante de que a proposta cobre integralmente os custos dos direitos trabalhistas (Constituição, leis, normas infralegais, convenções e TACs vigentes).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "63",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Sem a declaração, enfraquece-se a base para recusar propostas com custos trabalhistas subdimensionados.",
+   "dica": "Inclua a declaração no modelo de proposta e cite o art. 63, § 1º.",
+   "temas": [
+    "exequibilidade",
+    "custos trabalhistas"
+   ]
+  },
+  {
+   "id": "plan-05",
+   "doc": "planilha",
+   "titulo": "Garantias do cumprimento das obrigações trabalhistas",
+   "verificar": "O edital/contrato prevê ao menos uma das medidas para assegurar o pagamento das verbas trabalhistas (garantia com cobertura trabalhista, conta vinculada, pagamento direto em caso de inadimplemento, entre outras).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "121",
+     "disp": "p2"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "121",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem essas medidas e com fiscalização falha, a Administração pode responder solidariamente por encargos previdenciários e subsidiariamente por verbas trabalhistas.",
+   "dica": "Preveja conta-depósito vinculada (bloqueada para movimentação) para férias, 13º e rescisórias e a comprovação mensal das obrigações.",
+   "temas": [
+    "conta vinculada",
+    "responsabilidade subsidiária",
+    "obrigações trabalhistas"
+   ]
+  },
+  {
+   "id": "plan-06",
+   "doc": "planilha",
+   "titulo": "Conferência aritmética da planilha",
+   "verificar": "Somatórios, percentuais e totais da planilha estão corretos e consistentes entre módulos (conferência feita por programa, não pela IA).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "IV"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Erros de cálculo distorcem o valor estimado e o critério de aceitabilidade de preços.",
+   "dica": "Envie a planilha em Excel (com fórmulas) para conferência automática.",
+   "temas": [
+    "planilha de custos",
+    "formação de preços"
+   ]
+  },
+  {
+   "id": "ed-01",
+   "doc": "edital",
+   "titulo": "Conteúdo mínimo do edital",
+   "verificar": "O edital traz objeto e regras de convocação, julgamento, habilitação, recursos, penalidades, fiscalização e gestão do contrato, entrega do objeto e condições de pagamento.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "25",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Edital lacunoso gera impugnações, insegurança aos licitantes e nulidade de atos.",
+   "dica": "Use o roteiro do art. 25 como checklist e, quando houver, a minuta padronizada do órgão.",
+   "temas": [
+    "edital",
+    "conteúdo do edital"
+   ]
+  },
+  {
+   "id": "ed-02",
+   "doc": "edital",
+   "titulo": "Índice de reajuste com data-base no orçamento",
+   "verificar": "O edital prevê índice de reajustamento de preço com data-base vinculada à data do orçamento estimado, independentemente do prazo do contrato.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "25",
+     "disp": "p7"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "92",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem índice e data-base, o contratado pode pleitear reajuste por critério não previsto; data-base contada da assinatura ou da proposta contraria a lei e gera reajustes indevidos ou negados de forma ilegal.",
+   "dica": "Escreva: 'os preços serão reajustados pelo [índice], com data-base na data do orçamento estimado ([mês/ano]), observado o interregno mínimo de um ano'.",
+   "temas": [
+    "reajuste",
+    "data-base",
+    "índice de reajuste",
+    "anualidade"
+   ]
+  },
+  {
+   "id": "ed-03",
+   "doc": "edital",
+   "titulo": "Critério de reajuste em serviços contínuos",
+   "verificar": "Em serviços contínuos, o critério de reajuste é reajustamento em sentido estrito (por índice) quando não há dedicação exclusiva/predominância de mão de obra, e repactuação quando há.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "25",
+     "disp": "p8.I"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "25",
+     "disp": "p8.II"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "92",
+     "disp": "p4.II"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "135",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Serviços contínuos.",
+   "gravidade": "alta",
+   "risco": "Prever reajuste por índice em contrato com dedicação exclusiva de mão de obra (ou o inverso) gera pagamentos desconectados dos custos reais e disputas na execução.",
+   "dica": "Com dedicação exclusiva: repactuação para mão de obra (data-base da convenção) e índice/repactuação para insumos, conforme o caso, com interregno mínimo de um ano.",
+   "temas": [
+    "repactuação",
+    "reajuste",
+    "serviços contínuos",
+    "dedicação exclusiva de mão de obra"
+   ]
+  },
+  {
+   "id": "ed-04",
+   "doc": "edital",
+   "titulo": "Divulgação de todos os anexos",
+   "verificar": "Edital, minuta de contrato, TR, projetos e demais anexos são divulgados no sítio oficial na mesma data, sem exigência de cadastro para acesso.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "25",
+     "disp": "p3"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "54",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Anexo não divulgado ou acesso condicionado a cadastro restringe a competitividade e pode anular o certame.",
+   "dica": "Publique tudo no PNCP e no sítio do órgão no mesmo dia, com acesso livre.",
+   "temas": [
+    "publicidade",
+    "PNCP",
+    "divulgação do edital"
+   ]
+  },
+  {
+   "id": "ed-05",
+   "doc": "edital",
+   "titulo": "Prazo mínimo para apresentação de propostas",
+   "verificar": "O prazo entre a divulgação e o fim do recebimento de propostas respeita o mínimo legal para o objeto e o critério de julgamento, contado em dias úteis com exclusão do dia do começo, que é o primeiro dia útil seguinte à divulgação na internet.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "55",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "183",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "183",
+     "disp": "p1.I"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Prazo inferior ao mínimo é vício que leva à republicação ou anulação.",
+   "dica": "Conte em dias úteis a partir da divulgação e, se o edital for alterado com impacto nas propostas, reabra o prazo (art. 55, § 1º).",
+   "temas": [
+    "prazo de publicação",
+    "prazo mínimo de propostas"
+   ]
+  },
+  {
+   "id": "ed-06",
+   "doc": "edital",
+   "titulo": "Qualificação técnica proporcional",
+   "verificar": "As exigências de capacidade técnica se limitam às parcelas de maior relevância ou valor significativo (valor individual igual ou superior a 4% do total) e os quantitativos mínimos não passam de 50% dessas parcelas.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "67",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "67",
+     "disp": "p2"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Exigências desproporcionais restringem a competição e são das irregularidades mais apontadas em representações e impugnações.",
+   "dica": "Liste as parcelas de maior relevância com seu percentual no orçamento e limite os quantitativos a 50% delas.",
+   "temas": [
+    "qualificação técnica",
+    "atestado de capacidade técnica",
+    "parcela de maior relevância"
+   ]
+  },
+  {
+   "id": "ed-07",
+   "doc": "edital",
+   "titulo": "Qualificação econômico-financeira",
+   "verificar": "Os índices contábeis exigidos estão justificados no processo; não se exige faturamento mínimo anterior nem índices de rentabilidade ou lucratividade; capital ou patrimônio líquido mínimo não passa de 10% do valor estimado.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "69",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "69",
+     "disp": "p2"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "69",
+     "disp": "p4"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "69",
+     "disp": "p5"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Exigências econômicas vedadas ou desproporcionais restringem a competição e levam à anulação do certame.",
+   "dica": "Justifique os índices escolhidos e seus valores com base no mercado do objeto.",
+   "temas": [
+    "qualificação econômico-financeira",
+    "índices contábeis",
+    "patrimônio líquido"
+   ]
+  },
+  {
+   "id": "ed-08",
+   "doc": "edital",
+   "titulo": "Garantia de proposta e garantia contratual",
+   "verificar": "A garantia de proposta, se exigida, não passa de 1% do valor estimado; a garantia contratual respeita os limites legais (até 5%, ou até 10% com justificativa de complexidade e riscos).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "58",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "98",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Quando houver exigência de garantia.",
+   "gravidade": "media",
+   "risco": "Garantias acima do limite legal restringem a participação.",
+   "dica": "Fixe percentuais dentro do limite e justifique quando usar o percentual majorado.",
+   "temas": [
+    "garantia contratual",
+    "garantia de proposta"
+   ]
+  },
+  {
+   "id": "ed-09",
+   "doc": "edital",
+   "titulo": "Participação em consórcio",
+   "verificar": "Se o edital veda a participação de consórcios, a vedação está justificada no processo.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "15",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Quando houver vedação a consórcio.",
+   "gravidade": "media",
+   "risco": "Vedação sem motivação pode restringir a competição em objetos de maior porte ou complexidade.",
+   "dica": "Registre no ETP/TR por que o consórcio não é adequado ao objeto (ou admita-o com as regras do art. 15).",
+   "temas": [
+    "consórcio",
+    "participação em licitação"
+   ]
+  },
+  {
+   "id": "ed-10",
+   "doc": "edital",
+   "titulo": "Tratamento diferenciado a ME e EPP",
+   "verificar": "O edital aplica o tratamento favorecido às microempresas e empresas de pequeno porte (LC 123/2006), observados os limites do art. 4º da Lei 14.133.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "4",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "4",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Omitir ou aplicar mal o tratamento diferenciado gera impugnações e nulidade de etapas.",
+   "dica": "Inclua as regras de empate ficto, regularidade fiscal tardia e, quando cabível, itens exclusivos ou cota reservada.",
+   "temas": [
+    "microempresa",
+    "empresa de pequeno porte",
+    "tratamento diferenciado"
+   ]
+  },
+  {
+   "id": "ed-11",
+   "doc": "edital",
+   "titulo": "Impugnação e esclarecimentos",
+   "verificar": "O edital prevê pedidos de esclarecimento e impugnação até 3 dias úteis antes da abertura, com resposta em até 3 dias úteis (limitada ao último dia útil antes da abertura), e divulgação das respostas.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "164",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "164",
+     "disp": "pu"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Prazos divergentes da lei cerceiam o direito de impugnar e podem anular o certame.",
+   "dica": "Copie os prazos do art. 164 e indique o meio eletrônico para envio.",
+   "temas": [
+    "impugnação ao edital",
+    "esclarecimentos"
+   ]
+  },
+  {
+   "id": "ed-12",
+   "doc": "edital",
+   "titulo": "Recursos administrativos",
+   "verificar": "O edital prevê recurso no prazo de 3 dias úteis, com as regras de intenção e de contrarrazões.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "165",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "165",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Regras recursais em desacordo com a lei geram nulidade da fase de julgamento.",
+   "dica": "Reproduza os prazos e o rito do art. 165.",
+   "temas": [
+    "recurso administrativo",
+    "intenção de recurso"
+   ]
+  },
+  {
+   "id": "ed-13",
+   "doc": "edital",
+   "titulo": "Sanções e multas",
+   "verificar": "As sanções seguem o rol do art. 156 e a multa está entre 0,5% e 30% do valor do contrato ou da contratação direta.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "156",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "156",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Multas fora dos limites legais são inaplicáveis e enfraquecem a gestão do contrato.",
+   "dica": "Gradue as multas por tipo de infração dentro do intervalo legal.",
+   "temas": [
+    "sanções administrativas",
+    "multa contratual"
+   ]
+  },
+  {
+   "id": "ed-14",
+   "doc": "edital",
+   "titulo": "Orçamento sigiloso motivado",
+   "verificar": "Se o orçamento estimado é sigiloso, há motivação e o sigilo não alcança os órgãos de controle; o valor é divulgado após o julgamento.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "24",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "XI"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Quando o orçamento for sigiloso.",
+   "gravidade": "media",
+   "risco": "Sigilo sem motivação, ou com valor divulgado indevidamente, compromete a estratégia de preços e a transparência.",
+   "dica": "Registre no processo o motivo do sigilo e o momento da divulgação.",
+   "temas": [
+    "orçamento sigiloso",
+    "sigilo do orçamento"
+   ]
+  },
+  {
+   "id": "ed-15",
+   "doc": "edital",
+   "titulo": "Minuta de contrato como anexo e cláusulas necessárias",
+   "verificar": "A minuta de contrato é anexo do edital e contém as cláusulas necessárias (objeto, regime, preço e reajuste, prazos, pagamento, garantias, direitos e responsabilidades, sanções, extinção, matriz de riscos quando houver).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "VI"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "92",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Cláusula essencial ausente gera lacuna na execução e dificulta a aplicação de sanções e reajustes.",
+   "dica": "Confira a minuta contra os incisos do art. 92.",
+   "temas": [
+    "minuta de contrato",
+    "cláusulas necessárias"
+   ]
+  },
+  {
+   "id": "ed-16",
+   "doc": "edital",
+   "titulo": "Vigência e prorrogação de serviços contínuos",
+   "verificar": "Em serviços e fornecimentos contínuos, a vigência é de até 5 anos e a possibilidade de prorrogação (até 10 anos) está prevista no edital, condicionada à vantajosidade.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "106",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "107",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Serviços e fornecimentos contínuos.",
+   "gravidade": "media",
+   "risco": "Sem previsão no edital, a prorrogação futura fica juridicamente frágil.",
+   "dica": "Preveja expressamente a prorrogação e as condições para atestar a vantajosidade.",
+   "temas": [
+    "prorrogação contratual",
+    "serviços contínuos",
+    "vigência"
+   ]
+  },
+  {
+   "id": "ed-17",
+   "doc": "edital",
+   "titulo": "Parecer jurídico",
+   "verificar": "Há registro de que o processo foi submetido à análise jurídica prévia do órgão de assessoramento jurídico.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "53",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "A ausência da análise jurídica prévia é vício de procedimento.",
+   "dica": "Junte o parecer jurídico e registre o atendimento das recomendações (ou a motivação para não atendê-las).",
+   "temas": [
+    "parecer jurídico",
+    "assessoria jurídica"
+   ]
+  },
+  {
+   "id": "cx-01",
+   "doc": "cruzado",
+   "titulo": "Objeto e quantitativos iguais nos documentos",
+   "verificar": "Objeto, itens e quantidades coincidem no ETP, no TR, no edital e na planilha.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Divergências entre documentos geram dúvida sobre o que está sendo contratado, impugnações e propostas incomparáveis.",
+   "dica": "Mantenha uma tabela única de itens e quantidades e replique-a em todos os documentos.",
+   "temas": [
+    "definição do objeto",
+    "divergência entre edital e termo de referência"
+   ]
+  },
+  {
+   "id": "cx-02",
+   "doc": "cruzado",
+   "titulo": "Reajuste coerente em edital, TR e minuta",
+   "verificar": "Índice, data-base e critério (reajuste ou repactuação) são os mesmos no TR, no edital e na minuta de contrato.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "25",
+     "disp": "p7"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "92",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Critérios conflitantes geram disputa na execução sobre qual regra vale.",
+   "dica": "Centralize a cláusula de reajuste na minuta e faça os demais documentos remeterem a ela.",
+   "temas": [
+    "reajuste",
+    "repactuação",
+    "data-base"
+   ]
+  },
+  {
+   "id": "cx-03",
+   "doc": "cruzado",
+   "titulo": "Parcelamento: justificativa × forma de adjudicação",
+   "verificar": "A forma de adjudicação no edital (item, lote, global) corresponde à justificativa de parcelamento do ETP.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.VIII"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "47",
+     "disp": "II"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Edital com lote único quando o ETP recomenda parcelar (ou sem justificativa) restringe a competição.",
+   "dica": "Alinhe o edital ao que o ETP concluiu e, se mudou de ideia, atualize o ETP.",
+   "temas": [
+    "parcelamento do objeto",
+    "lote único"
+   ]
+  },
+  {
+   "id": "cx-04",
+   "doc": "cruzado",
+   "titulo": "Valor estimado consistente",
+   "verificar": "O valor estimado é o mesmo (ou a diferença está explicada) no ETP, no TR, na planilha e no edital.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "IV"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XXIII.i"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Valores divergentes fragilizam o critério de aceitabilidade e o enquadramento da modalidade.",
+   "dica": "Use a planilha/pesquisa de preços como fonte única do valor e atualize os demais documentos.",
+   "temas": [
+    "orçamento estimado",
+    "valor estimado"
+   ]
+  },
+  {
+   "id": "cx-05",
+   "doc": "cruzado",
+   "titulo": "Regime de mão de obra coerente",
+   "verificar": "Se o TR caracteriza dedicação exclusiva de mão de obra, há planilha de custos, o critério é repactuação e o edital exige as garantias trabalhistas.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "6",
+     "disp": "XVI"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "92",
+     "disp": "p4.II"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "121",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Serviços com dedicação exclusiva de mão de obra.",
+   "gravidade": "alta",
+   "risco": "Incoerência no regime leva a reajuste indevido e a responsabilização trabalhista da Administração.",
+   "dica": "Revise TR, planilha, edital e minuta juntos sempre que houver dedicação exclusiva de mão de obra.",
+   "temas": [
+    "dedicação exclusiva de mão de obra",
+    "repactuação",
+    "responsabilidade subsidiária"
+   ]
+  },
+  {
+   "id": "cx-06",
+   "doc": "cruzado",
+   "titulo": "Matriz de riscos refletida no contrato",
+   "verificar": "Os riscos alocados na matriz aparecem com o mesmo tratamento na minuta de contrato.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "22",
+     "disp": "p2"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Quando houver matriz de alocação de riscos.",
+   "gravidade": "alta",
+   "risco": "Contrato e matriz contraditórios anulam a segurança da alocação.",
+   "dica": "Faça a minuta remeter expressamente à matriz anexa.",
+   "temas": [
+    "matriz de riscos",
+    "equilíbrio econômico-financeiro"
+   ]
+  },
+  {
+   "id": "srp-01",
+   "doc": "edital",
+   "titulo": "Registro de preços: julgamento por lote (grupo de itens)",
+   "verificar": "Se o registro de preços adota menor preço por grupo/lote, o processo demonstra a inviabilidade de adjudicar por item e a vantagem técnica e econômica do agrupamento, e o edital indica o critério de aceitabilidade dos preços unitários máximos.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "82",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "82",
+     "disp": "p2"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Registro de preços com julgamento por grupo de itens ou lote.",
+   "gravidade": "alta",
+   "risco": "Agrupamento sem a demonstração exigida restringe a competição (afasta quem fornece só parte dos itens) e permite registrar itens individualmente caros dentro de um lote barato no total (jogo de planilha); sem preço unitário máximo, não há como recusar itens com sobrepreço.",
+   "dica": "Demonstre no ETP por que cada item não pode ser licitado isoladamente e qual a vantagem do lote; indique no edital o preço unitário máximo aceitável de cada item (ou o critério para aferi-lo).",
+   "temas": [
+    "registro de preços",
+    "adjudicação por lote",
+    "menor preço global",
+    "adjudicação por item",
+    "parcelamento do objeto"
+   ]
+  },
+  {
+   "id": "srp-02",
+   "doc": "edital",
+   "titulo": "Registro de preços: quem pode aderir à ata",
+   "verificar": "As regras de adesão por não participantes respeitam a esfera do gerenciador: ata municipal só admite adesão de órgãos municipais (e desde que o registro tenha sido feito por licitação); órgãos federais não podem aderir a atas estaduais, distritais ou municipais; os limites de 50% por órgão e do dobro no total estão previstos.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "86",
+     "disp": "p3"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "86",
+     "disp": "p3.II"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "86",
+     "disp": "p8"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "86",
+     "disp": "p4"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "86",
+     "disp": "p5"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Registro de preços que admite adesão (carona).",
+   "gravidade": "media",
+   "risco": "Cláusula que admite adesões vedadas pela lei induz órgãos de outras esferas a contratações irregulares, com risco de nulidade e responsabilização de quem autorizar a adesão.",
+   "dica": "Restrinja a adesão aos órgãos e entidades municipais (art. 86, § 3º, II) e mantenha os limites dos §§ 4º e 5º.",
+   "temas": [
+    "adesão à ata de registro de preços",
+    "carona",
+    "órgão não participante"
+   ]
+  },
+  {
+   "id": "srp-03",
+   "doc": "edital",
+   "titulo": "Registro de preços: quantidades e vigência da ata",
+   "verificar": "O edital fixa a quantidade máxima de cada item compatível com a vigência da ata (1 ano, prorrogável por igual período) e o planejamento não estima consumo para período maior que o da ata.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "82",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "84",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "p1.IV"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Registro de preços.",
+   "gravidade": "media",
+   "risco": "Quantidades dimensionadas para mais anos que a validade da ata superestimam o registro, inflam o limite das adesões (que é calculado sobre esse quantitativo) e distorcem a economia de escala ofertada.",
+   "dica": "Dimensione a quantidade máxima para a vigência da ata, com memória de cálculo; planeje os anos seguintes em novo registro de preços.",
+   "temas": [
+    "registro de preços",
+    "estimativa de quantitativos",
+    "superdimensionamento"
+   ]
+  },
+  {
+   "id": "srp-04",
+   "doc": "edital",
+   "titulo": "Registro de preços: regras obrigatórias do edital",
+   "verificar": "O edital dispõe sobre: quantidade mínima a ser cotada; possibilidade de cotar quantitativo inferior ao máximo; condições para alteração dos preços registrados; registro de mais de um fornecedor (cadastro de reserva); vedação de o órgão participar de mais de uma ata com o mesmo objeto; hipóteses de cancelamento da ata.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "82",
+     "disp": "II"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "82",
+     "disp": "IV"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "82",
+     "disp": "VI"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "82",
+     "disp": "VII"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "82",
+     "disp": "VIII"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "82",
+     "disp": "IX"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Registro de preços.",
+   "gravidade": "media",
+   "risco": "A omissão de regras que a lei manda o edital prever gera insegurança na formação das propostas e na gestão da ata, e pode ser apontada em impugnação ou pelo controle.",
+   "dica": "Inclua uma seção do edital com cada um dos incisos do art. 82, mesmo que para declarar a opção adotada (ex.: 'não será admitida cotação de quantitativo inferior ao máximo').",
+   "temas": [
+    "registro de preços",
+    "edital de registro de preços"
+   ]
+  },
+  {
+   "id": "ed-18",
+   "doc": "edital",
+   "titulo": "Coerência interna do edital e dos anexos",
+   "verificar": "Datas, critério de julgamento, forma de adjudicação e demais regras são os mesmos no corpo do edital, no termo de referência, no ETP e nas minutas, sem disposições contraditórias.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "25",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "18",
+     "disp": "IX"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Regras contraditórias geram dúvida sobre como competir e julgar, motivam impugnações e recursos e podem anular atos do certame.",
+   "dica": "Revise o edital e os anexos juntos antes da publicação, com uma tabela única de datas, critério de julgamento e forma de adjudicação.",
+   "temas": [
+    "divergência entre edital e termo de referência",
+    "vinculação ao instrumento convocatório"
+   ]
+  }
+ ]
 }

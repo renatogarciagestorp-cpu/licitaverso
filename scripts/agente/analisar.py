@@ -74,6 +74,51 @@ def fatos_pncp(compra):
     return f
 
 
+# ------------------------------------------------------------------ trilhas automáticas (tipologias)
+def _mapa_normalizado(t):
+    """Texto sem acentos e minúsculo, com o índice do caractere original de cada posição."""
+    out, idx = [], []
+    for i, ch in enumerate(t):
+        for c in unicodedata.normalize("NFD", ch.lower()):
+            if unicodedata.category(c) != "Mn":
+                out.append(c); idx.append(i)
+    return "".join(out), idx
+
+def _num(v):
+    try:
+        return float(str(v).replace(".", "").replace(",", ".")) if "," in str(v) else float(v)
+    except Exception:
+        return None
+
+def rodar_trilhas(bruto):
+    arq = RAIZ / "agente" / "tipologias" / "lei-14133.json"
+    if not arq.exists():
+        return []
+    trilhas = json.loads(arq.read_text(encoding="utf-8"))["trilhas"]
+    paginas = bruto.split("\f")
+    achados = []
+    for tr in trilhas:
+        ocorr = []
+        for npag, pag in enumerate(paginas, 1):
+            norm, idx = _mapa_normalizado(pag)
+            norm1 = re.sub(r"\s", " ", norm)
+            for pad in tr["padroes"]:
+                for m in re.finditer(pad, norm1):
+                    if "limite" in tr:
+                        vals = [_num(v) for k, v in m.groupdict().items() if v]
+                        if not vals or max(v for v in vals if v is not None) <= tr["limite"]:
+                            continue
+                    a, b = idx[max(0, m.start() - 160)], idx[min(len(idx) - 1, m.end() + 160)]
+                    ocorr.append({"pagina": npag, "trecho": re.sub(r"\s+", " ", pag[a:b]).strip()})
+                    if len(ocorr) >= 3: break
+                if len(ocorr) >= 3: break
+            if len(ocorr) >= 3: break
+        if ocorr:
+            achados.append({"id": tr["id"], "nome": tr["nome"], "gravidade": tr["gravidade"], "item": tr.get("item"), "nota": tr["nota"],
+                            "fundamento": "; ".join(rel.rotulo({"norma": "lei-14133", **f}) for f in tr["fundamento"]), "ocorrencias": ocorr})
+    return achados
+
+
 # ------------------------------------------------------------------ montagem do pedido
 def texto_com_paginas(txt):
     pags = txt.split("\f")
@@ -82,7 +127,10 @@ def texto_com_paginas(txt):
     return "\n".join(f"\n[página {i}]\n{p.strip()}" for i, p in enumerate(pags, 1) if p.strip()), len(pags)
 
 def itens_aplicaveis(roteiro, doc):
-    return [i for i in roteiro["itens"] if i["doc"] == doc]
+    """Itens do tipo de documento. O edital costuma trazer a planilha/orçamento como anexo: aplica também os itens de planilha
+    (o modelo marca 'nao_aplicavel' quando não houver mão de obra dedicada ou planilha)."""
+    tipos = {doc} | ({"planilha"} if doc == "edital" else set())
+    return [i for i in roteiro["itens"] if i["doc"] in tipos]
 
 def bloco_roteiro(itens):
     linhas = []
@@ -134,7 +182,16 @@ Regras obrigatórias:
     motivação da dispensa no item de justificativa (parcial/nao_conforme se for genérica). Lacunas que continuam obrigatórias na contratação
     direta (estimativa de despesa, razão da escolha do contratado, justificativa de preço — art. 72, II, VI e VII) vão em outros_apontamentos,
     com esse fundamento, e não como falha do ETP.
-14. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
+14. GRAVIDADE ALTA (política do Licitacon): classifique como "alta" toda irregularidade que possa (a) comprometer ou restringir a
+    competitividade, (b) direcionar o certame para determinada empresa ou marca, ou (c) indicar sobrepreço no orçamento estimado ou risco
+    de superfaturamento na execução — inclusive orçamento montado com convenção coletiva de categoria diversa da contratada, preços sem
+    pesquisa adequada ou quantitativos superdimensionados. Use "media" para falhas formais ou de instrução com risco moderado e "baixa" para
+    imprecisões e boas práticas. Ajuste a gravidade padrão do roteiro sempre que o caso concreto se enquadrar nesta política.
+15. INDÍCIOS DAS TRILHAS AUTOMÁTICAS: o sistema procurou no documento padrões de texto associados a irregularidades (como fazem as trilhas
+    do ALICE, da CGU/TCU). Avalie CADA indício no contexto: confirme quando a irregularidade de fato existe (registre-a no item do roteiro
+    indicado ou em outros_apontamentos) ou descarte quando for falso positivo (por exemplo, texto que proíbe a prática, ou percentual que
+    não se refere à exigência). Informe a decisão em "trilhas_avaliadas" ({id, confirmado, motivo}).
+16. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
     ementa_texto (síntese de 2–3 frases), resumo (um parágrafo de visão geral) e conclusao (um parágrafo)."""
 
 FERRAMENTA = {
@@ -156,6 +213,8 @@ FERRAMENTA = {
                 "gravidade": {"type": "string", "enum": ["alta", "media", "baixa"]},
                 "jurisprudencia_ids": {"type": "array", "items": {"type": "string"}}},
                 "required": ["item", "resultado"]}},
+            "trilhas_avaliadas": {"type": "array", "items": {"type": "object", "properties": {
+                "id": {"type": "string"}, "confirmado": {"type": "boolean"}, "motivo": {"type": "string"}}, "required": ["id", "confirmado"]}},
             "outros_apontamentos": {"type": "array", "items": {"type": "object", "properties": {
                 "titulo": {"type": "string"}, "constatacao": {"type": "string"}, "trecho": {"type": "string"}, "local": {"type": "string"},
                 "fundamento": {"type": "array", "items": {"type": "object", "properties": {"art": {"type": "string"}, "disp": {"type": "string"}},
@@ -284,6 +343,7 @@ def main():
         sys.exit(f"Documento grande demais ({len(texto)} caracteres; limite {MAX_CARACTERES}).")
     compra = json.loads(pathlib.Path(a.compra).read_text(encoding="utf-8")) if a.compra else None
     fatos = fatos_pncp(compra)
+    trilhas = rodar_trilhas(bruto)
 
     system = [
         {"type": "text", "text": INSTRUCOES},
@@ -292,6 +352,9 @@ def main():
     ]
     usuario = (f"Data da análise: {datetime.date.today():%d/%m/%Y}.\n\n"
                + ("FATOS CALCULADOS PELO SISTEMA (confiáveis):\n" + "\n".join("- " + f for f in fatos) + "\n\n" if fatos else "")
+               + ("INDÍCIOS DAS TRILHAS AUTOMÁTICAS (confirme ou descarte cada um):\n" + "\n".join(
+                   f"- [{t['id']}] {t['nome']} (gravidade se confirmado: {t['gravidade']}; item: {t['item'] or 'outros_apontamentos'}; {t['fundamento']}). {t['nota']}\n"
+                   + "\n".join(f"    · [página {o['pagina']}] …{o['trecho']}…" for o in t["ocorrencias"]) for t in trilhas) + "\n\n" if trilhas else "")
                + f"DOCUMENTO ({roteiro['documentos'].get(a.doc, a.doc)}; {npags or 'sem marcação de'} páginas):\n<documento>\n{texto}\n</documento>\n\n"
                "Verifique todos os itens do roteiro e registre o resultado chamando a ferramenta registrar_analise uma única vez, com todos os itens. Não responda em texto.")
     t0 = time.time()
@@ -317,13 +380,16 @@ def main():
         "regime_texto": "Lei 14.133/2021",
         "data": datetime.date.today().strftime("%d/%m/%Y"),
         "processo": dados.get("processo", {}),
-        "documentos": [{"tipo": a.doc, "arquivo": a.fonte or pathlib.Path(a.texto).name, "paginas": a.paginas or npags or None}],
+        "documentos": [{"tipo": a.doc, "arquivo": a.fonte or pathlib.Path(a.texto).name, "paginas": a.paginas or npags or None,
+                        "ocr": "[texto obtido por OCR]" in bruto}],
         "ementa": dados.get("ementa"), "ementa_texto": dados.get("ementa_texto"),
         "resumo": dados.get("resumo"), "conclusao": dados.get("conclusao"),
         "resultados": resultados,
         "outros_apontamentos": outros,
         "_execucao": {"modelo": resp.get("model"), "segundos": round(time.time() - t0), "uso": resp.get("usage"),
-                      "custo_usd": custo(resp.get("usage", {})), "parada": resp.get("stop_reason"), "avisos": avisos, "fatos": fatos},
+                      "custo_usd": custo(resp.get("usage", {})), "parada": resp.get("stop_reason"), "avisos": avisos, "fatos": fatos,
+                      "trilhas": [{"id": t["id"], "ocorrencias": len(t["ocorrencias"])} for t in trilhas],
+                      "trilhas_avaliadas": dados.get("trilhas_avaliadas", [])},
     }
     if a.fonte.startswith("http"):
         o = analise["processo"].get("orgao", "")

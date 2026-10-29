@@ -1214,7 +1214,7 @@
                 <label style="position: relative; display: flex; align-items: center; gap: 12px; margin-top: 12px; border: 1.5px dashed #BFD3D0; border-radius: 12px; padding: 14px 16px; cursor: pointer; background: #FBFCFC" style-hover="border-color: #0FA36B">
                   <input type="file" accept="application/pdf,.pdf" sc-camel-on-change="{{ onAnArquivo }}" style="position: absolute; width: 1px; height: 1px; opacity: 0">
                   <span aria-hidden="true" style="width: 34px; height: 34px; border-radius: 9px; background: #EAF2F1; color: #0F6B7E; display: grid; place-items: center; font-weight: 800">PDF</span>
-                  <span style="font-size: 14px; line-height: 1.4; color: #3D5058"><strong style="color: #0B1F2A">{{ anArquivoNome }}</strong><br><span style="font-size: 12.5px; color: #7A8B91">PDF pesquisável, até 200 páginas e 25 MB</span></span>
+                  <span style="font-size: 14px; line-height: 1.4; color: #3D5058"><strong style="color: #0B1F2A">{{ anArquivoNome }}</strong><br><span style="font-size: 12.5px; color: #7A8B91">PDF de até 200 páginas e 25 MB — digitalizado também serve</span></span>
                 </label>
               </sc-if>
               <sc-if value="{{ anOrigemPncp }}" hint-placeholder-val="{{ false }}">
@@ -2519,7 +2519,7 @@ const AN_TERMO_VERSAO = "2026-10-29";
 const AN_TERMO = [
   "Natureza: parecer técnico em gestão de licitações e contratos, elaborado de forma automatizada por inteligência artificial a partir do roteiro de verificação do Licitacon. Não é parecer jurídico e não substitui a análise jurídica prévia do órgão (Lei 14.133/2021, art. 53).",
   "Parecer opinativo: o parecer aponta todos os aspectos identificados, dos críticos aos de baixa vulnerabilidade, e recomenda providências, mas não vincula quem o recebe. A decisão de ajustar ou manter cada ponto, e a responsabilidade por ela, é exclusivamente sua (STF, MS 24.631/DF; Decreto-Lei 4.657/1942, art. 28).",
-  "Escopo: um documento por análise, em PDF pesquisável de até 200 páginas e 25 MB. Nesta fase, a análise considera a Lei 14.133/2021; normas estaduais, municipais e regulamentos internos só são considerados se constarem do próprio documento.",
+  "Escopo: um documento por análise, em PDF de até 200 páginas e 25 MB. Documentos digitalizados (imagem) são lidos por reconhecimento óptico de caracteres (OCR); com digitalização de baixa qualidade, trechos podem ser lidos com erro. Nesta fase, a análise considera a Lei 14.133/2021; normas estaduais, municipais e regulamentos internos só são considerados se constarem do próprio documento.",
   "Prazo: em geral, o parecer fica pronto em até 1 hora; você recebe um aviso por e-mail e baixa o parecer em PDF e Word nesta página.",
   "Plano Pro: 2 análises por semana incluídas (de segunda a domingo, sem acúmulo). A partir da 3ª análise na semana, a análise avulsa sai com 30% de desconto. Análise que não puder ser concluída não consome a cota; a avulsa paga é reprocessada ou estornada.",
   "Dados: o documento é processado por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos. O arquivo e o parecer ficam na sua conta, acessíveis só a você e à equipe do Licitacon. Não envie documento cuja divulgação a prestadores de serviço seja vedada.",
@@ -2614,7 +2614,7 @@ const EXIGE_LOGIN = ["forum", "cursos", "conta"];
 const PLANO_NOME = { teste: "Teste", basico: "Básico", premium: "Premium", pro: "Pro" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "3";
+const CHAT_VERSAO = "4";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
 // Pro: 1 consultoria por escrito por mês incluída (mês do calendário, horário de Brasília)
 const inicioMesBR = () => { const d = new Date(Date.now() - 3 * 3600000); return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1, 3)); };
@@ -4038,6 +4038,8 @@ class Component extends DCLogic {
         "Jurisprudência só da Biblioteca Licitacon, com link para a fonte oficial.",
         "Trechos do documento citados literalmente e conferidos por programa; prazos do art. 183 calculados pelo sistema.",
         "Todos os aspectos apontados, dos críticos aos leves, com risco, providência e redação sugerida.",
+        "Lê PDF pesquisável e também documento digitalizado (OCR em português).",
+        "Trilhas automáticas inspiradas nas tipologias do ALICE (CGU/TCU) procuram cláusulas restritivas, que o agente confirma ou descarta.",
         "Parecer em PDF e Word, no formato ABNT, pronto para juntar ao processo."
       ],
       anCotaTexto: (() => {

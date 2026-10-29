@@ -696,6 +696,11 @@ def gerar(analise, saida, paginas=None):
         "Cálculos de planilha são conferidos por programa a partir de arquivo em Excel; planilhas em PDF não permitem conferir fórmulas.",
         "Normas estaduais e municipais, regulamentos internos e orientações locais somente são considerados quando enviados com os documentos.",
         "O parecer é opinativo: aponta todos os aspectos identificados, inclusive os de baixa vulnerabilidade, e a decisão sobre cada recomendação cabe ao destinatário.",
+        "Trilhas automáticas, inspiradas nas tipologias do sistema ALICE (CGU/TCU), procuram no texto padrões associados a restrição de competitividade e direcionamento; cada indício é confirmado ou descartado pela análise no contexto do documento.",
+        "Classificação de gravidade: é alta toda irregularidade que possa comprometer a competitividade, direcionar o certame ou indicar sobrepreço ou risco de superfaturamento; média, falhas formais ou de instrução com risco moderado; baixa, imprecisões e boas práticas.",
+    ] + ([
+        "Parte do documento estava digitalizada (imagem) e foi lida por reconhecimento óptico de caracteres (OCR); trechos de baixa qualidade de digitalização podem conter erros de leitura e devem ser conferidos no original.",
+    ] if any(d.get("ocr") for d in analise.get("documentos", [])) else []) + [
         "Apontamentos adicionais são questões relevantes encontradas no documento que não constam do roteiro padrão; seus fundamentos legais também são conferidos na base oficial.",
         f"O código de verificação {verificador} identifica o conteúdo desta análise; qualquer alteração no resultado gera código diferente.",
     ], 1):

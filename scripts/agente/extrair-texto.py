@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Extrai o texto de um PDF para o agente. Se o PDF for digitalizado (imagem, sem texto pesquisável),
 faz OCR em português com o Tesseract, página por página (separadas por \\f, como o pdftotext).
-Uso: python3 scripts/agente/extrair-texto.py documento.pdf saida.txt [--max-ocr 120]
+Uso: python3 scripts/agente/extrair-texto.py documento.pdf saida.txt [--max-ocr 200]
 Sai com código 3 se não houver texto aproveitável nem com OCR."""
 import pathlib, re, shutil, subprocess, sys, tempfile
 
 pdf, saida = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
-max_ocr = int(sys.argv[sys.argv.index("--max-ocr") + 1]) if "--max-ocr" in sys.argv else 120
+max_ocr = int(sys.argv[sys.argv.index("--max-ocr") + 1]) if "--max-ocr" in sys.argv else 200
 MINIMO_POR_PAGINA = 200
 
 def util(t): return len(re.sub(r"\s+", "", t))
