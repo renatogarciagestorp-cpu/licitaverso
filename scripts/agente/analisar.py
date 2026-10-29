@@ -185,7 +185,9 @@ Regras obrigatórias:
 14. GRAVIDADE ALTA (política do Licitacon): classifique como "alta" toda irregularidade que possa (a) comprometer ou restringir a
     competitividade, (b) direcionar o certame para determinada empresa ou marca, ou (c) indicar sobrepreço no orçamento estimado ou risco
     de superfaturamento na execução — inclusive orçamento montado com convenção coletiva de categoria diversa da contratada, preços sem
-    pesquisa adequada ou quantitativos superdimensionados. Use "media" para falhas formais ou de instrução com risco moderado e "baixa" para
+    pesquisa adequada ou quantitativos superdimensionados. Exemplos que são SEMPRE alta: especificação excessivamente detalhada ou sem
+    tolerâncias que reduza o número de fornecedores aptos (risco de direcionamento); exigência de habilitação fora do rol legal ou acima dos
+    limites; prazo de divulgação abaixo do mínimo legal; orçamento sem pesquisa de preços que permita aferir sua compatibilidade com o mercado. Use "media" para falhas formais ou de instrução com risco moderado e "baixa" para
     imprecisões e boas práticas. Ajuste a gravidade padrão do roteiro sempre que o caso concreto se enquadrar nesta política.
 15. INDÍCIOS DAS TRILHAS AUTOMÁTICAS: o sistema procurou no documento padrões de texto associados a irregularidades (como fazem as trilhas
     do ALICE, da CGU/TCU). Avalie CADA indício no contexto: confirme quando a irregularidade de fato existe (registre-a no item do roteiro
