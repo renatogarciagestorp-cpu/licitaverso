@@ -1,0 +1,30 @@
+name: Agente — análise de preços (sobrepreço)
+on:
+  workflow_dispatch:
+    inputs:
+      link: { description: "Link do PNCP da contratação", required: true }
+permissions: { contents: write }
+jobs:
+  precos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preços
+        run: |
+          read CNPJ ANO SEQ < <(python3 -c "import re,sys;print(*re.search(r'(\d{14})/(\d{4})/(\d+)',sys.argv[1]).groups())" "${{ inputs.link }}")
+          H='User-Agent: Mozilla/5.0'
+          curl -fsS -H "$H" "https://pncp.gov.br/api/pncp/v1/orgaos/$CNPJ/compras/$ANO/$SEQ/itens?pagina=1&tamanhoPagina=500" -o /tmp/itens.json
+          curl -fsS -H "$H" "https://pncp.gov.br/api/consulta/v1/orgaos/$CNPJ/compras/$ANO/$SEQ" -o /tmp/compra.json
+          UF=$(python3 -c "import json;print(json.load(open('/tmp/compra.json'))['unidadeOrgao']['ufSigla'])")
+          DATA=$(python3 -c "import json;print(json.load(open('/tmp/compra.json'))['dataPublicacaoPncp'][:10])")
+          python3 scripts/agente/sobrepreco.py --itens /tmp/itens.json --uf "$UF" --data "$DATA" --excluir "$CNPJ-$ANO-$SEQ" --saida /tmp/precos.json 2>/tmp/log.txt | tee /tmp/out.txt
+          echo "::notice title=Preços::$(cat /tmp/out.txt)"
+          echo "::notice title=Itens::$(tail -c 900 /tmp/log.txt | tr '\n' ' ')"
+          echo "DEST=testes/pncp-$CNPJ-$ANO-$SEQ" >> "$GITHUB_ENV"
+      - name: Gravar
+        run: |
+          git fetch -q origin agente-testes && git worktree add -q /tmp/t origin/agente-testes
+          mkdir -p "/tmp/t/$DEST" && cp /tmp/precos.json "/tmp/t/$DEST/precos.json" && cd /tmp/t
+          git config user.name "Licitacon — agente" && git config user.email "actions@users.noreply.github.com"
+          git checkout -q -B agente-testes && git add "$DEST/precos.json" && git commit -q -m "preços $DEST" && git push -q origin agente-testes
