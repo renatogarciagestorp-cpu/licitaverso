@@ -1,0 +1,19 @@
+name: Agente — buscar jurisprudência (fontes oficiais)
+on:
+  workflow_dispatch:
+    inputs:
+      termos: { description: "Termos separados por ponto e vírgula", required: true }
+permissions: { contents: write }
+jobs:
+  buscar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          IFS=';' read -ra T <<< "${{ inputs.termos }}"
+          python3 scripts/agente/buscar-jurisprudencia.py "${T[@]}" --saida /tmp/juris.json --max 15
+      - run: |
+          git fetch -q origin agente-testes && git worktree add -q /tmp/t origin/agente-testes
+          cp /tmp/juris.json /tmp/t/testes/jurisprudencia-busca.json && cd /tmp/t
+          git config user.name "Licitacon — agente" && git config user.email "actions@users.noreply.github.com"
+          git checkout -q -B agente-testes && git add testes/jurisprudencia-busca.json && git commit -q -m "busca de jurisprudência" && git push -q origin agente-testes
