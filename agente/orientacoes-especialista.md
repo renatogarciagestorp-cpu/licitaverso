@@ -32,3 +32,15 @@ Este arquivo entra nas instruções de toda análise. Acrescente aqui cada nova 
   inicial a data do orçamento (art. 25, § 7º, e art. 92, § 3º): licitações de grande porte raramente terminam antes de 6 meses da
   pesquisa de preços. No máximo, registre como observação de gravidade baixa; aponte só se a defasagem for muito grande ou se o
   reajuste não estiver vinculado à data do orçamento.
+
+## Contagem de prazos
+- (29/10/2026) Em regra, aplique a literalidade da lei. Art. 183: exclui-se o dia do começo e inclui-se o do vencimento; o dia do começo
+  é o primeiro dia útil seguinte ao da disponibilização da informação na internet (§ 1º, I). Assim, divulgado o edital numa sexta-feira,
+  o dia do começo é a segunda-feira (excluído) e a contagem dos dias úteis começa na terça-feira.
+- (29/10/2026) Quando houver jurisprudência que trate do tema e delimite a interpretação, use-a como fundamento na análise. Sobre este
+  ponto, a Biblioteca tem o Acórdão TCU 2921/2026-Plenário (id tcu-ac-2921-2026-plenario): o prazo mínimo de propostas conta-se a partir
+  do primeiro dia útil seguinte à divulgação no PNCP; encerrar o recebimento antes do fim desse prazo é falha, mas o TCU não anulou o
+  certame porque houve competição efetiva e não se demonstrou prejuízo. Cite esse entendimento no risco e na providência (certame já
+  realizado: avaliar competição e prejuízo; certame futuro: corrigir a data).
+- (29/10/2026) Regra geral: sempre que um precedente da Biblioteca delimitar a interpretação de um dispositivo aplicado no parecer,
+  indique-o em jurisprudencia_ids e mencione a posição do tribunal na análise.
