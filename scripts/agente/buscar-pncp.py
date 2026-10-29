@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Procura no PNCP contratações recentes para testar o agente e lista os documentos publicados (edital, ETP, TR...).
-Uso: python3 scripts/agente/buscar-pncp.py <dias> <palavras separadas por vírgula> <saida.json>"""
+Uso: python3 scripts/agente/buscar-pncp.py <dias> <palavras separadas por vírgula ou "*"> <saida.json> [codigo_ibge] [orgao]"""
 import datetime, json, sys, time, unicodedata, urllib.request
 
 H = {"User-Agent": "Mozilla/5.0 (Licitacon; agente de análise)", "Accept": "application/json"}
@@ -15,18 +15,23 @@ def get(url):
 
 def n(s): return unicodedata.normalize("NFD", (s or "").lower()).encode("ascii", "ignore").decode()
 
-dias, palavras, saida = int(sys.argv[1]), [n(p.strip()) for p in sys.argv[2].split(",")], sys.argv[3]
+dias, saida = int(sys.argv[1]), sys.argv[3]
+palavras = [] if sys.argv[2].strip() in ("", "*") else [n(p.strip()) for p in sys.argv[2].split(",")]
+ibge = sys.argv[4] if len(sys.argv) > 4 and sys.argv[4] else ""
+orgao_filtro = n(sys.argv[5]) if len(sys.argv) > 5 else ""
 fim = datetime.date.today(); ini = fim - datetime.timedelta(days=dias)
 achados = []
-for modalidade in (6, 8):  # pregão eletrônico, dispensa
-    for pagina in range(1, 15):
+for modalidade in (6, 8, 4, 5):  # pregão eletrônico, dispensa, concorrência eletrônica, concorrência presencial
+    for pagina in range(1, 40 if ibge else 15):
         url = (f"https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial={ini:%Y%m%d}&dataFinal={fim:%Y%m%d}"
-               f"&codigoModalidadeContratacao={modalidade}&pagina={pagina}&tamanhoPagina=50")
+               f"&codigoModalidadeContratacao={modalidade}&pagina={pagina}&tamanhoPagina=50"
+               + (f"&uf=RJ&codigoMunicipioIbge={ibge}" if ibge else ""))
         d = get(url)
         if not d or not d.get("data"): break
         for c in d["data"]:
             obj = n(c.get("objetoCompra"))
-            if any(p in obj for p in palavras):
+            if orgao_filtro and orgao_filtro not in n(c["orgaoEntidade"].get("razaoSocial")): continue
+            if not palavras or any(p in obj for p in palavras):
                 achados.append(c)
         if pagina >= (d.get("totalPaginas") or 1): break
 print("contratações com as palavras:", len(achados))

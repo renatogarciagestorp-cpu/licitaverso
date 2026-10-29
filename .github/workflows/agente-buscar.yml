@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       dias: { description: "Últimos N dias", required: true, default: "20" }
-      palavras: { description: "Palavras no objeto (vírgula)", required: true, default: "limpeza,vigilancia,conservacao,apoio administrativo,recepcao,manutencao predial" }
+      palavras: { description: "Palavras no objeto (vírgula) ou * para todas", required: true, default: "*" }
+      ibge: { description: "Código IBGE do município (opcional; Maricá = 3302700)", required: false, default: "" }
+      orgao: { description: "Parte do nome do órgão (opcional)", required: false, default: "" }
 
 permissions:
   contents: write
@@ -16,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Procurar
-        run: python3 scripts/agente/buscar-pncp.py "${{ inputs.dias }}" "${{ inputs.palavras }}" /tmp/candidatos.json
+        run: python3 scripts/agente/buscar-pncp.py "${{ inputs.dias }}" "${{ inputs.palavras }}" /tmp/candidatos.json "${{ inputs.ibge }}" "${{ inputs.orgao }}"
       - name: Gravar no ramo agente-testes
         run: |
           git fetch -q origin agente-testes && git worktree add -q /tmp/t origin/agente-testes
