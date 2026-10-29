@@ -12,7 +12,6 @@ on:
 permissions:
   contents: write
 
-concurrency: { group: agente-analisar, cancel-in-progress: false }
 
 jobs:
   analisar:
@@ -50,9 +49,9 @@ jobs:
           PDF=$(python3 - "$D" "${{ inputs.arquivo }}" <<'PY' 2>/tmp/err.txt
           import pathlib, sys
           d, nome = pathlib.Path(sys.argv[1]), sys.argv[2].strip()
-          pdfs = [p for p in d.rglob("*.pdf") if "auto-" not in str(p)]
+          pdfs = [p for p in d.rglob("*") if p.suffix.lower() == ".pdf" and "auto-" not in str(p)]
           if nome:
-              pdfs = [p for p in pdfs if p.name == nome or p.stem == nome.removesuffix(".pdf")]
+              pdfs = [p for p in pdfs if p.name.lower() == nome.lower() or p.stem.lower() == nome.lower().removesuffix(".pdf")]
           if not pdfs: sys.exit("arquivo não encontrado; disponíveis: " + ", ".join(p.name for p in d.rglob("*.pdf")))
           print(max(pdfs, key=lambda p: p.stat().st_size))
           PY
@@ -72,4 +71,4 @@ jobs:
           git checkout -q -B agente-testes
           git add "$PASTA"
           git commit -q -m "Agente: análise automática $PASTA (${{ inputs.documento }})"
-          git push -q origin agente-testes
+          for i in 1 2 3 4 5; do git push -q origin agente-testes && break; git pull -q --rebase origin agente-testes; sleep $((RANDOM % 10 + 3)); done
