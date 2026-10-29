@@ -223,12 +223,29 @@ def gerar(analise, saida):
         x = p.add_run("Jurisprudência na Biblioteca Licitacon: "); x.bold = True; x.font.color.rgb = RGBColor.from_string(COR["titulo"])
         if not js:
             p.add_run("nenhuma decisão sobre o tema localizada na Biblioteca até esta data.")
+        # agrupa enunciados da mesma decisão (o TCU publica várias teses de um mesmo acórdão em separado)
+        grupos = {}
         for j in js:
+            grupos.setdefault((j.get("orgao", ""), j.get("numero", "")), []).append(j)
+        for (orgao, numero), lista in grupos.items():
             q = doc.add_paragraph(style="List Bullet"); q.paragraph_format.space_after = Pt(2)
-            q.add_run(f"{j.get('orgao', '')} · {j.get('numero', '')} ({j.get('data', '')[:10]}): ").bold = True
-            q.add_run((j.get("titulo") or "") + " ")
-            if j.get("fonte_url"):
-                link(q, "abrir na fonte oficial", j["fonte_url"])
+            data = (lista[0].get("data") or "")[:10]
+            if data:
+                data = "/".join(reversed(data.split("-")))
+            cab = f"{orgao} · {numero}" + (f" ({data})" if data else "")
+            if len(lista) > 1:
+                cab += f" — {len(lista)} enunciados distintos da mesma decisão"
+            q.add_run(cab + (":" if len(lista) == 1 else "")).bold = True
+            for k, j in enumerate(lista, 1):
+                alvo = q if len(lista) == 1 else doc.add_paragraph()
+                if alvo is not q:
+                    alvo.paragraph_format.left_indent = Cm(1.2); alvo.paragraph_format.space_after = Pt(2)
+                    alvo.add_run(f"Enunciado {k}: ").bold = True
+                else:
+                    alvo.add_run(" ")
+                alvo.add_run((j.get("tese") or j.get("titulo") or "").strip() + " ")
+                if j.get("fonte_url"):
+                    link(alvo, "abrir na fonte oficial", j["fonte_url"])
 
     # dicas
     dicas = [r for r in resultados if r["resultado"] == "conforme" and r.get("dica")]
