@@ -120,7 +120,15 @@ Regras obrigatórias:
 7. Seja rigoroso e equilibrado: não aponte falha sem base no texto; não deixe passar falha evidente. Em dúvida razoável, use parcial e explique.
 8. Considere a situação do processo (ex.: se já foi homologado, as providências se dirigem à execução/ata e aos próximos certames).
 9. Escreva em português formal, claro e objetivo, no registro de um parecer técnico (sem "eu"; prefira a voz impessoal).
-10. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
+10. O parecer é OPINATIVO e deve ser COMPLETO: registre todos os aspectos relevantes, dos críticos aos leves. Um ponto de baixa
+    vulnerabilidade, que hoje não invalida o processo mas pode gerar questionamento, retrabalho ou risco no futuro, também deve ser informado
+    (como parcial com gravidade "baixa", ou como dica). A decisão de corrigir ou manter é de quem recebe o parecer; omitir um ponto tira dele essa escolha.
+11. "gravidade" (opcional, por item): ajuste ao caso concreto quando a gravidade padrão do roteiro não refletir o risco real (alta, media ou baixa).
+12. "outros_apontamentos": problemas relevantes encontrados no documento que NÃO se encaixam em nenhum item do roteiro (ex.: erros materiais,
+    cláusulas contraditórias, exigências sem previsão legal, prazos inconsistentes). Para cada um: titulo, constatacao, trecho literal, local,
+    fundamento (lista de {art, disp} da Lei 14.133/2021, use disp como "caput", "I", "p1", "p1.I", "pu", "I.a"; deixe vazio se não houver dispositivo
+    específico), porque, risco, correcao, gravidade. Não repita o que já está nos itens do roteiro.
+13. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
     ementa_texto (síntese de 2–3 frases), resumo (um parágrafo de visão geral) e conclusao (um parágrafo)."""
 
 FERRAMENTA = {
@@ -139,8 +147,16 @@ FERRAMENTA = {
                 "local": {"type": "string"}, "trecho": {"type": "string"}, "constatacao": {"type": "string"},
                 "porque": {"type": "string"}, "risco": {"type": "string"}, "correcao": {"type": "string"},
                 "redacao_sugerida": {"type": "string"}, "dica": {"type": "string"},
+                "gravidade": {"type": "string", "enum": ["alta", "media", "baixa"]},
                 "jurisprudencia_ids": {"type": "array", "items": {"type": "string"}}},
                 "required": ["item", "resultado"]}},
+            "outros_apontamentos": {"type": "array", "items": {"type": "object", "properties": {
+                "titulo": {"type": "string"}, "constatacao": {"type": "string"}, "trecho": {"type": "string"}, "local": {"type": "string"},
+                "fundamento": {"type": "array", "items": {"type": "object", "properties": {"art": {"type": "string"}, "disp": {"type": "string"}},
+                                                          "required": ["art"]}},
+                "porque": {"type": "string"}, "risco": {"type": "string"}, "correcao": {"type": "string"},
+                "gravidade": {"type": "string", "enum": ["alta", "media", "baixa"]}},
+                "required": ["titulo", "constatacao", "gravidade"]}},
         },
         "required": ["processo", "ementa", "ementa_texto", "resumo", "conclusao", "resultados"],
     },
@@ -202,6 +218,7 @@ def validar(dados, itens, texto):
             r["jurisprudencia_ids"] = [j for j in r["jurisprudencia_ids"] if j in cands]
         else:
             r["jurisprudencia_ids"] = []
+        if r.get("gravidade") not in (None, "alta", "media", "baixa"): r.pop("gravidade")
         if r["resultado"] in ("parcial", "nao_conforme") and not r.get("constatacao"):
             r["constatacao"] = "Ver análise."
         res.append(r)
@@ -210,6 +227,33 @@ def validar(dados, itens, texto):
             avisos.append(f"{iid}: não avaliado pelo modelo; marcado como não verificável")
             res.append({"item": iid, "resultado": "nao_verificavel", "jurisprudencia_ids": []})
     return res, avisos
+
+
+def validar_outros(lista, texto):
+    norm_txt = _n(texto)
+    n = rel.norma("lei-14133")
+    saida, avisos = [], []
+    for o in lista or []:
+        o = {k: v for k, v in o.items() if v not in (None, "", [])}
+        if o.get("trecho"):
+            t = _n(o["trecho"]).strip('"').strip(".")
+            partes = [p for p in re.split(r"\s*(?:\[\.\.\.\]|\[…\]|\.\.\.|…)\s*", t) if len(p) > 12]
+            if not partes or not all(p in norm_txt for p in partes):
+                avisos.append(f"outro apontamento '{o.get('titulo', '')[:40]}': trecho não localizado; removido"); o.pop("trecho")
+        fund = []
+        for f in o.get("fundamento", []):
+            art = re.sub(r"[^0-9A-Z-]", "", str(f.get("art", "")).upper())
+            disp = str(f.get("disp") or "caput").strip()
+            a = next((x for x in (n or {}).get("artigos", []) if x["num"] == art), None)
+            d = next((x for x in (a or {}).get("dispositivos", []) if x["id"] == disp), None) if a else None
+            if d and not d.get("revogado") and not d.get("vetado"):
+                fund.append({"norma": "lei-14133", "art": art, "disp": disp})
+            else:
+                avisos.append(f"fundamento inexistente removido: art. {art}, {disp}")
+        o["fundamento"] = fund
+        if o.get("gravidade") not in ("alta", "media", "baixa"): o["gravidade"] = "baixa"
+        saida.append(o)
+    return saida, avisos
 
 
 def main():
@@ -255,6 +299,8 @@ def main():
         if not dados or "resultados" not in dados:
             sys.exit("O modelo não devolveu a análise (parada: " + str(resp.get("stop_reason")) + "): " + txt[:600])
     resultados, avisos = validar(dados, itens, bruto)
+    outros, avisos2 = validar_outros(dados.get("outros_apontamentos"), bruto)
+    avisos += avisos2
 
     analise = {
         "regime": "lei-14133",
@@ -265,6 +311,7 @@ def main():
         "ementa": dados.get("ementa"), "ementa_texto": dados.get("ementa_texto"),
         "resumo": dados.get("resumo"), "conclusao": dados.get("conclusao"),
         "resultados": resultados,
+        "outros_apontamentos": outros,
         "_execucao": {"modelo": resp.get("model"), "segundos": round(time.time() - t0), "uso": resp.get("usage"),
                       "custo_usd": custo(resp.get("usage", {})), "parada": resp.get("stop_reason"), "avisos": avisos, "fatos": fatos},
     }

@@ -30,7 +30,7 @@ C = {"marinho": "12324A", "petroleo": "1F7A8C", "areia": "F5F1EA", "linha": "D9D
      "alta_f": "F8E6E8", "media_f": "FBEEDD", "baixa_f": "E3F1F5", "ok_f": "E3F2EA", "claro": "EEF4F6"}
 GRAV = {"alta": "Alta", "media": "Média", "baixa": "Baixa"}
 RESULT = {"nao_conforme": "Não conforme", "conforme": "Conforme", "parcial": "Parcialmente conforme",
-          "nao_aplicavel": "Não se aplica", "nao_verificavel": "Não verificável"}
+          "nao_aplicavel": "Não se aplica", "nao_verificavel": "Não verificável", "apontamento": "Apontamento adicional"}
 MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"]
 MESES_ABNT = ["jan.", "fev.", "mar.", "abr.", "maio", "jun.", "jul.", "ago.", "set.", "out.", "nov.", "dez."]
 FONTE = "Arial"
@@ -38,6 +38,24 @@ LOCAL = "Maricá (RJ)"
 
 NOME_CURTO = {"lei-14133": "Lei 14.133/2021", "lei-13303": "Lei 13.303/2016", "lei-13019": "Lei 13.019/2014",
               "lei-10192": "Lei 10.192/2001", "lei-4320": "Lei 4.320/1964"}
+REF_OPINATIVO = [
+    "BRASIL. Supremo Tribunal Federal (Plenário). Mandado de Segurança nº 24.631/DF. Relator: Min. Joaquim Barbosa. Julgado em 9 ago. 2007. Diário da Justiça, Brasília, DF, 1 fev. 2008.",
+    "BRASIL. Decreto-Lei nº 4.657, de 4 de setembro de 1942. Lei de Introdução às Normas do Direito Brasileiro. Redação dada pela Lei nº 13.655, de 25 de abril de 2018. Disponível em: https://www.planalto.gov.br/ccivil_03/decreto-lei/del4657compilado.htm. Acesso em: {acesso}.",
+    "BRASIL. Lei nº 9.784, de 29 de janeiro de 1999. Regula o processo administrativo no âmbito da Administração Pública Federal. Disponível em: https://www.planalto.gov.br/ccivil_03/leis/l9784.htm. Acesso em: {acesso}.",
+]
+NATUREZA_OPINATIVA = [
+    "Este parecer técnico tem natureza exclusivamente opinativa. Ele expõe a análise de conformidade dos documentos examinados, "
+    "aponta todos os aspectos identificados — dos críticos aos de baixa vulnerabilidade — e recomenda providências, mas não vincula quem o recebe.",
+    "A decisão de adotar, total ou parcialmente, as recomendações, ou de manter o documento como está, é de competência e responsabilidade "
+    "exclusivas do destinatário (o agente público, a autoridade competente ou o contratante), que deve ponderá-las com os demais elementos do processo.",
+    "Fundamento: o Supremo Tribunal Federal distingue o parecer facultativo, o obrigatório e o vinculante; no parecer facultativo e no obrigatório "
+    "não vinculante, a autoridade não fica adstrita à opinião emitida e responde pela decisão que tomar (STF, MS 24.631/DF, Plenário, rel. Min. Joaquim Barbosa, "
+    "j. 9 ago. 2007). A distinção entre parecer vinculante e não vinculante também consta da Lei nº 9.784/1999 (art. 42, §§ 1º e 2º). A Lei de Introdução "
+    "às Normas do Direito Brasileiro estabelece que o agente público responde pessoalmente por suas decisões ou opiniões técnicas em caso de dolo ou erro grosseiro (art. 28).",
+    "Este parecer, contratado livremente e sem previsão legal que o torne obrigatório ou vinculante, não substitui o parecer jurídico de controle prévio "
+    "de legalidade (art. 53 da Lei nº 14.133/2021) nem a manifestação dos órgãos de assessoramento e controle.",
+]
+
 REF_NORMA = {
     "lei-14133": ("BRASIL. Lei nº 14.133, de 1º de abril de 2021. Lei de Licitações e Contratos Administrativos. "
                   "Diário Oficial da União: seção 1, Brasília, DF, 1 abr. 2021. Disponível em: "
@@ -349,7 +367,7 @@ def cabecalho_rodape(doc, numero, verificador):
     h.paragraphs[0].text = ""
     f = s.footer
     pf = f.paragraphs[0]; fmt(pf, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.CENTER)
-    run(pf, f"Análise técnica de apoio à instrução processual · não substitui o parecer jurídico do art. 53 da Lei 14.133/2021 · código de verificação {verificador}",
+    run(pf, f"Parecer técnico opinativo · a decisão final cabe exclusivamente ao destinatário · não substitui o parecer jurídico do art. 53 da Lei 14.133/2021 · código {verificador}",
         tam=7, hexa=C["fraco"])
 
 
@@ -389,6 +407,9 @@ def capa(doc, a, numero, data, situacao, cor_sit):
     c3 = t3.rows[0].cells[0]; sombrear(c3, cor_sit[1]); bordas(c3, left=(cor_sit[0], 36)); margens_celula(c3, 0.3)
     p = c3.paragraphs[0]; fmt(p, recuo1=0, entre=1.1, alinh=WD_ALIGN_PARAGRAPH.LEFT)
     run(p, "SITUAÇÃO GERAL  ", negrito=True, tam=7.5, hexa=cor_sit[0]); run(p, situacao, negrito=True, tam=10.5, hexa=cor_sit[0])
+    p = paragrafo(doc, "", recuo1=0, antes=8, entre=1.15, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+    run(p, "PARECER OPINATIVO  ", negrito=True, tam=7.5, hexa=C["petroleo"])
+    run(p, "As recomendações não vinculam o destinatário; a decisão final é sempre de quem recebe este parecer.", tam=9, hexa=C["texto"])
 
     p = paragrafo(doc, "", recuo1=0, antes=60, entre=1.15, alinh=WD_ALIGN_PARAGRAPH.CENTER)
     run(p, LOCAL.replace(" (RJ)", " – RJ"), negrito=True, tam=11)
@@ -425,12 +446,22 @@ def gerar(analise, saida, paginas=None):
     docs_nome = roteiro["documentos"]
     DOCS_ROTULO.update({"edital": "Edital", "etp": "Estudo Técnico Preliminar", "tr": "Termo de Referência",
                         "riscos": "Matriz de Riscos", "planilha": "Planilha de Custos"})
-    resultados = analise["resultados"]
+    resultados = list(analise["resultados"])
     for r in resultados:
         if r["item"] not in itens:
             raise SystemExit(f"Item desconhecido no roteiro: {r['item']}")
+        if r.get("gravidade") in GRAV and r["gravidade"] != itens[r["item"]]["gravidade"]:
+            itens[r["item"]] = {**itens[r["item"]], "gravidade": r["gravidade"]}  # ajustada ao caso concreto
+    doc_padrao = analise["documentos"][0]["tipo"] if analise.get("documentos") else "edital"
+    for k, o in enumerate(analise.get("outros_apontamentos") or [], 1):
+        iid = f"outro-{k}"
+        itens[iid] = {"id": iid, "doc": doc_padrao, "titulo": o["titulo"], "verificar": o.get("porque", ""), "fundamento": o.get("fundamento") or [],
+                      "gravidade": o.get("gravidade", "baixa"), "risco": o.get("risco", ""), "dica": o.get("correcao", ""), "temas": []}
+        resultados.append({"item": iid, "resultado": "apontamento", "local": o.get("local"), "trecho": o.get("trecho"),
+                           "constatacao": o["constatacao"], "porque": o.get("porque"), "risco": o.get("risco"), "correcao": o.get("correcao"),
+                           "jurisprudencia_ids": []})
     data = ler_data(analise.get("data", ""))
-    falhas = [r for r in resultados if r["resultado"] in ("nao_conforme", "parcial")]
+    falhas = [r for r in resultados if r["resultado"] in ("nao_conforme", "parcial", "apontamento")]
     cont = {g: sum(1 for r in falhas if itens[r["item"]]["gravidade"] == g) for g in ("alta", "media", "baixa")}
     cont_res = {}
     for r in resultados: cont_res[r["resultado"]] = cont_res.get(r["resultado"], 0) + 1
@@ -483,6 +514,13 @@ def gerar(analise, saida, paginas=None):
     p = fmt(doc.add_paragraph(), recuo1=0, esq=6, entre=1.0, depois=4)
     run(p, "EMENTA: ", negrito=True, tam=10, hexa=C["marinho"]); run(p, ementa_chaves + " ", negrito=True, tam=10); run(p, ementa_txt, tam=10)
     paragrafo(doc, "", recuo1=0, entre=1.0, depois=6)
+    t = tabela_sem_bordas(doc, 1, 1, [16])
+    c = t.rows[0].cells[0]; sombrear(c, C["claro"]); bordas(c, left=(C["petroleo"], 30)); margens_celula(c, 0.3)
+    p = c.paragraphs[0]; fmt(p, recuo1=0, entre=1.1, alinh=WD_ALIGN_PARAGRAPH.LEFT, depois=4)
+    run(p, "NATUREZA OPINATIVA DESTE PARECER", negrito=True, tam=9, hexa=C["petroleo"])
+    for txt in NATUREZA_OPINATIVA:
+        q = c.add_paragraph(); fmt(q, recuo1=0, entre=1.15, alinh=WD_ALIGN_PARAGRAPH.JUSTIFY, depois=4); run(q, txt, tam=9.5)
+    paragrafo(doc, "", recuo1=0, entre=1.0, depois=6)
 
     # 2 RELATÓRIO
     titulo(doc, "2 Relatório")
@@ -523,7 +561,10 @@ def gerar(analise, saida, paginas=None):
                 run(p, "O documento dispõe: “" + r["trecho"] + "”" + (f" ({r['local']})." if r.get("local") else "."), italico=False)
         p = fmt(doc.add_paragraph(), depois=4)
         run(p, "Dispositivo aplicável. ", negrito=True, hexa=C["marinho"])
-        run(p, "A matéria é disciplinada " + citar_fundamentos(it["fundamento"]) + ", que assim dispõe" + (":" if len(it["fundamento"]) == 1 else "m:"))
+        if it["fundamento"]:
+            run(p, "A matéria é disciplinada " + citar_fundamentos(it["fundamento"]) + ", que assim dispõe" + (":" if len(it["fundamento"]) == 1 else "m:"))
+        else:
+            run(p, "Não há dispositivo legal específico; o apontamento decorre da coerência e da boa instrução do processo.")
         for f in it["fundamento"]:
             normas_usadas.add(f["norma"])
             tl = texto_legal(f)
@@ -589,9 +630,12 @@ def gerar(analise, saida, paginas=None):
             p.paragraph_format.first_line_indent = Cm(-0.75)
             run(p, f"{n}. ", negrito=True, hexa=C[g]); run(p, it["titulo"] + " ", negrito=True)
             run(p, f"(gravidade {GRAV[g].lower()}, item 3.{n}): ", hexa=C[g]); run(p, prov)
-    paragrafo(doc, "O presente parecer tem natureza técnica, de apoio à instrução do processo, e não substitui a análise jurídica prévia "
-                   "obrigatória (art. 53 da Lei 14.133/2021) nem a decisão da autoridade competente.", antes=6, depois=6)
-    paragrafo(doc, "É o parecer técnico.", depois=18)
+    paragrafo(doc, "Todos os aspectos identificados foram informados, inclusive os de baixa vulnerabilidade, para que o destinatário disponha "
+                   "de visão completa do processo. Trata-se de parecer técnico de natureza opinativa: as recomendações não o vinculam, e a decisão de "
+                   "promover os ajustes ou manter os documentos como estão compete exclusivamente a quem recebe este parecer, sob sua responsabilidade "
+                   "(STF, MS 24.631/DF; art. 28 do Decreto-Lei nº 4.657/1942). Este parecer não substitui o parecer jurídico de controle prévio de "
+                   "legalidade (art. 53 da Lei nº 14.133/2021).", antes=6, depois=6)
+    paragrafo(doc, "É o parecer técnico, de caráter opinativo, salvo melhor juízo.", depois=18)
     paragrafo(doc, f"{LOCAL}, {data_extenso(data)}.", recuo1=0, alinh=WD_ALIGN_PARAGRAPH.RIGHT, depois=36)
     p = paragrafo(doc, "", recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.CENTER)
     run(p, "_" * 42, hexa=C["linha"])
@@ -608,6 +652,7 @@ def gerar(analise, saida, paginas=None):
     refs = []
     for nid in sorted(normas_usadas):
         if nid in REF_NORMA: refs.append(REF_NORMA[nid][0].format(acesso=acesso))
+    refs += [r_.format(acesso=acesso) for r_ in REF_OPINATIVO]
     if analise.get("referencia_documento"):
         refs.append(analise["referencia_documento"].format(acesso=acesso))
     for j in referencias_juris.values():
@@ -628,8 +673,8 @@ def gerar(analise, saida, paginas=None):
         p = c.paragraphs[0]; fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT); run(p, h.upper(), negrito=True, tam=8, hexa="FFFFFF")
     for i, col in enumerate(t.columns): col.width = Cm(larg[i])
     for i, gc in enumerate(t._tbl.tblGrid.findall(qn("w:gridCol"))): gc.set(qn("w:w"), str(int(larg[i] * 567)))
-    cores_res = {"conforme": C["ok"], "parcial": C["media"], "nao_conforme": C["alta"], "nao_aplicavel": C["fraco"], "nao_verificavel": C["nv"]}
-    for k, r in enumerate(sorted(resultados, key=lambda x: ["nao_conforme", "parcial", "conforme", "nao_verificavel", "nao_aplicavel"].index(x["resultado"]))):
+    cores_res = {"apontamento": C["baixa"], "conforme": C["ok"], "parcial": C["media"], "nao_conforme": C["alta"], "nao_aplicavel": C["fraco"], "nao_verificavel": C["nv"]}
+    for k, r in enumerate(sorted(resultados, key=lambda x: ["nao_conforme", "parcial", "apontamento", "conforme", "nao_verificavel", "nao_aplicavel"].index(x["resultado"]))):
         it = itens[r["item"]]; row = t.add_row().cells
         vals = [it["titulo"], docs_nome.get(it["doc"], it["doc"]), RESULT[r["resultado"]], "; ".join(rotulo(f, com_norma=False) for f in it["fundamento"])]
         for i, v in enumerate(vals):
@@ -650,6 +695,8 @@ def gerar(analise, saida, paginas=None):
         "Os precedentes provêm exclusivamente da Biblioteca Licitacon, com indicação da fonte oficial; a ausência de precedente listado não significa ausência de jurisprudência.",
         "Cálculos de planilha são conferidos por programa a partir de arquivo em Excel; planilhas em PDF não permitem conferir fórmulas.",
         "Normas estaduais e municipais, regulamentos internos e orientações locais somente são considerados quando enviados com os documentos.",
+        "O parecer é opinativo: aponta todos os aspectos identificados, inclusive os de baixa vulnerabilidade, e a decisão sobre cada recomendação cabe ao destinatário.",
+        "Apontamentos adicionais são questões relevantes encontradas no documento que não constam do roteiro padrão; seus fundamentos legais também são conferidos na base oficial.",
         f"O código de verificação {verificador} identifica o conteúdo desta análise; qualquer alteração no resultado gera código diferente.",
     ], 1):
         p = fmt(doc.add_paragraph(), recuo1=0, esq=0.75, depois=6)
@@ -690,7 +737,7 @@ def _painel_corpo(doc, itens, resultados, lst, cont, cont_res, indice):
         for c in row:
             bordas(c, bottom=(C["linha"], 4)); margens_celula(c, 0.12)
             if n % 2 == 0: sombrear(c, "FAFBFC")
-        vals = [f"3.{n}", it["titulo"], GRAV[g], rotulo(it["fundamento"][0], com_norma=False) + (" e outros" if len(it["fundamento"]) > 1 else "")]
+        vals = [f"3.{n}", it["titulo"], GRAV[g], (rotulo(it["fundamento"][0], com_norma=False) + (" e outros" if len(it["fundamento"]) > 1 else "")) if it["fundamento"] else "—"]
         for i, v in enumerate(vals):
             p = row[i].paragraphs[0]; fmt(p, recuo1=0, entre=1.05, alinh=WD_ALIGN_PARAGRAPH.LEFT)
             if i == 2:
