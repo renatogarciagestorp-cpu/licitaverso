@@ -128,7 +128,13 @@ Regras obrigatórias:
     cláusulas contraditórias, exigências sem previsão legal, prazos inconsistentes). Para cada um: titulo, constatacao, trecho literal, local,
     fundamento (lista de {art, disp} da Lei 14.133/2021, use disp como "caput", "I", "p1", "p1.I", "pu", "I.a"; deixe vazio se não houver dispositivo
     específico), porque, risco, correcao, gravidade. Não repita o que já está nos itens do roteiro.
-13. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
+13. Contratação direta (dispensa ou inexigibilidade): o ETP é exigido "se for o caso" (art. 72, I, da Lei 14.133/2021) e pode ter sido
+    dispensado por norma local. Se o documento enviado como ETP for, na verdade, uma justificativa de não elaboração do ETP, NÃO aplique
+    os itens de conteúdo do ETP como se fossem obrigatórios: marque-os como nao_aplicavel ("ETP dispensado — art. 72, I") e avalie a
+    motivação da dispensa no item de justificativa (parcial/nao_conforme se for genérica). Lacunas que continuam obrigatórias na contratação
+    direta (estimativa de despesa, razão da escolha do contratado, justificativa de preço — art. 72, II, VI e VII) vão em outros_apontamentos,
+    com esse fundamento, e não como falha do ETP.
+14. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
     ementa_texto (síntese de 2–3 frases), resumo (um parágrafo de visão geral) e conclusao (um parágrafo)."""
 
 FERRAMENTA = {
