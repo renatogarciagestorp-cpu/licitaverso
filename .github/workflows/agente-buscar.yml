@@ -1,0 +1,25 @@
+name: Agente — procurar contratações no PNCP para teste
+
+on:
+  workflow_dispatch:
+    inputs:
+      dias: { description: "Últimos N dias", required: true, default: "20" }
+      palavras: { description: "Palavras no objeto (vírgula)", required: true, default: "limpeza,vigilancia,conservacao,apoio administrativo,recepcao,manutencao predial" }
+
+permissions:
+  contents: write
+
+jobs:
+  buscar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Procurar
+        run: python3 scripts/agente/buscar-pncp.py "${{ inputs.dias }}" "${{ inputs.palavras }}" /tmp/candidatos.json
+      - name: Gravar no ramo agente-testes
+        run: |
+          git fetch -q origin agente-testes && git worktree add -q /tmp/t origin/agente-testes
+          cp /tmp/candidatos.json /tmp/t/testes/candidatos-pncp.json
+          cd /tmp/t && git config user.name "Licitacon — agente" && git config user.email "actions@users.noreply.github.com"
+          git checkout -q -B agente-testes && git add testes/candidatos-pncp.json && git commit -q -m "Agente: candidatos do PNCP" && git push -q origin agente-testes
