@@ -188,3 +188,8 @@ begin
 end $$;
 revoke execute on function public.analise_proxima() from public, anon, authenticated;
 grant execute on function public.analise_proxima() to service_role;
+
+-- Painel: o administrador pode devolver uma análise com erro à fila
+drop policy if exists analises_admin_alterar on public.analises;
+create policy analises_admin_alterar on public.analises for update to authenticated
+  using (public.is_admin()) with check (public.is_admin());

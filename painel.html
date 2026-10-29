@@ -132,7 +132,7 @@ async function iniciar() {
 }
 
 const ABAS = [
-  ["resumo", "Visão geral"], ["assinantes", "Assinantes"], ["consultorias", "Consultorias"], ["forum", "Fórum"],
+  ["resumo", "Visão geral"], ["assinantes", "Assinantes"], ["consultorias", "Consultorias"], ["analises", "Análises IA"], ["forum", "Fórum"],
   ["cursos", "Cursos"], ["mensagens", "Mensagens"], ["assistente", "Assistente"], ["lgpd", "Pedidos LGPD"], ["espera", "Lista de espera"], ["registro", "Registro"]
 ];
 let contagens = {};
@@ -366,6 +366,29 @@ const TELAS = {
       const { error } = await sb.from("contatos").update({ lido: true }).eq("id", b.dataset.lido); if (error) return toast(error.message, true); TELAS.mensagens(el);
     });
     ligarAnexos(el);
+  },
+
+  async analises(el) {
+    const [ppid, lista] = await Promise.all([perfisPorId(), q(sb.from("analises").select("*").order("criado_em", { ascending: false }).limit(300))]);
+    const doc = { edital: "Edital", etp: "ETP", tr: "TR", riscos: "Matriz de riscos", planilha: "Planilha" };
+    const etq = { concluida: "ok", erro: "erro", na_fila: "espera", processando: "espera", aguardando_pagamento: "espera", cancelada: "" };
+    const custo = lista.reduce((t, a) => t + Number(a.custo_usd || 0), 0);
+    const receita = lista.filter((a) => a.status !== "aguardando_pagamento" && a.status !== "cancelada").reduce((t, a) => t + Number(a.valor || 0), 0);
+    el.innerHTML = '<h1>Análises de documentos (agente de IA)</h1><p class="sub">Fila processada a cada 5 minutos pelo GitHub Actions. Em erro de análise paga: “Reprocessar” ou devolva o valor no Mercado Pago. O custo é o gasto com a API da Anthropic (em dólar).</p>' +
+      '<div class="numeros">' + [[lista.length, "análises", "últimas 300"], [lista.filter((a) => a.status === "concluida").length, "concluídas", ""], [lista.filter((a) => a.status === "erro").length, "com erro", ""],
+        ["US$ " + custo.toFixed(2), "custo da API", "R$ " + receita.toFixed(2).replace(".", ",") + " recebidos"]]
+        .map(([n, r, d]) => '<div class="numero"><b>' + esc(n) + "</b><span>" + esc(r) + (d ? "<br>" + esc(d) : "") + "</span></div>").join("") + "</div>" +
+      '<div class="caixa"><div class="rolar"><table class="tabela"><thead><tr><th>Quando</th><th>Pessoa</th><th>Documento</th><th>Cobrança</th><th>Status</th><th>Custo</th><th></th></tr></thead><tbody>' +
+      lista.map((a) => { const p = ppid[a.usuario_id] || {}; return "<tr><td>" + dataHora(a.criado_em) + "</td><td>" + esc(p.nome || "—") + '<br><span class="fraco">' + esc(p.email || "") + "</span></td><td>" + esc(doc[a.documento] || a.documento) + '<br><span class="fraco">' + esc(a.origem === "pncp" ? "PNCP" : (a.nome_arquivo || "PDF")) + (a.paginas ? " · " + a.paginas + " p." : "") + "</span></td><td>" + (a.cobranca === "franquia_pro" ? "Pro (cota)" : "R$ " + Number(a.valor).toFixed(2).replace(".", ",")) + '</td><td><span class="etq ' + (etq[a.status] || "") + '">' + esc(a.status) + "</span>" + (a.erro_msg ? '<br><span class="fraco">' + esc(a.erro_msg) + "</span>" : "") + "</td><td>" + (a.custo_usd ? "US$ " + Number(a.custo_usd).toFixed(2) : "—") + "</td><td>" +
+        (a.parecer_pdf ? '<button class="btn claro" data-pdf="' + esc(a.parecer_pdf) + '">PDF</button> ' : "") + (a.status === "erro" ? '<button class="btn claro" data-reproc="' + a.id + '">Reprocessar</button>' : "") + "</td></tr>"; }).join("") +
+      "</tbody></table></div>" + (lista.length ? "" : '<p class="fraco">Nenhuma análise ainda.</p>') + "</div>";
+    el.querySelectorAll("[data-pdf]").forEach((b) => b.onclick = async () => {
+      const { data, error } = await sb.storage.from("analises").createSignedUrl(b.dataset.pdf, 300); if (error) return toast(error.message, true); window.open(data.signedUrl, "_blank");
+    });
+    el.querySelectorAll("[data-reproc]").forEach((b) => b.onclick = async () => {
+      const { error } = await sb.from("analises").update({ status: "na_fila", tentativas: 0, erro_msg: null, avisado_status: null }).eq("id", b.dataset.reproc);
+      if (error) return toast(error.message, true); await registrar("reprocessar_analise", { id: b.dataset.reproc }); toast("Análise devolvida à fila."); TELAS.analises(el);
+    });
   },
 
   async assistente(el) {

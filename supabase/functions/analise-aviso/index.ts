@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
   const { data: p } = await admin.from("perfis").select("nome, email").eq("id", a.usuario_id).maybeSingle();
   const doc = DOC_ANALISE[a.documento as DocAnalise] ?? a.documento;
   const primeiro = (p?.nome || "").trim().split(/\s+/)[0] || "Olá";
-  const link = `${SITE}index.html?p=analises`;
+  const link = `${SITE}index.html?p=agente`;
   const enviados: string[] = [];
 
   try {

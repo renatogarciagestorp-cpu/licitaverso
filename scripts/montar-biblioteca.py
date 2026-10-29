@@ -51,7 +51,7 @@ barra = """<style>
 html = ('<!doctype html>\n<html lang="pt-BR"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
         '<meta name="theme-color" content="#0A1F2A"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><link rel="icon" type="image/png" href="icones/icone-192.png">'
-        '<script src="licitaverso-auth.js?v=4"></script><script src="chatbot.js?v=2" defer></script>\n'
+        '<script src="licitaverso-auth.js?v=4"></script><script src="chatbot.js?v=3" defer></script>\n'
         '<script>\n' + shim + '\n</script></head><body>\n' + barra + src + '\n</body></html>\n')
 out.write_text(html, encoding="utf-8")
 print("gravado", out, len(html), "bytes")

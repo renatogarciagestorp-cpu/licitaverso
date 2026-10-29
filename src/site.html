@@ -1170,49 +1170,130 @@
 
     <!-- ===================== AGENTE IA ===================== -->
     <sc-if value="{{ isAgente }}" hint-placeholder-val="{{ false }}">
-      <section style="background: radial-gradient(900px 420px at 80% -20%, #14424F 0%, #0A1F2A 60%); color: #fff; padding: 56px 24px 60px">
-        <div style="max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start">
+      <section style="background: radial-gradient(900px 420px at 80% -20%, #14424F 0%, #0A1F2A 60%); color: #fff; padding: 52px 24px 120px">
+        <div style="max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 44px; align-items: start">
           <div>
-            <span style="display: inline-block; border: 1px solid rgba(15,163,107,0.45); background: rgba(15,163,107,0.12); color: #7FE3B6; font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 7px 12px; border-radius: 999px">Em breve · Fase 3</span>
-            <h1 style="font-size: 42px; line-height: 1.08; letter-spacing: -0.035em; font-weight: 800; margin: 20px 0 0; text-wrap: balance">Agente de IA analista de procedimentos licitatórios</h1>
-            <p style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18.5px; line-height: 1.6; color: #B9CBD2; margin: 18px 0 0">Envie um edital, termo de referência ou minuta de aditivo. O agente cruza o documento com a legislação e a jurisprudência da própria Biblioteca Jurídica e devolve uma análise estruturada — com fonte citada em cada afirmação.</p>
-            <div style="margin-top: 30px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); border-radius: 16px; padding: 22px">
-              <label style="display: block; font-size: 13.5px; font-weight: 700; color: #CFDDE2">Entre na lista de espera</label>
-              <div style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap">
-                <input type="email" value="{{ email }}" sc-camel-on-input="{{ onEmail }}" placeholder="seu@email.com.br" aria-label="Seu e-mail" style="flex: 1; min-width: 220px; border: 1px solid rgba(255,255,255,0.24); background: rgba(255,255,255,0.08); color: #fff; border-radius: 11px; padding: 13px 15px; font-size: 15px">
-                <button sc-camel-on-click="{{ inscrever }}" style="background: #0FA36B; color: #06251A; border: 0; border-radius: 11px; padding: 13px 20px; font-size: 15px; font-weight: 700; cursor: pointer" style-hover="background: #14B978">Quero acesso</button>
-              </div>
-              <p style="margin: 10px 0 0; font-size: 12.5px; color: #93A9B2">{{ waitlistMsg }}</p>
-            </div>
-            <div style="display: grid; gap: 12px; margin-top: 28px">
-              <sc-for list="{{ governanca }}" as="g" hint-placeholder-count="4">
+            <span style="display: inline-block; border: 1px solid rgba(15,163,107,0.45); background: rgba(15,163,107,0.12); color: #7FE3B6; font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 7px 12px; border-radius: 999px">Agente de IA · Lei 14.133/2021</span>
+            <h1 style="font-size: 40px; line-height: 1.08; letter-spacing: -0.035em; font-weight: 800; margin: 20px 0 0; text-wrap: balance">Análise de documentos com parecer técnico</h1>
+            <p style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.6; color: #B9CBD2; margin: 18px 0 0">Envie o edital, o ETP, o termo de referência, a matriz de riscos ou a planilha de custos. O agente confere o documento item a item com a Lei 14.133/2021 e devolve um parecer técnico em PDF e Word, com o texto legal de cada dispositivo, a jurisprudência da Biblioteca e a redação sugerida para corrigir.</p>
+            <div style="display: grid; gap: 12px; margin-top: 26px">
+              <sc-for list="{{ governanca }}" as="g" hint-placeholder-count="5">
                 <div style="display: flex; gap: 12px; align-items: flex-start">
                   <span style="color: #0FA36B; font-weight: 800; margin-top: 1px">✓</span>
                   <span style="font-size: 14.5px; line-height: 1.55; color: #C3D3D9">{{ g }}</span>
                 </div>
               </sc-for>
             </div>
+            <div style="margin-top: 26px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); border-radius: 14px; padding: 16px 18px">
+              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #7FE3B6">Parecer opinativo</span>
+              <p style="margin: 8px 0 0; font-size: 14px; line-height: 1.6; color: #C3D3D9">O parecer aponta todos os aspectos identificados — dos críticos aos de baixa vulnerabilidade — para você decidir com a visão completa. As recomendações não vinculam: a decisão de ajustar ou manter cada ponto é sempre de quem recebe o parecer.</p>
+            </div>
           </div>
-          <div style="background: #fff; color: #0B1F2A; border-radius: 18px; padding: 22px; box-shadow: 0 30px 70px rgba(0,0,0,0.35)">
-            <div style="display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #EDF1F0; padding-bottom: 14px">
-              <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: #0F6B7E">PRÉVIA DA ANÁLISE</span>
-              <span style="flex: 1"></span>
-              <span style="font-size: 12px; color: #7A8B91">minuta_aditivo_2026.pdf · prorrogação</span>
+
+          <div style="background: #fff; color: #0B1F2A; border-radius: 18px; padding: 24px; box-shadow: 0 30px 70px rgba(0,0,0,0.35); display: flex; flex-direction: column; gap: 18px">
+            <div>
+              <h2 style="margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.02em">Nova análise</h2>
+              <p style="margin: 6px 0 0; font-size: 13.5px; color: #6A7B82">{{ anCotaTexto }}</p>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 14px">
-              <sc-for list="{{ analise }}" as="a" hint-placeholder-count="3">
-                <div style="border: 1px solid #E6EBEA; border-radius: 12px; padding: 15px 16px">
-                  <div style="display: flex; align-items: center; gap: 8px">
-                    <span style="font-size: 11px; font-weight: 800; letter-spacing: 0.06em; padding: 4px 8px; border-radius: 6px; color: {{ a.riscoColor }}; background: {{ a.riscoBg }}">RISCO {{ a.risco }}</span>
-                    <span style="font-size: 13.5px; font-weight: 700">{{ a.ponto }}</span>
-                  </div>
-                  <p style="margin: 9px 0 0; font-size: 13.5px; line-height: 1.55; color: #3D5058">{{ a.inconsistencia }}</p>
-                  <p style="margin: 8px 0 0; font-size: 13px; line-height: 1.5; color: #0F6B7E; font-weight: 600">Fundamento: {{ a.fundamento }}</p>
-                  <p style="margin: 6px 0 0; font-size: 13.5px; line-height: 1.55; color: #23343B"><strong>Sugestão:</strong> {{ a.sugestao }}</p>
+            <div>
+              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Documento</span>
+              <div role="group" aria-label="Tipo de documento" style="display: flex; gap: 8px; flex-wrap: wrap">
+                <sc-for list="{{ anDocs }}" as="d" hint-placeholder-count="5">
+                  <button sc-camel-on-click="{{ d.escolher }}" aria-pressed="{{ d.ativo }}" style="border-radius: 999px; padding: 9px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ d.borda }}; background: {{ d.fundo }}; color: {{ d.cor }}">{{ d.nome }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div>
+              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Como enviar</span>
+              <div role="group" aria-label="Como enviar" style="display: flex; gap: 8px; flex-wrap: wrap">
+                <sc-for list="{{ anOrigens }}" as="o" hint-placeholder-count="2">
+                  <button sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.ativo }}" style="border-radius: 999px; padding: 9px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ o.borda }}; background: {{ o.fundo }}; color: {{ o.cor }}">{{ o.nome }}</button>
+                </sc-for>
+              </div>
+              <sc-if value="{{ anOrigemPdf }}" hint-placeholder-val="{{ true }}">
+                <label style="position: relative; display: flex; align-items: center; gap: 12px; margin-top: 12px; border: 1.5px dashed #BFD3D0; border-radius: 12px; padding: 14px 16px; cursor: pointer; background: #FBFCFC" style-hover="border-color: #0FA36B">
+                  <input type="file" accept="application/pdf,.pdf" sc-camel-on-change="{{ onAnArquivo }}" style="position: absolute; width: 1px; height: 1px; opacity: 0">
+                  <span aria-hidden="true" style="width: 34px; height: 34px; border-radius: 9px; background: #EAF2F1; color: #0F6B7E; display: grid; place-items: center; font-weight: 800">PDF</span>
+                  <span style="font-size: 14px; line-height: 1.4; color: #3D5058"><strong style="color: #0B1F2A">{{ anArquivoNome }}</strong><br><span style="font-size: 12.5px; color: #7A8B91">PDF pesquisável, até 200 páginas e 25 MB</span></span>
+                </label>
+              </sc-if>
+              <sc-if value="{{ anOrigemPncp }}" hint-placeholder-val="{{ false }}">
+                <input type="url" value="{{ anLink }}" sc-camel-on-input="{{ onAnLink }}" placeholder="https://pncp.gov.br/app/editais/00000000000000/2026/1" aria-label="Link da contratação no PNCP" style="margin-top: 12px; width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 11px; padding: 12px 14px; font-size: 14px">
+                <p style="margin: 6px 0 0; font-size: 12.5px; color: #7A8B91">O agente baixa o maior arquivo publicado na contratação (em geral, o edital com anexos).</p>
+              </sc-if>
+            </div>
+            <div style="background: #F6F8F7; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px">
+              <details>
+                <summary style="cursor: pointer; font-size: 14px; font-weight: 700; color: #0F6B7E">Condições da análise (leia antes de aceitar)</summary>
+                <ol style="margin: 10px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 13px; line-height: 1.5; color: #3D5058">
+                  <sc-for list="{{ anTermo }}" as="t" hint-placeholder-count="3"><li>{{ t }}</li></sc-for>
+                </ol>
+              </details>
+              <label style="display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; cursor: pointer">
+                <input type="checkbox" checked="{{ anAceite }}" sc-camel-on-change="{{ onAnAceite }}" style="width: 18px; height: 18px; margin-top: 1px; accent-color: #0FA36B; flex: none">
+                <span style="font-size: 14px; font-weight: 700; color: #172B33">Li e aceito as condições. Entendo que o parecer é opinativo e que a decisão final é minha.</span>
+              </label>
+            </div>
+            <sc-if value="{{ anPaga }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Forma de pagamento</span>
+                <div role="group" aria-label="Forma de pagamento" style="display: flex; gap: 8px; flex-wrap: wrap">
+                  <sc-for list="{{ anMetodos }}" as="m" hint-placeholder-count="3">
+                    <button sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border-radius: 999px; padding: 9px 16px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}">{{ m.nome }}</button>
+                  </sc-for>
                 </div>
-              </sc-for>
+              </div>
+            </sc-if>
+            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; border-top: 1px solid #EDF1F0; padding-top: 18px">
+              <div style="flex: 1; min-width: 200px">
+                <div style="font-size: 24px; font-weight: 800; letter-spacing: -0.02em">{{ anTotal }}</div>
+                <div style="font-size: 12.5px; color: #7A8B91; margin-top: 2px">{{ anDesconto }}</div>
+              </div>
+              <button sc-camel-on-click="{{ enviarAnalise }}" style="background: #0FA36B; color: #06251A; border: 0; border-radius: 12px; padding: 14px 22px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 24px rgba(15,163,107,0.3)" style-hover="background: #14B978">{{ anBotao }}</button>
             </div>
-            <p style="margin: 14px 0 0; font-size: 12.5px; line-height: 1.5; color: #7A8B91; background: #FFF8E6; border: 1px solid #F0E0AE; border-radius: 10px; padding: 11px 13px">Minuta gerada por IA. Revisão humana obrigatória antes de qualquer decisão administrativa.</p>
+            <sc-if value="{{ anErro }}" hint-placeholder-val="{{ false }}">
+              <p role="alert" style="margin: 0; font-size: 13.5px; font-weight: 700; color: #8A1230">{{ anErro }}</p>
+            </sc-if>
+            <sc-if value="{{ anOk }}" hint-placeholder-val="{{ false }}">
+              <p role="status" style="margin: 0; font-size: 14px; font-weight: 700; color: #0A7A50">{{ anOk }}</p>
+            </sc-if>
+          </div>
+        </div>
+      </section>
+
+      <section style="max-width: 1240px; margin: -72px auto 0; padding: 0 24px 80px">
+        <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 26px 28px; box-shadow: 0 16px 40px rgba(11,31,42,0.08)">
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+            <h2 style="margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.02em; flex: 1">Minhas análises</h2>
+            <button sc-camel-on-click="{{ atualizarAnalises }}" style="background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer">Atualizar</button>
+          </div>
+          <sc-if value="{{ semAnalises }}" hint-placeholder-val="{{ false }}">
+            <p style="margin: 14px 0 0; font-size: 14.5px; color: #6A7B82">{{ semAnalisesTexto }}</p>
+          </sc-if>
+          <div style="display: grid; gap: 12px; margin-top: 16px">
+            <sc-for list="{{ minhasAnalises }}" as="ma" hint-placeholder-count="2">
+              <div style="border: 1px solid #E6EBEA; border-left: 4px solid {{ ma.cor }}; border-radius: 12px; padding: 15px 18px">
+                <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+                  <span style="font-size: 15px; font-weight: 800">{{ ma.doc }}</span>
+                  <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.04em; padding: 4px 9px; border-radius: 999px; color: {{ ma.cor }}; background: {{ ma.fundo }}">{{ ma.status }}</span>
+                  <span style="flex: 1"></span>
+                  <span style="font-size: 12.5px; color: #7A8B91">{{ ma.data }}</span>
+                </div>
+                <p style="margin: 6px 0 0; font-size: 13.5px; color: #55666D">{{ ma.detalhe }}</p>
+                <sc-if value="{{ ma.temResumo }}" hint-placeholder-val="{{ false }}">
+                  <p style="margin: 8px 0 0; font-size: 13.5px; line-height: 1.5; color: #23343B"><strong>{{ ma.situacao }}</strong> {{ ma.contagem }}</p>
+                </sc-if>
+                <sc-if value="{{ ma.pronta }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap">
+                    <button sc-camel-on-click="{{ ma.baixarPdf }}" style="background: #0A1F2A; color: #fff; border: 0; border-radius: 9px; padding: 9px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer">Baixar parecer (PDF)</button>
+                    <button sc-camel-on-click="{{ ma.baixarDocx }}" style="background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 9px; padding: 9px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer">Baixar em Word</button>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ ma.aguardaPagamento }}" hint-placeholder-val="{{ false }}">
+                  <button sc-camel-on-click="{{ ma.conferir }}" style="margin-top: 12px; background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 9px; padding: 9px 14px; font-size: 13px; font-weight: 700; cursor: pointer">Conferir pagamento</button>
+                </sc-if>
+              </div>
+            </sc-for>
           </div>
         </div>
       </section>
@@ -2238,7 +2319,7 @@ const INSTITUCIONAL = {
       ] },
       { titulo: "5. Conduta no fórum", texto: "O fórum é um ambiente profissional. É proibido publicar dados pessoais de terceiros, informação sigilosa, documento sob restrição de acesso, conteúdo ofensivo, discriminatório, publicidade não autorizada ou qualquer pedido de auxílio para fraudar procedimento licitatório. Moderadores podem editar a classificação de tópicos, mesclar conversas, remover conteúdo e suspender contas reincidentes. Você mantém a titularidade do que escreve e nos concede licença não exclusiva para exibir esse conteúdo na plataforma.", itens: [] },
       { titulo: "6. Cursos e consultoria", texto: "Cursos são hospedados na plataforma Hotmart, onde ficam as aulas, os materiais e o certificado. A consultoria técnica é prestada pelo Licitacon nas modalidades por escrito, vídeo gravado e reunião ao vivo, com escopo, prazo e preço informados antes do pagamento e condições aceitas no pedido. Assinantes Básico têm 10% de desconto, Premium 15% e Pro 30%; o Pro inclui ainda 1 consultoria por escrito por mês, sem acúmulo. A consultoria não é consultoria jurídica nem parecer jurídico e não substitui a assessoria jurídica do órgão.", itens: [] },
-      { titulo: "7. Inteligência artificial e revisão humana", texto: "As análises do agente de IA são minutas de apoio, geradas a partir da base curada da plataforma e sempre acompanhadas da fonte citada. A revisão por profissional humano é obrigatória antes de qualquer decisão administrativa ou contratual. O Licitacon não responde por decisão tomada com base exclusiva em saída de IA sem revisão.", itens: [] },
+      { titulo: "7. Análise de documentos com inteligência artificial", texto: "A análise de documentos gera um parecer técnico automatizado, a partir do roteiro de verificação do Licitacon, da Lei nº 14.133/2021, do texto oficial dos dispositivos citados e da jurisprudência da Biblioteca. O parecer é opinativo: aponta todos os aspectos identificados, dos críticos aos de baixa vulnerabilidade, e recomenda providências, mas não vincula quem o recebe; a decisão de ajustar ou manter cada ponto, e a responsabilidade por ela, é exclusivamente do destinatário (STF, MS 24.631/DF; Decreto-Lei nº 4.657/1942, art. 28). Não é parecer jurídico e não substitui a análise jurídica prévia do órgão (Lei nº 14.133/2021, art. 53). A inteligência artificial pode errar: confira cada apontamento no documento e na fonte oficial. O documento é processado por provedor contratado (Anthropic), pela API comercial, sem uso do conteúdo para treinar modelos. O Pro inclui 2 análises por semana, sem acúmulo; as demais são avulsas, com o preço e as condições informados antes do pagamento.", itens: [] },
       { titulo: "8. Propriedade intelectual", texto: "Textos normativos, acórdãos, súmulas e pareceres são documentos públicos e não nos pertencem. Já a organização da base, a taxonomia de temas, as notas editoriais, a marca, o software e o design da plataforma são protegidos. É vedada a extração automatizada em massa (scraping, mirroring ou revenda) do conteúdo do Licitacon sem autorização escrita.", itens: [] },
       { titulo: "9. Disponibilidade e limitação de responsabilidade", texto: "Trabalhamos para manter a plataforma sempre disponível, mas não garantimos operação ininterrupta nem ausência de erro em documento coletado de fonte oficial. Nossa responsabilidade, nos limites da lei aplicável, fica restrita ao valor pago por você nos 12 meses anteriores ao evento. Nada aqui afasta direitos do consumidor previstos em lei.", itens: [] },
       { titulo: "10. Alterações, encerramento e foro", texto: "Mudanças relevantes nestes Termos são avisadas por e-mail e na plataforma com 30 dias de antecedência; o uso continuado após esse prazo significa aceitação. Você pode encerrar a conta quando quiser. Aplica-se a lei brasileira, com foro do domicílio do consumidor, e buscamos resolver conflitos primeiro por canal direto ou plataformas de mediação antes de qualquer medida judicial.", itens: [] }
@@ -2261,7 +2342,7 @@ const INSTITUCIONAL = {
         "Comunicações de marketing: consentimento livre, específico e revogável a qualquer momento, com um clique."
       ] },
       { titulo: "3. Atenção especial aos documentos que você envia", texto: "Editais, processos administrativos e minutas podem conter dados pessoais — e às vezes dados sensíveis — de terceiros. Você é responsável por só enviar documento que possa legitimamente compartilhar. Nós, por nossa parte, restringimos o acesso ao mínimo de pessoas, aplicamos criptografia, não usamos seus documentos para treinar modelos de IA de terceiros e excluímos o arquivo original após o prazo de retenção configurado na sua conta.", itens: [] },
-      { titulo: "4. Com quem compartilhamos", texto: "Não vendemos dados pessoais. Compartilhamos apenas o necessário com operadores contratualmente obrigados a padrões equivalentes de proteção: provedor de nuvem e CDN, Mercado Pago Ltda. como processador de pagamentos (que trata dados de cobrança e antifraude sob sua própria política, como controlador dessa etapa), emissor de nota fiscal, provedor de e-mail transacional, ferramentas de monitoramento de erros e, quando você contrata consultoria, o especialista escolhido — que recebe somente o material do atendimento. Também compartilhamos quando houver ordem judicial ou requisição legal de autoridade competente.", itens: [] },
+      { titulo: "4. Com quem compartilhamos", texto: "Não vendemos dados pessoais. Compartilhamos apenas o necessário com operadores contratualmente obrigados a padrões equivalentes de proteção: provedor de nuvem e CDN, Mercado Pago Ltda. como processador de pagamentos (que trata dados de cobrança e antifraude sob sua própria política, como controlador dessa etapa), emissor de nota fiscal, provedor de e-mail transacional, ferramentas de monitoramento de erros quando você contrata consultoria, o especialista escolhido — que recebe somente o material do atendimento — e, quando você solicita análise de documento, o provedor de inteligência artificial (Anthropic), que recebe somente o documento enviado, pela API comercial, sem uso para treinamento de modelos. Também compartilhamos quando houver ordem judicial ou requisição legal de autoridade competente.", itens: [] },
       { titulo: "5. Transferência internacional", texto: "Parte da infraestrutura pode estar em servidores fora do Brasil. Nesses casos, a transferência ocorre com salvaguardas adequadas — cláusulas contratuais padrão, avaliação de país com nível adequado de proteção ou outro mecanismo previsto no art. 33 da LGPD e no capítulo V do GDPR.", itens: [] },
       { titulo: "6. Retenção e descarte", texto: "Dados de conta são mantidos enquanto a assinatura estiver ativa. Após o encerramento, excluímos ou anonimizamos em até 90 dias, exceto: documentos fiscais e contábeis (5 anos, por obrigação legal), registros de acesso (6 meses, por exigência do Marco Civil) e dados necessários à defesa em processo em curso.", itens: [] },
       { titulo: "7. Seus direitos como titular", texto: "Você exerce todos eles direto no Portal do Titular, dentro da Área do Assinante, sem precisar falar com ninguém — ou por e-mail ao DPO. Respondemos em até 15 dias.", itens: [
@@ -2375,16 +2456,16 @@ const SLIDES = [
     ]
   },
   {
-    tipo: "funcionalidade", badge: "Em breve · Fase 3", meta: "Agente de IA Analista",
-    titulo: "Envie o edital e receba a análise com fundamento citado",
-    texto: "O agente cruza o documento com a legislação e a jurisprudência da própria Biblioteca e devolve inconsistência, fundamento, sugestão de correção e nível de risco — sempre como minuta para revisão humana.",
-    chips: ["Fonte obrigatória", "Base fechada e curada", "Revisão humana"],
-    cta: "Entrar na lista de espera", destino: "agente",
-    painelTitulo: "Prévia da análise", numero: "4", numeroLabel: "níveis de risco: baixo, médio, alto e crítico",
+    tipo: "funcionalidade", badge: "Novo · Agente de IA", meta: "Análise de documentos",
+    titulo: "Envie o edital e receba um parecer técnico completo",
+    texto: "O agente confere o documento item a item com a Lei 14.133/2021 e devolve um parecer em PDF e Word: constatação, texto legal, risco, providência, redação sugerida e jurisprudência da Biblioteca. Parecer opinativo — a decisão é sempre sua.",
+    chips: ["Texto legal conferido", "Jurisprudência da Biblioteca", "Formato ABNT"],
+    cta: "Analisar um documento", destino: "agente",
+    painelTitulo: "Exemplo real de apontamentos", numero: "3", numeroLabel: "níveis de gravidade: alta, média e baixa",
     linhas: [
-      { rotulo: "Risco crítico", texto: "Prorrogação assinada após o termo final da vigência, sem instrumento de continuidade." },
-      { rotulo: "Risco alto", texto: "Vantajosidade não demonstrada: falta pesquisa de mercado contemporânea." },
-      { rotulo: "Risco médio", texto: "Aglutinação de itens divisíveis em lote único sem justificativa técnica (Súmula TCU nº 247)." }
+      { rotulo: "Gravidade alta", texto: "Julgamento por lote em registro de preços sem a demonstração do art. 82, § 1º." },
+      { rotulo: "Gravidade média", texto: "Ata municipal admitindo adesão de órgãos federais e estaduais (art. 86, § 8º)." },
+      { rotulo: "Gravidade baixa", texto: "Erro material na data do planejamento das quantidades." }
     ]
   },
   {
@@ -2429,6 +2510,26 @@ const CONSULTORIA = [
     escopo: "60 minutos por videoconferência",
     desc: "Conversa pelo Google Meet para tirar dúvidas e discutir o caso. Depois do pagamento, você escolhe o horário na agenda do especialista." }
 ];
+const AN_DOCS = [["edital", "Edital"], ["etp", "ETP"], ["tr", "Termo de Referência"], ["riscos", "Matriz de Riscos"], ["planilha", "Planilha de custos"]];
+const AN_DOC_NOME = { edital: "Edital", etp: "Estudo Técnico Preliminar", tr: "Termo de Referência", riscos: "Matriz de Riscos", planilha: "Planilha de custos" };
+const AN_PRECO = 147;
+const AN_DESCONTO = { basico: 0.1, premium: 0.15, pro: 0.3 };
+const AN_MAX_MB = 25;
+const AN_TERMO_VERSAO = "2026-10-29";
+const AN_TERMO = [
+  "Natureza: parecer técnico em gestão de licitações e contratos, elaborado de forma automatizada por inteligência artificial a partir do roteiro de verificação do Licitacon. Não é parecer jurídico e não substitui a análise jurídica prévia do órgão (Lei 14.133/2021, art. 53).",
+  "Parecer opinativo: o parecer aponta todos os aspectos identificados, dos críticos aos de baixa vulnerabilidade, e recomenda providências, mas não vincula quem o recebe. A decisão de ajustar ou manter cada ponto, e a responsabilidade por ela, é exclusivamente sua (STF, MS 24.631/DF; Decreto-Lei 4.657/1942, art. 28).",
+  "Escopo: um documento por análise, em PDF pesquisável de até 200 páginas e 25 MB. Nesta fase, a análise considera a Lei 14.133/2021; normas estaduais, municipais e regulamentos internos só são considerados se constarem do próprio documento.",
+  "Prazo: em geral, o parecer fica pronto em até 1 hora; você recebe um aviso por e-mail e baixa o parecer em PDF e Word nesta página.",
+  "Plano Pro: 2 análises por semana incluídas (de segunda a domingo, sem acúmulo). A partir da 3ª análise na semana, a análise avulsa sai com 30% de desconto. Análise que não puder ser concluída não consome a cota; a avulsa paga é reprocessada ou estornada.",
+  "Dados: o documento é processado por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos. O arquivo e o parecer ficam na sua conta, acessíveis só a você e à equipe do Licitacon. Não envie documento cuja divulgação a prestadores de serviço seja vedada.",
+  "Limitações: a inteligência artificial pode errar ou deixar de identificar pontos. Confira cada apontamento no documento e na fonte oficial antes de decidir."
+];
+const STATUS_ANALISE = {
+  aguardando_pagamento: ["aguardando pagamento", "#8A4A12", "#FDF1E3"], na_fila: ["na fila", "#0F6B7E", "#E3F1F5"],
+  processando: ["em análise", "#0F6B7E", "#E3F1F5"], concluida: ["parecer pronto", "#0A7A50", "#E3F2EA"],
+  erro: ["não concluída", "#8A1230", "#F8E6E8"], cancelada: ["cancelada", "#6A7B82", "#EEF1F2"]
+};
 const CONS_TERMO_VERSAO = "2026-10-27";
 const CONS_TERMO = [
   "Natureza do serviço: consultoria técnica em gestão de licitações e contratos. Não é consultoria jurídica nem parecer jurídico — atividades privativas de advogado (Lei 8.906/1994, art. 1º, II) — e não substitui a manifestação da assessoria jurídica do órgão (Lei 14.133/2021, art. 53).",
@@ -2513,7 +2614,7 @@ const EXIGE_LOGIN = ["forum", "cursos", "conta"];
 const PLANO_NOME = { teste: "Teste", basico: "Básico", premium: "Premium", pro: "Pro" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "2";
+const CHAT_VERSAO = "3";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
 // Pro: 1 consultoria por escrito por mês incluída (mês do calendário, horário de Brasília)
 const inicioMesBR = () => { const d = new Date(Date.now() - 3 * 3600000); return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1, 3)); };
@@ -2554,6 +2655,7 @@ function iniciaisDe(nome) {
   if (!p.length) return "?";
   return ((p[0][0] || "") + (p.length > 1 ? p[p.length - 1][0] : "")).toUpperCase();
 }
+function brlSimples(v) { const partes = Number(v || 0).toFixed(2).split("."); return "R$ " + partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "," + partes[1]; }
 function dataBR(iso) {
   if (!iso) return "—";
   const d = new Date(iso);
@@ -2645,6 +2747,8 @@ class Component extends DCLogic {
     admin: false,
     plano: null,           // plano em vigor: teste | basico | premium | pro | null
     assinaturas: [], pagamentos: [], consultorias: [], acessosCurso: [], seguindo: [], favBib: [],
+    analises: [], cotaAnalise: null,
+    an: { doc: "edital", origem: "pdf", arquivo: null, link: "", metodo: "pix", aceite: false, enviando: false, erro: "", ok: "" },
     auth: AUTH_VAZIO,
     volta: null,
     aviso: "", avisoTipo: "ok",
@@ -2781,7 +2885,7 @@ class Component extends DCLogic {
 
   limparDados() {
     this.setState({
-      admin: false, plano: null, assinaturas: [], pagamentos: [], consultorias: [], acessosCurso: [], seguindo: [], favBib: [],
+      admin: false, plano: null, assinaturas: [], pagamentos: [], consultorias: [], acessosCurso: [], seguindo: [], favBib: [], analises: [], cotaAnalise: null,
       perfil: { nome: "", celular: "", email: "", doc: "", orgao: "", cargo: "" }, notif: NOTIF_PADRAO, forumPerguntas: [], forumTopicos: null
     });
   }
@@ -2789,7 +2893,7 @@ class Component extends DCLogic {
   async carregarDados() {
     const sb = this.sb, u = this.state.usuario;
     if (!sb || !u) return;
-    const [perfil, plano, assin, pags, cons, acessos, seg, bib, cupom] = await Promise.all([
+    const [perfil, plano, assin, pags, cons, acessos, seg, bib, cupom, anal, cota] = await Promise.all([
       sb.from("perfis").select("*").eq("id", u.id).maybeSingle(),
       sb.rpc("meu_plano"),
       sb.from("assinaturas").select("*").order("criado_em", { ascending: false }).limit(50),
@@ -2798,7 +2902,9 @@ class Component extends DCLogic {
       sb.from("curso_acessos").select("criado_em, plano, cursos(titulo)").order("criado_em", { ascending: false }).limit(20),
       sb.from("forum_seguindo").select("topico_id, forum_topicos(nome)"),
       sb.from("biblioteca_pessoal").select("chave, dados, atualizado_em").like("chave", "nota-%").limit(1000),
-      sb.rpc("meu_cupom_curso")
+      sb.rpc("meu_cupom_curso"),
+      sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg").order("criado_em", { ascending: false }).limit(30),
+      sb.rpc("minha_cota_analises")
     ]);
     const p = perfil.data || {};
     const planoVig = plano.data || null;
@@ -2817,8 +2923,11 @@ class Component extends DCLogic {
       consultorias: cons.data || [],
       acessosCurso: acessos.data || [],
       seguindo: seg.data || [],
-      favBib: (bib.data || []).filter((r) => r.dados && (r.dados.marcas || []).includes("fav"))
+      favBib: (bib.data || []).filter((r) => r.dados && (r.dados.marcas || []).includes("fav")),
+      analises: (anal && !anal.error && anal.data) || [],
+      cotaAnalise: (cota && !cota.error && cota.data) || null
     });
+    this.vigiarAnalises();
     if (this.state.page === "forum") this.carregarForum();
   }
 
@@ -2840,7 +2949,8 @@ class Component extends DCLogic {
     const ref = qs.get("ref") || qs.get("external_reference");
     if (!retorno || !ref) return;
     history.replaceState(null, "", location.pathname + "?p=conta");
-    this.setState({ page: "conta", contaTab: ref.startsWith("consultoria:") ? "atividade" : "assinatura" });
+    if (ref.startsWith("analise:")) { history.replaceState(null, "", location.pathname + "?p=agente"); this.setState({ page: "agente" }); }
+    else this.setState({ page: "conta", contaTab: ref.startsWith("consultoria:") ? "atividade" : "assinatura" });
     if (retorno === "falhou") {
       this.aviso("O pagamento não foi concluído. Você pode tentar de novo quando quiser.", "erro");
       return;
@@ -2858,9 +2968,11 @@ class Component extends DCLogic {
         return;
       }
       const st = data && data.status;
-      if (st === "ativa" || st === "recebida" || st === "em_andamento" || st === "entregue") {
+      if (["ativa", "recebida", "em_andamento", "entregue", "na_fila", "processando", "concluida"].includes(st)) {
         await this.carregarDados();
-        this.aviso(ref.startsWith("assinatura:") ? "✓ Pagamento confirmado. Seu plano já está ativo." : "✓ Pagamento confirmado. Em até 1 dia útil o especialista confirma o escopo por e-mail.");
+        this.aviso(ref.startsWith("assinatura:") ? "✓ Pagamento confirmado. Seu plano já está ativo."
+          : ref.startsWith("analise:") ? "✓ Pagamento confirmado. A análise entrou na fila; você recebe um e-mail quando o parecer ficar pronto."
+          : "✓ Pagamento confirmado. Em até 1 dia útil o especialista confirma o escopo por e-mail.");
         return;
       }
       await new Promise((r) => setTimeout(r, 2500));
@@ -2886,6 +2998,7 @@ class Component extends DCLogic {
       try { history.pushState({ p: destino }, "", url); } catch (e) { /* sem histórico */ }
     }
     if (destino === "forum" && this.u) this.carregarForum();
+    if (destino === "agente" && this.u) this.carregarDados();
     window.scrollTo(0, 0);
   }
 
@@ -3188,6 +3301,66 @@ class Component extends DCLogic {
     }
     if (data && data.url) { window.location.href = data.url; return; }
     this.setState({ consultoria: { ...this.state.consultoria, enviando: false, erro: "Não foi possível abrir o pagamento." } });
+  }
+
+  // ------------------------------------------------------------ análise de documentos
+  precoAnalise() {
+    const s = this.state, c = s.cotaAnalise;
+    if (s.plano === "pro" && c && Number(c.usadas) < Number(c.limite)) return 0;
+    return Math.round(AN_PRECO * (1 - (AN_DESCONTO[s.plano] || 0)) * 100) / 100;
+  }
+
+  escolherArquivoAnalise(e) {
+    const f = e.target && e.target.files && e.target.files[0];
+    if (e.target) e.target.value = "";
+    const an = this.state.an;
+    if (!f) return;
+    if (!/\.pdf$/i.test(f.name) && f.type !== "application/pdf") { this.setState({ an: { ...an, erro: "Envie o documento em PDF." } }); return; }
+    if (f.size > AN_MAX_MB * 1048576) { this.setState({ an: { ...an, erro: "O arquivo passa de " + AN_MAX_MB + " MB. Envie só o documento a analisar." } }); return; }
+    this.setState({ an: { ...an, arquivo: f, erro: "", ok: "" } });
+  }
+
+  async enviarAnalise() {
+    const an = this.state.an;
+    const erro = (m) => this.setState({ an: { ...this.state.an, enviando: false, erro: m } });
+    if (!this.sb) { erro("A análise de documentos ainda não está ativa neste site (modo demonstração)."); return; }
+    if (!this.u) { this.setState({ volta: "agente" }); this.irPara("login"); return; }
+    if (an.origem === "pdf" && !an.arquivo) { erro("Escolha o arquivo em PDF."); return; }
+    if (an.origem === "pncp" && !/pncp\.gov\.br\/.*\d{14}\/\d{4}\/\d+/.test(an.link)) { erro("Cole o link da contratação no PNCP (ex.: https://pncp.gov.br/app/editais/CNPJ/ANO/NÚMERO)."); return; }
+    if (!an.aceite) { erro("Leia e aceite as condições da análise para continuar."); return; }
+    this.setState({ an: { ...an, enviando: true, erro: "", ok: "" } });
+    let arquivo = null;
+    if (an.origem === "pdf") {
+      const limpo = an.arquivo.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9._-]+/g, "-").replace(/\.pdf$/i, "").slice(-70) || "documento";
+      arquivo = this.state.usuario.id + "/" + Date.now().toString(36) + "-" + limpo + ".pdf";
+      const { error } = await this.sb.storage.from("analises").upload(arquivo, an.arquivo, { upsert: false, contentType: "application/pdf" });
+      if (error) { erro("Não foi possível enviar o arquivo. Tente de novo."); return; }
+    }
+    const { data, error } = await this.sb.functions.invoke("mp-checkout", {
+      body: { acao: "criar", tipo: "analise", documento: an.doc, origem: an.origem, arquivo, nome_arquivo: an.arquivo ? an.arquivo.name : "",
+              pncp_link: an.origem === "pncp" ? an.link.trim() : null, aceite: true, termo_versao: AN_TERMO_VERSAO, metodo: an.metodo, retorno: baseSite() + "index.html" }
+    });
+    if (error) { erro(await erroDaFuncao(error)); return; }
+    if (data && data.gratuito) {
+      this.setState({ an: { ...this.state.an, enviando: false, arquivo: null, link: "", aceite: false, ok: "✓ Análise recebida (incluída no seu plano Pro). Em geral fica pronta em até 1 hora; você recebe um e-mail." } });
+      this.carregarDados();
+      return;
+    }
+    if (data && data.url) { window.location.href = data.url; return; }
+    erro("Não foi possível abrir o pagamento.");
+  }
+
+  async baixarParecer(caminho, nome) {
+    if (!this.sb || !caminho) return;
+    const { data, error } = await this.sb.storage.from("analises").createSignedUrl(caminho, 300, { download: nome });
+    if (error || !data) { this.aviso("Não foi possível gerar o link do parecer. Tente de novo.", "erro"); return; }
+    window.location.href = data.signedUrl;
+  }
+
+  vigiarAnalises() {
+    clearTimeout(this.timerAnalises);
+    const pendente = (this.state.analises || []).some((a) => a.status === "na_fila" || a.status === "processando");
+    if (pendente && this.state.page === "agente") this.timerAnalises = setTimeout(() => this.carregarDados(), 45000);
   }
 
   // ------------------------------------------------------------ planos e checkout
@@ -3658,7 +3831,7 @@ class Component extends DCLogic {
         { icon: "◍", tag: "Comunidade", tagColor: "#0F6B7E", titulo: "Fórum por tema", desc: "Perguntas organizadas por tema, com resposta oficial do especialista e escolha da melhor resposta. Setor público e privado conversando no mesmo lugar.", cta: "Ver tópicos", go: this.nav("forum") },
         { icon: "▤", tag: "Capacitação", tagColor: "#0F6B7E", titulo: "Vitrine de cursos", desc: "Cursos com curadoria do Licitacon e desconto para assinantes — até 50% no plano Pro.", cta: "Explorar cursos", go: this.nav("cursos") },
         { icon: "◈", tag: "Especialistas", tagColor: "#0F6B7E", titulo: "Consultoria técnica", desc: "Por escrito, em vídeo gravado ou reunião ao vivo, com desconto de assinante — e 1 consultoria por escrito por mês incluída no Pro.", cta: "Ver especialistas", go: this.nav("consultoria") },
-        { icon: "✦", tag: "Em breve", tagColor: "#8A4A12", titulo: "Agente de IA analista", desc: "Envie um edital ou minuta de aditivo e receba a análise de conformidade com fundamento citado e nível de risco.", cta: "Entrar na lista", go: this.nav("agente") }
+        { icon: "✦", tag: "Novo", tagColor: "#0A7A50", titulo: "Análise de documentos com IA", desc: "Envie o edital, o ETP ou o TR e receba um parecer técnico em PDF e Word, com o texto legal, a jurisprudência e a redação sugerida.", cta: "Analisar documento", go: this.nav("agente") }
       ],
       diferenciais: [
         { titulo: "Base que se atualiza sozinha", desc: "Coleta automática nos dias úteis no TCU, CGU, STF, STJ, TCE-RJ, TCM-RJ, TJ-RJ e PGE-RJ, além da legislação, com o link da fonte em cada item." },
@@ -3859,25 +4032,61 @@ class Component extends DCLogic {
       temConsAnexos: cons.anexos.length > 0,
       enviarConsultoria: () => { if (!cons.enviando && !cons.ok) this.enviarConsultoria(); },
 
-      // agente
-      email: s.email,
-      onEmail: (e) => this.setState({ email: e.target.value, esperaErro: "" }),
-      inscrever: () => this.inscreverEspera(),
-      waitlistMsg: s.esperaErro || (s.inscrito
-        ? "Pronto — você está na lista. Avisaremos assim que o beta fechado abrir para assinantes Pro."
-        : "Beta fechado primeiro para assinantes Pro. Sem spam; só o aviso de liberação."),
+      // análise de documentos (agente)
       governanca: [
-        "Revisão humana obrigatória: a saída é uma minuta de análise, nunca decisão final.",
-        "Citação de fonte em toda afirmação relevante, com link para o documento na Biblioteca.",
-        "Guardrails que recusam qualquer tema fora de licitações e contratos administrativos.",
-        "Base fechada e curada — o agente não busca na internet aberta.",
-        "Versionamento de prompts e modelos para auditoria posterior."
+        "Verificação item a item, com o texto oficial vigente de cada dispositivo citado — o agente não inventa artigo.",
+        "Jurisprudência só da Biblioteca Licitacon, com link para a fonte oficial.",
+        "Trechos do documento citados literalmente e conferidos por programa; prazos do art. 183 calculados pelo sistema.",
+        "Todos os aspectos apontados, dos críticos aos leves, com risco, providência e redação sugerida.",
+        "Parecer em PDF e Word, no formato ABNT, pronto para juntar ao processo."
       ],
-      analise: [
-        { risco: "Crítico", ...RISCOS["Crítico"], ponto: "Prorrogação intempestiva", inconsistencia: "A minuta prevê assinatura em 12/03, após o termo final da vigência (28/02), sem instrumento de continuidade.", fundamento: "Lei nº 14.133/2021 (Lei de Licitações e Contratos Administrativos)", sugestao: "Instruir novo processo de contratação; a prorrogação após o termo final é nula." },
-        { risco: "Alto", ...RISCOS["Alto"], ponto: "Vantajosidade não demonstrada", inconsistencia: "Ausência de pesquisa de mercado contemporânea que ateste que o preço mantido permanece vantajoso.", fundamento: "IN SEGES/ME nº 65/2021", sugestao: "Anexar pesquisa em painéis oficiais e contratos similares, com nota técnica comparativa." },
-        { risco: "Médio", ...RISCOS["Médio"], ponto: "Índice de reajuste divergente", inconsistencia: "A cláusula 7ª cita IGP-M, enquanto o edital original fixou IPCA como índice aplicável.", fundamento: "Súmula TCU nº 247", sugestao: "Corrigir a cláusula para o índice do instrumento convocatório antes da assinatura." }
-      ],
+      anCotaTexto: (() => {
+        const c = s.cotaAnalise;
+        if (!s.usuario) return "Entre na sua conta para enviar um documento.";
+        if (s.plano === "pro" && c) return "Plano Pro: " + Math.max(0, c.limite - c.usadas) + " de " + c.limite + " análises disponíveis nesta semana (renova na segunda-feira).";
+        return "Análise avulsa por documento. Assinantes Pro têm 2 análises por semana incluídas.";
+      })(),
+      anDocs: AN_DOCS.map(([id, nome]) => ({ nome, ativo: s.an.doc === id, escolher: () => this.setState({ an: { ...this.state.an, doc: id, erro: "" } }), ...corBotao(s.an.doc === id) })),
+      anOrigens: [["pdf", "Enviar PDF"], ["pncp", "Link do PNCP"]].map(([id, nome]) => ({ nome, ativo: s.an.origem === id, escolher: () => this.setState({ an: { ...this.state.an, origem: id, erro: "" } }), ...corBotao(s.an.origem === id) })),
+      anOrigemPdf: s.an.origem === "pdf",
+      anOrigemPncp: s.an.origem === "pncp",
+      anArquivoNome: s.an.arquivo ? s.an.arquivo.name : "Escolher arquivo",
+      onAnArquivo: (e) => this.escolherArquivoAnalise(e),
+      anLink: s.an.link,
+      onAnLink: (e) => this.setState({ an: { ...this.state.an, link: e.target.value, erro: "" } }),
+      anTermo: AN_TERMO,
+      anAceite: s.an.aceite,
+      onAnAceite: (e) => { const v = !!e.target.checked; this.setState((st) => ({ an: { ...st.an, aceite: v, erro: "" } })); },
+      anPaga: this.precoAnalise() > 0,
+      anMetodos: [["pix", "Pix"], ["cartao", "Cartão"], ["boleto", "Boleto"]].map(([id, nome]) => ({ nome, ativo: s.an.metodo === id, escolher: () => this.setState({ an: { ...this.state.an, metodo: id } }), ...corBotao(s.an.metodo === id) })),
+      anTotal: this.precoAnalise() > 0 ? brlSimples(this.precoAnalise()) : "Incluída no seu plano",
+      anDesconto: this.precoAnalise() <= 0 ? "Análise da sua cota semanal do Pro"
+        : (s.plano && AN_DESCONTO[s.plano] ? "Desconto de assinante " + (PLANO_NOME[s.plano] || "") + " aplicado" + (s.plano === "pro" ? " (cota da semana já usada)" : "") : "Assinantes: Básico 10% e Premium 15% de desconto; Pro com 2 análises por semana incluídas."),
+      anBotao: s.an.enviando ? "Enviando…" : (!s.usuario && s.sb ? "Entrar para analisar" : (this.precoAnalise() > 0 ? "Pagar e analisar" : "Enviar para análise")),
+      enviarAnalise: () => { if (!s.an.enviando) this.enviarAnalise(); },
+      anErro: s.an.erro, anOk: s.an.ok,
+      atualizarAnalises: () => this.carregarDados(),
+      semAnalises: !(s.analises || []).length,
+      semAnalisesTexto: s.usuario ? "Nenhuma análise ainda. Envie o primeiro documento acima." : "Entre na sua conta para ver suas análises.",
+      minhasAnalises: (s.analises || []).map((a) => {
+        const st = STATUS_ANALISE[a.status] || [a.status, "#6A7B82", "#EEF1F2"];
+        const r = a.resumo || {};
+        const base = (AN_DOC_NOME[a.documento] || a.documento) + "-" + String(a.id).slice(0, 8);
+        return {
+          doc: AN_DOC_NOME[a.documento] || a.documento, status: st[0], cor: st[1], fundo: st[2], data: dataBR(a.criado_em),
+          detalhe: a.status === "erro" ? (a.erro_msg || "Não foi possível concluir a análise.")
+            : ((a.origem === "pncp" ? "PNCP" : (a.nome_arquivo || "PDF enviado")) + (a.paginas ? " · " + a.paginas + " páginas" : "")
+               + " · " + (a.cobranca === "franquia_pro" ? "incluída no Pro" : brlSimples(Number(a.valor || 0)))),
+          temResumo: a.status === "concluida" && !!r.situacao,
+          situacao: r.situacao || "",
+          contagem: "Apontamentos: " + Number(r.alta || 0) + " de gravidade alta, " + Number(r.media || 0) + " média e " + Number(r.baixa || 0) + " baixa.",
+          pronta: a.status === "concluida" && !!a.parecer_pdf,
+          baixarPdf: () => this.baixarParecer(a.parecer_pdf, "Parecer Licitacon - " + base + ".pdf"),
+          baixarDocx: () => this.baixarParecer(a.parecer_docx, "Parecer Licitacon - " + base + ".docx"),
+          aguardaPagamento: a.status === "aguardando_pagamento",
+          conferir: () => { this.aviso("Conferindo com o Mercado Pago…"); this.conferirPagamento("analise:" + a.id, false); }
+        };
+      }),
 
       // planos
       ciclo: anual
@@ -3898,11 +4107,11 @@ class Component extends DCLogic {
         { nome: "Teste", base: 0, publico: "Conheça a plataforma antes de assinar.", preco: "7 dias", unidade: "sem cartão", nota: "", detalhePreco: "Sem cartão e sem cobrança automática ao final.", destaque: false, cta: s.plano ? "Plano já ativo" : "Começar teste", btnBg: "#F1F6F5", btnColor: "#0A1F2A",
           itens: ["Acesso completo à Biblioteca Jurídica durante o teste", "Leitura do fórum da comunidade", "Sem cobrança automática ao final"] },
         { nome: "Básico", base: 119.9, publico: "Profissionais individuais iniciantes.", preco: precoPlano(119.9), unidade: unidadePlano, nota: notaPlano(119.9), detalhePreco: detalhePlano(119.9), destaque: destaque === "Básico", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Biblioteca Jurídica completa, com anotações, marcadores e dossiês salvos na conta", "Fórum da comunidade: leitura e participação", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto"] },
+          itens: ["Biblioteca Jurídica completa, com anotações, marcadores e dossiês salvos na conta", "Fórum da comunidade: leitura e participação", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "Análise de documentos com IA com 10% de desconto"] },
         { nome: "Premium", base: 199.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(199.9), unidade: unidadePlano, nota: notaPlano(199.9), detalhePreco: detalhePlano(199.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
-          itens: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Prioridade na agenda do especialista"] },
+          itens: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Análise de documentos com IA com 15% de desconto", "Prioridade na agenda do especialista"] },
         { nome: "Pro", base: 479.9, publico: "Profissionais avançados e empresas.", preco: precoPlano(479.9), unidade: unidadePlano, nota: notaPlano(479.9), detalhePreco: detalhePlano(479.9), destaque: destaque === "Pro", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Tudo do Premium", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "Cota mensal do Agente de IA Analista (quando lançado)", "Selo de resposta oficial no fórum para o especialista", "Suporte prioritário"] }
+          itens: ["Tudo do Premium", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "2 análises de documentos por semana com parecer técnico (edital, ETP, TR e outros); a partir da 3ª, 30% de desconto", "Selo de resposta oficial no fórum para o especialista", "Suporte prioritário"] }
       ]),
 
       // área do assinante
