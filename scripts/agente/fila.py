@@ -159,6 +159,7 @@ def processar(a):
                     raise ErroCliente("O documento é extenso demais para uma única análise. Envie só o documento a analisar.")
                 raise
             analise = json.loads(saida.read_text(encoding="utf-8"))
+            subprocess.run([sys.executable, str(RAIZ / "scripts/agente/exportar-juris.py"), str(saida), "/tmp/jurisprudencia-nova"], capture_output=True)
             rodar([sys.executable, str(RAIZ / "scripts/agente/gerar-relatorio.py"), str(saida), str(pasta / "parecer.docx"), "--pdf"], timeout=600)
             base = f"{a['usuario_id']}/pareceres/{aid}"
             for ext, tipo in (("pdf", "application/pdf"), ("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")):

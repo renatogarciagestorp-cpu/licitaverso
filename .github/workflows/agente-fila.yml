@@ -11,7 +11,7 @@ on:
       teste: { description: "Teste interno: link do PNCP para analisar em nome do administrador (opcional)", required: false, default: "" }
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency: { group: agente-fila, cancel-in-progress: false }
 
@@ -42,3 +42,12 @@ jobs:
           TESTE: ${{ inputs.teste }}
         run: |
           if [ -n "$TESTE" ]; then python3 scripts/agente/fila.py --teste "$TESTE"; else python3 scripts/agente/fila.py; fi
+      - name: Guardar jurisprudência nova para o acervo
+        if: steps.fila.outputs.tem == 'true'
+        run: |
+          [ -d /tmp/jurisprudencia-nova ] && [ -n "$(ls -A /tmp/jurisprudencia-nova)" ] || exit 0
+          git fetch -q origin agente-testes && git worktree add -q /tmp/t origin/agente-testes && cd /tmp/t
+          mkdir -p jurisprudencia-nova && cp /tmp/jurisprudencia-nova/*.json jurisprudencia-nova/
+          git config user.name "Licitacon — agente" && git config user.email "actions@users.noreply.github.com"
+          git checkout -q -B agente-testes && git add jurisprudencia-nova && git commit -q -m "Jurisprudência nova achada pelo agente" || exit 0
+          for i in 1 2 3; do git push -q origin agente-testes && break; git pull -q --rebase origin agente-testes; done

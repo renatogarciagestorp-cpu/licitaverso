@@ -579,7 +579,7 @@ def gerar(analise, saida, paginas=None):
             caixa(doc, "Redação sugerida", r["redacao_sugerida"], C["ok"], C["ok_f"])
 
         if "jurisprudencia_ids" in r:
-            por_id = {j.get("id"): j for j in acervo()}
+            por_id = {j.get("id"): j for j in acervo() + (analise.get("jurisprudencia_externa") or [])}
             js = [por_id[i] for i in r["jurisprudencia_ids"] if i in por_id]
         else:
             js = jurisprudencia(r.get("temas") or it.get("temas"))

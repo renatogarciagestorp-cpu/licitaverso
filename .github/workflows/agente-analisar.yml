@@ -71,11 +71,13 @@ jobs:
             --fonte "${{ inputs.link }}" --paginas "$PAGS" --saida "$OUT/analise.json" > /tmp/out.txt 2>/tmp/err.txt || erro "Análise"
           echo "::notice title=Análise::$(cat /tmp/out.txt | tr '\n' ' ')"
           python3 scripts/agente/gerar-relatorio.py "$OUT/analise.json" "$OUT/parecer.docx" --pdf > /tmp/out.txt 2>/tmp/err.txt || erro "Relatório"
+          python3 scripts/agente/exportar-juris.py "$OUT/analise.json" /tmp/testes/jurisprudencia-nova > /tmp/jn.txt 2>&1 || true
+          echo "::notice title=Jurisprudência::$(cat /tmp/jn.txt)"
       - name: Gravar no ramo agente-testes
         run: |
           cd /tmp/testes
           git config user.name "Licitacon — agente"; git config user.email "actions@users.noreply.github.com"
           git checkout -q -B agente-testes
-          git add "$PASTA"
+          git add "$PASTA" jurisprudencia-nova 2>/dev/null || git add "$PASTA"
           git commit -q -m "Agente: análise automática $PASTA (${{ inputs.documento }})"
           for i in 1 2 3 4 5; do git push -q origin agente-testes && break; git pull -q --rebase origin agente-testes; sleep $((RANDOM % 10 + 3)); done

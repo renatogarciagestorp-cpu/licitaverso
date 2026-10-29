@@ -11,7 +11,7 @@ Uso:
 
 A chave vem só da variável de ambiente (segredo do GitHub/Supabase); nunca é gravada em arquivo.
 """
-import argparse, datetime, json, os, pathlib, re, sys, time, unicodedata, urllib.error, urllib.request
+import argparse, datetime, json, os, pathlib, re, sys, time, unicodedata, urllib.error, urllib.parse, urllib.request
 
 RAIZ = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(RAIZ / "scripts" / "agente"))
@@ -132,6 +132,53 @@ def itens_aplicaveis(roteiro, doc):
     tipos = {doc} | ({"planilha"} if doc == "edital" else set())
     return [i for i in roteiro["itens"] if i["doc"] in tipos]
 
+# ------------------------------------------------------------------ jurisprudência fora do acervo (varredura em fonte oficial)
+EXTERNOS = {}  # id -> documento no formato do acervo (achados nesta análise)
+_cand_cache = {}
+
+def _tcu_js(termo, n=4):
+    url = ("https://pesquisa.apps.tcu.gov.br/rest/publico/base/jurisprudencia-selecionada/documentosResumidos?"
+           + urllib.parse.urlencode({"termo": termo, "ordenacao": "score desc", "quantidade": n, "inicio": 0}))
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json", "Referer": "https://pesquisa.apps.tcu.gov.br/"})
+        return json.load(urllib.request.urlopen(req, timeout=30)).get("documentos", [])
+    except Exception:
+        return []
+
+def _doc_tcu(x):
+    limpa = lambda t: re.sub(r"<[^>]+>", "", t or "").strip()
+    key = x["KEY"].rsplit("-", 1)[-1]
+    d, m, a = (x.get("DATASESSAOFORMATADA") or "//").split("/")
+    enun = limpa(x.get("ENUNCIADO"))
+    num = f"Acórdão {x.get('NUMACORDAO')}/{x.get('ANOACORDAO')}-{x.get('COLEGIADO')}"
+    url = f"https://pesquisa.apps.tcu.gov.br/documento/jurisprudencia-selecionada/*/KEY%253AJURISPRUDENCIA-SELECIONADA-{key}/score%2520desc/0"
+    meses = ["jan.", "fev.", "mar.", "abr.", "maio", "jun.", "jul.", "ago.", "set.", "out.", "nov.", "dez."]
+    rel_ = (x.get("AUTORTESE") or "").title()
+    return {"id": f"tcu-js-{key}", "orgao": "TCU", "numero": num, "colegiado": x.get("COLEGIADO"), "relator": f"Min. {rel_}" if rel_ else "",
+            "data": f"{a}-{m}-{d}" if a else "", "tema": limpa(x.get("TEMA")), "titulo": enun[:170], "tese": enun,
+            "tags": [limpa(x.get("TEMA")), limpa(x.get("SUBTEMA"))], "fonte_nome": "TCU – Jurisprudência Selecionada", "fonte_url": url,
+            "citacao_abnt": (f"BRASIL. Tribunal de Contas da União ({x.get('COLEGIADO')}). {num}. Relator: Ministro(a) {rel_}. "
+                             f"Julgado em {int(d)} {meses[int(m) - 1]} {a}. TCU – Jurisprudência Selecionada. Disponível em: {url}.") if a else num,
+            "_externo": True}
+
+def candidatos(it, n=6):
+    """Precedentes do acervo; se não houver, varredura na Jurisprudência Selecionada do TCU com os temas do item."""
+    if it["id"] in _cand_cache:
+        return _cand_cache[it["id"]]
+    c = rel.jurisprudencia(it.get("temas"), n=n)
+    if not c and os.environ.get("AGENTE_SEM_VARREDURA") != "1":
+        vistos = set()
+        for t in (it.get("temas") or [])[:4]:
+            for x in _tcu_js(t):
+                doc = _doc_tcu(x)
+                if doc["id"] not in vistos and doc["tese"]:
+                    vistos.add(doc["id"]); c.append(doc); EXTERNOS[doc["id"]] = doc
+            if len(c) >= 4:
+                break
+    _cand_cache[it["id"]] = c[:n]
+    return _cand_cache[it["id"]]
+
+
 def bloco_roteiro(itens):
     linhas = []
     for it in itens:
@@ -139,8 +186,8 @@ def bloco_roteiro(itens):
         for f in it["fundamento"]:
             tl = rel.texto_legal(f) or "[texto não disponível na base]"
             fund.append(f"    - {rel.rotulo(f)}: \"{tl}\"")
-        cands = rel.jurisprudencia(it.get("temas"), n=6)
-        js = "\n".join(f"    - [{j['id']}] {j.get('orgao','')} {j.get('numero','')}: {(j.get('tese') or j.get('titulo') or '')[:400]}" for j in cands) or "    (nenhum)"
+        cands = candidatos(it)
+        js = "\n".join(f"    - [{j['id']}] {j.get('orgao','')} {j.get('numero','')}{' (fonte oficial, fora do acervo)' if j.get('_externo') else ''}: {(j.get('tese') or j.get('titulo') or '')[:400]}" for j in cands) or "    (nenhum)"
         linhas.append(
             f"### {it['id']} — {it['titulo']}\n"
             f"  O que verificar: {it['verificar']}\n"
@@ -324,7 +371,7 @@ def validar(dados, itens, texto):
             if not partes or not all(p in norm_txt for p in partes):
                 avisos.append(f"{iid}: trecho não localizado literalmente no documento; removido")
                 r.pop("trecho")
-        cands = {j["id"] for j in rel.jurisprudencia(permitidos[iid].get("temas"), n=6)}
+        cands = {j["id"] for j in candidatos(permitidos[iid])}
         if "jurisprudencia_ids" in r:
             fora = [j for j in r["jurisprudencia_ids"] if j not in cands]
             if fora: avisos.append(f"{iid}: jurisprudência fora dos candidatos removida: {fora}")
@@ -454,6 +501,7 @@ def main():
         "resultados": resultados,
         "outros_apontamentos": outros,
         "precos": precos,
+        "jurisprudencia_externa": [EXTERNOS[j] for j in sorted({j for r in resultados for j in r.get("jurisprudencia_ids", [])}) if j in EXTERNOS],
         "_execucao": {"modelo": resp.get("model"), "segundos": round(time.time() - t0), "uso": resp.get("usage"),
                       "custo_usd": custo(resp.get("usage", {})), "parada": resp.get("stop_reason"), "avisos": avisos, "fatos": fatos,
                       "trilhas": [{"id": t["id"], "ocorrencias": len(t["ocorrencias"])} for t in trilhas],
