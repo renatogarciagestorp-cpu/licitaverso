@@ -410,8 +410,10 @@ def main():
                       f"{sum(1 for r in resto if r['situacao']=='amostra_heterogenea')} com amostra heterogênea.")
         fatos.append("\n  ".join(linhas))
 
+    orient = RAIZ / "agente" / "orientacoes-especialista.md"
     system = [
-        {"type": "text", "text": INSTRUCOES},
+        {"type": "text", "text": INSTRUCOES + ("\n\nORIENTAÇÕES DO ESPECIALISTA (prevalecem sobre a regra geral quando tratarem do mesmo ponto):\n"
+                                               + orient.read_text(encoding="utf-8") if orient.exists() else "")},
         {"type": "text", "text": f"ROTEIRO DE VERIFICAÇÃO — {roteiro['documentos'].get(a.doc, a.doc)} (versão {roteiro['versao']})\n\n" + bloco_roteiro(itens),
          "cache_control": {"type": "ephemeral"}},
     ]

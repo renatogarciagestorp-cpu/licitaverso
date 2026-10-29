@@ -8,6 +8,8 @@ apontando falhas com fundamento legal exato, riscos de manter, dicas de melhoria
 | `normas/fontes.json` | normas da base e seus endereços oficiais |
 | `normas/<id>.json` | texto oficial vigente, artigo por artigo (gerado por `scripts/agente/baixar-normas.py`) |
 | `roteiros/lei-14133.json` | itens de verificação: o que conferir, fundamento, gravidade, risco, dica, termos de jurisprudência |
+| `orientacoes-especialista.md` | orientações de calibração do especialista; entram em toda análise |
+| `tipologias/lei-14133.json` | trilhas automáticas (estilo ALICE) |
 | `relatorio/estrutura.md` | formato do resultado de uma análise |
 | `relatorio/exemplo-analise.json` | exemplo fictício de resultado |
 
