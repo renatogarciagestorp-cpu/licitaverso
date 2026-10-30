@@ -135,15 +135,25 @@ def itens_aplicaveis(roteiro, doc):
 # ------------------------------------------------------------------ jurisprudência fora do acervo (varredura em fonte oficial)
 EXTERNOS = {}  # id -> documento no formato do acervo (achados nesta análise)
 _cand_cache = {}
+_busca_cache = {}
+_VARREDURA = {"inicio": None, "limite_s": 120, "falhas": 0}  # orçamento de tempo: a varredura nunca atrasa muito a análise
 
 def _tcu_js(termo, n=4):
+    if termo in _busca_cache:
+        return _busca_cache[termo]
+    if _VARREDURA["inicio"] is None:
+        _VARREDURA["inicio"] = time.time()
+    if time.time() - _VARREDURA["inicio"] > _VARREDURA["limite_s"] or _VARREDURA["falhas"] >= 3:
+        return []
     url = ("https://pesquisa.apps.tcu.gov.br/rest/publico/base/jurisprudencia-selecionada/documentosResumidos?"
            + urllib.parse.urlencode({"termo": termo, "ordenacao": "score desc", "quantidade": n, "inicio": 0}))
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json", "Referer": "https://pesquisa.apps.tcu.gov.br/"})
-        return json.load(urllib.request.urlopen(req, timeout=30)).get("documentos", [])
+        _busca_cache[termo] = json.load(urllib.request.urlopen(req, timeout=12)).get("documentos", [])
     except Exception:
-        return []
+        _VARREDURA["falhas"] += 1
+        _busca_cache[termo] = []
+    return _busca_cache[termo]
 
 def _doc_tcu(x):
     limpa = lambda t: re.sub(r"<[^>]+>", "", t or "").strip()
