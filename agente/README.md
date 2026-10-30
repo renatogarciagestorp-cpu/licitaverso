@@ -33,3 +33,10 @@ os candidatos da Biblioteca. Primeiro teste (Campo Maior): 191 s, US$ 0,49, toda
 
 Próximas etapas: base com as instruções normativas (IN 05/2017, 58/2022, 81/2022, 65/2021, 98/2022);
 primeiras análises reais feitas em conjunto; depois o protótipo automático (Fase 2).
+
+## Regimes, objetos e planilhas (etapa 3A, 30/10/2026)
+- `analisar.py --regime lei-14133|lei-13303|lei-13019 --objeto obras --objeto mao-de-obra --anexo "tipo::nome::texto.txt"`.
+- Roteiro do regime: `roteiros/<regime>.json` (enquanto não houver, usa o da 14.133 como base e o modelo adapta à lei do regime).
+- Módulos por objeto: `roteiros/modulos/obras-engenharia.json` e `roteiros/modulos/mao-de-obra.json`, com fundamento por regime.
+- Planilhas Excel: `scripts/agente/extrair-planilha.py` (valores + fórmulas por célula; recalcula pelo LibreOffice quando o arquivo não traz valores).
+- `conferir-roteiro.py` confere roteiros e módulos contra o texto vigente das normas.

@@ -400,7 +400,7 @@ def capa(doc, a, numero, data, situacao, cor_sit):
     t2 = tabela_sem_bordas(doc, 1, 1, [16])
     c2 = t2.rows[0].cells[0]; sombrear(c2, C["petroleo"]); margens_celula(c2, 0.35)
     p = c2.paragraphs[0]; fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT)
-    run(p, "Conformidade do " + ", ".join(sorted({d.get('nome') or DOCS_ROTULO.get(d['tipo'], d['tipo']) for d in a['documentos']})).lower()
+    run(p, "Conformidade do " + ", ".join(sorted({d.get('nome') or DOCS_ROTULO.get(d['tipo'], d['tipo']) for d in a['documentos'] if not d.get('anexo')})).lower()
         + " com a " + NOME_CURTO.get(a["regime"], a["regime"]), negrito=True, tam=10.5, hexa="FFFFFF")
 
     p = paragrafo(doc, "", recuo1=0, antes=36, depois=6, entre=1.15, alinh=WD_ALIGN_PARAGRAPH.LEFT)
@@ -455,11 +455,16 @@ def caixa(doc, rotulo_txt, texto, borda, fundo):
 
 
 def gerar(analise, saida, paginas=None):
-    roteiro = json.loads((RAIZ / "agente" / "roteiros" / f"{analise['regime']}.json").read_text(encoding="utf-8"))
+    if analise.get("itens_roteiro"):  # itens efetivamente usados na análise (roteiro do regime + módulos), com o fundamento do regime
+        roteiro = {"versao": analise.get("roteiro_versao", ""), "itens": analise["itens_roteiro"], "documentos": analise.get("documentos_nomes", {})}
+    else:
+        roteiro = json.loads((RAIZ / "agente" / "roteiros" / f"{analise['regime']}.json").read_text(encoding="utf-8"))
+        roteiro["versao"] = "versão " + roteiro["versao"]
     itens = {i["id"]: i for i in roteiro["itens"]}
     docs_nome = roteiro["documentos"]
     DOCS_ROTULO.update({"edital": "Edital", "etp": "Estudo Técnico Preliminar", "tr": "Termo de Referência",
-                        "riscos": "Matriz de Riscos", "planilha": "Planilha de Custos"})
+                        "riscos": "Matriz de Riscos", "planilha": "Planilha de Custos",
+                        "orcamento": "Planilha Orçamentária", "plano_trabalho": "Plano de Trabalho"})
     resultados = [dict(r, resultado=r["resultado"] if r.get("resultado") in RESULT else "nao_verificavel") for r in analise["resultados"]]
     for r in resultados:
         if r["item"] not in itens:
@@ -539,13 +544,15 @@ def gerar(analise, saida, paginas=None):
 
     # 2 RELATÓRIO
     titulo(doc, "2 Relatório")
-    docs_txt = "; ".join(f"{docs_nome.get(d['tipo'], d['tipo'])} ({d.get('arquivo', '')}{', ' + str(d['paginas']) + ' páginas' if d.get('paginas') else ''})"
+    docs_txt = "; ".join(f"{d.get('nome') if d.get('anexo') else docs_nome.get(d['tipo'], d['tipo'])} ({d.get('arquivo', '')}{', ' + str(d['paginas']) + ' páginas' if d.get('paginas') else ''})"
                          for d in analise["documentos"])
     paragrafo(doc, f"Trata-se de análise técnica de conformidade solicitada em relação ao processo {proc.get('numero', '')}, "
                    f"do {proc.get('orgao', '')}, cujo objeto é: {proc.get('objeto', '').rstrip('.')}.", depois=6)
     paragrafo(doc, f"Foram examinados os seguintes documentos: {docs_txt}. O exame teve por parâmetro a "
                    f"{analise.get('regime_texto', NOME_CURTO.get(analise['regime'], ''))}, aplicando-se o roteiro de verificação "
-                   f"Licitacon (versão {roteiro['versao']}), com {len(resultados)} itens pertinentes ao caso.", depois=6)
+                   f"Licitacon ({roteiro['versao']}), com {len(resultados)} itens pertinentes ao caso"
+                   + (", incluídas as verificações próprias de " + " e de ".join({"obras": "obras e serviços de engenharia", "mao-de-obra": "serviços com dedicação exclusiva de mão de obra"}.get(o, o) for o in analise["objeto"]) if analise.get("objeto") else "")
+                   + ".", depois=6)
     if analise.get("normas_locais"):
         paragrafo(doc, "Por indicação do destinatário, considerou-se também a seguinte regulamentação específica: "
                        + "; ".join(n["nome"] for n in analise["normas_locais"]) + ". Ela foi aplicada no que complementa as normas gerais "

@@ -1,0 +1,482 @@
+{
+ "_sobre": "Módulo de verificação para OBRAS E SERVIÇOS DE ENGENHARIA. Aplica-se em qualquer regime (Lei 14.133/2021, Lei 13.303/2016, Lei 13.019/2014), somado ao roteiro do regime. Itens doc 'orcamento' são verificados na planilha orçamentária (Excel) e, na falta dela, no orçamento anexo ao documento. 'fundamento' é indicado por regime; ausente o regime, usa-se o da Lei 14.133 como referência.",
+ "modulo": "obras",
+ "titulo": "Obras e serviços de engenharia",
+ "versao": "2026-10-30",
+ "documentos": {
+  "orcamento": "Planilha orçamentária, BDI e composições (obras e serviços de engenharia)"
+ },
+ "anexos_exigidos": [
+  "planilha orçamentária com valores unitários e totais, sem e com BDI",
+  "composição analítica do BDI (onerado ou desonerado)",
+  "tabelas referenciais utilizadas e respectivas datas-base"
+ ],
+ "itens": [
+  {
+   "id": "obr-01",
+   "doc": "orcamento",
+   "titulo": "Orçamento detalhado com quantitativos e custos unitários",
+   "verificar": "A planilha orçamentária apresenta todos os serviços com código, fonte, descrição, unidade, quantidade, custo unitário sem BDI, preço unitário com BDI e total, formando o custo global da obra a partir de quantitativos propriamente avaliados.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "6",
+      "disp": "XXV.f"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "p2"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p2"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem orçamento detalhado não é possível aferir a compatibilidade do valor com o mercado, julgar a exequibilidade das propostas nem controlar medições e aditivos — campo aberto para sobrepreço e jogo de planilha.",
+   "dica": "Apresente orçamento sintético e analítico (composições), com totais por etapa e o valor global, sem e com BDI.",
+   "temas": [
+    "orçamento de obras",
+    "planilha orçamentária",
+    "custo global",
+    "sobrepreço"
+   ]
+  },
+  {
+   "id": "obr-02",
+   "doc": "orcamento",
+   "titulo": "Fonte e data-base das tabelas referenciais",
+   "verificar": "Cada custo unitário indica a tabela de origem (SINAPI, SICRO, EMOP, SCO, outra oficial ou cotação) com o código do serviço e a data-base (mês/ano) e o regime (onerado/desonerado) da tabela; tabelas regionais ou próprias têm uso justificado (recurso federal exige SINAPI/SICRO).",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "p2.I"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "p2.II"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "p3"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p2"
+     },
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p3"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Sem fonte e data-base os preços não podem ser conferidos nem atualizados, e a escolha de tabela mais cara sem motivação pode configurar sobrepreço.",
+   "dica": "Inclua colunas 'Fonte', 'Código' e 'Data-base' e indique no cabeçalho a versão da tabela (ex.: SINAPI-RJ 03/2026, desonerado).",
+   "temas": [
+    "SINAPI",
+    "SICRO",
+    "EMOP",
+    "tabela referencial",
+    "data-base"
+   ]
+  },
+  {
+   "id": "obr-03",
+   "doc": "orcamento",
+   "titulo": "Custos unitários compatíveis com o sistema referencial",
+   "verificar": "Os custos unitários sem BDI são iguais ou inferiores aos da tabela referencial indicada; composições próprias (sem código oficial) e cotações têm memória e justificativa; não há preço de insumo ou serviço com valor expressivamente acima da referência.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "p2.I"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "6",
+      "disp": "LVI"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p2"
+     },
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p1.I"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Custo unitário acima da referência sem justificativa é sobrepreço; nos itens de maior peso compromete o valor global.",
+   "dica": "Para composições próprias, junte a composição analítica (insumos, coeficientes, preços e fontes) e as cotações.",
+   "temas": [
+    "sobrepreço",
+    "composição de custo unitário",
+    "mediana SINAPI",
+    "cotação"
+   ]
+  },
+  {
+   "id": "obr-04",
+   "doc": "orcamento",
+   "titulo": "Composição analítica e percentual do BDI",
+   "verificar": "O BDI tem composição analítica demonstrada (administração central, seguro e garantia, risco, despesas financeiras, lucro e tributos — PIS, COFINS, ISS e, no regime desonerado, CPRB), com fórmula de cálculo, e o percentual final está dentro das faixas referenciais do TCU para o tipo de obra ou tem justificativa.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "p2"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p2"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "BDI sem composição ou acima das faixas referenciais sem justificativa eleva todos os preços da planilha — sobrepreço linear.",
+   "dica": "Use o modelo de composição do BDI e compare cada parcela com os quartis do Acórdão TCU 2622/2013-Plenário para o tipo de obra.",
+   "temas": [
+    "BDI",
+    "benefícios e despesas indiretas",
+    "Acórdão 2622/2013",
+    "lucro",
+    "administração central"
+   ]
+  },
+  {
+   "id": "obr-05",
+   "doc": "orcamento",
+   "titulo": "Coerência entre regime onerado/desonerado, encargos sociais e BDI",
+   "verificar": "O regime da tabela (onerado ou desonerado) é o mesmo nos custos e nos encargos sociais, e o BDI é coerente com ele: CPRB só no BDI desonerado; encargos sociais de mão de obra sem desoneração quando o BDI é onerado. Não há mistura de regimes nem cobrança dupla da contribuição previdenciária.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "p2"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "6",
+      "disp": "LVI"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p2"
+     },
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p1.I"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Misturar regimes cobra duas vezes a contribuição previdenciária (nos encargos e na CPRB) ou subestima o custo — sobrepreço ou proposta inexequível.",
+   "dica": "Declare o regime adotado no cabeçalho e demonstre que é o mais vantajoso para a Administração (comparação onerado × desonerado).",
+   "temas": [
+    "desoneração",
+    "CPRB",
+    "encargos sociais",
+    "onerado",
+    "BDI"
+   ]
+  },
+  {
+   "id": "obr-06",
+   "doc": "orcamento",
+   "titulo": "BDI diferenciado para fornecimento de materiais e equipamentos",
+   "verificar": "Itens de mero fornecimento de materiais ou equipamentos de valor relevante, que possam ser adquiridos separadamente, recebem BDI reduzido (ou foram parcelados), em vez do BDI integral da obra.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "p2"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p2"
+     }
+    ]
+   },
+   "obrigatorio": "quando houver fornecimento relevante",
+   "gravidade": "media",
+   "risco": "Aplicar o BDI cheio sobre equipamentos de alto valor remunera despesas indiretas que não existem nesses itens.",
+   "dica": "Separe os equipamentos relevantes com BDI diferenciado (Súmula TCU 253) ou avalie licitá-los à parte.",
+   "temas": [
+    "BDI diferenciado",
+    "fornecimento de equipamentos",
+    "Súmula 253"
+   ]
+  },
+  {
+   "id": "obr-07",
+   "doc": "orcamento",
+   "titulo": "Parcelas indevidas no BDI",
+   "verificar": "O BDI não inclui IRPJ e CSLL (tributos de natureza direta e personalíssima), nem itens que devem constar da planilha como custo direto: administração local, mobilização e desmobilização, canteiro e instalações provisórias.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "p2"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p2"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "IRPJ/CSLL no BDI ou duplicidade de administração local (no BDI e na planilha) elevam o preço sem contrapartida — sobrepreço.",
+   "dica": "Retire IRPJ e CSLL do BDI (Súmula TCU 254) e mantenha administração local e canteiro como itens da planilha, com quantitativos.",
+   "temas": [
+    "IRPJ CSLL",
+    "Súmula 254",
+    "administração local",
+    "mobilização",
+    "canteiro de obras"
+   ]
+  },
+  {
+   "id": "obr-08",
+   "doc": "orcamento",
+   "titulo": "Conferência aritmética da planilha orçamentária",
+   "verificar": "O preço com BDI corresponde ao custo sem BDI multiplicado por (1 + BDI); o total de cada item é quantidade × preço unitário; subtotais e total global somam corretamente; arredondamentos não geram distorção. Use as fórmulas da planilha (entre colchetes) para conferir.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "6",
+      "disp": "XXV.f"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "caput"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p2"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Erros de fórmula ou de soma alteram o valor estimado e contaminam o critério de aceitabilidade das propostas.",
+   "dica": "Confira as fórmulas, trave células de BDI e evite valores digitados sobre fórmulas.",
+   "temas": [
+    "conferência aritmética",
+    "fórmulas",
+    "valor global"
+   ]
+  },
+  {
+   "id": "obr-09",
+   "doc": "orcamento",
+   "titulo": "Quantitativos com memória de cálculo e coerência com o projeto",
+   "verificar": "Os quantitativos têm memória de cálculo e correspondem ao projeto básico/TR e ao memorial descritivo; não há serviço sem correspondência no projeto, nem quantitativo superdimensionado ou duplicado entre itens.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "6",
+      "disp": "XXV"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "18",
+      "disp": "p1.IV"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "42",
+      "disp": "VIII"
+     },
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p1.II.a"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Quantitativo superdimensionado é porta para superfaturamento na medição e para aditivos; o subdimensionado gera aditivos e jogo de planilha.",
+   "dica": "Junte a memória de cálculo por item, com referência às pranchas do projeto.",
+   "temas": [
+    "memória de cálculo",
+    "quantitativos",
+    "projeto básico",
+    "superfaturamento",
+    "jogo de planilha"
+   ]
+  },
+  {
+   "id": "obr-10",
+   "doc": "orcamento",
+   "titulo": "Curva ABC e critérios de aceitabilidade de preços",
+   "verificar": "O processo identifica os itens de maior relevância (curva ABC) e o edital fixa critério de aceitabilidade de preços unitários e global, inclusive para a análise de exequibilidade (75% do orçado na Lei 14.133; 70% na Lei 13.303).",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "59",
+      "disp": "p3"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "59",
+      "disp": "p4"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "56",
+      "disp": "p3"
+     },
+     {
+      "norma": "lei-13303",
+      "art": "56",
+      "disp": "p4"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Sem critério de aceitabilidade de preços unitários, a proposta pode trazer preços altos nos itens que serão aditados e baixos nos que serão suprimidos (jogo de planilha).",
+   "dica": "Inclua a curva ABC no processo e preveja no edital o limite de preço unitário igual ao do orçamento.",
+   "temas": [
+    "curva ABC",
+    "critério de aceitabilidade",
+    "exequibilidade",
+    "jogo de planilha"
+   ]
+  },
+  {
+   "id": "obr-11",
+   "doc": "orcamento",
+   "titulo": "Data-base do orçamento e índice de reajuste",
+   "verificar": "A data-base do orçamento está identificada e o edital/contrato prevê índice de reajuste setorial (ex.: INCC ou índice de obras) com data-base vinculada à data do orçamento estimado.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "25",
+      "disp": "p7"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "92",
+      "disp": "p3"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "81",
+      "disp": "p7"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Sem data-base e índice, o reajuste fica indefinido, abrindo espaço a pleitos de reequilíbrio e a pagamentos sem critério.",
+   "dica": "Indique 'data-base: mês/ano do orçamento' e o índice aplicável.",
+   "temas": [
+    "data-base",
+    "reajuste",
+    "INCC",
+    "índice de reajuste"
+   ]
+  },
+  {
+   "id": "obr-12",
+   "doc": "orcamento",
+   "titulo": "Cronograma físico-financeiro e critérios de medição",
+   "verificar": "Há cronograma físico-financeiro compatível com o orçamento e o prazo, e os critérios de medição e pagamento são coerentes com o regime de execução (preço unitário, global, integrada, semi-integrada).",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "6",
+      "disp": "XXV.e"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "46",
+      "disp": "caput"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "42",
+      "disp": "VIII.e"
+     },
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p1.II.d"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Cronograma incoerente com o orçamento permite antecipação de pagamentos e distorção físico-financeira (superfaturamento por antecipação).",
+   "dica": "Apresente o cronograma por etapa, com percentuais físicos e financeiros, e defina o critério de medição de cada serviço.",
+   "temas": [
+    "cronograma físico-financeiro",
+    "medição",
+    "regime de execução"
+   ]
+  }
+ ]
+}

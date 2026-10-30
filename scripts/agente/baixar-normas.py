@@ -139,8 +139,28 @@ def estruturar(linhas, norma):
                 d["notas"] = [re.sub(r"\s+", " ", n) for n in notas]
             d["vetado"] = bool(re.fullmatch(r"\(?\s*VETADO\s*\)?\.?", d["texto"], re.I))
             d["revogado"] = (not d["texto"]) and any("Revogad" in n for n in d.get("notas", []))
-        a["texto"] = "\n".join((("" if d["id"] == "caput" else d["rotulo"] + " ") + d["texto"]).strip() for d in a["dispositivos"])
+    limpar_versoes(artigos)
     return artigos
+
+
+def limpar_versoes(artigos):
+    """Remove redações antigas que o site oficial não riscou: dentro do artigo, o dispositivo repetido fica só na última versão
+    (a vigente vem depois da antiga); restos de texto revogado (só ";" ou ".") viram revogados."""
+    lixo = re.compile(r"\s*(Proposições em tramitação|remove_red_eye\s*Normas correlatas|all_inclusive\s*Regulamentação|Acórdãos|Normas correlatas)\s*$")
+    for a in artigos:
+        ult = {}
+        for k, d in enumerate(a["dispositivos"]):
+            t = d["texto"]
+            while True:
+                t2 = lixo.sub("", t)
+                if t2 == t: break
+                t = t2
+            d["texto"] = t.strip()
+            if d["texto"].strip(" ;.") == "" and not d.get("vetado"):
+                d["texto"], d["revogado"] = "", True
+            ult[d["id"]] = k
+        a["dispositivos"] = [d for k, d in enumerate(a["dispositivos"]) if ult[d["id"]] == k]
+        a["texto"] = "\n".join((("" if d["id"] == "caput" else d["rotulo"] + " ") + d["texto"]).strip() for d in a["dispositivos"] if d["texto"])
 
 
 def baixar(url):

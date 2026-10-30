@@ -132,6 +132,71 @@ def itens_aplicaveis(roteiro, doc):
     tipos = {doc} | ({"planilha"} if doc == "edital" else set())
     return [i for i in roteiro["itens"] if i["doc"] in tipos]
 
+REGIMES = {"lei-14133": "Lei 14.133/2021", "lei-13303": "Lei 13.303/2016 (empresas estatais)",
+           "lei-13019": "Lei 13.019/2014 (parcerias com organizações da sociedade civil)"}
+OBJETOS = {"obras": "obras-engenharia", "mao-de-obra": "mao-de-obra"}
+OBJETO_TEXTO = {"obras": "obras e serviços de engenharia", "mao-de-obra": "serviço com dedicação exclusiva de mão de obra"}
+ANEXO_TEXTO = {"orcamento": "Planilha orçamentária, BDI e composições", "planilha": "Planilha de custos e formação de preços (mão de obra)",
+               "plano-custos": "Planilha de custos do plano de trabalho", "outro": "Planilha anexa"}
+FONTES_OBJETO = {"obras": {"tcu-roteiro-obras", "tcu-obras-edificacoes", "tcu-engenharia-custos"},
+                 "mao-de-obra": {"in-05-2017", "manual-planilha-custos", "cad-limpeza", "cad-vigilancia", "cad-conta-vinculada", "cad-fato-gerador"}}
+
+
+def carregar_roteiro(regime):
+    """Roteiro do regime; enquanto não houver roteiro próprio, usa o da Lei 14.133 como base (o modelo adapta os fundamentos)."""
+    p = RAIZ / "agente" / "roteiros" / f"{regime}.json"
+    proprio = p.exists()
+    r = json.loads((p if proprio else RAIZ / "agente" / "roteiros" / "lei-14133.json").read_text(encoding="utf-8"))
+    r["_proprio"] = proprio
+    return r
+
+
+def fundamento_do_regime(it, regime):
+    f = it.get("fundamento") or []
+    if isinstance(f, dict):
+        f = f.get(regime) or f.get("lei-14133") or []
+    return f
+
+
+def montar_itens(roteiro, doc, regime, objetos):
+    """Itens do roteiro do regime para o documento + itens dos módulos do objeto (obras, mão de obra), com o fundamento do regime."""
+    itens = itens_aplicaveis(roteiro, doc)
+    ids = {i["id"] for i in itens}
+    if "mao-de-obra" in objetos:  # itens de planilha do roteiro do regime valem para qualquer documento
+        itens += [i for i in roteiro["itens"] if i["doc"] == "planilha" and i["id"] not in ids]
+    versoes = [f"roteiro {roteiro['versao']}"]
+    for o in objetos:
+        m = json.loads((RAIZ / "agente" / "roteiros" / "modulos" / f"{OBJETOS[o]}.json").read_text(encoding="utf-8"))
+        itens += [dict(i, modulo=o) for i in m["itens"]]
+        versoes.append(f"módulo {m['titulo'].lower()} {m['versao']}")
+    return [dict(i, fundamento=fundamento_do_regime(i, regime)) for i in itens], versoes
+
+
+def carregar_anexos(specs):
+    """--anexo "tipo::nome::caminho.txt" → lista de anexos (texto já extraído da planilha)."""
+    out = []
+    for k, sp in enumerate(specs, 1):
+        partes = sp.split("::")
+        if len(partes) != 3:
+            sys.exit(f"--anexo inválido: {sp!r} (use tipo::nome::caminho)")
+        tipo, nome, cam = partes
+        txt = pathlib.Path(cam).read_text(encoding="utf-8", errors="replace").strip()
+        if txt:
+            out.append({"id": f"anexo-{k}", "tipo": tipo if tipo in ANEXO_TEXTO else "outro", "nome": nome.strip()[:200], "texto": txt[:300_000]})
+    return out
+
+
+def bloco_anexos(anexos):
+    if not anexos:
+        return ""
+    partes = ["ANEXOS EM PLANILHA (Excel enviado pelo destinatário; cada linha traz o número da linha e as células preenchidas no formato "
+              "COLUNA=valor; fórmulas aparecem entre colchetes após o valor calculado). Ao citar, copie em \"trecho\" o conteúdo literal "
+              "de uma linha e indique em \"local\" o anexo, a aba e a linha (ex.: \"Planilha orçamentária, aba Orçamento, L12\"):"]
+    for a in anexos:
+        partes.append(f"<anexo id=\"{a['id']}\" tipo=\"{ANEXO_TEXTO[a['tipo']]}\" arquivo=\"{a['nome']}\">\n{a['texto']}\n</anexo>")
+    return "\n\n".join(partes) + "\n\n"
+
+
 # ------------------------------------------------------------------ jurisprudência fora do acervo (varredura em fonte oficial)
 EXTERNOS = {}  # id -> documento no formato do acervo (achados nesta análise)
 _cand_cache = {}
@@ -227,14 +292,14 @@ def _bm25(q, t, idf, media, k1=1.4, b=0.75):
             s += idf.get(w, 0) * f * (k1 + 1) / (f + k1 * (1 - b + b * t["_len"] / media))
     return s
 
-def selecionar_referencias(itens, texto_doc, limite=16):
+def selecionar_referencias(itens, texto_doc, limite=16, forcar=()):
     trechos, fontes, idf, media, _ = _carregar_ref()
     if not trechos:
         return []
     import collections
     termos_doc = [w for w, _ in collections.Counter(w for w in _tok(texto_doc[:60000]) if len(w) >= 5).most_common(30)]
     doc_norm = " ".join(_tok(texto_doc[:6000]))  # o objeto aparece no início do documento
-    permitidas = {fid for fid, f in fontes.items() if not f.get("exige") or re.search(f["exige"], doc_norm)}
+    permitidas = {fid for fid, f in fontes.items() if not f.get("exige") or re.search(f["exige"], doc_norm) or fid in forcar}
     trechos = [t for t in trechos if t["fonte"] in permitidas]
     escolhidos = {}
     for it in itens:
@@ -328,7 +393,7 @@ def bloco_roteiro(itens):
             f"  Jurisprudência candidata (use só estes ids, e só se pertinentes ao caso):\n{js}\n")
     return "\n".join(linhas)
 
-INSTRUCOES = """Você é o Agente Licitacon, analista sênior em licitações e contratos públicos (Lei 14.133/2021).
+INSTRUCOES = """Você é o Agente Licitacon, analista sênior em licitações, contratos públicos e parcerias (Leis 14.133/2021, 13.303/2016 e 13.019/2014).
 Sua tarefa: verificar o documento enviado contra CADA item do roteiro abaixo e registrar o resultado com a ferramenta registrar_analise.
 
 Regras obrigatórias:
@@ -390,7 +455,20 @@ Regras obrigatórias:
     no art. 23 da Lei 14.133/2021, citando o desvio calculado; recomende revisar a pesquisa de preços. "Ponto de atenção" é gravidade média.
     Amostra insuficiente ou heterogênea não permite concluir: não aponte sobrepreço nesses casos.
 19. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
-    ementa_texto (síntese de 2–3 frases), resumo (um parágrafo de visão geral) e conclusao (um parágrafo)."""
+    ementa_texto (síntese de 2–3 frases), resumo (um parágrafo de visão geral) e conclusao (um parágrafo).
+20. REGIME E OBJETO: a mensagem informa o regime jurídico da contratação e, quando for o caso, o objeto especial (obras e serviços de
+    engenharia; dedicação exclusiva de mão de obra). O ponto central é sempre analisar os documentos pelo que estabelece a lei do regime
+    informado: conformidade, legalidade, economicidade, vantajosidade, eventual direcionamento ou restrição à competitividade, sobrepreço e
+    risco de superfaturamento. Cada item traz o fundamento do regime; se o roteiro for o da Lei 14.133 usado como base para outro regime
+    (a mensagem avisa), avalie a mesma questão pela lei do regime e cite os dispositivos dela em outros_apontamentos ou na análise, sem
+    aplicar regra da Lei 14.133 que não valha para aquele regime. Na Lei 13.019/2014 o termo de referência é substituído pelo plano de
+    trabalho e pela planilha de custos do projeto; havendo profissional com dedicação exclusiva previsto no plano, o custo dele deve ser
+    formado pelo modelo de planilha de custos e formação de preços do Anexo VII-D da IN SEGES/MP 5/2017 (parâmetro técnico).
+21. PLANILHAS EM EXCEL: quando houver anexos em planilha, verifique neles os itens dos módulos (BDI, encargos, tabelas, datas-base,
+    CBO, piso, adicionais, provisões, tributos) e confira os cálculos pelas fórmulas e valores informados. Divergência numérica relevante
+    (BDI aplicado diferente do declarado, total que não fecha, percentual acima do legal) deve ser apontada com a linha da planilha e o
+    valor esperado. Se o objeto exigir planilha e ela não tiver sido enviada, procure as informações no documento; não as encontrando,
+    marque os itens como nao_verificavel e recomende a juntada da planilha."""
 
 FERRAMENTA = {
     "name": "registrar_analise",
@@ -578,7 +656,10 @@ def validar_outros(lista, texto):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--doc", required=True, choices=["edital", "etp", "tr", "riscos", "planilha"])
+    ap.add_argument("--doc", required=True, choices=["edital", "etp", "tr", "riscos", "planilha", "plano_trabalho", "orcamento"])
+    ap.add_argument("--regime", default="lei-14133", choices=sorted(REGIMES))
+    ap.add_argument("--objeto", action="append", default=[], choices=sorted(OBJETOS), help="obras e/ou mao-de-obra (repetível)")
+    ap.add_argument("--anexo", action="append", default=[], help='planilha anexa já extraída: "tipo::nome::caminho.txt" (tipo: orcamento, planilha, plano-custos, outro)')
     ap.add_argument("--texto", required=True)
     ap.add_argument("--compra")
     ap.add_argument("--fonte", default="")
@@ -588,8 +669,12 @@ def main():
     ap.add_argument("--saida", required=True)
     a = ap.parse_args()
 
-    roteiro = json.loads((RAIZ / "agente" / "roteiros" / "lei-14133.json").read_text(encoding="utf-8"))
-    itens = itens_aplicaveis(roteiro, a.doc)
+    objetos = list(dict.fromkeys(a.objeto))
+    roteiro = carregar_roteiro(a.regime)
+    itens, versoes = montar_itens(roteiro, a.doc, a.regime, objetos)
+    anexos = carregar_anexos(a.anexo)
+    if sum(len(x["texto"]) for x in anexos) > 450_000:
+        sys.exit("Planilhas anexas grandes demais para uma análise (limite de 450 mil caracteres no total).")
     bruto = pathlib.Path(a.texto).read_text(encoding="utf-8", errors="replace")
     texto, npags = texto_com_paginas(bruto)
     if len(texto) > MAX_CARACTERES:
@@ -597,7 +682,9 @@ def main():
     compra = json.loads(pathlib.Path(a.compra).read_text(encoding="utf-8")) if a.compra else None
     fatos = fatos_pncp(compra)
     trilhas = rodar_trilhas(bruto)
-    referencias = selecionar_referencias(itens, bruto)
+    texto_total = bruto + "\n".join("\n" + x["texto"] for x in anexos)  # trechos literais podem vir das planilhas
+    forcar = set().union(*[FONTES_OBJETO[o] for o in objetos]) if objetos else set()
+    referencias = selecionar_referencias(itens, bruto + "\n" + "\n".join(x["texto"][:20000] for x in anexos), forcar=forcar)
     carregar_normas_locais(a.norma_local)
     precos = None
     if a.precos and pathlib.Path(a.precos).exists():
@@ -617,20 +704,36 @@ def main():
                       f"{sum(1 for r in resto if r['situacao']=='amostra_heterogenea')} com amostra heterogênea.")
         fatos.append("\n  ".join(linhas))
 
+    tipos_anexo = {x["tipo"] for x in anexos}
+    exigido = {"obras": ("orcamento", "planilha orçamentária com BDI em Excel"), "mao-de-obra": ("planilha", "planilha de custos e formação de preços em Excel")}
+    for o in objetos:
+        t, nome = exigido[o]
+        if t not in tipos_anexo and a.doc != t:
+            fatos.append(f"O destinatário NÃO enviou a {nome}. Verifique os itens do módulo de {OBJETO_TEXTO[o]} no orçamento ou planilha que "
+                         "constar do próprio documento; não havendo, marque-os como nao_verificavel e recomende a juntada.")
+    if a.regime == "lei-13019" and "plano-custos" not in tipos_anexo:
+        fatos.append("O destinatário NÃO enviou a planilha de custos do plano de trabalho em Excel; avalie a previsão de receitas e despesas "
+                     "pelo que constar do documento.")
+    cabecalho = (f"REGIME JURÍDICO DA CONTRATAÇÃO: {REGIMES[a.regime]}."
+                 + (f" OBJETO: {'; '.join(OBJETO_TEXTO[o] for o in objetos)}." if objetos else "")
+                 + ("" if roteiro["_proprio"] else f" ATENÇÃO: ainda não há roteiro próprio para a {REGIMES[a.regime]}; o roteiro abaixo é o da "
+                    "Lei 14.133/2021, usado como base — avalie cada questão pela lei do regime (regra 20)."))
+
     orient = RAIZ / "agente" / "orientacoes-especialista.md"
     system = [
         {"type": "text", "text": INSTRUCOES + ("\n\nORIENTAÇÕES DO ESPECIALISTA (prevalecem sobre a regra geral quando tratarem do mesmo ponto):\n"
                                                + orient.read_text(encoding="utf-8") if orient.exists() else "")},
-        {"type": "text", "text": f"ROTEIRO DE VERIFICAÇÃO — {roteiro['documentos'].get(a.doc, a.doc)} (versão {roteiro['versao']})\n\n" + bloco_roteiro(itens),
+        {"type": "text", "text": f"ROTEIRO DE VERIFICAÇÃO — {roteiro['documentos'].get(a.doc, a.doc)} ({'; '.join(versoes)})\n\n" + bloco_roteiro(itens),
          "cache_control": {"type": "ephemeral"}},
     ]
-    usuario = (f"Data da análise: {datetime.date.today():%d/%m/%Y}.\n\n"
+    usuario = (f"Data da análise: {datetime.date.today():%d/%m/%Y}.\n{cabecalho}\n\n"
                + ("FATOS CALCULADOS PELO SISTEMA (confiáveis):\n" + "\n".join("- " + f for f in fatos) + "\n\n" if fatos else "")
                + ("INDÍCIOS DAS TRILHAS AUTOMÁTICAS (confirme ou descarte cada um):\n" + "\n".join(
                    f"- [{t['id']}] {t['nome']} (gravidade se confirmado: {t['gravidade']}; item: {t['item'] or 'outros_apontamentos'}; {t['fundamento']}). {t['nota']}\n"
                    + "\n".join(f"    · [página {o['pagina']}] …{o['trecho']}…" for o in t["ocorrencias"]) for t in trilhas) + "\n\n" if trilhas else "")
                + bloco_referencias(referencias)
                + bloco_normas_locais(itens)
+               + bloco_anexos(anexos)
                + f"DOCUMENTO ({roteiro['documentos'].get(a.doc, a.doc)}; {npags or 'sem marcação de'} páginas):\n<documento>\n{texto}\n</documento>\n\n"
                "Verifique todos os itens do roteiro e registre o resultado chamando a ferramenta registrar_analise uma única vez, com todos os itens. Não responda em texto.")
     t0 = time.time()
@@ -647,9 +750,9 @@ def main():
             dados = None
         if not dados or "resultados" not in dados:
             sys.exit("O modelo não devolveu a análise (parada: " + str(resp.get("stop_reason")) + "): " + txt[:600])
-    resultados, avisos = validar(dados, itens, bruto)
+    resultados, avisos = validar(dados, itens, texto_total)
     ids_ref = {r["id"] for r in referencias}
-    outros, avisos2 = validar_outros(dados.get("outros_apontamentos"), bruto)
+    outros, avisos2 = validar_outros(dados.get("outros_apontamentos"), texto_total)
     avisos += avisos2
     for x in resultados + outros:  # só referências que foram de fato oferecidas ao modelo
         if x.get("referencias_ids"):
@@ -658,12 +761,17 @@ def main():
             x["referencias_ids"] = [i for i in x["referencias_ids"] if i in ids_ref]
 
     analise = {
-        "regime": "lei-14133",
-        "regime_texto": "Lei 14.133/2021",
+        "regime": a.regime,
+        "regime_texto": REGIMES[a.regime].split(" (")[0],
+        "objeto": objetos,
+        "roteiro_versao": "; ".join(versoes),
+        "itens_roteiro": [{k: v for k, v in i.items() if k in ("id", "doc", "titulo", "verificar", "fundamento", "gravidade", "risco", "dica", "temas", "modulo")} for i in itens],
+        "documentos_nomes": {**roteiro["documentos"], "orcamento": "Planilha orçamentária e BDI", "plano_trabalho": "Plano de trabalho"},
         "data": datetime.date.today().strftime("%d/%m/%Y"),
         "processo": dados.get("processo", {}),
         "documentos": [{"tipo": a.doc, "arquivo": a.fonte or pathlib.Path(a.texto).name, "paginas": a.paginas or npags or None,
-                        "ocr": "[texto obtido por OCR]" in bruto}],
+                        "ocr": "[texto obtido por OCR]" in bruto}]
+                      + [{"tipo": x["tipo"], "nome": ANEXO_TEXTO[x["tipo"]], "arquivo": x["nome"], "anexo": True} for x in anexos],
         "ementa": dados.get("ementa"), "ementa_texto": dados.get("ementa_texto"),
         "resumo": dados.get("resumo"), "conclusao": dados.get("conclusao"),
         "resultados": resultados,

@@ -1,0 +1,427 @@
+{
+ "_sobre": "Módulo de verificação para SERVIÇOS COM DEDICAÇÃO EXCLUSIVA DE MÃO DE OBRA (e equipes remuneradas em parcerias da Lei 13.019/2014). Soma-se aos itens 'planilha' do roteiro do regime. Verificado na planilha de custos e formação de preços (Excel), por posto/profissional, conforme o modelo do Anexo VII-D da IN SEGES/MP 5/2017 (vinculante para a União; parâmetro para os demais entes, salvo adoção).",
+ "modulo": "mao-de-obra",
+ "titulo": "Dedicação exclusiva de mão de obra",
+ "versao": "2026-10-30",
+ "documentos": {
+  "planilha": "Planilha de custos e formação de preços (dedicação exclusiva de mão de obra)"
+ },
+ "anexos_exigidos": [
+  "planilha modelo de custos e formação de preços preenchida por posto (CBO, categoria, salário-base, adicionais)",
+  "convenção ou acordo coletivo utilizado"
+ ],
+ "itens": [
+  {
+   "id": "mdo-01",
+   "doc": "planilha",
+   "titulo": "Planilha por posto no modelo de custos e formação de preços",
+   "verificar": "Há uma planilha por posto/função, no modelo de custos e formação de preços (Módulos 1 a 6: remuneração, encargos e benefícios, provisão para rescisão, custo de reposição do profissional ausente, insumos, custos indiretos, tributos e lucro), com jornada, quantidade de postos e valor mensal e anual.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "6",
+      "disp": "XXIII.i"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "18",
+      "disp": "p1.VI"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "caput"
+     }
+    ],
+    "lei-13019": [
+     {
+      "norma": "lei-13019",
+      "art": "46",
+      "disp": "I"
+     },
+     {
+      "norma": "lei-13019",
+      "art": "22",
+      "disp": "II-A"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem a planilha por posto não se demonstra a formação do preço nem se viabiliza a repactuação, a análise de exequibilidade e a fiscalização trabalhista.",
+   "dica": "Use o modelo do Anexo VII-D da IN SEGES/MP 5/2017, uma aba por posto, e um resumo com o valor global.",
+   "temas": [
+    "planilha de custos e formação de preços",
+    "Anexo VII-D",
+    "IN 05/2017",
+    "módulos"
+   ]
+  },
+  {
+   "id": "mdo-02",
+   "doc": "planilha",
+   "titulo": "CBO, função e salário-base compatíveis com a convenção coletiva",
+   "verificar": "Cada posto informa o CBO e a função compatíveis com as atribuições do TR/plano de trabalho, e o salário-base corresponde ao piso da função na convenção ou acordo coletivo indicado (número de registro e vigência), da categoria e da base territorial corretas.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "135",
+      "disp": "II"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "caput"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p1.I"
+     }
+    ],
+    "lei-13019": [
+     {
+      "norma": "lei-13019",
+      "art": "46",
+      "disp": "I"
+     },
+     {
+      "norma": "lei-13019",
+      "art": "35",
+      "disp": "V.c"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Função ou CBO incompatíveis, piso de outra categoria ou de outra base territorial alteram todo o custo do posto (sobrepreço ou inexequibilidade) e comprometem a repactuação.",
+   "dica": "Indique para cada posto: CBO, função na CCT, cláusula do piso, número de registro da CCT no Mediador/MTE e vigência.",
+   "temas": [
+    "CBO",
+    "piso salarial",
+    "convenção coletiva",
+    "categoria profissional",
+    "salário-base"
+   ]
+  },
+  {
+   "id": "mdo-03",
+   "doc": "planilha",
+   "titulo": "Adicionais legais e convencionais",
+   "verificar": "Os adicionais (insalubridade com grau e base de cálculo, periculosidade de 30%, noturno e hora reduzida, intrajornada, gratificações da CCT) só aparecem quando cabíveis para o posto e são calculados corretamente.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "caput"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "63",
+      "disp": "p1"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p1.I"
+     }
+    ],
+    "lei-13019": [
+     {
+      "norma": "lei-13019",
+      "art": "46",
+      "disp": "I"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Adicional indevido ou calculado a maior é sobrepreço; adicional devido omitido gera passivo trabalhista e risco de responsabilidade subsidiária.",
+   "dica": "Justifique cada adicional (laudo, escala, cláusula da CCT) e mostre a memória de cálculo.",
+   "temas": [
+    "adicional de insalubridade",
+    "periculosidade",
+    "adicional noturno",
+    "intrajornada"
+   ]
+  },
+  {
+   "id": "mdo-04",
+   "doc": "planilha",
+   "titulo": "Encargos sociais e provisões trabalhistas",
+   "verificar": "Os percentuais de 13º salário, férias e adicional de férias, INSS, SAT/RAT ajustado pelo FAP, terceiros (salário-educação, SESC/SESI, SENAC/SENAI, SEBRAE, INCRA) e FGTS são os legais e coerentes com o regime tributário (empresa do Simples não recolhe terceiros nem o INSS patronal de 20%, salvo exceções); a incidência do Submódulo 2.2 sobre 13º e férias está correta.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "caput"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "6",
+      "disp": "LVI"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p1.I"
+     }
+    ],
+    "lei-13019": [
+     {
+      "norma": "lei-13019",
+      "art": "46",
+      "disp": "I"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Percentuais acima dos legais ou incidências em duplicidade inflam o custo de todos os postos — sobrepreço recorrente por todo o contrato.",
+   "dica": "Use os percentuais do caderno técnico e do Anexo VII-D (13º 8,33%; férias + 1/3 12,10%; FGTS 8%; INSS 20%) e demonstre o RAT/FAP.",
+   "temas": [
+    "encargos sociais",
+    "provisões",
+    "13º salário",
+    "férias",
+    "FGTS",
+    "INSS",
+    "RAT FAP"
+   ]
+  },
+  {
+   "id": "mdo-05",
+   "doc": "planilha",
+   "titulo": "Benefícios: vale-transporte, alimentação e benefícios da CCT",
+   "verificar": "O vale-transporte considera dias trabalhados, tarifa local e desconto de 6% do salário; auxílio-alimentação e demais benefícios seguem a CCT; não se incluem benefícios que a Administração não deve suportar (participação nos lucros, matéria não trabalhista, obrigações exclusivas de contratos públicos).",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "135",
+      "disp": "p1"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "135",
+      "disp": "p2"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p1.I"
+     }
+    ],
+    "lei-13019": [
+     {
+      "norma": "lei-13019",
+      "art": "46",
+      "disp": "I"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Benefícios a maior ou não vinculantes elevam o custo sem amparo; vale-transporte sem desconto legal é sobrepreço.",
+   "dica": "Demonstre o cálculo do VT (tarifa × viagens × dias − 6% do salário) e cite a cláusula da CCT de cada benefício.",
+   "temas": [
+    "vale-transporte",
+    "auxílio-alimentação",
+    "benefícios da convenção",
+    "art. 135 § 1º"
+   ]
+  },
+  {
+   "id": "mdo-06",
+   "doc": "planilha",
+   "titulo": "Provisão para rescisão e custos não renováveis",
+   "verificar": "A provisão para rescisão (aviso prévio indenizado e trabalhado, multa do FGTS) e o custo de reposição do profissional ausente têm percentuais justificados; está previsto que custos já pagos ou amortizados no primeiro ano (ex.: aviso prévio trabalhado) sejam eliminados na prorrogação.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "caput"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "107",
+      "disp": "caput"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p1.I"
+     }
+    ],
+    "lei-13019": [
+     {
+      "norma": "lei-13019",
+      "art": "46",
+      "disp": "I"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Manter na prorrogação custos não renováveis paga duas vezes a mesma despesa (superfaturamento) — TCU, Acórdãos 1186/2017 e 1586/2018-Plenário.",
+   "dica": "Preveja no edital/contrato a exclusão dos custos não renováveis na prorrogação (IN 05/2017, Anexo IX).",
+   "temas": [
+    "provisão para rescisão",
+    "aviso prévio",
+    "custos não renováveis",
+    "prorrogação"
+   ]
+  },
+  {
+   "id": "mdo-07",
+   "doc": "planilha",
+   "titulo": "Custos indiretos, lucro e tributos",
+   "verificar": "Custos indiretos e lucro têm percentuais razoáveis; os tributos são os do faturamento (ISS do município da prestação, PIS e COFINS conforme o regime de apuração) e não incluem IRPJ nem CSLL.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "caput"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "6",
+      "disp": "LVI"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p1.I"
+     }
+    ],
+    "lei-13019": [
+     {
+      "norma": "lei-13019",
+      "art": "46",
+      "disp": "III"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "IRPJ/CSLL na planilha ou alíquotas de ISS/PIS/COFINS acima das devidas configuram sobrepreço (Súmula TCU 254).",
+   "dica": "Indique alíquota de ISS do município e o regime de PIS/COFINS (cumulativo ou não cumulativo) e retire IRPJ/CSLL.",
+   "temas": [
+    "custos indiretos",
+    "lucro",
+    "tributos",
+    "ISS",
+    "PIS COFINS",
+    "Súmula 254"
+   ]
+  },
+  {
+   "id": "mdo-08",
+   "doc": "planilha",
+   "titulo": "Insumos: uniformes, materiais e equipamentos",
+   "verificar": "Uniformes, EPIs, materiais e equipamentos estão dimensionados (quantidade, vida útil, rateio mensal) e têm preços pesquisados; não há duplicidade com itens fornecidos pela Administração.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "caput"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "18",
+      "disp": "p1.IV"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p1.I"
+     }
+    ],
+    "lei-13019": [
+     {
+      "norma": "lei-13019",
+      "art": "22",
+      "disp": "II-A"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Insumos sem dimensionamento ou pesquisa de preço podem esconder sobrepreço e dificultam a fiscalização da entrega.",
+   "dica": "Inclua a memória de cálculo dos insumos (kit por empregado, periodicidade de reposição e preço pesquisado).",
+   "temas": [
+    "uniformes",
+    "EPI",
+    "materiais",
+    "insumos de mão de obra"
+   ]
+  },
+  {
+   "id": "mdo-09",
+   "doc": "planilha",
+   "titulo": "Dimensionamento dos postos e produtividade",
+   "verificar": "A quantidade de postos decorre de critério objetivo (área × produtividade de referência, escala de cobertura 12×36 ou 44 h, horários de funcionamento) demonstrado em memória de cálculo.",
+   "fundamento": {
+    "lei-14133": [
+     {
+      "norma": "lei-14133",
+      "art": "18",
+      "disp": "p1.IV"
+     },
+     {
+      "norma": "lei-14133",
+      "art": "23",
+      "disp": "caput"
+     }
+    ],
+    "lei-13303": [
+     {
+      "norma": "lei-13303",
+      "art": "31",
+      "disp": "p1.I"
+     }
+    ],
+    "lei-13019": [
+     {
+      "norma": "lei-13019",
+      "art": "22",
+      "disp": "II"
+     }
+    ]
+   },
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Postos superdimensionados geram pagamento por mão de obra desnecessária durante todo o contrato (sobrepreço/superfaturamento).",
+   "dica": "Use as produtividades de referência dos cadernos técnicos (ex.: m² por servente na limpeza) e demonstre a escala de cada posto.",
+   "temas": [
+    "dimensionamento de postos",
+    "produtividade",
+    "escala 12x36",
+    "caderno técnico"
+   ]
+  }
+ ]
+}

@@ -66,3 +66,18 @@ Este arquivo entra nas instruções de toda análise. Acrescente aqui cada nova 
 - (29/10/2026) O acervo é limitado no tempo. Quando não houver precedente no acervo para um ponto da análise, o sistema faz varredura na
   Jurisprudência Selecionada do TCU e oferece os achados como candidatos (marcados "fonte oficial, fora do acervo"). Os precedentes
   usados no parecer são incluídos no acervo na atualização diária.
+
+## Regimes (Leis 14.133, 13.303 e 13.019) e objetos especiais (obras; mão de obra exclusiva)
+- (30/10/2026) A estrutura de análise é a mesma em todos os regimes: analisar os documentos pelo que estabelece a lei que rege a
+  contratação; havendo inconsistência, apontá-la, classificar o grau de risco, dizer o que está errado e por que está errado e sugerir
+  melhorias. Em todos os regimes avaliam-se conformidade, legalidade, economicidade, vantajosidade, eventual direcionamento ou restrição
+  da competitividade, sobrepreço e superfaturamento.
+- (30/10/2026) Obras e serviços de engenharia: além de ETP, TR/projeto básico, edital e matriz de riscos, a análise usa a planilha
+  orçamentária em Excel com valores unitários e totais sem e com BDI, o BDI (onerado ou desonerado), as tabelas utilizadas (EMOP, SINAPI,
+  SICRO, SCO etc.) e as datas-base das tabelas.
+- (30/10/2026) Dedicação exclusiva de mão de obra: a análise usa a planilha modelo de custos preenchida, em Excel, com CBO, categoria,
+  salário-base, adicionais (se houver) e a convenção ou acordo coletivo.
+- (30/10/2026) Lei 13.019/2014: o TR é substituído pelo plano de trabalho (elaborado pelo órgão ou pela organização) e pela planilha de
+  custos (Excel) com o detalhamento de tudo o que será implementado e adquirido na execução. Se o plano de trabalho e a planilha
+  previrem profissional com dedicação exclusiva, o custo desse profissional deve ser formado pela planilha modelo do Anexo VII-D da
+  IN SEGES/MP 5/2017.

@@ -115,6 +115,14 @@ def resumo_de(analise):
     return {"situacao": sit, **cont, "objeto": p.get("objeto", "")[:400], "orgao": p.get("orgao", "")[:200], "numero": p.get("numero", "")[:200]}
 
 
+def a_lista(a, campo):
+    v = a.get(campo) or []
+    if isinstance(v, str):
+        try: v = json.loads(v)
+        except Exception: v = []
+    return [n for n in v if isinstance(n, dict) and n.get("arquivo")][:5]
+
+
 def a_normas(a):
     v = a.get("normas") or []
     if isinstance(v, str):
@@ -165,6 +173,23 @@ def processar(a):
                         args += ["--norma-local", f"{n['nome']}::{txt_n}"]
                 except Exception as e:
                     print(f"análise {aid}: norma local {k} não lida ({type(e).__name__})")
+            # regime jurídico, objeto especial e planilhas em Excel
+            if a.get("regime") in ("lei-14133", "lei-13303", "lei-13019"):
+                args += ["--regime", a["regime"]]
+            for o in (a.get("objeto") or []):
+                if o in ("obras", "mao-de-obra"):
+                    args += ["--objeto", o]
+            for k, x in enumerate(a_lista(a, "anexos"), 1):
+                orig = pasta / f"anexo{k}{pathlib.Path(x['arquivo']).suffix.lower() or '.xlsx'}"
+                try:
+                    orig.write_bytes(http("GET", f"{SUPA}/storage/v1/object/analises/{x['arquivo']}", cab=cab(), binario=True, timeout=300))
+                except Exception as e:
+                    print(f"análise {aid}: planilha {k} não baixada ({type(e).__name__})"); continue
+                txt_x = pasta / f"anexo{k}.txt"
+                rx = subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-planilha.py"), str(orig), str(txt_x)], capture_output=True, text=True, timeout=600)
+                if rx.returncode != 0 or not txt_x.exists():
+                    raise ErroCliente(f"Não foi possível ler a planilha \"{x.get('nome_arquivo') or k}\". Envie o arquivo em Excel (.xlsx) sem senha.")
+                args += ["--anexo", f"{x.get('tipo', 'outro')}::{x.get('nome_arquivo') or orig.name}::{txt_x}"]
             # análise de preços (sobrepreço): itens do PNCP no edital; nos demais casos, extraídos do documento
             precos = pasta / "precos.json"
             cmd = [sys.executable, str(RAIZ / "scripts/agente/precos-do-processo.py"), "--texto", str(txt), "--saida", str(precos)]
