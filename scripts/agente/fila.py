@@ -115,6 +115,14 @@ def resumo_de(analise):
     return {"situacao": sit, **cont, "objeto": p.get("objeto", "")[:400], "orgao": p.get("orgao", "")[:200], "numero": p.get("numero", "")[:200]}
 
 
+def a_normas(a):
+    v = a.get("normas") or []
+    if isinstance(v, str):
+        try: v = json.loads(v)
+        except Exception: v = []
+    return [n for n in v if isinstance(n, dict) and n.get("arquivo")][:3]
+
+
 def processar(a):
     aid = a["id"]
     print(f"análise {aid}: início (tentativa {a.get('tentativas')})")
@@ -141,6 +149,22 @@ def processar(a):
                     "--fonte", a.get("pncp_link") or a.get("nome_arquivo") or "documento enviado"]
             if compra:
                 args += ["--compra", str(compra)]
+            # regulamentação específica enviada pelo assinante (decreto, RILC etc.)
+            for k, n in enumerate(a_normas(a), 1):
+                try:
+                    bruto = http("GET", f"{SUPA}/storage/v1/object/analises/{n['arquivo']}", cab=cab(), binario=True, timeout=300)
+                    orig = pasta / f"norma{k}{pathlib.Path(n['arquivo']).suffix.lower() or '.pdf'}"
+                    orig.write_bytes(bruto)
+                    txt_n = pasta / f"norma{k}.txt"
+                    if orig.suffix == ".docx":
+                        import docx  # python-docx
+                        txt_n.write_text("\n".join(p.text for p in docx.Document(str(orig)).paragraphs), encoding="utf-8")
+                    else:
+                        subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-texto.py"), str(orig), str(txt_n)], capture_output=True, timeout=1800)
+                    if txt_n.exists() and len(txt_n.read_text(encoding="utf-8", errors="replace").strip()) > 200:
+                        args += ["--norma-local", f"{n['nome']}::{txt_n}"]
+                except Exception as e:
+                    print(f"análise {aid}: norma local {k} não lida ({type(e).__name__})")
             # análise de preços (sobrepreço): itens do PNCP no edital; nos demais casos, extraídos do documento
             precos = pasta / "precos.json"
             cmd = [sys.executable, str(RAIZ / "scripts/agente/precos-do-processo.py"), "--texto", str(txt), "--saida", str(precos)]

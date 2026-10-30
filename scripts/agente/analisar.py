@@ -257,6 +257,46 @@ def selecionar_referencias(itens, texto_doc, limite=16):
             break
     return saida
 
+# ------------------------------------------------------------------ regulamentação específica enviada pelo assinante
+NORMAS_LOCAIS = []  # [{id, nome, texto}]
+
+def carregar_normas_locais(specs):
+    for k, spec in enumerate(specs or [], 1):
+        nome, _, caminho = spec.partition("::")
+        p = pathlib.Path(caminho)
+        if p.exists():
+            NORMAS_LOCAIS.append({"id": f"local-{k}", "nome": nome.strip() or f"Regulamentação local {k}",
+                                  "texto": p.read_text(encoding="utf-8", errors="replace")})
+
+def artigo_local(nid, art):
+    n = next((x for x in NORMAS_LOCAIS if x["id"] == nid), None)
+    if not n:
+        return None
+    m = re.search(r"(?:^|\n)\s*Art\.?\s*" + re.escape(str(art)) + r"\s*[º°o]?\s*[.\-–]?\s*(.+?)(?=\n\s*Art\.?\s*\d|\Z)", n["texto"], re.S)
+    return re.sub(r"\s+", " ", m.group(1)).strip()[:900] if m else None
+
+def bloco_normas_locais(itens, limite_total=150_000):
+    if not NORMAS_LOCAIS:
+        return ""
+    partes = ["REGULAMENTAÇÃO ESPECÍFICA ENVIADA PELO DESTINATÁRIO (considere-a na análise; cite-a no fundamento com norma = id indicado):"]
+    total = sum(len(n["texto"]) for n in NORMAS_LOCAIS)
+    for n in NORMAS_LOCAIS:
+        if total <= limite_total:
+            partes.append(f'<norma id="{n["id"]}" nome="{n["nome"]}">\n{n["texto"]}\n</norma>')
+            continue
+        # norma extensa: só os artigos mais pertinentes aos itens do roteiro
+        arts = [a for a in re.split(r"\n(?=\s*Art\.?\s*\d)", n["texto"]) if len(a.strip()) > 40]
+        import collections, math
+        tfs = [collections.Counter(_tok(a)) for a in arts]
+        df = collections.Counter(w for tf in tfs for w in tf)
+        idf = {w: math.log(1 + (len(arts) - c + 0.5) / (c + 0.5)) for w, c in df.items()}
+        q = _tok(" ".join(it["titulo"] + " " + " ".join(it.get("temas") or []) for it in itens))
+        notas = sorted(range(len(arts)), key=lambda i: -sum(idf.get(w, 0) * min(tfs[i].get(w, 0), 3) for w in set(q)))[:40]
+        trechos = "\n".join(arts[i].strip()[:2500] for i in sorted(notas))
+        partes.append(f'<norma id="{n["id"]}" nome="{n["nome"]}" (trechos mais pertinentes; norma extensa)>\n{trechos}\n</norma>')
+    return "\n".join(partes) + "\n\n"
+
+
 ALCANCE = {"nacional": "aplicação nacional", "federal-parametro": "norma/orientação federal — vincula a União; para estados, municípios e DF é parâmetro de boa prática, salvo adoção pelo ente (art. 187 da Lei 14.133/2021)"}
 
 def bloco_referencias(refs):
@@ -340,11 +380,16 @@ Regras obrigatórias:
     caderno ou manual federal vincula a União; para estados, municípios e DF apresente como parâmetro ou boa prática ("conforme orientação
     federal...", "recomenda-se, por analogia..."), salvo se o ente o tiver adotado (art. 187 da Lei 14.133/2021) ou se a regulamentação local
     enviada assim dispuser. Nunca trate norma federal infralegal como obrigatória para município sem essa ressalva.
-17. ANÁLISE DE PREÇOS: quando os fatos do sistema trouxerem "INDÍCIO DE SOBREPREÇO", registre-o como irregularidade de gravidade ALTA
+17. REGULAMENTAÇÃO ESPECÍFICA: se o destinatário enviou decreto, regulamento ou RILC, considere-o na análise. Hierarquia: a
+    Constituição e as normas gerais nacionais (Lei 14.133/2021, Lei 13.303/2016 etc.) prevalecem; o regulamento local vale no que as
+    complementa e no espaço que a lei geral deixou ao ente (ex.: art. 187 da Lei 14.133/2021). Se o regulamento local adotar instrução
+    normativa federal, trate-a como obrigatória para aquele ente. Se uma regra local contrariar a norma geral, aponte o conflito (sem deixar
+    de informar o que o regulamento diz). Cite artigos do regulamento local em fundamento com norma = "local-N" e o número do artigo.
+18. ANÁLISE DE PREÇOS: quando os fatos do sistema trouxerem "INDÍCIO DE SOBREPREÇO", registre-o como irregularidade de gravidade ALTA
     no item de estimativa de valor do roteiro (ou em outros_apontamentos, se o documento não tiver item correspondente), com fundamento
     no art. 23 da Lei 14.133/2021, citando o desvio calculado; recomende revisar a pesquisa de preços. "Ponto de atenção" é gravidade média.
     Amostra insuficiente ou heterogênea não permite concluir: não aponte sobrepreço nesses casos.
-18. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
+19. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
     ementa_texto (síntese de 2–3 frases), resumo (um parágrafo de visão geral) e conclusao (um parágrafo)."""
 
 FERRAMENTA = {
@@ -510,6 +555,14 @@ def validar_outros(lista, texto):
             art = re.sub(r"[^0-9A-Z-]", "", str(f.get("art", "")).upper())
             disp = str(f.get("disp") or "caput").strip()
             nid = f.get("norma") or "lei-14133"
+            if nid.startswith("local-"):
+                txt = artigo_local(nid, art)
+                if txt:
+                    nome = next((x["nome"] for x in NORMAS_LOCAIS if x["id"] == nid), nid)
+                    fund.append({"norma": nid, "art": art, "disp": disp, "texto": txt, "nome_norma": nome})
+                else:
+                    avisos.append(f"artigo {art} não localizado na regulamentação local {nid}; removido")
+                continue
             n = rel.norma(nid)
             a = next((x for x in (n or {}).get("artigos", []) if x["num"] == art), None)
             d = next((x for x in (a or {}).get("dispositivos", []) if x["id"] == disp), None) if a else None
@@ -531,6 +584,7 @@ def main():
     ap.add_argument("--fonte", default="")
     ap.add_argument("--paginas", type=int)
     ap.add_argument("--precos", help="resultado de sobrepreco.py (análise de preços)")
+    ap.add_argument("--norma-local", action="append", default=[], help='regulamentação específica: "Nome da norma::caminho/do/texto.txt" (repetível)')
     ap.add_argument("--saida", required=True)
     a = ap.parse_args()
 
@@ -544,6 +598,7 @@ def main():
     fatos = fatos_pncp(compra)
     trilhas = rodar_trilhas(bruto)
     referencias = selecionar_referencias(itens, bruto)
+    carregar_normas_locais(a.norma_local)
     precos = None
     if a.precos and pathlib.Path(a.precos).exists():
         precos = json.loads(pathlib.Path(a.precos).read_text(encoding="utf-8"))
@@ -575,6 +630,7 @@ def main():
                    f"- [{t['id']}] {t['nome']} (gravidade se confirmado: {t['gravidade']}; item: {t['item'] or 'outros_apontamentos'}; {t['fundamento']}). {t['nota']}\n"
                    + "\n".join(f"    · [página {o['pagina']}] …{o['trecho']}…" for o in t["ocorrencias"]) for t in trilhas) + "\n\n" if trilhas else "")
                + bloco_referencias(referencias)
+               + bloco_normas_locais(itens)
                + f"DOCUMENTO ({roteiro['documentos'].get(a.doc, a.doc)}; {npags or 'sem marcação de'} páginas):\n<documento>\n{texto}\n</documento>\n\n"
                "Verifique todos os itens do roteiro e registre o resultado chamando a ferramenta registrar_analise uma única vez, com todos os itens. Não responda em texto.")
     t0 = time.time()
@@ -613,6 +669,7 @@ def main():
         "resultados": resultados,
         "outros_apontamentos": outros,
         "precos": precos,
+        "normas_locais": [{"id": n["id"], "nome": n["nome"]} for n in NORMAS_LOCAIS],
         "referencias_tecnicas": [r for r in referencias if r["id"] in {i for x in resultados + outros for i in x.get("referencias_ids", [])}],
         "jurisprudencia_externa": [EXTERNOS[j] for j in sorted({j for r in resultados for j in r.get("jurisprudencia_ids", [])}) if j in EXTERNOS],
         "_execucao": {"modelo": resp.get("model"), "segundos": round(time.time() - t0), "uso": resp.get("usage"),

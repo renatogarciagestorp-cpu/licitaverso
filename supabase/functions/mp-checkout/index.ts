@@ -3,7 +3,7 @@
 //
 // POST { acao: "criar", tipo: "plano", plano, ciclo, parcelas, contratante, metodo, retorno }
 // POST { acao: "criar", tipo: "consultoria", modalidade, assunto, descricao, metodo, aceite, termo_versao, anexos, retorno }
-// POST { acao: "criar", tipo: "analise", documento, origem: "pdf"|"pncp", arquivo, nome_arquivo, pncp_link, aceite, termo_versao, metodo, retorno }
+// POST { acao: "criar", tipo: "analise", documento, origem: "pdf"|"pncp", arquivo, nome_arquivo, pncp_link, normas: [ids], aceite, termo_versao, metodo, retorno }
 //      Pro com cota na semana: entra direto na fila (sem pagamento). Demais: análise avulsa paga.
 // POST { acao: "conferir", referencia: "assinatura:<id>" | "consultoria:<id>" | "analise:<id>" }
 
@@ -176,8 +176,15 @@ Deno.serve(async (req) => {
       }
       valor = franquia ? 0 : precoAnalise(vigente ?? null);
       titulo = `Licitacon · Análise de documento (${DOC_ANALISE[documento]})`;
+      // Regulamentação específica escolhida (até 3 normas da própria pessoa)
+      let normas: { id: string; nome: string; arquivo: string }[] = [];
+      const pedidas = (Array.isArray(corpo.normas) ? corpo.normas : []).map(String).slice(0, 3);
+      if (pedidas.length) {
+        const { data: ns } = await admin.from("normas_usuario").select("id, nome, arquivo").in("id", pedidas).eq("usuario_id", usuario.id);
+        normas = (ns ?? []).map((n: any) => ({ id: n.id, nome: n.nome, arquivo: n.arquivo }));
+      }
       const { data: nova, error } = await admin.from("analises").insert({
-        usuario_id: usuario.id, documento, origem, arquivo, pncp_link: pncp,
+        usuario_id: usuario.id, documento, origem, arquivo, pncp_link: pncp, normas,
         nome_arquivo: String(corpo.nome_arquivo ?? "").slice(0, 160),
         cobranca: franquia ? "franquia_pro" : "avulsa", plano: vigente ?? null, valor,
         termo_aceito_em: new Date().toISOString(), termo_versao: String(corpo.termo_versao ?? "").slice(0, 20),

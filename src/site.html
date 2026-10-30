@@ -1222,6 +1222,37 @@
                 <p style="margin: 6px 0 0; font-size: 12.5px; color: #7A8B91">O agente baixa o maior arquivo publicado na contratação (em geral, o edital com anexos).</p>
               </sc-if>
             </div>
+            <div>
+              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 6px">Regulamentação específica (opcional)</span>
+              <p style="margin: 0 0 10px; font-size: 13px; line-height: 1.5; color: #6A7B82">Decreto estadual ou municipal que regulamenta a Lei 14.133, regulamento interno de estatal (RILC) etc. O agente aplica a norma em complemento à legislação nacional. Até {{ anMaxNormas }} por análise.</p>
+              <sc-if value="{{ anSemNormas }}" hint-placeholder-val="{{ false }}">
+                <p style="margin: 0 0 10px; font-size: 13px; color: #7A8B91">Nenhuma norma enviada ainda.</p>
+              </sc-if>
+              <div style="display: grid; gap: 8px">
+                <sc-for list="{{ anNormas }}" as="n" hint-placeholder-count="2">
+                  <div style="display: flex; align-items: center; gap: 10px; border: 1px solid {{ n.borda }}; background: {{ n.fundo }}; border-radius: 11px; padding: 10px 12px">
+                    <button sc-camel-on-click="{{ n.alternar }}" aria-pressed="{{ n.ativo }}" style="flex: 1; display: flex; align-items: center; gap: 10px; background: transparent; border: 0; padding: 0; cursor: pointer; text-align: left; min-width: 0">
+                      <span aria-hidden="true" style="width: 20px; height: 20px; flex: none; border-radius: 6px; border: 1.5px solid {{ n.borda }}; display: grid; place-items: center; font-size: 13px; font-weight: 800; color: #0A7A50">{{ n.marca }}</span>
+                      <span style="font-size: 13.5px; font-weight: 700; color: #172B33; overflow-wrap: anywhere">{{ n.nome }} <span style="font-weight: 600; color: #7A8B91">· {{ n.tipo }}</span></span>
+                    </button>
+                    <button sc-camel-on-click="{{ n.apagar }}" aria-label="Excluir norma" style="background: transparent; border: 0; color: #8A1230; font-size: 12.5px; font-weight: 700; cursor: pointer; flex: none">Excluir</button>
+                  </div>
+                </sc-for>
+              </div>
+              <p style="margin: 8px 0 0; font-size: 12.5px; font-weight: 700; color: #0F6B7E">{{ anNormasResumo }}</p>
+              <div style="display: grid; gap: 8px; margin-top: 10px; border: 1px solid #E3E9E8; border-radius: 12px; padding: 12px; background: #FBFCFC">
+                <label style="position: relative; display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13.5px; color: #3D5058">
+                  <input type="file" accept="application/pdf,.pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" sc-camel-on-change="{{ onAnNormaArquivo }}" style="position: absolute; width: 1px; height: 1px; opacity: 0">
+                  <span aria-hidden="true" style="border-radius: 8px; background: #EAF2F1; color: #0F6B7E; padding: 6px 10px; font-weight: 800; font-size: 12px">+ Norma</span>
+                  <strong style="color: #0B1F2A; overflow-wrap: anywhere">{{ anNormaArquivoNome }}</strong>
+                </label>
+                <input type="text" value="{{ anNormaNome }}" sc-camel-on-input="{{ onAnNormaNome }}" placeholder="Nome da norma (ex.: Decreto Municipal nº 123/2023 — Maricá/RJ)" aria-label="Nome da norma" maxlength="200" style="width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 10px; padding: 10px 12px; font-size: 13.5px">
+                <button sc-camel-on-click="{{ enviarNorma }}" style="justify-self: start; background: #0F6B7E; color: #FFFFFF; border: 0; border-radius: 10px; padding: 9px 16px; font-size: 13.5px; font-weight: 800; cursor: pointer">{{ anNormaBotao }}</button>
+              </div>
+              <sc-if value="{{ anNormaErro }}" hint-placeholder-val="{{ false }}">
+                <p role="alert" style="margin: 8px 0 0; font-size: 13px; font-weight: 700; color: #8A1230">{{ anNormaErro }}</p>
+              </sc-if>
+            </div>
             <div style="background: #F6F8F7; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px">
               <details>
                 <summary style="cursor: pointer; font-size: 14px; font-weight: 700; color: #0F6B7E">Condições da análise (leia antes de aceitar)</summary>
@@ -2515,11 +2546,14 @@ const AN_DOC_NOME = { edital: "Edital", etp: "Estudo Técnico Preliminar", tr: "
 const AN_PRECO = 147;
 const AN_DESCONTO = { basico: 0.1, premium: 0.15, pro: 0.3 };
 const AN_MAX_MB = 25;
-const AN_TERMO_VERSAO = "2026-10-29";
+const AN_MAX_NORMAS = 3;
+const AN_NORMA_MB = 15;
+const AN_TERMO_VERSAO = "2026-10-30";
 const AN_TERMO = [
   "Natureza: parecer técnico em gestão de licitações e contratos, elaborado de forma automatizada por inteligência artificial a partir do roteiro de verificação do Licitacon. Não é parecer jurídico e não substitui a análise jurídica prévia do órgão (Lei 14.133/2021, art. 53).",
   "Parecer opinativo: o parecer aponta todos os aspectos identificados, dos críticos aos de baixa vulnerabilidade, e recomenda providências, mas não vincula quem o recebe. A decisão de ajustar ou manter cada ponto, e a responsabilidade por ela, é exclusivamente sua (STF, MS 24.631/DF; Decreto-Lei 4.657/1942, art. 28).",
-  "Escopo: um documento por análise, em PDF de até 200 páginas e 25 MB. Documentos digitalizados (imagem) são lidos por reconhecimento óptico de caracteres (OCR); com digitalização de baixa qualidade, trechos podem ser lidos com erro. Nesta fase, a análise considera a Lei 14.133/2021; normas estaduais, municipais e regulamentos internos só são considerados se constarem do próprio documento.",
+  "Escopo: um documento por análise, em PDF de até 200 páginas e 25 MB. Documentos digitalizados (imagem) são lidos por reconhecimento óptico de caracteres (OCR); com digitalização de baixa qualidade, trechos podem ser lidos com erro. A análise considera a legislação nacional aplicável a todos os entes (Constituição Federal, Lei 14.133/2021, LRF, LC 123/2006, LINDB, entre outras) e, como parâmetro técnico, instruções normativas, cadernos e manuais federais e do TCU.",
+  "Regulamentação específica (opcional): você pode anexar até 3 normas próprias (decreto estadual ou municipal, regulamento interno de licitações de estatal etc.), em PDF ou Word, que o agente aplica em complemento à legislação nacional, apontando eventual conflito. Você é responsável pela vigência e fidelidade do texto enviado.",
   "Prazo: em geral, o parecer fica pronto em até 1 hora; você recebe um aviso por e-mail e baixa o parecer em PDF e Word nesta página.",
   "Plano Pro: 2 análises por semana incluídas (de segunda a domingo, sem acúmulo). A partir da 3ª análise na semana, a análise avulsa sai com 30% de desconto. Análise que não puder ser concluída não consome a cota; a avulsa paga é reprocessada ou estornada.",
   "Dados: o documento é processado por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos. O arquivo e o parecer ficam na sua conta, acessíveis só a você e à equipe do Licitacon. Não envie documento cuja divulgação a prestadores de serviço seja vedada.",
@@ -2748,8 +2782,8 @@ class Component extends DCLogic {
     admin: false,
     plano: null,           // plano em vigor: teste | basico | premium | pro | null
     assinaturas: [], pagamentos: [], consultorias: [], acessosCurso: [], seguindo: [], favBib: [],
-    analises: [], cotaAnalise: null,
-    an: { doc: "edital", origem: "pdf", arquivo: null, link: "", metodo: "pix", aceite: false, enviando: false, erro: "", ok: "" },
+    analises: [], cotaAnalise: null, normasUsuario: [],
+    an: { doc: "edital", origem: "pdf", arquivo: null, link: "", metodo: "pix", aceite: false, enviando: false, erro: "", ok: "", normas: [], normaArquivo: null, normaNome: "", normaEnviando: false, normaErro: "" },
     auth: AUTH_VAZIO,
     volta: null,
     aviso: "", avisoTipo: "ok",
@@ -2894,7 +2928,7 @@ class Component extends DCLogic {
   async carregarDados() {
     const sb = this.sb, u = this.state.usuario;
     if (!sb || !u) return;
-    const [perfil, plano, assin, pags, cons, acessos, seg, bib, cupom, anal, cota] = await Promise.all([
+    const [perfil, plano, assin, pags, cons, acessos, seg, bib, cupom, anal, cota, normas] = await Promise.all([
       sb.from("perfis").select("*").eq("id", u.id).maybeSingle(),
       sb.rpc("meu_plano"),
       sb.from("assinaturas").select("*").order("criado_em", { ascending: false }).limit(50),
@@ -2905,7 +2939,8 @@ class Component extends DCLogic {
       sb.from("biblioteca_pessoal").select("chave, dados, atualizado_em").like("chave", "nota-%").limit(1000),
       sb.rpc("meu_cupom_curso"),
       sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg").order("criado_em", { ascending: false }).limit(30),
-      sb.rpc("minha_cota_analises")
+      sb.rpc("minha_cota_analises"),
+      sb.from("normas_usuario").select("id, nome, arquivo, tamanho, criado_em").order("criado_em", { ascending: false }).limit(30)
     ]);
     const p = perfil.data || {};
     const planoVig = plano.data || null;
@@ -2926,7 +2961,8 @@ class Component extends DCLogic {
       seguindo: seg.data || [],
       favBib: (bib.data || []).filter((r) => r.dados && (r.dados.marcas || []).includes("fav")),
       analises: (anal && !anal.error && anal.data) || [],
-      cotaAnalise: (cota && !cota.error && cota.data) || null
+      cotaAnalise: (cota && !cota.error && cota.data) || null,
+      normasUsuario: (normas && !normas.error && normas.data) || []
     });
     this.vigiarAnalises();
     if (this.state.page === "forum") this.carregarForum();
@@ -3339,16 +3375,63 @@ class Component extends DCLogic {
     }
     const { data, error } = await this.sb.functions.invoke("mp-checkout", {
       body: { acao: "criar", tipo: "analise", documento: an.doc, origem: an.origem, arquivo, nome_arquivo: an.arquivo ? an.arquivo.name : "",
-              pncp_link: an.origem === "pncp" ? an.link.trim() : null, aceite: true, termo_versao: AN_TERMO_VERSAO, metodo: an.metodo, retorno: baseSite() + "index.html" }
+              pncp_link: an.origem === "pncp" ? an.link.trim() : null, normas: (an.normas || []).slice(0, AN_MAX_NORMAS), aceite: true, termo_versao: AN_TERMO_VERSAO, metodo: an.metodo, retorno: baseSite() + "index.html" }
     });
     if (error) { erro(await erroDaFuncao(error)); return; }
     if (data && data.gratuito) {
-      this.setState({ an: { ...this.state.an, enviando: false, arquivo: null, link: "", aceite: false, ok: "✓ Análise recebida (incluída no seu plano Pro). Em geral fica pronta em até 1 hora; você recebe um e-mail." } });
+      this.setState({ an: { ...this.state.an, enviando: false, arquivo: null, link: "", aceite: false, normas: [], ok: "✓ Análise recebida (incluída no seu plano Pro). Em geral fica pronta em até 1 hora; você recebe um e-mail." } });
       this.carregarDados();
       return;
     }
     if (data && data.url) { window.location.href = data.url; return; }
     erro("Não foi possível abrir o pagamento.");
+  }
+
+  escolherArquivoNorma(e) {
+    const f = e.target && e.target.files && e.target.files[0];
+    if (e.target) e.target.value = "";
+    const an = this.state.an;
+    if (!f) return;
+    if (!/\.(pdf|docx)$/i.test(f.name)) { this.setState({ an: { ...an, normaErro: "Envie a norma em PDF ou Word (.docx)." } }); return; }
+    if (f.size > AN_NORMA_MB * 1048576) { this.setState({ an: { ...an, normaErro: "O arquivo passa de " + AN_NORMA_MB + " MB." } }); return; }
+    const sugestao = f.name.replace(/\.(pdf|docx)$/i, "").replace(/[_-]+/g, " ").trim();
+    this.setState({ an: { ...an, normaArquivo: f, normaNome: an.normaNome || sugestao, normaErro: "" } });
+  }
+
+  async enviarNorma() {
+    const an = this.state.an;
+    const erro = (m) => this.setState({ an: { ...this.state.an, normaEnviando: false, normaErro: m } });
+    if (!this.sb) { erro("O envio de normas ainda não está ativo neste site (modo demonstração)."); return; }
+    if (!this.u) { this.setState({ volta: "agente" }); this.irPara("login"); return; }
+    const nome = (an.normaNome || "").trim();
+    if (!an.normaArquivo) { erro("Escolha o arquivo da norma."); return; }
+    if (nome.length < 3) { erro("Informe o nome da norma (ex.: Decreto Municipal nº 123/2023 — Maricá/RJ)."); return; }
+    this.setState({ an: { ...an, normaEnviando: true, normaErro: "" } });
+    const ext = /\.docx$/i.test(an.normaArquivo.name) ? ".docx" : ".pdf";
+    const limpo = nome.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9._-]+/g, "-").slice(0, 60) || "norma";
+    const caminho = this.state.usuario.id + "/normas/" + Date.now().toString(36) + "-" + limpo + ext;
+    const tipo = ext === ".pdf" ? "application/pdf" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    const up = await this.sb.storage.from("analises").upload(caminho, an.normaArquivo, { upsert: false, contentType: tipo });
+    if (up.error) { erro("Não foi possível enviar o arquivo. Tente de novo."); return; }
+    const { data, error } = await this.sb.from("normas_usuario").insert({ usuario_id: this.state.usuario.id, nome: nome.slice(0, 200), arquivo: caminho, tamanho: an.normaArquivo.size }).select("id, nome, arquivo, tamanho, criado_em").single();
+    if (error || !data) { this.sb.storage.from("analises").remove([caminho]).catch(() => {}); erro("Não foi possível registrar a norma. Tente de novo."); return; }
+    const sel = (this.state.an.normas || []).length < AN_MAX_NORMAS ? [...this.state.an.normas, data.id] : this.state.an.normas;
+    this.setState({ normasUsuario: [data, ...(this.state.normasUsuario || [])], an: { ...this.state.an, normas: sel, normaArquivo: null, normaNome: "", normaEnviando: false, normaErro: "" } });
+  }
+
+  alternarNorma(id) {
+    const an = this.state.an, atual = an.normas || [];
+    if (atual.includes(id)) { this.setState({ an: { ...an, normas: atual.filter((x) => x !== id) } }); return; }
+    if (atual.length >= AN_MAX_NORMAS) { this.setState({ an: { ...an, normaErro: "Selecione no máximo " + AN_MAX_NORMAS + " normas por análise." } }); return; }
+    this.setState({ an: { ...an, normas: [...atual, id], normaErro: "" } });
+  }
+
+  async apagarNorma(n) {
+    if (!this.sb || !n) return;
+    const { error } = await this.sb.from("normas_usuario").delete().eq("id", n.id);
+    if (error) { this.aviso("Não foi possível excluir a norma.", "erro"); return; }
+    this.sb.storage.from("analises").remove([n.arquivo]).catch(() => {});
+    this.setState({ normasUsuario: (this.state.normasUsuario || []).filter((x) => x.id !== n.id), an: { ...this.state.an, normas: (this.state.an.normas || []).filter((x) => x !== n.id) } });
   }
 
   async baixarParecer(caminho, nome) {
@@ -4059,6 +4142,22 @@ class Component extends DCLogic {
       anLink: s.an.link,
       onAnLink: (e) => this.setState({ an: { ...this.state.an, link: e.target.value, erro: "" } }),
       anTermo: AN_TERMO,
+      anNormas: (s.normasUsuario || []).map((n) => {
+        const ativo = (s.an.normas || []).includes(n.id);
+        return { nome: n.nome, ativo, marca: ativo ? "✓" : "", tipo: /\.docx$/i.test(n.arquivo) ? "Word" : "PDF",
+          fundo: ativo ? "#E3F2EA" : "#FFFFFF", borda: ativo ? "#0FA36B" : "#DDE4E3",
+          alternar: () => this.alternarNorma(n.id), apagar: () => this.apagarNorma(n) };
+      }),
+      anSemNormas: !(s.normasUsuario || []).length,
+      anNormasResumo: (s.an.normas || []).length ? (s.an.normas.length + " de " + AN_MAX_NORMAS + " selecionada(s) para esta análise") : "Nenhuma selecionada: a análise usa só a base nacional",
+      anNormaArquivoNome: s.an.normaArquivo ? s.an.normaArquivo.name : "Escolher arquivo (PDF ou Word)",
+      onAnNormaArquivo: (e) => this.escolherArquivoNorma(e),
+      anNormaNome: s.an.normaNome,
+      onAnNormaNome: (e) => this.setState({ an: { ...this.state.an, normaNome: e.target.value, normaErro: "" } }),
+      anNormaBotao: s.an.normaEnviando ? "Enviando…" : "Adicionar norma",
+      enviarNorma: () => { if (!s.an.normaEnviando) this.enviarNorma(); },
+      anNormaErro: s.an.normaErro,
+      anMaxNormas: AN_MAX_NORMAS,
       anAceite: s.an.aceite,
       onAnAceite: (e) => { const v = !!e.target.checked; this.setState((st) => ({ an: { ...st.an, aceite: v, erro: "" } })); },
       anPaga: this.precoAnalise() > 0,

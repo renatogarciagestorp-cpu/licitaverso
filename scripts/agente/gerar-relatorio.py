@@ -84,6 +84,9 @@ def norma(nid):
     return _normas[nid]
 
 def rotulo(f, com_norma=True):
+    if str(f.get("norma", "")).startswith("local-"):
+        d = f.get("disp") or "caput"
+        return f"art. {f['art']}" + ("" if d == "caput" else f", {d}") + (f", do(a) {f.get('nome_norma', 'regulamentação local')}" if com_norma else "")
     n = norma(f["norma"])
     disp = f.get("disp", "caput")
     rot = None
@@ -114,6 +117,8 @@ def citar_fundamentos(fs):
     return "; ".join("pelo " + rotulo(f) for f in fs)
 
 def texto_legal(f):
+    if str(f.get("norma", "")).startswith("local-"):
+        return f.get("texto")
     n = norma(f["norma"])
     if not n:
         return None
@@ -541,6 +546,10 @@ def gerar(analise, saida, paginas=None):
     paragrafo(doc, f"Foram examinados os seguintes documentos: {docs_txt}. O exame teve por parâmetro a "
                    f"{analise.get('regime_texto', NOME_CURTO.get(analise['regime'], ''))}, aplicando-se o roteiro de verificação "
                    f"Licitacon (versão {roteiro['versao']}), com {len(resultados)} itens pertinentes ao caso.", depois=6)
+    if analise.get("normas_locais"):
+        paragrafo(doc, "Por indicação do destinatário, considerou-se também a seguinte regulamentação específica: "
+                       + "; ".join(n["nome"] for n in analise["normas_locais"]) + ". Ela foi aplicada no que complementa as normas gerais "
+                       "nacionais, que prevalecem em caso de conflito.", depois=6)
     if analise.get("resumo"):
         paragrafo(doc, analise["resumo"], depois=6)
     paragrafo(doc, "É o relatório. Passa-se à fundamentação.", depois=6)
@@ -578,7 +587,7 @@ def gerar(analise, saida, paginas=None):
         for f in it["fundamento"]:
             normas_usadas.add(f["norma"])
             tl = texto_legal(f)
-            ano = (REF_NORMA.get(f["norma"], (None, "BRASIL"))[1])
+            ano = f.get("nome_norma") if str(f.get("norma", "")).startswith("local-") else (REF_NORMA.get(f["norma"], (None, "BRASIL"))[1])
             if tl and tl.rstrip().endswith(":"): tl = tl.rstrip() + " […]"
             citacao_longa(doc, tl if tl else "[texto a conferir na fonte oficial]", f"{ano}, {rotulo(f, com_norma=False)}")
         run_in(doc, "Análise.", r.get("porque") or it["verificar"])
@@ -679,6 +688,8 @@ def gerar(analise, saida, paginas=None):
     for nid in sorted(normas_usadas):
         if nid in REF_NORMA: refs.append(REF_NORMA[nid][0].format(acesso=acesso))
     refs += [r_.format(acesso=acesso) for r_ in REF_OPINATIVO]
+    for n in analise.get("normas_locais") or []:
+        refs.append(f"{n['nome']}. Texto enviado pelo destinatário para a análise.")
     for u in {x["fonte"]: x for x in (analise.get("referencias_tecnicas") or [])}.values():
         if u.get("abnt"):
             refs.append(u["abnt"].format(url=u.get("url", ""), acesso=acesso))
