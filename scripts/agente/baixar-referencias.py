@@ -16,11 +16,16 @@ def baixar(url):
         return r.read()
 
 def html_para_texto(b):
+    t = _html_para_texto(b, True)
+    return t if len(t) > 3000 else _html_para_texto(b, False)
+
+def _html_para_texto(b, recortar):
     h = b.decode("utf-8", "replace")
-    m = re.search(r'<div[^>]+id="(content-core|parent-fieldname-text|content)"', h)
+    m = re.search(r'<div[^>]+id="(content-core|parent-fieldname-text)"', h) if recortar else None
+    if False: m = re.search(r'<div[^>]+id="(content-core|parent-fieldname-text|content)"', h)
     if m:
         h = h[m.start():]
-        fim = re.search(r'<div[^>]+(id="viewlet-below-content|class="documentByLine|id="portal-footer)', h)
+        fim = re.search(r'<div[^>]+(id="viewlet-below-content|id="portal-footer)', h)
         if fim: h = h[:fim.start()]
     h = re.sub(r"(?is)<(script|style|nav|header|footer)[^>]*>.*?</\1>", " ", h)
     h = re.sub(r"(?i)<br\s*/?>|</(p|div|li|tr|h\d|table)>", "\n", h)
@@ -76,7 +81,7 @@ def main():
                 b = baixar(f["url"])
                 texto = pdf_para_texto(b) if (f["tipo"] == "pdf" or b[:4] == b"%PDF") else html_para_texto(b)
             if len(texto) < 2000:
-                relatorio.append(f"{f['id']}: texto curto demais ({len(texto)}); mantida a versão anterior"); continue
+                relatorio.append(f"{f['id']}: texto curto demais ({len(texto)}; início do arquivo: {b[:60]!r}); mantida a versão anterior"); continue
             destino.write_text(texto, encoding="utf-8")
             relatorio.append(f"{f['id']}: ok ({len(texto)} caracteres)")
         except Exception as e:
