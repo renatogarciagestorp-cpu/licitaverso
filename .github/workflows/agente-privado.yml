@@ -1,0 +1,64 @@
+name: Agente — análise privada (pacote criptografado)
+
+# Os documentos chegam criptografados com uma chave pública gerada neste runner; o resultado volta criptografado
+# com a chave pública informada. O repositório é público: nada legível dos documentos ou do parecer é gravado ou impresso.
+on:
+  workflow_dispatch:
+    inputs:
+      sessao: { description: "Identificador da sessão (letras/números)", required: true }
+      chave: { description: "Chave pública RSA (PEM em base64) para criptografar o resultado", required: true }
+
+permissions:
+  contents: write
+
+jobs:
+  analisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      SESSAO: ${{ inputs.sessao }}
+      CHAVE: ${{ inputs.chave }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Chave do runner
+        run: |
+          [[ "$SESSAO" =~ ^[A-Za-z0-9-]{6,40}$ ]] || { echo "::error::sessão inválida"; exit 1; }
+          umask 077; openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out /tmp/runner.key 2>/dev/null
+          git config --global user.name "Licitacon — agente"; git config --global user.email "actions@users.noreply.github.com"
+          git fetch -q origin agente-testes && git worktree add -q /tmp/t origin/agente-testes
+          mkdir -p /tmp/t/privado/$SESSAO
+          openssl pkey -in /tmp/runner.key -pubout | base64 -w0 > /tmp/t/privado/$SESSAO/runner.pub
+          cd /tmp/t && git checkout -q -B agente-testes && git add privado && git commit -q -m "privado: chave da sessão" && git push -q origin agente-testes
+      - name: Preparar ambiente
+        run: |
+          sudo apt-get update -qq >/dev/null
+          sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-por libreoffice-writer-nogui libreoffice-calc-nogui fonts-liberation >/dev/null
+          pip install -q python-docx matplotlib openpyxl
+      - name: Aguardar o pacote (até 25 min)
+        run: |
+          for i in $(seq 1 150); do
+            git -C /tmp/t fetch -q origin agente-testes && git -C /tmp/t reset -q --hard origin/agente-testes
+            [ -f /tmp/t/privado/$SESSAO/pacote.enc ] && [ -f /tmp/t/privado/$SESSAO/pacote.senha ] && exit 0
+            sleep 10
+          done
+          echo "::error::pacote não recebido"; exit 1
+      - name: Analisar
+        run: |
+          umask 077; mkdir -p /tmp/pac /tmp/out
+          base64 -d /tmp/t/privado/$SESSAO/pacote.senha | openssl pkeyutl -decrypt -inkey /tmp/runner.key -pkeyopt rsa_padding_mode:oaep -out /tmp/senha
+          openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass file:/tmp/senha -in /tmp/t/privado/$SESSAO/pacote.enc | tar xz -C /tmp/pac
+          python3 scripts/agente/privado.py /tmp/pac /tmp/out 2>&1 | tail -5 | sed 's/^/::notice::/'
+          test -f /tmp/out/analise.json
+      - name: Devolver resultado criptografado
+        if: always()
+        run: |
+          umask 077; cd /tmp/out 2>/dev/null || { mkdir -p /tmp/out; cd /tmp/out; }
+          head -c 48 /dev/urandom | base64 -w0 > /tmp/senha2
+          tar cz . | openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -pass file:/tmp/senha2 -out /tmp/resultado.enc
+          echo "$CHAVE" | base64 -d > /tmp/dest.pub
+          openssl pkeyutl -encrypt -pubin -inkey /tmp/dest.pub -pkeyopt rsa_padding_mode:oaep -in /tmp/senha2 | base64 -w0 > /tmp/resultado.senha
+          cd /tmp/t && git fetch -q origin agente-testes && git reset -q --hard origin/agente-testes
+          rm -f privado/$SESSAO/pacote.enc privado/$SESSAO/pacote.senha
+          cp /tmp/resultado.enc /tmp/resultado.senha privado/$SESSAO/
+          git add -A privado && git commit -q -m "privado: resultado" && git push -q origin agente-testes

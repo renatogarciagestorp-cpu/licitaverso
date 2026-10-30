@@ -159,9 +159,14 @@ def fundamento_do_regime(it, regime):
     return f
 
 
-def montar_itens(roteiro, doc, regime, objetos):
-    """Itens do roteiro do regime para o documento + itens dos módulos do objeto (obras, mão de obra), com o fundamento do regime."""
+def montar_itens(roteiro, doc, regime, objetos, extras=()):
+    """Itens do roteiro do regime para o(s) documento(s) + itens dos módulos do objeto (obras, mão de obra), com o fundamento do regime.
+    Com mais de um documento, entram também os itens de coerência entre documentos ('cruzado')."""
     itens = itens_aplicaveis(roteiro, doc)
+    for t in dict.fromkeys(extras):
+        itens += [i for i in itens_aplicaveis(roteiro, t) if i["id"] not in {x["id"] for x in itens}]
+    if extras:
+        itens += [i for i in roteiro["itens"] if i["doc"] == "cruzado" and i["id"] not in {x["id"] for x in itens}]
     ids = {i["id"] for i in itens}
     if "mao-de-obra" in objetos:  # itens de planilha do roteiro do regime valem para qualquer documento
         itens += [i for i in roteiro["itens"] if i["doc"] == "planilha" and i["id"] not in ids]
@@ -675,6 +680,7 @@ def main():
     ap.add_argument("--fonte", default="")
     ap.add_argument("--paginas", type=int)
     ap.add_argument("--precos", help="resultado de sobrepreco.py (análise de preços)")
+    ap.add_argument("--doc-adicional", action="append", default=[], help='outro documento da mesma contratação: "tipo::nome::texto.txt" (repetível)')
     ap.add_argument("--salarios", help="resultado de salarios.py (referência salarial do estado, salario.com.br)")
     ap.add_argument("--norma-local", action="append", default=[], help='regulamentação específica: "Nome da norma::caminho/do/texto.txt" (repetível)')
     ap.add_argument("--saida", required=True)
@@ -682,18 +688,24 @@ def main():
 
     objetos = list(dict.fromkeys(a.objeto))
     roteiro = carregar_roteiro(a.regime)
-    itens, versoes = montar_itens(roteiro, a.doc, a.regime, objetos)
+    adicionais = []
+    for sp in a.doc_adicional:
+        t, nome, cam = sp.split("::", 2)
+        tb = pathlib.Path(cam).read_text(encoding="utf-8", errors="replace")
+        tx, np_ = texto_com_paginas(tb)
+        adicionais.append({"tipo": t, "nome": nome, "bruto": tb, "texto": tx, "paginas": np_})
+    itens, versoes = montar_itens(roteiro, a.doc, a.regime, objetos, [x["tipo"] for x in adicionais])
     anexos = carregar_anexos(a.anexo)
     if sum(len(x["texto"]) for x in anexos) > 450_000:
         sys.exit("Planilhas anexas grandes demais para uma análise (limite de 450 mil caracteres no total).")
     bruto = pathlib.Path(a.texto).read_text(encoding="utf-8", errors="replace")
     texto, npags = texto_com_paginas(bruto)
-    if len(texto) > MAX_CARACTERES:
+    if len(texto) + sum(len(x["texto"]) for x in adicionais) > MAX_CARACTERES:
         sys.exit(f"Documento grande demais ({len(texto)} caracteres; limite {MAX_CARACTERES}).")
     compra = json.loads(pathlib.Path(a.compra).read_text(encoding="utf-8")) if a.compra else None
     fatos = fatos_pncp(compra)
-    trilhas = rodar_trilhas(bruto)
-    texto_total = bruto + "\n".join("\n" + x["texto"] for x in anexos)  # trechos literais podem vir das planilhas
+    trilhas = rodar_trilhas(bruto + "".join("\f" + x["bruto"] for x in adicionais))
+    texto_total = bruto + "".join("\n" + x["bruto"] for x in adicionais) + "\n".join("\n" + x["texto"] for x in anexos)  # trechos literais podem vir das planilhas
     forcar = set().union(*[FONTES_OBJETO[o] for o in objetos]) if objetos else set()
     referencias = selecionar_referencias(itens, bruto + "\n" + "\n".join(x["texto"][:20000] for x in anexos), forcar=forcar)
     carregar_normas_locais(a.norma_local)
@@ -766,7 +778,9 @@ def main():
                + bloco_normas_locais(itens)
                + bloco_anexos(anexos)
                + f"DOCUMENTO ({roteiro['documentos'].get(a.doc, a.doc)}; {npags or 'sem marcação de'} páginas):\n<documento>\n{texto}\n</documento>\n\n"
-               "Verifique todos os itens do roteiro e registre o resultado chamando a ferramenta registrar_analise uma única vez, com todos os itens. Não responda em texto.")
+               + "".join(f"DOCUMENTO ADICIONAL DA MESMA CONTRATAÇÃO ({roteiro['documentos'].get(x['tipo'], x['nome'])} — {x['nome']}; {x['paginas'] or 'sem marcação de'} páginas; "
+                         f"em \"local\", identifique este documento pelo nome):\n<documento nome=\"{x['nome']}\">\n{x['texto']}\n</documento>\n\n" for x in adicionais)
+               + "Verifique todos os itens do roteiro e registre o resultado chamando a ferramenta registrar_analise uma única vez, com todos os itens. Não responda em texto.")
     t0 = time.time()
     resp = chamar(system, usuario)
     bloco = next((c for c in resp.get("content", []) if c.get("type") == "tool_use"), None)
@@ -802,6 +816,7 @@ def main():
         "processo": dados.get("processo", {}),
         "documentos": [{"tipo": a.doc, "arquivo": a.fonte or pathlib.Path(a.texto).name, "paginas": a.paginas or npags or None,
                         "ocr": "[texto obtido por OCR]" in bruto}]
+                      + [{"tipo": x["tipo"], "nome": x["nome"], "arquivo": x["nome"], "paginas": x["paginas"] or None, "anexo": True} for x in adicionais]
                       + [{"tipo": x["tipo"], "nome": ANEXO_TEXTO[x["tipo"]], "arquivo": x["nome"], "anexo": True} for x in anexos],
         "ementa": dados.get("ementa"), "ementa_texto": dados.get("ementa_texto"),
         "resumo": dados.get("resumo"), "conclusao": dados.get("conclusao"),
