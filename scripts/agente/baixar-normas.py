@@ -65,7 +65,12 @@ R_NOTA = re.compile(r"\((?:Incluíd[oa]|Redação dada|Revogad[oa]|Vide|Promulga
 def estruturar(linhas, norma):
     artigos, art, caminho, ctx = [], None, [], {}
     nome_secao = False  # a linha logo após "Seção I" / "CAPÍTULO II" é o nome da divisão, não texto de dispositivo
+    adct = False  # Constituição: o ADCT recomeça a numeração; seus artigos ficam como "ADCT-<n>"
     for ln in linhas:
+        if re.match(r"^ATO DAS DISPOSI[ÇC][ÕO]ES CONSTITUCIONAIS TRANSIT", ln, re.I):
+            adct = True
+            caminho = [("TÍTULO", "ADCT")]
+            continue
         if nome_secao and not (R_ART.match(ln) or R_PAR.match(ln) or R_INC.match(ln) or R_ALI.match(ln)) and len(ln) < 160 and not ln.rstrip().endswith((".", ";", ":")):
             if caminho:
                 caminho[-1] = (caminho[-1][0], caminho[-1][1] + " — " + ln)
@@ -82,7 +87,9 @@ def estruturar(linhas, norma):
         m = R_ART.match(ln)
         if m and (m.group(3) or "").strip():
             num = m.group(1) + ("-" + m.group(2) if m.group(2) else "")
-            art = {"num": num, "rotulo": "Art. " + num, "caminho": " > ".join(c[1] for c in caminho), "dispositivos": []}
+            if adct:
+                num = "ADCT-" + num
+            art = {"num": num, "rotulo": ("Art. " + num) if not adct else ("Art. " + num[5:] + " do ADCT"), "caminho": " > ".join(c[1] for c in caminho), "dispositivos": []}
             artigos.append(art)
             ctx = {"par": None, "inc": None, "ali": None}
             art["dispositivos"].append({"id": "caput", "rotulo": "caput", "texto": m.group(3).strip()})
