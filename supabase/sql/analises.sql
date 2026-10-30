@@ -44,7 +44,9 @@ create policy analises_ler on public.analises for select to authenticated
 -- Arquivos: bucket privado. Envio do PDF na própria pasta; o parecer é gravado pelo servidor em <usuario>/pareceres/.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('analises', 'analises', false, 26214400, array['application/pdf',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel',
+  'application/vnd.ms-excel.sheet.macroEnabled.12', 'application/vnd.oasis.opendocument.spreadsheet'])
 on conflict (id) do update set public = false, file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
 
@@ -93,7 +95,7 @@ declare
   c record;
   inicio_novo timestamptz;
   nomes jsonb := '{"basico":"Básico","premium":"Premium","pro":"Pro"}';
-  docs jsonb := '{"edital":"Edital","etp":"ETP","tr":"Termo de Referência","riscos":"Matriz de Riscos","planilha":"Planilha de custos"}';
+  docs jsonb := '{"edital":"Edital","etp":"ETP","tr":"Termo de Referência","riscos":"Matriz de Riscos","planilha":"Planilha de custos","plano_trabalho":"Plano de trabalho"}';
 begin
   begin
     ref_id := split_part(p_referencia, ':', 2)::uuid;

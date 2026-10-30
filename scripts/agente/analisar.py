@@ -137,7 +137,8 @@ REGIMES = {"lei-14133": "Lei 14.133/2021", "lei-13303": "Lei 13.303/2016 (empres
 OBJETOS = {"obras": "obras-engenharia", "mao-de-obra": "mao-de-obra"}
 OBJETO_TEXTO = {"obras": "obras e serviços de engenharia", "mao-de-obra": "serviço com dedicação exclusiva de mão de obra"}
 ANEXO_TEXTO = {"orcamento": "Planilha orçamentária, BDI e composições", "planilha": "Planilha de custos e formação de preços (mão de obra)",
-               "plano-custos": "Planilha de custos do plano de trabalho", "outro": "Planilha anexa"}
+               "plano-custos": "Planilha de custos do plano de trabalho", "cct": "Convenção ou acordo coletivo de trabalho",
+               "outro": "Planilha anexa"}
 FONTES_OBJETO = {"obras": {"tcu-roteiro-obras", "tcu-obras-edificacoes", "tcu-engenharia-custos"},
                  "mao-de-obra": {"in-05-2017", "manual-planilha-custos", "cad-limpeza", "cad-vigilancia", "cad-conta-vinculada", "cad-fato-gerador"}}
 
@@ -189,9 +190,10 @@ def carregar_anexos(specs):
 def bloco_anexos(anexos):
     if not anexos:
         return ""
-    partes = ["ANEXOS EM PLANILHA (Excel enviado pelo destinatário; cada linha traz o número da linha e as células preenchidas no formato "
-              "COLUNA=valor; fórmulas aparecem entre colchetes após o valor calculado). Ao citar, copie em \"trecho\" o conteúdo literal "
-              "de uma linha e indique em \"local\" o anexo, a aba e a linha (ex.: \"Planilha orçamentária, aba Orçamento, L12\"):"]
+    partes = ["ANEXOS ENVIADOS PELO DESTINATÁRIO. Nas planilhas (Excel), cada linha traz o número da linha e as células preenchidas no formato "
+              "COLUNA=valor; fórmulas aparecem entre colchetes após o valor calculado. Ao citar, copie em \"trecho\" o conteúdo literal "
+              "de uma linha e indique em \"local\" o anexo, a aba e a linha (ex.: \"Planilha orçamentária, aba Orçamento, L12\"). "
+              "Na convenção coletiva, cite a cláusula:"]
     for a in anexos:
         partes.append(f"<anexo id=\"{a['id']}\" tipo=\"{ANEXO_TEXTO[a['tipo']]}\" arquivo=\"{a['nome']}\">\n{a['texto']}\n</anexo>")
     return "\n\n".join(partes) + "\n\n"
@@ -468,7 +470,15 @@ Regras obrigatórias:
     CBO, piso, adicionais, provisões, tributos) e confira os cálculos pelas fórmulas e valores informados. Divergência numérica relevante
     (BDI aplicado diferente do declarado, total que não fecha, percentual acima do legal) deve ser apontada com a linha da planilha e o
     valor esperado. Se o objeto exigir planilha e ela não tiver sido enviada, procure as informações no documento; não as encontrando,
-    marque os itens como nao_verificavel e recomende a juntada da planilha."""
+    marque os itens como nao_verificavel e recomende a juntada da planilha.
+22. REFERÊNCIA SALARIAL (salario.com.br): quando os fatos trouxerem "SALÁRIO-BASE ACIMA DA MÉDIA DO ESTADO", registre o ponto com
+    gravidade ALTA (risco de sobrepreço no custo do profissional), no item de salário/convenção do módulo de mão de obra (ou em
+    outros_apontamentos), demonstrando a diferença e o reflexo no custo total do posto calculado pela planilha modelo. Como não há norma
+    que adote o salario.com.br como balizador, NÃO seja incisivo: não afirme sobrepreço nem superfaturamento; apresente a inconsistência
+    como indício que merece verificação e oriente o ajuste (conferir o piso da convenção da categoria e da base territorial, justificar
+    salário acima do piso ou do mercado, revisar a planilha). "Ligeiramente acima" é gravidade média; "compatível" pode ser citado como
+    indicativo de vantajosidade. O salário-base igual ao piso da convenção correta, ainda que acima da média do site, deve ser
+    reconhecido como justificativa, sem prejuízo de apontar a diferença."""
 
 FERRAMENTA = {
     "name": "registrar_analise",
@@ -665,6 +675,7 @@ def main():
     ap.add_argument("--fonte", default="")
     ap.add_argument("--paginas", type=int)
     ap.add_argument("--precos", help="resultado de sobrepreco.py (análise de preços)")
+    ap.add_argument("--salarios", help="resultado de salarios.py (referência salarial do estado, salario.com.br)")
     ap.add_argument("--norma-local", action="append", default=[], help='regulamentação específica: "Nome da norma::caminho/do/texto.txt" (repetível)')
     ap.add_argument("--saida", required=True)
     a = ap.parse_args()
@@ -705,9 +716,10 @@ def main():
         fatos.append("\n  ".join(linhas))
 
     tipos_anexo = {x["tipo"] for x in anexos}
-    exigido = {"obras": ("orcamento", "planilha orçamentária com BDI em Excel"), "mao-de-obra": ("planilha", "planilha de custos e formação de preços em Excel")}
+    exigido = {"obras": [("orcamento", "planilha orçamentária com BDI em Excel")],
+               "mao-de-obra": [("planilha", "planilha de custos e formação de preços em Excel"), ("cct", "convenção ou acordo coletivo de trabalho usado na composição do salário")]}
     for o in objetos:
-        t, nome = exigido[o]
+      for t, nome in exigido[o]:
         if t not in tipos_anexo and a.doc != t:
             fatos.append(f"O destinatário NÃO enviou a {nome}. Verifique os itens do módulo de {OBJETO_TEXTO[o]} no orçamento ou planilha que "
                          "constar do próprio documento; não havendo, marque-os como nao_verificavel e recomende a juntada.")
@@ -718,6 +730,25 @@ def main():
                  + (f" OBJETO: {'; '.join(OBJETO_TEXTO[o] for o in objetos)}." if objetos else "")
                  + ("" if roteiro["_proprio"] else f" ATENÇÃO: ainda não há roteiro próprio para a {REGIMES[a.regime]}; o roteiro abaixo é o da "
                     "Lei 14.133/2021, usado como base — avalie cada questão pela lei do regime (regra 20)."))
+
+    salarios = None
+    if a.salarios and pathlib.Path(a.salarios).exists():
+        salarios = json.loads(pathlib.Path(a.salarios).read_text(encoding="utf-8"))
+        brl = lambda v: ("R$ " + f"{v:,.2f}").replace(",", "X").replace(".", ",").replace("X", ".")
+        sit = {"acima": "SALÁRIO-BASE ACIMA DA MÉDIA DO ESTADO", "atencao": "ligeiramente acima da média (até 5%)", "compativel": "compatível (igual ou abaixo da média)"}
+        linhas = ["Referência salarial de mercado calculada pelo sistema (salario.com.br: média do salário-base em carteira no estado, Novo CAGED, "
+                  "últimos 12 meses; média ajustada proporcionalmente à jornada da planilha). Não é parâmetro normativo (regra 22):"]
+        for p in salarios.get("postos", []):
+            ref = p.get("referencia") or {}
+            if p.get("situacao") in sit:
+                linhas.append(f"{p.get('funcao')} (CBO {p.get('cbo')}, {p.get('uf')}; {p.get('local') or 'planilha'}): salário-base {brl(p['salario_base'])} × média do estado "
+                              f"{brl(ref['media'])}/{ref.get('jornada') or '?'}h (ajustada {brl(p['media_ajustada'])}) = {p['desvio']:+.1%} → {sit[p['situacao']]}"
+                              + (f"; custo total mensal na planilha {brl(p['custo_total_mensal'])} = {p['custo_total_sobre_custo_empresa_site']:.2f}× o 'custo para a empresa' "
+                                 f"informado pelo site ({brl(ref['custo_empresa'])}, que não inclui insumos, custos indiretos, lucro e tributos)" if p.get("custo_total_sobre_custo_empresa_site") else "")
+                              + f". Fonte: {ref.get('url')}{' (atualizado em ' + ref['atualizado'] + ')' if ref.get('atualizado') else ''}")
+            else:
+                linhas.append(f"{p.get('funcao')}: sem referência no site ({p.get('motivo', 'não localizada')}).")
+        fatos.append("\n  ".join(linhas))
 
     orient = RAIZ / "agente" / "orientacoes-especialista.md"
     system = [
@@ -777,6 +808,7 @@ def main():
         "resultados": resultados,
         "outros_apontamentos": outros,
         "precos": precos,
+        "salarios": salarios,
         "normas_locais": [{"id": n["id"], "nome": n["nome"]} for n in NORMAS_LOCAIS],
         "referencias_tecnicas": [r for r in referencias if r["id"] in {i for x in resultados + outros for i in x.get("referencias_ids", [])}],
         "jurisprudencia_externa": [EXTERNOS[j] for j in sorted({j for r in resultados for j in r.get("jurisprudencia_ids", [])}) if j in EXTERNOS],

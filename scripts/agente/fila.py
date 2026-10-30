@@ -186,10 +186,29 @@ def processar(a):
                 except Exception as e:
                     print(f"análise {aid}: planilha {k} não baixada ({type(e).__name__})"); continue
                 txt_x = pasta / f"anexo{k}.txt"
-                rx = subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-planilha.py"), str(orig), str(txt_x)], capture_output=True, text=True, timeout=600)
-                if rx.returncode != 0 or not txt_x.exists():
-                    raise ErroCliente(f"Não foi possível ler a planilha \"{x.get('nome_arquivo') or k}\". Envie o arquivo em Excel (.xlsx) sem senha.")
+                if x.get("tipo") == "cct":  # convenção coletiva em PDF ou Word
+                    if orig.suffix == ".docx":
+                        import docx  # python-docx
+                        txt_x.write_text("\n".join(p.text for p in docx.Document(str(orig)).paragraphs), encoding="utf-8")
+                    else:
+                        subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-texto.py"), str(orig), str(txt_x)], capture_output=True, timeout=1800)
+                    if not txt_x.exists() or len(txt_x.read_text(encoding="utf-8", errors="replace").strip()) < 200:
+                        raise ErroCliente(f"Não foi possível ler a convenção coletiva \"{x.get('nome_arquivo') or k}\". Envie em PDF pesquisável ou Word (.docx).")
+                else:
+                    rx = subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-planilha.py"), str(orig), str(txt_x)], capture_output=True, text=True, timeout=600)
+                    if rx.returncode != 0 or not txt_x.exists():
+                        raise ErroCliente(f"Não foi possível ler a planilha \"{x.get('nome_arquivo') or k}\". Envie o arquivo em Excel (.xlsx) sem senha.")
                 args += ["--anexo", f"{x.get('tipo', 'outro')}::{x.get('nome_arquivo') or orig.name}::{txt_x}"]
+                # mão de obra: postos da planilha × média salarial do estado (salario.com.br)
+                if x.get("tipo") == "planilha" or (x.get("tipo") == "plano-custos" and "mao-de-obra" in (a.get("objeto") or [])):
+                    postos, sal = pasta / f"postos{k}.json", pasta / f"salarios{k}.json"
+                    try:
+                        rodar([sys.executable, str(RAIZ / "scripts/agente/extrair-postos.py"), str(txt_x), str(postos)], timeout=900)
+                        rodar([sys.executable, str(RAIZ / "scripts/agente/salarios.py"), str(postos), str(sal)], timeout=900)
+                        if sal.exists() and "--salarios" not in args:
+                            args += ["--salarios", str(sal)]
+                    except Exception as e:
+                        print(f"análise {aid}: referência salarial não obtida ({type(e).__name__})")
             # análise de preços (sobrepreço): itens do PNCP no edital; nos demais casos, extraídos do documento
             precos = pasta / "precos.json"
             cmd = [sys.executable, str(RAIZ / "scripts/agente/precos-do-processo.py"), "--texto", str(txt), "--saida", str(precos)]

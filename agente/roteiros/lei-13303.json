@@ -1,0 +1,1292 @@
+{
+ "_sobre": "Roteiro de verificação do Agente Licitacon para licitações e contratos de EMPRESAS PÚBLICAS E SOCIEDADES DE ECONOMIA MISTA (Lei 13.303/2016), na mesma estrutura do roteiro da Lei 14.133/2021. O regulamento interno (RILC) da estatal complementa a lei; quando o destinatário o enviar, ele é aplicado (regulamentação específica). A Lei 13.303 não nomeia o ETP: os itens 'etp' aplicam-se ao documento de planejamento exigido pelo RILC. gravidade: alta = compromete legalidade, competitividade ou indica sobrepreço/superfaturamento; media = exige correção ou motivação; baixa = boa prática.",
+ "regime": "lei-13303",
+ "versao": "2026-10-30",
+ "revisado_por_especialista": false,
+ "documentos": {
+  "etp": "Documento de planejamento / estudo técnico",
+  "tr": "Termo de Referência / Projeto Básico",
+  "riscos": "Matriz de Riscos",
+  "planilha": "Planilha de custos e formação de preços",
+  "edital": "Edital e minuta do contrato",
+  "cruzado": "Coerência entre os documentos"
+ },
+ "itens": [
+  {
+   "id": "e-etp-01",
+   "doc": "etp",
+   "titulo": "Necessidade e justificativa da contratação",
+   "verificar": "O documento de planejamento demonstra a necessidade da contratação a partir do problema a resolver e da finalidade da estatal, buscando a maior vantagem competitiva (custos e benefícios diretos e indiretos).",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "31",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "32",
+     "disp": "II"
+    }
+   ],
+   "obrigatorio": "conforme RILC",
+   "gravidade": "alta",
+   "risco": "Sem necessidade demonstrada, objeto, quantitativos e solução ficam sem motivação; risco de contratação antieconômica e de questionamento pelo controle.",
+   "dica": "Descreva o problema, quem é afetado e o resultado esperado, e compare alternativas pelo custo-benefício.",
+   "temas": [
+    "planejamento",
+    "necessidade da contratação",
+    "vantajosidade"
+   ]
+  },
+  {
+   "id": "e-etp-02",
+   "doc": "etp",
+   "titulo": "Estimativa das quantidades com memória de cálculo",
+   "verificar": "As quantidades têm memória de cálculo baseada em consumo histórico ou critério técnico objetivo.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "31",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "31",
+     "disp": "p1.I"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Quantitativo superdimensionado gera sobrepreço no valor global e risco de pagamento por objeto desnecessário.",
+   "dica": "Junte a memória de cálculo (série histórica, demanda projetada, critério técnico).",
+   "temas": [
+    "quantitativos",
+    "memória de cálculo",
+    "sobrepreço"
+   ]
+  },
+  {
+   "id": "e-etp-03",
+   "doc": "etp",
+   "titulo": "Pesquisa de mercado e estimativa de valor",
+   "verificar": "O valor estimado decorre de pesquisa de preços ampla e documentada (fontes, datas, tratamento de outliers), compatível com os preços referenciais de mercado; em obras, com base nos sistemas referenciais (SINAPI/SICRO) ou fontes do § 3º.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "31",
+     "disp": "p1.I"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "31",
+     "disp": "p2"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "31",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Estimativa sem pesquisa adequada impede aferir sobrepreço e compromete o julgamento das propostas.",
+   "dica": "Documente cada fonte (painel de preços, contratações similares, cotações) e a metodologia (média, mediana, menor preço).",
+   "temas": [
+    "pesquisa de preços",
+    "estimativa de valor",
+    "sobrepreço"
+   ]
+  },
+  {
+   "id": "e-etp-04",
+   "doc": "etp",
+   "titulo": "Parcelamento do objeto",
+   "verificar": "Avalia-se o parcelamento do objeto para ampliar a participação, sem perda de economia de escala; a opção pelo não parcelamento é motivada.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "32",
+     "disp": "III"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Agrupar itens divisíveis sem motivação restringe a competitividade e pode direcionar o certame.",
+   "dica": "Justifique técnica e economicamente a reunião de itens em lote ou divida o objeto.",
+   "temas": [
+    "parcelamento",
+    "competitividade",
+    "lote"
+   ]
+  },
+  {
+   "id": "e-etp-05",
+   "doc": "etp",
+   "titulo": "Sustentabilidade, impactos e acessibilidade",
+   "verificar": "Foram considerados resíduos, impactos ambientais e de vizinhança, eficiência energética, patrimônio cultural e acessibilidade, quando pertinentes ao objeto.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "32",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "baixa",
+   "risco": "Omissão pode gerar passivo ambiental, embargos ou exigências supervenientes na execução.",
+   "dica": "Indique as medidas ambientais e de acessibilidade aplicáveis ao objeto.",
+   "temas": [
+    "sustentabilidade",
+    "impacto ambiental",
+    "acessibilidade"
+   ],
+   "quando": "Quando o objeto tiver impacto ambiental, urbanístico ou de acessibilidade."
+  },
+  {
+   "id": "e-tr-01",
+   "doc": "tr",
+   "titulo": "Definição do objeto sucinta e clara",
+   "verificar": "O objeto está definido de forma sucinta e clara, com especificações suficientes para a formulação de propostas.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "33",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Objeto impreciso gera propostas incomparáveis, impugnações e risco de contratar algo diferente do necessário.",
+   "dica": "Descreva o objeto, unidade, quantidade e requisitos essenciais sem detalhamento desnecessário.",
+   "temas": [
+    "objeto",
+    "especificação"
+   ]
+  },
+  {
+   "id": "e-tr-02",
+   "doc": "tr",
+   "titulo": "Especificação que não restrinja a competição; indicação de marca",
+   "verificar": "As especificações não são excessivas nem dirigidas; marca ou modelo só é indicado nas hipóteses legais (padronização, único apto a atender, referência com 'ou similar').",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "47",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "31",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Especificação dirigida ou marca sem justificativa restringe a competitividade e pode direcionar o certame.",
+   "dica": "Justifique cada requisito restritivo e, ao citar marca como referência, admita equivalentes.",
+   "temas": [
+    "indicação de marca",
+    "direcionamento",
+    "especificação restritiva"
+   ]
+  },
+  {
+   "id": "e-tr-03",
+   "doc": "tr",
+   "titulo": "Amostra, certificação e normas técnicas justificadas",
+   "verificar": "Exigências de amostra, certificação de qualidade e normas ABNT estão justificadas e são proporcionais ao objeto.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "47",
+     "disp": "II"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "47",
+     "disp": "III"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "47",
+     "disp": "pu"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "media",
+   "risco": "Exigência injustificada afasta licitantes e encarece a contratação.",
+   "dica": "Exija amostra apenas do classificado em primeiro lugar e motive certificações.",
+   "temas": [
+    "amostra",
+    "certificação",
+    "ABNT"
+   ],
+   "quando": "Quando houver amostra, certificação ou norma técnica exigida."
+  },
+  {
+   "id": "e-tr-04",
+   "doc": "tr",
+   "titulo": "Projeto básico e regime de execução de obras",
+   "verificar": "Obras e serviços de engenharia são precedidos de projeto básico disponível aos interessados, e o regime de execução (preço unitário, global, integral, semi-integrada, integrada) é adequado às características do objeto.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "43",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "43",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "42",
+     "disp": "p1.I.b"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "alta",
+   "risco": "Licitar obra sem projeto básico adequado ou com regime incompatível gera aditivos, jogo de planilha e superfaturamento.",
+   "dica": "Motive a escolha do regime e disponibilize o projeto básico completo com o edital.",
+   "temas": [
+    "projeto básico",
+    "regime de execução",
+    "obras"
+   ],
+   "quando": "Obras e serviços de engenharia."
+  },
+  {
+   "id": "e-tr-05",
+   "doc": "tr",
+   "titulo": "Contratação integrada e semi-integrada",
+   "verificar": "Na contratação integrada há anteprojeto de engenharia; nas integradas e semi-integradas há documento técnico que delimita as frações com liberdade de inovação, e a escolha do regime está motivada.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "42",
+     "disp": "p1.I.a"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "42",
+     "disp": "p1.I.c"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "42",
+     "disp": "p4"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "alta",
+   "risco": "Sem anteprojeto e sem delimitação das soluções, as propostas não são comparáveis e os riscos ficam indefinidos.",
+   "dica": "Junte anteprojeto com os elementos do art. 42, VII, e o documento técnico das frações inovadoras.",
+   "temas": [
+    "contratação integrada",
+    "semi-integrada",
+    "anteprojeto"
+   ],
+   "quando": "Contratação integrada ou semi-integrada."
+  },
+  {
+   "id": "e-tr-06",
+   "doc": "tr",
+   "titulo": "Remuneração variável vinculada ao desempenho",
+   "verificar": "A remuneração variável, se adotada, está vinculada a metas, padrões de qualidade e prazos objetivos e respeita o limite orçamentário.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "45",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "45",
+     "disp": "pu"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "media",
+   "risco": "Metas subjetivas permitem pagamentos adicionais sem contrapartida efetiva.",
+   "dica": "Defina indicadores mensuráveis e o teto da parcela variável.",
+   "temas": [
+    "remuneração variável",
+    "desempenho"
+   ],
+   "quando": "Quando houver remuneração variável."
+  },
+  {
+   "id": "e-tr-07",
+   "doc": "tr",
+   "titulo": "Medição, pagamento, prazos e recebimento",
+   "verificar": "O documento define critérios de medição e pagamento, prazos de início, execução, entrega e recebimento.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "69",
+     "disp": "III"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "69",
+     "disp": "IV"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "40",
+     "disp": "IX"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Critérios vagos de medição permitem pagamento por serviço não executado (superfaturamento).",
+   "dica": "Vincule cada pagamento a medição objetiva e a recebimento formal.",
+   "temas": [
+    "medição",
+    "pagamento",
+    "recebimento"
+   ]
+  },
+  {
+   "id": "e-tr-08",
+   "doc": "tr",
+   "titulo": "Gestão e fiscalização do contrato",
+   "verificar": "Há modelo de gestão e fiscalização (responsáveis, instrumentos, rotinas) conforme o regulamento interno.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "40",
+     "disp": "VII"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Sem fiscalização estruturada, falhas de execução e pagamentos indevidos passam despercebidos.",
+   "dica": "Indique gestor, fiscais, instrumentos de controle e periodicidade.",
+   "temas": [
+    "fiscalização",
+    "gestão do contrato",
+    "RILC"
+   ]
+  },
+  {
+   "id": "e-tr-09",
+   "doc": "tr",
+   "titulo": "Critério de julgamento adequado",
+   "verificar": "O critério de julgamento está identificado e é adequado ao objeto; não são consideradas vantagens não previstas.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "54",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "54",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "54",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Critério inadequado (ex.: técnica e preço sem justificativa) restringe a competição ou subjetiviza o julgamento.",
+   "dica": "Motive critérios diferentes de menor preço/maior desconto e defina os fatores de pontuação.",
+   "temas": [
+    "critério de julgamento",
+    "menor preço",
+    "técnica e preço"
+   ]
+  },
+  {
+   "id": "e-tr-10",
+   "doc": "tr",
+   "titulo": "Estimativa de valor e orçamento",
+   "verificar": "O valor estimado está demonstrado (memória, fontes) e, em obras, o orçamento de referência observa os sistemas referenciais.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "31",
+     "disp": "p1.I"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "31",
+     "disp": "p2"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Estimativa sem lastro impede aferir sobrepreço e a aceitabilidade das propostas.",
+   "dica": "Junte planilha de preços com fontes e datas.",
+   "temas": [
+    "estimativa de valor",
+    "orçamento de referência",
+    "sobrepreço"
+   ]
+  },
+  {
+   "id": "e-risco-01",
+   "doc": "riscos",
+   "titulo": "Matriz de riscos com conteúdo mínimo",
+   "verificar": "Há matriz de riscos como cláusula contratual, listando eventos supervenientes, frações com obrigação de resultado e frações com obrigação de meio.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "42",
+     "disp": "X"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "42",
+     "disp": "X.a"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "42",
+     "disp": "X.b"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "42",
+     "disp": "X.c"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem matriz, o equilíbrio econômico-financeiro inicial fica indefinido e abre espaço a aditivos.",
+   "dica": "Use matriz com evento, probabilidade, impacto, responsável e mitigação.",
+   "temas": [
+    "matriz de riscos",
+    "equilíbrio econômico-financeiro"
+   ]
+  },
+  {
+   "id": "e-risco-02",
+   "doc": "riscos",
+   "titulo": "Matriz de riscos no contrato",
+   "verificar": "A matriz de riscos consta como cláusula necessária do contrato.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "69",
+     "disp": "X"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Matriz fora do contrato não vincula as partes.",
+   "dica": "Inclua a matriz como cláusula ou anexo integrante da minuta.",
+   "temas": [
+    "matriz de riscos",
+    "cláusula necessária"
+   ]
+  },
+  {
+   "id": "e-risco-03",
+   "doc": "riscos",
+   "titulo": "Riscos de projeto nas contratações integradas e semi-integradas",
+   "verificar": "Os riscos decorrentes da escolha da solução de projeto pela contratada são a ela alocados, e não se preveem aditivos por eventos atribuídos à contratada.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "42",
+     "disp": "p3"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "81",
+     "disp": "p8"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "alta",
+   "risco": "Admitir aditivos por riscos da contratada transfere à estatal custos que a proposta já remunerava.",
+   "dica": "Deixe expressa a vedação de aditivos por eventos alocados à contratada.",
+   "temas": [
+    "riscos de projeto",
+    "aditivos",
+    "contratação integrada"
+   ],
+   "quando": "Contratação integrada ou semi-integrada, ou quando a minuta tratar de aditivos."
+  },
+  {
+   "id": "e-plan-01",
+   "doc": "planilha",
+   "titulo": "Convenção coletiva da categoria correta",
+   "verificar": "A planilha de custos de mão de obra usa a convenção ou acordo coletivo da categoria profissional e da base territorial dos serviços.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "31",
+     "disp": "p1.I"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "31",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "alta",
+   "risco": "Convenção de outra categoria altera todo o custo do posto (sobrepreço ou inexequibilidade).",
+   "dica": "Indique a CCT (registro, vigência, cláusulas de piso e benefícios) por função.",
+   "temas": [
+    "convenção coletiva",
+    "categoria profissional",
+    "planilha de custos"
+   ],
+   "quando": "Serviços com mão de obra residente."
+  },
+  {
+   "id": "e-plan-02",
+   "doc": "planilha",
+   "titulo": "Encargos trabalhistas e fiscalização",
+   "verificar": "O edital/contrato atribui ao contratado os encargos trabalhistas, fiscais e comerciais e prevê mecanismos de fiscalização do seu cumprimento.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "77",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "77",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "alta",
+   "risco": "Sem fiscalização, a estatal pode ser responsabilizada subsidiariamente por débitos trabalhistas (Súmula 331 do TST).",
+   "dica": "Preveja a comprovação mensal de salários, FGTS e INSS e retenções em caso de inadimplemento.",
+   "temas": [
+    "encargos trabalhistas",
+    "responsabilidade subsidiária"
+   ],
+   "quando": "Serviços com mão de obra residente."
+  },
+  {
+   "id": "e-plan-03",
+   "doc": "planilha",
+   "titulo": "Conferência aritmética da planilha",
+   "verificar": "Os valores da planilha (módulos, totais por posto e global) estão corretos e coerentes.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "31",
+     "disp": "p1.I"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "media",
+   "risco": "Erros de cálculo distorcem o valor estimado.",
+   "dica": "Confira fórmulas e totais.",
+   "temas": [
+    "conferência aritmética"
+   ],
+   "quando": "Quando houver planilha de custos."
+  },
+  {
+   "id": "e-ed-01",
+   "doc": "edital",
+   "titulo": "Divulgação e prazos mínimos",
+   "verificar": "O edital foi divulgado no portal e no diário oficial com os prazos mínimos em dias úteis conforme o objeto e o critério (bens 5/10; obras e serviços 15/30; técnica 45).",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "39",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "39",
+     "disp": "I.a"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "39",
+     "disp": "I.b"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "39",
+     "disp": "II.a"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "39",
+     "disp": "II.b"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "39",
+     "disp": "III"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Prazo inferior ao legal restringe a participação e vicia o certame.",
+   "dica": "Conte o prazo em dias úteis a partir da divulgação e republique se alterado o edital (art. 39, pu).",
+   "temas": [
+    "prazo de divulgação",
+    "publicidade",
+    "dias úteis"
+   ]
+  },
+  {
+   "id": "e-ed-02",
+   "doc": "edital",
+   "titulo": "Pregão eletrônico preferencial e portal de acesso público",
+   "verificar": "Para bens e serviços comuns adota-se preferencialmente o pregão, na forma eletrônica, em portal de acesso público.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "32",
+     "disp": "IV"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "32",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Modalidade diversa sem motivação reduz a competição e a transparência.",
+   "dica": "Motive a não adoção do pregão eletrônico.",
+   "temas": [
+    "pregão eletrônico",
+    "bens e serviços comuns"
+   ]
+  },
+  {
+   "id": "e-ed-03",
+   "doc": "edital",
+   "titulo": "Orçamento sigiloso e suas exceções",
+   "verificar": "O valor estimado é sigiloso (salvo maior desconto e melhor técnica, quando deve constar do edital) e fica disponível aos órgãos de controle.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "34",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "34",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "34",
+     "disp": "p2"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "34",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Divulgação indevida ou omissão nos casos em que deve constar compromete o julgamento.",
+   "dica": "Indique no edital o tratamento do orçamento conforme o critério de julgamento.",
+   "temas": [
+    "orçamento sigiloso",
+    "maior desconto"
+   ]
+  },
+  {
+   "id": "e-ed-04",
+   "doc": "edital",
+   "titulo": "Sequência de fases e inversão",
+   "verificar": "As fases seguem a ordem legal (habilitação após julgamento); a inversão é excepcional e motivada.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "51",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "51",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Inversão sem motivação contraria a lei e pode restringir a disputa.",
+   "dica": "Motive expressamente a inversão de fases, se adotada.",
+   "temas": [
+    "fases da licitação",
+    "inversão de fases"
+   ]
+  },
+  {
+   "id": "e-ed-05",
+   "doc": "edital",
+   "titulo": "Critérios de julgamento e de desempate",
+   "verificar": "Critérios de julgamento expressos e critérios de desempate na ordem legal.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "54",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "55",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Desempate fora da ordem legal permite escolha arbitrária.",
+   "dica": "Reproduza a ordem do art. 55.",
+   "temas": [
+    "desempate",
+    "critério de julgamento"
+   ]
+  },
+  {
+   "id": "e-ed-06",
+   "doc": "edital",
+   "titulo": "Efetividade das propostas e exequibilidade",
+   "verificar": "O edital prevê a verificação da efetividade (desclassificação por vício, preço inexequível ou acima do orçamento) e os critérios de exequibilidade (obras: 70% do menor valor do art. 56, § 3º; demais: critérios de aceitabilidade).",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "56",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "56",
+     "disp": "III"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "56",
+     "disp": "IV"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "56",
+     "disp": "p3"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "56",
+     "disp": "p4"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem critério de aceitabilidade, aceita-se preço acima do orçamento ou inexequível.",
+   "dica": "Fixe critérios objetivos de aceitabilidade de preços unitários e global.",
+   "temas": [
+    "exequibilidade",
+    "aceitabilidade de preços"
+   ]
+  },
+  {
+   "id": "e-ed-07",
+   "doc": "edital",
+   "titulo": "Negociação",
+   "verificar": "Prevê-se negociação com o primeiro colocado e, se acima do orçamento, com os demais pela ordem.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "57",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "57",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Sem negociação, perde-se a chance de obter preço igual ou inferior ao orçamento.",
+   "dica": "Inclua a cláusula de negociação.",
+   "temas": [
+    "negociação"
+   ]
+  },
+  {
+   "id": "e-ed-08",
+   "doc": "edital",
+   "titulo": "Habilitação restrita aos parâmetros legais",
+   "verificar": "Os documentos de habilitação se limitam a capacidade jurídica, qualificação técnica restrita às parcelas relevantes e capacidade econômico-financeira, sem exigências além do necessário.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "58",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "58",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "58",
+     "disp": "II"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "58",
+     "disp": "III"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Exigências excessivas restringem a competitividade e podem direcionar a licitação.",
+   "dica": "Limite atestados às parcelas de maior relevância e quantitativos razoáveis (até 50%).",
+   "temas": [
+    "habilitação",
+    "qualificação técnica",
+    "restrição à competitividade"
+   ]
+  },
+  {
+   "id": "e-ed-09",
+   "doc": "edital",
+   "titulo": "Impedimentos de participação",
+   "verificar": "O edital reproduz os impedimentos do art. 38 (vínculo com a estatal, sanções, parentesco).",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "38",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "38",
+     "disp": "pu"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Omissão permite contratação de impedidos, com nulidade e conflito de interesses.",
+   "dica": "Reproduza o art. 38 e exija declaração.",
+   "temas": [
+    "impedimentos",
+    "conflito de interesses"
+   ]
+  },
+  {
+   "id": "e-ed-10",
+   "doc": "edital",
+   "titulo": "Vedação ao autor do projeto",
+   "verificar": "Nas obras, veda-se a participação de quem elaborou o anteprojeto ou o projeto básico, observadas as exceções.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "44",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "44",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "44",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "alta",
+   "risco": "Participação do autor do projeto compromete a isonomia.",
+   "dica": "Inclua a vedação e a definição de participação indireta.",
+   "temas": [
+    "autor do projeto",
+    "isonomia",
+    "obras"
+   ],
+   "quando": "Obras e serviços de engenharia."
+  },
+  {
+   "id": "e-ed-11",
+   "doc": "edital",
+   "titulo": "Fase recursal",
+   "verificar": "Fase recursal única, com prazo de 5 dias úteis após a habilitação (ou conforme inversão).",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "59",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "59",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Prazos ou fases recursais diversos geram nulidade e insegurança.",
+   "dica": "Ajuste a cláusula de recursos ao art. 59.",
+   "temas": [
+    "recursos",
+    "fase recursal"
+   ]
+  },
+  {
+   "id": "e-ed-12",
+   "doc": "edital",
+   "titulo": "Tratamento diferenciado a ME e EPP",
+   "verificar": "O edital aplica os benefícios dos arts. 42 a 49 da LC 123/2006.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "28",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Omissão afasta direitos legais de ME/EPP e gera impugnações.",
+   "dica": "Inclua empate ficto, regularização fiscal tardia e cotas, quando cabíveis.",
+   "temas": [
+    "ME EPP",
+    "LC 123/2006"
+   ]
+  },
+  {
+   "id": "e-ed-13",
+   "doc": "edital",
+   "titulo": "Impugnação do edital",
+   "verificar": "O edital prevê a impugnação por qualquer cidadão, com prazo e forma.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "87",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Restringir a impugnação contraria o controle social.",
+   "dica": "Indique prazo (até 5 dias úteis antes da abertura) e canal.",
+   "temas": [
+    "impugnação"
+   ]
+  },
+  {
+   "id": "e-ed-14",
+   "doc": "edital",
+   "titulo": "Garantia contratual",
+   "verificar": "A garantia, se exigida, deixa ao contratado a escolha da modalidade e respeita o limite de 5% (até 10% em grande vulto com complexidade).",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "70",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "70",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "70",
+     "disp": "p2"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "70",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "media",
+   "risco": "Garantia acima do limite ou modalidade imposta restringe a participação.",
+   "dica": "Ajuste percentual e modalidades ao art. 70.",
+   "temas": [
+    "garantia contratual"
+   ],
+   "quando": "Quando houver garantia."
+  },
+  {
+   "id": "e-ed-15",
+   "doc": "edital",
+   "titulo": "Minuta de contrato com cláusulas necessárias",
+   "verificar": "A minuta traz as cláusulas necessárias: objeto, regime, preço e reajuste, prazos, garantias, responsabilidades e penalidades, rescisão, vinculação ao edital, manutenção das condições de habilitação e matriz de riscos.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "69",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "69",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "69",
+     "disp": "II"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "69",
+     "disp": "III"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "69",
+     "disp": "VI"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "69",
+     "disp": "IX"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Cláusula necessária ausente fragiliza a execução e a aplicação de sanções.",
+   "dica": "Revise a minuta contra o art. 69 e a minuta-padrão do RILC.",
+   "temas": [
+    "minuta de contrato",
+    "cláusulas necessárias"
+   ]
+  },
+  {
+   "id": "e-ed-16",
+   "doc": "edital",
+   "titulo": "Reajuste e data-base",
+   "verificar": "O contrato define critério, data-base e periodicidade do reajuste.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "69",
+     "disp": "III"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem data-base e índice, o reajuste fica indefinido e sujeito a pleitos.",
+   "dica": "Indique índice e data-base vinculada ao orçamento.",
+   "temas": [
+    "reajuste",
+    "data-base"
+   ]
+  },
+  {
+   "id": "e-ed-17",
+   "doc": "edital",
+   "titulo": "Duração do contrato",
+   "verificar": "A vigência não excede 5 anos (salvo exceções motivadas) e não há prazo indeterminado.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "71",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "71",
+     "disp": "pu"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Prazo acima do legal ou indeterminado vicia o contrato.",
+   "dica": "Ajuste a vigência e as prorrogações ao art. 71.",
+   "temas": [
+    "vigência",
+    "duração do contrato"
+   ]
+  },
+  {
+   "id": "e-ed-18",
+   "doc": "edital",
+   "titulo": "Sanções e multas",
+   "verificar": "Sanções e multas estão tipificadas no edital/contrato, com processo e defesa prévia.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "82",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "83",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Sanção sem previsão expressa não pode ser aplicada.",
+   "dica": "Tipifique condutas, percentuais de multa e prazos de defesa.",
+   "temas": [
+    "sanções",
+    "multa"
+   ]
+  },
+  {
+   "id": "e-ed-19",
+   "doc": "edital",
+   "titulo": "Aderência ao regulamento interno (RILC)",
+   "verificar": "O procedimento e as minutas observam o regulamento interno de licitações e contratos da estatal e as minutas-padrão.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "40",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "40",
+     "disp": "III"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "32",
+     "disp": "I"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Descumprir o RILC vicia o procedimento e fragiliza a defesa da estatal.",
+   "dica": "Indique no edital o artigo do RILC aplicável a cada fase.",
+   "temas": [
+    "RILC",
+    "regulamento interno",
+    "minutas-padrão"
+   ]
+  },
+  {
+   "id": "e-ed-20",
+   "doc": "edital",
+   "titulo": "Registro de preços",
+   "verificar": "O registro de preços observa ampla pesquisa de mercado, controle e atualização periódica dos preços, validade definida e cadastro de reserva; não obriga a contratar.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "66",
+     "disp": "p2.I"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "66",
+     "disp": "p2.III"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "66",
+     "disp": "p2.IV"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "66",
+     "disp": "p2.V"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "66",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "media",
+   "risco": "Ata sem controle de preços pode manter valores acima do mercado.",
+   "dica": "Preveja rotina de pesquisa periódica e a validade da ata.",
+   "temas": [
+    "registro de preços",
+    "ata"
+   ],
+   "quando": "Registro de preços."
+  },
+  {
+   "id": "e-ed-21",
+   "doc": "edital",
+   "titulo": "Contratação direta instruída",
+   "verificar": "Na dispensa ou inexigibilidade, o processo traz a caracterização da situação, a razão da escolha do fornecedor e a justificativa do preço, com enquadramento legal correto.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "29",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "30",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "30",
+     "disp": "p3.II"
+    },
+    {
+     "norma": "lei-13303",
+     "art": "30",
+     "disp": "p3.III"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "alta",
+   "risco": "Contratação direta sem justificativa de preço sujeita responsáveis e contratado à responsabilização solidária por sobrepreço (art. 30, § 2º).",
+   "dica": "Demonstre o enquadramento e compare o preço com contratações similares.",
+   "temas": [
+    "dispensa",
+    "inexigibilidade",
+    "justificativa de preço"
+   ],
+   "quando": "Contratação direta."
+  },
+  {
+   "id": "e-cx-01",
+   "doc": "cruzado",
+   "titulo": "Objeto e quantitativos iguais nos documentos",
+   "verificar": "Objeto, quantitativos e unidades coincidem entre planejamento, TR/projeto, edital e minuta.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "33",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Divergências geram propostas incompatíveis e litígios.",
+   "dica": "Revise todos os documentos com base na mesma planilha de quantitativos.",
+   "temas": [
+    "coerência documental"
+   ]
+  },
+  {
+   "id": "e-cx-02",
+   "doc": "cruzado",
+   "titulo": "Valor estimado consistente",
+   "verificar": "O valor estimado é o mesmo em todos os documentos e corresponde à planilha.",
+   "fundamento": [
+    {
+     "norma": "lei-13303",
+     "art": "31",
+     "disp": "p1.I"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Valores divergentes impedem aferir a aceitabilidade das propostas.",
+   "dica": "Uniformize o valor em todos os documentos.",
+   "temas": [
+    "valor estimado"
+   ]
+  }
+ ]
+}

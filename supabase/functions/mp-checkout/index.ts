@@ -3,7 +3,8 @@
 //
 // POST { acao: "criar", tipo: "plano", plano, ciclo, parcelas, contratante, metodo, retorno }
 // POST { acao: "criar", tipo: "consultoria", modalidade, assunto, descricao, metodo, aceite, termo_versao, anexos, retorno }
-// POST { acao: "criar", tipo: "analise", documento, origem: "pdf"|"pncp", arquivo, nome_arquivo, pncp_link, normas: [ids], aceite, termo_versao, metodo, retorno }
+// POST { acao: "criar", tipo: "analise", documento, origem: "pdf"|"pncp", arquivo, nome_arquivo, pncp_link, normas: [ids], regime, obras, mao_de_obra,
+//        anexos: [{tipo: "orcamento"|"planilha"|"plano-custos"|"cct", arquivo, nome_arquivo}], aceite, termo_versao, metodo, retorno }
 //      Pro com cota na semana: entra direto na fila (sem pagamento). Demais: análise avulsa paga.
 // POST { acao: "conferir", referencia: "assinatura:<id>" | "consultoria:<id>" | "analise:<id>" }
 
@@ -168,6 +169,30 @@ Deno.serve(async (req) => {
         pncp = String(corpo.pncp_link ?? "").trim();
         if (!/^https:\/\/(www\.)?pncp\.gov\.br\/.*\d{14}\/\d{4}\/\d+/.test(pncp)) return erro("Informe o link da contratação no PNCP.");
       }
+      // Regime, objeto especial e anexos obrigatórios (planilhas em Excel; convenção coletiva em PDF/Word)
+      const regime = ["lei-14133", "lei-13303", "lei-13019"].includes(String(corpo.regime)) ? String(corpo.regime) : "lei-14133";
+      if (regime === "lei-13019" ? !["edital", "plano_trabalho"].includes(documento) : documento === "plano_trabalho") {
+        return erro("Tipo de documento incompatível com o regime escolhido.");
+      }
+      if (typeof corpo.mao_de_obra !== "boolean" || typeof corpo.obras !== "boolean") {
+        return erro("Informe se a contratação envolve dedicação exclusiva de mão de obra e se é obra ou serviço de engenharia.");
+      }
+      const objeto = [...(corpo.obras ? ["obras"] : []), ...(corpo.mao_de_obra ? ["mao-de-obra"] : [])];
+      const TIPOS_ANEXO: Record<string, RegExp> = { orcamento: /\.(xlsx|xlsm|xls|ods)$/i, planilha: /\.(xlsx|xlsm|xls|ods)$/i,
+        "plano-custos": /\.(xlsx|xlsm|xls|ods)$/i, cct: /\.(pdf|docx)$/i };
+      const anexos: { tipo: string; arquivo: string; nome_arquivo: string }[] = [];
+      for (const x of (Array.isArray(corpo.anexos) ? corpo.anexos : []).slice(0, 5)) {
+        const tipo = String(x?.tipo ?? ""), arq = String(x?.arquivo ?? "");
+        if (!TIPOS_ANEXO[tipo] || !arq.startsWith(usuario.id + "/anexos/") || arq.includes("..") || !TIPOS_ANEXO[tipo].test(arq)) {
+          return erro("Anexo inválido. Envie as planilhas em Excel e a convenção coletiva em PDF ou Word.");
+        }
+        anexos.push({ tipo, arquivo: arq, nome_arquivo: String(x?.nome_arquivo ?? "").slice(0, 160) });
+      }
+      const tem = (t: string) => anexos.some((x) => x.tipo === t);
+      if (corpo.obras && !tem("orcamento")) return erro("Obras e serviços de engenharia: anexe a planilha orçamentária em Excel.");
+      if (corpo.mao_de_obra && !tem("planilha")) return erro("Dedicação exclusiva de mão de obra: anexe a planilha de custos e formação de preços em Excel.");
+      if (corpo.mao_de_obra && !tem("cct")) return erro("Dedicação exclusiva de mão de obra: anexe a convenção ou acordo coletivo (PDF ou Word).");
+      if (regime === "lei-13019" && !tem("plano-custos")) return erro("Parceria com OSC: anexe a planilha de custos do plano de trabalho em Excel.");
       // Pro: 2 análises por semana incluídas; a partir da 3ª, avulsa com desconto
       let franquia = false;
       if (vigente === "pro") {
@@ -184,7 +209,7 @@ Deno.serve(async (req) => {
         normas = (ns ?? []).map((n: any) => ({ id: n.id, nome: n.nome, arquivo: n.arquivo }));
       }
       const { data: nova, error } = await admin.from("analises").insert({
-        usuario_id: usuario.id, documento, origem, arquivo, pncp_link: pncp, normas,
+        usuario_id: usuario.id, documento, origem, arquivo, pncp_link: pncp, normas, regime, objeto, anexos,
         nome_arquivo: String(corpo.nome_arquivo ?? "").slice(0, 160),
         cobranca: franquia ? "franquia_pro" : "avulsa", plano: vigente ?? null, valor,
         termo_aceito_em: new Date().toISOString(), termo_versao: String(corpo.termo_versao ?? "").slice(0, 20),

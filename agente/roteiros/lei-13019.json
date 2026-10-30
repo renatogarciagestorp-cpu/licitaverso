@@ -1,0 +1,912 @@
+{
+ "_sobre": "Roteiro de verificação do Agente Licitacon para PARCERIAS COM ORGANIZAÇÕES DA SOCIEDADE CIVIL (Lei 13.019/2014 — termos de colaboração e de fomento), na mesma estrutura do roteiro da Lei 14.133/2021. O termo de referência é substituído pelo plano de trabalho e pela planilha de custos do projeto; havendo profissional com dedicação exclusiva, o custo é formado pelo modelo do Anexo VII-D da IN SEGES/MP 5/2017 (módulo mão de obra).",
+ "regime": "lei-13019",
+ "versao": "2026-10-30",
+ "revisado_por_especialista": false,
+ "documentos": {
+  "edital": "Edital de chamamento público e minuta do termo",
+  "plano_trabalho": "Plano de trabalho e planilha de custos",
+  "cruzado": "Coerência entre os documentos"
+ },
+ "itens": [
+  {
+   "id": "o-ed-01",
+   "doc": "edital",
+   "titulo": "Chamamento público ou justificativa da sua ausência",
+   "verificar": "A parceria é precedida de chamamento público; nos casos de dispensa (art. 30) ou inexigibilidade (art. 31), a ausência está justificada e o extrato foi publicado.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "30",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "31",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "32",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Parceria sem chamamento e sem justificativa válida é nula e frustra a seleção isonômica.",
+   "dica": "Enquadre a hipótese de dispensa/inexigibilidade e publique o extrato da justificativa.",
+   "temas": [
+    "chamamento público",
+    "dispensa",
+    "inexigibilidade"
+   ]
+  },
+  {
+   "id": "o-ed-02",
+   "doc": "edital",
+   "titulo": "Conteúdo mínimo do edital de chamamento",
+   "verificar": "O edital especifica programação orçamentária, objeto, datas e forma de apresentação das propostas, critérios de seleção e julgamento, valor previsto, condições de recurso e minuta do termo.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "p1.I"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "p1.III"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "p1.IV"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "p1.V"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "p1.VI"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "p1.VIII"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "p1.IX"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Edital incompleto impede propostas comparáveis e compromete a isonomia.",
+   "dica": "Revise o edital contra o art. 24, § 1º.",
+   "temas": [
+    "edital de chamamento",
+    "conteúdo mínimo"
+   ]
+  },
+  {
+   "id": "o-ed-03",
+   "doc": "edital",
+   "titulo": "Cláusulas que restrinjam ou frustrem a competição",
+   "verificar": "O edital não contém cláusulas ou condições que comprometam, restrinjam ou frustrem o caráter competitivo (exigências territoriais, experiência excessiva, requisitos desproporcionais).",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "p2"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Cláusula restritiva direciona a seleção e vicia o chamamento.",
+   "dica": "Justifique cada exigência e retire as que não tenham relação com o objeto.",
+   "temas": [
+    "restrição à competitividade",
+    "direcionamento"
+   ]
+  },
+  {
+   "id": "o-ed-04",
+   "doc": "edital",
+   "titulo": "Divulgação com antecedência mínima de 30 dias",
+   "verificar": "O edital foi divulgado no sítio oficial com antecedência mínima de 30 dias.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "26",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Prazo inferior restringe a participação das organizações.",
+   "dica": "Conte 30 dias entre a divulgação e o fim do prazo de propostas.",
+   "temas": [
+    "prazo de divulgação",
+    "publicidade"
+   ]
+  },
+  {
+   "id": "o-ed-05",
+   "doc": "edital",
+   "titulo": "Critérios de julgamento e valor de referência",
+   "verificar": "Os critérios de seleção têm metodologia de pontuação e pesos objetivos, consideram a adequação da proposta aos objetivos e, quando for o caso, ao valor de referência; a escolha de proposta que não seja a mais adequada ao valor de referência é justificada.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "27",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "p1.V"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "27",
+     "disp": "p5"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Critérios subjetivos permitem escolha dirigida da organização.",
+   "dica": "Defina critérios, pesos e notas objetivas no edital.",
+   "temas": [
+    "critérios de julgamento",
+    "metodologia de pontuação",
+    "valor de referência"
+   ]
+  },
+  {
+   "id": "o-ed-06",
+   "doc": "edital",
+   "titulo": "Comissão de seleção e impedimentos",
+   "verificar": "As propostas são julgadas por comissão de seleção previamente designada, sem membros com relação jurídica recente com as participantes.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "27",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "27",
+     "disp": "p2"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Conflito de interesses na comissão compromete a impessoalidade.",
+   "dica": "Exija declaração de ausência de impedimento dos membros.",
+   "temas": [
+    "comissão de seleção",
+    "conflito de interesses"
+   ]
+  },
+  {
+   "id": "o-ed-07",
+   "doc": "edital",
+   "titulo": "Requisitos das organizações proporcionais",
+   "verificar": "Os requisitos de existência, experiência prévia e capacidade técnica e operacional são os legais e proporcionais ao objeto; não se exige capacidade instalada prévia.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "33",
+     "disp": "V.a"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "33",
+     "disp": "V.b"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "33",
+     "disp": "V.c"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "33",
+     "disp": "p5"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Exigência acima da lei restringe a participação e pode direcionar a seleção.",
+   "dica": "Ajuste tempo de existência e experiência ao mínimo do art. 33, V.",
+   "temas": [
+    "requisitos da OSC",
+    "experiência prévia",
+    "capacidade técnica"
+   ]
+  },
+  {
+   "id": "o-ed-08",
+   "doc": "edital",
+   "titulo": "Documentos após a etapa competitiva",
+   "verificar": "A verificação dos documentos de habilitação (arts. 33 e 34) ocorre após o julgamento e a ordenação das propostas.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "28",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "34",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Exigir documentação antes da seleção afasta participantes sem necessidade.",
+   "dica": "Preveja a verificação documental só da organização selecionada.",
+   "temas": [
+    "habilitação da OSC",
+    "documentos"
+   ]
+  },
+  {
+   "id": "o-ed-09",
+   "doc": "edital",
+   "titulo": "Impedimentos para celebrar parceria",
+   "verificar": "O edital reproduz os impedimentos do art. 39 (contas rejeitadas, dirigentes agentes públicos, sanções).",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "39",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Omissão permite parceria com organização impedida.",
+   "dica": "Exija declaração quanto ao art. 39.",
+   "temas": [
+    "impedimentos",
+    "art. 39"
+   ]
+  },
+  {
+   "id": "o-ed-10",
+   "doc": "edital",
+   "titulo": "Resultado e recursos",
+   "verificar": "O resultado é homologado e divulgado no sítio oficial e há condições para recurso administrativo.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "27",
+     "disp": "p4"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "p1.VIII"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Sem divulgação e recurso, viola-se a publicidade e o contraditório.",
+   "dica": "Indique prazos de recurso e o local de divulgação.",
+   "temas": [
+    "resultado",
+    "recurso"
+   ]
+  },
+  {
+   "id": "o-ed-11",
+   "doc": "edital",
+   "titulo": "Minuta do termo com cláusulas essenciais",
+   "verificar": "A minuta do termo de colaboração/fomento contém objeto, obrigações, valor e cronograma de desembolso, vigência, prestação de contas, monitoramento, conta específica, livre acesso do controle e responsabilidade da organização pelos encargos.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "II"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "III"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "VI"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "VII"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "VIII"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "XIV"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "XV"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "XX"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Cláusula essencial ausente fragiliza a execução, a fiscalização e a responsabilização.",
+   "dica": "Revise a minuta contra o art. 42.",
+   "temas": [
+    "termo de colaboração",
+    "termo de fomento",
+    "cláusulas essenciais"
+   ]
+  },
+  {
+   "id": "o-ed-12",
+   "doc": "edital",
+   "titulo": "Plano de trabalho como anexo do termo",
+   "verificar": "O plano de trabalho integra o termo como anexo.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "pu"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Sem o plano anexo, metas e despesas não vinculam a execução.",
+   "dica": "Anexe o plano de trabalho aprovado ao termo.",
+   "temas": [
+    "plano de trabalho",
+    "anexo"
+   ]
+  },
+  {
+   "id": "o-ed-13",
+   "doc": "edital",
+   "titulo": "Contrapartida",
+   "verificar": "Não se exige contrapartida financeira; contrapartida em bens e serviços, se houver, tem expressão monetária identificada.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Exigir contrapartida financeira é ilegal e restringe a participação.",
+   "dica": "Retire a contrapartida financeira.",
+   "temas": [
+    "contrapartida"
+   ]
+  },
+  {
+   "id": "o-ed-14",
+   "doc": "edital",
+   "titulo": "Dotação orçamentária",
+   "verificar": "Há indicação da programação orçamentária e da prévia dotação para a parceria.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "p1.I"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "II"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Parceria sem dotação gera inadimplemento e responsabilização fiscal.",
+   "dica": "Indique a dotação no edital e no processo.",
+   "temas": [
+    "dotação orçamentária"
+   ]
+  },
+  {
+   "id": "o-ed-15",
+   "doc": "edital",
+   "titulo": "Acessibilidade",
+   "verificar": "Há medidas de acessibilidade para pessoas com deficiência ou mobilidade reduzida e idosos, conforme o objeto.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "p1.X"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "baixa",
+   "risco": "Omissão pode excluir beneficiários e gerar questionamentos.",
+   "dica": "Inclua as medidas de acessibilidade pertinentes.",
+   "temas": [
+    "acessibilidade"
+   ],
+   "quando": "Conforme as características do objeto."
+  },
+  {
+   "id": "o-pt-01",
+   "doc": "plano_trabalho",
+   "titulo": "Descrição da realidade e nexo com as metas",
+   "verificar": "O plano descreve a realidade objeto da parceria e demonstra o nexo entre ela e as atividades, projetos e metas.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "22",
+     "disp": "I"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem diagnóstico, não se demonstra o interesse público da parceria.",
+   "dica": "Apresente dados da realidade local e o público atendido.",
+   "temas": [
+    "plano de trabalho",
+    "diagnóstico"
+   ]
+  },
+  {
+   "id": "o-pt-02",
+   "doc": "plano_trabalho",
+   "titulo": "Metas e atividades",
+   "verificar": "As metas são quantitativas e mensuráveis e as atividades ou projetos estão descritos.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "22",
+     "disp": "II"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Metas vagas impedem o monitoramento e a prestação de contas por resultados.",
+   "dica": "Defina metas com quantidade, prazo e unidade de medida.",
+   "temas": [
+    "metas",
+    "atividades"
+   ]
+  },
+  {
+   "id": "o-pt-03",
+   "doc": "plano_trabalho",
+   "titulo": "Previsão de receitas e despesas",
+   "verificar": "Há previsão de receitas e de despesas detalhadas da execução, com planilha de custos de tudo o que será implementado e adquirido.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "22",
+     "disp": "II-A"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem detalhamento das despesas não se avalia economicidade nem sobrepreço.",
+   "dica": "Junte a planilha de custos (Excel) com item, quantidade, unitário e total.",
+   "temas": [
+    "previsão de despesas",
+    "planilha de custos",
+    "economicidade"
+   ]
+  },
+  {
+   "id": "o-pt-04",
+   "doc": "plano_trabalho",
+   "titulo": "Forma de execução",
+   "verificar": "A forma de execução das atividades e de cumprimento das metas está definida.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "22",
+     "disp": "III"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Execução indefinida dificulta a fiscalização.",
+   "dica": "Descreva metodologia, equipe e etapas.",
+   "temas": [
+    "forma de execução"
+   ]
+  },
+  {
+   "id": "o-pt-05",
+   "doc": "plano_trabalho",
+   "titulo": "Parâmetros de aferição das metas",
+   "verificar": "Há parâmetros e indicadores, quantitativos e qualitativos, para aferir o cumprimento das metas.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "22",
+     "disp": "IV"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "23",
+     "disp": "pu.VI"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem indicadores, não há como glosar metas descumpridas.",
+   "dica": "Defina indicador, fonte de verificação e periodicidade por meta.",
+   "temas": [
+    "indicadores",
+    "aferição de metas"
+   ]
+  },
+  {
+   "id": "o-pt-06",
+   "doc": "plano_trabalho",
+   "titulo": "Cronograma de desembolso",
+   "verificar": "O cronograma de desembolso é compatível com as etapas e metas e permite fiscalização efetiva.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "V.d"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "48",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "III"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Desembolso antecipado ou incompatível com as metas gera risco de dano ao erário.",
+   "dica": "Vincule cada parcela a metas e etapas.",
+   "temas": [
+    "cronograma de desembolso"
+   ]
+  },
+  {
+   "id": "o-pt-07",
+   "doc": "plano_trabalho",
+   "titulo": "Remuneração da equipe e encargos",
+   "verificar": "A remuneração da equipe está detalhada com encargos (impostos, contribuições, FGTS, férias, 13º, verbas rescisórias) e compatível com o mercado; havendo profissional com dedicação exclusiva, o custo é formado pelo modelo de planilha de custos e formação de preços do Anexo VII-D da IN SEGES/MP 5/2017.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "46",
+     "disp": "I"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Custo de pessoal sem demonstração pode esconder sobrepreço e gerar passivos.",
+   "dica": "Monte uma planilha por profissional (CBO, salário-base, encargos, benefícios) no modelo da IN 05/2017.",
+   "temas": [
+    "remuneração da equipe",
+    "encargos",
+    "IN 05/2017",
+    "planilha de custos"
+   ]
+  },
+  {
+   "id": "o-pt-08",
+   "doc": "plano_trabalho",
+   "titulo": "Custos indiretos",
+   "verificar": "Os custos indiretos são necessários à execução, demonstrados e não pagos por outra parceria.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "46",
+     "disp": "III"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Custos indiretos genéricos podem financiar despesas alheias ao objeto.",
+   "dica": "Discrimine e justifique cada custo indireto e o critério de rateio.",
+   "temas": [
+    "custos indiretos",
+    "rateio"
+   ]
+  },
+  {
+   "id": "o-pt-09",
+   "doc": "plano_trabalho",
+   "titulo": "Equipamentos e materiais permanentes",
+   "verificar": "A aquisição de equipamentos e materiais permanentes é essencial ao objeto e prevê a destinação dos bens (inalienabilidade).",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "46",
+     "disp": "IV"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "p5"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "gravidade": "media",
+   "risco": "Aquisição desnecessária desvia recursos do objeto.",
+   "dica": "Justifique cada bem e preveja sua destinação ao final.",
+   "temas": [
+    "bens permanentes",
+    "equipamentos"
+   ],
+   "quando": "Quando houver aquisição de bens permanentes."
+  },
+  {
+   "id": "o-pt-10",
+   "doc": "plano_trabalho",
+   "titulo": "Despesas vedadas",
+   "verificar": "Não há despesas alheias ao objeto nem pagamento a servidor ou empregado público com recursos da parceria.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "45",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "45",
+     "disp": "II"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Despesa vedada gera glosa, devolução e responsabilização.",
+   "dica": "Retire as despesas vedadas do plano.",
+   "temas": [
+    "despesas vedadas"
+   ]
+  },
+  {
+   "id": "o-pt-11",
+   "doc": "plano_trabalho",
+   "titulo": "Compatibilidade dos valores com o mercado",
+   "verificar": "Os valores estimados de bens, serviços e pessoal têm pesquisa ou referência de preços e são compatíveis com o mercado (viabilidade da execução).",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "V.c"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "22",
+     "disp": "II-A"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Valores acima do mercado configuram sobrepreço na parceria.",
+   "dica": "Junte cotações ou referências para cada item relevante.",
+   "temas": [
+    "preços de mercado",
+    "sobrepreço",
+    "economicidade"
+   ]
+  },
+  {
+   "id": "o-pt-12",
+   "doc": "plano_trabalho",
+   "titulo": "Monitoramento, fiscalização e prestação de contas",
+   "verificar": "Estão definidos os meios de fiscalização, os procedimentos de avaliação, a forma e os prazos da prestação de contas e os elementos de prova aceitos.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "V.e"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "VII"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "VIII"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "58",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "63",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Sem regras de prestação de contas, a análise por resultados fica inviável.",
+   "dica": "Defina relatórios, periodicidade e documentos comprobatórios.",
+   "temas": [
+    "monitoramento",
+    "prestação de contas"
+   ]
+  },
+  {
+   "id": "o-pt-13",
+   "doc": "plano_trabalho",
+   "titulo": "Conta específica e pagamentos eletrônicos",
+   "verificar": "Os recursos serão mantidos em conta específica e movimentados por transferência eletrônica identificada.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "51",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "53",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Movimentação fora da conta específica impede o rastreio dos recursos.",
+   "dica": "Preveja conta específica isenta de tarifa e pagamentos por transferência.",
+   "temas": [
+    "conta específica",
+    "movimentação financeira"
+   ]
+  },
+  {
+   "id": "o-pt-14",
+   "doc": "plano_trabalho",
+   "titulo": "Gestor e comissão de monitoramento",
+   "verificar": "Há designação do gestor da parceria e da comissão de monitoramento e avaliação.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "V.g"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "V.h"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "8",
+     "disp": "III"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Sem gestor designado, a parceria fica sem acompanhamento.",
+   "dica": "Publique os atos de designação.",
+   "temas": [
+    "gestor da parceria",
+    "comissão de monitoramento"
+   ]
+  },
+  {
+   "id": "o-pt-15",
+   "doc": "plano_trabalho",
+   "titulo": "Pareceres técnico e jurídico",
+   "verificar": "O processo traz parecer técnico (mérito, viabilidade, cronograma, fiscalização) e parecer jurídico; ressalvas foram sanadas ou motivadas.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "V"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "VI"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "p2"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Celebrar sem os pareceres é vício formal grave.",
+   "dica": "Junte os pareceres e a manifestação sobre as ressalvas.",
+   "temas": [
+    "parecer técnico",
+    "parecer jurídico"
+   ]
+  },
+  {
+   "id": "o-cx-01",
+   "doc": "cruzado",
+   "titulo": "Objeto e metas coerentes",
+   "verificar": "Objeto, metas e valores são os mesmos no edital, no plano de trabalho, na planilha de custos e na minuta do termo.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "22",
+     "disp": "II"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Divergência entre documentos gera insegurança na execução e na prestação de contas.",
+   "dica": "Uniformize objeto, metas e valores.",
+   "temas": [
+    "coerência documental"
+   ]
+  },
+  {
+   "id": "o-cx-02",
+   "doc": "cruzado",
+   "titulo": "Valor previsto consistente",
+   "verificar": "O valor previsto no edital corresponde ao total da planilha de custos e ao cronograma de desembolso.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "24",
+     "disp": "p1.VI"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "42",
+     "disp": "III"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Valores divergentes dificultam a fiscalização financeira.",
+   "dica": "Confira os totais entre os documentos.",
+   "temas": [
+    "valor previsto"
+   ]
+  }
+ ]
+}

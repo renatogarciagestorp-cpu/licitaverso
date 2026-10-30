@@ -40,3 +40,9 @@ primeiras análises reais feitas em conjunto; depois o protótipo automático (F
 - Módulos por objeto: `roteiros/modulos/obras-engenharia.json` e `roteiros/modulos/mao-de-obra.json`, com fundamento por regime.
 - Planilhas Excel: `scripts/agente/extrair-planilha.py` (valores + fórmulas por célula; recalcula pelo LibreOffice quando o arquivo não traz valores).
 - `conferir-roteiro.py` confere roteiros e módulos contra o texto vigente das normas.
+
+## Roteiros próprios e referência salarial (etapa 3B/3C, 30/10/2026)
+- `roteiros/lei-13303.json` (44 itens) e `roteiros/lei-13019.json` (32 itens), na estrutura do roteiro da 14.133.
+- Mão de obra: `extrair-postos.py` (Haiku lê a planilha: função, CBO, salário-base, jornada, custo total) → `salarios.py`
+  (média do estado no salario.com.br, ajustada à jornada; acima de 5% = "acima") → `analisar.py --salarios`. Indicador de mercado, não normativo.
+- Convenção coletiva entra como anexo `cct` (PDF/Word). Site: regime, perguntas iniciais (mão de obra exclusiva? obra?) e anexos obrigatórios.

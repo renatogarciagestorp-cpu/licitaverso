@@ -49,18 +49,27 @@ def paginas_do_cbo(cbo):
     """Links /profissao/<slug>-cbo-<cbo>/ listados na página de cargos do CBO."""
     h = baixar(f"{BASE}/ocupacao/cargos/cbo-{cbo}-cargos/")
     links = re.findall(r'href="(?:https://www\.salario\.com\.br)?(/profissao/([a-z0-9-]+)-cbo-(\d{6})/)"[^>]*>\s*([^<]{2,120})<', h)
-    vistos, out = set(), []
+    por_url = {}
     for url, slug, c, nome in links:
-        if c == cbo and url not in vistos:
-            vistos.add(url); out.append({"url": url, "slug": slug, "nome": htmllib.unescape(nome).strip()})
-    return out
+        if c != cbo:
+            continue
+        nome = htmllib.unescape(nome).strip()
+        atual = por_url.setdefault(url, {"url": url, "slug": slug, "nome": slug.replace("-", " ").capitalize()})
+        if nome and not re.search(r"(?i)pesquisa|salari|ver |saiba", nome):
+            atual["nome"] = nome
+    return list(por_url.values())
 
 
 def escolher(cands, funcao):
     if not cands:
         return None
     alvo = norm(funcao)
-    return max(cands, key=lambda c: difflib.SequenceMatcher(None, alvo, norm(c["nome"] + " " + c["slug"].replace("-", " "))).ratio())
+    def nota(c):
+        nome = norm(c["nome"]); slug = norm(c["slug"].replace("-", " "))
+        palavras = set(alvo.split())
+        comum = len(palavras & set((nome + " " + slug).split())) / max(1, len(palavras))
+        return comum + max(difflib.SequenceMatcher(None, alvo, nome).ratio(), difflib.SequenceMatcher(None, alvo, slug).ratio())
+    return max(cands, key=nota)
 
 
 def media_estado(url_prof, uf):

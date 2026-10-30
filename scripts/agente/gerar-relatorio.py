@@ -639,9 +639,13 @@ def gerar(analise, saida, paginas=None):
                     run(pc, " ", tam=10); link(pc, "[fonte oficial]", j["fonte_url"], tam=9)
 
     # 4 ANÁLISE DE PREÇOS (sobrepreço)
+    n_sec = 4
     if analise.get("precos"):
-        secao_precos(doc, analise["precos"])
-    n_rec = 5 if analise.get("precos") else 4
+        secao_precos(doc, analise["precos"], n_sec); n_sec += 1
+    sal = analise.get("salarios") or {}
+    if any(p.get("referencia") for p in sal.get("postos", [])):
+        secao_salarios(doc, sal, n_sec); n_sec += 1
+    n_rec = n_sec
 
     # RECOMENDAÇÕES
     titulo(doc, f"{n_rec} Recomendações de melhoria")
@@ -697,6 +701,9 @@ def gerar(analise, saida, paginas=None):
     refs += [r_.format(acesso=acesso) for r_ in REF_OPINATIVO]
     for n in analise.get("normas_locais") or []:
         refs.append(f"{n['nome']}. Texto enviado pelo destinatário para a análise.")
+    if any(p.get("referencia") for p in (analise.get("salarios") or {}).get("postos", [])):
+        refs.append("SALARIO.COM.BR. Pesquisa salarial por profissão e estado (dados do Novo CAGED/MTE). Disponível em: https://www.salario.com.br. "
+                    f"Acesso em: {acesso}.")
     for u in {x["fonte"]: x for x in (analise.get("referencias_tecnicas") or [])}.values():
         if u.get("abnt"):
             refs.append(u["abnt"].format(url=u.get("url", ""), acesso=acesso))
@@ -766,9 +773,50 @@ def _brl(v):
 SIT_PRECO = {"indicio": ("Indício de sobrepreço", "alta"), "atencao": ("Ponto de atenção", "media"), "compativel": ("Compatível", "ok"),
              "amostra_insuficiente": ("Amostra insuficiente", "na"), "amostra_heterogenea": ("Amostra heterogênea", "na")}
 
-def secao_precos(doc, pr):
+SIT_SAL = {"acima": ("Acima da média do estado", "alta"), "atencao": ("Ligeiramente acima", "media"), "compativel": ("Compatível", "ok"),
+           "sem_referencia": ("Sem referência", "na")}
+
+
+def secao_salarios(doc, sal, num):
+    titulo(doc, f"{num} Custo da mão de obra: referência salarial de mercado")
+    paragrafo(doc, "O salário-base de cada posto da planilha de custos e formação de preços foi comparado com a média salarial da mesma ocupação "
+                   "(CBO) no estado, divulgada pelo sítio Salario.com.br a partir dos registros do Novo CAGED (Ministério do Trabalho e Emprego), "
+                   "considerando o salário-base em carteira nos últimos 12 meses. A média foi ajustada proporcionalmente à jornada semanal da "
+                   "planilha. Não há norma que adote essa fonte como balizador de preços: a comparação é um indicador de mercado, que aponta "
+                   "pontos a verificar e não substitui o piso da convenção coletiva da categoria nem a pesquisa de preços do processo.", depois=6)
+    postos = sal.get("postos", [])
+    t = tabela_sem_bordas(doc, len(postos) + 1, 6, [4.4, 1.6, 2.4, 2.4, 1.4, 3.8])
+    for i, h in enumerate(["Função (CBO)", "UF", "Salário-base", "Média ajustada", "Desvio", "Situação"]):
+        c = t.rows[0].cells[i]; sombrear(c, C["marinho"]); margens_celula(c, 0.1)
+        p = c.paragraphs[0]; fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT); run(p, h.upper(), negrito=True, tam=7.5, hexa="FFFFFF")
+    for k, r in enumerate(postos, 1):
+        rot, cor_ = SIT_SAL.get(r.get("situacao"), (r.get("situacao", ""), "na"))
+        vals = [f"{r.get('funcao', '')[:60]} ({r.get('cbo') or '—'})", r.get("uf") or "—", _brl(r["salario_base"]) if r.get("salario_base") else "—",
+                _brl(r["media_ajustada"]) if r.get("media_ajustada") else "—", f"{r['desvio']:+.0%}" if r.get("desvio") is not None else "—", rot]
+        for i, v in enumerate(vals):
+            c = t.rows[k].cells[i]; bordas(c, bottom=(C["linha"], 4)); margens_celula(c, 0.1)
+            if k % 2 == 0: sombrear(c, "FAFBFC")
+            p = c.paragraphs[0]; fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+            run(p, v, tam=8, negrito=(i == 5), hexa=C[cor_] if i == 5 else None)
+    for r in [x for x in postos if x.get("situacao") in ("acima", "atencao")]:
+        ref = r["referencia"]
+        p = fmt(doc.add_paragraph(), recuo1=0, depois=4, antes=4, alinh=WD_ALIGN_PARAGRAPH.LEFT)
+        run(p, f"{r.get('funcao')}: ", negrito=True, hexa=C[SIT_SAL[r['situacao']][1]])
+        run(p, f"salário-base de {_brl(r['salario_base'])} para {r.get('jornada_semanal') or '—'} h semanais, contra média de {_brl(ref['media'])} "
+               f"no estado para {ref.get('jornada') or '—'} h ({format(r['desvio'], '+.1%').replace('.', ',')} em relação à média ajustada)"
+               + (f"; custo total mensal do posto na planilha: {_brl(r['custo_total_mensal'])}" if r.get("custo_total_mensal") else "")
+               + ". Recomenda-se conferir o piso da função na convenção coletiva da categoria e da base territorial e, se mantido valor acima "
+                 "da média de mercado, registrar a justificativa no processo. ")
+        link(p, "[fonte]", ref["url"], tam=8.5)
+    sem = [x for x in postos if x.get("situacao") == "sem_referencia"]
+    if sem:
+        paragrafo(doc, "Sem referência no sítio para: " + "; ".join(f"{x.get('funcao')} ({x.get('motivo', 'não localizada')})" for x in sem) + ".",
+                  recuo1=0, tam=8.5, hexa=C["fraco"], italico=True, antes=4, depois=8)
+
+
+def secao_precos(doc, pr, num=4):
     cr = pr.get("criterios", {})
-    titulo(doc, "4 Análise de preços")
+    titulo(doc, f"{num} Análise de preços")
     itens = pr.get("itens", [])
     ind = [r for r in itens if r["situacao"] == "indicio"]
     paragrafo(doc, f"O orçamento estimado foi confrontado com preços de contratações similares publicadas no Portal Nacional de Contratações "

@@ -81,3 +81,11 @@ Este arquivo entra nas instruções de toda análise. Acrescente aqui cada nova 
   custos (Excel) com o detalhamento de tudo o que será implementado e adquirido na execução. Se o plano de trabalho e a planilha
   previrem profissional com dedicação exclusiva, o custo desse profissional deve ser formado pela planilha modelo do Anexo VII-D da
   IN SEGES/MP 5/2017.
+- (30/10/2026) Custo do profissional (planilha modelo da IN 05/2017): avaliar se é vantajoso ou se há indício de sobrepreço ou
+  superfaturamento comparando com a média salarial do estado divulgada pelo salario.com.br. Se o custo estimado estiver acima dessa
+  média, indicar como risco grave (gravidade alta); como não há norma que adote o salario.com.br como balizador, não ser incisivo:
+  demonstrar a inconsistência e orientar o ajuste.
+- (30/10/2026) Dedicação exclusiva de mão de obra: além da planilha, o assinante fornece a convenção coletiva usada na composição do
+  salário (PDF ou Word). O site pergunta, antes da análise, se a contratação é de profissional com dedicação exclusiva e se é obra ou
+  serviço de engenharia; nesses casos as planilhas em Excel são obrigatórias, porque sem elas não se avalia por completo a
+  economicidade, a vantajosidade e a existência de sobrepreço.

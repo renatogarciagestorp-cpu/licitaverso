@@ -1196,6 +1196,28 @@
               <p style="margin: 6px 0 0; font-size: 13.5px; color: #6A7B82">{{ anCotaTexto }}</p>
             </div>
             <div>
+              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Regime da contratação</span>
+              <div role="group" aria-label="Regime da contratação" style="display: flex; gap: 8px; flex-wrap: wrap">
+                <sc-for list="{{ anRegimes }}" as="r" hint-placeholder-count="3">
+                  <button sc-camel-on-click="{{ r.escolher }}" aria-pressed="{{ r.ativo }}" style="border-radius: 12px; padding: 8px 14px; font-size: 13.5px; font-weight: 700; cursor: pointer; text-align: left; line-height: 1.25; border: 1px solid {{ r.borda }}; background: {{ r.fundo }}; color: {{ r.cor }}">{{ r.nome }}<br><span style="font-size: 11.5px; font-weight: 600; opacity: 0.8">{{ r.sub }}</span></button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background: #F6F8F7; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px; display: grid; gap: 14px">
+              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px; margin-bottom: 0">Antes de começar</span>
+              <sc-for list="{{ anPerguntas }}" as="q" hint-placeholder-count="2">
+                <div>
+                  <p style="margin: 0 0 4px; font-size: 14px; font-weight: 700; color: #172B33; line-height: 1.4">{{ q.pergunta }}</p>
+                  <p style="margin: 0 0 8px; font-size: 12.5px; color: #7A8B91">{{ q.dica }}</p>
+                  <div role="group" aria-label="{{ q.pergunta }}" style="display: flex; gap: 8px">
+                    <sc-for list="{{ q.opcoes }}" as="o" hint-placeholder-count="2">
+                      <button sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.ativo }}" style="border-radius: 999px; padding: 7px 18px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ o.borda }}; background: {{ o.fundo }}; color: {{ o.cor }}">{{ o.nome }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <div>
               <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Documento</span>
               <div role="group" aria-label="Tipo de documento" style="display: flex; gap: 8px; flex-wrap: wrap">
                 <sc-for list="{{ anDocs }}" as="d" hint-placeholder-count="5">
@@ -1222,6 +1244,22 @@
                 <p style="margin: 6px 0 0; font-size: 12.5px; color: #7A8B91">O agente baixa o maior arquivo publicado na contratação (em geral, o edital com anexos).</p>
               </sc-if>
             </div>
+            <sc-if value="{{ anTemAnexos }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px; margin-bottom: 6px">Anexos obrigatórios</span>
+                <p style="margin: 0 0 10px; font-size: 13px; line-height: 1.5; color: #6A7B82">Sem esses arquivos não é possível avaliar por completo a economicidade, a vantajosidade e a existência de sobrepreço.</p>
+                <div style="display: grid; gap: 8px">
+                  <sc-for list="{{ anAnexos }}" as="x" hint-placeholder-count="2">
+                    <label style="position: relative; display: block; border: 1.5px dashed #BFD3D0; border-radius: 12px; padding: 12px 14px; cursor: pointer; background: #FBFCFC" style-hover="border-color: #0FA36B">
+                      <input type="file" accept="{{ x.aceita }}" sc-camel-on-change="{{ x.onArquivo }}" style="position: absolute; width: 1px; height: 1px; opacity: 0">
+                      <span style="display: block; font-size: 13.5px; font-weight: 800; color: #0B1F2A">{{ x.nome }}</span>
+                      <span style="display: block; font-size: 12.5px; color: #7A8B91; line-height: 1.45; margin-top: 2px">{{ x.dica }}</span>
+                      <span style="display: block; font-size: 13px; font-weight: 700; color: #0F6B7E; margin-top: 6px; overflow-wrap: anywhere">{{ x.arquivo }}</span>
+                    </label>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
             <div>
               <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 6px">Regulamentação específica (opcional)</span>
               <p style="margin: 0 0 10px; font-size: 13px; line-height: 1.5; color: #6A7B82">Decreto estadual ou municipal que regulamenta a Lei 14.133, regulamento interno de estatal (RILC) etc. O agente aplica a norma em complemento à legislação nacional. Até {{ anMaxNormas }} por análise.</p>
@@ -2542,21 +2580,35 @@ const CONSULTORIA = [
     desc: "Conversa pelo Google Meet para tirar dúvidas e discutir o caso. Depois do pagamento, você escolhe o horário na agenda do especialista." }
 ];
 const AN_DOCS = [["edital", "Edital"], ["etp", "ETP"], ["tr", "Termo de Referência"], ["riscos", "Matriz de Riscos"], ["planilha", "Planilha de custos"]];
-const AN_DOC_NOME = { edital: "Edital", etp: "Estudo Técnico Preliminar", tr: "Termo de Referência", riscos: "Matriz de Riscos", planilha: "Planilha de custos" };
+const AN_DOC_NOME = { edital: "Edital", etp: "Estudo Técnico Preliminar", tr: "Termo de Referência", riscos: "Matriz de Riscos", planilha: "Planilha de custos", plano_trabalho: "Plano de trabalho" };
+const AN_REGIMES = [["lei-14133", "Lei 14.133/2021", "Administração pública"], ["lei-13303", "Lei 13.303/2016", "Empresas estatais"], ["lei-13019", "Lei 13.019/2014", "Parcerias com OSC"]];
+const AN_DOCS_REGIME = {
+  "lei-14133": AN_DOCS,
+  "lei-13303": [["edital", "Edital e minuta"], ["etp", "Estudo / planejamento"], ["tr", "TR / Projeto Básico"], ["riscos", "Matriz de Riscos"], ["planilha", "Planilha de custos"]],
+  "lei-13019": [["edital", "Edital de chamamento"], ["plano_trabalho", "Plano de trabalho"]]
+};
+const AN_ANEXOS = {
+  orcamento: { nome: "Planilha orçamentária (Excel)", dica: "Valores unitários e totais sem e com BDI, composição do BDI (onerado ou desonerado), tabelas utilizadas (EMOP, SINAPI, SICRO, SCO etc.) e datas-base.", excel: true },
+  planilha: { nome: "Planilha de custos e formação de preços (Excel)", dica: "Planilha modelo preenchida por posto: CBO, categoria, salário-base, adicionais, encargos, benefícios, insumos, custos indiretos, lucro e tributos.", excel: true },
+  cct: { nome: "Convenção ou acordo coletivo (PDF ou Word)", dica: "Instrumento coletivo usado na composição do salário (piso, benefícios e vigência).", excel: false },
+  "plano-custos": { nome: "Planilha de custos do plano de trabalho (Excel)", dica: "Detalhamento de tudo o que será implementado e adquirido na execução: item, quantidade, valor unitário e total.", excel: true }
+};
+const AN_ANEXO_MB = 15;
 const AN_PRECO = 147;
 const AN_DESCONTO = { basico: 0.1, premium: 0.15, pro: 0.3 };
 const AN_MAX_MB = 25;
 const AN_MAX_NORMAS = 3;
 const AN_NORMA_MB = 15;
-const AN_TERMO_VERSAO = "2026-10-30";
+const AN_TERMO_VERSAO = "2026-10-30b";
 const AN_TERMO = [
   "Natureza: parecer técnico em gestão de licitações e contratos, elaborado de forma automatizada por inteligência artificial a partir do roteiro de verificação do Licitacon. Não é parecer jurídico e não substitui a análise jurídica prévia do órgão (Lei 14.133/2021, art. 53).",
   "Parecer opinativo: o parecer aponta todos os aspectos identificados, dos críticos aos de baixa vulnerabilidade, e recomenda providências, mas não vincula quem o recebe. A decisão de ajustar ou manter cada ponto, e a responsabilidade por ela, é exclusivamente sua (STF, MS 24.631/DF; Decreto-Lei 4.657/1942, art. 28).",
-  "Escopo: um documento por análise, em PDF de até 200 páginas e 25 MB. Documentos digitalizados (imagem) são lidos por reconhecimento óptico de caracteres (OCR); com digitalização de baixa qualidade, trechos podem ser lidos com erro. A análise considera a legislação nacional aplicável a todos os entes (Constituição Federal, Lei 14.133/2021, LRF, LC 123/2006, LINDB, entre outras) e, como parâmetro técnico, instruções normativas, cadernos e manuais federais e do TCU.",
+  "Escopo: um documento por análise, em PDF de até 200 páginas e 25 MB. Documentos digitalizados (imagem) são lidos por reconhecimento óptico de caracteres (OCR); com digitalização de baixa qualidade, trechos podem ser lidos com erro. Regime: a análise segue a lei que rege a contratação (Lei 14.133/2021; Lei 13.303/2016, para empresas estatais; ou Lei 13.019/2014, para parcerias com organizações da sociedade civil). Obras e serviços de engenharia exigem a planilha orçamentária em Excel; serviços com dedicação exclusiva de mão de obra exigem a planilha de custos em Excel e a convenção coletiva; parcerias exigem a planilha de custos do plano de trabalho em Excel. A análise considera a legislação nacional aplicável a todos os entes (Constituição Federal, Lei 14.133/2021, LRF, LC 123/2006, LINDB, entre outras) e, como parâmetro técnico, instruções normativas, cadernos e manuais federais e do TCU.",
   "Regulamentação específica (opcional): você pode anexar até 3 normas próprias (decreto estadual ou municipal, regulamento interno de licitações de estatal etc.), em PDF ou Word, que o agente aplica em complemento à legislação nacional, apontando eventual conflito. Você é responsável pela vigência e fidelidade do texto enviado.",
   "Prazo: em geral, o parecer fica pronto em até 1 hora; você recebe um aviso por e-mail e baixa o parecer em PDF e Word nesta página.",
   "Plano Pro: 2 análises por semana incluídas (de segunda a domingo, sem acúmulo). A partir da 3ª análise na semana, a análise avulsa sai com 30% de desconto. Análise que não puder ser concluída não consome a cota; a avulsa paga é reprocessada ou estornada.",
   "Dados: o documento é processado por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos. O arquivo e o parecer ficam na sua conta, acessíveis só a você e à equipe do Licitacon. Não envie documento cuja divulgação a prestadores de serviço seja vedada.",
+  "Custo da mão de obra: o salário-base de cada posto é comparado com a média salarial da ocupação no estado divulgada pelo Salario.com.br (dados do Novo CAGED). Essa fonte não é parâmetro normativo; a comparação é indicativa e serve para orientar a verificação do piso da convenção e da planilha.",
   "Análise de preços: quando o documento traz o orçamento estimado, o sistema compara os valores com preços homologados em contratações equivalentes publicadas no PNCP (órgãos do mesmo estado, últimos 12 meses, Lei 14.133/2021). O resultado é indicativo e depende da equivalência das especificações; não substitui a pesquisa de preços do processo.",
   "Limitações: a inteligência artificial pode errar ou deixar de identificar pontos. Confira cada apontamento no documento e na fonte oficial antes de decidir."
 ];
@@ -2783,7 +2835,7 @@ class Component extends DCLogic {
     plano: null,           // plano em vigor: teste | basico | premium | pro | null
     assinaturas: [], pagamentos: [], consultorias: [], acessosCurso: [], seguindo: [], favBib: [],
     analises: [], cotaAnalise: null, normasUsuario: [],
-    an: { doc: "edital", origem: "pdf", arquivo: null, link: "", metodo: "pix", aceite: false, enviando: false, erro: "", ok: "", normas: [], normaArquivo: null, normaNome: "", normaEnviando: false, normaErro: "" },
+    an: { doc: "edital", origem: "pdf", arquivo: null, link: "", metodo: "pix", aceite: false, enviando: false, erro: "", ok: "", normas: [], normaArquivo: null, normaNome: "", normaEnviando: false, normaErro: "", regime: "lei-14133", obras: null, mdo: null, anexos: {} },
     auth: AUTH_VAZIO,
     volta: null,
     aviso: "", avisoTipo: "ok",
@@ -3364,8 +3416,25 @@ class Component extends DCLogic {
     if (!this.u) { this.setState({ volta: "agente" }); this.irPara("login"); return; }
     if (an.origem === "pdf" && !an.arquivo) { erro("Escolha o arquivo em PDF."); return; }
     if (an.origem === "pncp" && !/pncp\.gov\.br\/.*\d{14}\/\d{4}\/\d+/.test(an.link)) { erro("Cole o link da contratação no PNCP (ex.: https://pncp.gov.br/app/editais/CNPJ/ANO/NÚMERO)."); return; }
+    if (an.mdo === null || an.obras === null) { erro("Responda às perguntas iniciais: a contratação envolve profissional com dedicação exclusiva? É obra ou serviço de engenharia?"); return; }
+    const exigidos = this.anexosExigidos(an);
+    const falta = exigidos.find((t) => !an.anexos[t]);
+    if (falta) { erro("Anexe: " + AN_ANEXOS[falta].nome + ". Sem esse arquivo não é possível avaliar a economicidade e o sobrepreço."); return; }
     if (!an.aceite) { erro("Leia e aceite as condições da análise para continuar."); return; }
     this.setState({ an: { ...an, enviando: true, erro: "", ok: "" } });
+    const anexos = [];
+    for (const t of exigidos) {
+      const f = an.anexos[t];
+      const ext = (f.name.match(/\.[a-z0-9]+$/i) || [".xlsx"])[0].toLowerCase();
+      const limpo = f.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\.[a-z0-9]+$/i, "").replace(/[^A-Za-z0-9._-]+/g, "-").slice(-60) || t;
+      const caminho = this.state.usuario.id + "/anexos/" + Date.now().toString(36) + "-" + t + "-" + limpo + ext;
+      const tipoMime = { ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ".xlsm": "application/vnd.ms-excel.sheet.macroEnabled.12",
+        ".xls": "application/vnd.ms-excel", ".ods": "application/vnd.oasis.opendocument.spreadsheet" }[ext];
+      const up = await this.sb.storage.from("analises").upload(caminho, f, { upsert: false, contentType: tipoMime });
+      if (up.error) { erro("Não foi possível enviar o arquivo " + f.name + ". Tente de novo."); return; }
+      anexos.push({ tipo: t, arquivo: caminho, nome_arquivo: f.name });
+    }
     let arquivo = null;
     if (an.origem === "pdf") {
       const limpo = an.arquivo.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9._-]+/g, "-").replace(/\.pdf$/i, "").slice(-70) || "documento";
@@ -3375,16 +3444,32 @@ class Component extends DCLogic {
     }
     const { data, error } = await this.sb.functions.invoke("mp-checkout", {
       body: { acao: "criar", tipo: "analise", documento: an.doc, origem: an.origem, arquivo, nome_arquivo: an.arquivo ? an.arquivo.name : "",
-              pncp_link: an.origem === "pncp" ? an.link.trim() : null, normas: (an.normas || []).slice(0, AN_MAX_NORMAS), aceite: true, termo_versao: AN_TERMO_VERSAO, metodo: an.metodo, retorno: baseSite() + "index.html" }
+              pncp_link: an.origem === "pncp" ? an.link.trim() : null, normas: (an.normas || []).slice(0, AN_MAX_NORMAS), regime: an.regime, obras: !!an.obras, mao_de_obra: !!an.mdo, anexos, aceite: true, termo_versao: AN_TERMO_VERSAO, metodo: an.metodo, retorno: baseSite() + "index.html" }
     });
     if (error) { erro(await erroDaFuncao(error)); return; }
     if (data && data.gratuito) {
-      this.setState({ an: { ...this.state.an, enviando: false, arquivo: null, link: "", aceite: false, normas: [], ok: "✓ Análise recebida (incluída no seu plano Pro). Em geral fica pronta em até 1 hora; você recebe um e-mail." } });
+      this.setState({ an: { ...this.state.an, enviando: false, arquivo: null, link: "", aceite: false, normas: [], anexos: {}, obras: null, mdo: null, ok: "✓ Análise recebida (incluída no seu plano Pro). Em geral fica pronta em até 1 hora; você recebe um e-mail." } });
       this.carregarDados();
       return;
     }
     if (data && data.url) { window.location.href = data.url; return; }
     erro("Não foi possível abrir o pagamento.");
+  }
+
+  anexosExigidos(an) {
+    an = an || this.state.an;
+    return [...(an.obras ? ["orcamento"] : []), ...(an.mdo ? ["planilha", "cct"] : []), ...(an.regime === "lei-13019" ? ["plano-custos"] : [])];
+  }
+
+  escolherAnexo(tipo, e) {
+    const f = e.target && e.target.files && e.target.files[0];
+    if (e.target) e.target.value = "";
+    const an = this.state.an;
+    if (!f) return;
+    const ok = AN_ANEXOS[tipo].excel ? /\.(xlsx|xlsm|xls|ods)$/i.test(f.name) : /\.(pdf|docx)$/i.test(f.name);
+    if (!ok) { this.setState({ an: { ...an, erro: AN_ANEXOS[tipo].excel ? "Envie a planilha em Excel (.xlsx)." : "Envie a convenção em PDF ou Word (.docx)." } }); return; }
+    if (f.size > AN_ANEXO_MB * 1048576) { this.setState({ an: { ...an, erro: "O arquivo passa de " + AN_ANEXO_MB + " MB." } }); return; }
+    this.setState({ an: { ...an, anexos: { ...an.anexos, [tipo]: f }, erro: "" } });
   }
 
   escolherArquivoNorma(e) {
@@ -4133,7 +4218,20 @@ class Component extends DCLogic {
         if (s.plano === "pro" && c) return "Plano Pro: " + Math.max(0, c.limite - c.usadas) + " de " + c.limite + " análises disponíveis nesta semana (renova na segunda-feira).";
         return "Análise avulsa por documento. Assinantes Pro têm 2 análises por semana incluídas.";
       })(),
-      anDocs: AN_DOCS.map(([id, nome]) => ({ nome, ativo: s.an.doc === id, escolher: () => this.setState({ an: { ...this.state.an, doc: id, erro: "" } }), ...corBotao(s.an.doc === id) })),
+      anRegimes: AN_REGIMES.map(([id, nome, sub]) => ({ nome, sub, ativo: s.an.regime === id, ...corBotao(s.an.regime === id),
+        escolher: () => { const docs = AN_DOCS_REGIME[id].map((d) => d[0]); this.setState({ an: { ...this.state.an, regime: id, doc: docs.includes(this.state.an.doc) ? this.state.an.doc : "edital", erro: "" } }); } })),
+      anPerguntas: [
+        ["mdo", "A contratação é de profissional para prestar serviço com dedicação exclusiva (mão de obra residente)?", "Se sim, você vai anexar a planilha de custos em Excel e a convenção coletiva."],
+        ["obras", "É obra ou serviço de engenharia?", "Se sim, você vai anexar a planilha orçamentária em Excel (com e sem BDI, tabelas e datas-base)."]
+      ].map(([k, pergunta, dica]) => ({ pergunta, dica,
+        opcoes: [["sim", true], ["nao", false]].map(([rot, v]) => ({ nome: rot === "sim" ? "Sim" : "Não", ativo: s.an[k] === v, ...corBotao(s.an[k] === v),
+          escolher: () => this.setState({ an: { ...this.state.an, [k]: v, erro: "" } }) })) })),
+      anTemAnexos: this.anexosExigidos(s.an).length > 0,
+      anAnexos: this.anexosExigidos(s.an).map((t) => ({ nome: AN_ANEXOS[t].nome, dica: AN_ANEXOS[t].dica,
+        arquivo: s.an.anexos[t] ? "✓ " + s.an.anexos[t].name : "Escolher arquivo",
+        aceita: AN_ANEXOS[t].excel ? ".xlsx,.xlsm,.xls,.ods" : ".pdf,.docx",
+        onArquivo: (e) => this.escolherAnexo(t, e) })),
+      anDocs: AN_DOCS_REGIME[s.an.regime].map(([id, nome]) => ({ nome, ativo: s.an.doc === id, escolher: () => this.setState({ an: { ...this.state.an, doc: id, erro: "" } }), ...corBotao(s.an.doc === id) })),
       anOrigens: [["pdf", "Enviar PDF"], ["pncp", "Link do PNCP"]].map(([id, nome]) => ({ nome, ativo: s.an.origem === id, escolher: () => this.setState({ an: { ...this.state.an, origem: id, erro: "" } }), ...corBotao(s.an.origem === id) })),
       anOrigemPdf: s.an.origem === "pdf",
       anOrigemPncp: s.an.origem === "pncp",

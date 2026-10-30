@@ -29,9 +29,10 @@ export const DESCONTO_CONSULTORIA: Record<string, number> = {
 };
 
 /** Análise de documento pelo agente (parecer técnico opinativo). */
-export type DocAnalise = "edital" | "etp" | "tr" | "riscos" | "planilha";
+export type DocAnalise = "edital" | "etp" | "tr" | "riscos" | "planilha" | "plano_trabalho";
 export const DOC_ANALISE: Record<DocAnalise, string> = {
   edital: "Edital", etp: "Estudo Técnico Preliminar", tr: "Termo de Referência", riscos: "Matriz de Riscos", planilha: "Planilha de custos",
+  plano_trabalho: "Plano de trabalho",
 };
 export const ANALISE_AVULSA = 147;
 /** Desconto na avulsa: Básico 10%, Premium 15%; Pro paga 30% a menos a partir da 3ª análise da semana. */
