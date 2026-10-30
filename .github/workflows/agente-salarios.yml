@@ -1,0 +1,20 @@
+name: Agente — testar referência salarial
+on:
+  workflow_dispatch:
+    inputs:
+      postos: { description: 'JSON {"uf":"RJ","postos":[{"funcao","cbo","salario_base","jornada_semanal"}]}', required: true }
+permissions: { contents: read }
+jobs:
+  testar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env: { POSTOS: "${{ inputs.postos }}" }
+        run: |
+          printf '%s' "$POSTOS" > /tmp/p.json
+          python3 scripts/agente/salarios.py /tmp/p.json /tmp/s.json
+          python3 -c "
+          import json;d=json.load(open('/tmp/s.json'))
+          for p in d['postos']:
+              print('::notice::'+json.dumps({k:p.get(k) for k in ('funcao','situacao','desvio','media_ajustada','motivo','referencia','custo_total_sobre_custo_empresa_site')},ensure_ascii=False))
+          "
