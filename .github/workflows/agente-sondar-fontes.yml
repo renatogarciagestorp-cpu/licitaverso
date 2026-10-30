@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - env: { URLS: "${{ inputs.urls }}" }
-        run: python3 scripts/agente/sondar-fontes.py /tmp/f.json $URLS
+        run: if [ "${URLS:0:6}" = "LINKS:" ]; then python3 scripts/agente/listar-links.py /tmp/f.json ${URLS:6}; else python3 scripts/agente/sondar-fontes.py /tmp/f.json $URLS; fi
       - run: |
           git fetch -q origin agente-testes && git worktree add -q /tmp/t origin/agente-testes
           cp /tmp/f.json /tmp/t/testes/sonda-fontes.json && cd /tmp/t
