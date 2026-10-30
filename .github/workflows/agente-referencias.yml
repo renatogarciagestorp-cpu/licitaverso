@@ -1,0 +1,25 @@
+name: Agente — atualizar fontes técnicas de referência
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["agente/referencias/fontes.json", "agente/referencias/manuais/**", "scripts/agente/baixar-referencias.py"]
+permissions: { contents: write }
+concurrency: { group: agente-referencias, cancel-in-progress: false }
+jobs:
+  referencias:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get install -y -qq poppler-utils >/dev/null
+      - name: Baixar e indexar
+        run: |
+          python3 scripts/agente/baixar-referencias.py > /tmp/out.txt 2>&1 || true
+          echo "::notice title=Referências::$(tr '\n' ' ' < /tmp/out.txt | tail -c 1800)"
+      - name: Gravar
+        run: |
+          git config user.name "Licitacon — agente"; git config user.email "actions@users.noreply.github.com"
+          git add agente/referencias/textos agente/referencias/indice.json
+          git diff --cached --quiet && exit 0
+          git commit -q -m "Agente: fontes técnicas de referência atualizadas"
+          for i in 1 2 3; do git push -q && break; git pull -q --rebase; done
