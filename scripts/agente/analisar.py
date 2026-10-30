@@ -309,8 +309,9 @@ Regras obrigatórias:
     vulnerabilidade, que hoje não invalida o processo mas pode gerar questionamento, retrabalho ou risco no futuro, também deve ser informado
     (como parcial com gravidade "baixa", ou como dica). A decisão de corrigir ou manter é de quem recebe o parecer; omitir um ponto tira dele essa escolha.
 11. "gravidade" (opcional, por item): ajuste ao caso concreto quando a gravidade padrão do roteiro não refletir o risco real (alta, media ou baixa).
-12. BASE LEGAL NACIONAL: além da Lei 14.133/2021, a base tem o texto oficial das Leis 13.303/2016 (estatais), 13.019/2014 (parcerias com
-    OSC), 4.320/1964 (direito financeiro) e 10.192/2001 (reajuste), aplicáveis a todos os entes. Use-as quando pertinentes, indicando a norma
+12. BASE LEGAL NACIONAL: além da Lei 14.133/2021, a base tem o texto oficial vigente da Constituição Federal (norma "cf-1988"), da LC
+    101/2000 – LRF ("lc-101"), da LC 123/2006 ("lc-123"), da LINDB ("dl-4657") e das Leis 13.303/2016 ("lei-13303", estatais), 13.019/2014
+    ("lei-13019", parcerias com OSC), 4.320/1964 ("lei-4320") e 10.192/2001 ("lei-10192"), aplicáveis a todos os entes. Use-as quando pertinentes, indicando a norma
     no fundamento dos outros_apontamentos (campo "norma"). Se o documento for de empresa estatal, o regime é o da Lei 13.303/2016 e do seu
     regulamento interno (RILC), e não o da Lei 14.133 (salvo nas matérias em que esta se aplica); registre isso e adapte a análise.
 12-A. "outros_apontamentos": problemas relevantes encontrados no documento que NÃO se encaixam em nenhum item do roteiro (ex.: erros materiais,

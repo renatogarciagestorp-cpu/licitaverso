@@ -37,7 +37,8 @@ FONTE = "Arial"
 LOCAL = "Maricá (RJ)"
 
 NOME_CURTO = {"lei-14133": "Lei 14.133/2021", "lei-13303": "Lei 13.303/2016", "lei-13019": "Lei 13.019/2014",
-              "lei-10192": "Lei 10.192/2001", "lei-4320": "Lei 4.320/1964"}
+              "lei-10192": "Lei 10.192/2001", "lei-4320": "Lei 4.320/1964", "cf-1988": "Constituição Federal", "lc-101": "LC 101/2000 (LRF)",
+              "lc-123": "LC 123/2006", "dl-4657": "LINDB (Decreto-Lei 4.657/1942)"}
 REF_OPINATIVO = [
     "BRASIL. Supremo Tribunal Federal (Plenário). Mandado de Segurança nº 24.631/DF. Relator: Min. Joaquim Barbosa. Julgado em 9 ago. 2007. Diário da Justiça, Brasília, DF, 1 fev. 2008.",
     "BRASIL. Decreto-Lei nº 4.657, de 4 de setembro de 1942. Lei de Introdução às Normas do Direito Brasileiro. Redação dada pela Lei nº 13.655, de 25 de abril de 2018. Disponível em: https://www.planalto.gov.br/ccivil_03/decreto-lei/del4657compilado.htm. Acesso em: {acesso}.",
@@ -57,6 +58,14 @@ NATUREZA_OPINATIVA = [
 ]
 
 REF_NORMA = {
+    "cf-1988": ("BRASIL. [Constituição (1988)]. Constituição da República Federativa do Brasil de 1988. Brasília, DF: Presidência da República. "
+                "Disponível em: https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm. Acesso em: {acesso}.", "BRASIL, 1988"),
+    "lc-101": ("BRASIL. Lei Complementar nº 101, de 4 de maio de 2000. Lei de Responsabilidade Fiscal. Diário Oficial da União: seção 1, Brasília, DF, "
+               "5 maio 2000. Disponível em: https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp101.htm. Acesso em: {acesso}.", "BRASIL, 2000"),
+    "lc-123": ("BRASIL. Lei Complementar nº 123, de 14 de dezembro de 2006. Estatuto Nacional da Microempresa e da Empresa de Pequeno Porte. "
+               "Disponível em: https://www.planalto.gov.br/ccivil_03/leis/lcp/lcp123.htm. Acesso em: {acesso}.", "BRASIL, 2006"),
+    "dl-4657": ("BRASIL. Decreto-Lei nº 4.657, de 4 de setembro de 1942. Lei de Introdução às Normas do Direito Brasileiro. Disponível em: "
+                "https://www.planalto.gov.br/ccivil_03/decreto-lei/del4657compilado.htm. Acesso em: {acesso}.", "BRASIL, 1942"),
     "lei-14133": ("BRASIL. Lei nº 14.133, de 1º de abril de 2021. Lei de Licitações e Contratos Administrativos. "
                   "Diário Oficial da União: seção 1, Brasília, DF, 1 abr. 2021. Disponível em: "
                   "https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2021/lei/l14133.htm. Acesso em: {acesso}.", "BRASIL, 2021"),
