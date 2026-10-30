@@ -1,0 +1,18 @@
+name: Agente — sondar fontes normativas
+on:
+  workflow_dispatch:
+    inputs:
+      urls: { description: "URLs separadas por espaço", required: true }
+permissions: { contents: write }
+jobs:
+  sondar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - env: { URLS: "${{ inputs.urls }}" }
+        run: python3 scripts/agente/sondar-fontes.py /tmp/f.json $URLS
+      - run: |
+          git fetch -q origin agente-testes && git worktree add -q /tmp/t origin/agente-testes
+          cp /tmp/f.json /tmp/t/testes/sonda-fontes.json && cd /tmp/t
+          git config user.name "Licitacon — agente" && git config user.email "actions@users.noreply.github.com"
+          git checkout -q -B agente-testes && git add testes/sonda-fontes.json && git commit -q -m "sonda fontes" && git push -q origin agente-testes
