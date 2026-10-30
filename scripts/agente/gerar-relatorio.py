@@ -578,6 +578,17 @@ def gerar(analise, saida, paginas=None):
         if r.get("redacao_sugerida"):
             caixa(doc, "Redação sugerida", r["redacao_sugerida"], C["ok"], C["ok_f"])
 
+        refs_tec = {x["id"]: x for x in (analise.get("referencias_tecnicas") or [])}
+        usados = [refs_tec[i] for i in (r.get("referencias_ids") or []) if i in refs_tec]
+        if usados:
+            p = fmt(doc.add_paragraph(), depois=4)
+            run(p, "Referências técnicas. ", negrito=True, hexa=C["marinho"])
+            run(p, "Orientações oficiais pertinentes ao ponto" + (" (de alcance federal; para estados, municípios e DF, parâmetro de boa prática, "
+                   "salvo adoção pelo ente — art. 187 da Lei nº 14.133/2021)" if any(u.get("alcance") == "federal-parametro" for u in usados) else "") + ":")
+            for u in usados:
+                loc = (f", {u['secao']}" if u.get("secao") else "") + (f", p. {u['pagina']}" if u.get("pagina") else "")
+                trecho = re.sub(r"\s+", " ", u["texto"]).strip()
+                citacao_longa(doc, (trecho[:650] + "…") if len(trecho) > 650 else trecho, f"{u['titulo_fonte']}{loc}")
         if "jurisprudencia_ids" in r:
             por_id = {j.get("id"): j for j in acervo() + (analise.get("jurisprudencia_externa") or [])}
             js = [por_id[i] for i in r["jurisprudencia_ids"] if i in por_id]
@@ -659,6 +670,9 @@ def gerar(analise, saida, paginas=None):
     for nid in sorted(normas_usadas):
         if nid in REF_NORMA: refs.append(REF_NORMA[nid][0].format(acesso=acesso))
     refs += [r_.format(acesso=acesso) for r_ in REF_OPINATIVO]
+    for u in {x["fonte"]: x for x in (analise.get("referencias_tecnicas") or [])}.values():
+        if u.get("abnt"):
+            refs.append(u["abnt"].format(url=u.get("url", ""), acesso=acesso))
     if analise.get("referencia_documento"):
         refs.append(analise["referencia_documento"].format(acesso=acesso))
     for j in referencias_juris.values():
@@ -707,6 +721,7 @@ def gerar(analise, saida, paginas=None):
     ] + ([
         "Parte do documento estava digitalizada (imagem) e foi lida por reconhecimento óptico de caracteres (OCR); trechos de baixa qualidade de digitalização podem conter erros de leitura e devem ser conferidos no original.",
     ] if any(d.get("ocr") for d in analise.get("documentos", [])) else []) + [
+        "Fontes técnicas de referência (instruções normativas, cadernos de logística, manuais e cartilhas oficiais) são consultadas por busca de trechos pertinentes a cada item; normas e orientações federais infralegais são indicadas como parâmetro para estados, municípios e DF, salvo adoção pelo ente.",
         "Apontamentos adicionais são questões relevantes encontradas no documento que não constam do roteiro padrão; seus fundamentos legais também são conferidos na base oficial.",
         f"O código de verificação {verificador} identifica o conteúdo desta análise; qualquer alteração no resultado gera código diferente.",
     ], 1):

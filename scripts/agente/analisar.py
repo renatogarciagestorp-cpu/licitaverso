@@ -179,6 +179,86 @@ def candidatos(it, n=6):
     return _cand_cache[it["id"]]
 
 
+# ------------------------------------------------------------------ fontes técnicas de referência (busca de trechos)
+_REF = None
+_STOP = set("a o as os de da do das dos e em no na nos nas um uma por para com sem que se ao aos à às ou como mais ser sua seu suas seus "
+            "este esta isso pelo pela pelos pelas sobre entre quando deve deverá poderá caso não sim art lei nº".split())
+
+def _tok(t):
+    t = unicodedata.normalize("NFD", (t or "").lower())
+    t = "".join(c for c in t if unicodedata.category(c) != "Mn")
+    return [w for w in re.findall(r"[a-z0-9]{3,}", t) if w not in _STOP]
+
+def _carregar_ref():
+    global _REF
+    if _REF is None:
+        ind, cat = RAIZ / "agente/referencias/indice.json", RAIZ / "agente/referencias/fontes.json"
+        if not ind.exists():
+            _REF = ([], {}, {}, 0, {}); return _REF
+        trechos = json.loads(ind.read_text(encoding="utf-8"))["trechos"]
+        fontes = {f["id"]: f for f in json.loads(cat.read_text(encoding="utf-8"))["fontes"]}
+        import collections, math
+        df = collections.Counter()
+        for t in trechos:
+            t["_tf"] = collections.Counter(_tok(t["texto"] + " " + (t.get("secao") or "")))
+            t["_len"] = sum(t["_tf"].values()) or 1
+            df.update(t["_tf"].keys())
+        n = len(trechos)
+        idf = {w: math.log(1 + (n - c + 0.5) / (c + 0.5)) for w, c in df.items()}
+        media = sum(t["_len"] for t in trechos) / max(1, n)
+        _REF = (trechos, fontes, idf, media, {t["id"]: t for t in trechos})
+    return _REF
+
+def _bm25(q, t, idf, media, k1=1.4, b=0.75):
+    s = 0.0
+    for w in q:
+        f = t["_tf"].get(w)
+        if f:
+            s += idf.get(w, 0) * f * (k1 + 1) / (f + k1 * (1 - b + b * t["_len"] / media))
+    return s
+
+def selecionar_referencias(itens, texto_doc, limite=16):
+    trechos, fontes, idf, media, _ = _carregar_ref()
+    if not trechos:
+        return []
+    import collections
+    termos_doc = [w for w, _ in collections.Counter(w for w in _tok(texto_doc[:60000]) if len(w) >= 5).most_common(30)]
+    doc_norm = " ".join(_tok(texto_doc[:6000]))  # o objeto aparece no início do documento
+    permitidas = {fid for fid, f in fontes.items() if not f.get("exige") or re.search(f["exige"], doc_norm)}
+    trechos = [t for t in trechos if t["fonte"] in permitidas]
+    escolhidos = {}
+    for it in itens:
+        q = list(dict.fromkeys(_tok(" ".join([it["titulo"], it["verificar"], " ".join(it.get("temas") or [])]))))
+        melhores = sorted(((_bm25(q, t, idf, media) + 0.3 * _bm25(termos_doc, t, idf, media), t) for t in trechos), key=lambda x: -x[0])[:2]
+        for sc, t in melhores:
+            if sc >= 12 and (t["id"] not in escolhidos or escolhidos[t["id"]][0] < sc):
+                escolhidos[t["id"]] = (sc, t, it["id"])
+    lista = sorted(escolhidos.values(), key=lambda x: -x[0])
+    por_fonte, saida = collections.Counter(), []
+    for sc, t, iid in lista:
+        if por_fonte[t["fonte"]] >= 4:
+            continue
+        por_fonte[t["fonte"]] += 1
+        f = fontes.get(t["fonte"], {})
+        saida.append({"id": t["id"], "fonte": t["fonte"], "titulo_fonte": f.get("titulo", t["fonte"]), "alcance": f.get("alcance", ""),
+                      "secao": t.get("secao") or "", "pagina": t.get("pagina"), "texto": t["texto"][:1500], "item": iid,
+                      "abnt": f.get("abnt", ""), "url": f.get("url", "")})
+        if len(saida) >= limite:
+            break
+    return saida
+
+ALCANCE = {"nacional": "aplicação nacional", "federal-parametro": "norma/orientação federal — vincula a União; para estados, municípios e DF é parâmetro de boa prática, salvo adoção pelo ente (art. 187 da Lei 14.133/2021)"}
+
+def bloco_referencias(refs):
+    if not refs:
+        return ""
+    linhas = ["TRECHOS DE REFERÊNCIA TÉCNICA (fontes oficiais; use como fundamento complementar e cite em referencias_ids):"]
+    for r in refs:
+        loc = (f", {r['secao']}" if r["secao"] else "") + (f", p. {r['pagina']}" if r["pagina"] else "")
+        linhas.append(f"[{r['id']}] {r['titulo_fonte']}{loc} ({ALCANCE.get(r['alcance'], r['alcance'])}):\n{r['texto']}\n")
+    return "\n".join(linhas) + "\n\n"
+
+
 def bloco_roteiro(itens):
     linhas = []
     for it in itens:
@@ -219,7 +299,11 @@ Regras obrigatórias:
     vulnerabilidade, que hoje não invalida o processo mas pode gerar questionamento, retrabalho ou risco no futuro, também deve ser informado
     (como parcial com gravidade "baixa", ou como dica). A decisão de corrigir ou manter é de quem recebe o parecer; omitir um ponto tira dele essa escolha.
 11. "gravidade" (opcional, por item): ajuste ao caso concreto quando a gravidade padrão do roteiro não refletir o risco real (alta, media ou baixa).
-12. "outros_apontamentos": problemas relevantes encontrados no documento que NÃO se encaixam em nenhum item do roteiro (ex.: erros materiais,
+12. BASE LEGAL NACIONAL: além da Lei 14.133/2021, a base tem o texto oficial das Leis 13.303/2016 (estatais), 13.019/2014 (parcerias com
+    OSC), 4.320/1964 (direito financeiro) e 10.192/2001 (reajuste), aplicáveis a todos os entes. Use-as quando pertinentes, indicando a norma
+    no fundamento dos outros_apontamentos (campo "norma"). Se o documento for de empresa estatal, o regime é o da Lei 13.303/2016 e do seu
+    regulamento interno (RILC), e não o da Lei 14.133 (salvo nas matérias em que esta se aplica); registre isso e adapte a análise.
+12-A. "outros_apontamentos": problemas relevantes encontrados no documento que NÃO se encaixam em nenhum item do roteiro (ex.: erros materiais,
     cláusulas contraditórias, exigências sem previsão legal, prazos inconsistentes). Para cada um: titulo, constatacao, trecho literal, local,
     fundamento (lista de {art, disp} da Lei 14.133/2021, use disp como "caput", "I", "p1", "p1.I", "pu", "I.a"; deixe vazio se não houver dispositivo
     específico), porque, risco, correcao, gravidade. Não repita o que já está nos itens do roteiro.
@@ -240,11 +324,16 @@ Regras obrigatórias:
     do ALICE, da CGU/TCU). Avalie CADA indício no contexto: confirme quando a irregularidade de fato existe (registre-a no item do roteiro
     indicado ou em outros_apontamentos) ou descarte quando for falso positivo (por exemplo, texto que proíbe a prática, ou percentual que
     não se refere à exigência). Informe a decisão em "trilhas_avaliadas" ({id, confirmado, motivo}).
-16. ANÁLISE DE PREÇOS: quando os fatos do sistema trouxerem "INDÍCIO DE SOBREPREÇO", registre-o como irregularidade de gravidade ALTA
+16. FONTES TÉCNICAS: os trechos de referência (instruções normativas, cadernos de logística, manuais e cartilhas oficiais) servem
+    de fundamento complementar. Cite-os em "referencias_ids" quando embasarem a análise. Respeite o alcance indicado: instrução normativa,
+    caderno ou manual federal vincula a União; para estados, municípios e DF apresente como parâmetro ou boa prática ("conforme orientação
+    federal...", "recomenda-se, por analogia..."), salvo se o ente o tiver adotado (art. 187 da Lei 14.133/2021) ou se a regulamentação local
+    enviada assim dispuser. Nunca trate norma federal infralegal como obrigatória para município sem essa ressalva.
+17. ANÁLISE DE PREÇOS: quando os fatos do sistema trouxerem "INDÍCIO DE SOBREPREÇO", registre-o como irregularidade de gravidade ALTA
     no item de estimativa de valor do roteiro (ou em outros_apontamentos, se o documento não tiver item correspondente), com fundamento
     no art. 23 da Lei 14.133/2021, citando o desvio calculado; recomende revisar a pesquisa de preços. "Ponto de atenção" é gravidade média.
     Amostra insuficiente ou heterogênea não permite concluir: não aponte sobrepreço nesses casos.
-17. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
+18. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
     ementa_texto (síntese de 2–3 frases), resumo (um parágrafo de visão geral) e conclusao (um parágrafo)."""
 
 FERRAMENTA = {
@@ -264,15 +353,18 @@ FERRAMENTA = {
                 "porque": {"type": "string"}, "risco": {"type": "string"}, "correcao": {"type": "string"},
                 "redacao_sugerida": {"type": "string"}, "dica": {"type": "string"},
                 "gravidade": {"type": "string", "enum": ["alta", "media", "baixa"]},
+                "referencias_ids": {"type": "array", "items": {"type": "string"}},
                 "jurisprudencia_ids": {"type": "array", "items": {"type": "string"}}},
                 "required": ["item", "resultado"]}},
             "trilhas_avaliadas": {"type": "array", "items": {"type": "object", "properties": {
                 "id": {"type": "string"}, "confirmado": {"type": "boolean"}, "motivo": {"type": "string"}}, "required": ["id", "confirmado"]}},
             "outros_apontamentos": {"type": "array", "items": {"type": "object", "properties": {
                 "titulo": {"type": "string"}, "constatacao": {"type": "string"}, "trecho": {"type": "string"}, "local": {"type": "string"},
-                "fundamento": {"type": "array", "items": {"type": "object", "properties": {"art": {"type": "string"}, "disp": {"type": "string"}},
-                                                          "required": ["art"]}},
+                "fundamento": {"type": "array", "items": {"type": "object", "properties": {
+                    "norma": {"type": "string", "description": "lei-14133 (padrão), lei-13303, lei-13019, lei-4320, lei-10192 ou outra norma da base"},
+                    "art": {"type": "string"}, "disp": {"type": "string"}}, "required": ["art"]}},
                 "porque": {"type": "string"}, "risco": {"type": "string"}, "correcao": {"type": "string"},
+                "referencias_ids": {"type": "array", "items": {"type": "string"}},
                 "gravidade": {"type": "string", "enum": ["alta", "media", "baixa"]}},
                 "required": ["titulo", "constatacao", "gravidade"]}},
         },
@@ -394,7 +486,6 @@ def validar(dados, itens, texto):
 
 def validar_outros(lista, texto):
     norm_txt = _n(texto)
-    n = rel.norma("lei-14133")
     saida, avisos = [], []
     for o in lista or []:
         o = {k: v for k, v in o.items() if v not in (None, "", [])}
@@ -407,12 +498,14 @@ def validar_outros(lista, texto):
         for f in o.get("fundamento", []):
             art = re.sub(r"[^0-9A-Z-]", "", str(f.get("art", "")).upper())
             disp = str(f.get("disp") or "caput").strip()
+            nid = f.get("norma") or "lei-14133"
+            n = rel.norma(nid)
             a = next((x for x in (n or {}).get("artigos", []) if x["num"] == art), None)
             d = next((x for x in (a or {}).get("dispositivos", []) if x["id"] == disp), None) if a else None
             if d and not d.get("revogado") and not d.get("vetado"):
-                fund.append({"norma": "lei-14133", "art": art, "disp": disp})
+                fund.append({"norma": nid, "art": art, "disp": disp})
             else:
-                avisos.append(f"fundamento inexistente removido: art. {art}, {disp}")
+                avisos.append(f"fundamento inexistente removido: {nid} art. {art}, {disp}")
         o["fundamento"] = fund
         if o.get("gravidade") not in ("alta", "media", "baixa"): o["gravidade"] = "baixa"
         saida.append(o)
@@ -439,6 +532,7 @@ def main():
     compra = json.loads(pathlib.Path(a.compra).read_text(encoding="utf-8")) if a.compra else None
     fatos = fatos_pncp(compra)
     trilhas = rodar_trilhas(bruto)
+    referencias = selecionar_referencias(itens, bruto)
     precos = None
     if a.precos and pathlib.Path(a.precos).exists():
         precos = json.loads(pathlib.Path(a.precos).read_text(encoding="utf-8"))
@@ -469,6 +563,7 @@ def main():
                + ("INDÍCIOS DAS TRILHAS AUTOMÁTICAS (confirme ou descarte cada um):\n" + "\n".join(
                    f"- [{t['id']}] {t['nome']} (gravidade se confirmado: {t['gravidade']}; item: {t['item'] or 'outros_apontamentos'}; {t['fundamento']}). {t['nota']}\n"
                    + "\n".join(f"    · [página {o['pagina']}] …{o['trecho']}…" for o in t["ocorrencias"]) for t in trilhas) + "\n\n" if trilhas else "")
+               + bloco_referencias(referencias)
                + f"DOCUMENTO ({roteiro['documentos'].get(a.doc, a.doc)}; {npags or 'sem marcação de'} páginas):\n<documento>\n{texto}\n</documento>\n\n"
                "Verifique todos os itens do roteiro e registre o resultado chamando a ferramenta registrar_analise uma única vez, com todos os itens. Não responda em texto.")
     t0 = time.time()
@@ -486,8 +581,14 @@ def main():
         if not dados or "resultados" not in dados:
             sys.exit("O modelo não devolveu a análise (parada: " + str(resp.get("stop_reason")) + "): " + txt[:600])
     resultados, avisos = validar(dados, itens, bruto)
+    ids_ref = {r["id"] for r in referencias}
     outros, avisos2 = validar_outros(dados.get("outros_apontamentos"), bruto)
     avisos += avisos2
+    for x in resultados + outros:  # só referências que foram de fato oferecidas ao modelo
+        if x.get("referencias_ids"):
+            fora = [i for i in x["referencias_ids"] if i not in ids_ref]
+            if fora: avisos.append(f"referências inexistentes removidas: {fora}")
+            x["referencias_ids"] = [i for i in x["referencias_ids"] if i in ids_ref]
 
     analise = {
         "regime": "lei-14133",
@@ -501,6 +602,7 @@ def main():
         "resultados": resultados,
         "outros_apontamentos": outros,
         "precos": precos,
+        "referencias_tecnicas": [r for r in referencias if r["id"] in {i for x in resultados + outros for i in x.get("referencias_ids", [])}],
         "jurisprudencia_externa": [EXTERNOS[j] for j in sorted({j for r in resultados for j in r.get("jurisprudencia_ids", [])}) if j in EXTERNOS],
         "_execucao": {"modelo": resp.get("model"), "segundos": round(time.time() - t0), "uso": resp.get("usage"),
                       "custo_usd": custo(resp.get("usage", {})), "parada": resp.get("stop_reason"), "avisos": avisos, "fatos": fatos,
