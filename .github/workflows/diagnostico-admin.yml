@@ -1,0 +1,12 @@
+name: Diagnóstico — administradores (temporário)
+on: { workflow_dispatch: }
+jobs:
+  ver:
+    runs-on: ubuntu-latest
+    steps:
+      - env: { SUPABASE_ACCESS_TOKEN: "${{ secrets.SUPABASE_ACCESS_TOKEN }}" }
+        run: |
+          curl -fsS -X POST "https://api.supabase.com/v1/projects/umnhhztdqersjfrzqcea/database/query" \
+            -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" \
+            --data '{"query":"select count(*) filter (where admin) as admins, count(*) as contas, count(*) filter (where admin and email ilike '"'"'renatogarcia%'"'"') as dono_admin from public.perfis"}' \
+            | python3 -c "import json,sys; print('::notice::', json.load(sys.stdin))"
