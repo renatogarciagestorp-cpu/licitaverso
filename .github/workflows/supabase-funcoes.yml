@@ -20,6 +20,7 @@ on:
       - "supabase/sql/**"
       - "supabase/emails/**"
       - "scripts/configurar-emails.py"
+      - "scripts/configurar-login.py"
       - ".github/workflows/supabase-funcoes.yml"
       - "ETAPAS.md"
 
@@ -86,6 +87,13 @@ jobs:
           SMTP_USER: ${{ secrets.BREVO_SMTP_USER }}
           SMTP_PASS: ${{ secrets.BREVO_SMTP_KEY }}
         run: python3 scripts/configurar-emails.py
+
+      - name: Configurar login com Google (se os segredos existirem)
+        if: steps.chaves.outputs.ok == 'true'
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+        run: python3 scripts/configurar-login.py
 
       - name: Publicar funções (pagamentos e avisos)
         if: steps.chaves.outputs.ok == 'true'
