@@ -625,7 +625,7 @@
             <div style="display: flex; gap: 34px; margin-top: 42px; flex-wrap: wrap">
               <div>
                 <div style="font-size: 26px; font-weight: 800; letter-spacing: -0.02em">8 fontes</div>
-                <div style="font-size: 13px; color: #93A9B2; margin-top: 4px">oficiais em coleta: TCU, CGU, STF, STJ, TCE-RJ, TCM-RJ, TJ-RJ e PGE-RJ, além da legislação</div>
+                <div style="font-size: 13px; color: #93A9B2; margin-top: 4px">oficiais em coleta: TCU, CGU, STF, STJ, Tribunais de Contas de todos os estados e do DF, TCMs, Procuradorias-Gerais e Tribunais de Justiça estaduais, além da legislação</div>
               </div>
               <div>
                 <div style="font-size: 26px; font-weight: 800; letter-spacing: -0.02em">Dias úteis</div>
@@ -776,7 +776,7 @@
           </div>
           <div style="margin-top: 22px; border: 1px solid rgba(127,227,182,0.3); background: rgba(15,163,107,0.09); border-radius: 14px; padding: 16px 18px; display: flex; gap: 14px; align-items: flex-start">
             <span aria-hidden="true" style="color: #7FE3B6; font-weight: 800; flex: none">i</span>
-            <p style="margin: 0; font-size: 13.5px; line-height: 1.6; color: #CFDDE2; text-wrap: pretty">Fontes acompanhadas: <strong style="color: #fff">TCU, TCE-RJ, TCM-RJ, CGU, STF, STJ, PGE-RJ e TJ-RJ</strong>, além de normas federais e do Estado do RJ. Cada item traz o link da fonte oficial e a data em que foi conferido; o coletor automático roda nos dias úteis e a curadoria corrige o que for preciso.</p>
+            <p style="margin: 0; font-size: 13.5px; line-height: 1.6; color: #CFDDE2; text-wrap: pretty">Fontes acompanhadas: <strong style="color: #fff">TCU, CGU, STF, STJ, Tribunais de Contas dos 26 estados e do DF, TCMs, PGEs e TJs</strong>, além de normas federais e estaduais. Cada item traz o link da fonte oficial e a data em que foi conferido; o coletor automático roda nos dias úteis e a curadoria corrige o que for preciso.</p>
           </div>
         </div>
       </section>
@@ -2496,7 +2496,7 @@ const INSTITUCIONAL = {
         "Colaboração entre pares — setor público e setor privado no mesmo fórum, com identificação de perfil profissional.",
         "Ética e integridade na gestão pública — recusamos qualquer uso da plataforma para burlar controles ou fabricar fundamentação."
       ] },
-      { titulo: "Como a base é construída", texto: "A Biblioteca Jurídica é alimentada por coletas automáticas nos dias úteis em fontes oficiais (TCU, CGU, STF, STJ, TCE-RJ, TCM-RJ, TJ-RJ e PGE-RJ, além da legislação), usando dados abertos e as páginas públicas de cada órgão, com respeito aos termos de uso de cada portal e à Lei de Acesso à Informação (Lei nº 12.527/2011). Os documentos são organizados automaticamente por tema, e cada item traz o link para o inteiro teor na fonte oficial.", itens: [] },
+      { titulo: "Como a base é construída", texto: "A Biblioteca Jurídica é alimentada por coletas automáticas nos dias úteis em fontes oficiais (TCU, CGU, STF, STJ, Tribunais de Contas de todos os estados e do DF, TCMs, Procuradorias-Gerais e Tribunais de Justiça estaduais, além da legislação), usando dados abertos e as páginas públicas de cada órgão, com respeito aos termos de uso de cada portal e à Lei de Acesso à Informação (Lei nº 12.527/2011). Os documentos são organizados automaticamente por tema, e cada item traz o link para o inteiro teor na fonte oficial.", itens: [] },
       { titulo: "Limites do que oferecemos", texto: "O Licitacon é uma plataforma de informação, comunidade, capacitação e consultoria técnica. Não somos escritório de advocacia e não prestamos consultoria jurídica nem emitimos parecer jurídico. Conteúdo da Biblioteca, respostas do fórum e análises geradas por inteligência artificial são material de apoio à decisão — a responsabilidade pelo ato administrativo ou pela decisão empresarial permanece integralmente com o profissional e o órgão ou empresa a que ele se vincula.", itens: [] },
       { titulo: "Quem somos", texto: "O Licitacon é mantido por Renato Garcia, graduado em Gestão Pública (FGV EBAPE) e pós-graduado em Licitações e Contratações Públicas e em Direito Administrativo e Anticorrupção. O atendimento é 100% digital, pelo Fale Conosco e pelo assistente de dúvidas do site. Renato Garcia é também o encarregado de proteção de dados. Endereço: Estrada Henfil, Maricá, Rio de Janeiro.", itens: [] }
     ]
@@ -2656,7 +2656,7 @@ const SLIDES = [
     tipo: "funcionalidade", badge: "Funcionalidade", meta: "Biblioteca Jurídica",
     titulo: "Busca com filtros combináveis, do texto oficial ao tema",
     texto: "Órgão, estado, tipo de norma, tema e ano combinados na mesma consulta, com destaque do termo na ementa e link para a fonte oficial. Coleta automática em 8 fontes oficiais e na legislação. Gratuito para quem tem cadastro.",
-    chips: ["TCU e CGU", "STF e STJ", "TCE-RJ, TCM-RJ, TJ-RJ e PGE-RJ"],
+    chips: ["TCU e CGU", "STF e STJ", "TCEs, TCDF e TCMs", "PGEs e TJs"],
     cta: "Pesquisar jurisprudência", destino: "biblioteca",
     painelTitulo: "Coleta automática", numero: "Dias úteis", numeroLabel: "coleta automática, com trilha de auditoria da origem",
     linhas: [
@@ -4267,14 +4267,14 @@ class Component extends DCLogic {
 
       // home
       ferramentas: [
-        { icon: "⌕", tag: "Núcleo da plataforma", tagColor: "#0A7A50", titulo: "Biblioteca Jurídica", desc: "Busca com filtros por órgão, estado, tipo de norma, tema e ano. Coleta automática em TCU, CGU, STF, STJ, TCE-RJ, TCM-RJ, TJ-RJ e PGE-RJ, além da legislação.", cta: "Pesquisar agora", go: this.nav("biblioteca") },
+        { icon: "⌕", tag: "Núcleo da plataforma", tagColor: "#0A7A50", titulo: "Biblioteca Jurídica", desc: "Busca com filtros por órgão, estado, tipo de norma, tema e ano. Coleta automática em TCU, CGU, STF, STJ, Tribunais de Contas de todos os estados e do DF, TCMs, Procuradorias-Gerais e Tribunais de Justiça estaduais, além da legislação.", cta: "Pesquisar agora", go: this.nav("biblioteca") },
         { icon: "◍", tag: "Comunidade", tagColor: "#0F6B7E", titulo: "Fórum por tema", desc: "Perguntas organizadas por tema, com resposta oficial do especialista e escolha da melhor resposta. Setor público e privado conversando no mesmo lugar.", cta: "Ver tópicos", go: this.nav("forum") },
         { icon: "▤", tag: "Capacitação", tagColor: "#0F6B7E", titulo: "Vitrine de cursos", desc: "Cursos com curadoria do Licitacon e desconto para assinantes — até 50% no plano Pro.", cta: "Explorar cursos", go: this.nav("cursos") },
         { icon: "◈", tag: "Especialistas", tagColor: "#0F6B7E", titulo: "Consultoria técnica", desc: "Por escrito, em vídeo gravado ou reunião ao vivo, com desconto de assinante — e 1 consultoria por escrito por mês incluída no Pro.", cta: "Ver especialistas", go: this.nav("consultoria") },
         { icon: "✦", tag: "Novo", tagColor: "#0A7A50", titulo: "Análise de documentos com IA", desc: "Envie o edital, o ETP ou o TR e receba um parecer técnico em PDF e Word, com o texto legal, a jurisprudência e a redação sugerida.", cta: "Analisar documento", go: this.nav("agente") }
       ],
       diferenciais: [
-        { titulo: "Base que se atualiza sozinha", desc: "Coleta automática nos dias úteis no TCU, CGU, STF, STJ, TCE-RJ, TCM-RJ, TJ-RJ e PGE-RJ, além da legislação, com o link da fonte em cada item." },
+        { titulo: "Base que se atualiza sozinha", desc: "Coleta automática nos dias úteis no TCU, CGU, STF, STJ, Tribunais de Contas de todos os estados e do DF, TCMs, Procuradorias-Gerais e Tribunais de Justiça estaduais, além da legislação, com o link da fonte em cada item." },
         { titulo: "Classificação por tema, não por data", desc: "Jurisprudência e perguntas do fórum organizadas pelo vocabulário de licitações: reajuste vai para reajuste, adesão a ata vai para adesão a ata." },
         { titulo: "Fonte oficial em cada item", desc: "Toda decisão traz o link para o inteiro teor no portal de origem, para você conferir antes de citar." },
         { titulo: "Os dois lados do balcão", desc: "Pregoeiros, agentes de contratação e controle interno lado a lado com fornecedores e consultores." },
