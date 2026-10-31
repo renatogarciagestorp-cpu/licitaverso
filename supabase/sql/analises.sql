@@ -126,6 +126,27 @@ begin
             p_metodo, p_valor, coalesce(p_parcelas, 1), p_mp_pagamento);
     return 'assinatura_ativada';
 
+  elsif tipo = 'renovacao' then
+    -- cobrança recorrente do Mercado Pago: cada pagamento aprovado abre um novo período do plano
+    select * into c from public.renovacoes where id = ref_id for update;
+    if not found then return 'renovacao_inexistente'; end if;
+    if p_valor + 0.01 < c.valor then return 'valor_divergente'; end if;
+    select greatest(now(), coalesce(max(x.fim), now())) into inicio_novo
+      from public.assinaturas x
+      where x.usuario_id = c.usuario_id and x.status = 'ativa' and x.plano = c.plano and x.fim > now();
+    insert into public.assinaturas (usuario_id, plano, ciclo, status, valor, parcelas, metodo, inicio, fim, mp_pagamento, origem, observacao)
+    values (c.usuario_id, c.plano, c.ciclo, 'ativa', p_valor, 1, coalesce(nullif(p_metodo, ''), 'cartao'), inicio_novo,
+            inicio_novo + case c.ciclo when 'anual' then interval '12 months' else interval '1 month' end,
+            p_mp_pagamento, 'checkout', 'renovação automática');
+    update public.renovacoes set status = 'ativa', atualizado_em = now(),
+      proxima_cobranca = inicio_novo + case c.ciclo when 'anual' then interval '12 months' else interval '1 month' end
+      where id = c.id and status <> 'cancelada';
+    insert into public.pagamentos (usuario_id, referencia, descricao, metodo, valor, parcelas, mp_pagamento)
+    values (c.usuario_id, p_referencia,
+            'Plano ' || coalesce(nomes ->> c.plano, c.plano) || ' · renovação automática · ' || case c.ciclo when 'anual' then '12 meses' else '1 mês' end,
+            p_metodo, p_valor, 1, p_mp_pagamento);
+    return 'renovacao_paga';
+
   elsif tipo = 'consultoria' then
     select * into c from public.consultorias where id = ref_id for update;
     if not found then return 'consultoria_inexistente'; end if;

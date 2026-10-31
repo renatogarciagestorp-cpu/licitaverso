@@ -1548,7 +1548,7 @@
             </ul>
           </div>
 
-          <p style="font-size: 13px; color: #7A8B91; margin: 22px 0 0; max-width: 860px; line-height: 1.6">Sem fidelidade e sem renovação automática: você paga só o período escolhido. Para continuar ou mudar de plano, basta contratar de novo — o tempo restante do mesmo plano é somado.</p>
+          <p style="font-size: 13px; color: #7A8B91; margin: 22px 0 0; max-width: 860px; line-height: 1.6">Sem fidelidade. A renovação automática é opcional, só no cartão de crédito; nos demais meios você paga só o período escolhido. Para continuar ou mudar de plano, basta contratar de novo — o tempo restante do mesmo plano é somado.</p>
         </section>
       </section>
     </sc-if>
@@ -1631,6 +1631,9 @@
                 <button sc-camel-on-click="{{ goPlanos }}" style="background: #fff; border: 1px solid #DDE4E3; color: #3D5058; border-radius: 10px; padding: 12px 17px; font-size: 13.5px; font-weight: 700; cursor: pointer" style-hover="border-color: #0FA36B">Renovar ou mudar de plano</button>
                 <button sc-camel-on-click="{{ cancelar }}" style="background: #fff; border: 1px solid #E7C9D2; color: #8A1230; border-radius: 10px; padding: 12px 17px; font-size: 13.5px; font-weight: 700; cursor: pointer" style-hover="background: #FDE8ED">Cancelar assinatura</button>
               </div>
+              <sc-if value="{{ temRenovacao }}" hint-placeholder-val="{{ false }}">
+                <button sc-camel-on-click="{{ cancelarRenovacao }}" style="margin-top: 12px; background: #fff; border: 1px solid #E7C9D2; color: #8A1230; border-radius: 10px; padding: 10px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer">Cancelar renovação automática</button>
+              </sc-if>
               <p style="margin: 14px 0 0; font-size: 13px; color: #7A8B91; line-height: 1.6">{{ cancelamentoMsg }}</p>
             </section>
 
@@ -2028,6 +2031,23 @@
                 </sc-for>
               </ul>
             </div>
+
+            <sc-if value="{{ mostrarCartaoOpcoes }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top: 16px; border: 1px solid #BFD3D0; border-radius: 14px; padding: 16px 18px; background: #F4FAF8; display: grid; gap: 12px">
+                <sc-if value="{{ mostrarRenovacao }}" hint-placeholder-val="{{ false }}">
+                  <div>
+                    <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 8px">Deseja renovação automática?</span>
+                    <div role="group" aria-label="Renovação automática" style="display: flex; gap: 8px; flex-wrap: wrap">
+                      <sc-for list="{{ renovacaoOpcoes }}" as="r" hint-placeholder-count="2">
+                        <button sc-camel-on-click="{{ r.escolher }}" aria-pressed="{{ r.ativo }}" style="border-radius: 999px; padding: 8px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ r.borda }}; background: {{ r.fundo }}; color: {{ r.cor }}">{{ r.nome }}</button>
+                      </sc-for>
+                    </div>
+                    <p style="margin: 8px 0 0; font-size: 13px; line-height: 1.55; color: #3D5058">{{ renovacaoTexto }}</p>
+                  </div>
+                </sc-if>
+                <p style="margin: 0; font-size: 13px; line-height: 1.55; color: #3D5058"><strong>🔒 </strong>{{ cartaoSalvoTexto }}</p>
+              </div>
+            </sc-if>
           </div>
 
           <div style="background: #F6F8F7; border-left: 1px solid #E3E9E8; padding: 26px 26px 28px; display: flex; flex-direction: column">
@@ -2491,6 +2511,7 @@ const INSTITUCIONAL = {
       { titulo: "4. Planos, cobrança e cancelamento", texto: "A Biblioteca Jurídica tem camada de acesso gratuito permanente. Os planos pagos são cobrados por meio do Mercado Pago Ltda., nosso processador de pagamentos, em ambiente PCI-DSS: o Licitacon não recebe nem armazena o número completo do seu cartão. As formas de pagamento e o próprio regime de renovação variam conforme quem contrata — pessoa física, empresa privada ou órgão da administração pública:", itens: [
         "Duas formas de contratar: por 1 mês, sem compromisso de renovação; ou por 12 meses, com mensalidade menor e acesso contínuo durante todo o período, à vista ou em até 12x sem juros — o total é o mesmo nas duas hipóteses de parcelamento.",
         "Pessoa física (CPF): Pix, cartão de crédito, débito ou saldo Mercado Pago e boleto. No ciclo de 12 meses parcelado em Pix ou boleto, cada parcela é uma cobrança mensal do mesmo valor, sem juros.",
+        "Renovação automática (opcional, só no cartão de crédito): com a autorização do assinante no Mercado Pago, o plano é cobrado no início de cada novo ciclo, pelo valor vigente do ciclo, até o cancelamento, que pode ser feito a qualquer momento na Área do Assinante e vale para as cobranças seguintes. O cartão fica guardado no Mercado Pago, não no Licitacon.",
         "Empresa privada (CNPJ): Pix, cartão corporativo ou boleto pelo Mercado Pago, sem renovação automática; para vários acessos, proposta por e-mail.",
         "Órgão público: não há cobrança recorrente automática em cartão. A contratação exige empenho prévio (art. 60 da Lei nº 4.320/1964), cabendo ao órgão o enquadramento e a instrução do processo (por exemplo, dispensa por valor, art. 75, II, da Lei nº 14.133/2021), com base na proposta enviada pelo Licitacon. A continuidade depende de novo pedido do órgão.",
         "Upgrade vale imediatamente, com cobrança proporcional ao ciclo em curso.",
@@ -2751,10 +2772,10 @@ const CONS_ANEXO_TIPOS = ".pdf,.doc,.docx,.xls,.xlsx,.odt,.ods,.csv,.txt,.png,.j
 const COMPRADORES = {
   fisica: {
     label: "Pessoa física", sub: "CPF · profissional autônomo",
-    resumo: "Assinatura pessoal paga pelo Mercado Pago, sem renovação automática: você escolhe 1 mês ou 12 meses e paga só o período escolhido.",
+    resumo: "Assinatura pessoal paga pelo Mercado Pago: você escolhe 1 mês ou 12 meses. No cartão de crédito, pode ativar a renovação automática; nos demais meios, paga só o período escolhido.",
     regrasTitulo: "Regras da cobrança para pessoa física",
     regras: [
-      "Sem renovação automática: avisamos antes do fim do período e você decide se continua.",
+      "Renovação automática opcional, só no cartão de crédito, e cancelável a qualquer momento na Área do Assinante. Sem ela, avisamos antes do fim do período e você decide se continua.",
       "Direito de arrependimento de 7 dias na primeira contratação, com reembolso integral (art. 49 do Código de Defesa do Consumidor).",
       "Comprovante do Mercado Pago no seu e-mail e histórico de pagamentos na Área do Assinante.",
       "Reajuste anual do preço limitado à variação do IPCA, avisado com 30 dias de antecedência."
@@ -2931,7 +2952,7 @@ class Component extends DCLogic {
     contaTab: "perfil",
     institTab: "sobre",
     comprador: "fisica",
-    metodo: "pix",
+    metodo: "pix", renovacaoAuto: false, renovacoes: [],
     checkoutPlano: null,
     pagamentoFeito: false,
     pagamentoMsg: "",
@@ -3105,7 +3126,7 @@ class Component extends DCLogic {
   async carregarDados() {
     const sb = this.sb, u = this.state.usuario;
     if (!sb || !u) return;
-    const [perfil, plano, assin, pags, cons, acessos, seg, bib, cupom, anal, cota, normas] = await Promise.all([
+    const [perfil, plano, assin, pags, cons, acessos, seg, bib, cupom, anal, cota, normas, renov] = await Promise.all([
       sb.from("perfis").select("*").eq("id", u.id).maybeSingle(),
       sb.rpc("meu_plano"),
       sb.from("assinaturas").select("*").order("criado_em", { ascending: false }).limit(50),
@@ -3117,7 +3138,8 @@ class Component extends DCLogic {
       sb.rpc("meu_cupom_curso"),
       sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg, documentos").order("criado_em", { ascending: false }).limit(30),
       sb.rpc("minha_cota_analises"),
-      sb.from("normas_usuario").select("id, nome, arquivo, tamanho, criado_em").order("criado_em", { ascending: false }).limit(30)
+      sb.from("normas_usuario").select("id, nome, arquivo, tamanho, criado_em").order("criado_em", { ascending: false }).limit(30),
+      sb.from("renovacoes").select("id, plano, ciclo, valor, status, proxima_cobranca, criado_em").order("criado_em", { ascending: false }).limit(10)
     ]);
     const p = perfil.data || {};
     const planoVig = plano.data || null;
@@ -3139,7 +3161,8 @@ class Component extends DCLogic {
       favBib: (bib.data || []).filter((r) => r.dados && (r.dados.marcas || []).includes("fav")),
       analises: (anal && !anal.error && anal.data) || [],
       cotaAnalise: (cota && !cota.error && cota.data) || null,
-      normasUsuario: (normas && !normas.error && normas.data) || []
+      normasUsuario: (normas && !normas.error && normas.data) || [],
+      renovacoes: (renov && !renov.error && renov.data) || []
     });
     this.vigiarAnalises();
     if (this.state.page === "forum") this.carregarForum();
@@ -3182,9 +3205,12 @@ class Component extends DCLogic {
         return;
       }
       const st = data && data.status;
-      if (["ativa", "recebida", "em_andamento", "entregue", "na_fila", "processando", "concluida"].includes(st)) {
+      if (["ativa", "recebida", "em_andamento", "entregue", "na_fila", "processando", "concluida", "aguardando_documentos"].includes(st)) {
         await this.carregarDados();
+        if (st === "aguardando_documentos") this.irParaEnvio();
         this.aviso(ref.startsWith("assinatura:") ? "✓ Pagamento confirmado. Seu plano já está ativo."
+          : ref.startsWith("renovacao:") ? "✓ Renovação automática ativada. O plano é liberado assim que o Mercado Pago confirmar a primeira cobrança."
+          : st === "aguardando_documentos" ? "✓ Pagamento confirmado. Agora envie os documentos para a análise."
           : ref.startsWith("analise:") ? "✓ Pagamento confirmado. A análise entrou na fila; você recebe um e-mail quando o parecer ficar pronto."
           : "✓ Pagamento confirmado. Em até 1 dia útil o especialista confirma o escopo por e-mail.");
         return;
@@ -3622,6 +3648,20 @@ class Component extends DCLogic {
   }
 
   // etapa 2: envio dos documentos
+  renovacaoAtiva() {
+    return (this.state.renovacoes || []).find((r) => r.status === "ativa" || r.status === "pausada") || null;
+  }
+
+  async cancelarRenovacao() {
+    const r = this.renovacaoAtiva();
+    if (!this.sb || !r) return;
+    if (!window.confirm("Cancelar a renovação automática? O acesso continua até o fim do período já pago.")) return;
+    const { error } = await this.sb.functions.invoke("mp-checkout", { body: { acao: "cancelar_renovacao", id: r.id } });
+    if (error) { this.aviso(await erroDaFuncao(error), "erro"); return; }
+    this.aviso("Renovação automática cancelada. Nenhuma nova cobrança será feita.");
+    this.carregarDados();
+  }
+
   async entrarGoogle() {
     if (!this.sb) return;
     const volta = this.state.volta && PAGINAS.includes(this.state.volta) ? this.state.volta : "conta";
@@ -3787,7 +3827,8 @@ class Component extends DCLogic {
     const { data, error } = await this.sb.functions.invoke("mp-checkout", {
       body: {
         acao: "criar", tipo: "plano", plano: PLANO_CHAVE[pl.nome], ciclo: s.anual ? "anual" : "mensal",
-        parcelas: s.anual ? s.parcelas : 1, contratante: s.comprador, metodo: metodo.id, retorno: baseSite() + "index.html"
+        parcelas: s.anual ? s.parcelas : 1, contratante: s.comprador, metodo: metodo.id, retorno: baseSite() + "index.html",
+        renovacao_auto: metodo.id === "cartao" && !!s.renovacaoAuto
       }
     });
     if (error || !data || !data.url) {
@@ -4625,7 +4666,7 @@ class Component extends DCLogic {
           ["Válido até", dataBR(vig.fim) + " (" + dias + (dias === 1 ? " dia restante)" : " dias restantes)")],
           ["Valor pago", vig.plano === "teste" ? "Grátis" : brl(Number(vig.valor || 0)) + (vig.parcelas > 1 ? " em " + vig.parcelas + "x" : "")],
           ["Forma de pagamento", METODO_NOME[vig.metodo] || vig.metodo || "—"],
-          ["Renovação", "Manual: avisamos por e-mail antes do fim do período"]
+          ["Renovação", (() => { const r = this.renovacaoAtiva(); return r ? "Automática no cartão (Mercado Pago)" + (r.status === "pausada" ? " · pausada" : "") + (r.proxima_cobranca ? " · próxima cobrança em " + dataBR(r.proxima_cobranca) : "") : "Manual: avisamos por e-mail antes do fim do período"; })()]
         ];
         if (vig.plano === "pro" && cota) linhas.push(["Agente IA nesta semana", Math.max(0, Number(cota.limite) - Number(cota.usadas)) + " de " + cota.limite + " análises disponíveis (renova na segunda-feira)"]);
         else if (vig.plano !== "teste") linhas.push(["Agente IA", brlSimples(this.precoAnalise()) + " por análise, com o desconto do plano"]);
@@ -4681,9 +4722,13 @@ class Component extends DCLogic {
       })),
       temPendentes: pendentes.length > 0,
       cancelar: () => this.setState({ cancelado: true }),
-      cancelamentoMsg: s.cancelado
-        ? (vig ? "Não há cobrança automática no Licitacon: o acesso " + PLANO_NOME[vig.plano] + " segue até " + dataBR(vig.fim) + " e nada mais é cobrado depois disso." : "Você não tem plano ativo — não há nada a cancelar.")
-        : "Nenhum plano renova sozinho. Para continuar depois do fim do período, basta contratar de novo — o tempo restante é somado.",
+      temRenovacao: !!this.renovacaoAtiva(),
+      cancelarRenovacao: () => this.cancelarRenovacao(),
+      cancelamentoMsg: this.renovacaoAtiva()
+        ? "Renovação automática ativa no cartão de crédito (Mercado Pago). Para parar as próximas cobranças, use \"Cancelar renovação automática\"; o acesso segue até o fim do período pago."
+        : s.cancelado
+          ? (vig ? "Não há cobrança automática ativa: o acesso " + PLANO_NOME[vig.plano] + " segue até " + dataBR(vig.fim) + " e nada mais é cobrado depois disso." : "Você não tem plano ativo — não há nada a cancelar.")
+          : "Sem renovação automática ativa. Para continuar depois do fim do período, basta contratar de novo — o tempo restante é somado. No cartão de crédito, você pode ativar a renovação automática.",
 
       favoritosList: s.sb
         ? s.favBib.map((r) => ({
@@ -4755,8 +4800,18 @@ class Component extends DCLogic {
           radio: ativo ? "#0FA36B" : "#C9D6D3", radioFill: ativo ? "#0FA36B" : "transparent" };
       }),
       metodoAtual: metodoSel,
+      mostrarCartaoOpcoes: !!s.checkoutPlano && s.checkoutPlano.base > 0 && (metodoSel.id === "cartao" || metodoSel.id === "debito"),
+      mostrarRenovacao: !!s.checkoutPlano && s.checkoutPlano.base > 0 && metodoSel.id === "cartao",
+      renovacaoOpcoes: [[true, "Sim, renovar automaticamente"], [false, "Não, pagar só este período"]].map(([v, nome]) => ({ nome, ativo: !!s.renovacaoAuto === v,
+        escolher: () => this.setState({ renovacaoAuto: v, parcelas: v ? 1 : s.parcelas, pagamentoFeito: false }), ...corBotao(!!s.renovacaoAuto === v) })),
+      renovacaoTexto: s.renovacaoAuto
+        ? "O Mercado Pago cobra " + (anual ? "o valor anual a cada 12 meses (à vista, sem parcelamento)" : "a mensalidade todo mês") + " no seu cartão de crédito, até você cancelar. Você cancela quando quiser na Área do Assinante, e o acesso segue até o fim do período pago. Entre no Mercado Pago com o mesmo e-mail da sua conta do Licitacon."
+        : "Sem renovação automática: avisamos por e-mail antes do fim do período e você decide se continua.",
+      cartaoSalvoTexto: metodoSel.id === "debito"
+        ? "Salvar o cartão: se você pagar logado na sua conta do Mercado Pago, pode salvar o cartão lá para as próximas compras. O Licitacon não guarda dados de cartão. A renovação automática não está disponível no débito: avisamos por e-mail antes do fim do período."
+        : "Salvar o cartão: se você pagar logado na sua conta do Mercado Pago, pode salvar o cartão lá para as próximas compras. O Licitacon não guarda dados de cartão (o pagamento é processado pelo Mercado Pago, em ambiente PCI-DSS).",
       checkoutAberto: !!s.checkoutPlano,
-      mostrarParcelas: !!s.checkoutPlano && anual && s.checkoutPlano.base > 0 && parcelaCartao,
+      mostrarParcelas: !!s.checkoutPlano && anual && s.checkoutPlano.base > 0 && parcelaCartao && !(s.renovacaoAuto && metodoSel.id === "cartao"),
       opcoesParcelas: (s.checkoutPlano && s.checkoutPlano.base > 0 ? [1, 3, 6, 12] : []).map((n) => {
         const ativo = s.parcelas === n;
         const total = anualTotal(s.checkoutPlano.base);
@@ -4768,26 +4823,26 @@ class Component extends DCLogic {
         };
       }),
       parcelasObs: "Parcelamento no cartão de crédito, em uma única autorização. O Mercado Pago mostra as condições finais antes de você confirmar.",
-      checkout: s.checkoutPlano ? {
-        titulo: "Plano " + s.checkoutPlano.nome + " · " + (s.checkoutPlano.base === 0 ? "teste de 7 dias" : (anual ? "12 meses" : "1 mês avulso")),
+      checkout: s.checkoutPlano ? (() => { const auto = !!s.renovacaoAuto && metodoSel.id === "cartao" && s.checkoutPlano.base > 0; return {
+        titulo: "Plano " + s.checkoutPlano.nome + " · " + (s.checkoutPlano.base === 0 ? "teste de 7 dias" : (auto ? (anual ? "anual com renovação automática" : "mensal com renovação automática") : (anual ? "12 meses" : "1 mês avulso"))),
         total: s.checkoutPlano.base === 0 ? "R$ 0,00" : brl(anual ? anualTotal(s.checkoutPlano.base) : avulso(s.checkoutPlano.base)),
         botao: s.pagando ? "Aguarde…" : (s.checkoutPlano.base === 0 ? "Ativar teste grátis" : (metodoSel.checkout ? "Pagar com Mercado Pago" : "Solicitar cobrança")),
         obs: s.checkoutPlano.base === 0
           ? "Sem cartão e sem cobrança. O teste pode ser usado uma vez por conta."
           : metodoSel.checkout
-            ? "Você será levado ao ambiente seguro do Mercado Pago para concluir. " + (anual ? "Acesso garantido por 12 meses; ao fim do período avisamos antes de qualquer nova cobrança." : "Nenhuma cobrança automática depois deste pagamento.")
+            ? "Você será levado ao ambiente seguro do Mercado Pago para concluir. " + (auto ? "Renovação automática: nova cobrança no início de cada " + (anual ? "ano" : "mês") + ", até você cancelar na Área do Assinante." : (anual ? "Acesso garantido por 12 meses; ao fim do período avisamos antes de qualquer nova cobrança." : "Nenhuma cobrança automática depois deste pagamento."))
             : "Esta forma de pagamento não passa pelo checkout: nossa equipe envia a proposta e os documentos para o seu setor responsável.",
         linhas: [
           { label: "Plano", valor: s.checkoutPlano.nome },
-          { label: "Ciclo", valor: s.checkoutPlano.base === 0 ? "Teste de 7 dias" : (anual ? "12 meses" : "1 mês avulso") },
+          { label: "Ciclo", valor: s.checkoutPlano.base === 0 ? "Teste de 7 dias" : (auto ? (anual ? "Anual, renovação automática" : "Mensal, renovação automática") : (anual ? "12 meses" : "1 mês avulso")) },
           { label: anual ? "Mensalidade no anual" : "Mensalidade avulsa", valor: s.checkoutPlano.base === 0 ? "—" : (anual ? brl(mesAnual(s.checkoutPlano.base)) + " × 12" : brl(s.checkoutPlano.base)) },
           { label: anual ? "Sua economia" : "Economia no anual", valor: s.checkoutPlano.base === 0 ? "—" : brl(economia(s.checkoutPlano.base)) },
-          { label: "Pagamento", valor: s.checkoutPlano.base === 0 ? "Sem cobrança" : (anual ? (parcelaCartao && s.parcelas > 1 ? "até " + s.parcelas + "x de " + brl(anualTotal(s.checkoutPlano.base) / s.parcelas) : "À vista") : "Cobrança única") },
+          { label: "Pagamento", valor: s.checkoutPlano.base === 0 ? "Sem cobrança" : (auto ? (anual ? "Anual recorrente, à vista" : "Mensal recorrente") : (anual ? (parcelaCartao && s.parcelas > 1 ? "até " + s.parcelas + "x de " + brl(anualTotal(s.checkoutPlano.base) / s.parcelas) : "À vista") : "Cobrança única")) },
           { label: "Contratante", valor: COMPRADORES[s.comprador].label },
           { label: "Forma de pagamento", valor: metodoSel.nome },
           { label: "Documento fiscal", valor: s.comprador === "fisica" ? "Recibo no CPF" : "Nota no CNPJ" }
         ]
-      } : { linhas: [] },
+      }; })() : { linhas: [] },
       fecharCheckout: () => this.setState({ checkoutPlano: null, pagamentoFeito: false, pagamentoErro: "", pagando: false }),
       pagar: () => this.pagar(),
       pagamentoStatus: s.pagamentoMsg,

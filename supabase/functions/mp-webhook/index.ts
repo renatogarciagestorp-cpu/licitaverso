@@ -3,7 +3,7 @@
 // a autenticidade vem da assinatura x-signature (MP_WEBHOOK_SECRET) e, sobretudo,
 // de a função sempre buscar o pagamento direto na API do Mercado Pago antes de agir.
 
-import { aplicarPagamento, clienteServico, CORS, mp, resposta } from "../_shared/comum.ts";
+import { aplicarPagamento, clienteServico, conferirRenovacao, CORS, mp, resposta } from "../_shared/comum.ts";
 
 async function hmacHex(segredo: string, mensagem: string): Promise<string> {
   const chave = await crypto.subtle.importKey(
@@ -44,6 +44,16 @@ Deno.serve(async (req) => {
 
   const url = new URL(req.url);
   const corpo = await req.json().catch(() => ({} as any));
+
+  // Conferência periódica das renovações automáticas (chamada pelo agendamento do GitHub, com o segredo interno)
+  const interno = Deno.env.get("AVISOS_SECRET") ?? "";
+  if (corpo?.acao === "conferir_renovacoes" && interno && req.headers.get("x-avisos") === interno) {
+    const admin = clienteServico();
+    const { data: lista } = await admin.from("renovacoes").select("id, status, mp_preapproval").in("status", ["pendente", "ativa", "pausada"]).limit(500);
+    let n = 0;
+    for (const ren of lista ?? []) { try { await conferirRenovacao(admin, ren); n++; } catch (e) { console.error("renovacao", ren.id, e); } }
+    return resposta({ ok: true, conferidas: n });
+  }
   const tipo = String(corpo?.type ?? corpo?.topic ?? url.searchParams.get("type") ?? url.searchParams.get("topic") ?? "");
   const dataId = String(url.searchParams.get("data.id") ?? corpo?.data?.id ?? url.searchParams.get("id") ?? "");
 
@@ -53,7 +63,33 @@ Deno.serve(async (req) => {
     return resposta({ erro: "assinatura inválida" }, 401);
   }
 
-  // Só nos interessam notificações de pagamento
+  // Renovação automática (assinatura recorrente do Mercado Pago)
+  if (dataId && (tipo === "subscription_preapproval" || tipo === "preapproval" || tipo === "subscription_authorized_payment")) {
+    try {
+      const admin = clienteServico();
+      let preId = dataId;
+      if (tipo === "subscription_authorized_payment") {
+        const ap = await mp(`/authorized_payments/${encodeURIComponent(dataId)}`);
+        preId = String(ap?.preapproval_id ?? "");
+        if (ap?.payment?.id) {
+          const pg = await mp(`/v1/payments/${encodeURIComponent(String(ap.payment.id))}`);
+          if (!pg.external_reference && preId) {
+            const pre = await mp(`/preapproval/${encodeURIComponent(preId)}`);
+            pg.external_reference = pre?.external_reference ?? "";
+          }
+          console.log("mp-webhook renovacao pagamento", await aplicarPagamento(admin, pg));
+        }
+      }
+      const { data: ren } = await admin.from("renovacoes").select("id, status, mp_preapproval").eq("mp_preapproval", preId).maybeSingle();
+      if (ren) await conferirRenovacao(admin, ren);
+      return resposta({ ok: true });
+    } catch (e) {
+      console.error("mp-webhook renovacao falhou", dataId, e);
+      return resposta({ erro: "falha ao processar" }, 500);
+    }
+  }
+
+  // Demais: só notificações de pagamento
   if (!dataId || (tipo && tipo !== "payment")) return resposta({ ok: true, ignorado: tipo || "sem id" });
 
   try {

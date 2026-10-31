@@ -82,7 +82,7 @@ const NOME_METODO: Record<string, string> = {
  */
 export async function aplicarPagamento(admin: SupabaseClient, pagamento: any): Promise<string> {
   const ref: string = pagamento?.external_reference ?? "";
-  if (!/^(assinatura|consultoria|analise):[0-9a-f-]{36}$/.test(ref)) return "referencia_ignorada";
+  if (!/^(assinatura|consultoria|analise|renovacao):[0-9a-f-]{36}$/.test(ref)) return "referencia_ignorada";
   const status: string = pagamento.status;
   if (status === "approved") {
     const { data, error } = await admin.rpc("registrar_pagamento_aprovado", {
@@ -104,3 +104,21 @@ export async function aplicarPagamento(admin: SupabaseClient, pagamento: any): P
   }
   return "aguardando:" + status;
 }
+
+/** Atualiza a renovação automática pelo Mercado Pago: situação da assinatura recorrente e cobranças aprovadas. */
+export async function conferirRenovacao(admin: SupabaseClient, ren: { id: string; status: string; mp_preapproval: string | null }) {
+  const resultados: string[] = [];
+  if (ren.mp_preapproval) {
+    const pre = await mp(`/preapproval/${encodeURIComponent(ren.mp_preapproval)}`).catch(() => null);
+    const mapa: Record<string, string> = { authorized: "ativa", paused: "pausada", cancelled: "cancelada" };
+    const novo = pre?.status ? mapa[pre.status] : undefined;
+    if (novo && novo !== ren.status && ren.status !== "cancelada") {
+      await admin.from("renovacoes").update({ status: novo, atualizado_em: new Date().toISOString(),
+        proxima_cobranca: pre?.next_payment_date ?? null }).eq("id", ren.id);
+    }
+  }
+  const busca = await mp(`/v1/payments/search?external_reference=${encodeURIComponent("renovacao:" + ren.id)}&sort=date_created&criteria=desc&limit=50`).catch(() => null);
+  for (const p of (busca?.results ?? [])) resultados.push(await aplicarPagamento(admin, p));
+  return resultados;
+}
+

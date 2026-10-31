@@ -10,7 +10,7 @@
 // POST { acao: "conferir", referencia: "assinatura:<id>" | "consultoria:<id>" | "analise:<id>" }
 
 import {
-  aplicarPagamento, clienteServico, CORS, env, erro, mp, resposta, usuarioDaRequisicao,
+  aplicarPagamento, clienteServico, conferirRenovacao, CORS, env, erro, mp, resposta, usuarioDaRequisicao,
 } from "../_shared/comum.ts";
 import {
   CONSULTORIA, type Ciclo, FRANQUIA_PRO_SEMANA, inicioMesBR, MAX_DOCS_ANALISE, MAX_PAGINAS_ANALISE, type Modalidade, type Plano, PLANOS,
@@ -68,8 +68,15 @@ Deno.serve(async (req) => {
     // ---------------------------------------------------------------- conferir
     if (acao === "conferir") {
       const ref = String(corpo.referencia ?? "");
-      const m = ref.match(/^(assinatura|consultoria|analise):([0-9a-f-]{36})$/);
+      const m = ref.match(/^(assinatura|consultoria|analise|renovacao):([0-9a-f-]{36})$/);
       if (!m) return erro("Referência inválida.");
+      if (m[1] === "renovacao") {
+        const { data: ren } = await admin.from("renovacoes").select("id, usuario_id, status, mp_preapproval").eq("id", m[2]).maybeSingle();
+        if (!ren || ren.usuario_id !== usuario.id) return erro("Pedido não encontrado.", 404);
+        const resultados = await conferirRenovacao(admin, ren);
+        const { data: depois } = await admin.from("renovacoes").select("status").eq("id", m[2]).maybeSingle();
+        return resposta({ status: depois?.status ?? ren.status, resultados });
+      }
       const tabela = m[1] === "assinatura" ? "assinaturas" : m[1] === "consultoria" ? "consultorias" : "analises";
       const { data: linha } = await admin.from(tabela).select("id, usuario_id, status").eq("id", m[2]).maybeSingle();
       if (!linha || linha.usuario_id !== usuario.id) return erro("Pedido não encontrado.", 404);
@@ -146,6 +153,18 @@ Deno.serve(async (req) => {
       return resposta({ ok: true, id });
     }
 
+    // ---------------------------------------------------------------- cancelar a renovação automática
+    if (acao === "cancelar_renovacao") {
+      const { data: ren } = await admin.from("renovacoes").select("id, usuario_id, status, mp_preapproval").eq("id", String(corpo.id ?? "")).maybeSingle();
+      if (!ren || ren.usuario_id !== usuario.id) return erro("Renovação não encontrada.", 404);
+      if (ren.status === "cancelada") return resposta({ ok: true, status: "cancelada" });
+      if (ren.mp_preapproval) {
+        await mp(`/preapproval/${encodeURIComponent(ren.mp_preapproval)}`, { method: "PUT", body: JSON.stringify({ status: "cancelled" }) });
+      }
+      await admin.from("renovacoes").update({ status: "cancelada", cancelado_em: new Date().toISOString(), atualizado_em: new Date().toISOString() }).eq("id", ren.id);
+      return resposta({ ok: true, status: "cancelada" });
+    }
+
     if (acao !== "criar") return erro("Ação desconhecida.");
 
     const { data: perfil } = await admin.from("perfis").select("nome, email").eq("id", usuario.id).maybeSingle();
@@ -170,6 +189,30 @@ Deno.serve(async (req) => {
       const cartao = metodo === "cartao" || metodo === "cpgf";
       parcelas = ciclo === "anual" && cartao ? Math.max(1, Math.min(12, Number(corpo.parcelas) || 1)) : 1;
       titulo = `Licitacon · Plano ${PLANOS[plano].nome} · ${ciclo === "anual" ? "12 meses" : "1 mês"}`;
+
+      // Renovação automática: assinatura recorrente do Mercado Pago (só cartão de crédito; cobra o valor cheio a cada ciclo).
+      // O cartão fica guardado no Mercado Pago, nunca no Licitacon.
+      if (corpo.renovacao_auto === true) {
+        if (metodo !== "cartao") return erro("A renovação automática só está disponível no cartão de crédito.");
+        const { data: ren, error: e1 } = await admin.from("renovacoes").insert({
+          usuario_id: usuario.id, plano, ciclo, valor, status: "pendente",
+        }).select("id").single();
+        if (e1) throw e1;
+        const ref = `renovacao:${ren.id}`;
+        const pre = await mp("/preapproval", {
+          method: "POST",
+          body: JSON.stringify({
+            reason: `Licitacon · Plano ${PLANOS[plano].nome} · renovação automática ${ciclo === "anual" ? "anual" : "mensal"}`,
+            external_reference: ref,
+            payer_email: perfil?.email || usuario.email,
+            auto_recurring: { frequency: ciclo === "anual" ? 12 : 1, frequency_type: "months", transaction_amount: valor, currency_id: "BRL" },
+            back_url: voltar(retorno, ref, "aprovado"),
+            status: "pending",
+          }),
+        });
+        await admin.from("renovacoes").update({ mp_preapproval: String(pre.id) }).eq("id", ren.id);
+        return resposta({ url: pre.init_point, referencia: ref, valor, renovacao: true });
+      }
 
       const { data: nova, error } = await admin.from("assinaturas").insert({
         usuario_id: usuario.id, plano, ciclo, status: "pendente", valor, parcelas, contratante, metodo,

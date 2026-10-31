@@ -1,0 +1,20 @@
+name: Renovações automáticas — conferência
+
+# Confere no Mercado Pago as assinaturas recorrentes (renovação automática) e registra as cobranças aprovadas,
+# mesmo que alguma notificação do Mercado Pago não chegue. Não imprime dados de clientes.
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+
+jobs:
+  conferir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - env:
+          AVISOS_SECRET: ${{ secrets.AVISOS_SECRET }}
+        run: |
+          curl -fsS -X POST "https://umnhhztdqersjfrzqcea.supabase.co/functions/v1/mp-webhook" \
+            -H "Content-Type: application/json" -H "x-avisos: $AVISOS_SECRET" \
+            --data '{"acao":"conferir_renovacoes"}' | python3 -c "import json,sys; print('::notice::', json.load(sys.stdin))"
