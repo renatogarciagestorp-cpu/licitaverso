@@ -1626,6 +1626,28 @@
               <p style="margin: 14px 0 0; font-size: 13px; color: #7A8B91; line-height: 1.6">{{ cancelamentoMsg }}</p>
             </section>
 
+            <sc-if value="{{ temPlanoInfo }}" hint-placeholder-val="{{ true }}">
+              <section style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 28px">
+                <h2 style="margin: 0 0 14px; font-size: 17px; font-weight: 800; letter-spacing: -0.01em">Detalhes do plano atual</h2>
+                <dl style="margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px">
+                  <sc-for list="{{ planoInfo }}" as="i" hint-placeholder-count="6">
+                    <div style="background: #F6F8F7; border-radius: 11px; padding: 11px 13px">
+                      <dt style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #0F6B7E">{{ i.rot }}</dt>
+                      <dd style="margin: 4px 0 0; font-size: 14.5px; font-weight: 700; color: #172B33; line-height: 1.4">{{ i.val }}</dd>
+                    </div>
+                  </sc-for>
+                </dl>
+                <sc-if value="{{ temPlanoBeneficios }}" hint-placeholder-val="{{ true }}">
+                  <h3 style="margin: 20px 0 10px; font-size: 14px; font-weight: 800; color: #0B1F2A">O que o seu plano inclui</h3>
+                  <div style="display: grid; gap: 7px">
+                    <sc-for list="{{ planoBeneficios }}" as="b" hint-placeholder-count="4">
+                      <div style="display: flex; gap: 9px; font-size: 14px; line-height: 1.5; color: #3D5058"><span aria-hidden="true" style="color: #0FA36B; font-weight: 800">✓</span><span>{{ b }}</span></div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </section>
+            </sc-if>
+
             <sc-if value="{{ temPendentes }}" hint-placeholder-val="{{ false }}">
               <section style="background: #fff; border: 1px solid #F0E0AE; border-radius: 16px; padding: 22px 28px">
                 <h2 style="margin: 0 0 6px; font-size: 17px; font-weight: 800; letter-spacing: -0.01em">Aguardando pagamento</h2>
@@ -2785,6 +2807,13 @@ const COMPRADORES = {
 const PAGINAS = ["home", "forum", "cursos", "consultoria", "agente", "planos", "conta", "institucional", "login", "cadastro", "recuperar", "nova-senha"];
 const EXIGE_LOGIN = ["forum", "cursos", "conta"];
 const PLANO_NOME = { teste: "Teste", basico: "Básico", premium: "Premium", pro: "Pro" };
+const PLANO_BENEFICIOS = {
+  teste: ["Biblioteca Jurídica completa durante o teste", "Leitura do fórum da comunidade", "Sem cobrança automática ao final"],
+  basico: ["Biblioteca Jurídica completa, com anotações, marcadores e dossiês", "Fórum: leitura e participação", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "Agente IA: análise com 10% de desconto (R$ 261,00)"],
+  premium: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Agente IA: análise com 15% de desconto (R$ 246,50)", "Prioridade na agenda do especialista"],
+  pro: ["Tudo do Premium", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "Agente IA: 2 análises por semana sem custo; a partir da 3ª, 30% de desconto (R$ 203,00)", "Selo de resposta oficial no fórum", "Suporte prioritário"]
+};
+const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
 const CHAT_VERSAO = "5";
@@ -4564,6 +4593,28 @@ class Component extends DCLogic {
         ? ([s.perfil.cargo, s.perfil.orgao].filter(Boolean).join(" · ") || nomeConta)
         : "Agente de contratação · Prefeitura de Ribeirão Bonito · SP (demonstração)",
       planoAtual,
+      temPlanoInfo: !!vig || !s.sb,
+      planoInfo: (() => {
+        if (!s.sb) return [["Plano", "Premium (exemplo)"], ["Situação", "Ativo"], ["Ciclo", "12 meses"], ["Válido até", "14/02/2027"]].map(([rot, val]) => ({ rot, val }));
+        if (!vig) return [];
+        const dias = Math.max(0, Math.ceil((new Date(vig.fim).getTime() - agora) / 86400000));
+        const cota = s.cotaAnalise;
+        const linhas = [
+          ["Plano", PLANO_NOME[vig.plano]],
+          ["Situação", dias <= 7 ? "Ativo · termina em " + dias + (dias === 1 ? " dia" : " dias") : "Ativo"],
+          ["Ciclo", vig.plano === "teste" ? "Teste de 7 dias" : (vig.ciclo === "anual" ? "Anual (12 meses)" : "Mensal")],
+          ["Contratado em", dataBR(vig.inicio)],
+          ["Válido até", dataBR(vig.fim) + " (" + dias + (dias === 1 ? " dia restante)" : " dias restantes)")],
+          ["Valor pago", vig.plano === "teste" ? "Grátis" : brl(Number(vig.valor || 0)) + (vig.parcelas > 1 ? " em " + vig.parcelas + "x" : "")],
+          ["Forma de pagamento", METODO_NOME[vig.metodo] || vig.metodo || "—"],
+          ["Renovação", "Manual: avisamos por e-mail antes do fim do período"]
+        ];
+        if (vig.plano === "pro" && cota) linhas.push(["Agente IA nesta semana", Math.max(0, Number(cota.limite) - Number(cota.usadas)) + " de " + cota.limite + " análises disponíveis (renova na segunda-feira)"]);
+        else if (vig.plano !== "teste") linhas.push(["Agente IA", brlSimples(this.precoAnalise()) + " por análise, com o desconto do plano"]);
+        return linhas.map(([rot, val]) => ({ rot, val }));
+      })(),
+      planoBeneficios: PLANO_BENEFICIOS[(vig && vig.plano) || (!s.sb ? "premium" : "")] || [],
+      temPlanoBeneficios: !!(PLANO_BENEFICIOS[(vig && vig.plano) || (!s.sb ? "premium" : "")]),
       planoBadge: planoAtual.nome === "Sem plano" ? "Sem plano" : "Plano " + planoAtual.nome,
       temProxima: !!planoAtual.proxima,
       contaTabs: [
