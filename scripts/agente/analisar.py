@@ -587,7 +587,7 @@ def chamar(system, usuario, max_tokens=128000):
                 time.sleep(20 * (tentativa + 1)); continue
             sys.exit(f"Erro da API ({e.code}): {msg}")
         except (urllib.error.URLError, TimeoutError, ConnectionError, OSError, json.JSONDecodeError) as e:
-            if tentativa < 3:
+            if tentativa < 1:  # no máximo 1 repetição (com o documento em cache) — cada tentativa longa custa caro
                 time.sleep(20 * (tentativa + 1)); continue
             sys.exit(f"Falha de conexão com a API: {type(e).__name__}")
 
