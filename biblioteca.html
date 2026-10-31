@@ -220,7 +220,11 @@ main{min-width:0}
 .org.PGE-RJ{color:var(--pgerj);background:var(--pgerj-soft)} .org.TJ-RJ{color:var(--tjrj);background:var(--tjrj-soft)}
 .org.GOV-BR,.org.GOV-RJ,.org.g-GOV-UF{color:var(--warn);background:var(--warn-soft)}
 .org.g-TCE{color:var(--tcerj);background:var(--tcerj-soft)} .org.g-TCM{color:var(--tcmrj);background:var(--tcmrj-soft)} .org.g-PGE{color:var(--pgerj);background:var(--pgerj-soft)} .org.g-TJ{color:var(--tjrj);background:var(--tjrj-soft)}
-#ufs .chip{padding:5px 7px}
+.filtros{gap:10px 14px}
+.fsel{display:flex;align-items:center;gap:6px;font:600 11px/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.fsel select{width:auto;min-width:150px;max-width:280px;font:500 13px/1.2 var(--f-sans,inherit);text-transform:none;letter-spacing:0;color:var(--ink);padding:7px 30px 7px 10px}
+.fclear{font:500 12px/1 var(--f-mono);background:none;border:0;color:var(--accent);cursor:pointer;text-decoration:underline;padding:4px}
+@media (max-width:640px){.fsel{width:100%}.fsel span{min-width:72px}.fsel select{flex:1;max-width:none}}
 /* Dossiês, relacionadas, painel, status */
 .dosbar{border:1px solid var(--accent);border-radius:10px;background:var(--surface);padding:12px 16px;margin:6px 0 10px}
 .dosbar h2{font:650 17px/1.2 var(--f-display);margin:2px 0 6px}
@@ -344,12 +348,13 @@ dialog.notes::backdrop{background:rgba(10,16,22,.35)}
     <div class="stamp" id="stamp">Carregando acervo…</div>
   </header>
 
-  <div class="bar" role="group" aria-label="Filtrar por natureza">
-    <span class="lbl">Natureza</span>
-    <div class="seg" id="natureza"></div>
+  <div class="bar filtros" role="group" aria-label="Filtros">
+    <span class="lbl">Filtros</span>
+    <label class="fsel"><span>Natureza</span><select id="selNat" aria-label="Natureza"></select></label>
+    <label class="fsel"><span>Órgão</span><select id="selOrg" aria-label="Órgão"></select></label>
+    <label class="fsel"><span>Estado</span><select id="selUf" aria-label="Estado"></select></label>
+    <button type="button" class="fclear" id="selLimpa" hidden>Limpar</button>
   </div>
-  <div class="bar" id="counts" role="group" aria-label="Filtrar por órgão"><span class="lbl">Órgão</span></div>
-  <div class="bar" id="ufs" role="group" aria-label="Filtrar por estado"><span class="lbl">Estado</span></div>
 
   <div class="layout">
     <aside>
@@ -652,21 +657,28 @@ function listButtons(el,rows,cur,set){
   el.innerHTML="";rows.forEach(([v,l,n])=>{const b=document.createElement("button");b.type="button";b.setAttribute("aria-pressed",cur===v);
     b.innerHTML=`<span>${esc(l)}</span><span>${n}</span>`;b.onclick=()=>{set(v);render()};el.appendChild(b)});
 }
+function opt(sel,v,l,n,cur){const o=new Option(n===undefined?l:`${l} (${n})`,v);if(v===cur)o.selected=true;if(n===0&&v)o.className="zero";sel.add(o);return o}
+function renderFiltros(B){
+  const sn=$("selNat");sn.innerHTML="";NATS.forEach(([v,l])=>opt(sn,v,l,v?S.docs.filter(d=>d._nat===v).length:S.docs.length,S.nat));
+  sn.onchange=()=>{S.nat=sn.value;S.lei="";render()};
+  const Bu=B.filter(d=>!S.uf||ufDe(d.orgao)===S.uf);const cnt={};Bu.forEach(d=>cnt[d.orgao]=(cnt[d.orgao]||0)+1);
+  const so=$("selOrg");so.innerHTML="";const curO=S.orgao?"o:"+S.orgao:(S.grupo?"g:"+S.grupo:"");
+  opt(so,"","Todos os órgãos",Bu.length,curO);
+  const og=document.createElement("optgroup");og.label="Por tipo de órgão";so.appendChild(og);
+  LV_ORG.GRUPOS.forEach(([k,l])=>{const n=Bu.filter(d=>grupoDe(d.orgao)===k).length;const o=new Option(`${l} (${n})`,"g:"+k);if(curO==="g:"+k)o.selected=true;og.appendChild(o)});
+  LV_ORG.GRUPOS.forEach(([k,l])=>{const os=ORGAOS.filter(o=>grupoDe(o)===k&&(cnt[o]||S.orgao===o)&&LV_ORG.GRUPOS.length);
+    if(!os.length||(os.length===1&&os[0]===k))return;const g=document.createElement("optgroup");g.label=l;so.appendChild(g);
+    os.forEach(o=>{const op=new Option(`${lbl(o)} (${cnt[o]||0})`,"o:"+o);op.title=LV_ORG.info(o).nome;if(curO==="o:"+o)op.selected=true;g.appendChild(op)})});
+  so.onchange=()=>{const v=so.value;S.grupo=v.startsWith("g:")?v.slice(2):"";S.orgao=v.startsWith("o:")?v.slice(2):"";render()};
+  const Bg=B.filter(d=>(!S.grupo||grupoDe(d.orgao)===S.grupo)&&(!S.orgao||d.orgao===S.orgao));
+  const su=$("selUf");su.innerHTML="";opt(su,"","Todos os estados",Bg.length,S.uf);
+  LV_ORG.UFS.forEach(([uf,nome])=>opt(su,uf,`${nome} (${uf})`,Bg.filter(d=>ufDe(d.orgao)===uf).length,S.uf));
+  su.onchange=()=>{S.uf=su.value;if(S.orgao&&S.uf&&ufDe(S.orgao)!==S.uf)S.orgao="";render()};
+  const lim=$("selLimpa");lim.hidden=!(S.nat||S.grupo||S.orgao||S.uf);lim.onclick=()=>{S.nat="";S.grupo="";S.orgao="";S.uf="";S.lei="";render()};
+}
 function render(){
-  const nt=$("natureza");nt.innerHTML="";
-  NATS.forEach(([v,l])=>{const n=v?S.docs.filter(d=>d._nat===v).length:S.docs.length;const b=document.createElement("button");b.type="button";b.setAttribute("aria-pressed",S.nat===v);
-    b.innerHTML=`${esc(l)}<span>${n}</span>`;b.onclick=()=>{S.nat=v;S.lei="";render()};nt.appendChild(b)});
   const B=base();
-  const c=$("counts");c.querySelectorAll(".chip").forEach(x=>x.remove());
-  const chip=(el,v,l,n,cur,set)=>{const b=document.createElement("button");b.className="chip"+(n===0&&v?" zero":"");b.type="button";b.setAttribute("aria-pressed",cur===v);
-    b.innerHTML=`${esc(l)} <b>${n}</b>`;b.onclick=()=>{set(v);render()};el.appendChild(b)};
-  const Bu=B.filter(d=>!S.uf||ufDe(d.orgao)===S.uf);
-  [["","Todos",Bu.length],...LV_ORG.GRUPOS.map(([k,l])=>[k,l,Bu.filter(d=>grupoDe(d.orgao)===k).length])].forEach(([v,l,n])=>chip(c,v,l,n,S.grupo,v=>{S.grupo=v;S.orgao=""}));
-  if(S.orgao){const b=document.createElement("button");b.className="chip";b.type="button";b.setAttribute("aria-pressed","true");b.title="Remover filtro de órgão";
-    b.innerHTML=`${esc(lbl(S.orgao))} ×`;b.onclick=()=>{S.orgao="";render()};c.appendChild(b)}
-  const cu=$("ufs");cu.querySelectorAll(".chip").forEach(x=>x.remove());
-  const Bg=B.filter(d=>!S.grupo||grupoDe(d.orgao)===S.grupo);
-  [["","Todos",Bg.length],...LV_ORG.UFS.map(([uf,nome])=>[uf,uf,Bg.filter(d=>ufDe(d.orgao)===uf).length,nome])].forEach(([v,l,n,nome])=>{chip(cu,v,l,n,S.uf,v=>{S.uf=v;S.orgao=""});if(nome)cu.lastChild.title=nome});
+  renderFiltros(B);
   listButtons($("esferas"),[["","Todas",B.length],...ESFERAS.map(e=>[e,e,B.filter(d=>esfDe(d.orgao)===e).length])],S.esf,v=>S.esf=v);
   const pool=B.filter(d=>(!S.orgao||d.orgao===S.orgao)&&(!S.esf||esfDe(d.orgao)===S.esf)&&(!S.grupo||grupoDe(d.orgao)===S.grupo)&&(!S.uf||ufDe(d.orgao)===S.uf));
   $("vista").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.view));
