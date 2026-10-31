@@ -10,7 +10,7 @@ manifesto.json:
 
 Uso: python3 scripts/agente/privado.py pasta_do_pacote pasta_de_saida
 """
-import json, pathlib, subprocess, sys
+import json, pathlib, re, subprocess, sys
 
 RAIZ = pathlib.Path(__file__).resolve().parents[2]
 PY = sys.executable
@@ -68,7 +68,11 @@ def main():
         args += ["--anexo", f"{x['tipo']}::{x['nome']}::{t}"]
         if x.get("salarios"):
             try:
-                rodar([PY, str(RAIZ / "scripts/agente/extrair-postos.py"), str(t), str(tmp / "postos.json")], 900)
+                txt_pl = t.read_text(encoding="utf-8", errors="replace")
+                if "QUADRO RESUMO" in txt_pl.upper() and re.search(r"M[ÓO]DULO 1", txt_pl, re.I):  # modelo IN 5/2017: leitura sem IA
+                    rodar([PY, str(RAIZ / "scripts/agente/postos-in05.py"), str(t), str(tmp / "postos.json"), "--uf", m.get("uf", "")], 300)
+                else:
+                    rodar([PY, str(RAIZ / "scripts/agente/extrair-postos.py"), str(t), str(tmp / "postos.json")], 900)
                 rodar([PY, str(RAIZ / "scripts/agente/salarios.py"), str(tmp / "postos.json"), str(saida / "salarios.json")], 900)
                 args += ["--salarios", str(saida / "salarios.json")]
                 print("referência salarial: ok")
