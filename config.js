@@ -11,5 +11,5 @@ window.LICITAVERSO_CONFIG = {
   // trecho que o Cloudflare mostra ao adicionar o site. Só é carregada para quem aceita cookies de análise.
   cloudflareAnalytics: "77af40fc4d7f494ab442d9b51274788c",
   // Botão "Entrar com o Google": ligar (true) só depois de configurar a credencial do Google no Supabase.
-  googleLogin: false
+  googleLogin: true
 };
