@@ -167,7 +167,8 @@ Deno.serve(async (req) => {
 
     if (acao !== "criar") return erro("Ação desconhecida.");
 
-    const { data: perfil } = await admin.from("perfis").select("nome, email").eq("id", usuario.id).maybeSingle();
+    const { data: perfil } = await admin.from("perfis").select("nome, email, admin").eq("id", usuario.id).maybeSingle();
+    const ehAdmin = !!perfil?.admin; // administrador: acesso total, sem cobrança
     const { data: vigente } = await admin.rpc("plano_vigente", { uid: usuario.id });
     const retorno = urlDeRetorno(corpo.retorno);
     const metodo = String(corpo.metodo ?? "");
@@ -183,6 +184,7 @@ Deno.serve(async (req) => {
       const plano = corpo.plano as Plano;
       const ciclo = corpo.ciclo as Ciclo;
       if (!PLANOS[plano]) return erro("Plano inválido.");
+      if (ehAdmin) return erro("Você é administrador: já tem acesso total a todos os recursos, sem cobrança.");
       if (ciclo !== "mensal" && ciclo !== "anual") return erro("Ciclo inválido.");
       const contratante = ["fisica", "privada", "publica"].includes(corpo.contratante) ? corpo.contratante : "fisica";
       valor = precoPlano(plano, ciclo);
@@ -241,7 +243,7 @@ Deno.serve(async (req) => {
           .gte("criado_em", inicioMesBR().toISOString());
         franquiaLivre = (count ?? 0) === 0;
       }
-      valor = precoConsultoria(modalidade, vigente ?? null, franquiaLivre);
+      valor = ehAdmin ? 0 : precoConsultoria(modalidade, vigente ?? null, franquiaLivre);
       titulo = `Licitacon · ${CONSULTORIA[modalidade].nome}`;
 
       const gratuita = valor <= 0;
@@ -260,6 +262,17 @@ Deno.serve(async (req) => {
     } else if (corpo.tipo === "analise") {
       // Etapa 1 do agente: aceite das condições e pagamento (ou cota do Pro). Os documentos são enviados depois (acao "enviar_analise").
       if (corpo.aceite !== true) return erro("Aceite as condições da análise para continuar.");
+      if (ehAdmin) {
+        const { data: pend } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
+          .eq("status", "aguardando_documentos").limit(1).maybeSingle();
+        if (pend) return resposta({ gratuito: true, referencia: `analise:${pend.id}`, id: pend.id });
+        const { data: nova, error } = await admin.from("analises").insert({
+          usuario_id: usuario.id, documento: "multiplos", origem: "arquivos", cobranca: "cortesia_admin", plano: "pro", valor: 0,
+          termo_aceito_em: new Date().toISOString(), termo_versao: String(corpo.termo_versao ?? "").slice(0, 20), status: "aguardando_documentos",
+        }).select("id").single();
+        if (error) throw error;
+        return resposta({ gratuito: true, referencia: `analise:${nova.id}`, id: nova.id });
+      }
       let franquia = false;
       if (vigente === "pro") {
         // reaproveita uma análise da cota ainda sem documentos, para não consumir a cota duas vezes

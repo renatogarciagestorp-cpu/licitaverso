@@ -3469,6 +3469,7 @@ class Component extends DCLogic {
   }
 
   precoConsultoria(i) {
+    if (this.state.admin) return 0; // administrador: sem cobrança
     if (MODALIDADES[i] === "escrita" && this.franquiaProLivre()) return 0;
     const desc = DESC_CONSULTORIA[this.state.plano] || 0;
     return Math.round(CONSULTORIA[i].valor * (1 - desc) * 100) / 100;
@@ -3546,6 +3547,7 @@ class Component extends DCLogic {
   // ------------------------------------------------------------ análise de documentos
   precoAnalise() {
     const s = this.state, c = s.cotaAnalise;
+    if (s.admin) return 0; // administrador: sem cobrança
     if (s.plano === "pro" && c && Number(c.usadas) < Number(c.limite)) return 0;
     return Math.round(AN_PRECO * (1 - (AN_DESCONTO[s.plano] || 0)) * 100) / 100;
   }
@@ -4110,7 +4112,9 @@ class Component extends DCLogic {
     vigentes.sort((a, b) => (nivel[b.plano] - nivel[a.plano]) || (new Date(b.fim) - new Date(a.fim)));
     const vig = vigentes[0];
     const pendentes = s.assinaturas.filter((a) => a.status === "pendente");
-    const planoAtual = !s.sb
+    const planoAtual = s.admin
+      ? { nome: "Pro · Administrador", detalhe: "Conta de administrador: acesso total a todos os recursos (Biblioteca, fórum, consultoria e Agente IA sem limite), sem nenhuma cobrança.", preco: "Sem cobrança", rotulo: "", proxima: "" }
+      : !s.sb
       ? { nome: "Premium", detalhe: "Exemplo de demonstração. Quando as contas estiverem ativas, aqui aparece o seu plano real.", preco: "12x R$ 119,92", rotulo: "acesso até", proxima: "14/02/2027" }
       : vig
         ? {
@@ -4501,6 +4505,7 @@ class Component extends DCLogic {
       anTempo: "O tempo de análise depende da quantidade de documentos, da qualidade dos arquivos (documento digitalizado exige reconhecimento de texto) e da complexidade da contratação. A estimativa exata é calculada na página de envio, assim que você escolhe os arquivos.",
       anPlanoTitulo: (() => {
         if (!s.usuario) return "Entre na sua conta para ver as condições do seu plano.";
+        if (s.admin) return "Administrador";
         if (s.plano === "pro") return "Plano Pro";
         if (s.plano === "basico") return "Plano Básico";
         if (s.plano === "premium") return "Plano Premium";
@@ -4510,6 +4515,7 @@ class Component extends DCLogic {
         const c = s.cotaAnalise;
         if (!s.usuario) return "Valor por análise: R$ 290,00. Assinantes Básico e Premium têm desconto; o Pro inclui 2 análises por semana.";
         if (this.creditoAnalise()) return "Você já tem uma análise liberada aguardando os documentos. Siga para a página de envio.";
+        if (s.admin) return "Conta de administrador: análises sem limite e sem cobrança.";
         if (s.plano === "pro" && c) {
           const resta = Math.max(0, Number(c.limite) - Number(c.usadas));
           return resta > 0 ? "Você tem " + resta + " de " + c.limite + " análises disponíveis nesta semana, sem custo adicional (renova na segunda-feira)."
@@ -4652,9 +4658,10 @@ class Component extends DCLogic {
         ? ([s.perfil.cargo, s.perfil.orgao].filter(Boolean).join(" · ") || nomeConta)
         : "Agente de contratação · Prefeitura de Ribeirão Bonito · SP (demonstração)",
       planoAtual,
-      temPlanoInfo: !!vig || !s.sb,
+      temPlanoInfo: !!vig || !s.sb || !!s.admin,
       planoInfo: (() => {
         if (!s.sb) return [["Plano", "Premium (exemplo)"], ["Situação", "Ativo"], ["Ciclo", "12 meses"], ["Válido até", "14/02/2027"]].map(([rot, val]) => ({ rot, val }));
+        if (s.admin) return [["Perfil", "Administrador"], ["Acesso", "Total, equivalente ao Pro"], ["Cobrança", "Nenhuma"], ["Agente IA", "Sem limite semanal e sem custo"], ["Consultoria", "Sem custo"], ["Validade", "Enquanto a conta for administradora"]].map(([rot, val]) => ({ rot, val }));
         if (!vig) return [];
         const dias = Math.max(0, Math.ceil((new Date(vig.fim).getTime() - agora) / 86400000));
         const cota = s.cotaAnalise;
@@ -4672,9 +4679,9 @@ class Component extends DCLogic {
         else if (vig.plano !== "teste") linhas.push(["Agente IA", brlSimples(this.precoAnalise()) + " por análise, com o desconto do plano"]);
         return linhas.map(([rot, val]) => ({ rot, val }));
       })(),
-      planoBeneficios: PLANO_BENEFICIOS[(vig && vig.plano) || (!s.sb ? "premium" : "")] || [],
-      temPlanoBeneficios: !!(PLANO_BENEFICIOS[(vig && vig.plano) || (!s.sb ? "premium" : "")]),
-      planoBadge: planoAtual.nome === "Sem plano" ? "Sem plano" : "Plano " + planoAtual.nome,
+      planoBeneficios: s.admin ? ["Todos os recursos do Pro", "Agente IA sem limite e sem pagamento", "Consultoria sem pagamento", "Painel administrativo"] : (PLANO_BENEFICIOS[(vig && vig.plano) || (!s.sb ? "premium" : "")] || []),
+      temPlanoBeneficios: !!s.admin || !!(PLANO_BENEFICIOS[(vig && vig.plano) || (!s.sb ? "premium" : "")]),
+      planoBadge: s.admin ? "Administrador" : (planoAtual.nome === "Sem plano" ? "Sem plano" : "Plano " + planoAtual.nome),
       temProxima: !!planoAtual.proxima,
       contaTabs: [
         ["perfil", "Perfil", "◎"], ["assinatura", "Assinatura", "◫"], ["atividade", "Atividade", "★"],
