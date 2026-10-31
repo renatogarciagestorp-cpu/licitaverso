@@ -92,15 +92,22 @@ def media_estado(url_prof, uf):
 
 
 def comparar(p, ref):
-    sb = p.get("salario_base")
-    if not sb or not ref:
-        return "sem_referencia", None
-    media = ref["media"]
+    """Economicidade: custo do profissional na planilha (Módulos 1 a 4 — remuneração, encargos e benefícios, provisão para rescisão e
+    reposição do ausente, ou seja, o custo total do empregado antes de insumos, custos indiretos, tributos e lucro) × "custo para a
+    empresa" informado pelo site para o salário médio do estado (salário + encargos), ajustado à jornada da planilha."""
+    base = p.get("custo_modulos_1_a_4")
+    if not base or not ref or not ref.get("custo_empresa"):
+        return None, None
+    ref_custo = ref["custo_empresa"]
     if ref.get("jornada") and p.get("jornada_semanal"):
-        media = media * float(p["jornada_semanal"]) / ref["jornada"]  # proporcional à jornada da planilha
-    desvio = sb / media - 1
+        ref_custo = ref_custo * float(p["jornada_semanal"]) / ref["jornada"]
+    desvio = float(base) / ref_custo - 1
     sit = "acima" if desvio > TOLERANCIA else ("atencao" if desvio > 0 else "compativel")
-    return sit, {"media_ajustada": round(media, 2), "desvio": round(desvio, 4)}
+    return sit, {"custo_referencia_ajustado": round(ref_custo, 2), "desvio": round(desvio, 4)}
+
+
+ARQUIVO = ("não analisado: {o_que} no arquivo fornecido, em razão da qualidade da digitalização; a análise não foi realizada para "
+           "não presumir valores. Cabe a quem forneceu o arquivo apresentar versão legível")
 
 
 def main():
@@ -110,28 +117,37 @@ def main():
         cbo = re.sub(r"\D", "", str(p.get("cbo") or ""))[:6]
         uf = (p.get("uf") or dados.get("uf") or "").upper()
         p["referencia"], p["situacao"] = None, "sem_referencia"
-        if len(cbo) != 6 or uf not in UFS:
-            p["motivo"] = "CBO ou UF não informado na planilha"
+        if p.get("legivel") is False or len(cbo) != 6:
+            p["situacao"] = "nao_analisado_arquivo"
+            p["motivo"] = ARQUIVO.format(o_que="o CBO ou os valores do posto não puderam ser lidos com segurança")
+            continue
+        if uf not in UFS:
+            p["motivo"] = "UF da prestação não identificada"
+            continue
+        if not p.get("custo_modulos_1_a_4"):
+            p["situacao"] = "nao_analisado_arquivo"
+            p["motivo"] = ARQUIVO.format(o_que="o custo do profissional (Módulos 1 a 4) não pôde ser lido com segurança")
             continue
         if cbo not in cache:
             cache[cbo] = paginas_do_cbo(cbo)
         prof = escolher(cache[cbo], p.get("funcao", ""))
         if not prof:
-            p["motivo"] = "CBO sem página de pesquisa salarial no site"
+            p["motivo"] = (f"o CBO {cbo}, tal como lido no arquivo, não foi localizado na base do site; não é possível confirmar se há erro "
+                           "de leitura do arquivo digitalizado ou ausência de pesquisa para a ocupação. Posto não analisado; cabe a quem "
+                           "forneceu o arquivo confirmar o CBO em versão legível")
             continue
         ref = media_estado(prof["url"], uf)
-        if not ref:
-            p["motivo"] = "o site não informa média para o estado"
+        if not ref or not ref.get("custo_empresa"):
+            p["motivo"] = "o site não informa média e custo para a empresa no estado"
             continue
         ref["ocupacao_site"] = prof["nome"]
         p["referencia"] = ref
-        p["situacao"], comp = comparar(p, ref)
-        if comp:
+        sit, comp = comparar(p, ref)
+        if sit:
+            p["situacao"] = sit
             p.update(comp)
-        if ref.get("custo_empresa") and p.get("custo_total_mensal"):
-            p["custo_total_sobre_custo_empresa_site"] = round(float(p["custo_total_mensal"]) / ref["custo_empresa"], 3)
         time.sleep(1)
-    dados["fonte"] = {"nome": "Salario.com.br — pesquisa salarial (dados do Novo CAGED/MTE, salário-base em carteira, últimos 12 meses)",
+    dados["fonte"] = {"nome": "Salario.com.br — pesquisa salarial (dados do Novo CAGED/MTE, últimos 12 meses): salário médio do estado e custo para a empresa",
                       "url": BASE, "tolerancia": TOLERANCIA}
     json.dump(dados, open(sys.argv[2], "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     for p in dados.get("postos", []):

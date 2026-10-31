@@ -89,3 +89,8 @@ Este arquivo entra nas instruções de toda análise. Acrescente aqui cada nova 
   salário (PDF ou Word). O site pergunta, antes da análise, se a contratação é de profissional com dedicação exclusiva e se é obra ou
   serviço de engenharia; nesses casos as planilhas em Excel são obrigatórias, porque sem elas não se avalia por completo a
   economicidade, a vantajosidade e a existência de sobrepreço.
+- (30/10/2026) Economicidade da mão de obra: não comparar pelo salário-base da categoria, e sim pelo custo total do profissional
+  calculado na planilha modelo da IN 05/2017, confrontado com a referência do salario.com.br para o estado da licitação.
+- (30/10/2026) Arquivo ilegível: quando não for possível ler com segurança um CBO, salário ou valor (ex.: digitalização ruim), NÃO
+  adivinhar nem deduzir pelo nome do profissional. Registrar no parecer que a análise daquele ponto não foi realizada em razão da
+  qualidade do arquivo, transferindo a quem o forneceu a responsabilidade de apresentar versão legível.

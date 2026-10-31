@@ -476,9 +476,11 @@ Regras obrigatórias:
     (BDI aplicado diferente do declarado, total que não fecha, percentual acima do legal) deve ser apontada com a linha da planilha e o
     valor esperado. Se o objeto exigir planilha e ela não tiver sido enviada, procure as informações no documento; não as encontrando,
     marque os itens como nao_verificavel e recomende a juntada da planilha.
-22. REFERÊNCIA SALARIAL (salario.com.br): quando os fatos trouxerem "SALÁRIO-BASE ACIMA DA MÉDIA DO ESTADO", registre o ponto com
-    gravidade ALTA (risco de sobrepreço no custo do profissional), no item de salário/convenção do módulo de mão de obra (ou em
-    outros_apontamentos), demonstrando a diferença e o reflexo no custo total do posto calculado pela planilha modelo. Como não há norma
+22. REFERÊNCIA SALARIAL (salario.com.br): a economicidade do custo da mão de obra se avalia pelo CUSTO TOTAL do profissional na
+    planilha modelo, e não pelo salário-base. Quando os fatos trouxerem "CUSTO DO PROFISSIONAL ACIMA DA REFERÊNCIA DO ESTADO", registre
+    o ponto com gravidade ALTA (risco de sobrepreço), no item de custos do módulo de mão de obra (ou em outros_apontamentos),
+    demonstrando a diferença. Posto "não analisado" por qualidade do arquivo: informe que a verificação não foi possível porque o
+    arquivo fornecido não permitiu leitura segura, sem estimar ou deduzir valores ou CBO, e recomende a apresentação de versão legível. Como não há norma
     que adote o salario.com.br como balizador, NÃO seja incisivo: não afirme sobrepreço nem superfaturamento; apresente a inconsistência
     como indício que merece verificação e oriente o ajuste (conferir o piso da convenção da categoria e da base territorial, justificar
     salário acima do piso ou do mercado, revisar a planilha). "Ligeiramente acima" é gravidade média; "compatível" pode ser citado como
@@ -747,19 +749,22 @@ def main():
     if a.salarios and pathlib.Path(a.salarios).exists():
         salarios = json.loads(pathlib.Path(a.salarios).read_text(encoding="utf-8"))
         brl = lambda v: ("R$ " + f"{v:,.2f}").replace(",", "X").replace(".", ",").replace("X", ".")
-        sit = {"acima": "SALÁRIO-BASE ACIMA DA MÉDIA DO ESTADO", "atencao": "ligeiramente acima da média (até 5%)", "compativel": "compatível (igual ou abaixo da média)"}
-        linhas = ["Referência salarial de mercado calculada pelo sistema (salario.com.br: média do salário-base em carteira no estado, Novo CAGED, "
-                  "últimos 12 meses; média ajustada proporcionalmente à jornada da planilha). Não é parâmetro normativo (regra 22):"]
+        sit = {"acima": "CUSTO DO PROFISSIONAL ACIMA DA REFERÊNCIA DO ESTADO", "atencao": "ligeiramente acima da referência (até 5%)",
+               "compativel": "compatível (igual ou abaixo da referência)"}
+        linhas = ["Economicidade do custo da mão de obra calculada pelo sistema: custo do profissional na planilha (Módulos 1 a 4 — remuneração, "
+                  "encargos e benefícios, rescisão e reposição) × 'custo para a empresa' do salário médio do estado no salario.com.br (Novo CAGED, "
+                  "12 meses), ajustado à jornada. Não é parâmetro normativo (regra 22). Postos 'não analisados' por qualidade do arquivo devem "
+                  "ser registrados como tal, sem presumir valores, atribuindo a quem forneceu o arquivo o ônus de apresentar versão legível:"]
         for p in salarios.get("postos", []):
             ref = p.get("referencia") or {}
             if p.get("situacao") in sit:
-                linhas.append(f"{p.get('funcao')} (CBO {p.get('cbo')}, {p.get('uf')}; {p.get('local') or 'planilha'}): salário-base {brl(p['salario_base'])} × média do estado "
-                              f"{brl(ref['media'])}/{ref.get('jornada') or '?'}h (ajustada {brl(p['media_ajustada'])}) = {p['desvio']:+.1%} → {sit[p['situacao']]}"
-                              + (f"; custo total mensal na planilha {brl(p['custo_total_mensal'])} = {p['custo_total_sobre_custo_empresa_site']:.2f}× o 'custo para a empresa' "
-                                 f"informado pelo site ({brl(ref['custo_empresa'])}, que não inclui insumos, custos indiretos, lucro e tributos)" if p.get("custo_total_sobre_custo_empresa_site") else "")
-                              + f". Fonte: {ref.get('url')}{' (atualizado em ' + ref['atualizado'] + ')' if ref.get('atualizado') else ''}")
+                linhas.append(f"{p.get('funcao')} (CBO {p.get('cbo')}, {p.get('uf')}; {p.get('local') or 'planilha'}): custo do profissional {brl(p['custo_modulos_1_a_4'])}"
+                              + (f" (custo total do posto {brl(p['custo_total_mensal'])})" if p.get("custo_total_mensal") else "")
+                              + f" × custo para a empresa no estado {brl(ref['custo_empresa'])}/{ref.get('jornada') or '?'}h (ajustado {brl(p['custo_referencia_ajustado'])}; "
+                              f"salário médio {brl(ref['media'])}) = {p['desvio']:+.1%} → {sit[p['situacao']]}. Fonte: {ref.get('url')}"
+                              + (f" (atualizado em {ref['atualizado']})" if ref.get("atualizado") else ""))
             else:
-                linhas.append(f"{p.get('funcao')}: sem referência no site ({p.get('motivo', 'não localizada')}).")
+                linhas.append(f"{p.get('funcao')}: {p.get('motivo', 'sem referência')}.")
         fatos.append("\n  ".join(linhas))
 
     orient = RAIZ / "agente" / "orientacoes-especialista.md"

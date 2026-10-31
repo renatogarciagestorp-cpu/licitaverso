@@ -17,6 +17,9 @@ FERRAMENTA = {
             "uf": {"type": "string"}, "salario_base": {"type": "number", "description": "salário-base mensal (R$), sem adicionais"},
             "jornada_semanal": {"type": "number", "description": "horas semanais (ex.: 44; 12x36 = 42)"},
             "custo_total_mensal": {"type": "number", "description": "valor total mensal por empregado/posto na planilha (R$), com todos os módulos"},
+            "custo_modulos_1_a_4": {"type": "number", "description": "soma dos totais dos Módulos 1 a 4 (remuneração; encargos e benefícios; provisão para rescisão; reposição do profissional ausente), conforme o quadro-resumo da planilha"},
+            "legivel": {"type": "boolean", "description": "false se o CBO, o salário ou os totais estiverem ilegíveis, truncados ou incoerentes no texto"},
+            "observacao_legibilidade": {"type": "string"},
             "quantidade": {"type": "number"}, "convencao": {"type": "string", "description": "CCT/ACT indicada para o posto"},
             "local": {"type": "string", "description": "aba e linha onde estão o salário-base e o total (ex.: aba Servente, L12 e L80)"}},
             "required": ["funcao"]}}},
@@ -26,7 +29,9 @@ INSTR = ("A seguir está o conteúdo de uma planilha de custos e formação de p
          "(cada linha: número da linha e células COLUNA=valor; fórmulas entre colchetes). Identifique cada posto/função e registre: função, "
          "CBO (só se estiver na planilha), UF da prestação, salário-base mensal (sem adicionais), jornada semanal, valor total mensal por "
          "empregado (soma de todos os módulos, com custos indiretos, lucro e tributos), quantidade de postos, convenção coletiva indicada e "
-         "local (aba/linha). Não estime: deixe em branco o que não constar. Registre chamando a ferramenta registrar_postos.")
+         "local (aba/linha), a soma dos totais dos Módulos 1 a 4 (pelo quadro-resumo) e se os dados estão legíveis. O texto pode vir de "
+         "digitalização (OCR): NUNCA adivinhe nem corrija um CBO ou valor ilegível, truncado ou incoerente, nem deduza o CBO pelo nome da "
+         "função; deixe o campo em branco e marque legivel=false, explicando em observacao_legibilidade. Registre chamando a ferramenta registrar_postos.")
 
 
 def main():
