@@ -95,7 +95,7 @@ declare
   c record;
   inicio_novo timestamptz;
   nomes jsonb := '{"basico":"Básico","premium":"Premium","pro":"Pro"}';
-  docs jsonb := '{"edital":"Edital","etp":"ETP","tr":"Termo de Referência","riscos":"Matriz de Riscos","planilha":"Planilha de custos","plano_trabalho":"Plano de trabalho"}';
+  docs jsonb := '{"edital":"Edital","etp":"ETP","tr":"Termo de Referência","riscos":"Matriz de Riscos","planilha":"Planilha de custos","plano_trabalho":"Plano de trabalho","multiplos":"Até 3 documentos"}';
 begin
   begin
     ref_id := split_part(p_referencia, ':', 2)::uuid;
@@ -141,7 +141,10 @@ begin
     if not found then return 'analise_inexistente'; end if;
     if c.status not in ('aguardando_pagamento', 'cancelada') then return 'analise_ja_paga'; end if;
     if p_valor + 0.01 < c.valor then return 'valor_divergente'; end if;
-    update public.analises set status = 'na_fila', pago_em = now() where id = c.id;
+    -- pagamento antes do envio dos documentos (fluxo atual): fica aguardando os documentos
+    update public.analises set status = case when jsonb_array_length(coalesce(c.documentos, '[]'::jsonb)) = 0 and c.arquivo is null
+                                             and c.pncp_link is null then 'aguardando_documentos' else 'na_fila' end,
+           pago_em = now() where id = c.id;
     insert into public.pagamentos (usuario_id, referencia, descricao, metodo, valor, parcelas, mp_pagamento)
     values (c.usuario_id, p_referencia, 'Análise de documento · ' || coalesce(docs ->> c.documento, c.documento),
             p_metodo, p_valor, coalesce(p_parcelas, 1), p_mp_pagamento);

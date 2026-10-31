@@ -7,3 +7,15 @@ alter table public.analises add constraint analises_regime_check check (regime i
 alter table public.analises drop constraint if exists analises_documento_check;
 alter table public.analises add constraint analises_documento_check
   check (documento in ('edital', 'etp', 'tr', 'riscos', 'planilha', 'plano_trabalho'));
+
+-- Até 3 documentos por análise; pagamento (ou cota do Pro) antes do envio dos documentos.
+alter table public.analises add column if not exists documentos jsonb not null default '[]'::jsonb; -- [{tipo, arquivo, nome_arquivo, paginas}]
+alter table public.analises add column if not exists enviado_em timestamptz;
+alter table public.analises drop constraint if exists analises_documento_check;
+alter table public.analises add constraint analises_documento_check
+  check (documento in ('edital', 'etp', 'tr', 'riscos', 'planilha', 'plano_trabalho', 'multiplos'));
+alter table public.analises drop constraint if exists analises_status_check;
+alter table public.analises add constraint analises_status_check
+  check (status in ('aguardando_pagamento', 'aguardando_documentos', 'na_fila', 'processando', 'concluida', 'erro', 'cancelada'));
+alter table public.analises drop constraint if exists analises_origem_check;
+alter table public.analises add constraint analises_origem_check check (origem in ('pdf', 'pncp', 'arquivos'));

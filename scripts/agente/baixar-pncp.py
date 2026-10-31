@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Baixa os dados e todos os arquivos publicados de uma contratação no PNCP (API pública).
-Uso: python3 scripts/agente/baixar-pncp.py <cnpj> <ano> <sequencial> <pasta-destino>
+Uso: python3 scripts/agente/baixar-pncp.py <cnpj> <ano> <sequencial> <pasta-destino> [--so-dados]  (só dados e itens, sem os arquivos)
 Grava: compra.json, arquivos.json, cada arquivo (com o nome original) e _resultado.txt."""
 import json, pathlib, re, sys, urllib.parse, urllib.request
 
@@ -27,7 +27,7 @@ try:
     arquivos = json.loads((pasta / "arquivos.json").read_text(encoding="utf-8"))
 except Exception:
     arquivos = []
-for a in arquivos if isinstance(arquivos, list) else []:
+for a in (arquivos if isinstance(arquivos, list) and "--so-dados" not in sys.argv else []):
     url = a.get("url") or a.get("uri")
     if not url:
         continue

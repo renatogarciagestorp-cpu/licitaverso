@@ -3,17 +3,18 @@
 //
 // POST { acao: "criar", tipo: "plano", plano, ciclo, parcelas, contratante, metodo, retorno }
 // POST { acao: "criar", tipo: "consultoria", modalidade, assunto, descricao, metodo, aceite, termo_versao, anexos, retorno }
-// POST { acao: "criar", tipo: "analise", documento, origem: "pdf"|"pncp", arquivo, nome_arquivo, pncp_link, normas: [ids], regime, obras, mao_de_obra,
-//        anexos: [{tipo: "orcamento"|"planilha"|"plano-custos"|"cct", arquivo, nome_arquivo}], aceite, termo_versao, metodo, retorno }
-//      Pro com cota na semana: entra direto na fila (sem pagamento). Demais: análise avulsa paga.
+// POST { acao: "criar", tipo: "analise", aceite, termo_versao, metodo, retorno }
+//      Etapa 1: Pro com cota na semana recebe a análise sem pagamento; demais pagam antes de enviar os documentos.
+// POST { acao: "enviar_analise", id, regime, obras, mao_de_obra, documentos: [{tipo, arquivo, nome_arquivo, paginas}] (1 a 3),
+//        cct: {arquivo, nome_arquivo}, normas: [ids], pncp_link }  — etapa 2: documentos; a análise entra na fila.
 // POST { acao: "conferir", referencia: "assinatura:<id>" | "consultoria:<id>" | "analise:<id>" }
 
 import {
   aplicarPagamento, clienteServico, CORS, env, erro, mp, resposta, usuarioDaRequisicao,
 } from "../_shared/comum.ts";
 import {
-  CONSULTORIA, type Ciclo, DOC_ANALISE, type DocAnalise, FRANQUIA_PRO_SEMANA, inicioMesBR, type Modalidade, type Plano, PLANOS,
-  precoAnalise, precoConsultoria, precoPlano,
+  CONSULTORIA, type Ciclo, FRANQUIA_PRO_SEMANA, inicioMesBR, MAX_DOCS_ANALISE, MAX_PAGINAS_ANALISE, type Modalidade, type Plano, PLANOS,
+  precoAnalise, precoConsultoria, precoPlano, TIPOS_DOC_ANALISE,
 } from "../_shared/precos.ts";
 import { avisarEquipeNovaConsultoria } from "../_shared/consultoria.ts";
 
@@ -86,6 +87,65 @@ Deno.serve(async (req) => {
       return resposta({ status: depois?.status ?? linha.status, pagamentos: lista.length, resultados });
     }
 
+    // ---------------------------------------------------------------- enviar documentos da análise (etapa 2)
+    if (acao === "enviar_analise") {
+      const id = String(corpo.id ?? "");
+      const { data: an } = await admin.from("analises").select("id, usuario_id, status").eq("id", id).maybeSingle();
+      if (!an || an.usuario_id !== usuario.id) return erro("Análise não encontrada.", 404);
+      if (an.status !== "aguardando_documentos") return erro("Esta análise não está aguardando documentos (verifique o pagamento).");
+      const regime = ["lei-14133", "lei-13303", "lei-13019"].includes(String(corpo.regime)) ? String(corpo.regime) : "";
+      if (!regime) return erro("Escolha o regime da contratação.");
+      if (typeof corpo.mao_de_obra !== "boolean" || typeof corpo.obras !== "boolean") {
+        return erro("Informe se a contratação envolve dedicação exclusiva de mão de obra e se é obra ou serviço de engenharia.");
+      }
+      const lista = Array.isArray(corpo.documentos) ? corpo.documentos : [];
+      if (lista.length < 1 || lista.length > MAX_DOCS_ANALISE) return erro(`Envie de 1 a ${MAX_DOCS_ANALISE} documentos.`);
+      const prefixo = usuario.id + "/analises-docs/";
+      const documentos: { tipo: string; arquivo: string; nome_arquivo: string; paginas: number | null }[] = [];
+      for (const x of lista) {
+        const tipo = String(x?.tipo ?? ""), arq = String(x?.arquivo ?? "");
+        const def = TIPOS_DOC_ANALISE[tipo];
+        if (!def) return erro("Tipo de documento inválido.");
+        const extOk = def.formato === "pdf" ? /\.pdf$/i.test(arq) : /\.(pdf|xlsx|xlsm|xls|ods)$/i.test(arq);
+        if (!arq.startsWith(prefixo) || arq.includes("..") || !extOk) return erro(`Arquivo inválido para ${def.nome}.`);
+        const pag = Number(x?.paginas ?? 0) || null;
+        if (pag && pag > MAX_PAGINAS_ANALISE) return erro(`${def.nome}: o limite é de ${MAX_PAGINAS_ANALISE} páginas por documento.`);
+        documentos.push({ tipo, arquivo: arq, nome_arquivo: String(x?.nome_arquivo ?? "").slice(0, 160), paginas: pag });
+      }
+      const tipos = new Set(documentos.map((d) => d.tipo));
+      if (tipos.size !== documentos.length) return erro("Cada tipo de documento só pode ser enviado uma vez.");
+      if (regime !== "lei-13019" && (tipos.has("plano_trabalho") || tipos.has("planilha_parceria"))) {
+        return erro("Plano de trabalho e planilha de custos da parceria são documentos da Lei 13.019/2014.");
+      }
+      if (corpo.obras && !tipos.has("planilha_obras")) return erro("Obras e serviços de engenharia: inclua a planilha orçamentária entre os documentos.");
+      if (corpo.mao_de_obra && !tipos.has("planilha_mo")) return erro("Dedicação exclusiva de mão de obra: inclua a planilha de custos de mão de obra (IN 05/2017).");
+      if (regime === "lei-13019" && !tipos.has("planilha_parceria")) return erro("Parceria (Lei 13.019): inclua a planilha de custos da parceria.");
+      const anexos: { tipo: string; arquivo: string; nome_arquivo: string }[] = [];
+      if (corpo.mao_de_obra) {
+        const cct = String(corpo.cct?.arquivo ?? "");
+        if (!cct.startsWith(prefixo) || cct.includes("..") || !/\.(pdf|docx)$/i.test(cct)) {
+          return erro("Dedicação exclusiva de mão de obra: anexe a convenção ou acordo coletivo (PDF ou Word).");
+        }
+        anexos.push({ tipo: "cct", arquivo: cct, nome_arquivo: String(corpo.cct?.nome_arquivo ?? "").slice(0, 160) });
+      }
+      let normas: { id: string; nome: string; arquivo: string }[] = [];
+      const pedidas = (Array.isArray(corpo.normas) ? corpo.normas : []).map(String).slice(0, 3);
+      if (pedidas.length) {
+        const { data: ns } = await admin.from("normas_usuario").select("id, nome, arquivo").in("id", pedidas).eq("usuario_id", usuario.id);
+        normas = (ns ?? []).map((n: any) => ({ id: n.id, nome: n.nome, arquivo: n.arquivo }));
+      }
+      const pncp = String(corpo.pncp_link ?? "").trim();
+      const objeto = [...(corpo.obras ? ["obras"] : []), ...(corpo.mao_de_obra ? ["mao-de-obra"] : [])];
+      const { error } = await admin.from("analises").update({
+        documentos, anexos, normas, regime, objeto, documento: "multiplos", origem: "arquivos",
+        pncp_link: /^https:\/\/(www\.)?pncp\.gov\.br\/.*\d{14}\/\d{4}\/\d+/.test(pncp) ? pncp : null,
+        nome_arquivo: documentos.map((d) => d.nome_arquivo).join(" · ").slice(0, 160),
+        status: "na_fila", enviado_em: new Date().toISOString(),
+      }).eq("id", id).eq("status", "aguardando_documentos");
+      if (error) throw error;
+      return resposta({ ok: true, id });
+    }
+
     if (acao !== "criar") return erro("Ação desconhecida.");
 
     const { data: perfil } = await admin.from("perfis").select("nome, email").eq("id", usuario.id).maybeSingle();
@@ -155,68 +215,27 @@ Deno.serve(async (req) => {
       referencia = `consultoria:${nova.id}`;
     // ---------------------------------------------------------------- análise
     } else if (corpo.tipo === "analise") {
-      const documento = corpo.documento as DocAnalise;
-      if (!DOC_ANALISE[documento]) return erro("Tipo de documento inválido.");
+      // Etapa 1 do agente: aceite das condições e pagamento (ou cota do Pro). Os documentos são enviados depois (acao "enviar_analise").
       if (corpo.aceite !== true) return erro("Aceite as condições da análise para continuar.");
-      const origem = corpo.origem === "pncp" ? "pncp" : "pdf";
-      let arquivo: string | null = null, pncp: string | null = null;
-      if (origem === "pdf") {
-        arquivo = String(corpo.arquivo ?? "");
-        if (!arquivo.startsWith(usuario.id + "/") || arquivo.includes("..") || arquivo.includes("/pareceres/") || !/\.pdf$/i.test(arquivo)) {
-          return erro("Envie o documento em PDF.");
-        }
-      } else {
-        pncp = String(corpo.pncp_link ?? "").trim();
-        if (!/^https:\/\/(www\.)?pncp\.gov\.br\/.*\d{14}\/\d{4}\/\d+/.test(pncp)) return erro("Informe o link da contratação no PNCP.");
-      }
-      // Regime, objeto especial e anexos obrigatórios (planilhas em Excel; convenção coletiva em PDF/Word)
-      const regime = ["lei-14133", "lei-13303", "lei-13019"].includes(String(corpo.regime)) ? String(corpo.regime) : "lei-14133";
-      if (regime === "lei-13019" ? !["edital", "plano_trabalho"].includes(documento) : documento === "plano_trabalho") {
-        return erro("Tipo de documento incompatível com o regime escolhido.");
-      }
-      if (typeof corpo.mao_de_obra !== "boolean" || typeof corpo.obras !== "boolean") {
-        return erro("Informe se a contratação envolve dedicação exclusiva de mão de obra e se é obra ou serviço de engenharia.");
-      }
-      const objeto = [...(corpo.obras ? ["obras"] : []), ...(corpo.mao_de_obra ? ["mao-de-obra"] : [])];
-      const TIPOS_ANEXO: Record<string, RegExp> = { orcamento: /\.(xlsx|xlsm|xls|ods)$/i, planilha: /\.(xlsx|xlsm|xls|ods)$/i,
-        "plano-custos": /\.(xlsx|xlsm|xls|ods)$/i, cct: /\.(pdf|docx)$/i };
-      const anexos: { tipo: string; arquivo: string; nome_arquivo: string }[] = [];
-      for (const x of (Array.isArray(corpo.anexos) ? corpo.anexos : []).slice(0, 5)) {
-        const tipo = String(x?.tipo ?? ""), arq = String(x?.arquivo ?? "");
-        if (!TIPOS_ANEXO[tipo] || !arq.startsWith(usuario.id + "/anexos/") || arq.includes("..") || !TIPOS_ANEXO[tipo].test(arq)) {
-          return erro("Anexo inválido. Envie as planilhas em Excel e a convenção coletiva em PDF ou Word.");
-        }
-        anexos.push({ tipo, arquivo: arq, nome_arquivo: String(x?.nome_arquivo ?? "").slice(0, 160) });
-      }
-      const tem = (t: string) => anexos.some((x) => x.tipo === t);
-      if (corpo.obras && !tem("orcamento")) return erro("Obras e serviços de engenharia: anexe a planilha orçamentária em Excel.");
-      if (corpo.mao_de_obra && !tem("planilha")) return erro("Dedicação exclusiva de mão de obra: anexe a planilha de custos e formação de preços em Excel.");
-      if (corpo.mao_de_obra && !tem("cct")) return erro("Dedicação exclusiva de mão de obra: anexe a convenção ou acordo coletivo (PDF ou Word).");
-      if (regime === "lei-13019" && !tem("plano-custos")) return erro("Parceria com OSC: anexe a planilha de custos do plano de trabalho em Excel.");
-      // Pro: 2 análises por semana incluídas; a partir da 3ª, avulsa com desconto
       let franquia = false;
       if (vigente === "pro") {
+        // reaproveita uma análise da cota ainda sem documentos, para não consumir a cota duas vezes
+        const { data: pendente } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
+          .eq("status", "aguardando_documentos").eq("cobranca", "franquia_pro").limit(1).maybeSingle();
+        if (pendente) return resposta({ gratuito: true, referencia: `analise:${pendente.id}`, id: pendente.id });
         const { data: usadas } = await admin.rpc("analises_usadas_semana", { uid: usuario.id });
         franquia = Number(usadas ?? 0) < FRANQUIA_PRO_SEMANA;
       }
       valor = franquia ? 0 : precoAnalise(vigente ?? null);
-      titulo = `Licitacon · Análise de documento (${DOC_ANALISE[documento]})`;
-      // Regulamentação específica escolhida (até 3 normas da própria pessoa)
-      let normas: { id: string; nome: string; arquivo: string }[] = [];
-      const pedidas = (Array.isArray(corpo.normas) ? corpo.normas : []).map(String).slice(0, 3);
-      if (pedidas.length) {
-        const { data: ns } = await admin.from("normas_usuario").select("id, nome, arquivo").in("id", pedidas).eq("usuario_id", usuario.id);
-        normas = (ns ?? []).map((n: any) => ({ id: n.id, nome: n.nome, arquivo: n.arquivo }));
-      }
+      titulo = "Licitacon · Análise pelo Agente IA (até 3 documentos)";
       const { data: nova, error } = await admin.from("analises").insert({
-        usuario_id: usuario.id, documento, origem, arquivo, pncp_link: pncp, normas, regime, objeto, anexos,
-        nome_arquivo: String(corpo.nome_arquivo ?? "").slice(0, 160),
+        usuario_id: usuario.id, documento: "multiplos", origem: "arquivos", arquivo: null, pncp_link: null,
         cobranca: franquia ? "franquia_pro" : "avulsa", plano: vigente ?? null, valor,
         termo_aceito_em: new Date().toISOString(), termo_versao: String(corpo.termo_versao ?? "").slice(0, 20),
-        status: franquia ? "na_fila" : "aguardando_pagamento",
+        status: franquia ? "aguardando_documentos" : "aguardando_pagamento",
       }).select("id").single();
       if (error) throw error;
-      if (franquia) return resposta({ gratuito: true, referencia: `analise:${nova.id}` });
+      if (franquia) return resposta({ gratuito: true, referencia: `analise:${nova.id}`, id: nova.id });
       referencia = `analise:${nova.id}`;
     } else {
       return erro("Tipo de compra inválido.");

@@ -1170,96 +1170,198 @@
 
     <!-- ===================== AGENTE IA ===================== -->
     <sc-if value="{{ isAgente }}" hint-placeholder-val="{{ false }}">
-      <section style="background: radial-gradient(900px 420px at 80% -20%, #14424F 0%, #0A1F2A 60%); color: #fff; padding: 52px 24px 120px">
-        <div style="max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 44px; align-items: start">
-          <div>
-            <span style="display: inline-block; border: 1px solid rgba(15,163,107,0.45); background: rgba(15,163,107,0.12); color: #7FE3B6; font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 7px 12px; border-radius: 999px">Agente de IA · Lei 14.133/2021</span>
-            <h1 style="font-size: 40px; line-height: 1.08; letter-spacing: -0.035em; font-weight: 800; margin: 20px 0 0; text-wrap: balance">Análise de documentos com parecer técnico</h1>
-            <p style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.6; color: #B9CBD2; margin: 18px 0 0">Envie o edital, o ETP, o termo de referência, a matriz de riscos ou a planilha de custos. O agente confere o documento item a item com a Lei 14.133/2021 e devolve um parecer técnico em PDF e Word, com o texto legal de cada dispositivo, a jurisprudência da Biblioteca e a redação sugerida para corrigir.</p>
-            <div style="display: grid; gap: 12px; margin-top: 26px">
-              <sc-for list="{{ governanca }}" as="g" hint-placeholder-count="5">
-                <div style="display: flex; gap: 12px; align-items: flex-start">
-                  <span style="color: #0FA36B; font-weight: 800; margin-top: 1px">✓</span>
-                  <span style="font-size: 14.5px; line-height: 1.55; color: #C3D3D9">{{ g }}</span>
-                </div>
-              </sc-for>
-            </div>
-            <div style="margin-top: 26px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.16); border-radius: 14px; padding: 16px 18px">
-              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #7FE3B6">Parecer opinativo</span>
-              <p style="margin: 8px 0 0; font-size: 14px; line-height: 1.6; color: #C3D3D9">O parecer aponta todos os aspectos identificados — dos críticos aos de baixa vulnerabilidade — para você decidir com a visão completa. As recomendações não vinculam: a decisão de ajustar ou manter cada ponto é sempre de quem recebe o parecer.</p>
-            </div>
+      <sc-if value="{{ anEtapaInfo }}" hint-placeholder-val="{{ true }}">
+      <section style="background: radial-gradient(900px 420px at 80% -20%, #14424F 0%, #0A1F2A 60%); color: #fff; padding: 52px 24px 110px">
+        <div style="max-width: 980px; margin: 0 auto">
+          <span style="display: inline-block; border: 1px solid rgba(15,163,107,0.45); background: rgba(15,163,107,0.12); color: #7FE3B6; font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 7px 12px; border-radius: 999px">Agente IA · Leis 14.133, 13.303 e 13.019</span>
+          <h1 style="font-size: 40px; line-height: 1.08; letter-spacing: -0.035em; font-weight: 800; margin: 20px 0 0; text-wrap: balance">Análise de até 3 documentos com parecer técnico</h1>
+          <p style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.6; color: #B9CBD2; margin: 18px 0 0; max-width: 760px">Você escolhe até 3 documentos da contratação — ETP, termo de referência, matriz de riscos, edital, memória de cálculo, plano de trabalho ou planilhas de custos — e o agente devolve um parecer técnico opinativo em PDF e Word, no formato ABNT. Leia as informações abaixo antes de continuar.</p>
+        </div>
+      </section>
+      <section style="max-width: 980px; margin: -70px auto 0; padding: 0 16px 40px; display: grid; gap: 16px">
+        <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px; box-shadow: 0 16px 40px rgba(11,31,42,0.08)">
+          <h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em">Como funciona</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px">
+            <sc-for list="{{ anComoFunciona }}" as="c" hint-placeholder-count="4">
+              <div style="background: #F6F8F7; border-radius: 12px; padding: 14px">
+                <span style="display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #0A1F2A; color: #fff; font-weight: 800; font-size: 13px">{{ c.n }}</span>
+                <p style="margin: 10px 0 4px; font-size: 14.5px; font-weight: 800; color: #0B1F2A">{{ c.t }}</p>
+                <p style="margin: 0; font-size: 13.5px; line-height: 1.5; color: #55666D">{{ c.d }}</p>
+              </div>
+            </sc-for>
           </div>
-
-          <div style="background: #fff; color: #0B1F2A; border-radius: 18px; padding: 24px; box-shadow: 0 30px 70px rgba(0,0,0,0.35); display: flex; flex-direction: column; gap: 18px">
-            <div>
-              <h2 style="margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.02em">Nova análise</h2>
-              <p style="margin: 6px 0 0; font-size: 13.5px; color: #6A7B82">{{ anCotaTexto }}</p>
-            </div>
-            <div>
-              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Regime da contratação</span>
-              <div role="group" aria-label="Regime da contratação" style="display: flex; gap: 8px; flex-wrap: wrap">
-                <sc-for list="{{ anRegimes }}" as="r" hint-placeholder-count="3">
-                  <button sc-camel-on-click="{{ r.escolher }}" aria-pressed="{{ r.ativo }}" style="border-radius: 12px; padding: 8px 14px; font-size: 13.5px; font-weight: 700; cursor: pointer; text-align: left; line-height: 1.25; border: 1px solid {{ r.borda }}; background: {{ r.fundo }}; color: {{ r.cor }}">{{ r.nome }}<br><span style="font-size: 11.5px; font-weight: 600; opacity: 0.8">{{ r.sub }}</span></button>
+        </div>
+        <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px"><h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em">O que o agente faz</h2>
+              <div style="display: grid; gap: 9px">
+                <sc-for list="{{ anOQueFaz }}" as="x" hint-placeholder-count="4">
+                  <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; line-height: 1.55; color: #3D5058"><span aria-hidden="true" style="color: #0FA36B; font-weight: 800; flex: none">✓</span><span>{{ x }}</span></div>
                 </sc-for>
               </div>
-            </div>
-            <div style="background: #F6F8F7; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px; display: grid; gap: 14px">
-              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px; margin-bottom: 0">Antes de começar</span>
-              <sc-for list="{{ anPerguntas }}" as="q" hint-placeholder-count="2">
-                <div>
-                  <p style="margin: 0 0 4px; font-size: 14px; font-weight: 700; color: #172B33; line-height: 1.4">{{ q.pergunta }}</p>
-                  <p style="margin: 0 0 8px; font-size: 12.5px; color: #7A8B91">{{ q.dica }}</p>
-                  <div role="group" aria-label="{{ q.pergunta }}" style="display: flex; gap: 8px">
-                    <sc-for list="{{ q.opcoes }}" as="o" hint-placeholder-count="2">
-                      <button sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.ativo }}" style="border-radius: 999px; padding: 7px 18px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ o.borda }}; background: {{ o.fundo }}; color: {{ o.cor }}">{{ o.nome }}</button>
-                    </sc-for>
-                  </div>
-                </div>
-              </sc-for>
-            </div>
-            <div>
-              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Documento</span>
-              <div role="group" aria-label="Tipo de documento" style="display: flex; gap: 8px; flex-wrap: wrap">
-                <sc-for list="{{ anDocs }}" as="d" hint-placeholder-count="5">
-                  <button sc-camel-on-click="{{ d.escolher }}" aria-pressed="{{ d.ativo }}" style="border-radius: 999px; padding: 9px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ d.borda }}; background: {{ d.fundo }}; color: {{ d.cor }}">{{ d.nome }}</button>
+        </div>
+        <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px"><h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em">O que ele precisa para analisar</h2>
+          <p style="margin: 0 0 12px; font-size: 14px; line-height: 1.55; color: #55666D">Até 3 documentos por análise, à sua escolha entre:</p>
+          <div style="display: grid; gap: 8px">
+            <sc-for list="{{ anPrecisa }}" as="d" hint-placeholder-count="5">
+              <div style="border: 1px solid #E6EBEA; border-radius: 11px; padding: 10px 13px">
+                <span style="font-size: 14px; font-weight: 800; color: #0B1F2A">{{ d.nome }}</span> <span style="font-size: 12px; font-weight: 700; color: #0F6B7E">· {{ d.formato }}</span>
+                <span style="display: block; font-size: 13px; line-height: 1.45; color: #6A7B82; margin-top: 2px">{{ d.dica }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px"><h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em">Regras</h2>
+              <div style="display: grid; gap: 9px">
+                <sc-for list="{{ anRegras }}" as="x" hint-placeholder-count="4">
+                  <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; line-height: 1.55; color: #3D5058"><span aria-hidden="true" style="color: #0F6B7E; font-weight: 800; flex: none">•</span><span>{{ x }}</span></div>
                 </sc-for>
               </div>
-            </div>
-            <div>
-              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Como enviar</span>
-              <div role="group" aria-label="Como enviar" style="display: flex; gap: 8px; flex-wrap: wrap">
-                <sc-for list="{{ anOrigens }}" as="o" hint-placeholder-count="2">
-                  <button sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.ativo }}" style="border-radius: 999px; padding: 9px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ o.borda }}; background: {{ o.fundo }}; color: {{ o.cor }}">{{ o.nome }}</button>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
+          <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px"><h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em">Proteção de dados</h2>
+              <div style="display: grid; gap: 9px">
+                <sc-for list="{{ anDados }}" as="x" hint-placeholder-count="4">
+                  <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; line-height: 1.55; color: #3D5058"><span aria-hidden="true" style="color: #0F6B7E; font-weight: 800; flex: none">•</span><span>{{ x }}</span></div>
                 </sc-for>
               </div>
-              <sc-if value="{{ anOrigemPdf }}" hint-placeholder-val="{{ true }}">
-                <label style="position: relative; display: flex; align-items: center; gap: 12px; margin-top: 12px; border: 1.5px dashed #BFD3D0; border-radius: 12px; padding: 14px 16px; cursor: pointer; background: #FBFCFC" style-hover="border-color: #0FA36B">
-                  <input type="file" accept="application/pdf,.pdf" sc-camel-on-change="{{ onAnArquivo }}" style="position: absolute; width: 1px; height: 1px; opacity: 0">
-                  <span aria-hidden="true" style="width: 34px; height: 34px; border-radius: 9px; background: #EAF2F1; color: #0F6B7E; display: grid; place-items: center; font-weight: 800">PDF</span>
-                  <span style="font-size: 14px; line-height: 1.4; color: #3D5058"><strong style="color: #0B1F2A">{{ anArquivoNome }}</strong><br><span style="font-size: 12.5px; color: #7A8B91">PDF de até 200 páginas e 25 MB — digitalizado também serve</span></span>
-                </label>
-              </sc-if>
-              <sc-if value="{{ anOrigemPncp }}" hint-placeholder-val="{{ false }}">
-                <input type="url" value="{{ anLink }}" sc-camel-on-input="{{ onAnLink }}" placeholder="https://pncp.gov.br/app/editais/00000000000000/2026/1" aria-label="Link da contratação no PNCP" style="margin-top: 12px; width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 11px; padding: 12px 14px; font-size: 14px">
-                <p style="margin: 6px 0 0; font-size: 12.5px; color: #7A8B91">O agente baixa o maior arquivo publicado na contratação (em geral, o edital com anexos).</p>
-              </sc-if>
+          </div>
+          <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px"><h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em">O que não faz e limites</h2>
+              <div style="display: grid; gap: 9px">
+                <sc-for list="{{ anNaoFaz }}" as="x" hint-placeholder-count="4">
+                  <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; line-height: 1.55; color: #3D5058"><span aria-hidden="true" style="color: #8A1230; font-weight: 800; flex: none">×</span><span>{{ x }}</span></div>
+                </sc-for>
+              </div>
+          </div>
+        </div>
+        <div style="background: #0A1F2A; color: #fff; border-radius: 16px; padding: 22px 24px">
+          <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #7FE3B6">Parecer opinativo</span>
+          <p style="margin: 8px 0 0; font-size: 14.5px; line-height: 1.6; color: #D3E0E5">O parecer aponta todos os aspectos identificados — dos críticos aos de baixa vulnerabilidade — e recomenda providências, mas não vincula quem o recebe. A decisão de ajustar ou manter cada ponto, e a responsabilidade por ela, é sempre de quem recebe o parecer (STF, MS 24.631/DF; Decreto-Lei 4.657/1942, art. 28). Não é parecer jurídico.</p>
+          <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #7FE3B6; margin-top: 16px">Tempo de análise</span>
+          <p style="margin: 8px 0 0; font-size: 14.5px; line-height: 1.6; color: #D3E0E5">{{ anTempo }}</p>
+        </div>
+        <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px; border-color: #BFD3D0; display: grid; gap: 16px">
+          <div>
+            <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Seu plano</span>
+            <p style="margin: 0; font-size: 19px; font-weight: 800; color: #0B1F2A">{{ anPlanoTitulo }}</p>
+            <p style="margin: 6px 0 0; font-size: 14.5px; line-height: 1.55; color: #3D5058">{{ anPlanoTexto }}</p>
+          </div>
+          <div style="display: grid; gap: 6px">
+            <sc-for list="{{ anTabelaPrecos }}" as="t" hint-placeholder-count="4">
+              <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: baseline; border-radius: 10px; padding: 9px 12px; background: {{ t.fundo }}">
+                <strong style="min-width: 92px; font-size: 14px; color: #0B1F2A">{{ t.p }}</strong><span style="font-size: 13.5px; color: #3D5058">{{ t.v }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ anTemCredito }}" hint-placeholder-val="{{ false }}">
+            <button sc-camel-on-click="{{ irParaEnvio }}" style="justify-self: start; background: #0FA36B; color: #06251A; border: 0; border-radius: 12px; padding: 13px 20px; font-size: 15px; font-weight: 800; cursor: pointer">Ir para o envio dos documentos</button>
+          </sc-if>
+          <sc-if value="{{ anSemCredito }}" hint-placeholder-val="{{ true }}">
+            <div style="background: #F6F8F7; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px">
+              <details>
+                <summary style="cursor: pointer; font-size: 14px; font-weight: 700; color: #0F6B7E">Condições da análise (leia antes de aceitar)</summary>
+                <ol style="margin: 10px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 13px; line-height: 1.5; color: #3D5058">
+                  <sc-for list="{{ anTermo }}" as="t" hint-placeholder-count="3"><li>{{ t }}</li></sc-for>
+                </ol>
+              </details>
+              <label style="display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; cursor: pointer">
+                <input type="checkbox" checked="{{ anAceite }}" sc-camel-on-change="{{ onAnAceite }}" style="width: 18px; height: 18px; margin-top: 1px; accent-color: #0FA36B; flex: none">
+                <span style="font-size: 14px; font-weight: 700; color: #172B33">Li e concordo com as condições da análise. Entendo que o parecer é opinativo e que a decisão final é minha.</span>
+              </label>
             </div>
-            <sc-if value="{{ anTemAnexos }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ anPaga }}" hint-placeholder-val="{{ true }}">
               <div>
-                <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px; margin-bottom: 6px">Anexos obrigatórios</span>
-                <p style="margin: 0 0 10px; font-size: 13px; line-height: 1.5; color: #6A7B82">Sem esses arquivos não é possível avaliar por completo a economicidade, a vantajosidade e a existência de sobrepreço.</p>
-                <div style="display: grid; gap: 8px">
-                  <sc-for list="{{ anAnexos }}" as="x" hint-placeholder-count="2">
-                    <label style="position: relative; display: block; border: 1.5px dashed #BFD3D0; border-radius: 12px; padding: 12px 14px; cursor: pointer; background: #FBFCFC" style-hover="border-color: #0FA36B">
-                      <input type="file" accept="{{ x.aceita }}" sc-camel-on-change="{{ x.onArquivo }}" style="position: absolute; width: 1px; height: 1px; opacity: 0">
-                      <span style="display: block; font-size: 13.5px; font-weight: 800; color: #0B1F2A">{{ x.nome }}</span>
-                      <span style="display: block; font-size: 12.5px; color: #7A8B91; line-height: 1.45; margin-top: 2px">{{ x.dica }}</span>
-                      <span style="display: block; font-size: 13px; font-weight: 700; color: #0F6B7E; margin-top: 6px; overflow-wrap: anywhere">{{ x.arquivo }}</span>
-                    </label>
+                <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Forma de pagamento</span>
+                <div role="group" aria-label="Forma de pagamento" style="display: flex; gap: 8px; flex-wrap: wrap">
+                  <sc-for list="{{ anMetodos }}" as="m" hint-placeholder-count="3">
+                    <button sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border-radius: 999px; padding: 9px 16px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}">{{ m.nome }}</button>
                   </sc-for>
                 </div>
               </div>
             </sc-if>
+            <button sc-camel-on-click="{{ iniciarAnalise }}" style="justify-self: start; background: #0FA36B; color: #06251A; border: 0; border-radius: 12px; padding: 14px 22px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 24px rgba(15,163,107,0.3)" style-hover="background: #14B978">{{ anBotaoInicio }}</button>
+          </sc-if>
+          <sc-if value="{{ anErro }}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 0; font-size: 13.5px; font-weight: 700; color: #8A1230">{{ anErro }}</p></sc-if>
+          <sc-if value="{{ anOk }}" hint-placeholder-val="{{ false }}"><p role="status" style="margin: 0; font-size: 14px; font-weight: 700; color: #0A7A50">{{ anOk }}</p></sc-if>
+        </div>
+      </section>
+      </sc-if>
+
+      <sc-if value="{{ anEtapaPedido }}" hint-placeholder-val="{{ false }}">
+      <section style="background: #0A1F2A; color: #fff; padding: 40px 24px 100px">
+        <div style="max-width: 860px; margin: 0 auto">
+          <button sc-camel-on-click="{{ voltarInfo }}" style="background: transparent; border: 0; color: #7FE3B6; font-size: 13.5px; font-weight: 700; cursor: pointer; padding: 0">← Voltar às informações</button>
+          <h1 style="font-size: 32px; line-height: 1.1; letter-spacing: -0.03em; font-weight: 800; margin: 14px 0 0">Envio dos documentos</h1>
+          <p style="font-size: 15.5px; line-height: 1.55; color: #B9CBD2; margin: 10px 0 0">Análise liberada. Escolha o regime, responda às perguntas e anexe até 3 documentos.</p>
+        </div>
+      </section>
+      <section style="max-width: 860px; margin: -64px auto 0; padding: 0 16px 40px">
+        <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px; box-shadow: 0 16px 40px rgba(11,31,42,0.08); display: flex; flex-direction: column; gap: 20px">
+          <div>
+            <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Regime da contratação</span>
+            <div role="group" aria-label="Regime da contratação" style="display: flex; gap: 8px; flex-wrap: wrap">
+              <sc-for list="{{ anRegimes }}" as="r" hint-placeholder-count="3">
+                <button sc-camel-on-click="{{ r.escolher }}" aria-pressed="{{ r.ativo }}" style="border-radius: 12px; padding: 8px 14px; font-size: 13.5px; font-weight: 700; cursor: pointer; text-align: left; line-height: 1.25; border: 1px solid {{ r.borda }}; background: {{ r.fundo }}; color: {{ r.cor }}">{{ r.nome }}<br><span style="font-size: 11.5px; font-weight: 600; opacity: 0.8">{{ r.sub }}</span></button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="background: #F6F8F7; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px; display: grid; gap: 14px">
+            <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px; margin-bottom: 0">Antes de começar</span>
+            <sc-for list="{{ anPerguntas }}" as="q" hint-placeholder-count="2">
+              <div>
+                <p style="margin: 0 0 4px; font-size: 14px; font-weight: 700; color: #172B33; line-height: 1.4">{{ q.pergunta }}</p>
+                <p style="margin: 0 0 8px; font-size: 12.5px; color: #7A8B91">{{ q.dica }}</p>
+                <div role="group" aria-label="{{ q.pergunta }}" style="display: flex; gap: 8px">
+                  <sc-for list="{{ q.opcoes }}" as="o" hint-placeholder-count="2">
+                    <button sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.ativo }}" style="border-radius: 999px; padding: 7px 18px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ o.borda }}; background: {{ o.fundo }}; color: {{ o.cor }}">{{ o.nome }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div>
+            <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap"><span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px; margin-bottom: 4px">Documentos</span><span style="font-size: 12.5px; font-weight: 700; color: #7A8B91">{{ anContagem }}</span></div>
+            <sc-if value="{{ anExigidosTexto }}" hint-placeholder-val="{{ false }}"><p style="margin: 0 0 10px; font-size: 13px; font-weight: 700; color: #8A4A12">{{ anExigidosTexto }}</p></sc-if>
+            <div style="display: grid; gap: 10px">
+              <sc-for list="{{ anSlots }}" as="d" hint-placeholder-count="1">
+                <div style="border: 1px solid #DDE4E3; border-radius: 12px; padding: 12px 14px; display: grid; gap: 8px">
+                  <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap">
+                    <strong style="font-size: 13.5px; color: #0B1F2A">Documento {{ d.n }}</strong>
+                    <span style="flex: 1"></span>
+                    <sc-if value="{{ d.podeRemover }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ d.remover }}" style="background: transparent; border: 0; color: #8A1230; font-size: 12.5px; font-weight: 700; cursor: pointer">Remover</button></sc-if>
+                  </div>
+                  <select sc-camel-on-change="{{ d.onTipo }}" aria-label="Tipo do documento {{ d.n }}" style="width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 10px; padding: 10px 12px; font-size: 14px; background: #fff">
+                    <option value="">Escolha o tipo do documento…</option>
+                    <sc-for list="{{ d.opcoes }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for>
+                  </select>
+                  <span style="font-size: 12.5px; line-height: 1.45; color: #7A8B91">{{ d.dica }}</span>
+                  <sc-if value="{{ d.temTipo }}" hint-placeholder-val="{{ false }}">
+                    <label style="position: relative; display: block; border: 1.5px dashed #BFD3D0; border-radius: 10px; padding: 11px 13px; cursor: pointer; background: #FBFCFC" style-hover="border-color: #0FA36B">
+                      <input type="file" accept="{{ d.aceita }}" sc-camel-on-change="{{ d.onArquivo }}" style="position: absolute; width: 1px; height: 1px; opacity: 0">
+                      <span style="display: block; font-size: 13.5px; font-weight: 700; color: #0F6B7E; overflow-wrap: anywhere">{{ d.arquivo }}</span>
+                      <span style="display: block; font-size: 12px; color: #7A8B91; margin-top: 2px">{{ d.formato }}</span>
+                    </label>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ anPodeAdicionar }}" hint-placeholder-val="{{ true }}">
+              <button sc-camel-on-click="{{ anAdicionarDoc }}" style="margin-top: 10px; background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 10px; padding: 9px 14px; font-size: 13.5px; font-weight: 800; cursor: pointer">+ Adicionar documento</button>
+            </sc-if>
+          </div>
+          <sc-if value="{{ anPedeCct }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px; margin-bottom: 6px">Convenção coletiva (anexo extra, obrigatório)</span>
+              <label style="position: relative; display: block; border: 1.5px dashed #BFD3D0; border-radius: 10px; padding: 11px 13px; cursor: pointer; background: #FBFCFC">
+                <input type="file" accept=".pdf,.docx" sc-camel-on-change="{{ onAnCct }}" style="position: absolute; width: 1px; height: 1px; opacity: 0">
+                <span style="display: block; font-size: 13.5px; font-weight: 700; color: #0F6B7E; overflow-wrap: anywhere">{{ anCctNome }}</span>
+                <span style="display: block; font-size: 12px; color: #7A8B91; margin-top: 2px">Convenção ou acordo coletivo usado na composição do salário. Não conta no limite de 3 documentos.</span>
+              </label>
+            </div>
+          </sc-if>
+          <div>
+            <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px; margin-bottom: 6px">Link da contratação no PNCP (opcional)</span>
+            <input type="url" value="{{ anPncp }}" sc-camel-on-input="{{ onAnPncp }}" placeholder="https://pncp.gov.br/app/editais/00000000000000/2026/1" aria-label="Link do PNCP" style="width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 10px; padding: 11px 13px; font-size: 14px">
+            <p style="margin: 6px 0 0; font-size: 12.5px; color: #7A8B91">Se a contratação já estiver publicada, o agente usa os dados do PNCP para conferir prazos e comparar preços.</p>
+          </div>
             <div>
               <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 6px">Regulamentação específica (opcional)</span>
               <p style="margin: 0 0 10px; font-size: 13px; line-height: 1.5; color: #6A7B82">Decreto estadual ou municipal que regulamenta a Lei 14.133, regulamento interno de estatal (RILC) etc. O agente aplica a norma em complemento à legislação nacional. Até {{ anMaxNormas }} por análise.</p>
@@ -1291,47 +1393,24 @@
                 <p role="alert" style="margin: 8px 0 0; font-size: 13px; font-weight: 700; color: #8A1230">{{ anNormaErro }}</p>
               </sc-if>
             </div>
-            <div style="background: #F6F8F7; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px">
-              <details>
-                <summary style="cursor: pointer; font-size: 14px; font-weight: 700; color: #0F6B7E">Condições da análise (leia antes de aceitar)</summary>
-                <ol style="margin: 10px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 13px; line-height: 1.5; color: #3D5058">
-                  <sc-for list="{{ anTermo }}" as="t" hint-placeholder-count="3"><li>{{ t }}</li></sc-for>
-                </ol>
-              </details>
-              <label style="display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; cursor: pointer">
-                <input type="checkbox" checked="{{ anAceite }}" sc-camel-on-change="{{ onAnAceite }}" style="width: 18px; height: 18px; margin-top: 1px; accent-color: #0FA36B; flex: none">
-                <span style="font-size: 14px; font-weight: 700; color: #172B33">Li e aceito as condições. Entendo que o parecer é opinativo e que a decisão final é minha.</span>
-              </label>
+          <sc-if value="{{ anTemEstimativa }}" hint-placeholder-val="{{ false }}">
+            <div style="background: #EAF2F1; border: 1px solid #BFD3D0; border-radius: 12px; padding: 14px 16px">
+              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px; margin-bottom: 4px">Estimativa de duração</span>
+              <p style="margin: 0; font-size: 20px; font-weight: 800; color: #0B1F2A">{{ anEstimativa }}</p>
+              <ul style="margin: 8px 0 0; padding-left: 18px; font-size: 13px; line-height: 1.55; color: #3D5058">
+                <sc-for list="{{ anEstimativaPartes }}" as="p" hint-placeholder-count="3"><li>{{ p }}</li></sc-for>
+              </ul>
+              <p style="margin: 6px 0 0; font-size: 12.5px; color: #6A7B82">{{ anEstimativaBase }}</p>
             </div>
-            <sc-if value="{{ anPaga }}" hint-placeholder-val="{{ true }}">
-              <div>
-                <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Forma de pagamento</span>
-                <div role="group" aria-label="Forma de pagamento" style="display: flex; gap: 8px; flex-wrap: wrap">
-                  <sc-for list="{{ anMetodos }}" as="m" hint-placeholder-count="3">
-                    <button sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border-radius: 999px; padding: 9px 16px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}">{{ m.nome }}</button>
-                  </sc-for>
-                </div>
-              </div>
-            </sc-if>
-            <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; border-top: 1px solid #EDF1F0; padding-top: 18px">
-              <div style="flex: 1; min-width: 200px">
-                <div style="font-size: 24px; font-weight: 800; letter-spacing: -0.02em">{{ anTotal }}</div>
-                <div style="font-size: 12.5px; color: #7A8B91; margin-top: 2px">{{ anDesconto }}</div>
-              </div>
-              <button sc-camel-on-click="{{ enviarAnalise }}" style="background: #0FA36B; color: #06251A; border: 0; border-radius: 12px; padding: 14px 22px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 24px rgba(15,163,107,0.3)" style-hover="background: #14B978">{{ anBotao }}</button>
-            </div>
-            <sc-if value="{{ anErro }}" hint-placeholder-val="{{ false }}">
-              <p role="alert" style="margin: 0; font-size: 13.5px; font-weight: 700; color: #8A1230">{{ anErro }}</p>
-            </sc-if>
-            <sc-if value="{{ anOk }}" hint-placeholder-val="{{ false }}">
-              <p role="status" style="margin: 0; font-size: 14px; font-weight: 700; color: #0A7A50">{{ anOk }}</p>
-            </sc-if>
-          </div>
+          </sc-if>
+          <button sc-camel-on-click="{{ enviarDocumentos }}" style="align-self: flex-start; background: #0FA36B; color: #06251A; border: 0; border-radius: 12px; padding: 14px 22px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 24px rgba(15,163,107,0.3)" style-hover="background: #14B978">{{ anBotaoEnvio }}</button>
+          <sc-if value="{{ anErro }}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 0; font-size: 13.5px; font-weight: 700; color: #8A1230">{{ anErro }}</p></sc-if>
         </div>
       </section>
+      </sc-if>
 
-      <section style="max-width: 1240px; margin: -72px auto 0; padding: 0 24px 80px">
-        <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 26px 28px; box-shadow: 0 16px 40px rgba(11,31,42,0.08)">
+      <section style="max-width: 980px; margin: 0 auto; padding: 0 16px 80px">
+        <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 24px; box-shadow: 0 16px 40px rgba(11,31,42,0.08)">
           <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
             <h2 style="margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.02em; flex: 1">Minhas análises</h2>
             <button sc-camel-on-click="{{ atualizarAnalises }}" style="background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer">Atualizar</button>
@@ -1357,6 +1436,9 @@
                     <button sc-camel-on-click="{{ ma.baixarPdf }}" style="background: #0A1F2A; color: #fff; border: 0; border-radius: 9px; padding: 9px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer">Baixar parecer (PDF)</button>
                     <button sc-camel-on-click="{{ ma.baixarDocx }}" style="background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 9px; padding: 9px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer">Baixar em Word</button>
                   </div>
+                </sc-if>
+                <sc-if value="{{ ma.aguardaDocs }}" hint-placeholder-val="{{ false }}">
+                  <button sc-camel-on-click="{{ ma.enviarDocs }}" style="margin-top: 12px; background: #0FA36B; color: #06251A; border: 0; border-radius: 9px; padding: 9px 14px; font-size: 13px; font-weight: 800; cursor: pointer">Enviar documentos</button>
                 </sc-if>
                 <sc-if value="{{ ma.aguardaPagamento }}" hint-placeholder-val="{{ false }}">
                   <button sc-camel-on-click="{{ ma.conferir }}" style="margin-top: 12px; background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 9px; padding: 9px 14px; font-size: 13px; font-weight: 700; cursor: pointer">Conferir pagamento</button>
@@ -2579,41 +2661,45 @@ const CONSULTORIA = [
     escopo: "60 minutos por videoconferência",
     desc: "Conversa pelo Google Meet para tirar dúvidas e discutir o caso. Depois do pagamento, você escolhe o horário na agenda do especialista." }
 ];
-const AN_DOCS = [["edital", "Edital"], ["etp", "ETP"], ["tr", "Termo de Referência"], ["riscos", "Matriz de Riscos"], ["planilha", "Planilha de custos"]];
-const AN_DOC_NOME = { edital: "Edital", etp: "Estudo Técnico Preliminar", tr: "Termo de Referência", riscos: "Matriz de Riscos", planilha: "Planilha de custos", plano_trabalho: "Plano de trabalho" };
+const AN_DOC_NOME = { edital: "Edital", etp: "Estudo Técnico Preliminar", tr: "Termo de Referência", riscos: "Matriz de Riscos", planilha: "Planilha de custos", plano_trabalho: "Plano de trabalho", multiplos: "Análise de documentos" };
 const AN_REGIMES = [["lei-14133", "Lei 14.133/2021", "Administração pública"], ["lei-13303", "Lei 13.303/2016", "Empresas estatais"], ["lei-13019", "Lei 13.019/2014", "Parcerias com OSC"]];
-const AN_DOCS_REGIME = {
-  "lei-14133": AN_DOCS,
-  "lei-13303": [["edital", "Edital e minuta"], ["etp", "Estudo / planejamento"], ["tr", "TR / Projeto Básico"], ["riscos", "Matriz de Riscos"], ["planilha", "Planilha de custos"]],
-  "lei-13019": [["edital", "Edital de chamamento"], ["plano_trabalho", "Plano de trabalho"]]
-};
-const AN_ANEXOS = {
-  orcamento: { nome: "Planilha orçamentária (Excel)", dica: "Valores unitários e totais sem e com BDI, composição do BDI (onerado ou desonerado), tabelas utilizadas (EMOP, SINAPI, SICRO, SCO etc.) e datas-base.", excel: true },
-  planilha: { nome: "Planilha de custos e formação de preços (Excel)", dica: "Planilha modelo preenchida por posto: CBO, categoria, salário-base, adicionais, encargos, benefícios, insumos, custos indiretos, lucro e tributos.", excel: true },
-  cct: { nome: "Convenção ou acordo coletivo (PDF ou Word)", dica: "Instrumento coletivo usado na composição do salário (piso, benefícios e vigência).", excel: false },
-  "plano-custos": { nome: "Planilha de custos do plano de trabalho (Excel)", dica: "Detalhamento de tudo o que será implementado e adquirido na execução: item, quantidade, valor unitário e total.", excel: true }
-};
-const AN_ANEXO_MB = 15;
-const AN_PRECO = 147;
+// documentos aceitos (até 3 por análise). formato pdf = só PDF; planilha = Excel (recomendado) ou PDF
+const AN_TIPOS = [
+  ["edital", "Edital (com minutas)", "pdf", "Edital e anexos: minuta do contrato, da ata ou do termo de colaboração."],
+  ["etp", "Estudo Técnico Preliminar (ETP)", "pdf", "Estudo da necessidade, das alternativas e da solução escolhida."],
+  ["tr", "Termo de Referência / Projeto Básico", "pdf", "Definição do objeto, modelo de execução, de gestão e de pagamento."],
+  ["riscos", "Matriz de Riscos", "pdf", "Mapa de riscos ou matriz de alocação de riscos."],
+  ["memoria_calculo", "Memória de cálculo", "planilha", "Cálculo dos quantitativos e dos valores estimados."],
+  ["plano_trabalho", "Plano de trabalho", "pdf", "Lei 13.019/2014: substitui o termo de referência nas parcerias com OSC."],
+  ["planilha_mo", "Planilha de custos de mão de obra (IN 05/2017)", "planilha", "Uma composição por posto: CBO, categoria, salário-base, adicionais, encargos, benefícios, insumos, custos indiretos, lucro e tributos."],
+  ["planilha_obras", "Planilha orçamentária (obras e serviços de engenharia)", "planilha", "Valores unitários e totais sem e com BDI, composição do BDI (onerado ou desonerado), tabelas (EMOP, SINAPI, SICRO, SCO etc.) e datas-base."],
+  ["planilha_parceria", "Planilha de custos da parceria (Lei 13.019)", "planilha", "Detalhamento de tudo o que será implementado e adquirido na execução, com o custo total da parceria."]
+];
+const AN_TIPO = Object.fromEntries(AN_TIPOS.map(([id, nome, formato, dica]) => [id, { id, nome, formato, dica }]));
+const AN_MAX_DOCS = 3;
+const AN_MAX_PAGINAS = 200;
+const AN_ANEXO_MB = 25;
+const AN_PRECO = 290;
 const AN_DESCONTO = { basico: 0.1, premium: 0.15, pro: 0.3 };
 const AN_MAX_MB = 25;
 const AN_MAX_NORMAS = 3;
 const AN_NORMA_MB = 15;
-const AN_TERMO_VERSAO = "2026-10-30b";
+const AN_TERMO_VERSAO = "2026-10-31";
 const AN_TERMO = [
   "Natureza: parecer técnico em gestão de licitações e contratos, elaborado de forma automatizada por inteligência artificial a partir do roteiro de verificação do Licitacon. Não é parecer jurídico e não substitui a análise jurídica prévia do órgão (Lei 14.133/2021, art. 53).",
   "Parecer opinativo: o parecer aponta todos os aspectos identificados, dos críticos aos de baixa vulnerabilidade, e recomenda providências, mas não vincula quem o recebe. A decisão de ajustar ou manter cada ponto, e a responsabilidade por ela, é exclusivamente sua (STF, MS 24.631/DF; Decreto-Lei 4.657/1942, art. 28).",
-  "Escopo: um documento por análise, em PDF de até 200 páginas e 25 MB. Documentos digitalizados (imagem) são lidos por reconhecimento óptico de caracteres (OCR); com digitalização de baixa qualidade, trechos podem ser lidos com erro. Regime: a análise segue a lei que rege a contratação (Lei 14.133/2021; Lei 13.303/2016, para empresas estatais; ou Lei 13.019/2014, para parcerias com organizações da sociedade civil). Obras e serviços de engenharia exigem a planilha orçamentária em Excel; serviços com dedicação exclusiva de mão de obra exigem a planilha de custos em Excel e a convenção coletiva; parcerias exigem a planilha de custos do plano de trabalho em Excel. A análise considera a legislação nacional aplicável a todos os entes (Constituição Federal, Lei 14.133/2021, LRF, LC 123/2006, LINDB, entre outras) e, como parâmetro técnico, instruções normativas, cadernos e manuais federais e do TCU.",
+  "Escopo: até 3 documentos por análise, escolhidos por você entre ETP, termo de referência, matriz de riscos, edital, memória de cálculo, plano de trabalho, planilha de custos de mão de obra (IN 05/2017), planilha orçamentária de obras e serviços de engenharia e planilha de custos da parceria (Lei 13.019), cada um com até 200 páginas e 25 MB. Documentos digitalizados (imagem) são lidos por reconhecimento óptico de caracteres (OCR); com digitalização de baixa qualidade, trechos podem ser lidos com erro. Regime: a análise segue a lei que rege a contratação (Lei 14.133/2021; Lei 13.303/2016, para empresas estatais; ou Lei 13.019/2014, para parcerias com organizações da sociedade civil). Obras e serviços de engenharia exigem a planilha orçamentária; serviços com dedicação exclusiva de mão de obra exigem a planilha de custos de mão de obra e, como anexo extra, a convenção coletiva; parcerias exigem a planilha de custos da parceria. Sem esses arquivos não é possível avaliar a economicidade, a vantajosidade e o sobrepreço. Arquivo ou trecho ilegível não é presumido: o parecer registra que não foi possível analisá-lo. A análise considera a legislação nacional aplicável a todos os entes (Constituição Federal, Lei 14.133/2021, LRF, LC 123/2006, LINDB, entre outras) e, como parâmetro técnico, instruções normativas, cadernos e manuais federais e do TCU.",
   "Regulamentação específica (opcional): você pode anexar até 3 normas próprias (decreto estadual ou municipal, regulamento interno de licitações de estatal etc.), em PDF ou Word, que o agente aplica em complemento à legislação nacional, apontando eventual conflito. Você é responsável pela vigência e fidelidade do texto enviado.",
-  "Prazo: em geral, o parecer fica pronto em até 1 hora; você recebe um aviso por e-mail e baixa o parecer em PDF e Word nesta página.",
-  "Plano Pro: 2 análises por semana incluídas (de segunda a domingo, sem acúmulo). A partir da 3ª análise na semana, a análise avulsa sai com 30% de desconto. Análise que não puder ser concluída não consome a cota; a avulsa paga é reprocessada ou estornada.",
+  "Prazo: o tempo de análise depende da quantidade de documentos, da qualidade dos arquivos (documento digitalizado exige reconhecimento de texto) e da complexidade da contratação. A estimativa é calculada na página de envio, a partir dos arquivos escolhidos. Você recebe um aviso por e-mail e baixa o parecer em PDF e Word nesta página.",
+  "Valores e cota: análise a R$ 290,00 para quem não é assinante; assinantes do Básico têm 10% de desconto e do Premium, 15%, e pagam antes de enviar os documentos. O plano Pro inclui 2 análises por semana (de segunda a domingo, sem acúmulo) sem custo adicional; a partir da 3ª na semana, a análise sai com 30% de desconto. Análise que não puder ser concluída por falha técnica não consome a cota; a paga é reprocessada ou estornada.",
   "Dados: o documento é processado por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos. O arquivo e o parecer ficam na sua conta, acessíveis só a você e à equipe do Licitacon. Não envie documento cuja divulgação a prestadores de serviço seja vedada.",
-  "Custo da mão de obra: o salário-base de cada posto é comparado com a média salarial da ocupação no estado divulgada pelo Salario.com.br (dados do Novo CAGED). Essa fonte não é parâmetro normativo; a comparação é indicativa e serve para orientar a verificação do piso da convenção e da planilha.",
+  "Custo da mão de obra: o custo total do profissional na planilha (IN 05/2017) é comparado com a referência de mercado do estado divulgada pelo Salario.com.br (dados do Novo CAGED). Essa fonte não é parâmetro normativo; a comparação é indicativa e orienta a revisão da planilha.",
   "Análise de preços: quando o documento traz o orçamento estimado, o sistema compara os valores com preços homologados em contratações equivalentes publicadas no PNCP (órgãos do mesmo estado, últimos 12 meses, Lei 14.133/2021). O resultado é indicativo e depende da equivalência das especificações; não substitui a pesquisa de preços do processo.",
   "Limitações: a inteligência artificial pode errar ou deixar de identificar pontos. Confira cada apontamento no documento e na fonte oficial antes de decidir."
 ];
 const STATUS_ANALISE = {
-  aguardando_pagamento: ["aguardando pagamento", "#8A4A12", "#FDF1E3"], na_fila: ["na fila", "#0F6B7E", "#E3F1F5"],
+  aguardando_pagamento: ["aguardando pagamento", "#8A4A12", "#FDF1E3"], aguardando_documentos: ["aguardando documentos", "#8A4A12", "#FDF1E3"],
+  na_fila: ["na fila", "#0F6B7E", "#E3F1F5"],
   processando: ["em análise", "#0F6B7E", "#E3F1F5"], concluida: ["parecer pronto", "#0A7A50", "#E3F2EA"],
   erro: ["não concluída", "#8A1230", "#F8E6E8"], cancelada: ["cancelada", "#6A7B82", "#EEF1F2"]
 };
@@ -2701,7 +2787,7 @@ const EXIGE_LOGIN = ["forum", "cursos", "conta"];
 const PLANO_NOME = { teste: "Teste", basico: "Básico", premium: "Premium", pro: "Pro" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "4";
+const CHAT_VERSAO = "5";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
 // Pro: 1 consultoria por escrito por mês incluída (mês do calendário, horário de Brasília)
 const inicioMesBR = () => { const d = new Date(Date.now() - 3 * 3600000); return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1, 3)); };
@@ -2835,7 +2921,9 @@ class Component extends DCLogic {
     plano: null,           // plano em vigor: teste | basico | premium | pro | null
     assinaturas: [], pagamentos: [], consultorias: [], acessosCurso: [], seguindo: [], favBib: [],
     analises: [], cotaAnalise: null, normasUsuario: [],
-    an: { doc: "edital", origem: "pdf", arquivo: null, link: "", metodo: "pix", aceite: false, enviando: false, erro: "", ok: "", normas: [], normaArquivo: null, normaNome: "", normaEnviando: false, normaErro: "", regime: "lei-14133", obras: null, mdo: null, anexos: {} },
+    an: { etapa: "info", aceite: false, metodo: "pix", iniciando: false, enviando: false, erro: "", ok: "", regime: "lei-14133", obras: null, mdo: null,
+          docs: [{ tipo: "", arquivo: null, paginas: null, escaneado: false }], cct: null, pncp: "",
+          normas: [], normaArquivo: null, normaNome: "", normaEnviando: false, normaErro: "" },
     auth: AUTH_VAZIO,
     volta: null,
     aviso: "", avisoTipo: "ok",
@@ -2990,7 +3078,7 @@ class Component extends DCLogic {
       sb.from("forum_seguindo").select("topico_id, forum_topicos(nome)"),
       sb.from("biblioteca_pessoal").select("chave, dados, atualizado_em").like("chave", "nota-%").limit(1000),
       sb.rpc("meu_cupom_curso"),
-      sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg").order("criado_em", { ascending: false }).limit(30),
+      sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg, documentos").order("criado_em", { ascending: false }).limit(30),
       sb.rpc("minha_cota_analises"),
       sb.from("normas_usuario").select("id, nome, arquivo, tamanho, criado_em").order("criado_em", { ascending: false }).limit(30)
     ]);
@@ -3399,77 +3487,147 @@ class Component extends DCLogic {
     return Math.round(AN_PRECO * (1 - (AN_DESCONTO[s.plano] || 0)) * 100) / 100;
   }
 
-  escolherArquivoAnalise(e) {
-    const f = e.target && e.target.files && e.target.files[0];
-    if (e.target) e.target.value = "";
-    const an = this.state.an;
-    if (!f) return;
-    if (!/\.pdf$/i.test(f.name) && f.type !== "application/pdf") { this.setState({ an: { ...an, erro: "Envie o documento em PDF." } }); return; }
-    if (f.size > AN_MAX_MB * 1048576) { this.setState({ an: { ...an, erro: "O arquivo passa de " + AN_MAX_MB + " MB. Envie só o documento a analisar." } }); return; }
-    this.setState({ an: { ...an, arquivo: f, erro: "", ok: "" } });
+  // análise paga ou da cota do Pro que ainda espera os documentos (etapa 2)
+  creditoAnalise() {
+    return (this.state.analises || []).find((a) => a.status === "aguardando_documentos") || null;
   }
 
-  async enviarAnalise() {
+  // etapa 1: aceite e pagamento (Pro com cota: sem pagamento)
+  async iniciarAnalise() {
     const an = this.state.an;
-    const erro = (m) => this.setState({ an: { ...this.state.an, enviando: false, erro: m } });
+    const erro = (m) => this.setState({ an: { ...this.state.an, iniciando: false, erro: m } });
     if (!this.sb) { erro("A análise de documentos ainda não está ativa neste site (modo demonstração)."); return; }
     if (!this.u) { this.setState({ volta: "agente" }); this.irPara("login"); return; }
-    if (an.origem === "pdf" && !an.arquivo) { erro("Escolha o arquivo em PDF."); return; }
-    if (an.origem === "pncp" && !/pncp\.gov\.br\/.*\d{14}\/\d{4}\/\d+/.test(an.link)) { erro("Cole o link da contratação no PNCP (ex.: https://pncp.gov.br/app/editais/CNPJ/ANO/NÚMERO)."); return; }
-    if (an.mdo === null || an.obras === null) { erro("Responda às perguntas iniciais: a contratação envolve profissional com dedicação exclusiva? É obra ou serviço de engenharia?"); return; }
-    const exigidos = this.anexosExigidos(an);
-    const falta = exigidos.find((t) => !an.anexos[t]);
-    if (falta) { erro("Anexe: " + AN_ANEXOS[falta].nome + ". Sem esse arquivo não é possível avaliar a economicidade e o sobrepreço."); return; }
+    if (this.creditoAnalise()) { this.irParaEnvio(); return; }
     if (!an.aceite) { erro("Leia e aceite as condições da análise para continuar."); return; }
-    this.setState({ an: { ...an, enviando: true, erro: "", ok: "" } });
-    const anexos = [];
-    for (const t of exigidos) {
-      const f = an.anexos[t];
-      const ext = (f.name.match(/\.[a-z0-9]+$/i) || [".xlsx"])[0].toLowerCase();
-      const limpo = f.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\.[a-z0-9]+$/i, "").replace(/[^A-Za-z0-9._-]+/g, "-").slice(-60) || t;
-      const caminho = this.state.usuario.id + "/anexos/" + Date.now().toString(36) + "-" + t + "-" + limpo + ext;
-      const tipoMime = { ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ".xlsm": "application/vnd.ms-excel.sheet.macroEnabled.12",
-        ".xls": "application/vnd.ms-excel", ".ods": "application/vnd.oasis.opendocument.spreadsheet" }[ext];
-      const up = await this.sb.storage.from("analises").upload(caminho, f, { upsert: false, contentType: tipoMime });
-      if (up.error) { erro("Não foi possível enviar o arquivo " + f.name + ". Tente de novo."); return; }
-      anexos.push({ tipo: t, arquivo: caminho, nome_arquivo: f.name });
-    }
-    let arquivo = null;
-    if (an.origem === "pdf") {
-      const limpo = an.arquivo.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9._-]+/g, "-").replace(/\.pdf$/i, "").slice(-70) || "documento";
-      arquivo = this.state.usuario.id + "/" + Date.now().toString(36) + "-" + limpo + ".pdf";
-      const { error } = await this.sb.storage.from("analises").upload(arquivo, an.arquivo, { upsert: false, contentType: "application/pdf" });
-      if (error) { erro("Não foi possível enviar o arquivo. Tente de novo."); return; }
-    }
+    this.setState({ an: { ...an, iniciando: true, erro: "" } });
     const { data, error } = await this.sb.functions.invoke("mp-checkout", {
-      body: { acao: "criar", tipo: "analise", documento: an.doc, origem: an.origem, arquivo, nome_arquivo: an.arquivo ? an.arquivo.name : "",
-              pncp_link: an.origem === "pncp" ? an.link.trim() : null, normas: (an.normas || []).slice(0, AN_MAX_NORMAS), regime: an.regime, obras: !!an.obras, mao_de_obra: !!an.mdo, anexos, aceite: true, termo_versao: AN_TERMO_VERSAO, metodo: an.metodo, retorno: baseSite() + "index.html" }
+      body: { acao: "criar", tipo: "analise", aceite: true, termo_versao: AN_TERMO_VERSAO, metodo: an.metodo, retorno: baseSite() + "index.html" }
     });
     if (error) { erro(await erroDaFuncao(error)); return; }
     if (data && data.gratuito) {
-      this.setState({ an: { ...this.state.an, enviando: false, arquivo: null, link: "", aceite: false, normas: [], anexos: {}, obras: null, mdo: null, ok: "✓ Análise recebida (incluída no seu plano Pro). Em geral fica pronta em até 1 hora; você recebe um e-mail." } });
-      this.carregarDados();
+      await this.carregarDados();
+      this.setState({ an: { ...this.state.an, iniciando: false } });
+      this.irParaEnvio();
       return;
     }
     if (data && data.url) { window.location.href = data.url; return; }
     erro("Não foi possível abrir o pagamento.");
   }
 
-  anexosExigidos(an) {
-    an = an || this.state.an;
-    return [...(an.obras ? ["orcamento"] : []), ...(an.mdo ? ["planilha", "cct"] : []), ...(an.regime === "lei-13019" ? ["plano-custos"] : [])];
+  irParaEnvio() {
+    this.setState({ an: { ...this.state.an, etapa: "pedido", erro: "", ok: "" } });
+    try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {}
   }
 
-  escolherAnexo(tipo, e) {
+  // conta páginas do PDF no próprio navegador e estima se é digitalizado (sem enviar nada)
+  async lerPdf(f) {
+    try {
+      const buf = new Uint8Array(await f.arrayBuffer());
+      let txt = "";
+      for (let k = 0; k < buf.length; k += 65536) txt += String.fromCharCode.apply(null, buf.subarray(k, k + 65536));
+      let pg = (txt.match(/\/Type\s*\/Page(?![a-zA-Z])/g) || []).length;
+      if (!pg) { const c = [...txt.matchAll(/\/Count\s+(\d+)/g)].map((m) => +m[1]); pg = c.length ? Math.max(...c) : 0; }
+      const fontes = (txt.match(/\/Font\b/g) || []).length;
+      return { paginas: pg || null, escaneado: !!pg && (fontes === 0 || f.size / pg > 150000) };
+    } catch (e) { return { paginas: null, escaneado: false }; }
+  }
+
+  async escolherDocAnalise(i, e) {
     const f = e.target && e.target.files && e.target.files[0];
     if (e.target) e.target.value = "";
-    const an = this.state.an;
     if (!f) return;
-    const ok = AN_ANEXOS[tipo].excel ? /\.(xlsx|xlsm|xls|ods)$/i.test(f.name) : /\.(pdf|docx)$/i.test(f.name);
-    if (!ok) { this.setState({ an: { ...an, erro: AN_ANEXOS[tipo].excel ? "Envie a planilha em Excel (.xlsx)." : "Envie a convenção em PDF ou Word (.docx)." } }); return; }
-    if (f.size > AN_ANEXO_MB * 1048576) { this.setState({ an: { ...an, erro: "O arquivo passa de " + AN_ANEXO_MB + " MB." } }); return; }
-    this.setState({ an: { ...an, anexos: { ...an.anexos, [tipo]: f }, erro: "" } });
+    const an = this.state.an, d = an.docs[i], t = AN_TIPO[d.tipo];
+    const erro = (m) => this.setState({ an: { ...this.state.an, erro: m } });
+    if (!t) { erro("Escolha primeiro o tipo do documento."); return; }
+    const ok = t.formato === "pdf" ? /\.pdf$/i.test(f.name) : /\.(pdf|xlsx|xlsm|xls|ods)$/i.test(f.name);
+    if (!ok) { erro(t.formato === "pdf" ? t.nome + ": envie em PDF." : t.nome + ": envie em Excel (.xlsx, recomendado) ou PDF."); return; }
+    if (f.size > AN_ANEXO_MB * 1048576) { erro(f.name + " passa de " + AN_ANEXO_MB + " MB."); return; }
+    let info = { paginas: null, escaneado: false };
+    if (/\.pdf$/i.test(f.name)) {
+      info = await this.lerPdf(f);
+      if (info.paginas && info.paginas > AN_MAX_PAGINAS) { erro(f.name + " tem " + info.paginas + " páginas; o limite é de " + AN_MAX_PAGINAS + " páginas por documento."); return; }
+    }
+    const docs = this.state.an.docs.map((x, j) => (j === i ? { ...x, arquivo: f, ...info } : x));
+    this.setState({ an: { ...this.state.an, docs, erro: "" } });
+  }
+
+  escolherCct(e) {
+    const f = e.target && e.target.files && e.target.files[0];
+    if (e.target) e.target.value = "";
+    if (!f) return;
+    if (!/\.(pdf|docx)$/i.test(f.name)) { this.setState({ an: { ...this.state.an, erro: "Envie a convenção coletiva em PDF ou Word (.docx)." } }); return; }
+    this.setState({ an: { ...this.state.an, cct: f, erro: "" } });
+  }
+
+  tiposExigidos(an) {
+    an = an || this.state.an;
+    return [...(an.obras ? ["planilha_obras"] : []), ...(an.mdo ? ["planilha_mo"] : []), ...(an.regime === "lei-13019" ? ["planilha_parceria"] : [])];
+  }
+
+  // estimativa de duração (minutos) a partir dos arquivos escolhidos
+  estimativaAnalise(an) {
+    an = an || this.state.an;
+    const docs = an.docs.filter((d) => d.arquivo);
+    if (!docs.length) return null;
+    let paginas = 0, escaneadas = 0, planilhas = 0;
+    for (const d of docs) {
+      if (/\.pdf$/i.test(d.arquivo.name)) { const pg = d.paginas || Math.max(1, Math.round(d.arquivo.size / 60000)); paginas += pg; if (d.escaneado) escaneadas += pg; }
+      else planilhas += 1;
+    }
+    const fila = 5, preparo = 2 + planilhas, ocr = escaneadas * 0.07, leitura = (paginas - escaneadas) * 0.005,
+          modelo = 4 + paginas * 0.02 + planilhas * 1.5 + (an.mdo ? 2 : 0), parecer = 2;
+    const total = fila + preparo + ocr + leitura + modelo + parecer;
+    const r5 = (v) => Math.max(5, Math.round(v / 5) * 5);
+    return { min: r5(total * 0.8), max: r5(total * 1.3 + 5), paginas, escaneadas, planilhas,
+             partes: [["Espera na fila", fila], ["Leitura dos arquivos" + (escaneadas ? " (com reconhecimento de texto de " + escaneadas + " páginas digitalizadas)" : ""), preparo + ocr + leitura],
+                      ["Análise pelo agente", modelo], ["Montagem do parecer", parecer]].map(([n, v]) => n + ": cerca de " + Math.max(1, Math.round(v)) + " min") };
+  }
+
+  // etapa 2: envio dos documentos
+  async enviarDocumentosAnalise() {
+    const an = this.state.an, cred = this.creditoAnalise();
+    const erro = (m) => this.setState({ an: { ...this.state.an, enviando: false, erro: m } });
+    if (!this.sb || !this.u) { erro("Entre na sua conta para enviar os documentos."); return; }
+    if (!cred) { erro("Não há análise paga ou da sua cota aguardando documentos. Volte e conclua a primeira etapa."); return; }
+    if (an.mdo === null || an.obras === null) { erro("Responda às duas perguntas iniciais."); return; }
+    const docs = an.docs.filter((d) => d.tipo || d.arquivo);
+    if (!docs.length) { erro("Escolha pelo menos um documento."); return; }
+    if (docs.some((d) => !d.tipo || !d.arquivo)) { erro("Cada documento precisa do tipo e do arquivo."); return; }
+    const tipos = docs.map((d) => d.tipo);
+    if (new Set(tipos).size !== tipos.length) { erro("Cada tipo de documento só pode ser escolhido uma vez."); return; }
+    if (an.regime !== "lei-13019" && tipos.some((t) => t === "plano_trabalho" || t === "planilha_parceria")) { erro("Plano de trabalho e planilha de custos da parceria são documentos da Lei 13.019/2014."); return; }
+    const falta = this.tiposExigidos(an).find((t) => !tipos.includes(t));
+    if (falta) { erro("Inclua entre os documentos: " + AN_TIPO[falta].nome + ". Sem esse arquivo não é possível avaliar a economicidade e o sobrepreço."); return; }
+    if (an.mdo && !an.cct) { erro("Anexe a convenção ou acordo coletivo usado na composição do salário (PDF ou Word)."); return; }
+    this.setState({ an: { ...an, enviando: true, erro: "", ok: "" } });
+    const mime = { ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ".xlsm": "application/vnd.ms-excel.sheet.macroEnabled.12",
+      ".xls": "application/vnd.ms-excel", ".ods": "application/vnd.oasis.opendocument.spreadsheet" };
+    const subir = async (f, rot) => {
+      const ext = (f.name.match(/\.[a-z0-9]+$/i) || [".pdf"])[0].toLowerCase();
+      const limpo = f.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\.[a-z0-9]+$/i, "").replace(/[^A-Za-z0-9._-]+/g, "-").slice(-60) || rot;
+      const caminho = this.state.usuario.id + "/analises-docs/" + Date.now().toString(36) + "-" + rot + "-" + limpo + ext;
+      const up = await this.sb.storage.from("analises").upload(caminho, f, { upsert: false, contentType: mime[ext] });
+      if (up.error) throw new Error(f.name);
+      return caminho;
+    };
+    const enviados = [];
+    let cct = null;
+    try {
+      for (const d of docs) enviados.push({ tipo: d.tipo, arquivo: await subir(d.arquivo, d.tipo), nome_arquivo: d.arquivo.name, paginas: d.paginas });
+      if (an.mdo && an.cct) cct = { arquivo: await subir(an.cct, "cct"), nome_arquivo: an.cct.name };
+    } catch (e) { erro("Não foi possível enviar o arquivo " + e.message + ". Tente de novo."); return; }
+    const est = this.estimativaAnalise(an);
+    const { error } = await this.sb.functions.invoke("mp-checkout", {
+      body: { acao: "enviar_analise", id: cred.id, regime: an.regime, obras: !!an.obras, mao_de_obra: !!an.mdo, documentos: enviados, cct,
+              normas: (an.normas || []).slice(0, AN_MAX_NORMAS), pncp_link: (an.pncp || "").trim() }
+    });
+    if (error) { erro(await erroDaFuncao(error)); return; }
+    this.setState({ an: { ...this.state.an, enviando: false, etapa: "info", aceite: false, obras: null, mdo: null, cct: null, pncp: "", normas: [],
+      docs: [{ tipo: "", arquivo: null, paginas: null, escaneado: false }],
+      ok: "✓ Documentos recebidos. Estimativa: " + (est ? "entre " + est.min + " e " + est.max + " minutos" : "em instantes") + ". Você recebe um e-mail quando o parecer estiver pronto." } });
+    this.carregarDados();
   }
 
   escolherArquivoNorma(e) {
@@ -4212,33 +4370,119 @@ class Component extends DCLogic {
         "Trilhas automáticas inspiradas nas tipologias do ALICE (CGU/TCU) procuram cláusulas restritivas, que o agente confirma ou descarta.",
         "Parecer em PDF e Word, no formato ABNT, pronto para juntar ao processo."
       ],
-      anCotaTexto: (() => {
-        const c = s.cotaAnalise;
-        if (!s.usuario) return "Entre na sua conta para enviar um documento.";
-        if (s.plano === "pro" && c) return "Plano Pro: " + Math.max(0, c.limite - c.usadas) + " de " + c.limite + " análises disponíveis nesta semana (renova na segunda-feira).";
-        return "Análise avulsa por documento. Assinantes Pro têm 2 análises por semana incluídas.";
+      // página 1: informações, plano e aceite
+      anEtapaInfo: s.an.etapa !== "pedido" || !this.creditoAnalise(),
+      anEtapaPedido: s.an.etapa === "pedido" && !!this.creditoAnalise(),
+      anComoFunciona: [
+        ["1", "Leia as condições e aceite", "Nesta página estão as regras, o que o agente faz e o que ele precisa. O aceite é obrigatório."],
+        ["2", "Pagamento ou cota do Pro", "Assinante Pro usa uma das 2 análises da semana, sem custo. Os demais pagam antes de seguir para o envio."],
+        ["3", "Envie até 3 documentos", "Na página de envio você escolhe os tipos de documento, anexa os arquivos e vê a estimativa de duração."],
+        ["4", "Receba o parecer", "O agente analisa e você recebe um e-mail. O parecer fica nesta página, em PDF e Word."]
+      ].map(([n, t, d]) => ({ n, t, d })),
+      anOQueFaz: [
+        "Confere cada documento, item a item, com a lei que rege a contratação: Lei 14.133/2021, Lei 13.303/2016 (estatais) ou Lei 13.019/2014 (parcerias com OSC).",
+        "Avalia conformidade, legalidade, economicidade, vantajosidade e indícios de direcionamento, de restrição à competitividade, de sobrepreço e de superfaturamento.",
+        "Cruza os documentos enviados entre si (objeto, quantitativos, valores, metas e cronogramas).",
+        "Classifica cada ponto por gravidade (alta, média, baixa), explica o que está errado e por quê e sugere a correção, com redação pronta quando cabe.",
+        "Cita o texto oficial vigente de cada dispositivo e precedentes da Biblioteca Licitacon, com link para a fonte.",
+        "Compara preços com contratações equivalentes no PNCP e, na mão de obra, o custo total do profissional com a referência de mercado do estado.",
+        "Lê PDF pesquisável, PDF digitalizado (reconhecimento de texto) e planilhas em Excel, célula a célula."
+      ],
+      anPrecisa: AN_TIPOS.map(([, nome, formato, dica]) => ({ nome, formato: formato === "pdf" ? "PDF" : "Excel (recomendado) ou PDF", dica })),
+      anRegras: [
+        "Até 3 documentos por análise, cada um com até 200 páginas e 25 MB. Cada tipo de documento só pode ser escolhido uma vez.",
+        "Obras e serviços de engenharia: a planilha orçamentária é obrigatória.",
+        "Serviço com dedicação exclusiva de mão de obra: a planilha de custos de mão de obra (IN 05/2017) é obrigatória, e a convenção ou acordo coletivo vai como anexo extra (não conta no limite de 3).",
+        "Parceria pela Lei 13.019/2014: a planilha de custos da parceria é obrigatória; o plano de trabalho substitui o termo de referência.",
+        "Opcional: link da contratação no PNCP e até 3 normas próprias (decreto estadual ou municipal, regulamento de estatal), que não contam no limite.",
+        "Plano Pro: 2 análises por semana sem custo adicional (de segunda a domingo, sem acúmulo). Básico e Premium: análises ilimitadas, pagas com desconto. Sem plano: R$ 290,00 por análise."
+      ],
+      anDados: [
+        "Os arquivos são processados por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos.",
+        "Os documentos e o parecer ficam na sua conta, acessíveis só a você e à equipe técnica do Licitacon, em armazenamento privado.",
+        "Não envie documento sigiloso ou cuja divulgação a prestadores de serviço seja vedada. Retire dados pessoais desnecessários antes de enviar (por exemplo, documentos de habilitação).",
+        "Tratamento conforme a Lei Geral de Proteção de Dados (Lei 13.709/2018) e a Política de Privacidade do Licitacon."
+      ],
+      anNaoFaz: [
+        "Não emite parecer jurídico e não substitui a análise jurídica do órgão (Lei 14.133/2021, art. 53).",
+        "Não decide pelo órgão: o parecer é opinativo, e a decisão de ajustar ou manter cada ponto é de quem o recebe.",
+        "Não presume conteúdo: trecho ilegível, digitalização ruim ou valor que não pode ser lido com segurança é registrado como não analisado, cabendo a quem forneceu o arquivo apresentar versão legível.",
+        "Não analisa documentos além dos 3 escolhidos nem conteúdo fora dos arquivos enviados.",
+        "Pode errar ou deixar de identificar pontos: confira cada apontamento no documento e na fonte oficial."
+      ],
+      anTempo: "O tempo de análise depende da quantidade de documentos, da qualidade dos arquivos (documento digitalizado exige reconhecimento de texto) e da complexidade da contratação. A estimativa exata é calculada na página de envio, assim que você escolhe os arquivos.",
+      anPlanoTitulo: (() => {
+        if (!s.usuario) return "Entre na sua conta para ver as condições do seu plano.";
+        if (s.plano === "pro") return "Plano Pro";
+        if (s.plano === "basico") return "Plano Básico";
+        if (s.plano === "premium") return "Plano Premium";
+        return "Sem plano de assinatura";
       })(),
+      anPlanoTexto: (() => {
+        const c = s.cotaAnalise;
+        if (!s.usuario) return "Valor por análise: R$ 290,00. Assinantes Básico e Premium têm desconto; o Pro inclui 2 análises por semana.";
+        if (this.creditoAnalise()) return "Você já tem uma análise liberada aguardando os documentos. Siga para a página de envio.";
+        if (s.plano === "pro" && c) {
+          const resta = Math.max(0, Number(c.limite) - Number(c.usadas));
+          return resta > 0 ? "Você tem " + resta + " de " + c.limite + " análises disponíveis nesta semana, sem custo adicional (renova na segunda-feira)."
+            : "Você já usou as " + c.limite + " análises desta semana. Esta análise sai com 30% de desconto: " + brlSimples(this.precoAnalise()) + ".";
+        }
+        if (s.plano === "basico" || s.plano === "premium") return "Valor por análise com o desconto do seu plano: " + brlSimples(this.precoAnalise()) + ". O pagamento é feito antes de seguir para o envio dos documentos.";
+        return "Valor por análise: R$ 290,00, pago antes de seguir para o envio dos documentos.";
+      })(),
+      anTabelaPrecos: [["Sem plano", "R$ 290,00 por análise"], ["Básico", brlSimples(AN_PRECO * 0.9) + " por análise (10% de desconto)"],
+        ["Premium", brlSimples(AN_PRECO * 0.85) + " por análise (15% de desconto)"], ["Pro", "2 análises por semana sem custo; a partir da 3ª, " + brlSimples(AN_PRECO * 0.7) + " (30% de desconto)"]]
+        .map(([p, v]) => { const atual = (p === "Sem plano" && s.usuario && !s.plano) || (p === "Básico" && s.plano === "basico") || (p === "Premium" && s.plano === "premium") || (p === "Pro" && s.plano === "pro"); return { p, v, fundo: atual ? "#E3F2EA" : "#F6F8F7" }; }),
+      anTemCredito: !!this.creditoAnalise(),
+      anSemCredito: !this.creditoAnalise(),
+      irParaEnvio: () => this.irParaEnvio(),
+      voltarInfo: () => this.setState({ an: { ...this.state.an, etapa: "info", erro: "" } }),
+      anPaga: this.precoAnalise() > 0 && !this.creditoAnalise(),
+      anBotaoInicio: s.an.iniciando ? "Aguarde…" : (!s.usuario && s.sb ? "Entrar para continuar" : (this.creditoAnalise() ? "Ir para o envio dos documentos"
+        : (this.precoAnalise() > 0 ? "Pagar " + brlSimples(this.precoAnalise()) + " e continuar" : "Continuar para o envio (sem custo)"))),
+      iniciarAnalise: () => { if (!s.an.iniciando) this.iniciarAnalise(); },
+      // página 2: envio
       anRegimes: AN_REGIMES.map(([id, nome, sub]) => ({ nome, sub, ativo: s.an.regime === id, ...corBotao(s.an.regime === id),
-        escolher: () => { const docs = AN_DOCS_REGIME[id].map((d) => d[0]); this.setState({ an: { ...this.state.an, regime: id, doc: docs.includes(this.state.an.doc) ? this.state.an.doc : "edital", erro: "" } }); } })),
+        escolher: () => this.setState({ an: { ...this.state.an, regime: id, erro: "",
+          docs: this.state.an.docs.map((d) => (id !== "lei-13019" && (d.tipo === "plano_trabalho" || d.tipo === "planilha_parceria") ? { tipo: "", arquivo: null, paginas: null, escaneado: false } : d)) } }) })),
       anPerguntas: [
-        ["mdo", "A contratação é de profissional para prestar serviço com dedicação exclusiva (mão de obra residente)?", "Se sim, você vai anexar a planilha de custos em Excel e a convenção coletiva."],
-        ["obras", "É obra ou serviço de engenharia?", "Se sim, você vai anexar a planilha orçamentária em Excel (com e sem BDI, tabelas e datas-base)."]
+        ["mdo", "A contratação é de profissional para prestar serviço com dedicação exclusiva (mão de obra residente)?", "Se sim, inclua a planilha de custos de mão de obra (IN 05/2017) e anexe a convenção coletiva."],
+        ["obras", "É obra ou serviço de engenharia?", "Se sim, inclua a planilha orçamentária (com e sem BDI, tabelas e datas-base)."]
       ].map(([k, pergunta, dica]) => ({ pergunta, dica,
         opcoes: [["sim", true], ["nao", false]].map(([rot, v]) => ({ nome: rot === "sim" ? "Sim" : "Não", ativo: s.an[k] === v, ...corBotao(s.an[k] === v),
           escolher: () => this.setState({ an: { ...this.state.an, [k]: v, erro: "" } }) })) })),
-      anTemAnexos: this.anexosExigidos(s.an).length > 0,
-      anAnexos: this.anexosExigidos(s.an).map((t) => ({ nome: AN_ANEXOS[t].nome, dica: AN_ANEXOS[t].dica,
-        arquivo: s.an.anexos[t] ? "✓ " + s.an.anexos[t].name : "Escolher arquivo",
-        aceita: AN_ANEXOS[t].excel ? ".xlsx,.xlsm,.xls,.ods" : ".pdf,.docx",
-        onArquivo: (e) => this.escolherAnexo(t, e) })),
-      anDocs: AN_DOCS_REGIME[s.an.regime].map(([id, nome]) => ({ nome, ativo: s.an.doc === id, escolher: () => this.setState({ an: { ...this.state.an, doc: id, erro: "" } }), ...corBotao(s.an.doc === id) })),
-      anOrigens: [["pdf", "Enviar PDF"], ["pncp", "Link do PNCP"]].map(([id, nome]) => ({ nome, ativo: s.an.origem === id, escolher: () => this.setState({ an: { ...this.state.an, origem: id, erro: "" } }), ...corBotao(s.an.origem === id) })),
-      anOrigemPdf: s.an.origem === "pdf",
-      anOrigemPncp: s.an.origem === "pncp",
-      anArquivoNome: s.an.arquivo ? s.an.arquivo.name : "Escolher arquivo",
-      onAnArquivo: (e) => this.escolherArquivoAnalise(e),
-      anLink: s.an.link,
-      onAnLink: (e) => this.setState({ an: { ...this.state.an, link: e.target.value, erro: "" } }),
+      anExigidosTexto: (() => {
+        const t = this.tiposExigidos(s.an).map((x) => AN_TIPO[x].nome);
+        return t.length ? "Obrigatório nesta análise: " + t.join("; ") + (s.an.mdo ? "; e a convenção coletiva como anexo extra." : ".") : "";
+      })(),
+      anSlots: s.an.docs.map((d, i) => {
+        const usados = s.an.docs.filter((x, j) => j !== i).map((x) => x.tipo);
+        const opcoes = AN_TIPOS.filter(([id]) => !usados.includes(id) && (s.an.regime === "lei-13019" || (id !== "plano_trabalho" && id !== "planilha_parceria")))
+          .map(([id, nome]) => ({ id, nome, sel: d.tipo === id }));
+        const t = AN_TIPO[d.tipo];
+        return { n: i + 1, opcoes, temTipo: !!t, dica: t ? t.dica : "Escolha o tipo do documento.",
+          aceita: t && t.formato === "pdf" ? ".pdf,application/pdf" : ".xlsx,.xlsm,.xls,.ods,.pdf",
+          formato: t ? (t.formato === "pdf" ? "PDF, até 200 páginas" : "Excel (recomendado) ou PDF, até 200 páginas") : "",
+          arquivo: d.arquivo ? "✓ " + d.arquivo.name + (d.paginas ? " · " + d.paginas + " páginas" : "") + (d.escaneado ? " · digitalizado" : "") : "Escolher arquivo",
+          podeRemover: s.an.docs.length > 1,
+          onTipo: (e) => { const v = e.target.value; this.setState((st) => ({ an: { ...st.an, erro: "", docs: st.an.docs.map((x, j) => (j === i ? { tipo: v, arquivo: null, paginas: null, escaneado: false } : x)) } })); },
+          onArquivo: (e) => this.escolherDocAnalise(i, e),
+          remover: () => this.setState((st) => ({ an: { ...st.an, docs: st.an.docs.filter((_, j) => j !== i) } })) };
+      }),
+      anPodeAdicionar: s.an.docs.length < AN_MAX_DOCS,
+      anAdicionarDoc: () => this.setState((st) => ({ an: { ...st.an, docs: [...st.an.docs, { tipo: "", arquivo: null, paginas: null, escaneado: false }] } })),
+      anContagem: s.an.docs.length + " de " + AN_MAX_DOCS + " documentos",
+      anPedeCct: !!s.an.mdo,
+      anCctNome: s.an.cct ? "✓ " + s.an.cct.name : "Escolher arquivo (PDF ou Word)",
+      onAnCct: (e) => this.escolherCct(e),
+      anPncp: s.an.pncp,
+      onAnPncp: (e) => this.setState({ an: { ...this.state.an, pncp: e.target.value } }),
+      anTemEstimativa: !!this.estimativaAnalise(s.an),
+      anEstimativa: (() => { const e = this.estimativaAnalise(s.an); return e ? "Entre " + e.min + " e " + e.max + " minutos" : ""; })(),
+      anEstimativaPartes: (() => { const e = this.estimativaAnalise(s.an); return e ? e.partes : []; })(),
+      anEstimativaBase: (() => { const e = this.estimativaAnalise(s.an); return e ? "Calculada para " + e.paginas + " páginas em PDF" + (e.planilhas ? " e " + e.planilhas + " planilha(s)" : "") + ". Pode variar com a complexidade da contratação e o movimento da fila." : ""; })(),
+      anBotaoEnvio: s.an.enviando ? "Enviando arquivos…" : "Enviar para análise",
+      enviarDocumentos: () => { if (!s.an.enviando) this.enviarDocumentosAnalise(); },
       anTermo: AN_TERMO,
       anNormas: (s.normasUsuario || []).map((n) => {
         const ativo = (s.an.normas || []).includes(n.id);
@@ -4258,25 +4502,22 @@ class Component extends DCLogic {
       anMaxNormas: AN_MAX_NORMAS,
       anAceite: s.an.aceite,
       onAnAceite: (e) => { const v = !!e.target.checked; this.setState((st) => ({ an: { ...st.an, aceite: v, erro: "" } })); },
-      anPaga: this.precoAnalise() > 0,
       anMetodos: [["pix", "Pix"], ["cartao", "Cartão"], ["boleto", "Boleto"]].map(([id, nome]) => ({ nome, ativo: s.an.metodo === id, escolher: () => this.setState({ an: { ...this.state.an, metodo: id } }), ...corBotao(s.an.metodo === id) })),
-      anTotal: this.precoAnalise() > 0 ? brlSimples(this.precoAnalise()) : "Incluída no seu plano",
-      anDesconto: this.precoAnalise() <= 0 ? "Análise da sua cota semanal do Pro"
-        : (s.plano && AN_DESCONTO[s.plano] ? "Desconto de assinante " + (PLANO_NOME[s.plano] || "") + " aplicado" + (s.plano === "pro" ? " (cota da semana já usada)" : "") : "Assinantes: Básico 10% e Premium 15% de desconto; Pro com 2 análises por semana incluídas."),
-      anBotao: s.an.enviando ? "Enviando…" : (!s.usuario && s.sb ? "Entrar para analisar" : (this.precoAnalise() > 0 ? "Pagar e analisar" : "Enviar para análise")),
-      enviarAnalise: () => { if (!s.an.enviando) this.enviarAnalise(); },
       anErro: s.an.erro, anOk: s.an.ok,
       atualizarAnalises: () => this.carregarDados(),
       semAnalises: !(s.analises || []).length,
-      semAnalisesTexto: s.usuario ? "Nenhuma análise ainda. Envie o primeiro documento acima." : "Entre na sua conta para ver suas análises.",
+      semAnalisesTexto: s.usuario ? "Nenhuma análise ainda." : "Entre na sua conta para ver suas análises.",
       minhasAnalises: (s.analises || []).map((a) => {
         const st = STATUS_ANALISE[a.status] || [a.status, "#6A7B82", "#EEF1F2"];
         const r = a.resumo || {};
-        const base = (AN_DOC_NOME[a.documento] || a.documento) + "-" + String(a.id).slice(0, 8);
+        const docs = Array.isArray(a.documentos) ? a.documentos : [];
+        const titulo = docs.length ? docs.map((d) => (AN_TIPO[d.tipo] || { nome: d.tipo }).nome).join(" + ") : (AN_DOC_NOME[a.documento] || a.documento);
+        const base = "Analise-" + String(a.id).slice(0, 8);
         return {
-          doc: AN_DOC_NOME[a.documento] || a.documento, status: st[0], cor: st[1], fundo: st[2], data: dataBR(a.criado_em),
+          doc: titulo, status: st[0], cor: st[1], fundo: st[2], data: dataBR(a.criado_em),
           detalhe: a.status === "erro" ? (a.erro_msg || "Não foi possível concluir a análise.")
-            : ((a.origem === "pncp" ? "PNCP" : (a.nome_arquivo || "PDF enviado")) + (a.paginas ? " · " + a.paginas + " páginas" : "")
+            : a.status === "aguardando_documentos" ? "Análise liberada · envie os documentos para iniciar"
+            : ((docs.length ? docs.map((d) => d.nome_arquivo).join(" · ") : (a.origem === "pncp" ? "PNCP" : (a.nome_arquivo || "PDF enviado")))
                + " · " + (a.cobranca === "franquia_pro" ? "incluída no Pro" : brlSimples(Number(a.valor || 0)))),
           temResumo: a.status === "concluida" && !!r.situacao,
           situacao: r.situacao || "",
@@ -4285,6 +4526,8 @@ class Component extends DCLogic {
           baixarPdf: () => this.baixarParecer(a.parecer_pdf, "Parecer Licitacon - " + base + ".pdf"),
           baixarDocx: () => this.baixarParecer(a.parecer_docx, "Parecer Licitacon - " + base + ".docx"),
           aguardaPagamento: a.status === "aguardando_pagamento",
+          aguardaDocs: a.status === "aguardando_documentos",
+          enviarDocs: () => this.irParaEnvio(),
           conferir: () => { this.aviso("Conferindo com o Mercado Pago…"); this.conferirPagamento("analise:" + a.id, false); }
         };
       }),

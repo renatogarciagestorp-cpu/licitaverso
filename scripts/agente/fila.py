@@ -131,30 +131,111 @@ def a_normas(a):
     return [n for n in v if isinstance(n, dict) and n.get("arquivo")][:3]
 
 
+DOC_ANALISAR = {"edital": "edital", "tr": "tr", "etp": "etp", "riscos": "riscos", "plano_trabalho": "plano_trabalho"}
+PRIORIDADE = ["edital", "tr", "plano_trabalho", "etp", "riscos", "memoria_calculo", "planilha_mo", "planilha_obras", "planilha_parceria"]
+PLANILHA_ANEXO = {"planilha_mo": "planilha", "planilha_obras": "orcamento", "planilha_parceria": "plano-custos", "memoria_calculo": "outro"}
+NOME_DOC = {"edital": "Edital", "tr": "Termo de Referência", "etp": "Estudo Técnico Preliminar", "riscos": "Matriz de Riscos",
+            "plano_trabalho": "Plano de trabalho", "memoria_calculo": "Memória de cálculo", "planilha_mo": "Planilha de custos de mão de obra (IN 05/2017)",
+            "planilha_obras": "Planilha orçamentária", "planilha_parceria": "Planilha de custos da parceria"}
+
+
+def preparar_documentos(a, pasta):
+    """Até 3 documentos: baixa, extrai o texto (PDF com OCR; Excel célula a célula) e monta os argumentos do analisar.py.
+    Devolve (texto_principal, tipo_principal, paginas_total, args_extra, salarios_json|None)."""
+    docs = sorted(a_lista(a, "documentos"), key=lambda d: PRIORIDADE.index(d["tipo"]) if d["tipo"] in PRIORIDADE else 99)
+    textos, total = [], 0
+    for k, d in enumerate(docs, 1):
+        orig = pasta / f"doc{k}{pathlib.Path(d['arquivo']).suffix.lower()}"
+        orig.write_bytes(http("GET", f"{SUPA}/storage/v1/object/analises/{d['arquivo']}", cab=cab(), binario=True, timeout=300))
+        txt = pasta / f"doc{k}.txt"
+        nome = d.get("nome_arquivo") or orig.name
+        if orig.suffix == ".pdf":
+            m = re.search(r"^Pages:\s+(\d+)", subprocess.run(["pdfinfo", str(orig)], capture_output=True, text=True).stdout, re.M)
+            if not m:
+                raise ErroCliente(f"\"{nome}\" não é um PDF válido ou está protegido por senha.")
+            pg = int(m.group(1))
+            if pg > MAX_PAGINAS:
+                raise ErroCliente(f"\"{nome}\" tem {pg} páginas; o limite é de {MAX_PAGINAS} páginas por documento.")
+            total += pg
+            r = subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-texto.py"), str(orig), str(txt)], capture_output=True, text=True, timeout=3600)
+            if r.returncode == 3 or not txt.exists():
+                raise ErroCliente(f"Não foi possível ler o texto de \"{nome}\", nem por reconhecimento óptico (OCR). A análise não foi feita para não "
+                                  "presumir conteúdo; envie uma versão legível ou em PDF pesquisável.")
+        else:
+            r = subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-planilha.py"), str(orig), str(txt)], capture_output=True, text=True, timeout=600)
+            if r.returncode != 0 or not txt.exists():
+                raise ErroCliente(f"Não foi possível ler a planilha \"{nome}\". Envie o arquivo em Excel (.xlsx) sem senha, ou em PDF legível.")
+        textos.append((d["tipo"], nome, txt))
+    if not textos:
+        raise ErroCliente("Nenhum documento enviado.")
+    # documento principal: o primeiro que tem roteiro próprio; se só houver planilhas, a primeira planilha
+    principal = next((t for t in textos if t[0] in DOC_ANALISAR), textos[0])
+    tipo_p = DOC_ANALISAR.get(principal[0]) or {"planilha_mo": "planilha", "planilha_obras": "orcamento",
+                                                 "planilha_parceria": "plano_trabalho", "memoria_calculo": "edital"}[principal[0]]
+    extra, salarios = [], None
+    for tipo, nome, txt in textos:
+        if (tipo, nome, txt) == principal:
+            continue
+        if tipo in DOC_ANALISAR:
+            extra += ["--doc-adicional", f"{tipo}::{NOME_DOC[tipo]} ({nome})::{txt}"]
+        else:
+            extra += ["--anexo", f"{PLANILHA_ANEXO[tipo]}::{NOME_DOC[tipo]} ({nome})::{txt}"]
+    mo = next((t for t in textos if t[0] == "planilha_mo"), None)
+    if mo:  # custo total do profissional × referência do estado (salario.com.br); leitura sem IA quando for o modelo IN 5/2017
+        postos, sal = pasta / "postos.json", pasta / "salarios.json"
+        try:
+            conteudo = mo[2].read_text(encoding="utf-8", errors="replace")
+            uf = (re.search(r"\b(AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)\b", conteudo) or [None, ""])[1]
+            if "QUADRO RESUMO" in conteudo.upper() and re.search(r"M[ÓO]DULO 1", conteudo, re.I):
+                rodar([sys.executable, str(RAIZ / "scripts/agente/postos-in05.py"), str(mo[2]), str(postos), "--uf", uf], timeout=300)
+            else:
+                rodar([sys.executable, str(RAIZ / "scripts/agente/extrair-postos.py"), str(mo[2]), str(postos)], timeout=900)
+            rodar([sys.executable, str(RAIZ / "scripts/agente/salarios.py"), str(postos), str(sal)], timeout=900)
+            salarios = sal if sal.exists() else None
+        except Exception as e:
+            print(f"análise {a['id']}: referência salarial não obtida ({type(e).__name__})")
+    return principal[2], tipo_p, total, extra, salarios
+
+
 def processar(a):
     aid = a["id"]
     print(f"análise {aid}: início (tentativa {a.get('tentativas')})")
     with tempfile.TemporaryDirectory() as tmp:
         pasta = pathlib.Path(tmp)
         try:
-            pdf, compra = obter_documento(a, pasta)
-            info = subprocess.run(["pdfinfo", str(pdf)], capture_output=True, text=True).stdout
-            m = re.search(r"^Pages:\s+(\d+)", info, re.M)
-            if not m:
-                raise ErroCliente("O arquivo não é um PDF válido ou está protegido por senha.")
-            paginas = int(m.group(1))
-            if paginas > MAX_PAGINAS:
-                raise ErroCliente(f"O documento tem {paginas} páginas; o limite por análise é {MAX_PAGINAS}. Envie só o documento a analisar.")
-            txt = pasta / "documento.txt"
-            r = subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-texto.py"), str(pdf), str(txt)], capture_output=True, text=True, timeout=1800)
-            if r.returncode == 3 or not txt.exists():
-                raise ErroCliente("Não foi possível ler o texto do PDF, nem por reconhecimento óptico (OCR). Envie uma versão com melhor qualidade ou em PDF pesquisável.")
-            if r.returncode != 0:
-                raise RuntimeError(r.stderr[-500:])
+            extra, salarios, compra = [], None, None
+            if a_lista(a, "documentos"):  # fluxo atual: até 3 documentos enviados pelo assinante
+                txt, doc_p, paginas, extra, salarios = preparar_documentos(a, pasta)
+                m3 = re.search(r"(\d{14})/(\d{4})/(\d+)", a.get("pncp_link") or "")
+                if m3:  # link do PNCP opcional: só os dados da contratação (prazos e itens), sem baixar documento
+                    try:
+                        destino = pasta / "pncp"
+                        rodar([sys.executable, str(RAIZ / "scripts/agente/baixar-pncp.py"), *m3.groups(), str(destino), "--so-dados"], timeout=600)
+                        compra = destino / "compra.json" if (destino / "compra.json").exists() else None
+                    except Exception:
+                        compra = None
+            else:  # pedidos antigos: um documento (PDF ou PNCP)
+                pdf, compra = obter_documento(a, pasta)
+                info = subprocess.run(["pdfinfo", str(pdf)], capture_output=True, text=True).stdout
+                m = re.search(r"^Pages:\s+(\d+)", info, re.M)
+                if not m:
+                    raise ErroCliente("O arquivo não é um PDF válido ou está protegido por senha.")
+                paginas = int(m.group(1))
+                if paginas > MAX_PAGINAS:
+                    raise ErroCliente(f"O documento tem {paginas} páginas; o limite por análise é {MAX_PAGINAS}. Envie só o documento a analisar.")
+                txt = pasta / "documento.txt"
+                r = subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-texto.py"), str(pdf), str(txt)], capture_output=True, text=True, timeout=1800)
+                if r.returncode == 3 or not txt.exists():
+                    raise ErroCliente("Não foi possível ler o texto do PDF, nem por reconhecimento óptico (OCR). Envie uma versão com melhor qualidade ou em PDF pesquisável.")
+                if r.returncode != 0:
+                    raise RuntimeError(r.stderr[-500:])
+                doc_p = a["documento"]
             saida = pasta / "analise.json"
-            args = [sys.executable, str(RAIZ / "scripts/agente/analisar.py"), "--doc", a["documento"], "--texto", str(txt),
+            args = [sys.executable, str(RAIZ / "scripts/agente/analisar.py"), "--doc", doc_p, "--texto", str(txt),
                     "--paginas", str(paginas), "--saida", str(saida),
-                    "--fonte", a.get("pncp_link") or a.get("nome_arquivo") or "documento enviado"]
+                    "--fonte", a.get("pncp_link") or a.get("nome_arquivo") or "documento enviado"] + extra
+            if salarios:
+                args += ["--salarios", str(salarios)]
             if compra:
                 args += ["--compra", str(compra)]
             # regulamentação específica enviada pelo assinante (decreto, RILC etc.)
@@ -203,7 +284,10 @@ def processar(a):
                 if x.get("tipo") == "planilha" or (x.get("tipo") == "plano-custos" and "mao-de-obra" in (a.get("objeto") or [])):
                     postos, sal = pasta / f"postos{k}.json", pasta / f"salarios{k}.json"
                     try:
-                        rodar([sys.executable, str(RAIZ / "scripts/agente/extrair-postos.py"), str(txt_x), str(postos)], timeout=900)
+                        if "QUADRO RESUMO" in txt_x.read_text(encoding="utf-8", errors="replace").upper():
+                            rodar([sys.executable, str(RAIZ / "scripts/agente/postos-in05.py"), str(txt_x), str(postos)], timeout=300)
+                        else:
+                            rodar([sys.executable, str(RAIZ / "scripts/agente/extrair-postos.py"), str(txt_x), str(postos)], timeout=900)
                         rodar([sys.executable, str(RAIZ / "scripts/agente/salarios.py"), str(postos), str(sal)], timeout=900)
                         if sal.exists() and "--salarios" not in args:
                             args += ["--salarios", str(sal)]
@@ -212,7 +296,7 @@ def processar(a):
             # análise de preços (sobrepreço): itens do PNCP no edital; nos demais casos, extraídos do documento
             precos = pasta / "precos.json"
             cmd = [sys.executable, str(RAIZ / "scripts/agente/precos-do-processo.py"), "--texto", str(txt), "--saida", str(precos)]
-            if compra and a["documento"] == "edital":
+            if compra and doc_p == "edital":
                 cmd += ["--pasta-pncp", str(compra.parent)]
             m2 = re.search(r"(\d{14})/(\d{4})/(\d+)", a.get("pncp_link") or "")
             if m2:
@@ -220,8 +304,9 @@ def processar(a):
             subprocess.run(cmd, capture_output=True, text=True, timeout=2700)
             if precos.exists():
                 args += ["--precos", str(precos)]
+            etapa_paga = True  # daqui em diante há custo de API: falha não volta para a fila automaticamente
             try:
-                rodar(args, timeout=1500)
+                rodar(args, timeout=2700)
             except RuntimeError as e:
                 if "grande demais" in str(e):
                     raise ErroCliente("O documento é extenso demais para uma única análise. Envie só o documento a analisar.")
@@ -241,8 +326,8 @@ def processar(a):
             atualizar(aid, {"status": "erro", "erro_msg": str(e)})
             print(f"::notice title=Fila::análise {aid}: recusada ({type(e).__name__})")
         except Exception as e:
-            # tentativas 1 e 2: volta para a fila; na 3ª, erro definitivo
-            if int(a.get("tentativas") or 1) < 3:
+            # antes da chamada paga: volta para a fila (até 3 tentativas). Depois dela: erro, sem repetir (evita pagar de novo); a equipe é avisada.
+            if not locals().get("etapa_paga") and int(a.get("tentativas") or 1) < 3:
                 atualizar(aid, {"status": "na_fila"})
                 print(f"::notice title=Fila::análise {aid}: falhou, volta à fila ({type(e).__name__}: {str(e)[:200]})")
                 return

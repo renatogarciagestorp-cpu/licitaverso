@@ -267,7 +267,7 @@ window.LV_CHAT_BASE = {
       a: [{ t: "Analisar documento", ir: "agente" }], rel: ["agente-preco", "agente-opinativo"] },
     { id: "agente-preco", p: "Quanto custa a análise de documentos?",
       k: ["preco da analise", "quanto custa a analise", "analise avulsa", "cota", "duas analises", "2 analises", "franquia"],
-      r: "A análise avulsa custa **R$ 147 por documento**, com desconto de **10% no Básico** e **15% no Premium**. O **Pro inclui 2 análises por semana** (de segunda a domingo, sem acúmulo); a partir da 3ª na semana, a avulsa sai com **30% de desconto**. Se a análise não puder ser concluída, ela não consome a cota; a avulsa paga é reprocessada ou estornada.",
+      r: "Cada análise aceita **até 3 documentos** (até 200 páginas cada) e custa **R$ 290**. Assinantes têm desconto: **10% no Básico** e **15% no Premium**. O **Pro inclui 2 análises por semana** sem custo adicional (de segunda a domingo, sem acúmulo); a partir da 3ª na semana, sai com **30% de desconto**. O pagamento é feito antes do envio dos documentos. Se a análise não puder ser concluída por falha técnica, ela não consome a cota; a paga é reprocessada ou estornada.",
       a: [{ t: "Ver planos", ir: "planos" }, { t: "Analisar documento", ir: "agente" }], rel: ["agente"] },
     { id: "agente-opinativo", p: "O parecer do agente me obriga a corrigir?",
       k: ["opinativo", "vinculante", "obrigado a corrigir", "responsabilidade", "decisao final", "parecer juridico"],

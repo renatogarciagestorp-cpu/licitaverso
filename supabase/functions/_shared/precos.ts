@@ -29,13 +29,26 @@ export const DESCONTO_CONSULTORIA: Record<string, number> = {
 };
 
 /** Análise de documento pelo agente (parecer técnico opinativo). */
-export type DocAnalise = "edital" | "etp" | "tr" | "riscos" | "planilha" | "plano_trabalho";
+export type DocAnalise = "edital" | "etp" | "tr" | "riscos" | "planilha" | "plano_trabalho" | "multiplos";
 export const DOC_ANALISE: Record<DocAnalise, string> = {
   edital: "Edital", etp: "Estudo Técnico Preliminar", tr: "Termo de Referência", riscos: "Matriz de Riscos", planilha: "Planilha de custos",
-  plano_trabalho: "Plano de trabalho",
+  plano_trabalho: "Plano de trabalho", multiplos: "Até 3 documentos",
 };
-export const ANALISE_AVULSA = 147;
-/** Desconto na avulsa: Básico 10%, Premium 15%; Pro paga 30% a menos a partir da 3ª análise da semana. */
+/** Documentos que o assinante pode enviar (até 3 por análise). formato: "pdf" (texto) ou "planilha" (Excel ou PDF). */
+export const TIPOS_DOC_ANALISE: Record<string, { nome: string; formato: "pdf" | "planilha" }> = {
+  etp: { nome: "Estudo Técnico Preliminar (ETP)", formato: "pdf" },
+  tr: { nome: "Termo de Referência / Projeto Básico", formato: "pdf" },
+  riscos: { nome: "Matriz de Riscos", formato: "pdf" },
+  edital: { nome: "Edital (com minutas)", formato: "pdf" },
+  memoria_calculo: { nome: "Memória de cálculo", formato: "planilha" },
+  plano_trabalho: { nome: "Plano de trabalho", formato: "pdf" },
+  planilha_mo: { nome: "Planilha de custos de mão de obra (IN 05/2017)", formato: "planilha" },
+  planilha_obras: { nome: "Planilha orçamentária (obras e serviços de engenharia)", formato: "planilha" },
+  planilha_parceria: { nome: "Planilha de custos da parceria (Lei 13.019)", formato: "planilha" },
+};
+export const MAX_DOCS_ANALISE = 3;
+export const ANALISE_AVULSA = 290;
+/** Não assinante: R$ 290 por análise. Básico 10% e Premium 15% de desconto; Pro: 2 por semana incluídas e, a partir da 3ª, 30% de desconto. */
 export const DESCONTO_ANALISE: Record<string, number> = { basico: 0.1, premium: 0.15, pro: 0.3 };
 export const FRANQUIA_PRO_SEMANA = 2;
 export const MAX_PAGINAS_ANALISE = 200;
