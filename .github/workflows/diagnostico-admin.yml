@@ -8,5 +8,5 @@ jobs:
         run: |
           curl -fsS -X POST "https://api.supabase.com/v1/projects/umnhhztdqersjfrzqcea/database/query" \
             -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" \
-            --data '{"query":"select count(*) filter (where admin) as admins, count(*) as contas, count(*) filter (where admin and email ilike '"'"'renatogarcia%'"'"') as dono_admin from public.perfis"}' \
+            --data '{"query":"select admin, left(email,2) || '"'"'***@'"'"' || split_part(email,'"'"'@'"'"',2) as email_mascarado from public.perfis order by criado_em"}' \
             | python3 -c "import json,sys; print('::notice::', json.load(sys.stdin))"
