@@ -10,9 +10,9 @@ Critérios (definidos pelo Licitacon, em linha com o art. 23, § 1º, II, da Lei
 Preço de referência de mercado: MÉDIA SANEADA (mínimo de 3 preços), conforme a orientação do TCU (Manual de Licitações e Contratos,
 4ª ed., item 4.3.9.3) e o art. 6º da IN SEGES/ME 65/2021 — média, mediana ou menor valor obtidos a partir de no mínimo três preços,
 "desconsiderados os valores inexequíveis, inconsistentes e os excessivamente elevados", com o descarte justificado (art. 3º, VI).
-Saneamento: calculam-se a média (M) e o desvio-padrão (Dp) da amostra; se o coeficiente de variação (CV = Dp/M) passar de 25%, descartam-se
-os preços fora do intervalo [M − Dp; M + Dp] e repete-se o cálculo até o CV ficar em 25% ou menos (amostra homogênea), sem reduzir a
-amostra abaixo de 3 preços. Se, mesmo assim, o CV continuar acima de 25%, a referência passa a ser a MEDIANA dos preços remanescentes
+Saneamento: cada preço é comparado com a média dos demais; descarta-se, um por rodada, o que estiver mais de 25% abaixo
+(inexequível ou inconsistente) ou mais de 25% acima (excessivamente elevado) dessa média, até não haver novo descarte, sem reduzir a amostra abaixo de 3 preços. Se o coeficiente de
+variação (CV = desvio-padrão / média) dos remanescentes continuar acima de 25%, a referência passa a ser a MEDIANA dos preços remanescentes
 (o manual do TCU indica a mediana quando há valores extremos); acima de 50%, a amostra é tratada como heterogênea e não permite concluir.
 Estimado acima da referência em mais de 25% = indício de sobrepreço; entre 10% e 25% = ponto de atenção. O sistema calcula; a conclusão
 sobre sobrepreço depende de análise do caso.
@@ -108,24 +108,32 @@ def _cv(vals):
 def _br(v):
     return f"{v:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
+FAIXA_SANEAMENTO = 0.25  # preço mais de 25% abaixo ou acima da média dos demais é descartado
+
 def media_saneada(vals):
-    """Saneamento da amostra (média ± 1 desvio-padrão, repetido até CV <= 25%, mínimo de 3 preços).
+    """Saneamento da amostra: cada preço é comparado com a média dos DEMAIS preços; o que mais se afasta é descartado se estiver mais de
+    25% abaixo (inexequível ou inconsistente) ou mais de 25% acima (excessivamente elevado) dessa média. Repete-se, um preço por rodada,
+    até nenhum se afastar mais de 25%, sem reduzir a amostra abaixo de 3 preços. Comparar com a média dos demais evita que um único
+    valor extremo distorça a média e leve ao descarte de preços legítimos.
     Devolve (mantidos, descartados [(valor, motivo)], cv_inicial, cv_final, rodadas)."""
     mantidos, descartados, rodadas = list(vals), [], 0
     cv_ini = _cv(mantidos) if mantidos else 0.0
-    while len(mantidos) > MIN_COMPARAVEIS and _cv(mantidos) > LIMIAR_CV:
-        m, dp = statistics.mean(mantidos), statistics.stdev(mantidos)
-        li, ls = m - dp, m + dp
-        novos = [v for v in mantidos if li <= v <= ls]
-        if len(novos) == len(mantidos) or len(novos) < MIN_COMPARAVEIS:
+    while len(mantidos) > MIN_COMPARAVEIS:
+        piores = []
+        for i, v in enumerate(mantidos):
+            outros = mantidos[:i] + mantidos[i + 1:]
+            m = statistics.mean(outros)
+            piores.append((abs(v / m - 1) if m else 0, i, v, m))
+        dev, i, v, m = max(piores)
+        if dev <= FAIXA_SANEAMENTO:
             break
         rodadas += 1
-        for v in mantidos:
-            if v < li:
-                descartados.append((v, f"inexequível ou inconsistente: abaixo do limite inferior (M − Dp = R$ {_br(li)}) na rodada {rodadas}"))
-            elif v > ls:
-                descartados.append((v, f"excessivamente elevado: acima do limite superior (M + Dp = R$ {_br(ls)}) na rodada {rodadas}"))
-        mantidos = novos
+        if v < m:
+            mot = f"inexequível ou inconsistente: {_br((1 - v / m) * 100)}% abaixo da média dos demais preços (R$ {_br(m)}), rodada {rodadas}"
+        else:
+            mot = f"excessivamente elevado: {_br((v / m - 1) * 100)}% acima da média dos demais preços (R$ {_br(m)}), rodada {rodadas}"
+        descartados.append((v, mot))
+        mantidos.pop(i)
     return mantidos, descartados, cv_ini, (_cv(mantidos) if mantidos else 0.0), rodadas
 
 def _comparaveis(item, uf, data_ref, excluir, n_palavras):
@@ -240,7 +248,7 @@ def analisar(itens, uf, data_ref, excluir=""):
         "criterios": {"uf": uf, "data_referencia": data_ref.isoformat(), "janela_dias": 365, "lei": "Lei 14.133/2021",
                       "preco": "valor unitário homologado", "estatistica": "media_saneada", "minimo_comparaveis": MIN_COMPARAVEIS,
                       "limiar_indicio": LIMIAR_INDICIO, "limiar_atencao": LIMIAR_ATENCAO, "similaridade_minima": SIMILARIDADE,
-                      "saneamento": "média ± 1 desvio-padrão, repetido até CV <= 25% (mínimo de 3 preços)", "limiar_cv": LIMIAR_CV,
+                      "saneamento": "descarte, um por rodada, do preço mais de 25% abaixo ou acima da média dos demais, até não haver descarte (mínimo de 3 preços)", "limiar_cv": LIMIAR_CV,
                       "alternativa": "mediana dos remanescentes se o CV continuar acima de 25%", "heterogeneidade": "CV acima de 0,5 após o saneamento",
                       "fundamento": "IN SEGES/ME 65/2021, arts. 3º, VI, e 6º; TCU, Manual de Licitações e Contratos (4ª ed.), item 4.3.9.3"},
         "itens": saida, "itens_no_orcamento": len(itens), "itens_analisados": len(saida),

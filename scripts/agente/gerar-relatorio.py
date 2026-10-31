@@ -864,10 +864,10 @@ def secao_precos(doc, pr, num=4):
     paragrafo(doc, f"Preço de mercado: média saneada. Seguindo a orientação do Tribunal de Contas da União (Manual de Licitações e Contratos, "
                    f"item 4.3.9.3) e o art. 6º da IN SEGES/ME nº 65/2021 — que manda desconsiderar os valores inexequíveis, inconsistentes e "
                    f"excessivamente elevados, com justificativa do descarte (art. 3º, VI) —, a amostra de cada item, com no mínimo "
-                   f"{cr.get('minimo_comparaveis', 3)} preços, foi saneada assim: calculam-se a média (M) e o desvio-padrão (Dp); se o "
-                   f"coeficiente de variação (CV = Dp ÷ M) for superior a 25%, descartam-se os preços abaixo de M − Dp (inexequíveis ou "
-                   f"inconsistentes) e acima de M + Dp (excessivamente elevados), repetindo-se o cálculo até o CV ficar em 25% ou menos. A média "
-                   f"dos preços remanescentes é o preço de mercado. Se o CV continuar acima de 25% (valores extremos persistentes), adota-se a "
+                   f"{cr.get('minimo_comparaveis', 3)} preços, foi saneada assim: cada preço é comparado com a média dos demais, e "
+                   f"descarta-se, um por vez, o que estiver mais de 25% abaixo dela (inexequível ou inconsistente) ou mais de 25% acima "
+                   f"(excessivamente elevado), até não haver novo descarte. A média "f"dos preços remanescentes é o preço de mercado. Se o coeficiente de variação (CV = desvio-padrão ÷ média) dos remanescentes "
+                   f"continuar acima de 25% (valores extremos persistentes), adota-se a "
                    f"mediana, como indica o mesmo manual; acima de 50%, a amostra é heterogênea e não permite concluir. Considera-se indício de "
                    f"sobrepreço o valor orçado ou contratado superior ao de mercado em mais de 25%, e ponto de atenção a diferença entre 10% e 25%.",
               depois=6)

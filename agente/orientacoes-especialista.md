@@ -100,6 +100,6 @@ Este arquivo entra nas instruções de toda análise. Acrescente aqui cada nova 
   diferença percentual e diferença total (R$ × quantidade), mais a linha de totais. No custo da mão de obra, a tabela mostra a
   diferença mensal (R$) e percentual entre o custo do profissional (Módulos 1 a 4) e a referência de mercado.
 - O preço de mercado é a MÉDIA SANEADA (TCU, Manual de Licitações e Contratos, item 4.3.9.3; IN SEGES/ME 65/2021, arts. 3º, VI, e 6º):
-  média e desvio-padrão da amostra (mínimo de 3 preços); se o CV passar de 25%, descartam-se os preços fora de média ± 1 desvio-padrão
-  (inexequíveis/inconsistentes abaixo; excessivamente elevados acima), repetindo até CV ≤ 25%. Se a amostra continuar dispersa, usa-se a
-  mediana; com CV acima de 50%, a amostra é heterogênea e não permite concluir. Cada descarte é justificado no parecer (memória de cálculo).
+  amostra de no mínimo 3 preços; cada preço é comparado com a média dos demais; descarta-se, um por rodada, o que
+  estiver mais de 25% abaixo (inexequível/inconsistente) ou mais de 25% acima (excessivamente elevado), até não haver descarte (critério dos 25% definido pela administração do Licitacon). Se o CV dos
+  remanescentes continuar acima de 25%, usa-se a mediana; com CV acima de 50%, a amostra é heterogênea e não permite concluir. Cada descarte é justificado no parecer (memória de cálculo).

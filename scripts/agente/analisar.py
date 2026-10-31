@@ -462,8 +462,8 @@ Regras obrigatórias:
     no art. 23 da Lei 14.133/2021 e no art. 6º da IN SEGES/ME 65/2021, citando o valor orçado/contratado, a média saneada de mercado, a
     diferença unitária, a diferença percentual e a diferença total calculadas pelo sistema (não recalcule nem arredonde de outro modo);
     recomende revisar a pesquisa de preços. "Ponto de atenção" é gravidade média. A referência de mercado é a MÉDIA SANEADA, conforme a
-    orientação do TCU (descarte dos preços inexequíveis, inconsistentes e excessivamente elevados até a amostra ficar homogênea, CV até
-    25%); quando o sistema informar que usou a mediana, é porque a amostra continuou dispersa — diga isso. Amostra insuficiente ou
+    orientação do TCU (descarte dos preços inexequíveis, inconsistentes e excessivamente elevados: mais de 25% abaixo ou acima da média
+    dos demais preços); quando o sistema informar que usou a mediana, é porque a amostra continuou dispersa — diga isso. Amostra insuficiente ou
     heterogênea não permite concluir: não aponte sobrepreço nesses casos. O parecer já traz a tabela comparativa de preços: não a repita.
 19. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
     ementa_texto (síntese de 2–3 frases), resumo (um parágrafo de visão geral) e conclusao (um parágrafo).
@@ -730,7 +730,7 @@ def main():
                "amostra_insuficiente": "amostra insuficiente", "amostra_heterogenea": "amostra heterogênea"}
         linhas = [f"Análise de preços calculada pelo sistema (critérios: mesma UF {precos['criterios']['uf']}, contratações homologadas em até 1 ano, "
                   f"Lei 14.133/2021, objeto equivalente; referência de mercado = média saneada de no mínimo {precos['criterios']['minimo_comparaveis']} "
-                  f"preços, com descarte dos valores fora de média ± 1 desvio-padrão até CV <= 25% (TCU; IN SEGES/ME 65/2021, art. 6º); "
+                  f"preços, com descarte dos preços mais de 25% abaixo ou acima da média dos demais (TCU; IN SEGES/ME 65/2021, art. 6º); "
                   f"indício acima de 25%):"]
         for r in precos.get("itens", []):
             if r["situacao"] in ("indicio", "atencao"):
