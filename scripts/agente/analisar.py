@@ -554,20 +554,25 @@ def _ler_stream(resp):
     for i in sorted(blocos):
         cb = blocos[i]
         if cb.get("type") == "tool_use":
-            cb["input"] = json.loads(cb["_json"] or "{}")
+            try:
+                cb["input"] = json.loads(cb["_json"] or "{}")
+            except json.JSONDecodeError:  # saída cortada (limite de tokens): não é falha de conexão, não repetir às cegas
+                cb["input"] = None
+                msg["truncado"] = True
         cb.pop("_json", None)
         msg["content"].append(cb)
     return msg
 
 
-def chamar(system, usuario, max_tokens=56000):
+def chamar(system, usuario, max_tokens=128000):
     chave = os.environ.get("ANTHROPIC_API_KEY")
     if not chave:
         sys.exit("ANTHROPIC_API_KEY ausente")
     corpo = {"model": MODELO, "max_tokens": max_tokens, "system": system, "tools": [FERRAMENTA],
              "tool_choice": {"type": "auto"},  # o Sonnet 5.5 não aceita escolha forçada de ferramenta
              "stream": True,  # mantém a conexão ativa enquanto o modelo raciocina (evita queda em análises longas)
-             "messages": [{"role": "user", "content": usuario}]}
+             # o documento vai em cache: se for preciso repetir a chamada, a releitura custa ~10% do preço
+             "messages": [{"role": "user", "content": [{"type": "text", "text": usuario, "cache_control": {"type": "ephemeral"}}]}]}
     for tentativa in range(4):
         req = urllib.request.Request("https://api.anthropic.com/v1/messages", method="POST", data=json.dumps(corpo).encode(),
                                      headers={"x-api-key": chave, "anthropic-version": "2023-06-01", "content-type": "application/json"})
@@ -576,6 +581,8 @@ def chamar(system, usuario, max_tokens=56000):
                 return _ler_stream(r)
         except urllib.error.HTTPError as e:
             msg = e.read().decode()[:500]
+            if e.code == 400 and "max_tokens" in msg and corpo["max_tokens"] > 64000:
+                corpo["max_tokens"] = 64000; continue  # limite de saída do modelo menor que o pedido
             if e.code in (429, 500, 502, 503, 529) and tentativa < 3:
                 time.sleep(20 * (tentativa + 1)); continue
             sys.exit(f"Erro da API ({e.code}): {msg}")
@@ -788,6 +795,9 @@ def main():
                + "Verifique todos os itens do roteiro e registre o resultado chamando a ferramenta registrar_analise uma única vez, com todos os itens. Não responda em texto.")
     t0 = time.time()
     resp = chamar(system, usuario)
+    if resp.get("truncado") or resp.get("stop_reason") == "max_tokens":
+        sys.exit(f"A resposta do modelo foi cortada no limite de tokens (parada: {resp.get('stop_reason')}; uso: {resp.get('usage')}). "
+                 "Divida a análise (menos documentos por vez) em vez de repetir.")
     bloco = next((c for c in resp.get("content", []) if c.get("type") == "tool_use"), None)
     if bloco:
         dados = bloco["input"]
