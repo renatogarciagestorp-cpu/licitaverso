@@ -8,15 +8,13 @@ const ORIENT=new Set(["Parecer/orientação","Resposta a consulta","Súmula/Enun
 
 const natOf=d=>LEGISLACAO.has(d.tipo)?"legislacao":ORIENT.has(d.tipo)?"orientacoes":"decisoes";
 
-const ESFERA={"TCU":"União","CGU":"União","STF":"União","STJ":"União","GOV-BR":"União","TCE-RJ":"Estado do RJ","PGE-RJ":"Estado do RJ","TJ-RJ":"Estado do RJ","GOV-RJ":"Estado do RJ","TCM-RJ":"Município do Rio de Janeiro"};
-
-const ORG_NOME={"TCU":["BRASIL","Tribunal de Contas da União"],"CGU":["BRASIL","Controladoria-Geral da União"],"STF":["BRASIL","Supremo Tribunal Federal"],"STJ":["BRASIL","Superior Tribunal de Justiça"],
-  "TCE-RJ":["RIO DE JANEIRO (Estado)","Tribunal de Contas do Estado do Rio de Janeiro"],"PGE-RJ":["RIO DE JANEIRO (Estado)","Procuradoria-Geral do Estado"],"TJ-RJ":["RIO DE JANEIRO (Estado)","Tribunal de Justiça"],"TCM-RJ":["RIO DE JANEIRO (Município)","Tribunal de Contas do Município do Rio de Janeiro"],"GOV-BR":["BRASIL",""],"GOV-RJ":["RIO DE JANEIRO (Estado)",""]};
+import "../orgaos.js";
+const ORG=globalThis.LV_ORG;
 const MESES=["jan.","fev.","mar.","abr.","maio","jun.","jul.","ago.","set.","out.","nov.","dez."];
 const dAbnt=iso=>{if(!iso)return"";const[y,m,d]=iso.slice(0,10).split("-");return `${+d} ${MESES[+m-1]} ${y}`};
 function tese(d){let t=d.resumo||d.titulo||"";for(const k of [" Publicado em:"," (Boletim"," (Informativo"," Decisões de 2026"," Informativo STF"]){const i=t.indexOf(k);if(i>40)t=t.slice(0,i)}return t.trim()}
 function citacao(d,fmtc){
-  const [ente,org]=ORG_NOME[d.orgao]||["",d.orgao];const rel=(d.relator||"").replace(/^(Min\.|Cons\.|Des\.)\s*/,"");
+  const _oi=ORG.info(d.orgao);const ente=_oi.ente,org=_oi.nome;const rel=(d.relator||"").replace(/^(Min\.|Cons\.|Des\.)\s*/,"");
   const cargo=/^Cons\./.test(d.relator||"")?"Conselheiro":/^Des\./.test(d.relator||"")?"Desembargador(a)":/^Min/.test(d.relator||"")?"Ministro(a)":"";
   const num=d.numero||d.tipo;const hoje=dAbnt(new Date().toISOString());
   if(d._nat==="legislacao"&&fmtc==="abnt")return `${ente}. ${num}${d.titulo?". "+d.titulo.replace(/\.$/,""):""}. ${d.fonte_nome?d.fonte_nome+", ":""}${d.data?dAbnt(d.data)+". ":""}${d.fonte_url?`Disponível em: ${d.fonte_url}. Acesso em: ${hoje}.`:""}`.replace(/\s+/g," ").trim();
@@ -43,7 +41,7 @@ function leisDe(d){
   return [...out];
 }
 
-function itemPlataforma(d){return {id:d.id,orgao:d.orgao,esfera:ESFERA[d.orgao]||"",uf:ESFERA[d.orgao]==="União"?"":"RJ",municipio:d.orgao==="TCM-RJ"?"Rio de Janeiro":"",
+function itemPlataforma(d){const oi=ORG.info(d.orgao);return {id:d.id,orgao:d.orgao,grupo:oi.grupo,esfera:oi.esfera,uf:oi.uf,municipio:oi.municipio,
   natureza:d._nat,tipo:d.tipo,numero:d.numero||"",colegiado:d.colegiado||"",relator:d.relator||"",data:d.data||"",tema:d.tema,titulo:d.titulo,tese:tese(d),
   tags:d.tags||[],legislacao:d._leis,fonte_nome:d.fonte_nome||"",fonte_url:d.fonte_url||"",verificado_em:(d.capturado_em||"").slice(0,10),citacao_abnt:citacao(d,"abnt")}}
 

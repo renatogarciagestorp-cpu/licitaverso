@@ -2445,8 +2445,9 @@ const BASE_NORMAS = DOCS_BASE.filter((d) => !["TCU", "STF"].includes(d.orgao))
   .map((d) => ({ ...d, uf: d.uf === "Federal" ? "Federal" : d.uf, temas: [...new Set(d.temas.map((x) => TEMA_MAP[x] || x))] }));
 const brData = (iso) => iso && /^\d{4}-\d{2}-\d{2}/.test(iso) ? iso.slice(8, 10) + "/" + iso.slice(5, 7) + "/" + iso.slice(0, 4) : "s/d";
 function doAcervo(it) {
-  return { id: it.id, orgao: it.orgao === "GOV-BR" ? "Normas federais" : it.orgao === "GOV-RJ" ? "Normas do RJ" : it.orgao,
-    tipo: it.tipo, numero: it.numero || it.titulo, data: brData(it.data), ano: (it.data || "").slice(0, 4), uf: ESFERA_UF[it.esfera] || "Federal",
+  return { id: it.id, orgao: it.orgao === "GOV-BR" ? "Normas federais" : /^GOV-/.test(it.orgao) ? "Normas do " + it.orgao.slice(4) : it.orgao,
+    tipo: it.tipo, numero: it.numero || it.titulo, data: brData(it.data), ano: (it.data || "").slice(0, 4),
+    uf: it.uf ? (it.esfera === "Municipal" && it.municipio ? (it.municipio === "Rio de Janeiro" ? "Município do Rio" : "Município de " + it.municipio) : it.uf) : (ESFERA_UF[it.esfera] || "Federal"),
     temas: [it.tema].concat(it.tags || []).filter(Boolean).slice(0, 4), verificado: true, titulo: it.titulo || "",
     fonte: it.fonte_nome || "Fonte oficial", link: it.fonte_url || "", ementa: it.tese || it.titulo || "",
     nota: [it.titulo, it.relator ? "Relator: " + it.relator + (it.colegiado ? " · " + it.colegiado : "") : "", it.citacao_abnt ? "Como citar: " + it.citacao_abnt : ""].filter(Boolean).join(" — "),

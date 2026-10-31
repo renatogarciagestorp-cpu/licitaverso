@@ -218,7 +218,9 @@ main{min-width:0}
 .org.TCU{color:var(--tcu);background:var(--tcu-soft)} .org.TCE-RJ{color:var(--tcerj);background:var(--tcerj-soft)} .org.CGU{color:var(--cgu);background:var(--cgu-soft)}
 .org.STF{color:var(--stf);background:var(--stf-soft)} .org.STJ{color:var(--stj);background:var(--stj-soft)} .org.TCM-RJ{color:var(--tcmrj);background:var(--tcmrj-soft)}
 .org.PGE-RJ{color:var(--pgerj);background:var(--pgerj-soft)} .org.TJ-RJ{color:var(--tjrj);background:var(--tjrj-soft)}
-.org.GOV-BR,.org.GOV-RJ{color:var(--warn);background:var(--warn-soft)}
+.org.GOV-BR,.org.GOV-RJ,.org.g-GOV-UF{color:var(--warn);background:var(--warn-soft)}
+.org.g-TCE{color:var(--tcerj);background:var(--tcerj-soft)} .org.g-TCM{color:var(--tcmrj);background:var(--tcmrj-soft)} .org.g-PGE{color:var(--pgerj);background:var(--pgerj-soft)} .org.g-TJ{color:var(--tjrj);background:var(--tjrj-soft)}
+#ufs .chip{padding:5px 7px}
 /* Dossiês, relacionadas, painel, status */
 .dosbar{border:1px solid var(--accent);border-radius:10px;background:var(--surface);padding:12px 16px;margin:6px 0 10px}
 .dosbar h2{font:650 17px/1.2 var(--f-display);margin:2px 0 6px}
@@ -337,7 +339,7 @@ dialog.notes::backdrop{background:rgba(10,16,22,.35)}
     <div>
       <div class="eyebrow">Licitacon · Biblioteca jurídica</div>
       <h1>Acervo de decisões e normas</h1>
-      <p>TCU, TCE-RJ, CGU, STF, STJ, TCM-RJ, PGE-RJ, TJ-RJ e normas federais e do RJ captados automaticamente em dias úteis. Organizados por órgão, esfera, natureza, tema, lei, artigo, tipo e data.</p>
+      <p>TCU, TCE-RJ, CGU, STF, STJ, TCM-RJ, PGE-RJ, TJ-RJ e normas federais e do RJ captados automaticamente em dias úteis. Organizados por órgão, estado, esfera, natureza, tema, lei, artigo, tipo e data.</p>
     </div>
     <div class="stamp" id="stamp">Carregando acervo…</div>
   </header>
@@ -347,6 +349,7 @@ dialog.notes::backdrop{background:rgba(10,16,22,.35)}
     <div class="seg" id="natureza"></div>
   </div>
   <div class="bar" id="counts" role="group" aria-label="Filtrar por órgão"><span class="lbl">Órgão</span></div>
+  <div class="bar" id="ufs" role="group" aria-label="Filtrar por estado"><span class="lbl">Estado</span></div>
 
   <div class="layout">
     <aside>
@@ -568,25 +571,23 @@ dialog.notes::backdrop{background:rgba(10,16,22,.35)}
   <div style="display:flex;justify-content:flex-end;margin-top:10px"><button class="ghost" type="button" id="minFechar">Fechar</button></div>
 </dialog>
 
+<script src="orgaos.js?v=1"></script>
 <script>
-const ORGAOS=["TCU","TCE-RJ","CGU","STF","STJ","TCM-RJ","PGE-RJ","TJ-RJ","GOV-BR","GOV-RJ"];
-const ORG_LBL={"GOV-BR":"Normas federais","GOV-RJ":"Normas RJ"};const lbl=o=>ORG_LBL[o]||o;
+const ORGAOS=LV_ORG.ORGAOS;
+const lbl=o=>LV_ORG.rotulo(o);const grupoDe=o=>LV_ORG.info(o).grupo;const ufDe=o=>LV_ORG.info(o).uf;const esfDe=o=>LV_ORG.info(o).esfera;
 const TEMAS=["Planejamento e ETP","Licitações (geral)","Habilitação e qualificação técnica","Julgamento de propostas","Pesquisa de preços e sobrepreço","Contratação direta","Registro de preços","Execução e alteração contratual","Obras e engenharia","Concessões e PPP","Estatais (Lei 13.303)","Sanções e responsabilização","Integridade e anticorrupção","Controle e auditoria","Orçamento e finanças públicas","Pessoal","Outros"];
 const TIPOS=["Acórdão","Decisão monocrática","Decisão cautelar","Súmula/Enunciado","Tema de repercussão geral/repetitivo","Parecer/orientação","Resposta a consulta","Lei","Decreto","Norma (portaria, IN, resolução)","Sanção administrativa","Acordo de leniência/termo","Operação/fiscalização","Boletim/informativo"];
 const LEGISLACAO=new Set(["Lei","Decreto","Norma (portaria, IN, resolução)"]);
 const ORIENT=new Set(["Parecer/orientação","Resposta a consulta","Súmula/Enunciado","Boletim/informativo"]);
 const NATS=[["","Tudo"],["decisoes","Decisões"],["legislacao","Legislação"],["orientacoes","Pareceres e orientações"]];
 const natOf=d=>LEGISLACAO.has(d.tipo)?"legislacao":ORIENT.has(d.tipo)?"orientacoes":"decisoes";
-const S={docs:[],nat:"",orgao:"",tema:"",lei:"",tipo:"",q:"",de:"",ate:"",ordem:"desc",notes:{},nf:"",canNote:false,esf:"",view:"lista",only:null,art:"",artQ:"",dos:"",dossies:{},prefs:null,meta:{},rel:{}};
-const ESFERA={"TCU":"União","CGU":"União","STF":"União","STJ":"União","GOV-BR":"União","TCE-RJ":"Estado do RJ","PGE-RJ":"Estado do RJ","TJ-RJ":"Estado do RJ","GOV-RJ":"Estado do RJ","TCM-RJ":"Município do Rio de Janeiro"};
-const ESFERAS=["União","Estado do RJ","Município do Rio de Janeiro"];
-const ORG_NOME={"TCU":["BRASIL","Tribunal de Contas da União"],"CGU":["BRASIL","Controladoria-Geral da União"],"STF":["BRASIL","Supremo Tribunal Federal"],"STJ":["BRASIL","Superior Tribunal de Justiça"],
-  "TCE-RJ":["RIO DE JANEIRO (Estado)","Tribunal de Contas do Estado do Rio de Janeiro"],"PGE-RJ":["RIO DE JANEIRO (Estado)","Procuradoria-Geral do Estado"],"TJ-RJ":["RIO DE JANEIRO (Estado)","Tribunal de Justiça"],"TCM-RJ":["RIO DE JANEIRO (Município)","Tribunal de Contas do Município do Rio de Janeiro"],"GOV-BR":["BRASIL",""],"GOV-RJ":["RIO DE JANEIRO (Estado)",""]};
+const S={docs:[],nat:"",orgao:"",tema:"",lei:"",tipo:"",q:"",de:"",ate:"",ordem:"desc",notes:{},nf:"",canNote:false,esf:"",grupo:"",uf:"",view:"lista",only:null,art:"",artQ:"",dos:"",dossies:{},prefs:null,meta:{},rel:{}};
+const ESFERAS=LV_ORG.ESFERAS;
 const MESES=["jan.","fev.","mar.","abr.","maio","jun.","jul.","ago.","set.","out.","nov.","dez."];
 const dAbnt=iso=>{if(!iso)return"";const[y,m,d]=iso.slice(0,10).split("-");return `${+d} ${MESES[+m-1]} ${y}`};
 function tese(d){let t=d.resumo||d.titulo||"";for(const k of [" Publicado em:"," (Boletim"," (Informativo"," Decisões de 2026"," Informativo STF"]){const i=t.indexOf(k);if(i>40)t=t.slice(0,i)}return t.trim()}
 function citacao(d,fmtc){
-  const [ente,org]=ORG_NOME[d.orgao]||["",d.orgao];const rel=(d.relator||"").replace(/^(Min\.|Cons\.|Des\.)\s*/,"");
+  const _oi=LV_ORG.info(d.orgao);const ente=_oi.ente,org=_oi.nome;const rel=(d.relator||"").replace(/^(Min\.|Cons\.|Des\.)\s*/,"");
   const cargo=/^Cons\./.test(d.relator||"")?"Conselheiro":/^Des\./.test(d.relator||"")?"Desembargador(a)":/^Min/.test(d.relator||"")?"Ministro(a)":"";
   const num=d.numero||d.tipo;const hoje=dAbnt(new Date().toISOString());
   if(d._nat==="legislacao"&&fmtc==="abnt")return `${ente}. ${num}${d.titulo?". "+d.titulo.replace(/\.$/,""):""}. ${d.fonte_nome?d.fonte_nome+", ":""}${d.data?dAbnt(d.data)+". ":""}${d.fonte_url?`Disponível em: ${d.fonte_url}. Acesso em: ${hoje}.`:""}`.replace(/\s+/g," ").trim();
@@ -637,7 +638,9 @@ function filtered(){
     if(S.only&&!S.only.has(d.id))return false;
     if(S.dos&&!((S.dossies[S.dos]||{}).itens||[]).includes(d.id))return false;
     if(S.art&&!d._arts.includes(S.art))return false;
-    if(S.esf&&ESFERA[d.orgao]!==S.esf)return false;
+    if(S.esf&&esfDe(d.orgao)!==S.esf)return false;
+    if(S.grupo&&grupoDe(d.orgao)!==S.grupo)return false;
+    if(S.uf&&ufDe(d.orgao)!==S.uf)return false;
     if(S.nf==="any"&&!(n&&(n.texto||(n.marcas||[]).length)))return false;
     if(S.nf&&S.nf!=="any"&&!(n&&(n.marcas||[]).includes(S.nf)))return false;
     return (!S.orgao||d.orgao===S.orgao)&&(!S.tema||d.tema===S.tema)&&(!S.lei||d._leis.includes(S.lei))&&(!S.tipo||d.tipo===S.tipo)
@@ -655,11 +658,17 @@ function render(){
     b.innerHTML=`${esc(l)}<span>${n}</span>`;b.onclick=()=>{S.nat=v;S.lei="";render()};nt.appendChild(b)});
   const B=base();
   const c=$("counts");c.querySelectorAll(".chip").forEach(x=>x.remove());
-  [["","Todos",B.length],...ORGAOS.map(o=>[o,lbl(o),B.filter(d=>d.orgao===o).length])].forEach(([v,l,n])=>{
-    const b=document.createElement("button");b.className="chip"+(n===0&&v?" zero":"");b.type="button";b.setAttribute("aria-pressed",S.orgao===v);
-    b.innerHTML=`${esc(l)} <b>${n}</b>`;b.onclick=()=>{S.orgao=v;render()};c.appendChild(b)});
-  listButtons($("esferas"),[["","Todas",B.length],...ESFERAS.map(e=>[e,e,B.filter(d=>ESFERA[d.orgao]===e).length])],S.esf,v=>S.esf=v);
-  const pool=B.filter(d=>(!S.orgao||d.orgao===S.orgao)&&(!S.esf||ESFERA[d.orgao]===S.esf));
+  const chip=(el,v,l,n,cur,set)=>{const b=document.createElement("button");b.className="chip"+(n===0&&v?" zero":"");b.type="button";b.setAttribute("aria-pressed",cur===v);
+    b.innerHTML=`${esc(l)} <b>${n}</b>`;b.onclick=()=>{set(v);render()};el.appendChild(b)};
+  const Bu=B.filter(d=>!S.uf||ufDe(d.orgao)===S.uf);
+  [["","Todos",Bu.length],...LV_ORG.GRUPOS.map(([k,l])=>[k,l,Bu.filter(d=>grupoDe(d.orgao)===k).length])].forEach(([v,l,n])=>chip(c,v,l,n,S.grupo,v=>{S.grupo=v;S.orgao=""}));
+  if(S.orgao){const b=document.createElement("button");b.className="chip";b.type="button";b.setAttribute("aria-pressed","true");b.title="Remover filtro de órgão";
+    b.innerHTML=`${esc(lbl(S.orgao))} ×`;b.onclick=()=>{S.orgao="";render()};c.appendChild(b)}
+  const cu=$("ufs");cu.querySelectorAll(".chip").forEach(x=>x.remove());
+  const Bg=B.filter(d=>!S.grupo||grupoDe(d.orgao)===S.grupo);
+  [["","Todos",Bg.length],...LV_ORG.UFS.map(([uf,nome])=>[uf,uf,Bg.filter(d=>ufDe(d.orgao)===uf).length,nome])].forEach(([v,l,n,nome])=>{chip(cu,v,l,n,S.uf,v=>{S.uf=v;S.orgao=""});if(nome)cu.lastChild.title=nome});
+  listButtons($("esferas"),[["","Todas",B.length],...ESFERAS.map(e=>[e,e,B.filter(d=>esfDe(d.orgao)===e).length])],S.esf,v=>S.esf=v);
+  const pool=B.filter(d=>(!S.orgao||d.orgao===S.orgao)&&(!S.esf||esfDe(d.orgao)===S.esf)&&(!S.grupo||grupoDe(d.orgao)===S.grupo)&&(!S.uf||ufDe(d.orgao)===S.uf));
   $("vista").querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.view));
   $("onlyBar").innerHTML=S.only?`<div class="banner"><span>Mostrando só as ${S.only.size} decisões citadas na resposta.</span><button type="button" id="onlyX">Ver todo o acervo</button></div>`:"";
   if(S.only)$("onlyX").onclick=()=>{S.only=null;render()};
@@ -691,7 +700,7 @@ function render(){
     if(m!==cur){cur=m;const h=document.createElement("h2");h.className="month";h.textContent=m;L.appendChild(h)}
     const el=document.createElement("article");el.className="item";el.id="it-"+d.id;
     const n=S.notes[d.id];const mk=(n&&n.marcas)||[];const temTexto=!!(n&&n.texto);
-    el.innerHTML=`<div><div class="date">${fmt(d.data)}</div><span class="org ${esc(d.orgao)}">${esc(lbl(d.orgao))}</span></div>
+    el.innerHTML=`<div><div class="date">${fmt(d.data)}</div><span class="org ${esc(d.orgao)} g-${esc(grupoDe(d.orgao))}">${esc(lbl(d.orgao))}</span></div>
       <div><div class="ref">${d._nat==="legislacao"?'<span class="leg">Legislação</span>':''}${esc(d.tipo)}${d.numero?" · "+esc(d.numero):""}${d.colegiado?" · "+esc(d.colegiado):""}</div>
       <h3>${esc(d.titulo)}</h3><p class="resumo">${esc(d.resumo)}</p>
       ${temTexto?`<div class="mynote" data-note="${esc(d.id)}"><b>Minha anotação</b>${esc(n.texto.length>220?n.texto.slice(0,220)+"…":n.texto)}</div>`:""}
@@ -812,7 +821,7 @@ ${lista}`,{modelTier:"default"});
 };
 
 /* ===== Exportação para a plataforma Licitacon ===== */
-function itemPlataforma(d){return {id:d.id,orgao:d.orgao,esfera:ESFERA[d.orgao]||"",uf:ESFERA[d.orgao]==="União"?"":"RJ",municipio:d.orgao==="TCM-RJ"?"Rio de Janeiro":"",
+function itemPlataforma(d){return {id:d.id,orgao:d.orgao,esfera:esfDe(d.orgao)||"",uf:esfDe(d.orgao)==="União"?"":"RJ",municipio:d.orgao==="TCM-RJ"?"Rio de Janeiro":"",
   natureza:d._nat,tipo:d.tipo,numero:d.numero||"",colegiado:d.colegiado||"",relator:d.relator||"",data:d.data||"",tema:d.tema,titulo:d.titulo,tese:tese(d),
   tags:d.tags||[],legislacao:d._leis,fonte_nome:d.fonte_nome||"",fonte_url:d.fonte_url||"",verificado_em:(d.capturado_em||"").slice(0,10),citacao_abnt:citacao(d,"abnt")}}
 function csvDe(rows){const cols=["id","orgao","esfera","uf","municipio","natureza","tipo","numero","colegiado","relator","data","tema","titulo","tese","tags","legislacao","fonte_nome","fonte_url","verificado_em","citacao_abnt"];
@@ -1030,7 +1039,7 @@ async function salvarPrefs(){
 }
 $("resAtivo").onchange=salvarPrefs;
 
-$("limpar").onclick=()=>{$("artQ").value="";Object.assign(S,{nat:"",orgao:"",tema:"",lei:"",tipo:"",q:"",de:"",ate:"",nf:"",esf:"",only:null,art:"",artQ:"",dos:""});["q","tipo","de","ate"].forEach(i=>$(i).value="");render()};
+$("limpar").onclick=()=>{$("artQ").value="";Object.assign(S,{nat:"",orgao:"",tema:"",lei:"",tipo:"",q:"",de:"",ate:"",nf:"",esf:"",grupo:"",uf:"",only:null,art:"",artQ:"",dos:""});["q","tipo","de","ate"].forEach(i=>$(i).value="");render()};
 render();
 
 function slug(s){return norm(s).replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,40)}
