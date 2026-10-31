@@ -19,3 +19,6 @@ alter table public.analises add constraint analises_status_check
   check (status in ('aguardando_pagamento', 'aguardando_documentos', 'na_fila', 'processando', 'concluida', 'erro', 'cancelada'));
 alter table public.analises drop constraint if exists analises_origem_check;
 alter table public.analises add constraint analises_origem_check check (origem in ('pdf', 'pncp', 'arquivos'));
+
+-- LGPD: data em que os documentos enviados foram apagados automaticamente (o parecer continua na conta)
+alter table public.analises add column if not exists documentos_excluidos_em timestamptz;

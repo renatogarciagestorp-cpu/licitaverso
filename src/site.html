@@ -1874,6 +1874,7 @@
                 </label>
                 <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap">
                   <button sc-camel-on-click="{{ enviarContato }}" style="background: #0FA36B; color: #06251A; border: 0; border-radius: 11px; padding: 13px 22px; font-size: 14.5px; font-weight: 700; cursor: pointer" style-hover="background: #14B978">Enviar mensagem</button>
+                  <p style="margin: 8px 0 0; font-size: 12px; line-height: 1.5; color: #7A8B91">Usamos seu nome e e-mail só para responder a esta mensagem, conforme a Política de Privacidade (LGPD).</p>
                   <span style="font-size: 13.5px; font-weight: 700; color: {{ contatoCor }}">{{ contatoStatus }}</span>
                 </div>
                 <p style="margin: 0; font-size: 12.5px; line-height: 1.55; color: #7A8B91">Ao enviar, você concorda que usemos seus dados apenas para responder a esta solicitação (base legal: legítimo interesse). Nada é usado para marketing sem consentimento separado.</p>
@@ -2507,7 +2508,7 @@ const INSTITUCIONAL = {
     blocos: [
       { titulo: "1. Aceitação e capacidade", texto: "Ao criar uma conta ou usar a plataforma, você declara ter pelo menos 18 anos, ter capacidade civil e concordar com estes Termos e com a Política de Privacidade. Se você usa o Licitacon em nome de um órgão público ou de uma empresa, declara ter autorização para isso.", itens: [] },
       { titulo: "2. O que a plataforma é — e o que não é", texto: "O Licitacon oferece: (a) busca em base de jurisprudência, normas e pareceres de fontes oficiais; (b) fórum de comunidade profissional; (c) cursos ministrados por Renato Garcia e hospedados na plataforma Hotmart; (d) consultoria técnica em gestão de licitações e contratos, prestada por especialista em gestão pública; (e) futuramente, agente de inteligência artificial de análise de procedimentos. Nada disso constitui consultoria jurídica, parecer jurídico, representação processual ou garantia de resultado em processo administrativo ou judicial.", itens: [] },
-      { titulo: "3. Cadastro, conta e segurança", texto: "Você é responsável pela veracidade dos dados informados e pela guarda das suas credenciais. Contas são pessoais e intransferíveis: o compartilhamento de login com terceiros é motivo de suspensão. Recomendamos ativar a autenticação em dois fatores. Comunique imediatamente qualquer uso não autorizado.", itens: [] },
+      { titulo: "3. Cadastro, conta e segurança", texto: "Você é responsável pela veracidade dos dados informados e pela guarda das suas credenciais. Contas são pessoais e intransferíveis: o compartilhamento de login com terceiros é motivo de suspensão. Use senha forte e exclusiva (ou o login com Google, com a verificação em duas etapas da sua conta Google ativada) e comunique imediatamente qualquer uso não autorizado.", itens: [] },
       { titulo: "4. Planos, cobrança e cancelamento", texto: "A Biblioteca Jurídica tem camada de acesso gratuito permanente. Os planos pagos são cobrados por meio do Mercado Pago Ltda., nosso processador de pagamentos, em ambiente PCI-DSS: o Licitacon não recebe nem armazena o número completo do seu cartão. As formas de pagamento e o próprio regime de renovação variam conforme quem contrata — pessoa física, empresa privada ou órgão da administração pública:", itens: [
         "Duas formas de contratar: por 1 mês, sem compromisso de renovação; ou por 12 meses, com mensalidade menor e acesso contínuo durante todo o período, à vista ou em até 12x sem juros — o total é o mesmo nas duas hipóteses de parcelamento.",
         "Pessoa física (CPF): Pix, cartão de crédito, débito ou saldo Mercado Pago e boleto. No ciclo de 12 meses parcelado em Pix ou boleto, cada parcela é uma cobrança mensal do mesmo valor, sem juros.",
@@ -2530,43 +2531,62 @@ const INSTITUCIONAL = {
   privacidade: {
     label: "Política de Privacidade",
     titulo: "Política de Privacidade",
-    intro: "Como coletamos, usamos, protegemos e devolvemos seus dados pessoais — em conformidade com a LGPD e alinhada aos princípios do GDPR europeu.",
-    vigencia: "Versão 1.0 · vigente desde 1º de agosto de 2026 · Controlador: Renato Garcia, responsável pelo Licitacon.",
+    intro: "Como coletamos, usamos, protegemos e devolvemos seus dados pessoais, em conformidade com a Lei Geral de Proteção de Dados (Lei nº 13.709/2018 — LGPD).",
+    vigencia: "Versão 1.1 · vigente desde 31 de outubro de 2026 · Controlador: Renato Garcia, responsável pelo Licitacon.",
     blocos: [
-      { titulo: "1. Princípios que seguimos", texto: "Tratamos dados pessoais conforme a Lei nº 13.709/2018 (LGPD) e, para usuários no Espaço Econômico Europeu, conforme o Regulamento (UE) 2016/679 (GDPR): finalidade específica, necessidade e minimização, transparência, segurança, prevenção, não discriminação e responsabilização. Só pedimos o dado que a função exige e mantemos apenas pelo tempo necessário.", itens: [] },
-      { titulo: "2. Dados que coletamos e por quê", texto: "A coleta é organizada por finalidade, cada uma com sua base legal:", itens: [
-        "Cadastro (nome, e-mail, senha, tipo de perfil): execução de contrato — criar e manter sua conta.",
-        "CPF/CNPJ, endereço e dados de cobrança: cumprimento de obrigação legal e fiscal — emissão de NFS-e e cobrança. Dados completos de cartão são tokenizados e ficam com o Mercado Pago, não conosco.",
-        "Órgãos públicos: número do processo administrativo, nota de empenho e dados do fiscal do contrato — cumprimento de obrigação legal e execução de contrato administrativo.",
-        "Conteúdo publicado no fórum e perfil profissional público: execução de contrato e legítimo interesse na moderação da comunidade.",
-        "Documentos enviados ao agente de IA: execução de contrato, com retenção limitada, acesso restrito e anonimização sempre que tecnicamente possível.",
-        "Dados de uso, dispositivo e registros de acesso: obrigação legal (art. 15 do Marco Civil da Internet) e legítimo interesse em segurança e melhoria do serviço.",
-        "Comunicações de marketing: consentimento livre, específico e revogável a qualquer momento, com um clique."
+      { titulo: "1. Princípios que seguimos", texto: "Tratamos dados pessoais conforme a LGPD: finalidade específica, adequação, necessidade (só o dado que a função exige), livre acesso, qualidade, transparência, segurança, prevenção, não discriminação e responsabilização. Não vendemos dados pessoais.", itens: [] },
+      { titulo: "2. Dados que coletamos, para quê e com qual base legal", texto: "Cada finalidade tem sua base legal (art. 7º da LGPD):", itens: [
+        "Cadastro e conta (nome, e-mail, celular, senha protegida por criptografia; ou nome e e-mail recebidos do Google, se você entrar com o Google): execução de contrato — criar e manter sua conta.",
+        "Perfil profissional (órgão ou empresa, cargo, tipo de perfil, CPF ou CNPJ quando informado): execução de contrato e cumprimento de obrigação legal na cobrança.",
+        "Pagamentos (plano, valor, forma de pagamento, identificador do pagamento): execução de contrato e obrigação legal. Os dados do cartão são digitados no ambiente do Mercado Pago e não chegam ao Licitacon.",
+        "Renovação automática (opcional): execução de contrato, mediante sua autorização no Mercado Pago; você cancela quando quiser na Área do Assinante.",
+        "Documentos enviados ao Agente IA e à consultoria: execução de contrato — gerar o parecer ou o atendimento pedido.",
+        "Conteúdo publicado no fórum: execução de contrato e legítimo interesse na moderação da comunidade.",
+        "Registros de acesso (data, hora e IP): obrigação legal (art. 15 do Marco Civil da Internet) e legítimo interesse em segurança.",
+        "Medição de visitas (Cloudflare Web Analytics, sem cookies de rastreamento): consentimento, só se você aceitar os cookies de análise.",
+        "E-mails de aviso sobre a conta, o plano e os seus pedidos: execução de contrato. Novidades e marketing: só com o seu consentimento, revogável a qualquer momento."
       ] },
-      { titulo: "3. Atenção especial aos documentos que você envia", texto: "Editais, processos administrativos e minutas podem conter dados pessoais — e às vezes dados sensíveis — de terceiros. Você é responsável por só enviar documento que possa legitimamente compartilhar. Nós, por nossa parte, restringimos o acesso ao mínimo de pessoas, aplicamos criptografia, não usamos seus documentos para treinar modelos de IA de terceiros e excluímos o arquivo original após o prazo de retenção configurado na sua conta.", itens: [] },
-      { titulo: "4. Com quem compartilhamos", texto: "Não vendemos dados pessoais. Compartilhamos apenas o necessário com operadores contratualmente obrigados a padrões equivalentes de proteção: provedor de nuvem e CDN, Mercado Pago Ltda. como processador de pagamentos (que trata dados de cobrança e antifraude sob sua própria política, como controlador dessa etapa), emissor de nota fiscal, provedor de e-mail transacional, ferramentas de monitoramento de erros quando você contrata consultoria, o especialista escolhido — que recebe somente o material do atendimento — e, quando você solicita análise de documento, o provedor de inteligência artificial (Anthropic), que recebe somente o documento enviado, pela API comercial, sem uso para treinamento de modelos. Também compartilhamos quando houver ordem judicial ou requisição legal de autoridade competente.", itens: [] },
-      { titulo: "5. Transferência internacional", texto: "Parte da infraestrutura pode estar em servidores fora do Brasil. Nesses casos, a transferência ocorre com salvaguardas adequadas — cláusulas contratuais padrão, avaliação de país com nível adequado de proteção ou outro mecanismo previsto no art. 33 da LGPD e no capítulo V do GDPR.", itens: [] },
-      { titulo: "6. Retenção e descarte", texto: "Dados de conta são mantidos enquanto a assinatura estiver ativa. Após o encerramento, excluímos ou anonimizamos em até 90 dias, exceto: documentos fiscais e contábeis (5 anos, por obrigação legal), registros de acesso (6 meses, por exigência do Marco Civil) e dados necessários à defesa em processo em curso.", itens: [] },
-      { titulo: "7. Seus direitos como titular", texto: "Você exerce todos eles direto no Portal do Titular, dentro da Área do Assinante, sem precisar falar com ninguém — ou por e-mail ao DPO. Respondemos em até 15 dias.", itens: [
+      { titulo: "3. Documentos enviados ao Agente IA", texto: "Editais, estudos, termos de referência e planilhas podem conter dados pessoais — às vezes sensíveis — de terceiros. Você é responsável por só enviar documento que possa legitimamente compartilhar e por retirar dados pessoais desnecessários (por exemplo, documentos de habilitação, CPF e dados de saúde). Os arquivos ficam em armazenamento privado, acessível só a você e à equipe técnica; são lidos por programa e pelo provedor de inteligência artificial pela API comercial, que não usa o conteúdo para treinar modelos; e são apagados automaticamente 30 dias depois do fim da análise. O parecer gerado fica na sua conta até você excluí-la. O parecer é produzido de forma automatizada e tem caráter opinativo: você pode pedir a revisão por pessoa e a explicação dos critérios usados (art. 20 da LGPD) pelo Fale Conosco.", itens: [] },
+      { titulo: "4. Com quem compartilhamos (operadores)", texto: "Compartilhamos apenas o necessário para prestar o serviço, com fornecedores que tratam os dados por nossa conta:", itens: [
+        "Supabase (banco de dados, contas e arquivos) — servidores nos Estados Unidos.",
+        "GitHub (hospedagem do site e processamento automático das análises do Agente IA) — Estados Unidos. O conteúdo dos documentos não é gravado nos registros públicos do repositório.",
+        "Anthropic (inteligência artificial que lê os documentos enviados ao Agente IA) — Estados Unidos; API comercial, sem uso para treinamento.",
+        "Mercado Pago (pagamentos e renovação automática) — Brasil; trata os dados de cobrança e antifraude também como controlador, sob a própria política.",
+        "Brevo (envio de e-mails transacionais) — União Europeia.",
+        "Google (login com conta Google, se você escolher) — recebemos só nome, e-mail e foto do perfil.",
+        "Cloudflare (medição de visitas, se você consentir) — sem cookies de rastreamento.",
+        "Especialista da consultoria — recebe somente o material do seu atendimento.",
+        "Autoridades, quando houver ordem judicial ou requisição legal."
+      ] },
+      { titulo: "5. Transferência internacional", texto: "Supabase, GitHub, Anthropic e, conforme o caso, Google e Cloudflare tratam dados fora do Brasil. A transferência se apoia nas hipóteses do art. 33 da LGPD — em especial, cláusulas contratuais e garantias de proteção oferecidas por esses fornecedores e a necessidade para a execução do contrato com você (art. 33, IX, combinado com o art. 7º, V).", itens: [] },
+      { titulo: "6. Retenção e descarte", texto: "Guardamos cada dado só pelo tempo necessário:", itens: [
+        "Documentos enviados ao Agente IA: apagados automaticamente 30 dias após o fim da análise.",
+        "Pareceres, consultorias e dados da conta: enquanto a conta existir; após o pedido de exclusão, apagados ou anonimizados em até 15 dias.",
+        "Registros de pagamento: 5 anos, por obrigação legal e fiscal.",
+        "Registros de acesso: 6 meses (Marco Civil da Internet).",
+        "Dados necessários à defesa em processo: pelo prazo do processo."
+      ] },
+      { titulo: "7. Seus direitos como titular (art. 18 da LGPD)", texto: "Você exerce os direitos na Área do Assinante → Privacidade (baixar e portar seus dados, corrigir o perfil, pedir a exclusão) ou pelo Fale Conosco, assunto Privacidade (LGPD). Respondemos em até 15 dias.", itens: [
         "Confirmação de tratamento e acesso aos seus dados.",
         "Correção de dados incompletos, inexatos ou desatualizados.",
         "Anonimização, bloqueio ou eliminação de dados desnecessários ou tratados em desconformidade.",
-        "Portabilidade em formato aberto e legível por máquina (JSON/CSV).",
+        "Portabilidade em formato aberto (JSON).",
         "Informação sobre com quem compartilhamos seus dados.",
-        "Revogação de consentimento e oposição a tratamento fundado em legítimo interesse.",
-        "Revisão de decisão automatizada e explicação sobre a lógica aplicada.",
-        "Reclamação à Autoridade Nacional de Proteção de Dados (ANPD) ou à autoridade local competente."
+        "Revogação do consentimento e oposição a tratamento baseado em legítimo interesse.",
+        "Revisão, por pessoa, de decisão tomada só com tratamento automatizado, e explicação dos critérios.",
+        "Reclamação à Autoridade Nacional de Proteção de Dados (ANPD)."
       ] },
-      { titulo: "8. Segurança", texto: "Criptografia em trânsito (TLS) e em repouso, controle de acesso por perfil com privilégio mínimo, autenticação em dois fatores disponível, registro de acessos a dados sensíveis, backups diários com teste periódico de restauração, ambiente de homologação separado da produção e avaliação de risco antes de lançar funcionalidade que trate dado novo. Em caso de incidente com risco relevante, comunicamos os titulares afetados e a ANPD em prazo razoável, com descrição do ocorrido e das medidas adotadas.", itens: [] },
-      { titulo: "9. Menores de idade", texto: "A plataforma é destinada a profissionais e não coleta intencionalmente dados de menores de 18 anos. Identificado esse caso, a conta é encerrada e os dados eliminados.", itens: [] },
-      { titulo: "10. Contato e mudanças", texto: "Encarregado de proteção de dados: Renato Garcia. Pedidos e dúvidas sobre seus dados: Fale Conosco, assunto Privacidade (LGPD), ou Minha conta → Privacidade. Alterações materiais nesta política são comunicadas por e-mail e na plataforma com 30 dias de antecedência, e o histórico de versões fica disponível para consulta.", itens: [] }
+      { titulo: "8. Segurança", texto: "Conexão criptografada (HTTPS/TLS); senhas guardadas com criptografia pelo provedor de autenticação; regras de acesso no banco que impedem um assinante de ver dados de outro; armazenamento de arquivos privado, com links de download temporários; chaves de acesso guardadas apenas em cofres de segredos; acesso administrativo restrito ao responsável; e registros do processamento automático sem dados dos clientes. Em caso de incidente de segurança que possa causar risco ou dano relevante, comunicamos os titulares afetados e a ANPD, nos termos do art. 48 da LGPD e da regulamentação da ANPD.", itens: [] },
+      { titulo: "9. Cookies", texto: "Usamos só o armazenamento essencial ao funcionamento (sessão de login e preferências). A medição de visitas só é ativada se você aceitar os cookies de análise; você muda a escolha a qualquer momento. Detalhes na Política de Cookies.", itens: [] },
+      { titulo: "10. Menores de idade", texto: "A plataforma é destinada a profissionais e não coleta intencionalmente dados de menores de 18 anos. Identificado esse caso, a conta é encerrada e os dados eliminados.", itens: [] },
+      { titulo: "11. Controlador, encarregado e mudanças", texto: "Controlador e encarregado pelo tratamento de dados pessoais (art. 41 da LGPD): Renato Garcia, responsável pelo Licitacon. Contato: Fale Conosco, assunto Privacidade (LGPD), ou Área do Assinante → Privacidade. Mudanças relevantes nesta política são avisadas por e-mail e no site antes de entrarem em vigor.", itens: [] }
     ]
   },
   cookies: {
     label: "Política de Cookies",
     titulo: "Política de Cookies",
     intro: "O que guardamos no seu navegador, para quê, por quanto tempo — e como recusar sem perder funcionalidade.",
-    vigencia: "Versão 1.0 · vigente desde 1º de agosto de 2026",
+    vigencia: "Versão 1.1 · vigente desde 31 de outubro de 2026",
     blocos: [
       { titulo: "1. O que são cookies", texto: "Cookies são pequenos arquivos que um site grava no seu navegador para lembrar informações entre visitas. Usamos também tecnologias equivalentes, como armazenamento local (localStorage) e identificadores de sessão, e as tratamos sob as mesmas regras desta política.", itens: [] },
       { titulo: "2. Consentimento: nada não essencial antes do seu sim", texto: "Cookies analíticos e de preferência só são ativados após consentimento livre e específico, dado no banner da primeira visita. Recusar é tão fácil quanto aceitar: o botão de recusa tem o mesmo destaque visual do botão de aceite, sem padrões enganosos. Nenhum recurso da plataforma é bloqueado se você recusar os não essenciais, e você pode mudar de opinião a qualquer momento na Área do Assinante, aba Privacidade.", itens: [] },
@@ -2576,7 +2596,7 @@ const INSTITUCIONAL = {
         "Analíticos (opcional): contagem de visitas pelo Cloudflare Web Analytics, que não usa cookies nem identifica você — serve para saber quais páginas são mais usadas. Só é ativado se você aceitar.",
         "Publicidade e rastreamento entre sites: não utilizamos. Não vendemos nem cruzamos seus dados com redes de anúncios."
       ] },
-      { titulo: "4. Cookies de terceiros", texto: "Alguns serviços que sustentam a plataforma podem definir cookies próprios: o gateway de pagamento (antifraude, apenas durante a transação), o provedor de vídeo quando você assiste a uma resposta de consultoria e a ferramenta de monitoramento de erros. Cada um tem sua própria política, e exigimos contratualmente aderência à LGPD.", itens: [] },
+      { titulo: "4. Cookies de terceiros", texto: "Alguns serviços podem definir cookies próprios quando você os usa: o Mercado Pago, durante o pagamento (antifraude), e o Google, se você escolher entrar com a conta Google. Cada um tem a própria política de privacidade. O Licitacon não usa ferramentas de publicidade nem de rastreamento entre sites.", itens: [] },
       { titulo: "5. Como gerenciar no navegador", texto: "Além do nosso painel de preferências, você pode bloquear ou apagar cookies nas configurações de privacidade do seu navegador, inclusive de forma automática ao fechá-lo. Bloquear cookies essenciais impede o login e o funcionamento da conta — os demais podem ser bloqueados sem prejuízo.", itens: [] },
       { titulo: "6. Base legal e referências", texto: "Tratamos dados de cookies com base em consentimento (art. 7º, I da LGPD) para os opcionais e em legítimo interesse ou execução de contrato para os estritamente necessários. Nossa abordagem observa também o padrão europeu de consentimento prévio informado para cookies não essenciais (Diretiva ePrivacy e GDPR), aplicado por padrão a todos os usuários — inclusive os brasileiros.", itens: [] }
     ]
@@ -2743,7 +2763,7 @@ const AN_TERMO = [
   "Regulamentação específica (opcional): você pode anexar até 3 normas próprias (decreto estadual ou municipal, regulamento interno de licitações de estatal etc.), em PDF ou Word, que o agente aplica em complemento à legislação nacional, apontando eventual conflito. Você é responsável pela vigência e fidelidade do texto enviado.",
   "Prazo: o tempo de análise depende da quantidade de documentos, da qualidade dos arquivos (documento digitalizado exige reconhecimento de texto) e da complexidade da contratação. A estimativa é calculada na página de envio, a partir dos arquivos escolhidos. Você recebe um aviso por e-mail e baixa o parecer em PDF e Word nesta página.",
   "Valores e cota: análise a R$ 290,00 para quem não é assinante; assinantes do Básico têm 10% de desconto e do Premium, 15%, e pagam antes de enviar os documentos. O plano Pro inclui 2 análises por semana (de segunda a domingo, sem acúmulo) sem custo adicional; a partir da 3ª na semana, a análise sai com 30% de desconto. Análise que não puder ser concluída por falha técnica não consome a cota; a paga é reprocessada ou estornada.",
-  "Dados: o documento é processado por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos. O arquivo e o parecer ficam na sua conta, acessíveis só a você e à equipe do Licitacon. Não envie documento cuja divulgação a prestadores de serviço seja vedada.",
+  "Dados: o documento é processado por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos. Os arquivos ficam em armazenamento privado, acessíveis só a você e à equipe do Licitacon, e são apagados automaticamente 30 dias após o fim da análise; o parecer fica na sua conta. Não envie documento cuja divulgação a prestadores de serviço seja vedada e retire dados pessoais desnecessários (Lei 13.709/2018).",
   "Custo da mão de obra: o custo total do profissional na planilha (IN 05/2017) é comparado com a referência de mercado do estado divulgada pelo Salario.com.br (dados do Novo CAGED). Essa fonte não é parâmetro normativo; a comparação é indicativa e orienta a revisão da planilha.",
   "Análise de preços: quando o documento traz o orçamento estimado, o sistema compara os valores com preços homologados em contratações equivalentes publicadas no PNCP (órgãos do mesmo estado, últimos 12 meses, Lei 14.133/2021). O resultado é indicativo e depende da equivalência das especificações; não substitui a pesquisa de preços do processo.",
   "Limitações: a inteligência artificial pode errar ou deixar de identificar pontos. Confira cada apontamento no documento e na fonte oficial antes de decidir."
@@ -3888,7 +3908,7 @@ class Component extends DCLogic {
     const s = this.state;
     if (!this.sb || !s.usuario) { this.setState({ lgpdMsg: "Disponível quando você estiver logado." }); return; }
     this.setState({ lgpdMsg: "Preparando o arquivo…" });
-    const tabelas = ["perfis", "assinaturas", "pagamentos", "consultorias", "curso_acessos", "forum_seguindo", "biblioteca_pessoal", "solicitacoes_lgpd"];
+    const tabelas = ["perfis", "assinaturas", "renovacoes", "pagamentos", "consultorias", "analises", "normas_usuario", "curso_acessos", "forum_seguindo", "biblioteca_pessoal", "solicitacoes_lgpd"];
     const resultado = { gerado_em: new Date().toISOString(), conta: { id: s.usuario.id, email: s.usuario.email, criada_em: s.usuario.created_at } };
     for (const t of tabelas) {
       const { data } = await this.sb.from(t).select("*");
@@ -4491,7 +4511,7 @@ class Component extends DCLogic {
       ],
       anDados: [
         "Os arquivos são processados por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos.",
-        "Os documentos e o parecer ficam na sua conta, acessíveis só a você e à equipe técnica do Licitacon, em armazenamento privado.",
+        "Os documentos ficam em armazenamento privado, acessíveis só a você e à equipe técnica do Licitacon, e são apagados automaticamente 30 dias após o fim da análise. O parecer fica na sua conta até você excluí-la.",
         "Não envie documento sigiloso ou cuja divulgação a prestadores de serviço seja vedada. Retire dados pessoais desnecessários antes de enviar (por exemplo, documentos de habilitação).",
         "Tratamento conforme a Lei Geral de Proteção de Dados (Lei 13.709/2018) e a Política de Privacidade do Licitacon."
       ],
@@ -4784,7 +4804,7 @@ class Component extends DCLogic {
       })),
 
       direitos: [
-        { titulo: "Baixar meus dados", desc: "Arquivo com cadastro, participações no fórum, anotações da Biblioteca, consultorias e histórico de pagamentos.", cta: "Gerar arquivo", btnBg: "#0A1F2A", btnCor: "#fff", btnBorda: "#0A1F2A", acao: () => this.exportarDados("acesso") },
+        { titulo: "Baixar meus dados", desc: "Arquivo com cadastro, plano e renovação, pagamentos, consultorias, análises do Agente IA, normas enviadas, participações no fórum e anotações da Biblioteca.", cta: "Gerar arquivo", btnBg: "#0A1F2A", btnCor: "#fff", btnBorda: "#0A1F2A", acao: () => this.exportarDados("acesso") },
         { titulo: "Corrigir dados", desc: "Ajuste cadastro e vínculo profissional direto na aba Perfil.", cta: "Ir para o Perfil", btnBg: "#fff", btnCor: "#3D5058", btnBorda: "#DDE4E3", acao: this.setContaTab("perfil") },
         { titulo: "Portabilidade", desc: "Exportação em formato aberto (JSON) para levar seus dados a outro serviço.", cta: "Exportar agora", btnBg: "#fff", btnCor: "#3D5058", btnBorda: "#DDE4E3", acao: () => this.exportarDados("portabilidade") },
         { titulo: "Excluir conta e dados", desc: "Exclusão definitiva, exceto dados que a lei obriga a guardar (fiscais e contábeis).", cta: "Solicitar exclusão", btnBg: "#fff", btnCor: "#8A1230", btnBorda: "#E7C9D2", acao: () => this.pedirExclusao() }

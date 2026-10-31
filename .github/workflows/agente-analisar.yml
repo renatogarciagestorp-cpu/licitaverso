@@ -35,7 +35,8 @@ jobs:
       - name: Baixar do PNCP (se ainda não baixado)
         run: |
           D="/tmp/testes/$PASTA"
-          if [ ! -f "$D/compra.json" ]; then
+          # os documentos originais não ficam no ramo público (LGPD): baixa de novo sempre que faltarem
+          if [ -z "$(find "$D" -name '*.pdf' -not -path '*/auto-*' 2>/dev/null | head -1)" ]; then
             python3 scripts/agente/baixar-pncp.py "$CNPJ" "$ANO" "$SEQ" "$D"
             cd "$D"
             for f in *.pdf; do [ -f "$f" ] && pdftotext -layout "$f" "${f%.pdf}.txt" || true; done
@@ -78,6 +79,7 @@ jobs:
           cd /tmp/testes
           git config user.name "Licitacon — agente"; git config user.email "actions@users.noreply.github.com"
           git checkout -q -B agente-testes
-          git add "$PASTA" jurisprudencia-nova 2>/dev/null || git add "$PASTA"
+          # só os resultados (análise, parecer, preços) e os metadados públicos do PNCP; nunca os documentos originais (LGPD)
+          git add "$PASTA"/auto-* "$PASTA"/*.json jurisprudencia-nova 2>/dev/null || git add "$PASTA"/auto-*
           git commit -q -m "Agente: análise automática $PASTA (${{ inputs.documento }})"
           for i in 1 2 3 4 5; do git push -q origin agente-testes && break; git pull -q --rebase origin agente-testes; sleep $((RANDOM % 10 + 3)); done

@@ -1,0 +1,20 @@
+name: LGPD — limpeza de documentos do Agente IA
+
+# Apaga os documentos enviados ao Agente IA 30 dias depois do fim da análise (o parecer continua na conta).
+on:
+  schedule:
+    - cron: "41 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  limpar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_REF: umnhhztdqersjfrzqcea
+      BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+      EMAIL_REMETENTE: ${{ secrets.EMAIL_REMETENTE }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/limpeza-lgpd.py
