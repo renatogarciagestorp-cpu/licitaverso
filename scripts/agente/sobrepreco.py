@@ -7,8 +7,15 @@ Critérios (definidos pelo Licitacon, em linha com o art. 23, § 1º, II, da Lei
   - órgãos do mesmo estado (UF);
   - contratações regidas pela mesma lei (Lei 14.133/2021, conforme o amparo legal registrado no PNCP);
   - preço de comparação: valor unitário HOMOLOGADO (contratação efetivamente realizada).
-Indicador: mediana dos preços comparáveis (mínimo de 3). Estimado acima da mediana em mais de 25% = indício de sobrepreço;
-entre 10% e 25% = ponto de atenção. O sistema calcula; a conclusão sobre sobrepreço depende de análise do caso.
+Preço de referência de mercado: MÉDIA SANEADA (mínimo de 3 preços), conforme a orientação do TCU (Manual de Licitações e Contratos,
+4ª ed., item 4.3.9.3) e o art. 6º da IN SEGES/ME 65/2021 — média, mediana ou menor valor obtidos a partir de no mínimo três preços,
+"desconsiderados os valores inexequíveis, inconsistentes e os excessivamente elevados", com o descarte justificado (art. 3º, VI).
+Saneamento: calculam-se a média (M) e o desvio-padrão (Dp) da amostra; se o coeficiente de variação (CV = Dp/M) passar de 25%, descartam-se
+os preços fora do intervalo [M − Dp; M + Dp] e repete-se o cálculo até o CV ficar em 25% ou menos (amostra homogênea), sem reduzir a
+amostra abaixo de 3 preços. Se, mesmo assim, o CV continuar acima de 25%, a referência passa a ser a MEDIANA dos preços remanescentes
+(o manual do TCU indica a mediana quando há valores extremos); acima de 50%, a amostra é tratada como heterogênea e não permite concluir.
+Estimado acima da referência em mais de 25% = indício de sobrepreço; entre 10% e 25% = ponto de atenção. O sistema calcula; a conclusão
+sobre sobrepreço depende de análise do caso.
 
 Uso: python3 scripts/agente/sobrepreco.py --itens itens.json --uf RJ --data 2026-09-29 [--excluir CNPJ-ANO-SEQ] --saida precos.json
   itens.json: lista no formato do PNCP (descricao, unidadeMedida, quantidade, valorUnitarioEstimado, catalogoCodigoItem...).
@@ -92,14 +99,34 @@ def comparaveis_do_item(item, uf, data_ref, excluir):
         achados += [c for c in _comparaveis(item, uf, data_ref, excluir, 3) if c["link"] not in vistos]
     return achados[:MAX_COMPARAVEIS]
 
-def filtrar_extremos(vals):
-    """Descarta preços inexequíveis ou excessivamente elevados pelo critério do intervalo interquartil (n >= 4)."""
-    if len(vals) < 4:
-        return vals, []
-    q = statistics.quantiles(vals, n=4)
-    iqr = q[2] - q[0]
-    lo, hi = q[0] - 1.5 * iqr, q[2] + 1.5 * iqr
-    return [v for v in vals if lo <= v <= hi], [v for v in vals if v < lo or v > hi]
+LIMIAR_CV, LIMIAR_HETEROGENEA = 0.25, 0.50
+
+def _cv(vals):
+    m = statistics.mean(vals)
+    return (statistics.stdev(vals) / m) if len(vals) > 1 and m else 0.0
+
+def _br(v):
+    return f"{v:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+def media_saneada(vals):
+    """Saneamento da amostra (média ± 1 desvio-padrão, repetido até CV <= 25%, mínimo de 3 preços).
+    Devolve (mantidos, descartados [(valor, motivo)], cv_inicial, cv_final, rodadas)."""
+    mantidos, descartados, rodadas = list(vals), [], 0
+    cv_ini = _cv(mantidos) if mantidos else 0.0
+    while len(mantidos) > MIN_COMPARAVEIS and _cv(mantidos) > LIMIAR_CV:
+        m, dp = statistics.mean(mantidos), statistics.stdev(mantidos)
+        li, ls = m - dp, m + dp
+        novos = [v for v in mantidos if li <= v <= ls]
+        if len(novos) == len(mantidos) or len(novos) < MIN_COMPARAVEIS:
+            break
+        rodadas += 1
+        for v in mantidos:
+            if v < li:
+                descartados.append((v, f"inexequível ou inconsistente: abaixo do limite inferior (M − Dp = R$ {_br(li)}) na rodada {rodadas}"))
+            elif v > ls:
+                descartados.append((v, f"excessivamente elevado: acima do limite superior (M + Dp = R$ {_br(ls)}) na rodada {rodadas}"))
+        mantidos = novos
+    return mantidos, descartados, cv_ini, (_cv(mantidos) if mantidos else 0.0), rodadas
 
 def _comparaveis(item, uf, data_ref, excluir, n_palavras):
     desc = item.get("descricao") or ""
@@ -163,6 +190,38 @@ def _comparaveis(item, uf, data_ref, excluir, n_palavras):
             break
     return achados
 
+def referencia_de_mercado(est, qtd, vals_todos, comp=None):
+    """Calcula a média saneada e a diferença entre o valor orçado/contratado e o de mercado (unitária, percentual e total)."""
+    reg = {"n": len(vals_todos)}
+    if len(vals_todos) < MIN_COMPARAVEIS:
+        reg.update({"situacao": "amostra_insuficiente", "descartados": 0})
+        return reg
+    vals, fora, cv_ini, cv, rodadas = media_saneada(vals_todos)
+    motivos = {}
+    for v, mot in fora:
+        motivos.setdefault(v, mot)
+    for c in comp or []:
+        c["descartado"] = c["valor_unitario"] in motivos
+        if c["descartado"]:
+            c["motivo_descarte"] = motivos[c["valor_unitario"]]
+    media, med = statistics.mean(vals), statistics.median(vals)
+    if cv <= LIMIAR_CV:
+        ref, estat = media, "media_saneada"
+    else:
+        ref, estat = med, "mediana"  # valores extremos persistentes: o manual do TCU indica a mediana
+    dif = est - ref
+    desvio = round(dif / ref, 4) if ref else 0
+    reg.update({"media_saneada": round(media, 4), "mediana": round(med, 4), "referencia": round(ref, 4), "estatistica_referencia": estat,
+                "minimo": min(vals), "maximo": max(vals), "n_validos": len(vals), "descartados": len(fora),
+                "coef_variacao_inicial": round(cv_ini, 3), "coef_variacao": round(cv, 3), "rodadas_saneamento": rodadas,
+                "valor_referencia_total": round(ref * qtd, 2), "diferenca_unitaria": round(dif, 4), "diferenca_total": round(dif * qtd, 2),
+                "desvio": round(desvio, 4), "excesso_estimado": round(max(0.0, dif) * qtd, 2)})
+    if cv > LIMIAR_HETEROGENEA:
+        reg["situacao"] = "amostra_heterogenea"  # preços muito dispersos mesmo após o saneamento: especificações provavelmente diferentes
+    else:
+        reg["situacao"] = "indicio" if desvio > LIMIAR_INDICIO else ("atencao" if desvio > LIMIAR_ATENCAO else "compativel")
+    return reg
+
 def analisar(itens, uf, data_ref, excluir=""):
     validos = [i for i in itens if (i.get("valorUnitarioEstimado") or 0) > 0 and not i.get("orcamentoSigiloso")]
     validos.sort(key=lambda i: (i.get("valorTotal") or (i.get("valorUnitarioEstimado") or 0) * (i.get("quantidade") or 1)), reverse=True)
@@ -173,36 +232,31 @@ def analisar(itens, uf, data_ref, excluir=""):
         est = float(it["valorUnitarioEstimado"]); qtd = float(it.get("quantidade") or 1)
         reg = {"numero": it.get("numeroItem"), "descricao": (it.get("descricao") or "")[:300], "unidade": it.get("unidadeMedida"),
                "quantidade": qtd, "valor_estimado": est, "valor_total": round(est * qtd, 2), "comparaveis": comp, "n": len(comp)}
-        vals_todos = [c["valor_unitario"] for c in comp]
-        vals, fora = filtrar_extremos(vals_todos)
-        for c in comp:
-            c["descartado"] = c["valor_unitario"] in fora
-        reg["descartados"] = len(fora)
-        if len(vals) >= MIN_COMPARAVEIS:
-            med = statistics.median(vals)
-            cv = statistics.pstdev(vals) / statistics.mean(vals) if statistics.mean(vals) else 0
-            desvio = (est - med) / med if med else 0
-            reg.update({"mediana": round(med, 4), "minimo": min(vals), "maximo": max(vals), "desvio": round(desvio, 4),
-                        "coef_variacao": round(cv, 3), "excesso_estimado": round(max(0.0, est - med) * qtd, 2)})
-            if cv > 0.5:
-                reg["situacao"] = "amostra_heterogenea"  # preços muito dispersos: especificações provavelmente diferentes
-            else:
-                reg["situacao"] = "indicio" if desvio > LIMIAR_INDICIO else ("atencao" if desvio > LIMIAR_ATENCAO else "compativel")
-        else:
-            reg["situacao"] = "amostra_insuficiente"
+        reg.update(referencia_de_mercado(est, qtd, [c["valor_unitario"] for c in comp], comp))
         saida.append(reg)
         print(f"item {reg['numero']}: {reg['n']} comparáveis · {reg['situacao']}", file=sys.stderr)
     analisados = sum(r["valor_total"] for r in saida)
     return {
         "criterios": {"uf": uf, "data_referencia": data_ref.isoformat(), "janela_dias": 365, "lei": "Lei 14.133/2021",
-                      "preco": "valor unitário homologado", "estatistica": "mediana", "minimo_comparaveis": MIN_COMPARAVEIS,
+                      "preco": "valor unitário homologado", "estatistica": "media_saneada", "minimo_comparaveis": MIN_COMPARAVEIS,
                       "limiar_indicio": LIMIAR_INDICIO, "limiar_atencao": LIMIAR_ATENCAO, "similaridade_minima": SIMILARIDADE,
-                      "extremos": "intervalo interquartil (1,5 x IQR)", "heterogeneidade": "coeficiente de variação acima de 0,5"},
+                      "saneamento": "média ± 1 desvio-padrão, repetido até CV <= 25% (mínimo de 3 preços)", "limiar_cv": LIMIAR_CV,
+                      "alternativa": "mediana dos remanescentes se o CV continuar acima de 25%", "heterogeneidade": "CV acima de 0,5 após o saneamento",
+                      "fundamento": "IN SEGES/ME 65/2021, arts. 3º, VI, e 6º; TCU, Manual de Licitações e Contratos (4ª ed.), item 4.3.9.3"},
         "itens": saida, "itens_no_orcamento": len(itens), "itens_analisados": len(saida),
         "cobertura_valor": round(analisados / total_orc, 4) if total_orc else 0,
         "com_indicio": sum(1 for r in saida if r["situacao"] == "indicio"),
         "excesso_total": round(sum(r.get("excesso_estimado", 0) for r in saida if r["situacao"] == "indicio"), 2),
+        "totais": totais(saida),
     }
+
+def totais(itens):
+    """Soma, para os itens com referência válida (amostra suficiente e não heterogênea), o valor orçado/contratado, o de mercado e a diferença."""
+    ok = [r for r in itens if r.get("referencia") is not None and r["situacao"] not in ("amostra_heterogenea", "amostra_insuficiente")]
+    orc = sum(r["valor_total"] for r in ok); mer = sum(r["valor_referencia_total"] for r in ok)
+    return {"itens": len(ok), "valor_orcado": round(orc, 2), "valor_mercado": round(mer, 2), "diferenca": round(orc - mer, 2),
+            "desvio": round((orc - mer) / mer, 4) if mer else None,
+            "excesso_itens_acima": round(sum(r["excesso_estimado"] for r in ok), 2)}
 
 def main():
     ap = argparse.ArgumentParser()

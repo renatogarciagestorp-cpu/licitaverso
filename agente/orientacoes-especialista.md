@@ -94,3 +94,12 @@ Este arquivo entra nas instruções de toda análise. Acrescente aqui cada nova 
 - (30/10/2026) Arquivo ilegível: quando não for possível ler com segurança um CBO, salário ou valor (ex.: digitalização ruim), NÃO
   adivinhar nem deduzir pelo nome do profissional. Registrar no parecer que a análise daquele ponto não foi realizada em razão da
   qualidade do arquivo, transferindo a quem o forneceu a responsabilidade de apresentar versão legível.
+
+## Economicidade: tabela comparativa e média saneada (orientação do TCU)
+- Toda análise de economicidade traz uma tabela com, por item: valor orçado ou contratado, preço de mercado, diferença unitária (R$),
+  diferença percentual e diferença total (R$ × quantidade), mais a linha de totais. No custo da mão de obra, a tabela mostra a
+  diferença mensal (R$) e percentual entre o custo do profissional (Módulos 1 a 4) e a referência de mercado.
+- O preço de mercado é a MÉDIA SANEADA (TCU, Manual de Licitações e Contratos, item 4.3.9.3; IN SEGES/ME 65/2021, arts. 3º, VI, e 6º):
+  média e desvio-padrão da amostra (mínimo de 3 preços); se o CV passar de 25%, descartam-se os preços fora de média ± 1 desvio-padrão
+  (inexequíveis/inconsistentes abaixo; excessivamente elevados acima), repetindo até CV ≤ 25%. Se a amostra continuar dispersa, usa-se a
+  mediana; com CV acima de 50%, a amostra é heterogênea e não permite concluir. Cada descarte é justificado no parecer (memória de cálculo).

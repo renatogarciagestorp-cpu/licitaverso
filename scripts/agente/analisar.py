@@ -459,8 +459,12 @@ Regras obrigatórias:
     de informar o que o regulamento diz). Cite artigos do regulamento local em fundamento com norma = "local-N" e o número do artigo.
 18. ANÁLISE DE PREÇOS: quando os fatos do sistema trouxerem "INDÍCIO DE SOBREPREÇO", registre-o como irregularidade de gravidade ALTA
     no item de estimativa de valor do roteiro (ou em outros_apontamentos, se o documento não tiver item correspondente), com fundamento
-    no art. 23 da Lei 14.133/2021, citando o desvio calculado; recomende revisar a pesquisa de preços. "Ponto de atenção" é gravidade média.
-    Amostra insuficiente ou heterogênea não permite concluir: não aponte sobrepreço nesses casos.
+    no art. 23 da Lei 14.133/2021 e no art. 6º da IN SEGES/ME 65/2021, citando o valor orçado/contratado, a média saneada de mercado, a
+    diferença unitária, a diferença percentual e a diferença total calculadas pelo sistema (não recalcule nem arredonde de outro modo);
+    recomende revisar a pesquisa de preços. "Ponto de atenção" é gravidade média. A referência de mercado é a MÉDIA SANEADA, conforme a
+    orientação do TCU (descarte dos preços inexequíveis, inconsistentes e excessivamente elevados até a amostra ficar homogênea, CV até
+    25%); quando o sistema informar que usou a mediana, é porque a amostra continuou dispersa — diga isso. Amostra insuficiente ou
+    heterogênea não permite concluir: não aponte sobrepreço nesses casos. O parecer já traz a tabela comparativa de preços: não a repita.
 19. Preencha também: processo (órgão, número, objeto, modalidade), ementa (palavras-chave em caixa alta separadas por ponto),
     ementa_texto (síntese de 2–3 frases), resumo (um parágrafo de visão geral) e conclusao (um parágrafo).
 20. REGIME E OBJETO: a mensagem informa o regime jurídico da contratação e, quando for o caso, o objeto especial (obras e serviços de
@@ -725,11 +729,21 @@ def main():
         sit = {"indicio": "INDÍCIO DE SOBREPREÇO", "atencao": "ponto de atenção", "compativel": "compatível",
                "amostra_insuficiente": "amostra insuficiente", "amostra_heterogenea": "amostra heterogênea"}
         linhas = [f"Análise de preços calculada pelo sistema (critérios: mesma UF {precos['criterios']['uf']}, contratações homologadas em até 1 ano, "
-                  f"Lei 14.133/2021, objeto equivalente; mediana de no mínimo {precos['criterios']['minimo_comparaveis']} preços; indício acima de 25%):"]
+                  f"Lei 14.133/2021, objeto equivalente; referência de mercado = média saneada de no mínimo {precos['criterios']['minimo_comparaveis']} "
+                  f"preços, com descarte dos valores fora de média ± 1 desvio-padrão até CV <= 25% (TCU; IN SEGES/ME 65/2021, art. 6º); "
+                  f"indício acima de 25%):"]
         for r in precos.get("itens", []):
             if r["situacao"] in ("indicio", "atencao"):
-                linhas.append(f"item {r['numero']} — {r['descricao'][:120]}: estimado {brl(r['valor_estimado'])} × mediana {brl(r['mediana'])} "
-                              f"({r['n']} comparáveis) = {r['desvio']:+.0%} → {sit[r['situacao']]}")
+                ref = r.get("referencia", r.get("mediana"))
+                estat = "mediana (amostra ainda dispersa após o saneamento)" if r.get("estatistica_referencia") == "mediana" else "média saneada"
+                linhas.append(f"item {r['numero']} — {r['descricao'][:120]}: orçado/contratado {brl(r['valor_estimado'])} × {estat} {brl(ref)} "
+                              f"({r.get('n_validos', r['n'])} preços válidos, {r.get('descartados', 0)} descartados) → diferença unitária "
+                              f"{brl(r.get('diferenca_unitaria', r['valor_estimado'] - ref))} ({r['desvio']:+.1%}), diferença total "
+                              f"{brl(r.get('diferenca_total', 0))} para {r.get('quantidade', 1):g} unidade(s) → {sit[r['situacao']]}")
+        if precos.get("totais", {}).get("itens"):
+            tt = precos["totais"]
+            linhas.append(f"Totais dos {tt['itens']} itens com referência válida: orçado/contratado {brl(tt['valor_orcado'])} × mercado "
+                          f"{brl(tt['valor_mercado'])} = diferença {brl(tt['diferenca'])}" + (f" ({tt['desvio']:+.1%})" if tt.get("desvio") is not None else ""))
         resto = [r for r in precos.get("itens", []) if r["situacao"] not in ("indicio", "atencao")]
         linhas.append(f"Demais itens analisados: {sum(1 for r in resto if r['situacao']=='compativel')} compatíveis, "
                       f"{sum(1 for r in resto if r['situacao']=='amostra_insuficiente')} sem amostra suficiente, "
