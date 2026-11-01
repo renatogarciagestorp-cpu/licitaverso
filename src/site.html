@@ -589,6 +589,57 @@
     .lvh-ach { animation: none; opacity: 1; transform: none; }
     .lvh-f, .lvh-free-card { transition: none; }
   }
+  /* ---------- Fórum ---------- */
+  .lvf-hero { background: #0A1F2A; color: #fff; padding: 44px 24px 40px; }
+  .lvf-hero-in { max-width: 1240px; margin: 0 auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  .lvf-h1 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 40px; line-height: 1.1; margin: 12px 0 0; max-width: 22ch; }
+  .lvf-lead { font-size: 16px; line-height: 1.6; color: #B8CBD2; margin: 12px 0 0; max-width: 60ch; }
+  .lvf-grid { max-width: 1240px; margin: 0 auto; padding: 28px 24px 80px; display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 28px; align-items: start; }
+  .lvf-temas { position: sticky; top: 92px; }
+  .lvf-temas-t { font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #0F6B7E; padding: 0 10px 8px; }
+  .lvf-temas-lista { display: grid; gap: 2px; }
+  .lvf-tema { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: 0; border-radius: 10px; padding: 10px 12px; cursor: pointer; font: inherit; color: #3D5058; }
+  .lvf-tema:hover { background: #EEF4F3; }
+  .lvf-tema.ativo { background: #0A1F2A; color: #fff; }
+  .lvf-tema-n { flex: 1; font-size: 14.5px; font-weight: 700; }
+  .lvf-tema-c { font-size: 12px; font-weight: 800; min-width: 24px; text-align: center; border-radius: 999px; padding: 2px 7px; background: #E6EEEC; color: #4A5D64; }
+  .lvf-tema.ativo .lvf-tema-c { background: #0FA36B; color: #06251A; }
+  .lvf-cab { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid #E3E9E8; }
+  .lvf-h2 { margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 30px; color: #0B1F2A; }
+  .lvf-cab-txt p { margin: 6px 0 0; font-size: 14.5px; line-height: 1.55; color: #55666D; max-width: 70ch; }
+  .lvf-seguir { flex: none; background: #fff; border: 1px solid #D5E2DF; color: #0F6B7E; border-radius: 10px; padding: 9px 14px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .lvf-cab-acoes { display: flex; gap: 8px; flex: none; }
+  .lvf-perguntar { background: #0A1F2A; border: 0; color: #fff; border-radius: 10px; padding: 9px 14px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .lvf-filtros { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 16px; }
+  .lvf-filtro { border: 1px solid #D5E2DF; background: #fff; color: #3D5058; border-radius: 999px; padding: 7px 14px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .lvf-filtro[aria-pressed="true"] { background: #0F6B7E; border-color: #0F6B7E; color: #fff; }
+  .lvf-lista { display: grid; gap: 10px; margin-top: 14px; }
+  .lvf-q { font: inherit; text-align: left; cursor: pointer; display: grid; gap: 6px; background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 18px 20px; transition: border-color 0.14s ease, box-shadow 0.14s ease; }
+  .lvf-q:hover { border-color: #0FA36B; box-shadow: 0 10px 26px rgba(11,31,42,0.07); }
+  .lvf-q-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .lvf-st { font-size: 11.5px; font-weight: 800; border-radius: 999px; padding: 3px 9px; }
+  .lvf-st.ok { background: #E3F6EC; color: #0A7A50; }
+  .lvf-st.esp { background: #0A1F2A; color: #7FE3B6; }
+  .lvf-st.resp { background: #E9F3F5; color: #0F6B7E; }
+  .lvf-st.sem { background: #FFF4DC; color: #6B4A00; }
+  .lvf-q-setor { font-size: 12px; color: #7A8B91; font-weight: 600; }
+  .lvf-q-t { font-size: 17px; font-weight: 800; line-height: 1.35; color: #0B1F2A; letter-spacing: -0.01em; }
+  .lvf-q-c { font-size: 14px; line-height: 1.5; color: #55666D; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .lvf-q-meta { font-size: 12.5px; color: #7A8B91; }
+  .lvf-vazio { margin: 6px 4px; font-size: 14px; color: #7A8B91; }
+  .lvf-voltar { margin-top: 16px; background: none; border: 0; padding: 0; color: #0A7A50; font-size: 14px; font-weight: 800; cursor: pointer; }
+  .lvf-mod { font-size: 12.5px; color: #8A9AA0; margin-top: 22px; line-height: 1.6; }
+  @media (max-width: 960px) {
+    .lvf-hero { padding: 32px 16px 28px; }
+    .lvf-h1 { font-size: 30px; }
+    .lvf-grid { grid-template-columns: minmax(0, 1fr); padding: 18px 16px 60px; gap: 18px; }
+    .lvf-temas { position: static; }
+    .lvf-temas-lista { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; }
+    .lvf-tema { width: auto; flex: none; border: 1px solid #D5E2DF; background: #fff; border-radius: 999px; padding: 8px 12px; }
+    .lvf-tema-n { white-space: nowrap; font-size: 13.5px; }
+    .lvf-cab { flex-direction: column; }
+    .lvf-h2 { font-size: 24px; }
+  }
   /* ---------- Agente IA ---------- */
   .lva-hero { background: radial-gradient(800px 420px at 85% 10%, rgba(15,163,107,0.16), transparent 60%), #0A1F2A; color: #fff; padding: 60px 24px 72px; }
   .lva-hero-in { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr); gap: 48px; align-items: center; }
@@ -1105,38 +1156,39 @@
 
     <!-- ===================== FÓRUM ===================== -->
     <sc-if value="{{ isForum }}" hint-placeholder-val="{{ false }}">
-      <section style="background: #0A1F2A; color: #fff; padding: 48px 24px 32px">
-        <div style="max-width: 1240px; margin: 0 auto">
-          <h1 style="font-size: 40px; letter-spacing: -0.03em; font-weight: 800; margin: 0">Fórum da Comunidade</h1>
-          <p style="font-size: 16.5px; color: #A9BEC6; margin: 10px 0 0; max-width: 680px">Organizado por tema, não por ordem cronológica. Escolha o tema, publique sua pergunta e receba respostas de quem trabalha com licitações dos dois lados do balcão — e do especialista do Licitacon.</p>
+      <section class="lvf-hero">
+        <div class="lvf-hero-in">
+          <div>
+            <span class="lvh-eyebrow">Fórum da comunidade</span>
+            <h1 class="lvf-h1">Pergunte a quem trabalha com licitação todo dia.</h1>
+            <p class="lvf-lead">Perguntas organizadas por tema, respondidas por quem atua dos dois lados do balcão e pelo especialista do Licitacon.</p>
+          </div>
+          <button class="lvh-btn" sc-camel-on-click="{{ novaPergunta }}">Fazer uma pergunta</button>
         </div>
       </section>
-      <div style="max-width: 1240px; margin: 0 auto; padding: 28px 24px 80px; display: grid; grid-template-columns: 300px 1fr; gap: 28px; align-items: start">
-        <aside aria-label="Tópicos por tema" style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 14px; position: sticky; top: 92px">
-          <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #0F6B7E; padding: 8px 10px">Tópicos por tema</div>
-          <sc-for list="{{ topicos }}" as="t" hint-placeholder-count="6">
-            <button sc-camel-on-click="{{ t.abrir }}" style="width: 100%; text-align: left; background: none; border: 0; border-radius: 11px; padding: 11px 12px; cursor: pointer; display: flex; align-items: center; gap: 10px" style-hover="background: #F1F6F5">
-              <sc-if value="{{ t.ativo }}" hint-placeholder-val="{{ false }}">
-                <span style="width: 3px; align-self: stretch; background: #0FA36B; border-radius: 3px"></span>
-              </sc-if>
-              <span style="flex: 1">
-                <span style="display: block; font-size: 14.5px; font-weight: 700; color: #172B33">{{ t.nome }}</span>
-                <span style="display: block; font-size: 12.5px; color: #7A8B91; margin-top: 2px">{{ t.perguntas }} perguntas · {{ t.ultima }}</span>
-              </span>
-            </button>
-          </sc-for>
-          <button sc-camel-on-click="{{ novaPergunta }}" style="width: 100%; margin-top: 8px; background: #F1F6F5; border: 1px dashed #BFD4CF; color: #0A7A50; border-radius: 11px; padding: 11px; font-size: 13.5px; font-weight: 700; cursor: pointer">+ Nova pergunta</button>
+      <div class="lvf-grid">
+        <aside class="lvf-temas" aria-label="Temas do fórum">
+          <div class="lvf-temas-t">Temas</div>
+          <div class="lvf-temas-lista">
+            <sc-for list="{{ topicos }}" as="t" hint-placeholder-count="6">
+              <button class="{{ t.classe }}" sc-camel-on-click="{{ t.abrir }}" aria-pressed="{{ t.ativo }}">
+                <span class="lvf-tema-n">{{ t.nome }}</span>
+                <span class="lvf-tema-c">{{ t.perguntas }}</span>
+              </button>
+            </sc-for>
+          </div>
         </aside>
 
         <div>
-          <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 24px 26px">
-            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
-              <h2 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.02em">{{ topicoAtual.nome }}</h2>
-              <span style="flex: 1"></span>
-              <button sc-camel-on-click="{{ seguirTopico }}" style="background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 9px; padding: 8px 13px; font-size: 13px; font-weight: 700; cursor: pointer">{{ seguirLabel }}</button>
-              <button sc-camel-on-click="{{ novaPergunta }}" style="background: #0A1F2A; border: 0; color: #fff; border-radius: 9px; padding: 9px 14px; font-size: 13px; font-weight: 700; cursor: pointer" style-hover="background: #14424F">+ Perguntar</button>
+          <div class="lvf-cab">
+            <div class="lvf-cab-txt">
+              <h2 class="lvf-h2">{{ topicoAtual.nome }}</h2>
+              <p>{{ topicoAtual.descricao }}</p>
             </div>
-            <p style="font-size: 14.5px; color: #55666D; margin: 10px 0 0">{{ topicoAtual.descricao }}</p>
+            <div class="lvf-cab-acoes">
+              <button class="lvf-seguir" sc-camel-on-click="{{ seguirTopico }}">{{ seguirLabel }}</button>
+              <button class="lvf-perguntar" sc-camel-on-click="{{ novaPergunta }}">+ Perguntar</button>
+            </div>
           </div>
 
           <sc-if value="{{ novaAberta }}" hint-placeholder-val="{{ false }}">
@@ -1191,9 +1243,29 @@
             </div>
           </sc-if>
 
-          <sc-if value="{{ forumLivre }}" hint-placeholder-val="{{ true }}">
-          <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 16px">
-            <sc-for list="{{ threads }}" as="th" hint-placeholder-count="2">
+          <sc-if value="{{ forumMostraLista }}" hint-placeholder-val="{{ true }}">
+            <div class="lvf-filtros" role="group" aria-label="Filtrar perguntas">
+              <sc-for list="{{ forumFiltros }}" as="fl" hint-placeholder-count="3">
+                <button class="lvf-filtro" sc-camel-on-click="{{ fl.escolher }}" aria-pressed="{{ fl.ativo }}">{{ fl.rot }}</button>
+              </sc-for>
+            </div>
+            <div class="lvf-lista">
+              <sc-for list="{{ threadsLista }}" as="q" hint-placeholder-count="3">
+                <button class="lvf-q" sc-camel-on-click="{{ q.abrir }}">
+                  <span class="lvf-q-top"><span class="{{ q.statusClasse }}">{{ q.status }}</span><span class="lvf-q-setor">{{ q.setor }}</span></span>
+                  <span class="lvf-q-t">{{ q.pergunta }}</span>
+                  <span class="lvf-q-c">{{ q.contexto }}</span>
+                  <span class="lvf-q-meta">{{ q.autor }} · {{ q.quando }} · {{ q.nResp }}</span>
+                </button>
+              </sc-for>
+              <sc-if value="{{ filtroVazio }}" hint-placeholder-val="{{ false }}"><p class="lvf-vazio">Nenhuma pergunta com esse filtro neste tema.</p></sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ forumMostraDetalhe }}" hint-placeholder-val="{{ false }}">
+          <button class="lvf-voltar" sc-camel-on-click="{{ fecharThread }}">← Todas as perguntas de {{ topicoAtual.nome }}</button>
+          <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 12px">
+            <sc-for list="{{ threadAtual }}" as="th" hint-placeholder-count="1">
               <article style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; overflow: hidden">
                 <div style="padding: 22px 26px; border-bottom: 1px solid #EDF1F0">
                   <div style="display: flex; align-items: center; gap: 11px">
@@ -1273,7 +1345,7 @@
           </div>
           </sc-if>
 
-          <p style="font-size: 13px; color: #7A8B91; margin-top: 18px; line-height: 1.6">Moderação ativa: respeite as regras de conduta dos Termos de Uso. Conteúdo fora do tema, ofensivo ou com dados pessoais de terceiros é removido pela moderação. Conteúdo do fórum não substitui parecer jurídico.</p>
+          <p class="lvf-mod">Moderação ativa: respeite as regras de conduta dos Termos de Uso. Conteúdo fora do tema, ofensivo ou com dados pessoais de terceiros é removido pela moderação. Conteúdo do fórum não substitui parecer jurídico.</p>
         </div>
       </div>
     </sc-if>
@@ -3405,6 +3477,7 @@ class Component extends DCLogic {
     forumCarregando: false,
     forumErro: "",
     nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
+    threadAberta: null, forumFiltro: "todas",
     respondendo: null, resposta: "", citacao: "", respEnviando: false, respErro: "",
 
     // cursos
@@ -3792,7 +3865,7 @@ class Component extends DCLogic {
   podeParticipar() { return this.state.admin || ["basico", "premium", "pro"].includes(this.state.plano); }
 
   abrirTopico = (nome) => () => {
-    this.setState({ topico: nome, respondendo: null, nova: { ...this.state.nova, aberta: false } });
+    this.setState({ topico: nome, respondendo: null, threadAberta: null, forumFiltro: "todas", nova: { ...this.state.nova, aberta: false } });
     if (this.sb && this.state.usuario) {
       const t = (this.state.forumTopicos || []).find((x) => x.nome === nome);
       this.setState({ forumCarregando: true });
@@ -4853,7 +4926,21 @@ class Component extends DCLogic {
       emConferencia: DOCS.filter((d) => !d.verificado).length,
 
       // fórum
-      topicos: topicosDefs.map((t) => ({ ...t, ativo: t.nome === s.topico, abrir: this.abrirTopico(t.nome) })),
+      topicos: topicosDefs.map((t) => ({ ...t, ativo: t.nome === s.topico, classe: "lvf-tema" + (t.nome === s.topico ? " ativo" : ""), abrir: this.abrirTopico(t.nome) })),
+      forumMostraLista: !forumBloqueado && !s.nova.aberta && !threads.some((t) => t.id === s.threadAberta) && threads.length > 0,
+      forumMostraDetalhe: !forumBloqueado && !s.nova.aberta && threads.some((t) => t.id === s.threadAberta),
+      threadAtual: threads.filter((t) => t.id === s.threadAberta),
+      fecharThread: () => this.setState({ threadAberta: null, respondendo: null }),
+      forumFiltros: [["todas", "Todas"], ["sem", "Sem resposta"], ["respondidas", "Respondidas"]].map(([k, rot]) => ({ rot, ativo: s.forumFiltro === k,
+        escolher: () => this.setState({ forumFiltro: k }) })),
+      threadsLista: threads.filter((t) => s.forumFiltro === "todas" || (s.forumFiltro === "sem" ? t.respostas.length === 0 : t.respostas.length > 0)).map((t) => {
+        const melhor = t.respostas.some((r) => r.melhor), oficial = t.respostas.some((r) => r.oficial), n = t.respostas.length;
+        const st = melhor ? ["✓ Melhor resposta escolhida", "ok"] : oficial ? ["Especialista respondeu", "esp"] : n ? ["Respondida", "resp"] : ["Aguardando resposta", "sem"];
+        return { pergunta: t.pergunta, contexto: t.contexto || "", autor: t.autor, quando: t.quando, setor: t.setor,
+          nResp: n === 0 ? "nenhuma resposta" : n === 1 ? "1 resposta" : n + " respostas", status: st[0], statusClasse: "lvf-st " + st[1],
+          abrir: () => { this.setState({ threadAberta: t.id, respondendo: null }); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} } };
+      }),
+      filtroVazio: threads.length > 0 && !threads.filter((t) => s.forumFiltro === "todas" || (s.forumFiltro === "sem" ? t.respostas.length === 0 : t.respostas.length > 0)).length,
       topicoAtual, threads,
       semThreads: forumReal && !forumBloqueado && !s.forumCarregando && threads.length === 0,
       forumCarregando: forumReal && s.forumCarregando,
