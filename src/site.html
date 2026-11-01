@@ -465,6 +465,90 @@
     [role="dialog"] > div { border-radius: 16px !important; }
     [style*="max-width: 260px"] { max-width: none !important; flex: 1 1 100%; }
   }
+  /* ---------- página Planos ---------- */
+  .lvp-hero { background: #0A1F2A; color: #fff; padding: 56px 24px 120px; }
+  .lvp-hero-in { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 48px; align-items: center; }
+  .lvp-h1 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 50px; line-height: 1.06; letter-spacing: -0.015em; margin: 0; max-width: 15ch; }
+  .lvp-lead { font-size: 17px; line-height: 1.6; color: #B8CBD2; margin: 18px 0 0; max-width: 54ch; }
+  .lvp-provas { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 10px; }
+  .lvp-provas li { display: flex; gap: 10px; font-size: 15px; color: #E3EEF0; }
+  .lvp-provas li::before { content: "✓"; flex: none; width: 20px; height: 20px; border-radius: 50%; background: #0FA36B; color: #06251A; font-size: 12px; font-weight: 900; display: grid; place-items: center; margin-top: 1px; }
+  .lvp-cfg { background: #12303D; border: 1px solid #24495A; border-radius: 22px; padding: 26px 26px 22px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.28); }
+  .lvp-cfg-frase { font-family: 'Source Serif 4', Georgia, serif; font-size: 22px; font-weight: 600; margin: 16px 0 10px; color: #fff; }
+  .lvp-cfg-frase:first-child { margin-top: 0; }
+  .lvp-cfg-linha { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .lvp-chip { border: 1px solid #3A6274; background: transparent; color: #D4E3E8; border-radius: 999px; padding: 10px 16px; font-size: 14.5px; font-weight: 700; cursor: pointer; transition: background 0.15s, border-color 0.15s, color 0.15s; }
+  .lvp-chip:hover { border-color: #7FE3B6; }
+  .lvp-chip[aria-pressed="true"] { background: #0FA36B; border-color: #0FA36B; color: #06251A; }
+  .lvp-cfg-qtd { margin-top: 12px; font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; font-weight: 600; }
+  .lvp-stepper { display: inline-flex; align-items: center; border: 1px solid #3A6274; border-radius: 12px; overflow: hidden; font-family: Manrope, sans-serif; }
+  .lvp-stepper button { border: 0; background: #1B3F4F; color: #fff; width: 40px; height: 40px; font-size: 20px; font-weight: 800; cursor: pointer; }
+  .lvp-stepper output { min-width: 52px; text-align: center; font-size: 19px; font-weight: 800; }
+  .lvp-cfg-nota { font-size: 13px; line-height: 1.5; color: #7FE3B6; margin: 10px 0 0; }
+  .lvp-cfg-rodape { font-size: 13px; line-height: 1.5; color: #8FA9B3; margin: 18px 0 0; border-top: 1px solid #24495A; padding-top: 14px; }
+  .lvp-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; align-items: stretch; }
+  .lvp-card { position: relative; background: #fff; border: 1px solid #DFE7E6; border-radius: 20px; padding: 26px 24px 22px; display: flex; flex-direction: column; box-shadow: 0 18px 40px rgba(10, 31, 42, 0.08); }
+  .lvp-card.lvp-dest { background: #0A1F2A; color: #fff; border-color: #2B5466; box-shadow: 0 26px 60px rgba(10, 31, 42, 0.32); transform: translateY(-10px); }
+  .lvp-card.lvp-leve { background: #FBFDFC; box-shadow: 0 10px 24px rgba(10, 31, 42, 0.05); }
+  .lvp-selo { position: absolute; top: -13px; left: 24px; background: #F2B544; color: #3A2600; font-size: 12.5px; font-weight: 800; border-radius: 999px; padding: 5px 12px; }
+  .lvp-nome { margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.01em; }
+  .lvp-publico { margin: 6px 0 0; font-size: 13.5px; line-height: 1.5; color: #6A7B82; min-height: 40px; }
+  .lvp-dest .lvp-publico { color: #A9BEC6; }
+  .lvp-preco { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; margin-top: 16px; }
+  .lvp-valor { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 40px; line-height: 1; letter-spacing: -0.01em; }
+  .lvp-unid { font-size: 13.5px; color: #7A8B91; }
+  .lvp-dest .lvp-unid { color: #A9BEC6; }
+  .lvp-nota { margin: 8px 0 0; font-size: 13.5px; font-weight: 700; color: #0F6B7E; min-height: 20px; }
+  .lvp-dest .lvp-nota { color: #7FE3B6; }
+  .lvp-economia { align-self: flex-start; margin-top: 10px; background: #FFF4DC; color: #6B4A00; font-size: 12.5px; font-weight: 800; border-radius: 8px; padding: 5px 9px; }
+  .lvp-dest .lvp-economia { background: #F2B544; color: #3A2600; }
+  .lvp-cta { margin-top: 18px; border: 0; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 800; cursor: pointer; background: #0A1F2A; color: #fff; }
+  .lvp-cta:hover { background: #163646; }
+  .lvp-dest .lvp-cta { background: #0FA36B; color: #06251A; }
+  .lvp-dest .lvp-cta:hover { background: #12B97A; }
+  .lvp-leve .lvp-cta { background: #E9F1EF; color: #0A1F2A; }
+  .lvp-leve .lvp-cta:hover { background: #DCE9E6; }
+  .lvp-itens { list-style: none; margin: 18px 0 0; padding: 18px 0 0; border-top: 1px solid #EDF2F1; display: grid; gap: 10px; }
+  .lvp-dest .lvp-itens { border-top-color: #20414F; }
+  .lvp-itens li { display: flex; gap: 9px; font-size: 14px; line-height: 1.5; color: #3D5058; }
+  .lvp-dest .lvp-itens li { color: #D7E5E9; }
+  .lvp-itens li::before { content: "✓"; flex: none; color: #0FA36B; font-weight: 800; }
+  .lvp-dest .lvp-itens li::before { color: #7FE3B6; }
+  .lvp-detalhe { margin: auto 0 0; padding-top: 16px; font-size: 12px; line-height: 1.5; color: #8A9AA0; }
+  .lvp-dest .lvp-detalhe { color: #86A0AA; }
+  .lvp-bloco { margin-top: 56px; }
+  .lvp-h2 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 32px; letter-spacing: -0.01em; margin: 0 0 18px; }
+  .lvp-tabela-rolar { overflow-x: auto; background: #fff; border: 1px solid #DFE7E6; border-radius: 18px; }
+  .lvp-tabela { min-width: 660px; font-size: 14.5px; }
+  .lvp-tr { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1.25fr; border-bottom: 1px solid #EEF3F2; }
+  .lvp-tr:last-child { border-bottom: 0; }
+  .lvp-tr > span { padding: 14px 18px; color: #3D5058; line-height: 1.45; }
+  .lvp-thead > span { font-size: 15px; font-weight: 800; color: #0B1F2A; background: #F4F8F7; }
+  .lvp-th { font-weight: 700; color: #26393F !important; }
+  .lvp-tr > .lvp-sim { color: #0A7A50; font-weight: 700; }
+  .lvp-tr > .lvp-nao { color: #A3B1B5; }
+  .lvp-tr > .lvp-forte { color: #0A1F2A; font-weight: 800; background: #F2FBF7; }
+  .lvp-tr > span:last-child:not(.lvp-forte) { background: #FAFDFC; }
+  .lvp-tr.lvp-thead > span:last-child { background: #0A1F2A; color: #fff; }
+  .lvp-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .lvp-garantias { margin-top: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); background: #0F6B7E; color: #fff; border-radius: 18px; overflow: hidden; }
+  .lvp-garantia { padding: 22px; display: grid; gap: 6px; border-right: 1px solid rgba(255, 255, 255, 0.16); }
+  .lvp-garantia:last-child { border-right: 0; }
+  .lvp-garantia b { font-size: 16px; }
+  .lvp-garantia span { font-size: 13.5px; line-height: 1.5; color: #D2ECEF; }
+  .lvp-faq { background: #fff; border: 1px solid #DFE7E6; border-radius: 18px; }
+  .lvp-faq-item + .lvp-faq-item { border-top: 1px solid #EEF3F2; }
+  .lvp-faq-q { width: 100%; display: flex; justify-content: space-between; gap: 16px; align-items: center; text-align: left; background: none; border: 0; padding: 18px 22px; font-size: 16px; font-weight: 700; color: #0B1F2A; cursor: pointer; }
+  .lvp-faq-sinal { flex: none; width: 28px; height: 28px; border-radius: 50%; background: #EEF4F3; display: grid; place-items: center; font-size: 18px; color: #0F6B7E; }
+  .lvp-faq-a { margin: -4px 22px 18px; font-size: 15px; line-height: 1.65; color: #4A5D64; max-width: 75ch; }
+  @media (max-width: 960px) {
+    .lvp-hero { padding: 36px 16px 96px; }
+    .lvp-hero-in { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+    .lvp-h1 { font-size: 36px; }
+    .lvp-card.lvp-dest { transform: none; }
+    .lvp-garantia { border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.16); }
+  }
+  @media (prefers-reduced-motion: reduce) { .lvp-chip { transition: none; } }
 </style>
 </helmet>
 
@@ -1460,72 +1544,69 @@
 
     <!-- ===================== PLANOS ===================== -->
     <sc-if value="{{ isPlanos }}" hint-placeholder-val="{{ false }}">
-      <section style="background: #0A1F2A; color: #fff; padding: 48px 24px 96px">
-        <div style="max-width: 1240px; margin: 0 auto; text-align: center">
-          <h1 style="font-size: 42px; letter-spacing: -0.035em; font-weight: 800; margin: 0">Planos e preços</h1>
-          <p style="font-size: 16.5px; color: #A9BEC6; margin: 12px auto 0; max-width: 620px">Todos os planos incluem a Biblioteca Jurídica. O que muda é a comunidade, as condições em cursos, o desconto na consultoria técnica e a cota do agente de IA.</p>
-          <div role="group" aria-label="Ciclo de contratação" style="display: inline-flex; margin-top: 26px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 4px; gap: 4px">
-            <sc-for list="{{ ciclos }}" as="c" hint-placeholder-count="2">
-              <button sc-camel-on-click="{{ c.escolher }}" aria-pressed="{{ c.ativo }}" style="border: 0; font-size: 14px; font-weight: 700; padding: 10px 20px; border-radius: 999px; cursor: pointer; background: {{ c.fundo }}; color: {{ c.cor }}">{{ c.label }}</button>
-            </sc-for>
+      <section class="lvp-hero">
+        <div class="lvp-hero-in">
+          <div class="lvp-hero-txt">
+            <h1 class="lvp-h1">Planos para quem trabalha com licitação todo dia</h1>
+            <p class="lvp-lead">Todos incluem a Biblioteca Jurídica com decisões dos Tribunais de Contas de todo o país. O que muda é o fórum, os descontos em cursos e consultoria e quantas análises o Agente IA faz por você.</p>
+            <ul class="lvp-provas">
+              <sc-for list="{{ provasPlanos }}" as="pv" hint-placeholder-count="3"><li>{{ pv }}</li></sc-for>
+            </ul>
           </div>
-          <p style="font-size: 13px; color: #7FE3B6; margin: 12px 0 0; font-weight: 700">{{ ciclo }}</p>
-          <div style="margin-top: 22px">
-            <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: #93A9B2; margin-bottom: 12px">Para quem</span>
-            <div role="group" aria-label="Para quem" style="display: inline-flex; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 999px; padding: 4px; gap: 4px">
+          <div class="lvp-cfg" role="group" aria-label="Monte o seu plano">
+            <p class="lvp-cfg-frase">Quero o Licitacon</p>
+            <div class="lvp-cfg-linha">
               <sc-for list="{{ modos }}" as="m" hint-placeholder-count="2">
-                <button sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 0; font-size: 14px; font-weight: 700; padding: 10px 20px; border-radius: 999px; cursor: pointer; background: {{ m.fundo }}; color: {{ m.cor }}">{{ m.label }}</button>
+                <button class="lvp-chip" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}">{{ m.label }}</button>
               </sc-for>
             </div>
             <sc-if value="{{ modoEquipe }}" hint-placeholder-val="{{ false }}">
-              <div style="display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 16px; flex-wrap: wrap">
-                <span style="font-size: 14px; font-weight: 700; color: #C9D6DB">Quantos acessos?</span>
-                <div style="display: inline-flex; align-items: center; border: 1px solid rgba(255,255,255,0.25); border-radius: 12px; overflow: hidden">
-                  <button sc-camel-on-click="{{ eqMenos }}" aria-label="Menos acessos" style="border: 0; background: rgba(255,255,255,0.1); color: #fff; width: 42px; height: 42px; font-size: 20px; font-weight: 800; cursor: pointer">−</button>
-                  <span style="min-width: 58px; text-align: center; font-size: 20px; font-weight: 800; color: #fff">{{ eqAcessos }}</span>
-                  <button sc-camel-on-click="{{ eqMais }}" aria-label="Mais acessos" style="border: 0; background: rgba(255,255,255,0.1); color: #fff; width: 42px; height: 42px; font-size: 20px; font-weight: 800; cursor: pointer">+</button>
+              <div class="lvp-cfg-linha lvp-cfg-qtd">
+                <span>com</span>
+                <div class="lvp-stepper">
+                  <button sc-camel-on-click="{{ eqMenos }}" aria-label="Menos acessos">−</button>
+                  <output aria-live="polite">{{ eqAcessos }}</output>
+                  <button sc-camel-on-click="{{ eqMais }}" aria-label="Mais acessos">+</button>
                 </div>
+                <span>acessos</span>
               </div>
-              <p style="font-size: 13px; color: #7FE3B6; margin: 10px 0 0; font-weight: 700">{{ eqFaixas }}</p>
+              <p class="lvp-cfg-nota">{{ eqFaixas }}</p>
             </sc-if>
-          </div>
-          <div style="margin-top: 26px">
-            <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: #93A9B2; margin-bottom: 12px">Quem vai pagar</span>
-            <div role="group" aria-label="Tipo de contratante" style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap">
-              <sc-for list="{{ compradores }}" as="c" hint-placeholder-count="3">
-                <button sc-camel-on-click="{{ c.escolher }}" aria-pressed="{{ c.ativo }}" style="text-align: left; border-radius: 13px; padding: 13px 18px; cursor: pointer; border: 1px solid {{ c.borda }}; background: {{ c.fundo }}; color: {{ c.cor }}; max-width: 260px" style-hover="border-color: #0FA36B">
-                  <span style="display: block; font-size: 14.5px; font-weight: 800">{{ c.label }}</span>
-                  <span style="display: block; font-size: 12.5px; margin-top: 3px; opacity: 0.8">{{ c.sub }}</span>
-                </button>
+            <p class="lvp-cfg-frase">pagando</p>
+            <div class="lvp-cfg-linha">
+              <sc-for list="{{ ciclos }}" as="c" hint-placeholder-count="2">
+                <button class="lvp-chip" sc-camel-on-click="{{ c.escolher }}" aria-pressed="{{ c.ativo }}">{{ c.label }}</button>
               </sc-for>
             </div>
+            <p class="lvp-cfg-frase">como</p>
+            <div class="lvp-cfg-linha">
+              <sc-for list="{{ compradores }}" as="c" hint-placeholder-count="3">
+                <button class="lvp-chip" sc-camel-on-click="{{ c.escolher }}" aria-pressed="{{ c.ativo }}">{{ c.label }}</button>
+              </sc-for>
+            </div>
+            <p class="lvp-cfg-rodape">{{ ciclo }}</p>
           </div>
         </div>
       </section>
-      <section style="max-width: 1240px; margin: -68px auto 0; padding: 0 24px 80px">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 18px; align-items: start">
+      <section style="max-width: 1240px; margin: -64px auto 0; padding: 0 24px 80px; position: relative">
+        <div class="lvp-cards">
           <sc-for list="{{ planos }}" as="p" hint-placeholder-count="4">
-            <article style="background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 26px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 16px 40px rgba(11,31,42,0.08)">
+            <article class="{{ p.classe }}">
               <sc-if value="{{ p.destaque }}" hint-placeholder-val="{{ false }}">
-                <span style="align-self: flex-start; font-size: 11.5px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; background: #0FA36B; color: #06251A; padding: 5px 10px; border-radius: 999px">Mais escolhido</span>
+                <span class="lvp-selo">{{ p.selo }}</span>
               </sc-if>
-              <h2 style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em">{{ p.nome }}</h2>
-              <p style="margin: 0; font-size: 13.5px; color: #6A7B82; min-height: 38px">{{ p.publico }}</p>
-              <div style="display: flex; align-items: baseline; gap: 6px">
-                <span style="font-size: 36px; font-weight: 800; letter-spacing: -0.03em">{{ p.preco }}</span>
-                <span style="font-size: 14px; color: #7A8B91">{{ p.unidade }}</span>
-              </div>
-              <p style="margin: -4px 0 0; font-size: 13px; line-height: 1.5; font-weight: 700; color: #0F6B7E">{{ p.nota }}</p>
-              <p style="margin: 0; font-size: 12.5px; line-height: 1.5; color: #7A8B91">{{ p.detalhePreco }}</p>
-              <ul style="list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 9px">
-                <sc-for list="{{ p.itens }}" as="i" hint-placeholder-count="3">
-                  <li style="display: flex; gap: 9px; font-size: 14px; line-height: 1.5; color: #3D5058">
-                    <span style="color: #0FA36B; font-weight: 800">✓</span>
-                    <span>{{ i }}</span>
-                  </li>
-                </sc-for>
+              <h2 class="lvp-nome">{{ p.nome }}</h2>
+              <p class="lvp-publico">{{ p.publico }}</p>
+              <div class="lvp-preco"><span class="lvp-valor">{{ p.preco }}</span><span class="lvp-unid">{{ p.unidade }}</span></div>
+              <p class="lvp-nota">{{ p.nota }}</p>
+              <sc-if value="{{ p.temEconomia }}" hint-placeholder-val="{{ false }}">
+                <span class="lvp-economia">{{ p.economia }}</span>
+              </sc-if>
+              <button class="lvp-cta" sc-camel-on-click="{{ p.contratar }}">{{ p.cta }}</button>
+              <ul class="lvp-itens">
+                <sc-for list="{{ p.itens }}" as="i" hint-placeholder-count="3"><li>{{ i }}</li></sc-for>
               </ul>
-              <button sc-camel-on-click="{{ p.contratar }}" style="margin-top: auto; border: 0; border-radius: 11px; padding: 13px; font-size: 14.5px; font-weight: 700; cursor: pointer; background: {{ p.btnBg }}; color: {{ p.btnColor }}">{{ p.cta }}</button>
+              <p class="lvp-detalhe">{{ p.detalhePreco }}</p>
             </article>
           </sc-for>
         </div>
@@ -1569,6 +1650,38 @@
           </div>
         </section>
         </sc-if>
+
+        <section class="lvp-bloco" aria-labelledby="lvp-comp-t">
+          <h2 id="lvp-comp-t" class="lvp-h2">Compare os planos</h2>
+          <div class="lvp-tabela-rolar">
+            <div class="lvp-tabela" role="table" aria-label="Comparação dos planos">
+              <div class="lvp-tr lvp-thead" role="row"><span role="columnheader"><span class="lvp-sr">Recurso</span></span>
+                <sc-for list="{{ compCols }}" as="c" hint-placeholder-count="3"><span role="columnheader">{{ c }}</span></sc-for></div>
+              <sc-for list="{{ compLinhas }}" as="l" hint-placeholder-count="6">
+                <div class="lvp-tr" role="row"><span class="lvp-th" role="rowheader">{{ l.rot }}</span>
+                  <sc-for list="{{ l.vals }}" as="v" hint-placeholder-count="3"><span class="{{ v.cls }}" role="cell">{{ v.txt }}</span></sc-for></div>
+              </sc-for>
+            </div>
+          </div>
+        </section>
+
+        <section class="lvp-garantias" aria-label="Garantias">
+          <sc-for list="{{ garantiasPlanos }}" as="g" hint-placeholder-count="4">
+            <div class="lvp-garantia"><b>{{ g.t }}</b><span>{{ g.d }}</span></div>
+          </sc-for>
+        </section>
+
+        <section class="lvp-bloco" aria-labelledby="lvp-faq-t">
+          <h2 id="lvp-faq-t" class="lvp-h2">Perguntas antes de assinar</h2>
+          <div class="lvp-faq">
+            <sc-for list="{{ faqsPlanos }}" as="f" hint-placeholder-count="5">
+              <div class="lvp-faq-item">
+                <button class="lvp-faq-q" sc-camel-on-click="{{ f.alternar }}" aria-expanded="{{ f.aberta }}"><span>{{ f.q }}</span><span class="lvp-faq-sinal" aria-hidden="true">{{ f.sinal }}</span></button>
+                <sc-if value="{{ f.aberta }}" hint-placeholder-val="{{ false }}"><p class="lvp-faq-a">{{ f.a }}</p></sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </section>
 
         <section aria-label="Formas de pagamento" style="margin-top: 34px; background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 30px 32px">
           <div style="display: flex; align-items: flex-start; gap: 18px; flex-wrap: wrap">
@@ -3050,7 +3163,7 @@ class Component extends DCLogic {
     favoritos: {},
     topico: "Reajuste de Preços",
     anual: false,
-    modoEquipe: false, equipePlano: "pro", equipeAcessos: 4, equipeOrg: "", equipeCnpj: "", equipeMsg: "", equipeErro: "", equipeEnviando: false,
+    faqAberta: -1, modoEquipe: false, equipePlano: "pro", equipeAcessos: 4, equipeOrg: "", equipeCnpj: "", equipeMsg: "", equipeErro: "", equipeEnviando: false,
     email: "",
     inscrito: false,
     esperaErro: "",
@@ -3945,6 +4058,17 @@ class Component extends DCLogic {
 
   comPlanos = (lista) => lista.map((pl) => ({
     ...pl,
+    ...(() => {
+      const st = this.state, base = Number(pl.base || 0);
+      let economia = "";
+      if (base > 0 && st.modoEquipe && pl.chave) {
+        const n = Math.min(st.equipeAcessos, EQ_MAX), pr = eqPreco(pl.chave, n, st.anual);
+        const ganho = st.anual ? base * 12 * n - pr.total : (base - pr.pa) * n;
+        if (ganho > 0.5) economia = "Economia de " + brlSimples(ganho) + (st.anual ? " no ano" : " por mês") + " para a equipe";
+      } else if (base > 0 && st.anual) economia = "Você economiza " + brlSimples(base * 12 * 0.2) + " no ano";
+      return { classe: "lvp-card" + (pl.nome === "Teste" ? " lvp-leve" : "") + (pl.destaque ? " lvp-dest" : ""),
+        selo: st.modoEquipe ? "Mais completo para equipes" : "Mais escolhido", economia, temEconomia: !!economia };
+    })(),
     contratar: () => {
       if (this.state.modoEquipe && pl.chave) {
         this.setState({ equipePlano: pl.chave, equipeMsg: "", equipeErro: "" });
@@ -4265,14 +4389,14 @@ class Component extends DCLogic {
     const avulso = (base) => base;
     const mesAnual = (base) => base * 0.8;
     const anualTotal = (base) => base * 12 * 0.8;
-    const precoPlano = (base) => anual ? "12x " + brl(mesAnual(base)) : brl(base);
-    const unidadePlano = anual ? "no cartão" : "/mês";
+    const precoPlano = (base) => anual ? brl(mesAnual(base)) : brl(base);
+    const unidadePlano = "/mês";
     const economia = (base) => base * 12 - anualTotal(base);
     const notaPlano = (base) => anual
-      ? "Economia de " + brl(economia(base)) + " em 12 meses"
-      : "No anual: " + brl(mesAnual(base)) + " por mês";
+      ? brl(anualTotal(base)) + " por 12 meses"
+      : "ou " + brl(mesAnual(base)) + "/mês no plano anual";
     const detalhePlano = (base) => anual
-      ? brl(anualTotal(base)) + " pelo ano inteiro — à vista no Pix ou boleto, ou em até 12x no cartão."
+      ? "Pago de uma vez no Pix ou boleto, ou em até 12x no cartão."
       : "Mês a mês sai " + brl(base) + ". No anual você paga " + brl(mesAnual(base)) + " por mês e economiza " + brl(economia(base)) + ".";
     const parcelaCartao = metodoSel.id === "cartao" || metodoSel.id === "cpgf";
 
@@ -4809,8 +4933,8 @@ class Component extends DCLogic {
         ? "Um ano inteiro de acesso sem interrupção, pela menor mensalidade — à vista ou em até 12x no cartão"
         : "Escolhendo os 12 meses, a mensalidade cai e você garante o ano completo sem interrupção",
       ciclos: [
-        { key: false, label: "1 mês" },
-        { key: true, label: "Anual · 12 meses" }
+        { key: false, label: "mês a mês" },
+        { key: true, label: "por ano, com 20% de desconto" }
       ].map((c) => ({
         label: c.label, ativo: anual === c.key,
         escolher: () => this.setState({ anual: c.key, pagamentoFeito: false }),
@@ -4894,7 +5018,37 @@ class Component extends DCLogic {
       eqTotal: brlSimples(eqPreco(s.equipePlano, Math.min(s.equipeAcessos, EQ_MAX), s.anual).total) + (s.anual ? " por 12 meses" : " por mês"),
       eqDescontoTxt: brlSimples(eqPreco(s.equipePlano, Math.min(s.equipeAcessos, EQ_MAX), s.anual).pa) + " por acesso/mês · " + Math.round(eqDesconto(Math.min(s.equipeAcessos, EQ_MAX)) * 100) + "% de desconto por quantidade" + (s.anual ? " + 20% do anual (o mesmo de todos os planos)" : ""),
       modoEquipe: !!s.modoEquipe,
-      modos: [[false, "Para mim"], [true, "Para minha equipe"]].map(([k, label]) => ({ label, ativo: !!s.modoEquipe === k,
+      provasPlanos: ["Decisões do TCU, dos Tribunais de Contas, PGEs e TJs de todo o país, sempre com o link oficial",
+        "Agente IA que lê edital, ETP e TR e entrega um parecer técnico com os pontos de risco", "Teste de 7 dias grátis, sem cartão"],
+      compCols: ["Básico", "Premium", "Pro"],
+      compLinhas: (() => {
+        const eq = !!s.modoEquipe;
+        const L = [
+          ["Biblioteca Jurídica nacional", ["Completa", "Completa", "Completa"]],
+          ["Fórum da comunidade", ["Ler e participar", "Ler e participar", "Ler, participar e selo de resposta oficial"]],
+          ["Cursos", ["10% de desconto", "15% de desconto", "50% de desconto"]],
+          ["Consultoria técnica", ["10% de desconto", "15% de desconto", eq ? "1 por escrito por mês para a equipe; demais com 30%" : "1 por escrito por mês incluída; demais com 30%"]],
+          ["Agente IA (parecer de edital, ETP, TR…)", ["10% de desconto", "15% de desconto", eq ? "6 análises por acesso por mês, somadas para a equipe" : "2 análises por semana incluídas; demais com 30%"]],
+          ["Prioridade na agenda do especialista", ["—", "Sim", "Sim"]],
+          ["Suporte prioritário", ["—", "—", "Sim"]]
+        ];
+        if (eq) L.push(["Gestor que inclui e troca as pessoas", ["Sim", "Sim", "Sim"]]);
+        return L.map(([rot, vals]) => ({ rot, vals: vals.map((t, i) => ({ txt: t, cls: t === "—" ? "lvp-nao" : (i === 2 && !/^Completa|^Ler e participar|^Sim$/.test(t) ? "lvp-forte" : (t === "Sim" ? "lvp-sim" : "")) })) }));
+      })(),
+      garantiasPlanos: [
+        { t: "Sem fidelidade", d: "Sem renovação automática, a não ser que você ative no cartão. Cancele quando quiser." },
+        { t: "7 dias para desistir", d: "Na primeira contratação como pessoa física, com reembolso integral (art. 49 do CDC)." },
+        { t: "Pagamento seguro", d: "Mercado Pago: Pix, cartão em até 12x no anual, boleto. Órgãos públicos por empenho." },
+        { t: "Dados protegidos", d: "Conforme a LGPD, com verificação em duas etapas para a sua conta." }
+      ],
+      faqsPlanos: [
+        ["Posso cancelar quando quiser?", "Sim. Não há fidelidade nem multa. Sem a renovação automática, o plano simplesmente termina no fim do período pago e avisamos antes. Se você ativou a renovação no cartão, desligue a qualquer momento em Minha conta → Assinatura."],
+        ["Órgão público pode contratar? Como funciona?", "Pode. Escolha “órgão público”, monte o plano e peça a proposta para empenho — ou baixe a proposta preliminar para instruir o processo. O enquadramento (por exemplo, dispensa por valor, art. 75, II, da Lei nº 14.133/2021) cabe ao órgão. Os acessos são liberados após a nota de empenho. Quem preferir também pode assinar como pessoa física."],
+        ["Como funciona o plano para equipes?", "Você contrata a quantidade de acessos e quem contrata vira o gestor. Ele inclui as pessoas pelo e-mail e troca quando alguém sai da equipe. Cada acesso é de uma pessoa, e o desconto cresce com a quantidade: 5% de 3 a 5 acessos, 10% de 6 a 10 e 15% de 11 a 25, além dos 20% do anual."],
+        ["O que o Agente IA faz e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. O Pro inclui 2 análises por semana; equipes Pro têm 6 por acesso por mês, somadas. Nos demais planos a análise é paga com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
+        ["Posso mudar de plano depois?", "Sim. Basta contratar o novo plano; se for o mesmo plano, o tempo que ainda falta é somado ao novo período."]
+      ].map(([q, a], i) => ({ q, a, aberta: s.faqAberta === i, sinal: s.faqAberta === i ? "−" : "+", alternar: () => this.setState((x) => ({ faqAberta: x.faqAberta === i ? -1 : i })) })),
+      modos: [[false, "para mim"], [true, "para a minha equipe"]].map(([k, label]) => ({ label, ativo: !!s.modoEquipe === k,
         escolher: () => this.setState((x) => ({ modoEquipe: k, equipeMsg: "", equipeErro: "", comprador: k && x.comprador === "fisica" ? "privada" : x.comprador })),
         fundo: !!s.modoEquipe === k ? "#0FA36B" : "transparent", cor: !!s.modoEquipe === k ? "#06251A" : "#C9D6DB" })),
       eqFaixas: "Desconto por quantidade, em cada acesso: 3 a 5 acessos 5% · 6 a 10 acessos 10% · 11 a 25 acessos 15%. Acima de 25, sob consulta.",
