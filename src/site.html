@@ -496,18 +496,15 @@
   @keyframes lvhIn { to { opacity: 1; transform: none; } }
   .lvh-doc-pe { display: flex; justify-content: space-between; gap: 10px; margin-top: 14px; font-size: 12.5px; color: #4A5D64; font-weight: 700; }
   .lvh-pdf { background: #0A1F2A; color: #fff; border-radius: 6px; padding: 3px 8px; }
-  .lvh-prova { background: #0F3F4D; color: #fff; padding: 36px 24px 24px; }
-  .lvh-prova-in { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+  .lvh-bibsec { background: #EAF4F1; border: 1px solid #D3E6E0; border-radius: 24px; padding: 40px; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 40px; align-items: center; }
   .lvh-bib-tag { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #06251A; background: #7FE3B6; border-radius: 999px; padding: 5px 11px; }
-  .lvh-bib-t { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 26px; line-height: 1.2; margin: 12px 0 0; color: #fff; max-width: 30ch; }
-  .lvh-bib-cta { margin-top: 14px; border: 0; background: none; padding: 0; color: #7FE3B6; font-size: 15px; font-weight: 800; cursor: pointer; }
-  .lvh-bib-cta:hover { text-decoration: underline; }
+  .lvh-bib-lead { margin: 14px 0 0; font-size: 16px; line-height: 1.6; color: #3D5058; max-width: 56ch; }
   .lvh-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .lvh-num { display: grid; gap: 4px; background: #fff; border: 1px solid #D3E6E0; border-radius: 16px; padding: 18px 16px; }
+  .lvh-num-v { display: block; font-family: 'Source Serif 4', Georgia, serif; font-size: 34px; line-height: 1.1; font-weight: 600; color: #0A7A50; }
+  .lvh-num > span { font-size: 13.5px; line-height: 1.4; color: #4A5D64; }
+  .lvh-fontes { margin: 16px 0 0; font-size: 12.5px; line-height: 1.5; color: #55666D; }
   .lvh-ag { background: #0A1F2A; color: #7FE3B6; border-radius: 6px; padding: 2px 7px; margin-right: 6px; font-size: 11.5px; letter-spacing: 0.04em; }
-  .lvh-num { display: grid; gap: 2px; }
-  .lvh-prova .lvh-num-v { display: block; font-family: 'Source Serif 4', Georgia, serif; font-size: 34px; line-height: 1.1; font-weight: 600; letter-spacing: -0.01em; color: #fff; }
-  .lvh-num > span { font-size: 13.5px; color: #B9D4DB; }
-  .lvh-fontes { max-width: 1240px; margin: 16px auto 0; font-size: 12.5px; color: #8DB2BC; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 12px; }
   .lvh-sec { max-width: 1240px; margin: 0 auto; padding: 84px 24px 0; }
   .lvh-kicker { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #0F6B7E; }
   .lvh-h2 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 38px; line-height: 1.12; letter-spacing: -0.015em; margin: 12px 0 0; max-width: 24ch; text-wrap: balance; color: #0B1F2A; }
@@ -554,10 +551,10 @@
     .lvh-hero-in { grid-template-columns: minmax(0, 1fr); gap: 36px; }
     .lvh-h1 { font-size: 38px; }
     .lvh-doc { transform: none; }
-    .lvh-prova-in { grid-template-columns: minmax(0, 1fr); gap: 22px; }
-    .lvh-bib-t { font-size: 22px; }
-    .lvh-nums { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-    .lvh-prova .lvh-num-v { font-size: 26px; }
+    .lvh-bibsec { grid-template-columns: minmax(0, 1fr); padding: 24px 18px; gap: 24px; }
+    .lvh-nums { gap: 8px; }
+    .lvh-num { padding: 12px 10px; }
+    .lvh-num-v { font-size: 26px; }
     .lvh-sec { padding: 60px 16px 0; }
     .lvh-h2 { font-size: 29px; }
     .lvh-dores, .lvh-passos, .lvh-bento { grid-template-columns: minmax(0, 1fr); }
@@ -850,22 +847,6 @@
         </div>
       </section>
 
-      <section class="lvh-prova" aria-labelledby="lvh-bib-t">
-        <div class="lvh-prova-in">
-          <div class="lvh-bib">
-            <span class="lvh-bib-tag">Biblioteca Jurídica · grátis com cadastro</span>
-            <h2 id="lvh-bib-t" class="lvh-bib-t">A base que o agente consulta. Você também pode pesquisar nela, sem pagar nada.</h2>
-            <button class="lvh-bib-cta" sc-camel-on-click="{{ goBiblioteca }}">Pesquisar na Biblioteca →</button>
-          </div>
-          <div class="lvh-nums">
-            <sc-for list="{{ homeNumeros }}" as="n" hint-placeholder-count="3">
-              <div class="lvh-num"><strong class="lvh-num-v">{{ n.v }}</strong><span>{{ n.r }}</span></div>
-            </sc-for>
-          </div>
-        </div>
-        <p class="lvh-fontes">TCU · CGU · STF · STJ · Tribunais de Contas dos 26 estados e do DF · TCMs de SP, RJ, GO, BA e PA · Procuradorias-Gerais e Tribunais de Justiça de todo o país</p>
-      </section>
-
       <section class="lvh-sec">
         <p class="lvh-kicker">Por que isso importa</p>
         <h2 class="lvh-h2">Em licitação, é o detalhe pequeno que custa caro.</h2>
@@ -900,6 +881,25 @@
               <span class="lvh-f-cta">{{ f.cta }} →</span>
             </button>
           </sc-for>
+        </div>
+      </section>
+
+      <section class="lvh-sec">
+        <div class="lvh-bibsec">
+          <div>
+            <span class="lvh-bib-tag">Biblioteca Jurídica · grátis com cadastro</span>
+            <h2 class="lvh-h2" style="margin-top: 14px">Jurisprudência de todo o país, sem pagar nada.</h2>
+            <p class="lvh-bib-lead">Crie sua conta e pesquise decisões do TCU, dos Tribunais de Contas, das Procuradorias-Gerais e dos Tribunais de Justiça, com filtros por órgão, estado, tema e ano, o link oficial em cada decisão e espaço para suas anotações.</p>
+            <button class="lvh-btn" style="margin-top: 22px" sc-camel-on-click="{{ goBiblioteca }}">Pesquisar na Biblioteca</button>
+          </div>
+          <div>
+            <div class="lvh-nums">
+              <sc-for list="{{ homeNumeros }}" as="n" hint-placeholder-count="3">
+                <div class="lvh-num"><strong class="lvh-num-v">{{ n.v }}</strong><span>{{ n.r }}</span></div>
+              </sc-for>
+            </div>
+            <p class="lvh-fontes">TCU · CGU · STF · STJ · Tribunais de Contas dos 26 estados e do DF · TCMs de SP, RJ, GO, BA e PA · Procuradorias-Gerais e Tribunais de Justiça de todo o país</p>
+          </div>
         </div>
       </section>
 
