@@ -465,6 +465,102 @@
     [role="dialog"] > div { border-radius: 16px !important; }
     [style*="max-width: 260px"] { max-width: none !important; flex: 1 1 100%; }
   }
+  /* ---------- página inicial ---------- */
+  .lvh-hero { background: radial-gradient(900px 500px at 85% 20%, rgba(15,163,107,0.16), transparent 60%), #0A1F2A; color: #fff; padding: 72px 24px 88px; overflow: hidden; }
+  .lvh-hero-in { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 56px; align-items: center; }
+  .lvh-eyebrow { display: inline-block; font-size: 12.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #7FE3B6; }
+  .lvh-h1 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 58px; line-height: 1.04; letter-spacing: -0.02em; margin: 18px 0 0; max-width: 14ch; text-wrap: balance; }
+  .lvh-h1 em { font-style: italic; color: #F2B544; }
+  .lvh-lead { font-size: 18px; line-height: 1.6; color: #B8CBD2; margin: 22px 0 0; max-width: 56ch; }
+  .lvh-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
+  .lvh-btn { border: 0; border-radius: 12px; background: #0FA36B; color: #06251A; padding: 16px 24px; font-size: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 14px 32px rgba(15,163,107,0.32); }
+  .lvh-btn:hover { background: #12B97A; }
+  .lvh-btn-sec { border: 1px solid rgba(255,255,255,0.24); border-radius: 12px; background: rgba(255,255,255,0.06); color: #fff; padding: 16px 22px; font-size: 15.5px; font-weight: 700; cursor: pointer; }
+  .lvh-btn-sec:hover { background: rgba(255,255,255,0.13); }
+  .lvh-micro { margin: 14px 0 0; font-size: 13.5px; color: #8FA9B3; }
+  .lvh-demo { position: relative; }
+  .lvh-doc { background: #F7FAF9; color: #0B1F2A; border-radius: 20px; padding: 20px; box-shadow: 0 40px 80px rgba(0,0,0,0.4); transform: rotate(-1.2deg); }
+  .lvh-doc-top { display: flex; align-items: center; gap: 9px; font-size: 12.5px; font-weight: 700; color: #4A5D64; }
+  .lvh-dot { width: 9px; height: 9px; border-radius: 50%; background: #0FA36B; box-shadow: 0 0 0 4px rgba(15,163,107,0.18); flex: none; }
+  .lvh-linhas { position: relative; display: grid; gap: 9px; margin: 16px 0 14px; padding: 16px; background: #fff; border: 1px solid #E3EAE8; border-radius: 12px; overflow: hidden; }
+  .lvh-linhas span { display: block; height: 8px; border-radius: 4px; background: #E6EDEB; }
+  .lvh-scan { position: absolute; left: 0; right: 0; top: -40px; height: 40px; background: linear-gradient(180deg, transparent, rgba(15,163,107,0.28), transparent); animation: lvhScan 2.8s ease-in-out infinite; }
+  @keyframes lvhScan { to { top: 100%; } }
+  .lvh-achados { display: grid; gap: 8px; }
+  .lvh-ach { display: grid; gap: 3px; border-radius: 11px; padding: 10px 12px; background: #fff; border: 1px solid #E3EAE8; border-left-width: 4px; opacity: 0; transform: translateY(8px); animation: lvhIn 0.5s ease forwards; }
+  .lvh-ach b { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .lvh-ach > span { font-size: 13.5px; line-height: 1.45; color: #26393F; }
+  .lvh-ach.alta { border-left-color: #D64545; animation-delay: 0.9s; } .lvh-ach.alta b { color: #B83232; }
+  .lvh-ach.media { border-left-color: #E3A21A; animation-delay: 1.7s; } .lvh-ach.media b { color: #9A6A00; }
+  .lvh-ach.baixa { border-left-color: #2E8FA8; animation-delay: 2.5s; } .lvh-ach.baixa b { color: #1F6F83; }
+  @keyframes lvhIn { to { opacity: 1; transform: none; } }
+  .lvh-doc-pe { display: flex; justify-content: space-between; gap: 10px; margin-top: 14px; font-size: 12.5px; color: #4A5D64; font-weight: 700; }
+  .lvh-pdf { background: #0A1F2A; color: #fff; border-radius: 6px; padding: 3px 8px; }
+  .lvh-prova { background: #0F3F4D; color: #fff; padding: 26px 24px 22px; }
+  .lvh-prova-in { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+  .lvh-num { display: grid; gap: 2px; }
+  .lvh-prova .lvh-num-v { display: block; font-family: 'Source Serif 4', Georgia, serif; font-size: 34px; line-height: 1.1; font-weight: 600; letter-spacing: -0.01em; color: #fff; }
+  .lvh-num > span { font-size: 13.5px; color: #B9D4DB; }
+  .lvh-fontes { max-width: 1240px; margin: 16px auto 0; font-size: 12.5px; color: #8DB2BC; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 12px; }
+  .lvh-sec { max-width: 1240px; margin: 0 auto; padding: 84px 24px 0; }
+  .lvh-kicker { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #0F6B7E; }
+  .lvh-h2 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 38px; line-height: 1.12; letter-spacing: -0.015em; margin: 12px 0 0; max-width: 24ch; text-wrap: balance; color: #0B1F2A; }
+  .lvh-dores { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 34px; }
+  .lvh-dor { background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 24px; }
+  .lvh-dor-quem { font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #B83232; }
+  .lvh-dor h3 { margin: 10px 0 0; font-size: 19px; line-height: 1.3; letter-spacing: -0.01em; }
+  .lvh-dor p { margin: 10px 0 0; font-size: 15px; line-height: 1.6; color: #4A5D64; }
+  .lvh-passos { list-style: none; padding: 0; margin: 34px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; counter-reset: p; }
+  .lvh-passo { position: relative; background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 24px; }
+  .lvh-passo-n { font-family: 'Source Serif 4', Georgia, serif; font-size: 44px; line-height: 1; color: #0FA36B; font-weight: 600; }
+  .lvh-passo h3 { margin: 12px 0 0; font-size: 19px; letter-spacing: -0.01em; }
+  .lvh-passo p { margin: 8px 0 0; font-size: 15px; line-height: 1.6; color: #4A5D64; }
+  .lvh-bento { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 34px; }
+  .lvh-f { text-align: left; background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 24px; cursor: pointer; display: flex; flex-direction: column; gap: 8px; min-height: 220px; transition: transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease; font: inherit; color: inherit; }
+  .lvh-f:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(11,31,42,0.1); border-color: #0FA36B; }
+  .lvh-f.lvh-f-big { grid-row: span 2; background: #0A1F2A; color: #fff; border-color: #0A1F2A; }
+  .lvh-f-ic { width: 42px; height: 42px; border-radius: 12px; background: #EAF2F1; color: #0F6B7E; display: grid; place-items: center; font-size: 20px; font-weight: 700; }
+  .lvh-f-big .lvh-f-ic { background: rgba(15,163,107,0.18); color: #7FE3B6; }
+  .lvh-f-tag { font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #0A7A50; }
+  .lvh-f-big .lvh-f-tag { color: #F2B544; }
+  .lvh-f-t { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; }
+  .lvh-f-big .lvh-f-t { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 30px; line-height: 1.15; }
+  .lvh-f-d { font-size: 14.5px; line-height: 1.55; color: #55666D; }
+  .lvh-f-big .lvh-f-d { color: #B8CBD2; font-size: 16px; }
+  .lvh-f-cta { margin-top: auto; font-size: 14px; font-weight: 800; color: #0FA36B; }
+  .lvh-f-big .lvh-f-cta { color: #7FE3B6; }
+  .lvh-dif { background: #0A1F2A; border-radius: 24px; padding: 46px; color: #fff; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 48px; }
+  .lvh-dif-lead { margin: 16px 0 0; font-size: 16.5px; line-height: 1.6; color: #B3C6CD; }
+  .lvh-dif-lista { display: grid; gap: 14px; }
+  .lvh-dif-item { display: grid; gap: 3px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 14px; }
+  .lvh-dif-item b { font-size: 16px; }
+  .lvh-dif-item > span { font-size: 14.5px; line-height: 1.55; color: #9FB4BC; }
+  .lvh-final { margin-top: 84px; background: radial-gradient(700px 300px at 50% 0%, rgba(15,163,107,0.22), transparent 70%), #0A1F2A; color: #fff; padding: 72px 24px; text-align: center; }
+  .lvh-final-in { max-width: 820px; margin: 0 auto; display: grid; justify-items: center; }
+  .lvh-final .lvh-h2 { max-width: none; }
+  .lvh-gratis { list-style: none; padding: 0; margin: 24px 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .lvh-gratis li { border: 1px solid rgba(127,227,182,0.35); background: rgba(15,163,107,0.1); color: #D7F5E7; border-radius: 999px; padding: 9px 15px; font-size: 14.5px; font-weight: 700; }
+  .lvh-gratis li::before { content: "✓ "; color: #7FE3B6; }
+  .lvh-fund { margin: 22px 0 0; font-size: 14.5px; line-height: 1.5; color: #E8DCC2; }
+  .lvh-fund b { color: #F7C76A; }
+  @media (max-width: 960px) {
+    .lvh-hero { padding: 44px 16px 56px; }
+    .lvh-hero-in { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+    .lvh-h1 { font-size: 38px; }
+    .lvh-doc { transform: none; }
+    .lvh-prova-in { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lvh-sec { padding: 60px 16px 0; }
+    .lvh-h2 { font-size: 29px; }
+    .lvh-dores, .lvh-passos, .lvh-bento { grid-template-columns: minmax(0, 1fr); }
+    .lvh-f.lvh-f-big { grid-row: auto; }
+    .lvh-dif { grid-template-columns: minmax(0, 1fr); padding: 28px 20px; gap: 24px; }
+    .lvh-final { margin-top: 60px; padding: 52px 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .lvh-scan { display: none; }
+    .lvh-ach { animation: none; opacity: 1; transform: none; }
+    .lvh-f { transition: none; }
+  }
   /* ---------- página Planos ---------- */
   .lvp-hero { background: #0A1F2A; color: #fff; padding: 56px 24px 120px; }
   .lvp-hero-in { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 48px; align-items: center; }
@@ -714,150 +810,110 @@
 
     <!-- ===================== HOME ===================== -->
     <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
-      <section style="background: linear-gradient(168deg, #17414F 0%, #103241 55%, #0D2937 100%); color: #fff; padding: 88px 24px 96px">
-        <div style="max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 56px; align-items: center">
+      <section class="lvh-hero">
+        <div class="lvh-hero-in">
           <div>
-            <span style="display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(15,163,107,0.45); background: rgba(15,163,107,0.12); color: #7FE3B6; font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 7px 12px; border-radius: 999px">Base atualizada nos dias úteis</span>
-            <h1 style="font-size: 58px; line-height: 1.04; letter-spacing: -0.035em; font-weight: 800; margin: 22px 0 0; text-wrap: balance">Tudo sobre licitações. Em um só lugar.</h1>
-            <p style="font-family: 'Source Serif 4', Georgia, serif; font-size: 20px; line-height: 1.55; color: #BCCDD4; margin: 22px 0 0; max-width: 560px; text-wrap: pretty">Jurisprudência confiável, comunidade organizada por tema, capacitação acessível e consultoria técnica especializada — para quem trabalha com licitações e contratos administrativos, dos dois lados do balcão.</p>
-            <div style="display: flex; gap: 12px; margin-top: 34px; flex-wrap: wrap">
-              <button sc-camel-on-click="{{ goBiblioteca }}" style="background: #0FA36B; color: #06251A; border: 0; padding: 15px 24px; border-radius: 12px; font-size: 15.5px; font-weight: 700; cursor: pointer; box-shadow: 0 10px 26px rgba(15,163,107,0.3)" style-hover="background: #14B978">Pesquisar jurisprudência</button>
-              <button sc-camel-on-click="{{ goPlanos }}" style="background: rgba(255,255,255,0.07); color: #fff; border: 1px solid rgba(255,255,255,0.22); padding: 15px 24px; border-radius: 12px; font-size: 15.5px; font-weight: 700; cursor: pointer" style-hover="background: rgba(255,255,255,0.14)">Ver planos</button>
+            <span class="lvh-eyebrow">Licitações e contratos · Lei nº 14.133/2021</span>
+            <h1 class="lvh-h1">Ache o problema do edital <em>antes</em> do Tribunal de Contas.</h1>
+            <p class="lvh-lead">O agente de IA do Licitacon lê o seu edital, ETP ou termo de referência, confere item a item com a lei e com decisões de 90 fontes oficiais e devolve um parecer técnico com o risco, a providência e a redação sugerida.</p>
+            <div class="lvh-ctas">
+              <button class="lvh-btn" sc-camel-on-click="{{ goAgente }}">{{ heroCta }}</button>
+              <button class="lvh-btn-sec" sc-camel-on-click="{{ goBiblioteca }}">Pesquisar jurisprudência</button>
             </div>
-            <div style="display: flex; gap: 34px; margin-top: 42px; flex-wrap: wrap">
-              <div>
-                <div style="font-size: 26px; font-weight: 800; letter-spacing: -0.02em">8 fontes</div>
-                <div style="font-size: 13px; color: #93A9B2; margin-top: 4px">oficiais em coleta: TCU, CGU, STF, STJ, Tribunais de Contas de todos os estados e do DF, TCMs, Procuradorias-Gerais e Tribunais de Justiça estaduais, além da legislação</div>
+            <p class="lvh-micro">{{ heroMicro }}</p>
+          </div>
+          <div class="lvh-demo" aria-label="Exemplo de parecer gerado pelo agente">
+            <div class="lvh-doc">
+              <div class="lvh-doc-top"><span class="lvh-dot"></span><span>Exemplo · Edital de pregão eletrônico · registro de preços</span></div>
+              <div class="lvh-linhas" aria-hidden="true">
+                <span style="width: 92%"></span><span style="width: 78%"></span><span style="width: 86%"></span><span style="width: 64%"></span>
+                <span style="width: 90%"></span><span style="width: 72%"></span><span style="width: 81%"></span><span style="width: 58%"></span>
+                <i class="lvh-scan"></i>
               </div>
-              <div>
-                <div style="font-size: 26px; font-weight: 800; letter-spacing: -0.02em">Dias úteis</div>
-                <div style="font-size: 13px; color: #93A9B2; margin-top: 4px">Ciclo de atualização automática</div>
+              <div class="lvh-achados">
+                <sc-for list="{{ heroAchados }}" as="h" hint-placeholder-count="3">
+                  <div class="{{ h.classe }}"><b>{{ h.nivel }}</b><span>{{ h.texto }}</span></div>
+                </sc-for>
               </div>
-              <div>
-                <div style="font-size: 26px; font-weight: 800; letter-spacing: -0.02em">7 dias</div>
-                <div style="font-size: 13px; color: #93A9B2; margin-top: 4px">Teste completo, sem cartão</div>
-              </div>
+              <div class="lvh-doc-pe"><span>3 apontamentos · com a lei e a jurisprudência</span><span class="lvh-pdf">PDF · Word</span></div>
             </div>
           </div>
         </div>
       </section>
 
-      <section aria-label="Destaques da plataforma" style="max-width: 1240px; margin: -56px auto 0; padding: 0 24px; position: relative; z-index: 5">
-        <div sc-camel-on-mouse-enter="{{ pausar }}" sc-camel-on-mouse-leave="{{ retomar }}" style="background: #05121A; border: 1px solid rgba(127,227,182,0.16); border-radius: 26px; box-shadow: 0 30px 70px rgba(2,9,13,0.6); overflow: hidden; position: relative">
-          <span aria-hidden="true" style="position: absolute; top: -140px; right: -80px; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle, rgba(15,163,107,0.10) 0%, rgba(15,163,107,0) 70%); pointer-events: none"></span>
-          <span aria-hidden="true" style="position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px); background-size: 46px 46px; mask-image: radial-gradient(750px 340px at 78% 12%, #000 0%, transparent 78%); pointer-events: none"></span>
+      <section class="lvh-prova" aria-label="Fontes oficiais">
+        <div class="lvh-prova-in">
+          <sc-for list="{{ homeNumeros }}" as="n" hint-placeholder-count="4">
+            <div class="lvh-num"><strong class="lvh-num-v">{{ n.v }}</strong><span>{{ n.r }}</span></div>
+          </sc-for>
+        </div>
+        <p class="lvh-fontes">TCU · CGU · STF · STJ · Tribunais de Contas dos 26 estados e do DF · TCMs de SP, RJ, GO, BA e PA · Procuradorias-Gerais e Tribunais de Justiça de todo o país</p>
+      </section>
 
-          <div style="overflow: hidden; position: relative">
-            <div style="display: flex; width: 400%; transition: transform 780ms cubic-bezier(0.62,0.02,0.28,1); transform: {{ trackTransform }}">
-              <sc-for list="{{ slides }}" as="s" hint-placeholder-count="4">
-                <div aria-hidden="{{ s.oculto }}" style="flex: 0 0 25%; padding: 44px 46px 34px; display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 44px; align-items: center; min-height: 396px">
-                  <div>
-                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
-                      <span style="font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: {{ s.badgeCor }}; border: 1px solid {{ s.badgeBorda }}; background: {{ s.badgeBg }}; padding: 6px 11px; border-radius: 999px">{{ s.badge }}</span>
-                      <span style="font-size: 12.5px; color: #7E959E; font-weight: 600">{{ s.meta }}</span>
-                    </div>
-                    <h2 style="font-size: 38px; line-height: 1.08; letter-spacing: -0.035em; font-weight: 800; color: #fff; margin: 20px 0 0; text-wrap: balance">{{ s.titulo }}</h2>
-                    <p style="font-family: 'Source Serif 4', Georgia, serif; font-size: 17.5px; line-height: 1.6; color: #B3C6CD; margin: 16px 0 0; max-width: 520px; text-wrap: pretty">{{ s.texto }}</p>
-                    <div style="display: flex; gap: 7px; margin-top: 20px; flex-wrap: wrap">
-                      <sc-for list="{{ s.chips }}" as="ch" hint-placeholder-count="3">
-                        <span style="font-size: 12px; font-weight: 700; color: #9FE7C6; background: rgba(15,163,107,0.13); border: 1px solid rgba(15,163,107,0.3); padding: 6px 11px; border-radius: 999px">{{ ch }}</span>
-                      </sc-for>
-                    </div>
-                    <button sc-camel-on-click="{{ s.go }}" style="margin-top: 26px; background: #0FA36B; color: #06251A; border: 0; padding: 13px 22px; border-radius: 12px; font-size: 14.5px; font-weight: 700; cursor: pointer; box-shadow: 0 10px 26px rgba(15,163,107,0.3)" style-hover="background: #14B978">{{ s.cta }}</button>
-                  </div>
-
-                  <div style="background: rgba(255,255,255,0.055); border: 1px solid rgba(255,255,255,0.13); border-radius: 18px; padding: 20px; backdrop-filter: blur(6px)">
-                    <div style="display: flex; align-items: center; gap: 9px; padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.1)">
-                      <span aria-hidden="true" style="width: 8px; height: 8px; border-radius: 50%; background: #0FA36B; box-shadow: 0 0 0 4px rgba(15,163,107,0.18)"></span>
-                      <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: #8FA7B0">{{ s.painelTitulo }}</span>
-                    </div>
-                    <div style="display: flex; flex-direction: column; gap: 11px; margin-top: 14px">
-                      <sc-for list="{{ s.linhas }}" as="l" hint-placeholder-count="3">
-                        <div style="border: 1px solid rgba(255,255,255,0.1); border-left: 2px solid {{ l.barra }}; border-radius: 10px; padding: 12px 14px; background: rgba(255,255,255,0.04)">
-                          <div style="font-size: 11px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #7FE3B6">{{ l.rotulo }}</div>
-                          <div style="font-size: 14px; line-height: 1.5; color: #D3E0E5; margin-top: 5px; text-wrap: pretty">{{ l.texto }}</div>
-                        </div>
-                      </sc-for>
-                    </div>
-                    <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.1)">
-                      <span style="font-size: 24px; font-weight: 800; letter-spacing: -0.025em; color: #fff">{{ s.numero }}</span>
-                      <span style="font-size: 12.5px; color: #8FA7B0; line-height: 1.4">{{ s.numeroLabel }}</span>
-                    </div>
-                  </div>
-                </div>
-              </sc-for>
-            </div>
-          </div>
-
-          <div style="display: flex; align-items: center; gap: 16px; padding: 0 46px 30px; flex-wrap: wrap">
-            <div role="tablist" aria-label="Selecionar destaque" style="display: flex; gap: 8px; align-items: center">
-              <sc-for list="{{ pontos }}" as="pt" hint-placeholder-count="4">
-                <button sc-camel-on-click="{{ pt.ir }}" role="tab" aria-selected="{{ pt.ativo }}" aria-label="{{ pt.aria }}" style="border: 0; padding: 12px 0; background: none; cursor: pointer; min-height: 44px; display: flex; align-items: center">
-                  <span aria-hidden="true" style="display: block; height: 4px; width: {{ pt.largura }}; border-radius: 999px; background: {{ pt.fundo }}; transition: width 400ms ease, background 400ms ease"></span>
-                </button>
-              </sc-for>
-            </div>
-            <span style="font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; color: #7E959E">{{ contador }}</span>
-            <span style="flex: 1"></span>
-            <div style="display: flex; gap: 8px">
-              <button sc-camel-on-click="{{ anterior }}" aria-label="Destaque anterior" style="width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #fff; font-size: 16px; cursor: pointer" style-hover="background: rgba(255,255,255,0.15)">‹</button>
-              <button sc-camel-on-click="{{ proximo }}" aria-label="Próximo destaque" style="width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #fff; font-size: 16px; cursor: pointer" style-hover="background: rgba(255,255,255,0.15)">›</button>
-            </div>
-          </div>
+      <section class="lvh-sec">
+        <p class="lvh-kicker">Por que isso importa</p>
+        <h2 class="lvh-h2">Em licitação, é o detalhe pequeno que custa caro.</h2>
+        <div class="lvh-dores">
+          <sc-for list="{{ homeDores }}" as="d" hint-placeholder-count="3">
+            <article class="lvh-dor"><span class="lvh-dor-quem">{{ d.quem }}</span><h3>{{ d.t }}</h3><p>{{ d.d }}</p></article>
+          </sc-for>
         </div>
       </section>
 
-      <section style="max-width: 1240px; margin: 0 auto; padding: 84px 24px 24px">
-        <h2 style="font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #0F6B7E; margin: 0">As cinco ferramentas</h2>
-        <p style="font-size: 34px; line-height: 1.15; letter-spacing: -0.03em; font-weight: 800; margin: 12px 0 0; max-width: 720px; text-wrap: balance">O que hoje está espalhado em dez abas do navegador, reunido em um só ambiente profissional.</p>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-top: 40px">
+      <section class="lvh-sec lvh-sec-claro">
+        <p class="lvh-kicker">Como funciona</p>
+        <h2 class="lvh-h2">Três passos, um parecer que você pode usar.</h2>
+        <ol class="lvh-passos">
+          <sc-for list="{{ homePassos }}" as="ps" hint-placeholder-count="3">
+            <li class="lvh-passo"><span class="lvh-passo-n">{{ ps.n }}</span><h3>{{ ps.t }}</h3><p>{{ ps.d }}</p></li>
+          </sc-for>
+        </ol>
+        <button class="lvh-btn" style="margin-top: 30px" sc-camel-on-click="{{ goAgente }}">{{ heroCta }}</button>
+      </section>
+
+      <section class="lvh-sec">
+        <p class="lvh-kicker">Tudo em um só lugar</p>
+        <h2 class="lvh-h2">O que hoje está espalhado em dez abas do navegador.</h2>
+        <div class="lvh-bento">
           <sc-for list="{{ ferramentas }}" as="f" hint-placeholder-count="5">
-            <button sc-camel-on-click="{{ f.go }}" style="text-align: left; background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 24px; cursor: pointer; display: flex; flex-direction: column; gap: 10px; min-height: 210px; transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease" style-hover="transform: translateY(-3px); box-shadow: 0 16px 36px rgba(11,31,42,0.1); border-color: #0FA36B">
-              <span style="width: 40px; height: 40px; border-radius: 11px; background: #EAF2F1; color: #0F6B7E; display: grid; place-items: center; font-size: 19px; font-weight: 700">{{ f.icon }}</span>
-              <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: {{ f.tagColor }}">{{ f.tag }}</span>
-              <span style="font-size: 20px; font-weight: 800; letter-spacing: -0.02em">{{ f.titulo }}</span>
-              <span style="font-size: 14.5px; line-height: 1.55; color: #55666D; text-wrap: pretty">{{ f.desc }}</span>
-              <span style="margin-top: auto; font-size: 13.5px; font-weight: 700; color: #0FA36B">{{ f.cta }} →</span>
+            <button class="{{ f.classe }}" sc-camel-on-click="{{ f.go }}">
+              <span class="lvh-f-ic" aria-hidden="true">{{ f.icon }}</span>
+              <span class="lvh-f-tag">{{ f.tag }}</span>
+              <span class="lvh-f-t">{{ f.titulo }}</span>
+              <span class="lvh-f-d">{{ f.desc }}</span>
+              <span class="lvh-f-cta">{{ f.cta }} →</span>
             </button>
           </sc-for>
         </div>
       </section>
 
-      <section style="max-width: 1240px; margin: 0 auto; padding: 72px 24px">
-        <div style="background: #0A1F2A; border-radius: 22px; padding: 46px; color: #fff; display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 48px">
+      <section class="lvh-sec">
+        <div class="lvh-dif">
           <div>
-            <h2 style="font-size: 30px; line-height: 1.15; letter-spacing: -0.03em; font-weight: 800; margin: 0; text-wrap: balance">Por que não é mais uma base jurídica genérica</h2>
-            <p style="font-family: 'Source Serif 4', Georgia, serif; font-size: 17px; line-height: 1.6; color: #B3C6CD; margin-top: 16px">Especialização total no nicho de licitações e contratos administrativos — da taxonomia de temas até o futuro agente de IA.</p>
+            <h2 class="lvh-h2" style="color: #fff; margin: 0">Por que não é mais uma base jurídica genérica</h2>
+            <p class="lvh-dif-lead">Tudo aqui foi feito só para licitações e contratos administrativos, da classificação por tema até o roteiro que o agente segue.</p>
           </div>
-          <div style="display: grid; gap: 14px">
+          <div class="lvh-dif-lista">
             <sc-for list="{{ diferenciais }}" as="d" hint-placeholder-count="5">
-              <div style="display: flex; gap: 14px; align-items: flex-start; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 14px">
-                <span style="color: #0FA36B; font-weight: 800; font-size: 14px; flex: none; margin-top: 2px">✓</span>
-                <div>
-                  <div style="font-size: 16px; font-weight: 700">{{ d.titulo }}</div>
-                  <div style="font-size: 14.5px; line-height: 1.55; color: #9FB4BC; margin-top: 3px; text-wrap: pretty">{{ d.desc }}</div>
-                </div>
-              </div>
+              <div class="lvh-dif-item"><b>{{ d.titulo }}</b><span>{{ d.desc }}</span></div>
             </sc-for>
           </div>
         </div>
       </section>
 
-      <section style="max-width: 1240px; margin: 0 auto; padding: 0 24px 84px">
-        <h2 style="font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #0F6B7E; margin: 0 0 28px">Quem já usa</h2>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px">
-          <sc-for list="{{ depoimentos }}" as="t" hint-placeholder-count="3">
-            <figure style="margin: 0; background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 26px; display: flex; flex-direction: column; gap: 16px">
-              <blockquote style="margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-size: 17.5px; line-height: 1.55; color: #23343B; text-wrap: pretty">“{{ t.texto }}”</blockquote>
-              <figcaption style="margin-top: auto; display: flex; align-items: center; gap: 12px">
-                <span style="width: 38px; height: 38px; border-radius: 50%; background: #EAF2F1; color: #0F6B7E; display: grid; place-items: center; font-weight: 800; font-size: 14px">{{ t.iniciais }}</span>
-                <span>
-                  <span style="display: block; font-size: 14.5px; font-weight: 700">{{ t.nome }}</span>
-                  <span style="display: block; font-size: 13px; color: #6A7B82">{{ t.cargo }}</span>
-                </span>
-              </figcaption>
-            </figure>
-          </sc-for>
+      <section class="lvh-final">
+        <div class="lvh-final-in">
+          <h2 class="lvh-h2" style="color: #fff; margin: 0">Comece pelo que é grátis.</h2>
+          <ul class="lvh-gratis">
+            <sc-for list="{{ homeGratis }}" as="g" hint-placeholder-count="3"><li>{{ g }}</li></sc-for>
+          </ul>
+          <sc-if value="{{ temFundador }}" hint-placeholder-val="{{ true }}">
+            <p class="lvh-fund"><b>{{ fundTitulo }}</b> · {{ fundTexto }}</p>
+          </sc-if>
+          <div class="lvh-ctas" style="justify-content: center">
+            <button class="lvh-btn" sc-camel-on-click="{{ finalAcao }}">{{ finalCta }}</button>
+            <button class="lvh-btn-sec" sc-camel-on-click="{{ goPlanos }}">Ver planos</button>
+          </div>
         </div>
       </section>
     </sc-if>
@@ -2736,7 +2792,7 @@ const INSTITUCIONAL = {
     vigencia: "Versão 1.0 · vigente desde 1º de agosto de 2026",
     blocos: [
       { titulo: "1. Aceitação e capacidade", texto: "Ao criar uma conta ou usar a plataforma, você declara ter pelo menos 18 anos, ter capacidade civil e concordar com estes Termos e com a Política de Privacidade. Se você usa o Licitacon em nome de um órgão público ou de uma empresa, declara ter autorização para isso.", itens: [] },
-      { titulo: "2. O que a plataforma é — e o que não é", texto: "O Licitacon oferece: (a) busca em base de jurisprudência, normas e pareceres de fontes oficiais; (b) fórum de comunidade profissional; (c) cursos ministrados por Renato Garcia e hospedados na plataforma Hotmart; (d) consultoria técnica em gestão de licitações e contratos, prestada por especialista em gestão pública; (e) futuramente, agente de inteligência artificial de análise de procedimentos. Nada disso constitui consultoria jurídica, parecer jurídico, representação processual ou garantia de resultado em processo administrativo ou judicial.", itens: [] },
+      { titulo: "2. O que a plataforma é — e o que não é", texto: "O Licitacon oferece: (a) busca em base de jurisprudência, normas e pareceres de fontes oficiais; (b) fórum de comunidade profissional; (c) cursos ministrados por Renato Garcia e hospedados na plataforma Hotmart; (d) consultoria técnica em gestão de licitações e contratos, prestada por especialista em gestão pública; (e) agente de inteligência artificial de análise de documentos. Nada disso constitui consultoria jurídica, parecer jurídico, representação processual ou garantia de resultado em processo administrativo ou judicial.", itens: [] },
       { titulo: "3. Cadastro, conta e segurança", texto: "Você é responsável pela veracidade dos dados informados e pela guarda das suas credenciais. Contas são pessoais e intransferíveis: o compartilhamento de login com terceiros é motivo de suspensão. Use senha forte e exclusiva (ou o login com Google, com a verificação em duas etapas da sua conta Google ativada) e comunique imediatamente qualquer uso não autorizado.", itens: [] },
       { titulo: "4. Planos, cobrança e cancelamento", texto: "A Biblioteca Jurídica tem camada de acesso gratuito permanente. Os planos pagos são cobrados por meio do Mercado Pago Ltda., nosso processador de pagamentos, em ambiente PCI-DSS: o Licitacon não recebe nem armazena o número completo do seu cartão. As formas de pagamento e o próprio regime de renovação variam conforme quem contrata — pessoa física, empresa privada ou órgão da administração pública:", itens: [
         "Duas formas de contratar: por 1 mês, sem compromisso de renovação; ou por 12 meses, com mensalidade menor e acesso contínuo durante todo o período, à vista ou em até 12x sem juros — o total é o mesmo nas duas hipóteses de parcelamento.",
@@ -2883,7 +2939,7 @@ const SLIDES = [
   {
     tipo: "funcionalidade", badge: "Funcionalidade", meta: "Biblioteca Jurídica",
     titulo: "Busca com filtros combináveis, do texto oficial ao tema",
-    texto: "Órgão, estado, tipo de norma, tema e ano combinados na mesma consulta, com destaque do termo na ementa e link para a fonte oficial. Coleta automática em 8 fontes oficiais e na legislação. Gratuito para quem tem cadastro.",
+    texto: "Órgão, estado, tipo de norma, tema e ano combinados na mesma consulta, com destaque do termo na ementa e link para a fonte oficial. Coleta automática em 90 fontes oficiais de todo o país e na legislação. Gratuito para quem tem cadastro.",
     chips: ["TCU e CGU", "STF e STJ", "TCEs, TCDF e TCMs", "PGEs e TJs"],
     cta: "Pesquisar jurisprudência", destino: "biblioteca",
     painelTitulo: "Coleta automática", numero: "Dias úteis", numeroLabel: "coleta automática, com trilha de auditoria da origem",
@@ -3421,7 +3477,7 @@ class Component extends DCLogic {
       sb.from("forum_seguindo").select("topico_id, forum_topicos(nome)"),
       sb.from("biblioteca_pessoal").select("chave, dados, atualizado_em").like("chave", "nota-%").limit(1000),
       sb.rpc("meu_cupom_curso"),
-      sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg, documentos").order("criado_em", { ascending: false }).limit(30),
+      sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg, documentos, liberar_em").order("criado_em", { ascending: false }).limit(30),
       sb.rpc("minha_cota_analises"),
       sb.from("normas_usuario").select("id, nome, arquivo, tamanho, criado_em").order("criado_em", { ascending: false }).limit(30),
       sb.from("renovacoes").select("id, plano, ciclo, valor, status, proxima_cobranca, criado_em").order("criado_em", { ascending: false }).limit(10),
@@ -4228,6 +4284,7 @@ class Component extends DCLogic {
       msg = r.error ? "Dados salvos, mas não foi possível trocar o e-mail: " + traduzErroAuth(r.error) : "✓ Dados salvos. Para trocar o e-mail, confirme pelo link enviado ao novo endereço.";
     }
     this.setState({ perfilSalvo: true, perfilMsg: msg });
+    this.carregarOferta(); // o CPF libera a primeira análise grátis
   }
 
   toggleNotif = (id, canal) => () => {
@@ -4617,24 +4674,46 @@ class Component extends DCLogic {
 
       // home
       ferramentas: [
-        { icon: "⌕", tag: "Núcleo da plataforma", tagColor: "#0A7A50", titulo: "Biblioteca Jurídica", desc: "Busca com filtros por órgão, estado, tipo de norma, tema e ano. Coleta automática em TCU, CGU, STF, STJ, Tribunais de Contas de todos os estados e do DF, TCMs, Procuradorias-Gerais e Tribunais de Justiça estaduais, além da legislação.", cta: "Pesquisar agora", go: this.nav("biblioteca") },
-        { icon: "◍", tag: "Comunidade", tagColor: "#0F6B7E", titulo: "Fórum por tema", desc: "Perguntas organizadas por tema, com resposta oficial do especialista e escolha da melhor resposta. Setor público e privado conversando no mesmo lugar.", cta: "Ver tópicos", go: this.nav("forum") },
-        { icon: "▤", tag: "Capacitação", tagColor: "#0F6B7E", titulo: "Vitrine de cursos", desc: "Cursos com curadoria do Licitacon e desconto para assinantes — até 50% no plano Pro.", cta: "Explorar cursos", go: this.nav("cursos") },
-        { icon: "◈", tag: "Especialistas", tagColor: "#0F6B7E", titulo: "Consultoria técnica", desc: "Por escrito, em vídeo gravado ou reunião ao vivo, com desconto de assinante — e 1 consultoria por escrito por mês incluída no Pro.", cta: "Ver especialistas", go: this.nav("consultoria") },
-        { icon: "✦", tag: "Novo", tagColor: "#0A7A50", titulo: "Análise de documentos com IA", desc: "Envie o edital, o ETP ou o TR e receba um parecer técnico em PDF e Word, com o texto legal, a jurisprudência e a redação sugerida.", cta: "Analisar documento", go: this.nav("agente") }
-      ],
+        { icon: "✦", tag: "Agente de IA", titulo: "Análise de documentos com parecer técnico", desc: "Envie até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e receba um parecer em PDF e Word: constatação, texto legal, risco, providência, redação sugerida e jurisprudência. A primeira análise é grátis.", cta: "Analisar um documento", go: this.nav("agente"), big: true },
+        { icon: "⌕", tag: "Biblioteca Jurídica", titulo: "Jurisprudência de todo o país", desc: "TCU, Tribunais de Contas, PGEs e TJs com filtros por órgão, estado, tema e ano, e o link oficial em cada decisão. Grátis com cadastro.", cta: "Pesquisar agora", go: this.nav("biblioteca") },
+        { icon: "◍", tag: "Comunidade", titulo: "Fórum por tema", desc: "Perguntas organizadas por tema, com resposta oficial do especialista. Setor público e privado no mesmo lugar.", cta: "Ver tópicos", go: this.nav("forum") },
+        { icon: "◈", tag: "Especialista", titulo: "Consultoria técnica", desc: "Por escrito, em vídeo ou ao vivo, com desconto de assinante. O Pro inclui 1 consultoria por escrito por mês.", cta: "Ver consultoria", go: this.nav("consultoria") },
+        { icon: "▤", tag: "Capacitação", titulo: "Cursos", desc: "Cursos práticos de licitações e contratos, com até 50% de desconto no plano Pro.", cta: "Explorar cursos", go: this.nav("cursos") }
+      ].map((f) => ({ ...f, classe: "lvh-f" + (f.big ? " lvh-f-big" : "") })),
       diferenciais: [
-        { titulo: "Base que se atualiza sozinha", desc: "Coleta automática nos dias úteis no TCU, CGU, STF, STJ, Tribunais de Contas de todos os estados e do DF, TCMs, Procuradorias-Gerais e Tribunais de Justiça estaduais, além da legislação, com o link da fonte em cada item." },
-        { titulo: "Classificação por tema, não por data", desc: "Jurisprudência e perguntas do fórum organizadas pelo vocabulário de licitações: reajuste vai para reajuste, adesão a ata vai para adesão a ata." },
+        { titulo: "Base que se atualiza sozinha", desc: "Coleta automática nos dias úteis em 90 fontes oficiais, com a data e a origem de cada documento registradas." },
+        { titulo: "Classificação por tema, não por data", desc: "Reajuste vai para reajuste, adesão a ata vai para adesão a ata: jurisprudência e fórum organizados pelo vocabulário de licitações." },
         { titulo: "Fonte oficial em cada item", desc: "Toda decisão traz o link para o inteiro teor no portal de origem, para você conferir antes de citar." },
-        { titulo: "Os dois lados do balcão", desc: "Pregoeiros, agentes de contratação e controle interno lado a lado com fornecedores e consultores." },
-        { titulo: "Em breve: IA com fonte obrigatória", desc: "O agente em desenvolvimento vai buscar só na base do Licitacon e citar o documento exato em cada afirmação." }
+        { titulo: "IA que cita a lei e a decisão", desc: "O agente confere o texto legal e usa a jurisprudência da Biblioteca em cada apontamento. O parecer é opinativo: a decisão é sempre sua." },
+        { titulo: "Os dois lados do balcão", desc: "Agentes de contratação, pregoeiros e controle interno ao lado de fornecedores e consultores." }
       ],
-      depoimentos: [
-        { texto: "Antes eu abria seis abas e ainda ficava insegura na fundamentação do parecer. Hoje resolvo na busca por tema e cito o acórdão com link.", nome: "Ana Lúcia Ribeiro", cargo: "Agente de contratação · prefeitura do interior de SP", iniciais: "AL" },
-        { texto: "O fórum organizado por tema mudou meu dia a dia. Pergunta de reajuste vai para reajuste — não se perde em um grupo com 800 mensagens.", nome: "Ricardo Menezes", cargo: "Pregoeiro · autarquia federal", iniciais: "RM" },
-        { texto: "Como fornecedor, entender a jurisprudência antes de impugnar um edital me economizou duas participações mal fundamentadas.", nome: "Marcos Camargo", cargo: "Diretor · empresa de serviços terceirizados", iniciais: "MC" }
+      goAgente: this.nav("agente"),
+      heroCta: this.cortesiaAnalise() ? "Fazer minha primeira análise grátis" : "Analisar um documento",
+      heroMicro: this.cortesiaAnalise() ? "1 análise grátis por CPF · sem cartão · parecer em PDF e Word" : "Parecer em PDF e Word · até 3 documentos por análise",
+      heroAchados: [
+        ["alta", "Gravidade alta", "Julgamento por lote em registro de preços sem a justificativa do art. 82, § 1º."],
+        ["media", "Gravidade média", "Ata municipal admitindo adesão de órgãos federais e estaduais (art. 86, § 8º)."],
+        ["baixa", "Gravidade baixa", "Erro material na data do planejamento das quantidades."]
+      ].map(([c, nivel, texto]) => ({ classe: "lvh-ach " + c, nivel, texto })),
+      homeNumeros: [
+        { v: "90", r: "fontes oficiais monitoradas" },
+        { v: s.acervoN > 0 ? s.acervoN.toLocaleString("pt-BR") : "Dias úteis", r: s.acervoN > 0 ? "decisões e normas na Biblioteca" : "coleta automática" },
+        { v: "27", r: "estados e DF cobertos" },
+        { v: "Grátis", r: "pesquisa com cadastro" }
       ],
+      homeDores: [
+        { quem: "Quem conduz a licitação", t: "Um item sem justificativa vira impugnação", d: "E a impugnação vira suspensão do certame, apontamento do controle e responsabilidade de quem assinou o documento." },
+        { quem: "Quem disputa", t: "Uma exigência ilegal custa o contrato", d: "Se não for impugnada no prazo, ou se a planilha tiver um erro, a proposta fica pelo caminho." },
+        { quem: "Quem assessora e controla", t: "Fundamentar sem a decisão certa é risco", d: "Parecer sem a jurisprudência atual do tribunal certo é retrabalho, ou pior: uma orientação frágil." }
+      ],
+      homePassos: [
+        { n: "1", t: "Envie até 3 documentos", d: "Edital, ETP, TR, matriz de riscos ou planilhas, em PDF ou Excel. Você escolhe o regime: Lei 14.133, Lei 13.303 ou Lei 13.019." },
+        { n: "2", t: "O agente confere item a item", d: "Com o texto da lei, com o roteiro de verificação do Licitacon e com a jurisprudência da Biblioteca." },
+        { n: "3", t: "Receba o parecer", d: "Em PDF e Word, no formato ABNT: cada apontamento com gravidade, fundamento, providência e redação sugerida." }
+      ],
+      homeGratis: ["Biblioteca Jurídica com cadastro gratuito", "1ª análise do Agente IA grátis", "Teste de 7 dias, sem cartão"],
+      finalCta: s.usuario ? "Ir para o Agente IA" : "Criar minha conta grátis",
+      finalAcao: s.usuario ? this.nav("agente") : this.nav("cadastro"),
 
       // biblioteca (página interna antiga; o menu leva a biblioteca.html)
       q: s.q,
@@ -4884,7 +4963,7 @@ class Component extends DCLogic {
       })(),
       anPlanoTexto: (() => {
         const c = s.cotaAnalise;
-        if (!s.usuario) return (this.cortesiaAnalise() ? "Crie sua conta e faça a primeira análise grátis. Depois, o valor por análise é de R$ 290,00." : "Valor por análise: R$ 290,00.") + " Assinantes Básico e Premium têm desconto; o Pro inclui 2 análises por semana.";
+        if (!s.usuario) return (this.cortesiaAnalise() ? "Crie sua conta e faça a primeira análise grátis (uma por CPF). Depois, o valor por análise é de R$ 290,00." : "Valor por análise: R$ 290,00.") + " Assinantes Básico e Premium têm desconto; o Pro inclui 2 análises por semana.";
         if (this.creditoAnalise()) return "Você já tem uma análise liberada aguardando os documentos. Siga para a página de envio.";
         if (s.admin) return "Conta de administrador: análises sem limite e sem cobrança.";
         if (s.plano === "pro" && c && c.equipe) {
@@ -4897,7 +4976,14 @@ class Component extends DCLogic {
           return resta > 0 ? "Você tem " + resta + " de " + c.limite + " análises disponíveis nesta semana, sem custo adicional (renova na segunda-feira)."
             : "Você já usou as " + c.limite + " análises desta semana. Esta análise sai com 30% de desconto: " + brlSimples(this.precoAnalise()) + ".";
         }
-        if (this.cortesiaAnalise() && this.precoAnalise() === 0) return "Sua primeira análise é grátis, sem pagamento. Envie até 3 documentos da contratação e receba o parecer técnico. A partir da segunda, vale o preço do seu plano.";
+        if (this.cortesiaAnalise() && this.precoAnalise() === 0) {
+          const o = s.oferta || {}, hoje = new Date(Date.now() - 3 * 3600000).toISOString().slice(0, 10);
+          const adiada = o.cortesia_proximo_dia && String(o.cortesia_proximo_dia) > hoje;
+          return "Sua primeira análise é grátis, sem pagamento. Envie até 3 documentos da contratação e receba o parecer técnico. A partir da segunda, vale o preço do seu plano."
+            + (adiada ? " As análises grátis de hoje já se esgotaram: a sua entra na fila e é processada a partir de " + String(o.cortesia_proximo_dia).split("-").reverse().join("/") + ", com prioridade." : "");
+        }
+        const semCpf = s.oferta && s.oferta.cortesia_situacao === "sem_cpf" && !s.admin && !(s.plano === "pro" && s.cotaAnalise && Number(s.cotaAnalise.usadas) < Number(s.cotaAnalise.limite));
+        if (semCpf) return "Sua primeira análise pode ser grátis: informe um CPF válido em Minha conta → Perfil (uma análise grátis por CPF). Ou siga com a análise paga: " + brlSimples(this.precoAnalise()) + ".";
         if (s.plano === "basico" || s.plano === "premium") return "Valor por análise com o desconto do seu plano: " + brlSimples(this.precoAnalise()) + ". O pagamento é feito antes de seguir para o envio dos documentos.";
         return "Valor por análise: R$ 290,00, pago antes de seguir para o envio dos documentos.";
       })(),
@@ -4987,7 +5073,8 @@ class Component extends DCLogic {
         return {
           doc: titulo, status: st[0], cor: st[1], fundo: st[2], data: dataBR(a.criado_em),
           detalhe: a.status === "erro" ? (a.erro_msg || "Não foi possível concluir a análise.")
-            : a.status === "aguardando_documentos" ? "Análise liberada · envie os documentos para iniciar"
+            : a.status === "aguardando_documentos" ? "Análise liberada · envie os documentos para iniciar" + (a.liberar_em && new Date(a.liberar_em).getTime() > Date.now() ? " (análise grátis: processada a partir de " + dataBR(a.liberar_em) + ", com prioridade)" : "")
+            : a.status === "na_fila" && a.liberar_em && new Date(a.liberar_em).getTime() > Date.now() ? "Análise grátis na fila: o limite diário foi atingido; ela é processada a partir de " + dataBR(a.liberar_em) + ", com prioridade"
             : ((docs.length ? docs.map((d) => d.nome_arquivo).join(" · ") : (a.origem === "pncp" ? "PNCP" : (a.nome_arquivo || "PDF enviado")))
                + " · " + (a.cobranca === "franquia_pro" ? "incluída no Pro" : a.cobranca === "franquia_org" ? "incluída no plano da equipe" : brlSimples(Number(a.valor || 0)))),
           temResumo: a.status === "concluida" && !!r.situacao,
@@ -5133,7 +5220,7 @@ class Component extends DCLogic {
         ["Como funciona o plano para equipes?", "Você contrata a quantidade de acessos e quem contrata vira o gestor. Ele inclui as pessoas pelo e-mail e troca quando alguém sai da equipe. Cada acesso é de uma pessoa, e o desconto cresce com a quantidade: 5% de 3 a 5 acessos, 10% de 6 a 10 e 15% de 11 a 25, além dos 20% do anual."],
         ["O que o Agente IA faz e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. O Pro inclui 2 análises por semana; equipes Pro têm 6 por acesso por mês, somadas. Nos demais planos a análise é paga com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
         ["O que é o preço de fundador?", "É o preço de lançamento para os primeiros " + ((s.oferta && s.oferta.limite) || 100) + " assinantes: 30% de desconto no Básico, no Premium ou no Pro, no mensal ou no anual (não se soma ao desconto de 20% do anual nem aos planos de equipe). O preço fica travado enquanto a sua assinatura continuar ativa; se ela ficar mais de 30 dias sem renovação, o preço de fundador deixa de valer."],
-        ["A primeira análise do Agente IA é grátis mesmo?", "Sim. Toda conta com e-mail confirmado pode fazer uma análise grátis, com até 3 documentos, assinante ou não. Se a análise não puder ser concluída por falha técnica, a cortesia continua disponível."],
+        ["A primeira análise do Agente IA é grátis mesmo?", "Sim. Cada CPF tem direito a uma análise grátis, com até 3 documentos, assinante ou não: basta informar o CPF no perfil e confirmar o e-mail. Se a análise não puder ser concluída por falha técnica, a cortesia continua disponível. Quando o limite diário de análises grátis é atingido, a sua entra na fila e é processada no dia seguinte, com prioridade."],
         ["Posso mudar de plano depois?", "Sim. Basta contratar o novo plano; se for o mesmo plano, o tempo que ainda falta é somado ao novo período."]
       ].map(([q, a], i) => ({ q, a, aberta: s.faqAberta === i, sinal: s.faqAberta === i ? "−" : "+", alternar: () => this.setState((x) => ({ faqAberta: x.faqAberta === i ? -1 : i })) })),
       modos: [[false, "para mim"], [true, "para a minha equipe"]].map(([k, label]) => ({ label, ativo: !!s.modoEquipe === k,
@@ -5170,7 +5257,7 @@ class Component extends DCLogic {
         { label: "Nome completo", valor: s.perfil.nome, onInput: this.onPerfil("nome"), ajuda: "Exibido no fórum." },
         { label: "Celular", valor: s.perfil.celular, onInput: this.onPerfil("celular"), ajuda: "Com DDD. Usado só para contato sobre a sua conta." },
         { label: "E-mail", valor: s.perfil.email, onInput: this.onPerfil("email"), ajuda: "Usado para login e avisos. Trocar exige confirmar o novo endereço." },
-        { label: "CPF / CNPJ", valor: s.perfil.doc, onInput: this.onPerfil("doc"), ajuda: "Opcional. Para empresas, informe o CNPJ." },
+        { label: "CPF / CNPJ", valor: s.perfil.doc, onInput: this.onPerfil("doc"), ajuda: "Opcional. Com um CPF válido, você ganha uma análise grátis do Agente IA. Para empresas, informe o CNPJ." },
         { label: "Órgão ou empresa", valor: s.perfil.orgao, onInput: this.onPerfil("orgao"), ajuda: "Aparece junto do seu nome no fórum." },
         { label: "Cargo ou função", valor: s.perfil.cargo, onInput: this.onPerfil("cargo"), ajuda: "Ajuda a comunidade a calibrar as respostas." }
       ],

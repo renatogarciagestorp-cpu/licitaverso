@@ -353,20 +353,16 @@ Deno.serve(async (req) => {
         const { data: usadas } = await admin.rpc("analises_usadas_semana", { uid: usuario.id });
         franquia = Number(usadas ?? 0) < FRANQUIA_PRO_SEMANA;
       }
-      // primeira análise grátis (uma por conta, com e-mail confirmado), quando não há franquia
+      // primeira análise grátis (uma por CPF e por conta, com e-mail confirmado), quando não há franquia
       if (!franquia) {
         const { data: pendC } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
           .eq("status", "aguardando_documentos").eq("cobranca", "cortesia_boas_vindas").limit(1).maybeSingle();
         if (pendC) return resposta({ gratuito: true, cortesia: true, referencia: `analise:${pendC.id}`, id: pendC.id });
-        const { data: livre } = await admin.rpc("cortesia_disponivel", { uid: usuario.id });
-        if (livre && usuario.email_confirmed_at) {
-          const { data: nova, error } = await admin.from("analises").insert({
-            usuario_id: usuario.id, documento: "multiplos", origem: "arquivos", arquivo: null, pncp_link: null,
-            cobranca: "cortesia_boas_vindas", plano: vigente ?? null, valor: 0,
-            termo_aceito_em: new Date().toISOString(), termo_versao: String(corpo.termo_versao ?? "").slice(0, 20), status: "aguardando_documentos",
-          }).select("id").single();
-          if (error) throw error;
-          return resposta({ gratuito: true, cortesia: true, referencia: `analise:${nova.id}`, id: nova.id });
+        // 1 por CPF e por conta; acima de 20 por dia, a análise vai para a fila do primeiro dia com vaga (liberar_em)
+        if (usuario.email_confirmed_at) {
+          const { data: cort, error: eC } = await admin.rpc("criar_cortesia", { uid: usuario.id, p_plano: vigente ?? null, p_termo: String(corpo.termo_versao ?? "") });
+          if (eC) throw eC;
+          if (cort?.id) return resposta({ gratuito: true, cortesia: true, referencia: `analise:${cort.id}`, id: cort.id, liberar_em: cort.liberar_em ?? null });
         }
       }
       valor = franquia ? 0 : precoAnalise(vigente ?? null);
