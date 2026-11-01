@@ -1622,7 +1622,7 @@
         <div class="lvp-hero-in">
           <div class="lvp-hero-txt">
             <h1 class="lvp-h1">Planos para quem trabalha com licitação todo dia</h1>
-            <p class="lvp-lead">Todos incluem a Biblioteca Jurídica com decisões dos Tribunais de Contas de todo o país. O que muda é o fórum, os descontos em cursos e consultoria e quantas análises o Agente IA faz por você.</p>
+            <p class="lvp-lead">A Biblioteca Jurídica, com decisões de todo o país, é grátis para quem cria conta. Os planos liberam a participação no fórum, os descontos em cursos e consultoria e as análises do Agente IA.</p>
             <ul class="lvp-provas">
               <sc-for list="{{ provasPlanos }}" as="pv" hint-placeholder-count="3"><li>{{ pv }}</li></sc-for>
             </ul>
@@ -3148,13 +3148,13 @@ const EQ_MIN = 3, EQ_MAX = 25;
 const eqDesconto = (n) => (n >= 11 ? 0.15 : n >= 6 ? 0.1 : n >= 3 ? 0.05 : 0);
 const eqPreco = (plano, n, anual) => { const pa = Math.round(EQ_MENSAL[plano] * (1 - eqDesconto(n)) * (anual ? 0.8 : 1) * 100) / 100; return { pa, total: Math.round(pa * n * (anual ? 12 : 1) * 100) / 100 }; };
 const EQ_INCLUI = {
-  basico: ["Biblioteca Jurídica completa e fórum (leitura e participação) para cada acesso", "Descontos do Básico em cursos, consultoria e análises do Agente IA"],
-  premium: ["Tudo do Premium para cada acesso: Biblioteca, fórum, cursos e consultoria com desconto", "Agente IA com 15% de desconto por análise"],
+  basico: ["Fórum (leitura e participação) para cada acesso", "Descontos do Básico em cursos, consultoria e análises do Agente IA"],
+  premium: ["Tudo do Premium para cada acesso: fórum, cursos e consultoria com desconto", "Agente IA com 15% de desconto por análise"],
   pro: ["Tudo do Pro para cada acesso", "Agente IA: 6 análises por acesso por mês, somadas para a equipe", "1 consultoria por escrito por mês para a organização; as demais com 30% de desconto"]
 };
 const PLANO_BENEFICIOS = {
-  teste: ["Biblioteca Jurídica completa durante o teste", "Leitura do fórum da comunidade", "Sem cobrança automática ao final"],
-  basico: ["Biblioteca Jurídica completa, com anotações, marcadores e dossiês", "Fórum: leitura e participação", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "Agente IA: análise com 10% de desconto (R$ 261,00)"],
+  teste: ["Leitura do fórum da comunidade", "Biblioteca Jurídica (grátis com cadastro)", "Sem cobrança automática ao final"],
+  basico: ["Fórum: leitura e participação", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "Agente IA: análise com 10% de desconto (R$ 261,00)"],
   premium: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Agente IA: análise com 15% de desconto (R$ 246,50)", "Prioridade na agenda do especialista"],
   pro: ["Tudo do Premium", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "Agente IA: 2 análises por semana sem custo; a partir da 3ª, 30% de desconto (R$ 203,00)", "Selo de resposta oficial no fórum", "Suporte prioritário"]
 };
@@ -4227,7 +4227,7 @@ class Component extends DCLogic {
       const { error } = await this.sb.rpc("iniciar_teste");
       if (error) { this.setState({ pagando: false, pagamentoErro: error.message || "Não foi possível iniciar o teste." }); return; }
       await this.carregarDados();
-      this.setState({ pagando: false, pagamentoFeito: true, pagamentoMsg: "✓ Teste de 7 dias ativado. Aproveite a Biblioteca e o fórum." });
+      this.setState({ pagando: false, pagamentoFeito: true, pagamentoMsg: "✓ Teste de 7 dias ativado. Aproveite o fórum da comunidade." });
       return;
     }
 
@@ -4546,14 +4546,14 @@ class Component extends DCLogic {
         ? {
             nome: PLANO_NOME[vig.plano],
             detalhe: vig.plano === "teste"
-              ? "Teste gratuito de 7 dias: Biblioteca Jurídica completa e leitura do fórum. Ao final, nada é cobrado — escolha um plano se quiser continuar."
+              ? "Teste gratuito de 7 dias: leitura do fórum da comunidade. A Biblioteca Jurídica continua liberada depois do teste. Ao final, nada é cobrado — escolha um plano se quiser continuar."
               : "Ciclo de " + (vig.ciclo === "anual" ? "12 meses" : "1 mês") + " contratado em " + dataBR(vig.inicio) + (vig.metodo ? " · " + vig.metodo : "") + (vig.parcelas > 1 ? " em " + vig.parcelas + "x" : "") + ". Sem renovação automática: avisamos antes do fim do período.",
             preco: vig.plano === "teste" ? "Grátis" : brl(Number(vig.valor || 0)),
             rotulo: "acesso até", proxima: dataBR(vig.fim)
           }
         : s.organizacao
         ? { nome: PLANO_NOME[s.organizacao.plano] + " · Equipe", detalhe: "Acesso pelo plano de equipe de " + s.organizacao.nome + ". Detalhes na aba Equipe.", preco: "Pago pela organização", rotulo: "acesso até", proxima: dataBR(s.organizacao.fim) }
-        : { nome: "Sem plano", detalhe: "Sua conta dá acesso à Biblioteca Jurídica. Comece o teste de 7 dias ou assine para ler e participar do fórum, ter desconto em cursos e consultoria.", preco: "—", rotulo: "", proxima: "" };
+        : { nome: "Sem plano", detalhe: "Sua conta dá acesso livre à Biblioteca Jurídica, com anotações, marcadores e dossiês. Comece o teste de 7 dias ou assine para ler e participar do fórum, ter desconto em cursos e consultoria.", preco: "—", rotulo: "", proxima: "" };
 
     const nomeConta = s.perfil.nome || (s.usuario && s.usuario.email) || "Assinante";
     const notifs = [
@@ -4699,7 +4699,7 @@ class Component extends DCLogic {
         { v: "90", r: "fontes oficiais monitoradas" },
         { v: s.acervoN > 0 ? s.acervoN.toLocaleString("pt-BR") : "Dias úteis", r: s.acervoN > 0 ? "decisões e normas na Biblioteca" : "coleta automática" },
         { v: "27", r: "estados e DF cobertos" },
-        { v: "Grátis", r: "pesquisa com cadastro" }
+        { v: "Grátis", r: "Biblioteca liberada para quem cria conta" }
       ],
       homeDores: [
         { quem: "Quem conduz a licitação", t: "Um item sem justificativa vira impugnação", d: "E a impugnação vira suspensão do certame, apontamento do controle e responsabilidade de quem assinou o documento." },
@@ -5114,9 +5114,9 @@ class Component extends DCLogic {
           chave: k, itens: EQ_INCLUI[k].concat(["Gestor da equipe inclui e troca as pessoas", "Acesso pelo navegador, sem instalação"]) };
       })) : this.comPlanos([
         { nome: "Teste", base: 0, publico: "Conheça a plataforma antes de assinar.", preco: "7 dias", unidade: "sem cartão", nota: "", detalhePreco: "Sem cartão e sem cobrança automática ao final.", destaque: false, cta: s.plano ? "Plano já ativo" : "Começar teste", btnBg: "#F1F6F5", btnColor: "#0A1F2A",
-          itens: ["Acesso completo à Biblioteca Jurídica durante o teste", "Leitura do fórum da comunidade", "Sem cobrança automática ao final"] },
+          itens: ["Leitura do fórum da comunidade", "Conheça a plataforma antes de assinar", "Sem cobrança automática ao final"] },
         { nome: "Básico", base: 119.9, publico: "Profissionais individuais iniciantes.", preco: precoPlano(119.9), unidade: unidadePlano, nota: notaPlano(119.9), detalhePreco: detalhePlano(119.9), destaque: destaque === "Básico", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Biblioteca Jurídica completa, com anotações, marcadores e dossiês salvos na conta", "Fórum da comunidade: leitura e participação", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "Análise de documentos com IA com 10% de desconto"] },
+          itens: ["Fórum da comunidade: leitura e participação", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "Análise de documentos com IA com 10% de desconto"] },
         { nome: "Premium", base: 199.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(199.9), unidade: unidadePlano, nota: notaPlano(199.9), detalhePreco: detalhePlano(199.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
           itens: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Análise de documentos com IA com 15% de desconto", "Prioridade na agenda do especialista"] },
         { nome: "Pro", base: 479.9, publico: "Profissionais avançados e empresas.", preco: precoPlano(479.9), unidade: unidadePlano, nota: notaPlano(479.9), detalhePreco: detalhePlano(479.9), destaque: destaque === "Pro", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
@@ -5197,7 +5197,7 @@ class Component extends DCLogic {
       compLinhas: (() => {
         const eq = !!s.modoEquipe;
         const L = [
-          ["Biblioteca Jurídica nacional", ["Completa", "Completa", "Completa"]],
+          ["Biblioteca Jurídica nacional", ["Grátis com cadastro", "Grátis com cadastro", "Grátis com cadastro"]],
           ["Fórum da comunidade", ["Ler e participar", "Ler e participar", "Ler, participar e selo de resposta oficial"]],
           ["Cursos", ["10% de desconto", "15% de desconto", "50% de desconto"]],
           ["Consultoria técnica", ["10% de desconto", "15% de desconto", eq ? "1 por escrito por mês para a equipe; demais com 30%" : "1 por escrito por mês incluída; demais com 30%"]],
@@ -5206,7 +5206,7 @@ class Component extends DCLogic {
           ["Suporte prioritário", ["—", "—", "Sim"]]
         ];
         if (eq) L.push(["Gestor que inclui e troca as pessoas", ["Sim", "Sim", "Sim"]]);
-        return L.map(([rot, vals]) => ({ rot, vals: vals.map((t, i) => ({ txt: t, cls: t === "—" ? "lvp-nao" : (i === 2 && !/^Completa|^Ler e participar|^Sim$/.test(t) ? "lvp-forte" : (t === "Sim" ? "lvp-sim" : "")) })) }));
+        return L.map(([rot, vals]) => ({ rot, vals: vals.map((t, i) => ({ txt: t, cls: t === "—" ? "lvp-nao" : (i === 2 && !/^Completa|^Grátis|^Ler e participar|^Sim$/.test(t) ? "lvp-forte" : (t === "Sim" ? "lvp-sim" : "")) })) }));
       })(),
       garantiasPlanos: [
         { t: "Sem fidelidade", d: "Sem renovação automática, a não ser que você ative no cartão. Cancele quando quiser." },
