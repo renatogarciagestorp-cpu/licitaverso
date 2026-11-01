@@ -504,7 +504,7 @@
   .lvh-num-v { display: block; font-family: 'Source Serif 4', Georgia, serif; font-size: 34px; line-height: 1.1; font-weight: 600; color: #0A7A50; }
   .lvh-num > span { font-size: 13.5px; line-height: 1.4; color: #4A5D64; }
   .lvh-fontes { margin: 16px 0 0; font-size: 12.5px; line-height: 1.5; color: #55666D; }
-  .lvh-ag { background: #0A1F2A; color: #7FE3B6; border-radius: 6px; padding: 2px 7px; margin-right: 6px; font-size: 11.5px; letter-spacing: 0.04em; }
+  .lvh-ag { white-space: nowrap; background: #0A1F2A; color: #7FE3B6; border-radius: 6px; padding: 2px 7px; margin-right: 6px; font-size: 11.5px; letter-spacing: 0.04em; }
   .lvh-sec { max-width: 1240px; margin: 0 auto; padding: 84px 24px 0; }
   .lvh-kicker { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #0F6B7E; }
   .lvh-h2 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 38px; line-height: 1.12; letter-spacing: -0.015em; margin: 12px 0 0; max-width: 24ch; text-wrap: balance; color: #0B1F2A; }
@@ -588,6 +588,52 @@
     .lvh-scan { display: none; }
     .lvh-ach { animation: none; opacity: 1; transform: none; }
     .lvh-f, .lvh-free-card { transition: none; }
+  }
+  /* ---------- Agente IA ---------- */
+  .lva-hero { background: radial-gradient(800px 420px at 85% 10%, rgba(15,163,107,0.16), transparent 60%), #0A1F2A; color: #fff; padding: 60px 24px 72px; }
+  .lva-hero-in { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr); gap: 48px; align-items: center; }
+  .lva-h1 { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 46px; line-height: 1.08; letter-spacing: -0.015em; margin: 16px 0 0; text-wrap: balance; }
+  .lva-lead { font-size: 17px; line-height: 1.6; color: #B8CBD2; margin: 18px 0 0; max-width: 58ch; }
+  .lva-amostra { background: #F7FAF9; color: #0B1F2A; border-radius: 20px; padding: 20px; box-shadow: 0 36px 70px rgba(0,0,0,0.38); }
+  .lva-am-top { display: flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 700; color: #4A5D64; }
+  .lva-am-grav { margin-top: 14px; display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #B83232; background: #FCEBEB; border-radius: 8px; padding: 5px 10px; }
+  .lva-am { margin: 12px 0 0; display: grid; gap: 8px; }
+  .lva-am-l { background: #fff; border: 1px solid #E3EAE8; border-radius: 11px; padding: 10px 12px; }
+  .lva-am-l dt { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #0F6B7E; }
+  .lva-am-l dd { margin: 3px 0 0; font-size: 13.5px; line-height: 1.45; color: #26393F; }
+  .lva-corpo { max-width: 1180px; margin: 0 auto; padding: 0 24px 56px; display: grid; gap: 22px; }
+  .lva-passos { list-style: none; margin: -30px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; position: relative; }
+  .lva-passos li { background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 18px; display: grid; gap: 6px; box-shadow: 0 14px 34px rgba(11,31,42,0.08); }
+  .lva-passo-n { width: 30px; height: 30px; border-radius: 50%; background: #0FA36B; color: #06251A; font-weight: 800; font-size: 14px; display: grid; place-items: center; }
+  .lva-passos li > b { font-size: 15.5px; }
+  .lva-passo-d { font-size: 13.5px; line-height: 1.5; color: #55666D; }
+  .lva-duas { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 16px; align-items: stretch; }
+  .lva-card { background: #fff; border: 1px solid #E3E9E8; border-radius: 20px; padding: 26px; }
+  .lva-h2 { margin: 0; font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 26px; letter-spacing: -0.01em; color: #0B1F2A; }
+  .lva-sub { margin: 6px 0 0; font-size: 14px; color: #55666D; }
+  .lva-lista { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 10px; }
+  .lva-lista li { position: relative; padding-left: 26px; font-size: 14.5px; line-height: 1.55; color: #3D5058; }
+  .lva-lista li::before { content: "✓"; position: absolute; left: 0; top: 0; color: #0FA36B; font-weight: 900; }
+  .lva-lista-p li::before { content: "•"; color: #0F6B7E; }
+  .lva-lista-x li::before { content: "×"; color: #B83232; }
+  .lva-docs { margin-top: 12px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .lva-doc { border: 1px solid #E6EBEA; border-radius: 12px; padding: 10px 13px; display: grid; gap: 2px; }
+  .lva-doc > b { font-size: 14px; }
+  .lva-doc-f { font-size: 12px; font-weight: 800; color: #0F6B7E; }
+  .lva-doc-d { font-size: 13px; line-height: 1.45; color: #6A7B82; }
+  .lva-antes { background: #F1F6F5; border: 1px solid #E0EAE8; border-radius: 20px; padding: 24px; }
+  .lva-det-grid { margin-top: 14px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; align-items: start; }
+  .lva-det { background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 14px 16px; }
+  .lva-det summary { cursor: pointer; font-size: 15px; font-weight: 800; color: #0B1F2A; }
+  .lva-det-p { margin: 12px 0 0; font-size: 14px; line-height: 1.6; color: #3D5058; }
+  .lva-iniciar { scroll-margin-top: 90px; background: #fff; border: 2px solid #0FA36B; border-radius: 22px; padding: 26px; display: grid; gap: 16px; box-shadow: 0 24px 50px rgba(15,163,107,0.14); }
+  @media (max-width: 960px) {
+    .lva-hero { padding: 40px 16px 56px; }
+    .lva-hero-in { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+    .lva-h1 { font-size: 32px; }
+    .lva-corpo { padding: 0 16px 40px; }
+    .lva-passos, .lva-duas, .lva-det-grid, .lva-docs { grid-template-columns: minmax(0, 1fr); }
+    .lva-card, .lva-iniciar { padding: 20px; }
   }
   /* ---------- página Planos ---------- */
   .lvp-hero { background: #0A1F2A; color: #fff; padding: 56px 24px 120px; }
@@ -1389,74 +1435,70 @@
     <!-- ===================== AGENTE IA ===================== -->
     <sc-if value="{{ isAgente }}" hint-placeholder-val="{{ false }}">
       <sc-if value="{{ anEtapaInfo }}" hint-placeholder-val="{{ true }}">
-      <section style="background: radial-gradient(900px 420px at 80% -20%, #14424F 0%, #0A1F2A 60%); color: #fff; padding: 52px 24px 110px">
-        <div style="max-width: 980px; margin: 0 auto">
-          <span style="display: inline-block; border: 1px solid rgba(15,163,107,0.45); background: rgba(15,163,107,0.12); color: #7FE3B6; font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 7px 12px; border-radius: 999px">Agente IA · Leis 14.133, 13.303 e 13.019</span>
-          <h1 style="font-size: 40px; line-height: 1.08; letter-spacing: -0.035em; font-weight: 800; margin: 20px 0 0; text-wrap: balance">Análise de até 3 documentos com parecer técnico</h1>
-          <p style="font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; line-height: 1.6; color: #B9CBD2; margin: 18px 0 0; max-width: 760px">Você escolhe até 3 documentos da contratação — ETP, termo de referência, matriz de riscos, edital, memória de cálculo, plano de trabalho ou planilhas de custos — e o agente devolve um parecer técnico opinativo em PDF e Word, no formato ABNT. Leia as informações abaixo antes de continuar.</p>
+      <section class="lva-hero">
+        <div class="lva-hero-in">
+          <div>
+            <span class="lvh-eyebrow">Agente de IA · Leis 14.133, 13.303 e 13.019</span>
+            <h1 class="lva-h1">Um parecer técnico do seu edital, ETP ou TR, apontamento por apontamento.</h1>
+            <p class="lva-lead">Envie até 3 documentos da contratação. O agente confere cada item com a lei e com a jurisprudência da Biblioteca e devolve um parecer em PDF e Word, no formato ABNT, com a gravidade, o fundamento, a providência e a redação sugerida.</p>
+            <div class="lvh-ctas">
+              <button class="lvh-btn" sc-camel-on-click="{{ anIrIniciar }}">{{ anHeroCta }}</button>
+            </div>
+            <p class="lvh-micro">{{ anHeroMicro }}</p>
+          </div>
+          <div class="lva-amostra" aria-label="Exemplo ilustrativo de apontamento do parecer">
+            <div class="lva-am-top"><span class="lvh-ag">Agente de IA</span><span>Exemplo ilustrativo · apontamento do parecer</span></div>
+            <div class="lva-am-grav">Gravidade alta · Termo de Referência, item 8.3</div>
+            <dl class="lva-am">
+              <sc-for list="{{ anAmostra }}" as="a" hint-placeholder-count="5">
+                <div class="lva-am-l"><dt>{{ a.r }}</dt><dd>{{ a.t }}</dd></div>
+              </sc-for>
+            </dl>
+          </div>
         </div>
       </section>
-      <section style="max-width: 980px; margin: -70px auto 0; padding: 0 16px 40px; display: grid; gap: 16px">
-        <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px; box-shadow: 0 16px 40px rgba(11,31,42,0.08)">
-          <h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em">Como funciona</h2>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px">
-            <sc-for list="{{ anComoFunciona }}" as="c" hint-placeholder-count="4">
-              <div style="background: #F6F8F7; border-radius: 12px; padding: 14px">
-                <span style="display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #0A1F2A; color: #fff; font-weight: 800; font-size: 13px">{{ c.n }}</span>
-                <p style="margin: 10px 0 4px; font-size: 14.5px; font-weight: 800; color: #0B1F2A">{{ c.t }}</p>
-                <p style="margin: 0; font-size: 13.5px; line-height: 1.5; color: #55666D">{{ c.d }}</p>
-              </div>
-            </sc-for>
+
+      <section class="lva-corpo">
+        <ol class="lva-passos">
+          <sc-for list="{{ anComoFunciona }}" as="c" hint-placeholder-count="4">
+            <li><span class="lva-passo-n">{{ c.n }}</span><b>{{ c.t }}</b><span class="lva-passo-d">{{ c.d }}</span></li>
+          </sc-for>
+        </ol>
+
+        <div class="lva-duas">
+          <div class="lva-card">
+            <h2 class="lva-h2">O que o agente verifica</h2>
+            <ul class="lva-lista">
+              <sc-for list="{{ anOQueFaz }}" as="x" hint-placeholder-count="4"><li>{{ x }}</li></sc-for>
+            </ul>
+          </div>
+          <div class="lva-card">
+            <h2 class="lva-h2">Documentos que você pode enviar</h2>
+            <p class="lva-sub">Até 3 por análise, à sua escolha:</p>
+            <div class="lva-docs">
+              <sc-for list="{{ anPrecisa }}" as="d" hint-placeholder-count="5">
+                <div class="lva-doc"><b>{{ d.nome }}</b><span class="lva-doc-f">{{ d.formato }}</span><span class="lva-doc-d">{{ d.dica }}</span></div>
+              </sc-for>
+            </div>
           </div>
         </div>
-        <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px"><h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em">O que o agente faz</h2>
-              <div style="display: grid; gap: 9px">
-                <sc-for list="{{ anOQueFaz }}" as="x" hint-placeholder-count="4">
-                  <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; line-height: 1.55; color: #3D5058"><span aria-hidden="true" style="color: #0FA36B; font-weight: 800; flex: none">✓</span><span>{{ x }}</span></div>
-                </sc-for>
-              </div>
-        </div>
-        <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px"><h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em">O que ele precisa para analisar</h2>
-          <p style="margin: 0 0 12px; font-size: 14px; line-height: 1.55; color: #55666D">Até 3 documentos por análise, à sua escolha entre:</p>
-          <div style="display: grid; gap: 8px">
-            <sc-for list="{{ anPrecisa }}" as="d" hint-placeholder-count="5">
-              <div style="border: 1px solid #E6EBEA; border-radius: 11px; padding: 10px 13px">
-                <span style="font-size: 14px; font-weight: 800; color: #0B1F2A">{{ d.nome }}</span> <span style="font-size: 12px; font-weight: 700; color: #0F6B7E">· {{ d.formato }}</span>
-                <span style="display: block; font-size: 13px; line-height: 1.45; color: #6A7B82; margin-top: 2px">{{ d.dica }}</span>
-              </div>
-            </sc-for>
+
+        <div class="lva-antes">
+          <h2 class="lva-h2">Antes de enviar</h2>
+          <div class="lva-det-grid">
+            <details class="lva-det"><summary>Regras da análise</summary>
+              <ul class="lva-lista lva-lista-p"><sc-for list="{{ anRegras }}" as="x" hint-placeholder-count="4"><li>{{ x }}</li></sc-for></ul></details>
+            <details class="lva-det"><summary>Proteção de dados</summary>
+              <ul class="lva-lista lva-lista-p"><sc-for list="{{ anDados }}" as="x" hint-placeholder-count="4"><li>{{ x }}</li></sc-for></ul></details>
+            <details class="lva-det"><summary>O que não faz e limites</summary>
+              <ul class="lva-lista lva-lista-x"><sc-for list="{{ anNaoFaz }}" as="x" hint-placeholder-count="4"><li>{{ x }}</li></sc-for></ul></details>
+            <details class="lva-det"><summary>Parecer opinativo e tempo de análise</summary>
+              <p class="lva-det-p">O parecer aponta todos os aspectos identificados, dos críticos aos de baixa vulnerabilidade, e recomenda providências, mas não vincula quem o recebe. A decisão de ajustar ou manter cada ponto, e a responsabilidade por ela, é sempre de quem recebe o parecer (STF, MS 24.631/DF; Decreto-Lei 4.657/1942, art. 28). Não é parecer jurídico.</p>
+              <p class="lva-det-p">{{ anTempo }}</p></details>
           </div>
         </div>
-        <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px"><h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em">Regras</h2>
-              <div style="display: grid; gap: 9px">
-                <sc-for list="{{ anRegras }}" as="x" hint-placeholder-count="4">
-                  <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; line-height: 1.55; color: #3D5058"><span aria-hidden="true" style="color: #0F6B7E; font-weight: 800; flex: none">•</span><span>{{ x }}</span></div>
-                </sc-for>
-              </div>
-        </div>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px">
-          <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px"><h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em">Proteção de dados</h2>
-              <div style="display: grid; gap: 9px">
-                <sc-for list="{{ anDados }}" as="x" hint-placeholder-count="4">
-                  <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; line-height: 1.55; color: #3D5058"><span aria-hidden="true" style="color: #0F6B7E; font-weight: 800; flex: none">•</span><span>{{ x }}</span></div>
-                </sc-for>
-              </div>
-          </div>
-          <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px"><h2 style="margin: 0 0 12px; font-size: 20px; font-weight: 800; letter-spacing: -0.02em">O que não faz e limites</h2>
-              <div style="display: grid; gap: 9px">
-                <sc-for list="{{ anNaoFaz }}" as="x" hint-placeholder-count="4">
-                  <div style="display: flex; gap: 10px; align-items: flex-start; font-size: 14.5px; line-height: 1.55; color: #3D5058"><span aria-hidden="true" style="color: #8A1230; font-weight: 800; flex: none">×</span><span>{{ x }}</span></div>
-                </sc-for>
-              </div>
-          </div>
-        </div>
-        <div style="background: #0A1F2A; color: #fff; border-radius: 16px; padding: 22px 24px">
-          <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #7FE3B6">Parecer opinativo</span>
-          <p style="margin: 8px 0 0; font-size: 14.5px; line-height: 1.6; color: #D3E0E5">O parecer aponta todos os aspectos identificados — dos críticos aos de baixa vulnerabilidade — e recomenda providências, mas não vincula quem o recebe. A decisão de ajustar ou manter cada ponto, e a responsabilidade por ela, é sempre de quem recebe o parecer (STF, MS 24.631/DF; Decreto-Lei 4.657/1942, art. 28). Não é parecer jurídico.</p>
-          <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #7FE3B6; margin-top: 16px">Tempo de análise</span>
-          <p style="margin: 8px 0 0; font-size: 14.5px; line-height: 1.6; color: #D3E0E5">{{ anTempo }}</p>
-        </div>
-        <div style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 24px; border-color: #BFD3D0; display: grid; gap: 16px">
+
+        <div id="an-iniciar" class="lva-iniciar">
           <div>
             <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Seu plano</span>
             <p style="margin: 0; font-size: 19px; font-weight: 800; color: #0B1F2A">{{ anPlanoTitulo }}</p>
@@ -4975,6 +5017,16 @@ class Component extends DCLogic {
       // página 1: informações, plano e aceite
       anEtapaInfo: s.an.etapa !== "pedido" || !this.creditoAnalise(),
       anEtapaPedido: s.an.etapa === "pedido" && !!this.creditoAnalise(),
+      anIrIniciar: () => { const el = document.getElementById("an-iniciar"); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); },
+      anHeroCta: this.creditoAnalise() ? "Ir para o envio dos documentos" : (this.cortesiaAnalise() && (!s.usuario || this.precoAnalise() === 0) ? "Fazer minha análise grátis" : (this.precoAnalise() === 0 && s.usuario ? "Começar uma análise (sem custo)" : "Começar uma análise")),
+      anHeroMicro: this.cortesiaAnalise() ? "Primeira análise grátis, uma por CPF · parecer em PDF e Word" : (s.plano === "pro" ? "Plano Pro: 2 análises por semana incluídas" : "R$ 290,00 por análise · assinantes têm desconto · o Pro inclui 2 por semana"),
+      anAmostra: [
+        ["Constatação", "O termo de referência exige atestado de execução de 100% do quantitativo do objeto."],
+        ["Texto legal", "Lei 14.133/2021, art. 67, § 2º: a exigência de quantidades mínimas em atestados é limitada a 50% das parcelas de maior relevância."],
+        ["Jurisprudência", "Súmula TCU nº 263: exigência limitada às parcelas de maior relevância e valor significativo do objeto."],
+        ["Providência", "Reduzir a exigência para até 50% das parcelas de maior relevância, indicadas no processo."],
+        ["Redação sugerida", "“Atestado(s) que comprovem a execução de, no mínimo, 50% das parcelas de maior relevância indicadas no item 8.1.”"]
+      ].map(([r, t]) => ({ r, t })),
       anComoFunciona: [
         ["1", "Leia as condições e aceite", "Nesta página estão as regras, o que o agente faz e o que ele precisa. O aceite é obrigatório."],
         ["2", "Pagamento ou cota do Pro", "Assinante Pro usa uma das 2 análises da semana, sem custo. Os demais pagam antes de seguir para o envio."],
