@@ -41,8 +41,8 @@ Deno.serve(async (req) => {
         const html = moldura(`Não foi possível concluir a análise`, [
           `${esc(primeiro)}, não conseguimos analisar o documento <strong>${esc(doc)}</strong>${a.nome_arquivo ? ` (${esc(a.nome_arquivo)})` : ""}.`,
           `<strong>Motivo:</strong> ${esc(a.erro_msg || "falha no processamento.")}`,
-          a.cobranca === "franquia_pro"
-            ? "Esta análise não foi descontada da sua cota semanal. Você pode enviar o documento de novo."
+          (a.cobranca === "franquia_pro" || a.cobranca === "franquia_org")
+            ? "Esta análise não foi descontada da cota semanal. Você pode enviar o documento de novo."
             : "Como a análise foi paga, nossa equipe vai entrar em contato em até 1 dia útil para reprocessar ou estornar o valor.",
         ], { texto: "Ver minhas análises", url: link }, undefined, "Andamento de consultoria");
         await enviarEmail({ email: p.email, nome: p.nome }, `Análise do ${doc}: não foi possível concluir`, html);

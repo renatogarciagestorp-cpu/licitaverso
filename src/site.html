@@ -1786,6 +1786,22 @@
             </section>
           </sc-if>
 
+          <!-- EQUIPE -->
+          <sc-if value="{{ isEquipe }}" hint-placeholder-val="{{ false }}">
+            <section style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 26px 28px">
+              <span style="display: inline-block; font-size: 11.5px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; background: #EAF2F1; padding: 6px 11px; border-radius: 999px">Plano para equipes</span>
+              <h2 style="margin: 16px 0 0; font-size: 21px; font-weight: 800; letter-spacing: -0.02em">{{ equipeNome }}</h2>
+              <div style="display: grid; gap: 8px; margin-top: 16px">
+                <sc-for list="{{ equipeLinhas }}" as="l" hint-placeholder-count="4">
+                  <div style="display: flex; gap: 12px; font-size: 14.5px; border-bottom: 1px solid #EEF2F1; padding-bottom: 8px"><span style="min-width: 120px; color: #6A7B82">{{ l.rot }}</span><b style="font-weight: 600">{{ l.val }}</b></div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ equipeGestor }}" hint-placeholder-val="{{ true }}">
+                <button sc-camel-on-click="{{ abrirEquipe }}" style="margin-top: 18px; background: #0FA36B; color: #06251A; border: 0; border-radius: 10px; padding: 11px 16px; font-size: 14px; font-weight: 700; cursor: pointer">Gerenciar acessos</button>
+              </sc-if>
+            </section>
+          </sc-if>
+
           <!-- PRIVACIDADE -->
           <sc-if value="{{ isPrivacidade }}" hint-placeholder-val="{{ false }}">
             <section style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 26px 28px">
@@ -2971,6 +2987,7 @@ class Component extends DCLogic {
     cookies: lsLer("cookies"),
     docAberto: null,
     contaTab: "perfil",
+    organizacao: null,
     institTab: "sobre",
     comprador: "fisica",
     metodo: "pix", renovacaoAuto: false, renovacoes: [],
@@ -3139,7 +3156,7 @@ class Component extends DCLogic {
 
   limparDados() {
     this.setState({
-      admin: false, plano: null, assinaturas: [], pagamentos: [], consultorias: [], acessosCurso: [], seguindo: [], favBib: [], analises: [], cotaAnalise: null,
+      admin: false, plano: null, organizacao: null, assinaturas: [], pagamentos: [], consultorias: [], acessosCurso: [], seguindo: [], favBib: [], analises: [], cotaAnalise: null,
       perfil: { nome: "", celular: "", email: "", doc: "", orgao: "", cargo: "" }, notif: NOTIF_PADRAO, forumPerguntas: [], forumTopicos: null
     });
   }
@@ -3147,7 +3164,7 @@ class Component extends DCLogic {
   async carregarDados() {
     const sb = this.sb, u = this.state.usuario;
     if (!sb || !u) return;
-    const [perfil, plano, assin, pags, cons, acessos, seg, bib, cupom, anal, cota, normas, renov] = await Promise.all([
+    const [perfil, plano, assin, pags, cons, acessos, seg, bib, cupom, anal, cota, normas, renov, orgR] = await Promise.all([
       sb.from("perfis").select("*").eq("id", u.id).maybeSingle(),
       sb.rpc("meu_plano"),
       sb.from("assinaturas").select("*").order("criado_em", { ascending: false }).limit(50),
@@ -3160,7 +3177,8 @@ class Component extends DCLogic {
       sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg, documentos").order("criado_em", { ascending: false }).limit(30),
       sb.rpc("minha_cota_analises"),
       sb.from("normas_usuario").select("id, nome, arquivo, tamanho, criado_em").order("criado_em", { ascending: false }).limit(30),
-      sb.from("renovacoes").select("id, plano, ciclo, valor, status, proxima_cobranca, criado_em").order("criado_em", { ascending: false }).limit(10)
+      sb.from("renovacoes").select("id, plano, ciclo, valor, status, proxima_cobranca, criado_em").order("criado_em", { ascending: false }).limit(10),
+      sb.rpc("minha_organizacao")
     ]);
     const p = perfil.data || {};
     const planoVig = plano.data || null;
@@ -3183,7 +3201,8 @@ class Component extends DCLogic {
       analises: (anal && !anal.error && anal.data) || [],
       cotaAnalise: (cota && !cota.error && cota.data) || null,
       normasUsuario: (normas && !normas.error && normas.data) || [],
-      renovacoes: (renov && !renov.error && renov.data) || []
+      renovacoes: (renov && !renov.error && renov.data) || [],
+      organizacao: (orgR && !orgR.error && orgR.data) || null
     });
     this.vigiarAnalises();
     if (this.state.page === "forum") this.carregarForum();
@@ -4146,6 +4165,8 @@ class Component extends DCLogic {
             preco: vig.plano === "teste" ? "Grátis" : brl(Number(vig.valor || 0)),
             rotulo: "acesso até", proxima: dataBR(vig.fim)
           }
+        : s.organizacao
+        ? { nome: PLANO_NOME[s.organizacao.plano] + " · Equipe", detalhe: "Acesso pelo plano de equipe de " + s.organizacao.nome + ". Detalhes na aba Equipe.", preco: "Pago pela organização", rotulo: "acesso até", proxima: dataBR(s.organizacao.fim) }
         : { nome: "Sem plano", detalhe: "Sua conta dá acesso à Biblioteca Jurídica. Comece o teste de 7 dias ou assine para ler e participar do fórum, ter desconto em cursos e consultoria.", preco: "—", rotulo: "", proxima: "" };
 
     const nomeConta = s.perfil.nome || (s.usuario && s.usuario.email) || "Assinante";
@@ -4633,7 +4654,7 @@ class Component extends DCLogic {
           detalhe: a.status === "erro" ? (a.erro_msg || "Não foi possível concluir a análise.")
             : a.status === "aguardando_documentos" ? "Análise liberada · envie os documentos para iniciar"
             : ((docs.length ? docs.map((d) => d.nome_arquivo).join(" · ") : (a.origem === "pncp" ? "PNCP" : (a.nome_arquivo || "PDF enviado")))
-               + " · " + (a.cobranca === "franquia_pro" ? "incluída no Pro" : brlSimples(Number(a.valor || 0)))),
+               + " · " + (a.cobranca === "franquia_pro" ? "incluída no Pro" : a.cobranca === "franquia_org" ? "incluída no plano da equipe" : brlSimples(Number(a.valor || 0)))),
           temResumo: a.status === "concluida" && !!r.situacao,
           situacao: r.situacao || "",
           contagem: "Apontamentos: " + Number(r.alta || 0) + " de gravidade alta, " + Number(r.media || 0) + " média e " + Number(r.baixa || 0) + " baixa.",
@@ -4707,7 +4728,7 @@ class Component extends DCLogic {
       contaTabs: [
         ["perfil", "Perfil", "◎"], ["assinatura", "Assinatura", "◫"], ["atividade", "Atividade", "★"],
         ["notificacoes", "Notificações", "🔔"], ["privacidade", "Privacidade", "⛨"]
-      ].map(([key, label, icon]) => ({
+      ].concat(s.organizacao ? [["equipe", "Equipe", "◉"]] : []).map(([key, label, icon]) => ({
         label, icon, ativo: s.contaTab === key, abrir: this.setContaTab(key),
         bg: s.contaTab === key ? "#0A1F2A" : "transparent",
         cor: s.contaTab === key ? "#FFFFFF" : "#3D5058"
@@ -4717,6 +4738,15 @@ class Component extends DCLogic {
       isAtividade: s.contaTab === "atividade",
       isNotificacoes: s.contaTab === "notificacoes",
       isPrivacidade: s.contaTab === "privacidade",
+      isEquipe: s.contaTab === "equipe" && !!s.organizacao,
+      equipeNome: (s.organizacao && s.organizacao.nome) || "",
+      equipeLinhas: (() => { const o = s.organizacao; if (!o) return [];
+        const l = [["Plano", { basico: "Básico", premium: "Premium", pro: "Pro" }[o.plano] + " para equipes"], ["Acessos", o.usados + " de " + o.acessos + " em uso"],
+          ["Vigência", "até " + brData(String(o.fim).slice(0, 10))], ["Seu papel", o.gestor ? "Gestor (inclui e retira acessos)" : "Membro"]];
+        if (o.plano === "pro") { l.push(["Agente IA", o.analises_semana + " de " + o.limite_semana + " análises usadas nesta semana (franquia da equipe)"]); l.push(["Consultoria", "1 consultoria por escrito por mês incluída para a equipe"]); }
+        return l.map(([rot, val]) => ({ rot, val })); })(),
+      equipeGestor: !!(s.organizacao && s.organizacao.gestor),
+      abrirEquipe: async () => { if (!window.LV_EQUIPE) await carregarScript(baseSite() + "equipe.js?v=1"); window.LV_EQUIPE.abrir(() => this.carregarDados()); },
       isAdmin: s.admin,
       abrirPainel: () => { window.location.href = "painel.html"; },
 

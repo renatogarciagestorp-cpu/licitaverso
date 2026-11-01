@@ -186,6 +186,10 @@ Deno.serve(async (req) => {
     const { data: perfil } = await admin.from("perfis").select("nome, email, admin").eq("id", usuario.id).maybeSingle();
     const ehAdmin = !!perfil?.admin && nivelDoToken(req) === "aal2"; // administrador (com verificação em duas etapas): sem cobrança
     const { data: vigente } = await admin.rpc("plano_vigente", { uid: usuario.id });
+    // organização (plano de equipe) da pessoa, se houver
+    const { data: orgId } = await admin.rpc("org_do_usuario", { uid: usuario.id });
+    const { data: org } = orgId ? await admin.from("organizacoes").select("id, plano, acessos").eq("id", orgId).maybeSingle() : { data: null };
+    const orgPro = !!org && org.plano === "pro";
     const retorno = urlDeRetorno(corpo.retorno);
     const metodo = String(corpo.metodo ?? "");
     const excluir = (EXCLUIR[metodo] ?? []).map((id) => ({ id }));
@@ -252,11 +256,13 @@ Deno.serve(async (req) => {
         .map((a: any) => ({ caminho: a.caminho.slice(0, 300), nome: String(a.nome ?? "").slice(0, 160), tamanho: Number(a.tamanho) || 0 }));
 
       // Pro: 1 consultoria por escrito por mês incluída
+      // Pro individual: 1 por mês por pessoa; plano de equipe Pro: 1 por mês para a organização inteira
       let franquiaLivre = false;
       if (vigente === "pro" && modalidade === "escrita") {
-        const { count } = await admin.from("consultorias").select("id", { count: "exact", head: true })
-          .eq("usuario_id", usuario.id).eq("modalidade", "escrita").eq("valor", 0).neq("status", "cancelada")
-          .gte("criado_em", inicioMesBR().toISOString());
+        let busca = admin.from("consultorias").select("id", { count: "exact", head: true })
+          .eq("modalidade", "escrita").eq("valor", 0).neq("status", "cancelada").gte("criado_em", inicioMesBR().toISOString());
+        busca = orgPro ? busca.eq("org_id", org!.id) : busca.eq("usuario_id", usuario.id);
+        const { count } = await busca;
         franquiaLivre = (count ?? 0) === 0;
       }
       valor = ehAdmin ? 0 : precoConsultoria(modalidade, vigente ?? null, franquiaLivre);
@@ -264,7 +270,7 @@ Deno.serve(async (req) => {
 
       const gratuita = valor <= 0;
       const { data: nova, error } = await admin.from("consultorias").insert({
-        usuario_id: usuario.id, modalidade, assunto, descricao, plano: vigente ?? null, valor, anexos,
+        usuario_id: usuario.id, modalidade, assunto, descricao, plano: vigente ?? null, valor, anexos, org_id: orgPro ? org!.id : null,
         termo_aceito_em: new Date().toISOString(), termo_versao: String(corpo.termo_versao ?? "").slice(0, 20),
         status: gratuita ? "recebida" : "aguardando_pagamento",
       }).select("id").single();
@@ -289,8 +295,24 @@ Deno.serve(async (req) => {
         if (error) throw error;
         return resposta({ gratuito: true, referencia: `analise:${nova.id}`, id: nova.id });
       }
+      // plano de equipe Pro: franquia somada (2 análises por acesso por semana), compartilhada pela equipe
+      if (orgPro) {
+        const { data: pendOrg } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
+          .eq("status", "aguardando_documentos").eq("cobranca", "franquia_org").limit(1).maybeSingle();
+        if (pendOrg) return resposta({ gratuito: true, referencia: `analise:${pendOrg.id}`, id: pendOrg.id });
+        const { data: usadasOrg } = await admin.rpc("analises_usadas_org", { org: org!.id });
+        if (Number(usadasOrg ?? 0) < FRANQUIA_PRO_SEMANA * Number(org!.acessos)) {
+          const { data: nova, error } = await admin.from("analises").insert({
+            usuario_id: usuario.id, documento: "multiplos", origem: "arquivos", arquivo: null, pncp_link: null,
+            cobranca: "franquia_org", plano: "pro", valor: 0, org_id: org!.id,
+            termo_aceito_em: new Date().toISOString(), termo_versao: String(corpo.termo_versao ?? "").slice(0, 20), status: "aguardando_documentos",
+          }).select("id").single();
+          if (error) throw error;
+          return resposta({ gratuito: true, referencia: `analise:${nova.id}`, id: nova.id });
+        }
+      }
       let franquia = false;
-      if (vigente === "pro") {
+      if (vigente === "pro" && !orgPro) {
         // reaproveita uma análise da cota ainda sem documentos, para não consumir a cota duas vezes
         const { data: pendente } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
           .eq("status", "aguardando_documentos").eq("cobranca", "franquia_pro").limit(1).maybeSingle();

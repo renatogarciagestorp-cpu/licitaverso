@@ -133,7 +133,7 @@ async function iniciar() {
 }
 
 const ABAS = [
-  ["resumo", "Visão geral"], ["assinantes", "Assinantes"], ["consultorias", "Consultorias"], ["analises", "Análises IA"], ["forum", "Fórum"],
+  ["resumo", "Visão geral"], ["assinantes", "Assinantes"], ["organizacoes", "Equipes"], ["consultorias", "Consultorias"], ["analises", "Análises IA"], ["forum", "Fórum"],
   ["cursos", "Cursos"], ["mensagens", "Mensagens"], ["assistente", "Assistente"], ["lgpd", "Pedidos LGPD"], ["espera", "Lista de espera"], ["registro", "Registro"]
 ];
 let contagens = {};
@@ -158,6 +158,91 @@ function vigente(assins, uid) {
 }
 
 const TELAS = {
+  async organizacoes(el) {
+    const [orgs, membros] = await Promise.all([
+      q(sb.from("organizacoes").select("*").order("criado_em", { ascending: false }).limit(500)),
+      q(sb.from("organizacao_membros").select("*").order("papel").order("email").limit(5000))
+    ]);
+    const porOrg = {}; membros.forEach((m) => (porOrg[m.org_id] = porOrg[m.org_id] || []).push(m));
+    const desc = (n) => n >= 11 ? 0.25 : n >= 6 ? 0.2 : n >= 3 ? 0.15 : 0;
+    const MENSAL = { basico: 119.9, premium: 199.9, pro: 479.9 };
+    const preco = (plano, n, ciclo) => { const pa = MENSAL[plano] * (1 - desc(n)) * (ciclo === "anual" ? 0.8 : 1); return { pa, total: pa * n * (ciclo === "anual" ? 12 : 1) }; };
+    el.innerHTML = '<h1>Equipes (empresas e órgãos)</h1><p class="sub">Planos com vários acessos nominais por e-mail. Desconto por acesso: 3–5 = 15%, 6–10 = 20%, 11+ = 25% (o anual soma mais 20%). No Pro, as análises do agente são somadas para a equipe (2 por acesso por semana) e a consultoria por escrito incluída é 1 por mês para a organização.</p>' +
+      '<div class="caixa"><h2>Nova equipe</h2><div class="form">' +
+      '<label>Nome<input type="text" id="oNome" placeholder="Ex.: Prefeitura de Maricá — Secretaria de Compras"></label>' +
+      '<label>CNPJ<input type="text" id="oCnpj"></label>' +
+      '<label>Tipo<select id="oTipo"><option value="publica">Órgão público</option><option value="privada">Empresa privada</option></select></label>' +
+      '<label>Plano<select id="oPlano"><option value="pro">Pro</option><option value="premium">Premium</option><option value="basico">Básico</option></select></label>' +
+      '<label>Acessos<input type="number" id="oAcessos" min="1" max="500" value="4"></label>' +
+      '<label>Ciclo<select id="oCiclo"><option value="anual">Anual</option><option value="mensal">Mensal</option></select></label>' +
+      '<label>Início<input type="date" id="oIni"></label><label>Fim<input type="date" id="oFim"></label>' +
+      '<label>Origem<select id="oOrigem"><option value="empenho">Empenho / contrato público</option><option value="manual">Pagamento fora do site</option><option value="cortesia">Cortesia</option></select></label>' +
+      '<label>Valor total (R$)<input type="number" id="oValor" step="0.01" min="0"></label>' +
+      '<label>E-mail do gestor<input type="email" id="oGestor" placeholder="quem vai administrar os acessos"></label>' +
+      '<label class="larga">Observação (nº do empenho, processo…)<input type="text" id="oObs"></label>' +
+      '</div><p class="fraco" id="oPreco" style="margin:8px 0 0"></p><div class="barra" style="margin-top:12px"><button class="btn verde" id="oCriar">Criar equipe</button></div></div>' +
+      '<div class="caixa"><h2>Equipes cadastradas</h2>' + (orgs.length ? orgs.map((o) => {
+        const ms = porOrg[o.id] || []; const cls = o.status === "ativa" && new Date(o.fim) > new Date() ? "ok" : o.status === "pendente" ? "espera" : "alerta";
+        return '<div class="caixa" style="margin:10px 0"><div class="barra" style="justify-content:space-between"><div><b>' + esc(o.nome) + '</b> <span class="etq ' + cls + '">' + esc(o.status) + "</span><br>" +
+          '<span class="fraco">' + (o.tipo === "publica" ? "Órgão público" : "Empresa") + (o.cnpj ? " · CNPJ " + esc(o.cnpj) : "") + " · " + PLANO[o.plano] + " · " + o.acessos + " acessos (" + ms.length + " em uso) · " + esc(o.ciclo) + " · " + data(o.inicio) + " a " + data(o.fim) + " · " + brl(o.valor) + " · " + esc(o.origem) + "</span>" +
+          (o.observacao ? '<br><span class="fraco">' + esc(o.observacao) + "</span>" : "") + "</div>" +
+          '<div class="barra"><button class="btn claro" data-oacessos="' + o.id + '">Alterar acessos/fim</button>' + (o.status === "ativa" ? '<button class="btn perigo" data-oencerrar="' + o.id + '">Encerrar</button>' : '<button class="btn claro" data-oativar="' + o.id + '">Ativar</button>') + "</div></div>" +
+          '<table class="tabela" style="margin-top:8px"><tbody>' + ms.map((m) => "<tr><td>" + esc(m.email) + "</td><td>" + (m.papel === "gestor" ? '<span class="etq">gestor</span>' : "membro") + '</td><td><button class="btn claro" data-otirar="' + m.id + '">Retirar</button>' + (m.papel === "gestor" ? "" : ' <button class="btn claro" data-ogestor="' + m.id + '">Tornar gestor</button>') + "</td></tr>").join("") + "</tbody></table>" +
+          '<div class="barra" style="margin-top:8px"><input type="email" placeholder="incluir e-mail" id="oinc-' + o.id + '" style="flex:1;min-width:200px"><button class="btn claro" data-oincluir="' + o.id + '">Incluir acesso</button></div></div>';
+      }).join("") : '<p class="fraco">Nenhuma equipe ainda.</p>') + "</div>";
+    const hoje = new Date(), umAno = new Date(); umAno.setFullYear(umAno.getFullYear() + 1);
+    const $ = (id) => document.getElementById(id);
+    $("oIni").value = hoje.toISOString().slice(0, 10); $("oFim").value = umAno.toISOString().slice(0, 10);
+    const atualizaPreco = () => { const n = Math.max(1, Number($("oAcessos").value) || 1); const r = preco($("oPlano").value, n, $("oCiclo").value);
+      $("oPreco").textContent = "Tabela: " + brl(r.pa) + " por acesso/mês (desconto de " + Math.round(desc(n) * 100) + "%" + ($("oCiclo").value === "anual" ? " + 20% do anual" : "") + ") → total " + brl(r.total) + ($("oCiclo").value === "anual" ? " por ano" : " por mês") + (n > 25 ? " · acima de 25 acessos, preço sob consulta" : "");
+      if (!$("oValor").dataset.mexido) $("oValor").value = r.total.toFixed(2); };
+    ["oAcessos", "oPlano", "oCiclo"].forEach((k) => $(k).oninput = atualizaPreco); $("oValor").oninput = () => { $("oValor").dataset.mexido = "1"; }; atualizaPreco();
+    $("oCriar").onclick = async () => {
+      const nome = $("oNome").value.trim(), gestor = $("oGestor").value.trim().toLowerCase();
+      if (nome.length < 3) return toast("Informe o nome da equipe.", true);
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(gestor)) return toast("Informe o e-mail do gestor.", true);
+      const reg = { nome, cnpj: $("oCnpj").value.trim() || null, tipo: $("oTipo").value, plano: $("oPlano").value, acessos: Math.max(1, Number($("oAcessos").value) || 1),
+        ciclo: $("oCiclo").value, inicio: new Date($("oIni").value + "T00:00:00-03:00").toISOString(), fim: new Date($("oFim").value + "T23:59:59-03:00").toISOString(),
+        origem: $("oOrigem").value, valor: Number($("oValor").value) || 0, observacao: $("oObs").value.trim() || null, status: "ativa" };
+      const { data: nova, error } = await sb.from("organizacoes").insert(reg).select("id").single();
+      if (error) return toast(error.message, true);
+      const { error: e2 } = await sb.from("organizacao_membros").insert({ org_id: nova.id, email: gestor, papel: "gestor" });
+      if (e2) return toast(e2.message, true);
+      await registrar("criar_equipe", { nome, plano: reg.plano, acessos: reg.acessos, gestor });
+      toast("Equipe criada."); desenhar();
+    };
+    const recarregar = () => desenhar();
+    el.querySelectorAll("[data-oencerrar],[data-oativar]").forEach((b) => b.onclick = async () => {
+      const id = b.dataset.oencerrar || b.dataset.oativar, st = b.dataset.oencerrar ? "encerrada" : "ativa";
+      if (st === "encerrada" && !confirm("Encerrar esta equipe? Os acessos deixam de valer na hora.")) return;
+      const { error } = await sb.from("organizacoes").update({ status: st }).eq("id", id); if (error) return toast(error.message, true);
+      await registrar(st === "ativa" ? "ativar_equipe" : "encerrar_equipe", { id }); recarregar();
+    });
+    el.querySelectorAll("[data-oacessos]").forEach((b) => b.onclick = async () => {
+      const o = orgs.find((x) => x.id === b.dataset.oacessos);
+      const n = prompt("Quantidade de acessos:", o.acessos); if (n === null) return;
+      const f = prompt("Fim da vigência (AAAA-MM-DD):", o.fim.slice(0, 10)); if (f === null) return;
+      const { error } = await sb.from("organizacoes").update({ acessos: Math.max(1, Number(n) || o.acessos), fim: new Date(f + "T23:59:59-03:00").toISOString() }).eq("id", o.id);
+      if (error) return toast(error.message, true); await registrar("alterar_equipe", { id: o.id, acessos: n, fim: f }); recarregar();
+    });
+    el.querySelectorAll("[data-oincluir]").forEach((b) => b.onclick = async () => {
+      const o = orgs.find((x) => x.id === b.dataset.oincluir); const em = document.getElementById("oinc-" + o.id).value.trim().toLowerCase();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) return toast("E-mail inválido.", true);
+      if ((porOrg[o.id] || []).length >= o.acessos) return toast("Todos os acessos contratados já estão em uso.", true);
+      const { error } = await sb.from("organizacao_membros").insert({ org_id: o.id, email: em, papel: "membro" }); if (error) return toast(error.message, true);
+      await registrar("incluir_acesso_equipe", { org: o.nome, email: em }); recarregar();
+    });
+    el.querySelectorAll("[data-otirar]").forEach((b) => b.onclick = async () => {
+      const m = membros.find((x) => String(x.id) === b.dataset.otirar); if (!confirm("Retirar o acesso de " + m.email + "?")) return;
+      const { error } = await sb.from("organizacao_membros").delete().eq("id", m.id); if (error) return toast(error.message, true);
+      await registrar("retirar_acesso_equipe", { email: m.email }); recarregar();
+    });
+    el.querySelectorAll("[data-ogestor]").forEach((b) => b.onclick = async () => {
+      const m = membros.find((x) => String(x.id) === b.dataset.ogestor);
+      const { error } = await sb.from("organizacao_membros").update({ papel: "gestor" }).eq("id", m.id); if (error) return toast(error.message, true);
+      await registrar("definir_gestor_equipe", { email: m.email }); recarregar();
+    });
+  },
   async resumo(el) {
     const [perfis, assins, pags, cons, msgs, lgpd, espera] = await Promise.all([
       q(sb.from("perfis").select("id, criado_em")),
