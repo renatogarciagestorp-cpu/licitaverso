@@ -302,7 +302,7 @@ Deno.serve(async (req) => {
       const { data: nova, error } = await admin.from("organizacoes").insert({
         nome: nomeOrg, cnpj: cnpj || null, tipo: corpo.contratante === "publica" ? "publica" : "privada", plano, acessos, ciclo,
         inicio: new Date().toISOString(), fim: fimProvisorio, status: "pendente", origem: "mercado_pago", valor, usuario_id: usuario.id,
-        observacao: `Compra pelo site · ${p.porAcessoMes.toFixed(2)} por acesso/mês (desconto de ${Math.round(p.desconto * 100)}%${ciclo === "anual" ? " + 10% do anual" : ""})`,
+        observacao: `Compra pelo site · ${p.porAcessoMes.toFixed(2)} por acesso/mês (desconto de ${Math.round(p.desconto * 100)}%${ciclo === "anual" ? " + 20% do anual" : ""})`,
       }).select("id").single();
       if (error) throw error;
       const { error: e2 } = await admin.from("organizacao_membros").insert({ org_id: nova.id, email: emailGestor, papel: "gestor" });
