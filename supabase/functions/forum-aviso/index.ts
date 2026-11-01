@@ -43,6 +43,7 @@ Deno.serve(async (req) => {
       `${primeiro}, ${quem} respondeu à sua pergunta no fórum${topico ? ` (${esc(topico)})` : ""}:`,
       `<strong>“${esc(q.titulo)}”</strong>`,
       `<span style="display:block;border-left:3px solid #0FA36B;padding:4px 0 4px 12px;color:#3D5058">${esc(trecho(r.texto)).replace(/\n/g, "<br>")}</span>`,
+      ...(r.oficial ? [] : ["A resposta ajudou? Avalie de 0 a 5 estrelas no fórum: a sua avaliação vale pontos no ranking da comunidade."]),
     ],
     { texto: "Ver a resposta no fórum", url: `${SITE}index.html?p=forum${topico ? `&topico=${encodeURIComponent(topico)}` : ""}` },
     "Para não receber mais avisos desta pergunta, abra-a no fórum e desligue o aviso de respostas por e-mail.",

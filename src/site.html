@@ -640,6 +640,45 @@
     .lvf-cab { flex-direction: column; }
     .lvf-h2 { font-size: 24px; }
   }
+  .lvf-nivel { font-size: 11px; font-weight: 800; border-radius: 999px; padding: 3px 8px; }
+  .lvf-nivel.n1 { background: #EEF2F2; color: #4A5D64; }
+  .lvf-nivel.n2 { background: #E9F3F5; color: #0F6B7E; }
+  .lvf-nivel.n3 { background: #E3F6EC; color: #0A7A50; }
+  .lvf-nivel.n4 { background: #FFF1D6; color: #8A5A00; }
+  .lvf-destaque { font-size: 11px; font-weight: 800; border-radius: 999px; padding: 3px 8px; background: #F2B544; color: #3A2600; }
+  .lvf-estrelas { margin-top: 8px; display: flex; gap: 8px; align-items: center; font-size: 12.5px; color: #6A7B82; }
+  .lvf-est { color: #E3A21A; font-size: 16px; letter-spacing: 1px; }
+  .lvf-avaliar { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; background: #FFF8E8; border: 1px solid #F3DFAE; border-radius: 12px; padding: 8px 10px; }
+  .lvf-avaliar > span { font-size: 12.5px; font-weight: 700; color: #6B4A00; margin-right: 4px; }
+  .lvf-av-b { border: 1px solid #EAD39B; background: #fff; color: #B07D00; border-radius: 8px; padding: 5px 8px; font-size: 12.5px; font-weight: 800; cursor: pointer; }
+  .lvf-av-b:hover, .lvf-av-b[aria-pressed="true"] { background: #F2B544; border-color: #F2B544; color: #3A2600; }
+  .lvf-st.aval { background: #F2B544; color: #3A2600; }
+  .lvf-rank { margin-top: 18px; background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 14px; }
+  .lvf-rank-t { font-size: 13px; font-weight: 800; color: #0B1F2A; margin-bottom: 8px; }
+  .lvf-rank-l { display: flex; gap: 8px; align-items: center; padding: 6px 2px; font-size: 13.5px; border-top: 1px solid #F0F4F3; }
+  .lvf-rank-p { width: 26px; font-weight: 800; color: #0F6B7E; }
+  .lvf-rank-n { flex: 1; font-weight: 700; color: #26393F; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lvf-rank-pt { font-weight: 800; color: #0A7A50; font-size: 12.5px; }
+  .lvf-rank-vazio { margin: 4px 0 6px; font-size: 12.5px; line-height: 1.5; color: #7A8B91; }
+  .lvf-rank-btn { margin-top: 8px; background: none; border: 0; padding: 0; color: #0A7A50; font-size: 13px; font-weight: 800; cursor: pointer; }
+  .lvf-rk { margin-top: 12px; display: grid; gap: 16px; }
+  .lvf-rk-cab { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .lvf-rk-tab { background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; overflow: hidden; }
+  .lvf-rk-l { display: grid; grid-template-columns: 44px minmax(0, 1fr) 70px 70px 80px 80px; gap: 8px; align-items: center; padding: 12px 16px; border-top: 1px solid #F0F4F3; font-size: 14px; color: #3D5058; }
+  .lvf-rk-h { border-top: 0; background: #F4F8F7; font-size: 12px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: #55666D; }
+  .lvf-rk-l.top .lvf-rk-pos { color: #B07D00; }
+  .lvf-rk-l.eu { background: #F1FBF6; }
+  .lvf-rk-pos { font-weight: 800; font-size: 16px; color: #0F6B7E; }
+  .lvf-rk-nome { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; }
+  .lvf-rk-nome > b { color: #0B1F2A; }
+  .lvf-rk-nome > small { font-size: 12px; color: #7A8B91; }
+  .lvf-rk-pts { font-weight: 800; color: #0A7A50; font-size: 16px; }
+  .lvf-regras { background: #F1F6F5; border: 1px solid #E0EAE8; border-radius: 16px; padding: 18px 20px; font-size: 14px; color: #3D5058; }
+  .lvf-regras ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 6px; line-height: 1.55; }
+  @media (max-width: 960px) {
+    .lvf-rk-l { grid-template-columns: 34px minmax(0, 1fr) 54px; }
+    .lvf-rk-l > span:nth-child(n+4) { display: none; }
+  }
   /* ---------- Agente IA ---------- */
   .lva-hero { background: radial-gradient(800px 420px at 85% 10%, rgba(15,163,107,0.16), transparent 60%), #0A1F2A; color: #fff; padding: 60px 24px 72px; }
   .lva-hero-in { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr); gap: 48px; align-items: center; }
@@ -1177,6 +1216,14 @@
               </button>
             </sc-for>
           </div>
+          <div class="lvf-rank">
+            <div class="lvf-rank-t">🏆 Ranking do mês</div>
+            <sc-for list="{{ rankTop }}" as="rk" hint-placeholder-count="3">
+              <div class="lvf-rank-l"><span class="lvf-rank-p">{{ rk.pos }}</span><span class="lvf-rank-n">{{ rk.nome }}</span><span class="lvf-rank-pt">{{ rk.pontos }}</span></div>
+            </sc-for>
+            <sc-if value="{{ rankVazio }}" hint-placeholder-val="{{ true }}"><p class="lvf-rank-vazio">Ninguém pontuou ainda neste mês. Responda uma pergunta e seja o primeiro.</p></sc-if>
+            <button class="lvf-rank-btn" sc-camel-on-click="{{ abrirRanking }}">Ver ranking e regras →</button>
+          </div>
         </aside>
 
         <div>
@@ -1243,6 +1290,35 @@
             </div>
           </sc-if>
 
+          <sc-if value="{{ forumVerRanking }}" hint-placeholder-val="{{ false }}">
+            <button class="lvf-voltar" sc-camel-on-click="{{ fecharRanking }}">← Voltar às perguntas</button>
+            <div class="lvf-rk">
+              <div class="lvf-rk-cab">
+                <h3 class="lvf-h2" style="font-size: 26px">{{ rankTitulo }}</h3>
+                <div class="lvf-filtros" style="margin: 0" role="group" aria-label="Período do ranking">
+                  <sc-for list="{{ rankPeriodos }}" as="rp2" hint-placeholder-count="2"><button class="lvf-filtro" sc-camel-on-click="{{ rp2.escolher }}" aria-pressed="{{ rp2.ativo }}">{{ rp2.rot }}</button></sc-for>
+                </div>
+              </div>
+              <div class="lvf-rk-tab" role="table" aria-label="Ranking do fórum">
+                <div class="lvf-rk-l lvf-rk-h" role="row"><span role="columnheader">#</span><span role="columnheader">Participante</span><span role="columnheader">Pontos</span><span role="columnheader">Média</span><span role="columnheader">Respostas</span><span role="columnheader">Melhores</span></div>
+                <sc-for list="{{ rankLinhas }}" as="rl" hint-placeholder-count="3">
+                  <div class="{{ rl.classe }}" role="row"><span role="cell" class="lvf-rk-pos">{{ rl.pos }}</span><span role="cell" class="lvf-rk-nome"><b>{{ rl.nome }}</b><small>{{ rl.papel }}</small><span class="{{ rl.nivelClasse }}">{{ rl.nivel }}</span></span><span role="cell" class="lvf-rk-pts">{{ rl.pontos }}</span><span role="cell">{{ rl.media }}</span><span role="cell">{{ rl.respostas }}</span><span role="cell">{{ rl.melhores }}</span></div>
+                </sc-for>
+                <sc-if value="{{ rankLinhasVazio }}" hint-placeholder-val="{{ false }}"><p class="lvf-vazio" style="padding: 16px">Ainda não há pontuação neste período.</p></sc-if>
+              </div>
+              <div class="lvf-regras">
+                <b>Como funciona</b>
+                <ul>
+                  <li>Quem fez a pergunta avalia cada resposta de 0 a 5 estrelas. Cada estrela vale 1 ponto.</li>
+                  <li>A resposta escolhida como a melhor ganha mais 5 pontos.</li>
+                  <li>O ranking do mês zera no dia 1º. O geral soma tudo e define o seu nível: Iniciante, Colaborador (10 pontos), Referência (50) e Mestre (150).</li>
+                  <li>O primeiro colocado do mês ganha o selo de Destaque do mês, que aparece ao lado do nome nas respostas durante o mês seguinte.</li>
+                  <li>Respostas do especialista do Licitacon e respostas à própria pergunta não contam pontos.</li>
+                </ul>
+              </div>
+            </div>
+          </sc-if>
+
           <sc-if value="{{ forumMostraLista }}" hint-placeholder-val="{{ true }}">
             <div class="lvf-filtros" role="group" aria-label="Filtrar perguntas">
               <sc-for list="{{ forumFiltros }}" as="fl" hint-placeholder-count="3">
@@ -1286,6 +1362,8 @@
                       <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
                         <span style="font-size: 14px; font-weight: 700">{{ rp.autor }}</span>
                         <span style="font-size: 12.5px; color: #7A8B91">{{ rp.papel }} · {{ rp.quando }}</span>
+                        <sc-if value="{{ rp.temNivel }}" hint-placeholder-val="{{ false }}"><span class="{{ rp.nivelClasse }}">{{ rp.nivel }}</span></sc-if>
+                        <sc-if value="{{ rp.destaque }}" hint-placeholder-val="{{ false }}"><span class="lvf-destaque">{{ rp.destaqueRot }}</span></sc-if>
                         <sc-if value="{{ rp.melhor }}" hint-placeholder-val="{{ false }}">
                           <span style="font-size: 11.5px; font-weight: 800; background: #0FA36B; color: #06251A; padding: 4px 9px; border-radius: 999px">✓ Melhor resposta</span>
                         </sc-if>
@@ -1304,6 +1382,17 @@
                         </sc-if>
                       </div>
                       <p style="font-family: 'Source Serif 4', Georgia, serif; font-size: 16px; line-height: 1.62; color: #23343B; margin: 9px 0 0; text-wrap: pretty">{{ rp.texto }}</p>
+                      <sc-if value="{{ rp.temEstrelas }}" hint-placeholder-val="{{ false }}">
+                        <div class="lvf-estrelas"><span class="lvf-est" aria-hidden="true">{{ rp.estrelasTxt }}</span><span>{{ rp.estrelasRot }}</span></div>
+                      </sc-if>
+                      <sc-if value="{{ rp.podeAvaliar }}" hint-placeholder-val="{{ false }}">
+                        <div class="lvf-avaliar" role="group" aria-label="Avaliar resposta">
+                          <span>{{ rp.avaliarRot }}</span>
+                          <sc-for list="{{ rp.opcoesEstrela }}" as="oe" hint-placeholder-count="6">
+                            <button class="lvf-av-b" sc-camel-on-click="{{ oe.avaliar }}" aria-pressed="{{ oe.ativo }}" aria-label="{{ oe.aria }}">{{ oe.rot }}</button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
                       <sc-if value="{{ rp.citacao }}" hint-placeholder-val="{{ false }}">
                         <div style="margin-top: 12px; border-left: 3px solid #0F6B7E; background: #F1F6F5; border-radius: 0 10px 10px 0; padding: 11px 14px">
                           <div style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; color: #0F6B7E">FUNDAMENTO CITADO DA BIBLIOTECA</div>
@@ -3203,6 +3292,9 @@ const AN_MAX_PAGINAS = 200;
 const AN_ANEXO_MB = 25;
 const AN_PRECO = 290;
 const DESCONTO_FUNDADOR = 0.3; // o mesmo de supabase/functions/_shared/precos.ts
+const MESES_NOME = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+// níveis do fórum pelos pontos do ranking geral
+const nivelForum = (p) => p >= 150 ? { nome: "Mestre", cls: "n4" } : p >= 50 ? { nome: "Referência", cls: "n3" } : p >= 10 ? { nome: "Colaborador", cls: "n2" } : { nome: "Iniciante", cls: "n1" };
 const AN_DESCONTO = { basico: 0.1, premium: 0.15, pro: 0.3 };
 const AN_MAX_MB = 25;
 const AN_MAX_NORMAS = 3;
@@ -3477,7 +3569,7 @@ class Component extends DCLogic {
     forumCarregando: false,
     forumErro: "",
     nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
-    threadAberta: null, forumFiltro: "todas",
+    threadAberta: null, forumFiltro: "todas", forumRank: { mes: [], geral: [], destaque: null }, forumVerRanking: false, rankPeriodo: "mes",
     respondendo: null, resposta: "", citacao: "", respEnviando: false, respErro: "",
 
     // cursos
@@ -3850,8 +3942,29 @@ class Component extends DCLogic {
     if (error) { this.setState({ forumCarregando: false, forumErro: "Não foi possível carregar o fórum agora." }); return; }
     const atual = (topicos || []).find((t) => t.nome === this.state.topico) || (topicos || [])[0];
     this.setState({ forumTopicos: topicos || [], topico: atual ? atual.nome : this.state.topico });
+    this.carregarRanking();
     await this.carregarPerguntas(atual);
   }
+
+  // ranking do fórum: mês, geral (também dá o nível de cada participante) e o destaque do mês anterior
+  async carregarRanking() {
+    if (!this.sb || !this.u || !this.podeLerForum()) return;
+    const [m, g, a] = await Promise.all([
+      this.sb.rpc("forum_ranking", { p_periodo: "mes", p_limite: 20 }),
+      this.sb.rpc("forum_ranking", { p_periodo: "geral", p_limite: 1000 }),
+      this.sb.rpc("forum_ranking", { p_periodo: "mes_anterior", p_limite: 1 })
+    ]);
+    this.setState({ forumRank: { mes: (m && m.data) || [], geral: (g && g.data) || [], destaque: (a && a.data && a.data[0]) || null } });
+  }
+
+  avaliarResposta = (id, estrelas) => async () => {
+    if (!this.sb) { this.aviso("O fórum ainda não está conectado (modo demonstração).", "erro"); return; }
+    const { error } = await this.sb.rpc("forum_avaliar", { p_resposta: id, p_estrelas: estrelas });
+    if (error) { this.aviso(error.message || "Não foi possível registrar a avaliação.", "erro"); return; }
+    this.aviso("✓ Avaliação registrada: " + estrelas + (estrelas === 1 ? " estrela." : " estrelas."));
+    this.carregarPerguntas();
+    this.carregarRanking();
+  };
 
   async carregarPerguntas(topico) {
     const t = topico || (this.state.forumTopicos || []).find((x) => x.nome === this.state.topico);
@@ -3915,6 +4028,7 @@ class Component extends DCLogic {
     const { error } = await this.sb.rpc("forum_marcar_melhor", { p_resposta: id });
     if (error) { this.aviso(error.message || "Não foi possível marcar a melhor resposta.", "erro"); return; }
     this.carregarPerguntas();
+    this.carregarRanking();
   };
 
   abrirDenuncia = (tipo, id, titulo) => () => {
@@ -4635,6 +4749,8 @@ class Component extends DCLogic {
       ? { setorColor: "#0F6B7E", setorBg: "#E9F3F5" }
       : { setorColor: "#8A4A12", setorBg: "#FDF1E3" };
     const meuId = s.usuario && s.usuario.id;
+    const pontosDe = {}; (s.forumRank.geral || []).forEach((x) => { pontosDe[x.autor_id] = x.pontos; });
+    const destaqueId = s.forumRank.destaque && s.forumRank.destaque.autor_id;
     const threadsBase = forumReal
       ? s.forumPerguntas.map((q) => {
           const dono = q.autor_id === meuId;
@@ -4651,7 +4767,8 @@ class Component extends DCLogic {
               this.carregarPerguntas();
             },
             respostas: respostas.map((r) => ({
-              id: r.id, autor: r.autor_nome || "Participante", papel: (r.oficial ? "Resposta oficial · " : "") + (r.autor_papel || "Participante"),
+              id: r.id, autorId: r.autor_id, estrelas: r.estrelas, avaliavel: dono && r.autor_id !== meuId && !r.oficial,
+              autor: r.autor_nome || "Participante", papel: (r.oficial ? "Resposta oficial · " : "") + (r.autor_papel || "Participante"),
               quando: haQuanto(r.criado_em), melhor: !!r.melhor, oficial: !!r.oficial, texto: r.texto, citacao: r.citacao || "",
               podeMarcar: (dono || s.admin) && !r.melhor, marcar: this.marcarMelhor(r.id),
               podeApagar: r.autor_id === meuId || s.admin, apagar: this.apagar("forum_respostas", r.id),
@@ -4663,7 +4780,19 @@ class Component extends DCLogic {
     const threads = threadsBase.map((t) => ({
       ...t, ...setorStyle(t.setor),
       responder: this.responder(t.id), respondendo: s.respondendo !== null && s.respondendo === t.id,
-      respostas: t.respostas.map((r) => ({ podeMarcar: false, podeApagar: false, marcar: () => {}, apagar: () => {}, podeDenunciar: false, denunciar: () => {}, ...r })),
+      respostas: t.respostas.map((r) => {
+        const pts = pontosDe[r.autorId] || 0, nv = r.oficial ? null : nivelForum(pts);
+        const est = typeof r.estrelas === "number" ? r.estrelas : null;
+        return { podeMarcar: false, podeApagar: false, marcar: () => {}, apagar: () => {}, podeDenunciar: false, denunciar: () => {}, ...r,
+          temNivel: !!nv && pts > 0, nivel: nv ? nv.nome + " · " + pts + " pts" : "", nivelClasse: "lvf-nivel " + (nv ? nv.cls : ""),
+          destaque: !!destaqueId && r.autorId === destaqueId && !r.oficial, destaqueRot: "★ Destaque de " + MESES_NOME[(new Date(Date.now() - 3 * 3600000).getUTCMonth() + 11) % 12],
+          temEstrelas: est !== null, estrelasTxt: est !== null ? "★".repeat(est) + "☆".repeat(5 - est) : "", estrelasRot: est !== null ? est + " de 5 · avaliação de quem perguntou" : "",
+          podeAvaliar: !!r.avaliavel,
+          avaliarRot: est !== null ? "Mudar sua avaliação:" : "Avalie esta resposta (0 a 5 estrelas):",
+          opcoesEstrela: [0, 1, 2, 3, 4, 5].map((n) => ({ rot: n === 0 ? "0" : "★".repeat(n), aria: n + (n === 1 ? " estrela" : " estrelas"), ativo: est === n, avaliar: this.avaliarResposta(r.id, n) }))
+        };
+      }),
+      pendenteAvaliacao: !!t.souAutor && t.respostas.some((r) => r.avaliavel && typeof r.estrelas !== "number"),
       podeApagar: !!t.podeApagar, apagar: t.apagar || (() => {}),
       podeDenunciar: forumReal && !t.souAutor, denunciar: this.abrirDenuncia("pergunta", t.id, t.pergunta),
       souAutor: !!t.souAutor, avisoLabel: t.avisoLabel || "", alternarAviso: t.alternarAviso || (() => {})
@@ -4927,15 +5056,28 @@ class Component extends DCLogic {
 
       // fórum
       topicos: topicosDefs.map((t) => ({ ...t, ativo: t.nome === s.topico, classe: "lvf-tema" + (t.nome === s.topico ? " ativo" : ""), abrir: this.abrirTopico(t.nome) })),
-      forumMostraLista: !forumBloqueado && !s.nova.aberta && !threads.some((t) => t.id === s.threadAberta) && threads.length > 0,
-      forumMostraDetalhe: !forumBloqueado && !s.nova.aberta && threads.some((t) => t.id === s.threadAberta),
+      forumMostraLista: !forumBloqueado && !s.nova.aberta && !s.forumVerRanking && !threads.some((t) => t.id === s.threadAberta) && threads.length > 0,
+      forumMostraDetalhe: !forumBloqueado && !s.nova.aberta && !s.forumVerRanking && threads.some((t) => t.id === s.threadAberta),
       threadAtual: threads.filter((t) => t.id === s.threadAberta),
       fecharThread: () => this.setState({ threadAberta: null, respondendo: null }),
+      forumVerRanking: !!s.forumVerRanking && !forumBloqueado,
+      abrirRanking: () => { this.setState({ forumVerRanking: true, threadAberta: null }); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} },
+      fecharRanking: () => this.setState({ forumVerRanking: false }),
+      rankTop: (s.forumRank.mes || []).slice(0, 5).map((x, i) => ({ pos: i + 1 + "º", nome: x.nome || "Participante", pontos: x.pontos + " pts" })),
+      rankVazio: !(s.forumRank.mes || []).length,
+      rankPeriodos: [["mes", "Este mês"], ["geral", "Geral"]].map(([k, rot]) => ({ rot, ativo: s.rankPeriodo === k, escolher: () => this.setState({ rankPeriodo: k }) })),
+      rankLinhas: ((s.rankPeriodo === "geral" ? s.forumRank.geral : s.forumRank.mes) || []).slice(0, 20).map((x, i) => {
+        const nv = nivelForum((s.forumRank.geral.find((g) => g.autor_id === x.autor_id) || x).pontos);
+        return { pos: i + 1 + "º", nome: x.nome || "Participante", papel: x.papel || "", pontos: x.pontos, media: x.media ? String(x.media).replace(".", ",") + " ★" : "—",
+          respostas: x.respostas, melhores: x.melhores, nivel: nv.nome, nivelClasse: "lvf-nivel " + nv.cls, classe: "lvf-rk-l" + (i < 3 ? " top" : "") + (x.autor_id === meuId ? " eu" : "") };
+      }),
+      rankLinhasVazio: !((s.rankPeriodo === "geral" ? s.forumRank.geral : s.forumRank.mes) || []).length,
+      rankTitulo: s.rankPeriodo === "geral" ? "Ranking geral" : "Ranking de " + MESES_NOME[new Date(Date.now() - 3 * 3600000).getUTCMonth()],
       forumFiltros: [["todas", "Todas"], ["sem", "Sem resposta"], ["respondidas", "Respondidas"]].map(([k, rot]) => ({ rot, ativo: s.forumFiltro === k,
         escolher: () => this.setState({ forumFiltro: k }) })),
       threadsLista: threads.filter((t) => s.forumFiltro === "todas" || (s.forumFiltro === "sem" ? t.respostas.length === 0 : t.respostas.length > 0)).map((t) => {
         const melhor = t.respostas.some((r) => r.melhor), oficial = t.respostas.some((r) => r.oficial), n = t.respostas.length;
-        const st = melhor ? ["✓ Melhor resposta escolhida", "ok"] : oficial ? ["Especialista respondeu", "esp"] : n ? ["Respondida", "resp"] : ["Aguardando resposta", "sem"];
+        const st = t.pendenteAvaliacao ? ["★ Avalie as respostas", "aval"] : melhor ? ["✓ Melhor resposta escolhida", "ok"] : oficial ? ["Especialista respondeu", "esp"] : n ? ["Respondida", "resp"] : ["Aguardando resposta", "sem"];
         return { pergunta: t.pergunta, contexto: t.contexto || "", autor: t.autor, quando: t.quando, setor: t.setor,
           nResp: n === 0 ? "nenhuma resposta" : n === 1 ? "1 resposta" : n + " respostas", status: st[0], statusClasse: "lvf-st " + st[1],
           abrir: () => { this.setState({ threadAberta: t.id, respondendo: null }); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} } };
