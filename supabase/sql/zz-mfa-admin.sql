@@ -21,3 +21,20 @@ returns text language sql stable security definer set search_path = public as $$
       limit 1)
   end
 $$;
+
+-- Conceder ou retirar o acesso de administrador pelo painel (só quem já é admin, em sessão com verificação em duas etapas).
+create or replace function public.definir_admin(p_usuario uuid, p_admin boolean)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if not public.is_admin() then
+    raise exception 'Somente a administração, com verificação em duas etapas, pode alterar administradores.';
+  end if;
+  if p_usuario = auth.uid() and not p_admin then
+    raise exception 'Você não pode retirar o seu próprio acesso de administrador.';
+  end if;
+  update public.perfis set admin = p_admin where id = p_usuario;
+  insert into public.registro_admin (acao, detalhes)
+  values (case when p_admin then 'tornar_admin' else 'retirar_admin' end, jsonb_build_object('usuario_id', p_usuario));
+end $$;
+revoke all on function public.definir_admin(uuid, boolean) from public, anon;
+grant execute on function public.definir_admin(uuid, boolean) to authenticated;
