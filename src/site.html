@@ -559,6 +559,13 @@
   .lvp-eq-linha b { font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 600; color: #0A7A50; }
   .lvp-eq-nota { margin: 0; padding: 12px 16px; font-size: 12.5px; color: #6A7B82; }
   @media (max-width: 960px) { .lvp-equipes { grid-template-columns: minmax(0, 1fr); padding: 22px 18px; } }
+  .lvp-fund { margin-top: 22px; display: grid; gap: 4px; background: linear-gradient(90deg, rgba(242,181,68,0.18), rgba(242,181,68,0.06)); border: 1px solid rgba(242,181,68,0.55); border-radius: 14px; padding: 14px 16px; max-width: 54ch; }
+  .lvp-fund b { color: #F7C76A; font-size: 16px; }
+  .lvp-fund span { color: #E8DCC2; font-size: 14px; line-height: 1.5; }
+  .lvp-de { display: block; margin-top: 14px; margin-bottom: -10px; font-size: 14px; color: #8A9AA0; }
+  .lvp-dest .lvp-de { color: #86A0AA; }
+  .lvp-garantia-cta { margin: 8px 0 0; font-size: 12.5px; font-weight: 700; color: #0A7A50; text-align: center; }
+  .lvp-dest .lvp-garantia-cta { color: #7FE3B6; }
   @media (prefers-reduced-motion: reduce) { .lvp-chip { transition: none; } }
 </style>
 </helmet>
@@ -1563,6 +1570,9 @@
             <ul class="lvp-provas">
               <sc-for list="{{ provasPlanos }}" as="pv" hint-placeholder-count="3"><li>{{ pv }}</li></sc-for>
             </ul>
+            <sc-if value="{{ temFundador }}" hint-placeholder-val="{{ true }}">
+              <div class="lvp-fund"><b>{{ fundTitulo }}</b><span>{{ fundTexto }}</span></div>
+            </sc-if>
           </div>
           <div class="lvp-cfg" role="group" aria-label="Monte o seu plano">
             <p class="lvp-cfg-frase">Quero o Licitacon</p>
@@ -1608,12 +1618,14 @@
               </sc-if>
               <h2 class="lvp-nome">{{ p.nome }}</h2>
               <p class="lvp-publico">{{ p.publico }}</p>
+              <sc-if value="{{ p.temDe }}" hint-placeholder-val="{{ false }}"><s class="lvp-de">{{ p.precoDe }}/mês</s></sc-if>
               <div class="lvp-preco"><span class="lvp-valor">{{ p.preco }}</span><span class="lvp-unid">{{ p.unidade }}</span></div>
               <p class="lvp-nota">{{ p.nota }}</p>
               <sc-if value="{{ p.temEconomia }}" hint-placeholder-val="{{ false }}">
                 <span class="lvp-economia">{{ p.economia }}</span>
               </sc-if>
               <button class="lvp-cta" sc-camel-on-click="{{ p.contratar }}">{{ p.cta }}</button>
+              <sc-if value="{{ p.temGarantia }}" hint-placeholder-val="{{ false }}"><p class="lvp-garantia-cta">Garantia de 7 dias: desistiu, devolvemos tudo</p></sc-if>
               <ul class="lvp-itens">
                 <sc-for list="{{ p.itens }}" as="i" hint-placeholder-count="3"><li>{{ i }}</li></sc-for>
               </ul>
@@ -2968,6 +2980,7 @@ const AN_MAX_DOCS = 3;
 const AN_MAX_PAGINAS = 200;
 const AN_ANEXO_MB = 25;
 const AN_PRECO = 290;
+const DESCONTO_FUNDADOR = 0.3; // o mesmo de supabase/functions/_shared/precos.ts
 const AN_DESCONTO = { basico: 0.1, premium: 0.15, pro: 0.3 };
 const AN_MAX_MB = 25;
 const AN_MAX_NORMAS = 3;
@@ -3191,6 +3204,7 @@ class Component extends DCLogic {
     favoritos: {},
     topico: "Reajuste de Preços",
     anual: false,
+    oferta: { desconto: 0.3, limite: 100, vagas: 100, sou_fundador: false, cortesia: true },
     faqAberta: -1, modoEquipe: false, equipePlano: "pro", equipeAcessos: 4, equipeOrg: "", equipeCnpj: "", equipeMsg: "", equipeErro: "", equipeEnviando: false,
     email: "",
     inscrito: false,
@@ -3360,12 +3374,33 @@ class Component extends DCLogic {
     // página pedida no endereço pode exigir login
     if (EXIGE_LOGIN.includes(this.state.page) && !u) this.setState({ volta: this.state.page, page: "login" });
     if (u && (this.state.page === "login" || this.state.page === "cadastro")) { this.irPara(this.state.page, false); }
+    this.carregarOferta();
     if (u) await this.carregarDados();
     this.tratarRetornoPagamento();
     this.carregarCursos();
   }
 
+  // ofertas de lançamento: vagas de fundador, se a pessoa é fundadora e se ainda tem a primeira análise grátis
+  async carregarOferta() {
+    if (!this.sb) return;
+    try {
+      const { data, error } = await this.sb.rpc("oferta_lancamento");
+      if (!error && data) this.setState({ oferta: data });
+    } catch (e) {}
+  }
+
+  fundadorAtivo() {
+    const o = this.state.oferta;
+    return !this.state.modoEquipe && !!o && (!!o.sou_fundador || Number(o.vagas) > 0);
+  }
+
+  cortesiaAnalise() {
+    const s = this.state, o = s.oferta;
+    return !!o && !!o.cortesia && !s.admin && (!s.usuario || !!s.usuario.email_confirmed_at);
+  }
+
   limparDados() {
+    setTimeout(() => this.carregarOferta(), 0);
     this.setState({
       admin: false, plano: null, organizacao: null, assinaturas: [], pagamentos: [], consultorias: [], acessosCurso: [], seguindo: [], favBib: [], analises: [], cotaAnalise: null,
       perfil: { nome: "", celular: "", email: "", doc: "", orgao: "", cargo: "" }, notif: NOTIF_PADRAO, forumPerguntas: [], forumTopicos: null
@@ -3373,6 +3408,7 @@ class Component extends DCLogic {
   }
 
   async carregarDados() {
+    this.carregarOferta();
     const sb = this.sb, u = this.state.usuario;
     if (!sb || !u) return;
     const [perfil, plano, assin, pags, cons, acessos, seg, bib, cupom, anal, cota, normas, renov, orgR] = await Promise.all([
@@ -3800,6 +3836,7 @@ class Component extends DCLogic {
     const s = this.state, c = s.cotaAnalise;
     if (s.admin) return 0; // administrador: sem cobrança
     if (s.plano === "pro" && c && Number(c.usadas) < Number(c.limite)) return 0;
+    if (s.usuario && this.cortesiaAnalise()) return 0; // primeira análise grátis
     return Math.round(AN_PRECO * (1 - (AN_DESCONTO[s.plano] || 0)) * 100) / 100;
   }
 
@@ -4093,8 +4130,11 @@ class Component extends DCLogic {
         const n = Math.min(st.equipeAcessos, EQ_MAX), pr = eqPreco(pl.chave, n, st.anual);
         const ganho = st.anual ? base * 12 * n - pr.total : (base - pr.pa) * n;
         if (ganho > 0.5) economia = "Economia de " + brlSimples(ganho) + (st.anual ? " no ano" : " por mês") + " para a equipe";
-      } else if (base > 0 && st.anual) economia = "Você economiza " + brlSimples(base * 12 * 0.2) + " no ano";
-      return { classe: "lvp-card" + (pl.nome === "Teste" ? " lvp-leve" : "") + (pl.destaque ? " lvp-dest" : ""),
+      } else if (base > 0 && this.fundadorAtivo()) economia = "Você economiza " + (st.anual ? brlSimples(base * 12 * DESCONTO_FUNDADOR) + " no ano" : brlSimples(base * DESCONTO_FUNDADOR) + " por mês");
+      else if (base > 0 && st.anual) economia = "Você economiza " + brlSimples(base * 12 * 0.2) + " no ano";
+      const mostraDe = base > 0 && !st.modoEquipe && (st.anual || this.fundadorAtivo());
+      return { precoDe: mostraDe ? brlSimples(base) : "", temDe: mostraDe, temGarantia: base > 0 && !st.modoEquipe && st.comprador === "fisica",
+        classe: "lvp-card" + (pl.nome === "Teste" ? " lvp-leve" : "") + (pl.destaque ? " lvp-dest" : ""),
         selo: st.modoEquipe ? "Mais completo para equipes" : "Mais escolhido", economia, temEconomia: !!economia };
     })(),
     contratar: () => {
@@ -4414,18 +4454,24 @@ class Component extends DCLogic {
     const metodosDoComprador = COMPRADORES[s.comprador].metodos;
     const metodoSel = metodosDoComprador.find((m) => m.id === s.metodo) || metodosDoComprador[0];
     const brl = (v) => { const partes = v.toFixed(2).split("."); return "R$ " + partes[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".") + "," + partes[1]; };
-    const avulso = (base) => base;
-    const mesAnual = (base) => base * 0.8;
-    const anualTotal = (base) => base * 12 * 0.8;
-    const precoPlano = (base) => anual ? brl(mesAnual(base)) : brl(base);
+    // preço de fundador (30%, planos individuais, enquanto houver vagas ou para quem já é fundador); não se soma ao anual
+    const fund = this.fundadorAtivo();
+    const r2 = (v) => Math.round(v * 100) / 100;
+    const mesFund = (base) => r2(base * (1 - DESCONTO_FUNDADOR));
+    const avulso = (base) => fund ? mesFund(base) : base;
+    const mesAnual = (base) => fund ? mesFund(base) : base * 0.8;
+    const anualTotal = (base) => r2(mesAnual(base) * 12);
+    const precoPlano = (base) => anual ? brl(mesAnual(base)) : brl(avulso(base));
     const unidadePlano = "/mês";
     const economia = (base) => base * 12 - anualTotal(base);
-    const notaPlano = (base) => anual
-      ? brl(anualTotal(base)) + " por 12 meses"
-      : "ou " + brl(mesAnual(base)) + "/mês no plano anual";
-    const detalhePlano = (base) => anual
-      ? "Pago de uma vez no Pix ou boleto, ou em até 12x no cartão."
-      : "Mês a mês sai " + brl(base) + ". No anual você paga " + brl(mesAnual(base)) + " por mês e economiza " + brl(economia(base)) + ".";
+    const notaPlano = (base) => fund
+      ? (anual ? brl(anualTotal(base)) + " por 12 meses · preço de fundador" : "Preço de fundador, travado enquanto a assinatura estiver ativa")
+      : (anual ? brl(anualTotal(base)) + " por 12 meses" : "ou " + brl(mesAnual(base)) + "/mês no plano anual");
+    const detalhePlano = (base) => fund
+      ? "Preço cheio: " + brl(base) + "/mês. O desconto de fundador vale no mensal e no anual, mas não se soma ao desconto do anual." + (anual ? " Pago de uma vez no Pix ou boleto, ou em até 12x no cartão." : "")
+      : (anual
+        ? "Pago de uma vez no Pix ou boleto, ou em até 12x no cartão."
+        : "Mês a mês sai " + brl(base) + ". No anual você paga " + brl(mesAnual(base)) + " por mês e economiza " + brl(economia(base)) + ".");
     const parcelaCartao = metodoSel.id === "cartao" || metodoSel.id === "cpgf";
 
     // ---------------------------------------------------------------- conta
@@ -4838,7 +4884,7 @@ class Component extends DCLogic {
       })(),
       anPlanoTexto: (() => {
         const c = s.cotaAnalise;
-        if (!s.usuario) return "Valor por análise: R$ 290,00. Assinantes Básico e Premium têm desconto; o Pro inclui 2 análises por semana.";
+        if (!s.usuario) return (this.cortesiaAnalise() ? "Crie sua conta e faça a primeira análise grátis. Depois, o valor por análise é de R$ 290,00." : "Valor por análise: R$ 290,00.") + " Assinantes Básico e Premium têm desconto; o Pro inclui 2 análises por semana.";
         if (this.creditoAnalise()) return "Você já tem uma análise liberada aguardando os documentos. Siga para a página de envio.";
         if (s.admin) return "Conta de administrador: análises sem limite e sem cobrança.";
         if (s.plano === "pro" && c && c.equipe) {
@@ -4851,6 +4897,7 @@ class Component extends DCLogic {
           return resta > 0 ? "Você tem " + resta + " de " + c.limite + " análises disponíveis nesta semana, sem custo adicional (renova na segunda-feira)."
             : "Você já usou as " + c.limite + " análises desta semana. Esta análise sai com 30% de desconto: " + brlSimples(this.precoAnalise()) + ".";
         }
+        if (this.cortesiaAnalise() && this.precoAnalise() === 0) return "Sua primeira análise é grátis, sem pagamento. Envie até 3 documentos da contratação e receba o parecer técnico. A partir da segunda, vale o preço do seu plano.";
         if (s.plano === "basico" || s.plano === "premium") return "Valor por análise com o desconto do seu plano: " + brlSimples(this.precoAnalise()) + ". O pagamento é feito antes de seguir para o envio dos documentos.";
         return "Valor por análise: R$ 290,00, pago antes de seguir para o envio dos documentos.";
       })(),
@@ -4863,7 +4910,7 @@ class Component extends DCLogic {
       voltarInfo: () => this.setState({ an: { ...this.state.an, etapa: "info", erro: "" } }),
       anPaga: this.precoAnalise() > 0 && !this.creditoAnalise(),
       anBotaoInicio: s.an.iniciando ? "Aguarde…" : (!s.usuario && s.sb ? "Entrar para continuar" : (this.creditoAnalise() ? "Ir para o envio dos documentos"
-        : (this.precoAnalise() > 0 ? "Pagar " + brlSimples(this.precoAnalise()) + " e continuar" : "Continuar para o envio (sem custo)"))),
+        : (this.precoAnalise() > 0 ? "Pagar " + brlSimples(this.precoAnalise()) + " e continuar" : (this.cortesiaAnalise() && !(s.plano === "pro" && s.cotaAnalise && Number(s.cotaAnalise.usadas) < Number(s.cotaAnalise.limite)) ? "Fazer minha análise grátis" : "Continuar para o envio (sem custo)")))),
       iniciarAnalise: () => { if (!s.an.iniciando) this.iniciarAnalise(); },
       // página 2: envio
       anRegimes: AN_REGIMES.map(([id, nome, sub]) => ({ nome, sub, ativo: s.an.regime === id, ...corBotao(s.an.regime === id),
@@ -4962,7 +5009,7 @@ class Component extends DCLogic {
         : "Escolhendo os 12 meses, a mensalidade cai e você garante o ano completo sem interrupção",
       ciclos: [
         { key: false, label: "mês a mês" },
-        { key: true, label: "por ano, com 20% de desconto" }
+        { key: true, label: this.fundadorAtivo() ? "por ano (12 meses de uma vez)" : "por ano, com 20% de desconto" }
       ].map((c) => ({
         label: c.label, ativo: anual === c.key,
         escolher: () => this.setState({ anual: c.key, pagamentoFeito: false }),
@@ -5052,7 +5099,13 @@ class Component extends DCLogic {
       verEquipes: () => { this.setState((x) => ({ modoEquipe: true, comprador: x.comprador === "fisica" ? "privada" : x.comprador, equipeMsg: "", equipeErro: "" }));
         setTimeout(() => { const el = document.querySelector(".lvp-cfg"); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 60); },
       provasPlanos: ["Decisões do TCU, dos Tribunais de Contas, PGEs e TJs de todo o país, sempre com o link oficial",
-        "Agente IA que lê edital, ETP e TR e entrega um parecer técnico com os pontos de risco", "Teste de 7 dias grátis, sem cartão"],
+        "Agente IA que lê edital, ETP e TR e entrega um parecer técnico com os pontos de risco", "Teste de 7 dias grátis, sem cartão"]
+        .concat(this.cortesiaAnalise() ? ["Sua primeira análise do Agente IA é grátis"] : []),
+      temFundador: this.fundadorAtivo(),
+      fundTitulo: s.oferta && s.oferta.sou_fundador ? "Você é fundador do Licitacon" : "Preço de fundador: 30% de desconto",
+      fundTexto: s.oferta && s.oferta.sou_fundador
+        ? "Seu desconto de 30% está garantido nos planos individuais enquanto a sua assinatura continuar ativa."
+        : "Para os primeiros " + ((s.oferta && s.oferta.limite) || 100) + " assinantes, travado enquanto a assinatura continuar ativa. Restam " + Number((s.oferta && s.oferta.vagas) || 0) + " vagas.",
       compCols: ["Básico", "Premium", "Pro"],
       compLinhas: (() => {
         const eq = !!s.modoEquipe;
@@ -5079,6 +5132,8 @@ class Component extends DCLogic {
         ["Órgão público pode contratar? Como funciona?", "Pode. Escolha “órgão público”, monte o plano e peça a proposta para empenho — ou baixe a proposta preliminar para instruir o processo. O enquadramento (por exemplo, dispensa por valor, art. 75, II, da Lei nº 14.133/2021) cabe ao órgão. Os acessos são liberados após a nota de empenho. Quem preferir também pode assinar como pessoa física."],
         ["Como funciona o plano para equipes?", "Você contrata a quantidade de acessos e quem contrata vira o gestor. Ele inclui as pessoas pelo e-mail e troca quando alguém sai da equipe. Cada acesso é de uma pessoa, e o desconto cresce com a quantidade: 5% de 3 a 5 acessos, 10% de 6 a 10 e 15% de 11 a 25, além dos 20% do anual."],
         ["O que o Agente IA faz e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. O Pro inclui 2 análises por semana; equipes Pro têm 6 por acesso por mês, somadas. Nos demais planos a análise é paga com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
+        ["O que é o preço de fundador?", "É o preço de lançamento para os primeiros " + ((s.oferta && s.oferta.limite) || 100) + " assinantes: 30% de desconto no Básico, no Premium ou no Pro, no mensal ou no anual (não se soma ao desconto de 20% do anual nem aos planos de equipe). O preço fica travado enquanto a sua assinatura continuar ativa; se ela ficar mais de 30 dias sem renovação, o preço de fundador deixa de valer."],
+        ["A primeira análise do Agente IA é grátis mesmo?", "Sim. Toda conta com e-mail confirmado pode fazer uma análise grátis, com até 3 documentos, assinante ou não. Se a análise não puder ser concluída por falha técnica, a cortesia continua disponível."],
         ["Posso mudar de plano depois?", "Sim. Basta contratar o novo plano; se for o mesmo plano, o tempo que ainda falta é somado ao novo período."]
       ].map(([q, a], i) => ({ q, a, aberta: s.faqAberta === i, sinal: s.faqAberta === i ? "−" : "+", alternar: () => this.setState((x) => ({ faqAberta: x.faqAberta === i ? -1 : i })) })),
       modos: [[false, "para mim"], [true, "para a minha equipe"]].map(([k, label]) => ({ label, ativo: !!s.modoEquipe === k,
@@ -5255,8 +5310,10 @@ class Component extends DCLogic {
         linhas: [
           { label: "Plano", valor: s.checkoutPlano.nome },
           { label: "Ciclo", valor: s.checkoutPlano.base === 0 ? "Teste de 7 dias" : (auto ? (anual ? "Anual, renovação automática" : "Mensal, renovação automática") : (anual ? "12 meses" : "1 mês avulso")) },
-          { label: anual ? "Mensalidade no anual" : "Mensalidade avulsa", valor: s.checkoutPlano.base === 0 ? "—" : (anual ? brl(mesAnual(s.checkoutPlano.base)) + " × 12" : brl(s.checkoutPlano.base)) },
-          { label: anual ? "Sua economia" : "Economia no anual", valor: s.checkoutPlano.base === 0 ? "—" : brl(economia(s.checkoutPlano.base)) },
+          { label: anual ? "Mensalidade no anual" : "Mensalidade avulsa", valor: s.checkoutPlano.base === 0 ? "—" : (anual ? brl(mesAnual(s.checkoutPlano.base)) + " × 12" : brl(avulso(s.checkoutPlano.base))) + (fund && s.checkoutPlano.base > 0 ? " (fundador)" : "") },
+          fund && s.checkoutPlano.base > 0
+            ? { label: "Desconto de fundador", valor: anual ? brl(economia(s.checkoutPlano.base)) + " no ano" : brl(s.checkoutPlano.base - avulso(s.checkoutPlano.base)) + " por mês" }
+            : { label: anual ? "Sua economia" : "Economia no anual", valor: s.checkoutPlano.base === 0 ? "—" : brl(economia(s.checkoutPlano.base)) },
           { label: "Pagamento", valor: s.checkoutPlano.base === 0 ? "Sem cobrança" : (auto ? (anual ? "Anual recorrente, à vista" : "Mensal recorrente") : (anual ? (parcelaCartao && s.parcelas > 1 ? "até " + s.parcelas + "x de " + brl(anualTotal(s.checkoutPlano.base) / s.parcelas) : "À vista") : "Cobrança única")) },
           { label: "Contratante", valor: COMPRADORES[s.comprador].label },
           { label: "Forma de pagamento", valor: metodoSel.nome },

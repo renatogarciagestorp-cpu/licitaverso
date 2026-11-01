@@ -85,8 +85,16 @@ export function inicioMesBR(agora = Date.now()): Date {
 
 const centavos = (v: number) => Math.round(v * 100) / 100;
 
-export function precoPlano(plano: Plano, ciclo: Ciclo): number {
+/** Preço de fundador (lançamento): 30% nos planos individuais para os primeiros 100 assinantes, travado enquanto a
+ *  assinatura continuar ativa. Não se soma ao desconto do anual: no anual, o fundador paga 12 × a mensalidade de fundador. */
+export const DESCONTO_FUNDADOR = 0.3;
+
+export function precoPlano(plano: Plano, ciclo: Ciclo, fundador = false): number {
   const base = PLANOS[plano].mensal;
+  if (fundador) {
+    const mes = centavos(base * (1 - DESCONTO_FUNDADOR));
+    return ciclo === "anual" ? centavos(mes * 12) : mes;
+  }
   return ciclo === "anual" ? centavos(base * 12 * (1 - DESCONTO_ANUAL)) : centavos(base);
 }
 

@@ -41,7 +41,9 @@ Deno.serve(async (req) => {
         const html = moldura(`Não foi possível concluir a análise`, [
           `${esc(primeiro)}, não conseguimos analisar o documento <strong>${esc(doc)}</strong>${a.nome_arquivo ? ` (${esc(a.nome_arquivo)})` : ""}.`,
           `<strong>Motivo:</strong> ${esc(a.erro_msg || "falha no processamento.")}`,
-          (a.cobranca === "franquia_pro" || a.cobranca === "franquia_org")
+          a.cobranca === "cortesia_boas_vindas"
+            ? "Sua análise grátis continua disponível. Você pode enviar os documentos de novo."
+          : (a.cobranca === "franquia_pro" || a.cobranca === "franquia_org")
             ? "Esta análise não foi descontada da cota semanal. Você pode enviar o documento de novo."
             : "Como a análise foi paga, nossa equipe vai entrar em contato em até 1 dia útil para reprocessar ou estornar o valor.",
         ], { texto: "Ver minhas análises", url: link }, undefined, "Andamento de consultoria");
@@ -52,7 +54,7 @@ Deno.serve(async (req) => {
     if (a.status === "erro") {
       const { data: eq } = await admin.from("perfis").select("email, nome").eq("admin", true);
       const html = moldura("Análise com erro", [
-        `Documento: ${esc(doc)} · ${a.cobranca === "avulsa" ? "avulsa paga (R$ " + Number(a.valor).toFixed(2).replace(".", ",") + ")" : "franquia Pro"}`,
+        `Documento: ${esc(doc)} · ${a.cobranca === "avulsa" ? "avulsa paga (R$ " + Number(a.valor).toFixed(2).replace(".", ",") + ")" : a.cobranca === "cortesia_boas_vindas" ? "1ª análise grátis" : "franquia Pro"}`,
         `Cliente: ${esc(p?.nome || "—")} · ${esc(p?.email || "")}`,
         `Erro: ${esc(a.erro_msg || "")}`,
         a.cobranca === "avulsa" ? "Ação: reprocessar (Painel → Análises) ou estornar no Mercado Pago." : "Sem cobrança; a cota não foi consumida.",

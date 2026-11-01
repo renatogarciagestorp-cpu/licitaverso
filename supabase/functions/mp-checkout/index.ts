@@ -207,17 +207,21 @@ Deno.serve(async (req) => {
       if (ehAdmin) return erro("Você é administrador: já tem acesso total a todos os recursos, sem cobrança.");
       if (ciclo !== "mensal" && ciclo !== "anual") return erro("Ciclo inválido.");
       const contratante = ["fisica", "privada", "publica"].includes(corpo.contratante) ? corpo.contratante : "fisica";
-      valor = precoPlano(plano, ciclo);
+      // preço de fundador: quem já é fundador (com assinatura ativa) ou enquanto houver vagas
+      const { data: souFundador } = await admin.rpc("eh_fundador", { uid: usuario.id });
+      const { data: vagas } = await admin.rpc("vagas_fundador");
+      const fundador = !!souFundador || Number(vagas ?? 0) > 0;
+      valor = precoPlano(plano, ciclo, fundador);
       const cartao = metodo === "cartao" || metodo === "cpgf";
       parcelas = ciclo === "anual" && cartao ? Math.max(1, Math.min(12, Number(corpo.parcelas) || 1)) : 1;
-      titulo = `Licitacon · Plano ${PLANOS[plano].nome} · ${ciclo === "anual" ? "12 meses" : "1 mês"}`;
+      titulo = `Licitacon · Plano ${PLANOS[plano].nome} · ${ciclo === "anual" ? "12 meses" : "1 mês"}${fundador ? " · preço de fundador" : ""}`;
 
       // Renovação automática: assinatura recorrente do Mercado Pago (só cartão de crédito; cobra o valor cheio a cada ciclo).
       // O cartão fica guardado no Mercado Pago, nunca no Licitacon.
       if (corpo.renovacao_auto === true) {
         if (metodo !== "cartao") return erro("A renovação automática só está disponível no cartão de crédito.");
         const { data: ren, error: e1 } = await admin.from("renovacoes").insert({
-          usuario_id: usuario.id, plano, ciclo, valor, status: "pendente",
+          usuario_id: usuario.id, plano, ciclo, valor, status: "pendente", fundador,
         }).select("id").single();
         if (e1) throw e1;
         const ref = `renovacao:${ren.id}`;
@@ -237,7 +241,8 @@ Deno.serve(async (req) => {
       }
 
       const { data: nova, error } = await admin.from("assinaturas").insert({
-        usuario_id: usuario.id, plano, ciclo, status: "pendente", valor, parcelas, contratante, metodo,
+        usuario_id: usuario.id, plano, ciclo, status: "pendente", valor, parcelas, contratante, metodo, fundador,
+        observacao: fundador ? "preço de fundador" : "",
       }).select("id").single();
       if (error) throw error;
       referencia = `assinatura:${nova.id}`;
@@ -347,6 +352,22 @@ Deno.serve(async (req) => {
         if (pendente) return resposta({ gratuito: true, referencia: `analise:${pendente.id}`, id: pendente.id });
         const { data: usadas } = await admin.rpc("analises_usadas_semana", { uid: usuario.id });
         franquia = Number(usadas ?? 0) < FRANQUIA_PRO_SEMANA;
+      }
+      // primeira análise grátis (uma por conta, com e-mail confirmado), quando não há franquia
+      if (!franquia) {
+        const { data: pendC } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
+          .eq("status", "aguardando_documentos").eq("cobranca", "cortesia_boas_vindas").limit(1).maybeSingle();
+        if (pendC) return resposta({ gratuito: true, cortesia: true, referencia: `analise:${pendC.id}`, id: pendC.id });
+        const { data: livre } = await admin.rpc("cortesia_disponivel", { uid: usuario.id });
+        if (livre && usuario.email_confirmed_at) {
+          const { data: nova, error } = await admin.from("analises").insert({
+            usuario_id: usuario.id, documento: "multiplos", origem: "arquivos", arquivo: null, pncp_link: null,
+            cobranca: "cortesia_boas_vindas", plano: vigente ?? null, valor: 0,
+            termo_aceito_em: new Date().toISOString(), termo_versao: String(corpo.termo_versao ?? "").slice(0, 20), status: "aguardando_documentos",
+          }).select("id").single();
+          if (error) throw error;
+          return resposta({ gratuito: true, cortesia: true, referencia: `analise:${nova.id}`, id: nova.id });
+        }
       }
       valor = franquia ? 0 : precoAnalise(vigente ?? null);
       titulo = "Licitacon · Análise pelo Agente IA (até 3 documentos)";
