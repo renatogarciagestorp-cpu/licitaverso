@@ -4,9 +4,6 @@ alter table public.analises add column if not exists objeto jsonb not null defau
 alter table public.analises add column if not exists anexos jsonb not null default '[]'::jsonb;   -- [{tipo, arquivo, nome_arquivo}]
 alter table public.analises drop constraint if exists analises_regime_check;
 alter table public.analises add constraint analises_regime_check check (regime in ('lei-14133', 'lei-13303', 'lei-13019'));
-alter table public.analises drop constraint if exists analises_documento_check;
-alter table public.analises add constraint analises_documento_check
-  check (documento in ('edital', 'etp', 'tr', 'riscos', 'planilha', 'plano_trabalho'));
 
 -- Até 3 documentos por análise; pagamento (ou cota do Pro) antes do envio dos documentos.
 alter table public.analises add column if not exists documentos jsonb not null default '[]'::jsonb; -- [{tipo, arquivo, nome_arquivo, paginas}]

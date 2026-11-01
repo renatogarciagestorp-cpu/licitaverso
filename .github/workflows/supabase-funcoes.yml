@@ -77,8 +77,9 @@ jobs:
         run: |
           for f in supabase/sql/*.sql; do
             python3 -c 'import json,sys;print(json.dumps({"query":open(sys.argv[1]).read()}))' "$f" > /tmp/q.json
-            curl -fsS -X POST "https://api.supabase.com/v1/projects/$PROJECT_REF/database/query" \
-              -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" --data @/tmp/q.json >/dev/null
+            cod=$(curl -sS -o /tmp/r.json -w '%{http_code}' -X POST "https://api.supabase.com/v1/projects/$PROJECT_REF/database/query" \
+              -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" -H "Content-Type: application/json" --data @/tmp/q.json)
+            if [ "$cod" -ge 300 ]; then echo "::error::$f falhou ($cod): $(head -c 400 /tmp/r.json)"; exit 1; fi
             echo "aplicado: $f"
           done
 
