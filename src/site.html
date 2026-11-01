@@ -4525,7 +4525,7 @@ ${juris.length ? "<h2>Jurisprudência relacionada (Biblioteca Licitacon)</h2><ul
   async entrarGoogle() {
     if (!this.sb) return;
     const volta = this.state.volta && PAGINAS.includes(this.state.volta) ? this.state.volta : "conta";
-    const { error } = await this.sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: baseSite() + "index.html?p=" + volta } });
+    const { error } = await this.sb.auth.signInWithOAuth({ provider: "google", options: { redirectTo: baseSite() + "index.html?p=" + volta, queryParams: { prompt: "select_account" } } });
     if (error) this.setState({ auth: { ...this.state.auth, erro: "Não foi possível entrar com o Google. Tente de novo ou use e-mail e senha." } });
   }
 
