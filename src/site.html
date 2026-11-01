@@ -496,8 +496,14 @@
   @keyframes lvhIn { to { opacity: 1; transform: none; } }
   .lvh-doc-pe { display: flex; justify-content: space-between; gap: 10px; margin-top: 14px; font-size: 12.5px; color: #4A5D64; font-weight: 700; }
   .lvh-pdf { background: #0A1F2A; color: #fff; border-radius: 6px; padding: 3px 8px; }
-  .lvh-prova { background: #0F3F4D; color: #fff; padding: 26px 24px 22px; }
-  .lvh-prova-in { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+  .lvh-prova { background: #0F3F4D; color: #fff; padding: 36px 24px 24px; }
+  .lvh-prova-in { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+  .lvh-bib-tag { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #06251A; background: #7FE3B6; border-radius: 999px; padding: 5px 11px; }
+  .lvh-bib-t { font-family: 'Source Serif 4', Georgia, serif; font-weight: 600; font-size: 26px; line-height: 1.2; margin: 12px 0 0; color: #fff; max-width: 30ch; }
+  .lvh-bib-cta { margin-top: 14px; border: 0; background: none; padding: 0; color: #7FE3B6; font-size: 15px; font-weight: 800; cursor: pointer; }
+  .lvh-bib-cta:hover { text-decoration: underline; }
+  .lvh-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .lvh-ag { background: #0A1F2A; color: #7FE3B6; border-radius: 6px; padding: 2px 7px; margin-right: 6px; font-size: 11.5px; letter-spacing: 0.04em; }
   .lvh-num { display: grid; gap: 2px; }
   .lvh-prova .lvh-num-v { display: block; font-family: 'Source Serif 4', Georgia, serif; font-size: 34px; line-height: 1.1; font-weight: 600; letter-spacing: -0.01em; color: #fff; }
   .lvh-num > span { font-size: 13.5px; color: #B9D4DB; }
@@ -548,7 +554,10 @@
     .lvh-hero-in { grid-template-columns: minmax(0, 1fr); gap: 36px; }
     .lvh-h1 { font-size: 38px; }
     .lvh-doc { transform: none; }
-    .lvh-prova-in { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lvh-prova-in { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+    .lvh-bib-t { font-size: 22px; }
+    .lvh-nums { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .lvh-prova .lvh-num-v { font-size: 26px; }
     .lvh-sec { padding: 60px 16px 0; }
     .lvh-h2 { font-size: 29px; }
     .lvh-dores, .lvh-passos, .lvh-bento { grid-template-columns: minmax(0, 1fr); }
@@ -824,7 +833,7 @@
           </div>
           <div class="lvh-demo" aria-label="Exemplo de parecer gerado pelo agente">
             <div class="lvh-doc">
-              <div class="lvh-doc-top"><span class="lvh-dot"></span><span>Exemplo · Edital de pregão eletrônico · registro de preços</span></div>
+              <div class="lvh-doc-top"><span class="lvh-dot"></span><span><b class="lvh-ag">Agente de IA</b> Exemplo de parecer · edital de pregão eletrônico</span></div>
               <div class="lvh-linhas" aria-hidden="true">
                 <span style="width: 92%"></span><span style="width: 78%"></span><span style="width: 86%"></span><span style="width: 64%"></span>
                 <span style="width: 90%"></span><span style="width: 72%"></span><span style="width: 81%"></span><span style="width: 58%"></span>
@@ -841,11 +850,18 @@
         </div>
       </section>
 
-      <section class="lvh-prova" aria-label="Fontes oficiais">
+      <section class="lvh-prova" aria-labelledby="lvh-bib-t">
         <div class="lvh-prova-in">
-          <sc-for list="{{ homeNumeros }}" as="n" hint-placeholder-count="4">
-            <div class="lvh-num"><strong class="lvh-num-v">{{ n.v }}</strong><span>{{ n.r }}</span></div>
-          </sc-for>
+          <div class="lvh-bib">
+            <span class="lvh-bib-tag">Biblioteca Jurídica · grátis com cadastro</span>
+            <h2 id="lvh-bib-t" class="lvh-bib-t">A base que o agente consulta. Você também pode pesquisar nela, sem pagar nada.</h2>
+            <button class="lvh-bib-cta" sc-camel-on-click="{{ goBiblioteca }}">Pesquisar na Biblioteca →</button>
+          </div>
+          <div class="lvh-nums">
+            <sc-for list="{{ homeNumeros }}" as="n" hint-placeholder-count="3">
+              <div class="lvh-num"><strong class="lvh-num-v">{{ n.v }}</strong><span>{{ n.r }}</span></div>
+            </sc-for>
+          </div>
         </div>
         <p class="lvh-fontes">TCU · CGU · STF · STJ · Tribunais de Contas dos 26 estados e do DF · TCMs de SP, RJ, GO, BA e PA · Procuradorias-Gerais e Tribunais de Justiça de todo o país</p>
       </section>
@@ -4697,9 +4713,8 @@ class Component extends DCLogic {
       ].map(([c, nivel, texto]) => ({ classe: "lvh-ach " + c, nivel, texto })),
       homeNumeros: [
         { v: "90", r: "fontes oficiais monitoradas" },
-        { v: s.acervoN > 0 ? s.acervoN.toLocaleString("pt-BR") : "Dias úteis", r: s.acervoN > 0 ? "decisões e normas na Biblioteca" : "coleta automática" },
-        { v: "27", r: "estados e DF cobertos" },
-        { v: "Grátis", r: "Biblioteca liberada para quem cria conta" }
+        { v: s.acervoN > 0 ? s.acervoN.toLocaleString("pt-BR") : "Dias úteis", r: s.acervoN > 0 ? "decisões e normas, atualizadas nos dias úteis" : "coleta automática" },
+        { v: "27", r: "estados e DF cobertos" }
       ],
       homeDores: [
         { quem: "Quem conduz a licitação", t: "Um item sem justificativa vira impugnação", d: "E a impugnação vira suspensão do certame, apontamento do controle e responsabilidade de quem assinou o documento." },
