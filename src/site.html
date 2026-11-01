@@ -679,6 +679,56 @@
     .lvf-rk-l { grid-template-columns: 34px minmax(0, 1fr) 54px; }
     .lvf-rk-l > span:nth-child(n+4) { display: none; }
   }
+  /* ---------- Calculadora ---------- */
+  .lvc-hero-in { max-width: 1180px; margin: 0 auto; }
+  .lvc-corpo { max-width: 1180px; margin: 0 auto; padding: 0 24px 64px; }
+  .lvc-tipos { margin-top: -28px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; position: relative; }
+  .lvc-tipo { font: inherit; text-align: left; display: grid; gap: 2px; background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 14px 16px; box-shadow: 0 12px 28px rgba(11,31,42,0.07); color: #0B1F2A; }
+  .lvc-tipo.ativo { border: 2px solid #0FA36B; }
+  .lvc-tipo:disabled { opacity: 0.6; cursor: default; }
+  .lvc-tipo > b { font-size: 15px; }
+  .lvc-tipo > span { font-size: 12.5px; color: #6A7B82; }
+  .lvc-grid { margin-top: 18px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+  .lvc-form { background: #fff; border: 1px solid #E3E9E8; border-radius: 20px; padding: 24px; display: grid; gap: 14px; }
+  .lvc-campo { display: grid; gap: 6px; }
+  .lvc-campo > span { font-size: 12.5px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: #0F6B7E; }
+  .lvc-campo input, .lvc-campo select { width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 11px; padding: 11px 13px; font: inherit; font-size: 15px; color: #0B1F2A; background: #FBFCFC; }
+  .lvc-campo input:focus, .lvc-campo select:focus { outline: 2px solid #0FA36B; outline-offset: 1px; background: #fff; }
+  .lvc-campo > small { font-size: 12.5px; color: #7A8B91; line-height: 1.4; }
+  .lvc-check { display: flex; gap: 10px; align-items: center; font-size: 14.5px; font-weight: 700; color: #26393F; cursor: pointer; }
+  .lvc-check input { width: 18px; height: 18px; accent-color: #0FA36B; }
+  .lvc-det { border-top: 1px solid #EDF2F1; padding-top: 12px; }
+  .lvc-det summary { cursor: pointer; font-size: 14px; font-weight: 800; color: #0F6B7E; }
+  .lvc-det .lvc-campo { margin-top: 10px; }
+  .lvc-res { position: sticky; top: 92px; background: #0A1F2A; color: #fff; border-radius: 20px; padding: 26px; min-height: 260px; }
+  .lvc-vazio { display: grid; gap: 6px; place-content: center; text-align: center; min-height: 220px; color: #B8CBD2; }
+  .lvc-vazio > b { color: #fff; font-size: 17px; }
+  .lvc-msg { margin: 0 0 12px; font-size: 14px; color: #F7C76A; }
+  .lvc-res-rot { font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #7FE3B6; }
+  .lvc-res-valor { font-family: 'Source Serif 4', Georgia, serif; font-size: 46px; font-weight: 600; line-height: 1.1; margin-top: 6px; }
+  .lvc-res-sub { margin: 6px 0 0; font-size: 14px; color: #B8CBD2; }
+  .lvc-kpis { margin-top: 18px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .lvc-kpi { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 12px; display: grid; gap: 3px; }
+  .lvc-kpi > b { font-size: 16px; }
+  .lvc-kpi > span { font-size: 12px; color: #A9BEC6; line-height: 1.35; }
+  .lvc-al { margin: 12px 0 0; font-size: 13.5px; line-height: 1.5; border-radius: 10px; padding: 10px 12px; }
+  .lvc-al.info { background: rgba(127,227,182,0.12); color: #D7F5E7; }
+  .lvc-al.aviso { background: rgba(242,181,68,0.16); color: #F7DFA8; }
+  .lvc-al.ok { background: rgba(255,255,255,0.06); color: #C9D8DD; }
+  .lvc-ciclos { margin-top: 16px; background: #fff; color: #0B1F2A; border-radius: 12px; overflow: hidden; }
+  .lvc-ci { display: grid; grid-template-columns: 52px 1fr 1.3fr 0.8fr 1fr; gap: 6px; padding: 9px 12px; font-size: 13px; border-top: 1px solid #EEF3F2; }
+  .lvc-ci-h { border-top: 0; background: #F4F8F7; font-size: 11px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: #55666D; }
+  .lvc-fonte { margin: 14px 0 0; font-size: 12px; color: #8FA9B3; }
+  .lvc-bloq { margin-top: -28px; position: relative; background: #fff; border: 1px solid #E3E9E8; border-radius: 20px; padding: 28px; box-shadow: 0 16px 40px rgba(11,31,42,0.08); }
+  @media (max-width: 960px) {
+    .lvc-corpo { padding: 0 16px 48px; }
+    .lvc-tipos, .lvc-grid { grid-template-columns: minmax(0, 1fr); }
+    .lvc-res { position: static; }
+    .lvc-res-valor { font-size: 36px; }
+    .lvc-kpis { grid-template-columns: minmax(0, 1fr); }
+    .lvc-ci { grid-template-columns: 40px 1fr 1fr; }
+    .lvc-ci > span:nth-child(3), .lvc-ci > span:nth-child(4) { display: none; }
+  }
   /* ---------- Agente IA ---------- */
   .lva-hero { background: radial-gradient(800px 420px at 85% 10%, rgba(15,163,107,0.16), transparent 60%), #0A1F2A; color: #fff; padding: 60px 24px 72px; }
   .lva-hero-in { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr); gap: 48px; align-items: center; }
@@ -1437,6 +1487,86 @@
           <p class="lvf-mod">Moderação ativa: respeite as regras de conduta dos Termos de Uso. Conteúdo fora do tema, ofensivo ou com dados pessoais de terceiros é removido pela moderação. Conteúdo do fórum não substitui parecer jurídico.</p>
         </div>
       </div>
+    </sc-if>
+
+    <!-- ===================== CALCULADORA ===================== -->
+    <sc-if value="{{ isCalculadora }}" hint-placeholder-val="{{ false }}">
+      <section class="lva-hero" style="padding-bottom: 56px">
+        <div class="lvc-hero-in">
+          <span class="lvh-eyebrow">Calculadora · gestão de contratos</span>
+          <h1 class="lva-h1" style="max-width: 22ch">Reajuste de contrato calculado certo, com a nota técnica pronta.</h1>
+          <p class="lva-lead">Índices oficiais atualizados todos os dias, conferência dos 12 meses, ciclos acumulados e memória de cálculo mês a mês. No fim, você baixa a nota técnica em Word para juntar ao processo.</p>
+        </div>
+      </section>
+      <section class="lvc-corpo">
+        <sc-if value="{{ calcBloqueada }}" hint-placeholder-val="{{ false }}">
+          <div class="lvc-bloq">
+            <span class="lvh-bib-tag">Exclusivo para assinantes</span>
+            <h2 class="lva-h2" style="margin-top: 12px">A calculadora faz parte de todos os planos, inclusive o teste de 7 dias.</h2>
+            <p class="lva-sub" style="font-size: 15px; margin-top: 8px">{{ calcBloqTexto }}</p>
+            <div class="lvh-ctas" style="margin-top: 18px"><button class="lvh-btn" sc-camel-on-click="{{ calcBloqAcao }}">{{ calcBloqCta }}</button></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ calcLiberada }}" hint-placeholder-val="{{ true }}">
+          <div class="lvc-tipos" role="group" aria-label="Tipo de pedido">
+            <button class="lvc-tipo ativo" aria-pressed="true"><b>Reajuste por índice</b><span>IPCA, INPC, IGP-M, INCC…</span></button>
+            <button class="lvc-tipo" disabled><b>Repactuação</b><span>Em breve · mão de obra e convenção coletiva</span></button>
+            <button class="lvc-tipo" disabled><b>Reequilíbrio</b><span>Em breve · fato imprevisível</span></button>
+          </div>
+          <div class="lvc-grid">
+            <div class="lvc-form">
+              <h2 class="lva-h2" style="font-size: 22px">Dados do contrato</h2>
+              <label class="lvc-campo"><span>Regime do contrato</span>
+                <select sc-camel-on-change="{{ calcOnRegime }}"><sc-for list="{{ calcRegimes }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+              <label class="lvc-campo"><span>Índice previsto no contrato</span>
+                <select sc-camel-on-change="{{ calcOnIndice }}"><sc-for list="{{ calcIndices }}" as="o" hint-placeholder-count="6"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+              <label class="lvc-campo"><span>Valor mensal atual do contrato (R$)</span>
+                <input type="text" inputmode="decimal" value="{{ calcValor }}" sc-camel-on-input="{{ calcOnValor }}" placeholder="Ex.: 48.500,00"></label>
+              <label class="lvc-campo"><span>Data-base (mês do orçamento estimado)</span>
+                <input type="month" value="{{ calcDataBase }}" sc-camel-on-input="{{ calcOnDataBase }}"><small>Pela Lei 14.133, é a data do orçamento estimado, salvo se o contrato indicar outra.</small></label>
+              <label class="lvc-check"><input type="checkbox" checked="{{ calcHouve }}" sc-camel-on-change="{{ calcOnHouve }}"><span>Já houve reajuste neste contrato</span></label>
+              <sc-if value="{{ calcHouve }}" hint-placeholder-val="{{ false }}">
+                <label class="lvc-campo"><span>Mês em que o último reajuste passou a valer</span><input type="month" value="{{ calcUltimo }}" sc-camel-on-input="{{ calcOnUltimo }}"><small>O próximo ciclo conta 12 meses a partir daqui.</small></label>
+              </sc-if>
+              <label class="lvc-campo"><span>Calcular até (mês de referência)</span><input type="month" value="{{ calcReferencia }}" sc-camel-on-input="{{ calcOnReferencia }}"><small>Deixe em branco para usar o mês atual.</small></label>
+              <label class="lvc-campo"><span>Fim da vigência (opcional)</span><input type="month" value="{{ calcFim }}" sc-camel-on-input="{{ calcOnFim }}"></label>
+              <label class="lvc-campo"><span>Período do índice em cada ciclo</span>
+                <select sc-camel-on-change="{{ calcOnMetodo }}"><sc-for list="{{ calcMetodos }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select>
+                <small>Use o que diz a cláusula de reajuste do seu contrato.</small></label>
+              <details class="lvc-det"><summary>Dados para a nota técnica (opcional)</summary>
+                <label class="lvc-campo"><span>Contrato / processo</span><input type="text" value="{{ calcContrato }}" sc-camel-on-input="{{ calcOnContrato }}"></label>
+                <label class="lvc-campo"><span>Contratada</span><input type="text" value="{{ calcContratada }}" sc-camel-on-input="{{ calcOnContratada }}"></label>
+                <label class="lvc-campo"><span>Objeto</span><input type="text" value="{{ calcObjeto }}" sc-camel-on-input="{{ calcOnObjeto }}"></label>
+              </details>
+            </div>
+            <div class="lvc-res" aria-live="polite">
+              <sc-if value="{{ calcSemIndices }}" hint-placeholder-val="{{ false }}"><p class="lvc-msg">{{ calcSemIndicesTxt }}</p></sc-if>
+              <sc-if value="{{ calcAguardando }}" hint-placeholder-val="{{ true }}">
+                <div class="lvc-vazio"><b>Preencha o valor mensal e a data-base</b><span>O resultado aparece aqui, na hora.</span></div>
+              </sc-if>
+              <sc-if value="{{ calcPronto }}" hint-placeholder-val="{{ false }}">
+                <span class="lvc-res-rot">{{ calcRotulo }}</span>
+                <div class="lvc-res-valor">{{ calcNovo }}</div>
+                <p class="lvc-res-sub">{{ calcSub }}</p>
+                <div class="lvc-kpis">
+                  <sc-for list="{{ calcKpis }}" as="k" hint-placeholder-count="3"><div class="lvc-kpi"><b>{{ k.v }}</b><span>{{ k.r }}</span></div></sc-for>
+                </div>
+                <sc-for list="{{ calcAlertas }}" as="al" hint-placeholder-count="1"><p class="{{ al.cls }}">{{ al.t }}</p></sc-for>
+                <sc-if value="{{ calcTemCiclos }}" hint-placeholder-val="{{ false }}">
+                  <div class="lvc-ciclos" role="table" aria-label="Ciclos de reajuste">
+                    <div class="lvc-ci lvc-ci-h" role="row"><span role="columnheader">Ciclo</span><span role="columnheader">Vale a partir de</span><span role="columnheader">Índice de</span><span role="columnheader">Variação</span><span role="columnheader">Valor mensal</span></div>
+                    <sc-for list="{{ calcCiclos }}" as="ci" hint-placeholder-count="1">
+                      <div class="lvc-ci" role="row"><span role="cell">{{ ci.k }}</span><span role="cell">{{ ci.aniv }}</span><span role="cell">{{ ci.periodo }}</span><span role="cell">{{ ci.var }}</span><span role="cell"><b>{{ ci.valor }}</b></span></div>
+                    </sc-for>
+                  </div>
+                  <button class="lvh-btn" style="margin-top: 16px; width: 100%" sc-camel-on-click="{{ calcBaixarNota }}">Baixar nota técnica (Word)</button>
+                </sc-if>
+                <p class="lvc-fonte">{{ calcFonte }}</p>
+              </sc-if>
+            </div>
+          </div>
+        </sc-if>
+      </section>
     </sc-if>
 
     <!-- ===================== CURSOS ===================== -->
@@ -3397,7 +3527,7 @@ const COMPRADORES = {
 // ===================== Contas, dados e pagamentos =====================
 // O site usa o Supabase (contas e banco) e o Mercado Pago (cobrança) quando
 // config.js está preenchido. Sem configuração, roda em modo demonstração.
-const PAGINAS = ["home", "forum", "cursos", "consultoria", "agente", "planos", "conta", "institucional", "login", "cadastro", "recuperar", "nova-senha"];
+const PAGINAS = ["home", "forum", "cursos", "consultoria", "agente", "calculadora", "planos", "conta", "institucional", "login", "cadastro", "recuperar", "nova-senha"];
 const EXIGE_LOGIN = ["forum", "cursos", "conta"];
 const PLANO_NOME = { teste: "Teste", basico: "Básico", premium: "Premium", pro: "Pro" };
 // Planos para equipes: mesmas regras do servidor (supabase/functions/_shared/precos.ts)
@@ -3569,6 +3699,8 @@ class Component extends DCLogic {
     forumCarregando: false,
     forumErro: "",
     nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
+    indices: null, indicesErro: false,
+    calc: { regime: "14133", indice: "ipca", valor: "", dataBase: "", houveReajuste: false, ultimo: "", referencia: "", fim: "", metodo: "a", contrato: "", contratada: "", objeto: "" },
     threadAberta: null, forumFiltro: "todas", forumRank: { mes: [], geral: [], destaque: null }, forumVerRanking: false, rankPeriodo: "mes",
     respondendo: null, resposta: "", citacao: "", respEnviando: false, respErro: "",
 
@@ -3608,6 +3740,7 @@ class Component extends DCLogic {
       ACERVO_EM = j.gerado_em || "";
       this.setState({ acervoN: DOCS.length });
     }).catch(() => {});
+    if (pIni === "calculadora") this.carregarIndices();
     this.timer = setInterval(() => {
       if (!this.state.pausado && this.state.page === "home") {
         this.setState((s) => ({ slide: (s.slide + 1) % SLIDES.length }));
@@ -3693,6 +3826,105 @@ class Component extends DCLogic {
     if (u) await this.carregarDados();
     this.tratarRetornoPagamento();
     this.carregarCursos();
+  }
+
+  // ------------------------------------------------------------ calculadora de reajuste
+  carregarIndices() {
+    if (this.state.indices || this._indicesCarregando) return;
+    this._indicesCarregando = true;
+    fetch("indices.json?v=" + Date.now(), { cache: "no-store" }).then((r) => r.ok ? r.json() : Promise.reject(r.status))
+      .then((j) => this.setState({ indices: j, indicesErro: false }))
+      .catch(() => this.setState({ indicesErro: true }))
+      .finally(() => { this._indicesCarregando = false; });
+  }
+
+  onCalc = (k) => (e) => {
+    const v = e && e.target ? (e.target.type === "checkbox" ? !!e.target.checked : e.target.value) : e;
+    this.setState((s) => ({ calc: { ...s.calc, [k]: v } }));
+  };
+
+  // reajuste por índice: ciclos anuais a partir da data-base, com a variação acumulada de 12 meses do índice
+  calcularReajuste() {
+    const c = this.state.calc, idx = this.state.indices;
+    const serie = idx && idx.series && idx.series[c.indice];
+    const valor = Number(String(c.valor).replace(/\./g, "").replace(",", ".")) || 0;
+    const mesNum = (ym) => { const m = /^(\d{4})-(\d{2})$/.exec(ym || ""); return m ? Number(m[1]) * 12 + Number(m[2]) - 1 : null; };
+    const ym = (n) => Math.floor(n / 12) + "-" + String(n % 12 + 1).padStart(2, "0");
+    const hoje = new Date(Date.now() - 3 * 3600000);
+    const refN = mesNum(c.referencia) ?? (hoje.getUTCFullYear() * 12 + hoje.getUTCMonth());
+    const baseOrig = mesNum(c.dataBase);
+    const baseN = c.houveReajuste && mesNum(c.ultimo) !== null ? mesNum(c.ultimo) : baseOrig;
+    if (!serie || baseN === null || !(valor > 0)) return { pronto: false, serie };
+    const meses = Object.keys(serie.mensal).sort();
+    const ultimoDisp = meses[meses.length - 1];
+    const ciclos = [];
+    let fatorTot = 1, pendente = false;
+    for (let k = 1; baseN + 12 * k <= refN && k <= 10; k++) {
+      const ini = baseN + 12 * (k - 1) + (c.metodo === "b" ? 1 : 0);
+      const lista = [];
+      let f = 1, falta = false;
+      for (let m = ini; m < ini + 12; m++) {
+        const v = serie.mensal[ym(m)];
+        if (typeof v !== "number") { falta = true; lista.push({ mes: ym(m), v: null }); continue; }
+        f *= 1 + v / 100; lista.push({ mes: ym(m), v });
+      }
+      if (falta) pendente = true;
+      fatorTot *= f;
+      ciclos.push({ k, aniversario: ym(baseN + 12 * k), ini: ym(ini), fim: ym(ini + 11), fator: f, falta, lista, valor: valor * fatorTot });
+    }
+    const proximo = ym(baseN + 12 * (ciclos.length + 1));
+    // diferença acumulada desde o primeiro aniversário até o mês de referência (valor pago sem reajuste)
+    let retro = 0;
+    ciclos.forEach((ci, i) => {
+      const de = mesNum(ci.aniversario), ate = i + 1 < ciclos.length ? mesNum(ciclos[i + 1].aniversario) - 1 : refN;
+      retro += (ci.valor - valor) * Math.max(0, ate - de + 1);
+    });
+    const fimN = mesNum(c.fim);
+    const restante = fimN !== null && fimN > refN ? fimN - refN : 0;
+    const novo = ciclos.length ? ciclos[ciclos.length - 1].valor : valor;
+    return { pronto: true, serie, valor, ciclos, novo, fatorTot, pendente, ultimoDisp, proximo, retro, restante, impactoRestante: (novo - valor) * restante,
+      baseN, refN, mesNum, ym, baseYm: ym(baseN) };
+  }
+
+  baixarNotaReajuste() {
+    const r = this.calcularReajuste(), c = this.state.calc;
+    if (!r.pronto || !r.ciclos.length) { this.aviso("Preencha os dados e confira se já há reajuste devido para gerar a nota.", "erro"); return; }
+    const brlN = (v) => "R$ " + v.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    const pct = (f) => ((f - 1) * 100).toFixed(4).replace(".", ",") + "%";
+    const mesBR = (x) => { const [a, m] = x.split("-"); return ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"][Number(m) - 1] + "/" + a; };
+    const esc = (t) => String(t || "").replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
+    const FUND = {
+      "14133": "Lei nº 14.133/2021, art. 25, § 7º (índice de reajuste com data-base vinculada à data do orçamento estimado), art. 92, V e § 3º (cláusula de reajuste), e art. 136, I (formalização por apostila); Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual).",
+      "8666": "Lei nº 8.666/1993, art. 40, XI, art. 55, III, e art. 65, § 8º (formalização por apostila); Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual).",
+      "13303": "Lei nº 13.303/2016, art. 69, III (data-base e periodicidade do reajustamento como cláusula necessária), e regulamento interno de licitações e contratos da empresa; Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual)."
+    };
+    const juris = DOCS.filter((d) => /reajust/i.test([d.titulo, d.ementa, (d.temas || []).join(" ")].join(" "))).slice(0, 3);
+    const linhasCiclo = r.ciclos.map((ci) => "<tr><td>" + ci.k + "º</td><td>" + mesBR(ci.aniversario) + "</td><td>" + mesBR(ci.ini) + " a " + mesBR(ci.fim) + "</td><td>" + pct(ci.fator) + (ci.falta ? " (parcial)" : "") + "</td><td>" + brlN(ci.valor) + "</td></tr>").join("");
+    const memoria = r.ciclos.map((ci) => "<p><b>" + ci.k + "º ciclo</b> (" + mesBR(ci.ini) + " a " + mesBR(ci.fim) + "):</p><table><tr><th>Mês</th><th>Variação mensal</th></tr>" +
+      ci.lista.map((l) => "<tr><td>" + mesBR(l.mes) + "</td><td>" + (l.v === null ? "não divulgado" : String(l.v).replace(".", ",") + "%") + "</td></tr>").join("") +
+      "<tr><td><b>Acumulado</b></td><td><b>" + pct(ci.fator) + "</b></td></tr></table>").join("");
+    const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>Nota técnica de reajuste</title>
+<style>@page{size:21cm 29.7cm;margin:3cm 2cm 2cm 3cm}body{font-family:"Times New Roman",serif;font-size:12pt;line-height:1.5;text-align:justify}h1{font-size:14pt;text-align:center;text-transform:uppercase}h2{font-size:12pt;text-transform:uppercase;margin-top:18pt}table{border-collapse:collapse;width:100%;margin:6pt 0}td,th{border:1px solid #444;padding:4pt 6pt;font-size:11pt;text-align:left}th{background:#eee}.peq{font-size:10pt;color:#444}</style></head><body>
+<h1>Nota técnica — cálculo de reajuste contratual</h1>
+<p><b>Contrato/processo:</b> ${esc(c.contrato) || "____________"}<br><b>Contratada:</b> ${esc(c.contratada) || "____________"}<br><b>Objeto:</b> ${esc(c.objeto) || "____________"}</p>
+<h2>1. Objeto</h2><p>Esta nota apresenta o cálculo do reajuste do valor contratual pelo índice ${esc(r.serie.nome)}, previsto no contrato, a partir da data-base de ${mesBR(r.baseYm)}${c.houveReajuste ? " (mês em que passou a valer o último reajuste concedido)" : " (data do orçamento estimado ou a indicada no contrato)"}.</p>
+<h2>2. Fundamentação</h2><p>${FUND[c.regime]}</p><p>O reajuste por índice recompõe a variação ordinária dos custos, é devido a cada período de 12 meses contados da data-base e não caracteriza alteração contratual, podendo ser registrado por simples apostila.</p>
+<h2>3. Resultado</h2><table><tr><th>Ciclo</th><th>Vigência a partir de</th><th>Período do índice</th><th>Variação acumulada</th><th>Valor mensal reajustado</th></tr>${linhasCiclo}</table>
+<p>Valor mensal antes do reajuste: <b>${brlN(r.valor)}</b>. Valor mensal reajustado: <b>${brlN(r.novo)}</b> (variação total de ${pct(r.fatorTot)}). Diferença mensal: <b>${brlN(r.novo - r.valor)}</b>.</p>
+${r.retro > 0 ? `<p>Diferença acumulada estimada desde o primeiro aniversário até ${mesBR(r.ym(r.refN))}, considerando o valor pago sem reajuste: <b>${brlN(r.retro)}</b>. O valor a pagar depende das medições efetivamente realizadas no período.</p>` : ""}
+${r.restante > 0 ? `<p>Impacto estimado até o fim da vigência (${r.restante} meses): <b>${brlN(r.impactoRestante)}</b>.</p>` : ""}
+<h2>4. Memória de cálculo</h2><p>Fonte: ${esc(r.serie.fonte)}. Fórmula: valor reajustado = valor anterior × Π (1 + variação mensal), sobre os 12 meses de cada ciclo.</p>${memoria}
+${r.ciclos.length > 1 ? "<h2>5. Observação</h2><p>Há mais de um ciclo anual acumulado. Confira se o contrato foi prorrogado sem que o reajuste tenha sido pedido ou ressalvado, pois há entendimento do TCU de que, nessa situação, o direito pode ter precluído.</p>" : ""}
+${juris.length ? "<h2>Jurisprudência relacionada (Biblioteca Licitacon)</h2><ul>" + juris.map((d) => "<li>" + esc(d.titulo) + (d.link ? " — " + esc(d.link) : "") + "</li>").join("") + "</ul>" : ""}
+<h2>Conclusão</h2><p>Pelo exposto, o valor mensal do contrato passa de ${brlN(r.valor)} para ${brlN(r.novo)}, com efeitos a partir de ${mesBR(r.ciclos[r.ciclos.length - 1].aniversario)}, a ser formalizado por apostila, após a conferência da cláusula de reajuste do contrato e da disponibilidade orçamentária.</p>
+<p>____________________________<br>Responsável</p>
+<p class="peq">Cálculo gerado pela Calculadora de reajuste do Licitacon em ${new Date().toLocaleDateString("pt-BR")}. Confira os dados de entrada, a cláusula contratual e os índices na fonte oficial antes de usar no processo.</p>
+</body></html>`;
+    const blob = new Blob(["\ufeff" + html], { type: "application/msword" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "Nota-tecnica-reajuste" + (c.contrato ? "-" + c.contrato.replace(/[^\w-]+/g, "-") : "") + ".doc";
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
   }
 
   // ofertas de lançamento: vagas de fundador, se a pessoa é fundadora e se ainda tem a primeira análise grátis
@@ -3841,6 +4073,7 @@ class Component extends DCLogic {
     }
     if (destino === "forum" && this.u) this.carregarForum();
     if (destino === "agente" && this.u) this.carregarDados();
+    if (destino === "calculadora") this.carregarIndices();
     window.scrollTo(0, 0);
   }
 
@@ -4692,7 +4925,7 @@ class Component extends DCLogic {
 
     const navDefs = [
       ["Biblioteca Jurídica", "biblioteca"], ["Fórum", "forum"], ["Cursos", "cursos"],
-      ["Consultoria", "consultoria"], ["Agente IA", "agente"], ["Planos", "planos"]
+      ["Consultoria", "consultoria"], ["Agente IA", "agente"], ["Calculadora", "calculadora"], ["Planos", "planos"]
     ];
 
     const filtradosTodos = this.filtrar();
@@ -4891,7 +5124,7 @@ class Component extends DCLogic {
       goHome: this.nav("home"), goBiblioteca: this.nav("biblioteca"), goForum: this.nav("forum"), goPlanos: this.nav("planos"),
       goLogin: this.nav("login"), goCadastro: this.nav("cadastro"), goRecuperar: this.nav("recuperar"),
       isHome: p("home"), isBiblioteca: p("biblioteca"), isForum: p("forum"), isCursos: p("cursos"),
-      isConsultoria: p("consultoria"), isAgente: p("agente"), isPlanos: p("planos"),
+      isConsultoria: p("consultoria"), isAgente: p("agente"), isCalculadora: p("calculadora"), isPlanos: p("planos"),
       isConta: p("conta"), goConta: this.nav("conta"),
       isLogin: p("login"), isCadastro: p("cadastro"), isRecuperar: p("recuperar"), isNovaSenha: p("nova-senha"),
       isAuth: p("login") || p("cadastro") || p("recuperar") || p("nova-senha"),
@@ -4968,6 +5201,54 @@ class Component extends DCLogic {
       pausar: () => this.setState({ pausado: true }),
       retomar: () => this.setState({ pausado: false }),
 
+      // calculadora de reajuste
+      ...(() => {
+        const c = s.calc, liberada = !!s.admin || !!s.plano || !s.sb; // sem contas ativas (demonstração), fica aberta
+        const r = liberada ? this.calcularReajuste() : { pronto: false };
+        const brlN = (v) => "R$ " + v.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        const pct = (f) => ((f - 1) * 100).toFixed(2).replace(".", ",") + "%";
+        const mesBR = (x) => { const [a, m] = String(x).split("-"); return ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"][Number(m) - 1] + "/" + a; };
+        const opt = (lista, atual) => lista.map(([id, nome]) => ({ id, nome, sel: id === atual }));
+        const idxNomes = [["ipca", "IPCA (IBGE)"], ["ipca_e", "IPCA-E (IBGE)"], ["inpc", "INPC (IBGE)"], ["igpm", "IGP-M (FGV)"], ["igpdi", "IGP-DI (FGV)"], ["incc", "INCC-DI (FGV)"]]
+          .filter(([id]) => !s.indices || (s.indices.series && s.indices.series[id]));
+        const alertas = [];
+        if (r.pronto) {
+          if (!r.ciclos.length) alertas.push({ cls: "lvc-al info", t: "Ainda não se passaram 12 meses desde a data-base. O primeiro reajuste só é devido a partir de " + mesBR(r.proximo) + " (Lei nº 10.192/2001)." });
+          if (r.pendente) alertas.push({ cls: "lvc-al aviso", t: "Parte do período ainda não tem índice divulgado (último disponível: " + mesBR(r.ultimoDisp) + "). O cálculo considera só os meses já publicados." });
+          if (r.ciclos.length > 1) alertas.push({ cls: "lvc-al aviso", t: "Há " + r.ciclos.length + " ciclos anuais acumulados. Confira se o contrato foi prorrogado sem que o reajuste tenha sido pedido ou ressalvado: há entendimento do TCU de que, nesse caso, o direito pode ter precluído." });
+          if (r.ciclos.length) alertas.push({ cls: "lvc-al ok", t: "O reajuste por índice não altera o contrato: é registrado por simples apostila" + (c.regime === "14133" ? " (Lei nº 14.133/2021, art. 136, I)." : c.regime === "8666" ? " (Lei nº 8.666/1993, art. 65, § 8º)." : ", conforme o regulamento da estatal.") });
+        }
+        const ultimoCiclo = r.pronto && r.ciclos.length ? r.ciclos[r.ciclos.length - 1] : null;
+        return {
+          calcLiberada: liberada, calcBloqueada: !liberada,
+          calcBloqTexto: s.usuario ? "Comece o teste grátis de 7 dias ou escolha um plano para usar a calculadora e baixar a nota técnica." : "Entre na sua conta para usar. Se ainda não assina, o teste de 7 dias é grátis e sem cartão.",
+          calcBloqCta: s.usuario ? "Ver teste e planos" : "Entrar ou criar conta", calcBloqAcao: s.usuario ? this.nav("planos") : () => { this.setState({ volta: "calculadora" }); this.irPara("login"); },
+          calcRegimes: opt([["14133", "Lei 14.133/2021"], ["8666", "Lei 8.666/1993 (contrato antigo)"], ["13303", "Lei 13.303/2016 (estatais)"]], c.regime),
+          calcIndices: opt(idxNomes, c.indice),
+          calcMetodos: opt([["a", "12 meses a partir do mês da data-base (ex.: mar a fev)"], ["b", "12 meses a partir do mês seguinte (ex.: abr a mar)"]], c.metodo),
+          calcValor: c.valor, calcDataBase: c.dataBase, calcHouve: !!c.houveReajuste, calcUltimo: c.ultimo, calcReferencia: c.referencia, calcFim: c.fim,
+          calcContrato: c.contrato, calcContratada: c.contratada, calcObjeto: c.objeto,
+          calcOnRegime: this.onCalc("regime"), calcOnIndice: this.onCalc("indice"), calcOnValor: this.onCalc("valor"), calcOnDataBase: this.onCalc("dataBase"),
+          calcOnHouve: this.onCalc("houveReajuste"), calcOnUltimo: this.onCalc("ultimo"), calcOnReferencia: this.onCalc("referencia"), calcOnFim: this.onCalc("fim"),
+          calcOnMetodo: this.onCalc("metodo"), calcOnContrato: this.onCalc("contrato"), calcOnContratada: this.onCalc("contratada"), calcOnObjeto: this.onCalc("objeto"),
+          calcSemIndices: liberada && !s.indices,
+          calcSemIndicesTxt: s.indicesErro ? "Os índices oficiais ainda estão sendo carregados pela primeira vez. Tente de novo em alguns minutos." : "Carregando os índices oficiais…",
+          calcAguardando: liberada && !r.pronto, calcPronto: !!r.pronto,
+          calcRotulo: ultimoCiclo ? "Valor mensal reajustado" : "Valor mensal (sem reajuste devido)",
+          calcNovo: r.pronto ? brlN(r.novo) : "",
+          calcSub: ultimoCiclo ? "A partir de " + mesBR(ultimoCiclo.aniversario) + " · variação de " + pct(r.fatorTot) + " sobre " + brlN(r.valor) : (r.pronto ? "Próximo reajuste possível: " + mesBR(r.proximo) : ""),
+          calcKpis: r.pronto ? [
+            { v: brlN(r.novo - r.valor), r: "diferença por mês" },
+            { v: r.retro > 0 ? brlN(r.retro) : "—", r: "diferença acumulada até " + mesBR(r.ym(r.refN)) },
+            { v: r.restante > 0 ? brlN(r.impactoRestante) : "—", r: r.restante > 0 ? "impacto até o fim da vigência" : "informe o fim da vigência" }
+          ] : [],
+          calcAlertas: alertas,
+          calcTemCiclos: !!ultimoCiclo,
+          calcCiclos: r.pronto ? r.ciclos.map((ci) => ({ k: ci.k + "º", aniv: mesBR(ci.aniversario), periodo: mesBR(ci.ini) + " a " + mesBR(ci.fim), var: pct(ci.fator) + (ci.falta ? "*" : ""), valor: brlN(ci.valor) })) : [],
+          calcBaixarNota: () => this.baixarNotaReajuste(),
+          calcFonte: r.pronto && r.serie ? "Fonte: " + r.serie.fonte + " · último mês disponível: " + mesBR(r.ultimoDisp) + (s.indices && s.indices.gerado_em ? " · atualizado em " + new Date(s.indices.gerado_em).toLocaleDateString("pt-BR") : "") : ""
+        };
+      })(),
       // home
       ferramentas: [
         { icon: "✦", tag: "Agente de IA", titulo: "Análise de documentos com parecer técnico", desc: "Envie até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e receba um parecer em PDF e Word: constatação, texto legal, risco, providência, redação sugerida e jurisprudência. A primeira análise é grátis.", cta: "Analisar um documento", go: this.nav("agente"), big: true },
