@@ -13,7 +13,7 @@ import {
   aplicarPagamento, clienteServico, conferirRenovacao, CORS, env, erro, mp, resposta, usuarioDaRequisicao, nivelDoToken } from "../_shared/comum.ts";
 import {
   CONSULTORIA, type Ciclo, FRANQUIA_PRO_SEMANA, inicioMesBR, MAX_DOCS_ANALISE, MAX_PAGINAS_ANALISE, type Modalidade, type Plano, PLANOS,
-  precoAnalise, precoConsultoria, precoPlano, TIPOS_DOC_ANALISE,
+  precoAnalise, precoConsultoria, precoPlano, TIPOS_DOC_ANALISE, FRANQUIA_EQUIPE_MES, MIN_ACESSOS_EQUIPE, MAX_ACESSOS_EQUIPE, precoEquipe,
 } from "../_shared/precos.ts";
 import { avisarEquipeNovaConsultoria } from "../_shared/consultoria.ts";
 
@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
     // ---------------------------------------------------------------- conferir
     if (acao === "conferir") {
       const ref = String(corpo.referencia ?? "");
-      const m = ref.match(/^(assinatura|consultoria|analise|renovacao):([0-9a-f-]{36})$/);
+      const m = ref.match(/^(assinatura|consultoria|analise|renovacao|equipe):([0-9a-f-]{36})$/);
       if (!m) return erro("Referência inválida.");
       if (m[1] === "renovacao") {
         const { data: ren } = await admin.from("renovacoes").select("id, usuario_id, status, mp_preapproval").eq("id", m[2]).maybeSingle();
@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
         const { data: depois } = await admin.from("renovacoes").select("status").eq("id", m[2]).maybeSingle();
         return resposta({ status: depois?.status ?? ren.status, resultados });
       }
-      const tabela = m[1] === "assinatura" ? "assinaturas" : m[1] === "consultoria" ? "consultorias" : "analises";
+      const tabela = m[1] === "assinatura" ? "assinaturas" : m[1] === "consultoria" ? "consultorias" : m[1] === "equipe" ? "organizacoes" : "analises";
       const { data: linha } = await admin.from(tabela).select("id, usuario_id, status").eq("id", m[2]).maybeSingle();
       if (!linha || linha.usuario_id !== usuario.id) return erro("Pedido não encontrado.", 404);
 
@@ -280,6 +280,34 @@ Deno.serve(async (req) => {
         return resposta({ gratuito: true, referencia: `consultoria:${nova.id}` });
       }
       referencia = `consultoria:${nova.id}`;
+    // ------------------------------------------------------- plano de equipe (empresas e órgãos)
+    } else if (corpo.tipo === "equipe") {
+      const plano = corpo.plano as Plano;
+      const ciclo = corpo.ciclo as Ciclo;
+      const acessos = Math.floor(Number(corpo.acessos) || 0);
+      if (!PLANOS[plano]) return erro("Plano inválido.");
+      if (ciclo !== "mensal" && ciclo !== "anual") return erro("Ciclo inválido.");
+      if (acessos < MIN_ACESSOS_EQUIPE || acessos > MAX_ACESSOS_EQUIPE) return erro(`Planos de equipe vão de ${MIN_ACESSOS_EQUIPE} a ${MAX_ACESSOS_EQUIPE} acessos. Acima disso, peça uma proposta.`);
+      const nomeOrg = String(corpo.organizacao ?? "").trim().replace(/\s+/g, " ").slice(0, 160);
+      if (nomeOrg.length < 3) return erro("Informe o nome da empresa ou do órgão.");
+      const cnpj = String(corpo.cnpj ?? "").replace(/\D/g, "").slice(0, 14);
+      const emailGestor = String(perfil?.email || usuario.email || "").trim().toLowerCase();
+      if (!emailGestor) return erro("Sua conta precisa ter um e-mail para ser a gestora da equipe.");
+      const p = precoEquipe(plano, acessos, ciclo);
+      valor = p.total;
+      const cartao = metodo === "cartao" || metodo === "cpgf" || metodo === "";
+      parcelas = ciclo === "anual" && cartao ? Math.max(1, Math.min(12, Number(corpo.parcelas) || 1)) : 1;
+      titulo = `Licitacon · Plano ${PLANOS[plano].nome} para equipes · ${acessos} acessos · ${ciclo === "anual" ? "12 meses" : "1 mês"}`;
+      const fimProvisorio = new Date(Date.now() + 3 * 24 * 3600 * 1000).toISOString();
+      const { data: nova, error } = await admin.from("organizacoes").insert({
+        nome: nomeOrg, cnpj: cnpj || null, tipo: corpo.contratante === "publica" ? "publica" : "privada", plano, acessos, ciclo,
+        inicio: new Date().toISOString(), fim: fimProvisorio, status: "pendente", origem: "mercado_pago", valor, usuario_id: usuario.id,
+        observacao: `Compra pelo site · ${p.porAcessoMes.toFixed(2)} por acesso/mês (desconto de ${Math.round(p.desconto * 100)}%${ciclo === "anual" ? " + 10% do anual" : ""})`,
+      }).select("id").single();
+      if (error) throw error;
+      const { error: e2 } = await admin.from("organizacao_membros").insert({ org_id: nova.id, email: emailGestor, papel: "gestor" });
+      if (e2) throw e2;
+      referencia = `equipe:${nova.id}`;
     // ---------------------------------------------------------------- análise
     } else if (corpo.tipo === "analise") {
       // Etapa 1 do agente: aceite das condições e pagamento (ou cota do Pro). Os documentos são enviados depois (acao "enviar_analise").
@@ -295,13 +323,13 @@ Deno.serve(async (req) => {
         if (error) throw error;
         return resposta({ gratuito: true, referencia: `analise:${nova.id}`, id: nova.id });
       }
-      // plano de equipe Pro: franquia somada (2 análises por acesso por semana), compartilhada pela equipe
+      // plano de equipe Pro: franquia somada (6 análises por acesso por mês), compartilhada pela equipe
       if (orgPro) {
         const { data: pendOrg } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
           .eq("status", "aguardando_documentos").eq("cobranca", "franquia_org").limit(1).maybeSingle();
         if (pendOrg) return resposta({ gratuito: true, referencia: `analise:${pendOrg.id}`, id: pendOrg.id });
         const { data: usadasOrg } = await admin.rpc("analises_usadas_org", { org: org!.id });
-        if (Number(usadasOrg ?? 0) < FRANQUIA_PRO_SEMANA * Number(org!.acessos)) {
+        if (Number(usadasOrg ?? 0) < FRANQUIA_EQUIPE_MES * Number(org!.acessos)) {
           const { data: nova, error } = await admin.from("analises").insert({
             usuario_id: usuario.id, documento: "multiplos", origem: "arquivos", arquivo: null, pncp_link: null,
             cobranca: "franquia_org", plano: "pro", valor: 0, org_id: org!.id,
@@ -363,7 +391,7 @@ Deno.serve(async (req) => {
       }),
     });
 
-    const tabela = referencia.startsWith("assinatura:") ? "assinaturas" : referencia.startsWith("consultoria:") ? "consultorias" : "analises";
+    const tabela = referencia.startsWith("assinatura:") ? "assinaturas" : referencia.startsWith("consultoria:") ? "consultorias" : referencia.startsWith("equipe:") ? "organizacoes" : "analises";
     await admin.from(tabela).update({ mp_preferencia: preferencia.id }).eq("id", referencia.split(":")[1]);
 
     const producao = !String(Deno.env.get("MP_ACCESS_TOKEN") ?? "").startsWith("TEST-");

@@ -1,5 +1,5 @@
 -- Planos para equipes (empresas e órgãos públicos): licença anual ou mensal com N acessos nominais (e-mails), franquia de
--- análises do agente somada para a equipe (Pro: 2 por acesso por semana) e 1 consultoria por escrito por mês para a organização.
+-- análises do agente somada para a equipe (Pro: 6 por acesso por mês) e 1 consultoria por escrito por mês para a organização.
 -- (nome "zz-o..." para ser aplicado depois de zz-mfa-admin.sql: sobrepõe plano_vigente e minha_cota_analises)
 
 create table if not exists public.organizacoes (
@@ -28,6 +28,11 @@ create table if not exists public.organizacao_membros (
   criado_em timestamptz not null default now(),
   unique (org_id, email)
 );
+alter table public.organizacoes add column if not exists usuario_id uuid references auth.users on delete set null; -- quem comprou pelo site
+alter table public.organizacoes add column if not exists mp_preferencia text;
+alter table public.organizacoes add column if not exists mp_pagamento text;
+alter table public.organizacoes add column if not exists metodo text;
+alter table public.organizacoes add column if not exists parcelas int not null default 1;
 create index if not exists organizacao_membros_email on public.organizacao_membros (email);
 
 alter table public.organizacoes enable row level security;
@@ -98,11 +103,17 @@ alter table public.analises drop constraint if exists analises_cobranca_check;
 alter table public.analises add constraint analises_cobranca_check check (cobranca in ('franquia_pro', 'franquia_org', 'avulsa', 'cortesia_admin'));
 alter table public.consultorias add column if not exists org_id uuid references public.organizacoes on delete set null;
 
+-- Início do mês corrente (dia 1, 00:00, horário de Brasília)
+create or replace function public.inicio_mes_br(agora timestamptz default now())
+returns timestamptz language sql immutable as $$
+  select (date_trunc('month', agora at time zone 'America/Sao_Paulo')) at time zone 'America/Sao_Paulo'
+$$;
+
 create or replace function public.analises_usadas_org(org uuid)
 returns int language sql stable security definer set search_path = public as $$
   select count(*)::int from public.analises
   where org_id = org and cobranca = 'franquia_org'
-    and status not in ('erro', 'cancelada') and criado_em >= public.inicio_semana_br()
+    and status not in ('erro', 'cancelada') and criado_em >= public.inicio_mes_br()
 $$;
 revoke execute on function public.analises_usadas_org(uuid) from public, anon, authenticated;
 grant execute on function public.analises_usadas_org(uuid) to service_role;
@@ -117,8 +128,8 @@ begin
   org := public.org_do_usuario(auth.uid());
   if org is not null then select * into o from public.organizacoes where id = org; end if;
   if o.id is not null and o.plano = 'pro' then
-    return jsonb_build_object('plano', 'pro', 'equipe', true, 'organizacao', o.nome, 'acessos', o.acessos,
-      'limite', 2 * o.acessos, 'usadas', public.analises_usadas_org(o.id), 'renova_em', public.inicio_semana_br() + interval '7 days');
+    return jsonb_build_object('plano', 'pro', 'equipe', true, 'periodo', 'mes', 'organizacao', o.nome, 'acessos', o.acessos,
+      'limite', 6 * o.acessos, 'usadas', public.analises_usadas_org(o.id), 'renova_em', public.inicio_mes_br() + interval '1 month');
   end if;
   return jsonb_build_object(
     'plano', public.plano_vigente(auth.uid()),
@@ -140,8 +151,8 @@ begin
   return jsonb_build_object('id', o.id, 'nome', o.nome, 'plano', o.plano, 'acessos', o.acessos, 'fim', o.fim, 'ciclo', o.ciclo,
     'gestor', gestor,
     'usados', (select count(*) from public.organizacao_membros where org_id = org),
-    'analises_semana', case when o.plano = 'pro' then public.analises_usadas_org(org) else null end,
-    'limite_semana', case when o.plano = 'pro' then 2 * o.acessos else null end,
+    'analises_mes', case when o.plano = 'pro' then public.analises_usadas_org(org) else null end,
+    'limite_mes', case when o.plano = 'pro' then 6 * o.acessos else null end,
     'membros', case when gestor then (select coalesce(jsonb_agg(jsonb_build_object('email', m.email, 'papel', m.papel,
                      'nome', (select p.nome from public.perfis p where lower(p.email) = m.email limit 1),
                      'cadastrado', exists (select 1 from public.perfis p where lower(p.email) = m.email)) order by m.papel, m.email), '[]'::jsonb)
@@ -172,3 +183,28 @@ begin
 end $$;
 revoke execute on function public.org_definir_membro(text, boolean) from public, anon;
 grant execute on function public.org_definir_membro(text, boolean) to authenticated;
+
+-- Compra de plano de equipe pelo site (Mercado Pago): ativa a equipe quando o pagamento é aprovado
+create or replace function public.registrar_pagamento_equipe(
+  p_referencia text, p_mp_pagamento text, p_metodo text, p_valor numeric, p_parcelas int
+) returns text language plpgsql security definer set search_path = public as $$
+declare o public.organizacoes; ref_id uuid; nomes jsonb := '{"basico":"Básico","premium":"Premium","pro":"Pro"}';
+begin
+  begin ref_id := split_part(p_referencia, ':', 2)::uuid; exception when others then return 'referencia_invalida'; end;
+  if exists (select 1 from public.pagamentos where mp_pagamento = p_mp_pagamento) then return 'ja_registrado'; end if;
+  select * into o from public.organizacoes where id = ref_id for update;
+  if not found then return 'equipe_inexistente'; end if;
+  if o.status = 'ativa' then return 'ja_ativa'; end if;
+  if p_valor + 0.01 < o.valor then return 'valor_divergente'; end if;
+  update public.organizacoes set status = 'ativa', inicio = now(),
+    fim = now() + case o.ciclo when 'anual' then interval '12 months' else interval '1 month' end,
+    mp_pagamento = p_mp_pagamento, metodo = coalesce(nullif(p_metodo, ''), metodo), parcelas = greatest(1, least(12, coalesce(p_parcelas, 1)))
+  where id = o.id;
+  insert into public.pagamentos (usuario_id, referencia, descricao, metodo, valor, parcelas, mp_pagamento)
+  values (o.usuario_id, p_referencia,
+          'Plano ' || coalesce(nomes ->> o.plano, o.plano) || ' para equipes · ' || o.acessos || ' acessos · ' || case o.ciclo when 'anual' then '12 meses' else '1 mês' end,
+          p_metodo, p_valor, coalesce(p_parcelas, 1), p_mp_pagamento);
+  return 'equipe_ativada';
+end $$;
+revoke execute on function public.registrar_pagamento_equipe(text, text, text, numeric, int) from public, anon, authenticated;
+grant execute on function public.registrar_pagamento_equipe(text, text, text, numeric, int) to service_role;

@@ -12,20 +12,22 @@ export const PLANOS: Record<Plano, { nome: string; mensal: number }> = {
   pro: { nome: "Pro", mensal: 479.9 },
 };
 
-/** Planos para equipes (empresas e órgãos): desconto por acesso conforme a quantidade de acessos nominais.
- *  O desconto do anual (20%) se soma. Acima de 25 acessos, a proposta é feita sob consulta. */
+/** Planos para equipes (empresas e órgãos): desconto por acesso conforme a quantidade de acessos nominais; no anual, mais 10%.
+ *  No Pro, a franquia do agente é de 6 análises por acesso por mês, somadas para a equipe. Acima de 25 acessos, sob consulta. */
 export const MIN_ACESSOS_EQUIPE = 3;
 export const MAX_ACESSOS_EQUIPE = 25;
+export const DESCONTO_ANUAL_EQUIPE = 0.1;
+export const FRANQUIA_EQUIPE_MES = 6;
 export function descontoEquipe(acessos: number): number {
-  if (acessos >= 11) return 0.25;
-  if (acessos >= 6) return 0.2;
-  if (acessos >= 3) return 0.15;
+  if (acessos >= 11) return 0.2;
+  if (acessos >= 6) return 0.15;
+  if (acessos >= 3) return 0.1;
   return 0;
 }
-/** Valor total do plano de equipe: mensal (por mês) ou anual (12 meses, com o desconto do anual). */
+/** Valor do plano de equipe: mensal (por mês) ou anual (12 meses, com +10% de desconto). */
 export function precoEquipe(plano: Plano, acessos: number, ciclo: Ciclo): { porAcessoMes: number; total: number; desconto: number } {
   const desc = descontoEquipe(acessos);
-  const porAcessoMes = centavos(PLANOS[plano].mensal * (1 - desc) * (ciclo === "anual" ? 1 - DESCONTO_ANUAL : 1));
+  const porAcessoMes = centavos(PLANOS[plano].mensal * (1 - desc) * (ciclo === "anual" ? 1 - DESCONTO_ANUAL_EQUIPE : 1));
   return { porAcessoMes, total: centavos(porAcessoMes * acessos * (ciclo === "anual" ? 12 : 1)), desconto: desc };
 }
 

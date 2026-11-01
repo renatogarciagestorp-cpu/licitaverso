@@ -91,10 +91,10 @@ const NOME_METODO: Record<string, string> = {
  */
 export async function aplicarPagamento(admin: SupabaseClient, pagamento: any): Promise<string> {
   const ref: string = pagamento?.external_reference ?? "";
-  if (!/^(assinatura|consultoria|analise|renovacao):[0-9a-f-]{36}$/.test(ref)) return "referencia_ignorada";
+  if (!/^(assinatura|consultoria|analise|renovacao|equipe):[0-9a-f-]{36}$/.test(ref)) return "referencia_ignorada";
   const status: string = pagamento.status;
   if (status === "approved") {
-    const { data, error } = await admin.rpc("registrar_pagamento_aprovado", {
+    const { data, error } = await admin.rpc(ref.startsWith("equipe:") ? "registrar_pagamento_equipe" : "registrar_pagamento_aprovado", {
       p_referencia: ref,
       p_mp_pagamento: String(pagamento.id),
       p_metodo: NOME_METODO[pagamento.payment_type_id] ?? pagamento.payment_type_id ?? "",
@@ -107,6 +107,7 @@ export async function aplicarPagamento(admin: SupabaseClient, pagamento: any): P
   }
   // Cartão recusado não encerra o pedido: a pessoa pode tentar de novo no mesmo checkout.
   if (status === "cancelled") {
+    if (ref.startsWith("equipe:")) return "recusado:equipe";
     const { data, error } = await admin.rpc("registrar_pagamento_recusado", { p_referencia: ref });
     if (error) throw error;
     return "recusado:" + data;

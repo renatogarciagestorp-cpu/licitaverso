@@ -1511,6 +1511,67 @@
           </sc-for>
         </div>
 
+        <section aria-label="Planos para equipes" style="margin-top: 34px; background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 30px 32px">
+          <span style="display: inline-block; font-size: 11.5px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; background: #EAF2F1; padding: 6px 11px; border-radius: 999px">Para empresas e órgãos</span>
+          <h2 style="margin: 14px 0 0; font-size: 24px; font-weight: 800; letter-spacing: -0.02em">Planos para equipes</h2>
+          <p style="margin: 8px 0 0; font-size: 14.5px; line-height: 1.6; color: #55666D; max-width: 760px; text-wrap: pretty">Contrate vários acessos de uma vez, com desconto por quantidade e um gestor que distribui os acessos para a equipe. {{ eqFaixas }}</p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-top: 22px; align-items: start">
+            <div style="display: grid; gap: 16px">
+              <div>
+                <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #6A7B82; margin-bottom: 8px">Plano</div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap">
+                  <sc-for list="{{ eqPlanos }}" as="o" hint-placeholder-count="3">
+                    <button sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.ativo }}" style="border: 1px solid #DDE4E3; border-radius: 999px; padding: 9px 16px; font-size: 14px; font-weight: 700; cursor: pointer; background: {{ o.bg }}; color: {{ o.cor }}">{{ o.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+              <div>
+                <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #6A7B82; margin-bottom: 8px">Acessos</div>
+                <div style="display: inline-flex; align-items: center; border: 1px solid #DDE4E3; border-radius: 12px; overflow: hidden">
+                  <button sc-camel-on-click="{{ eqMenos }}" aria-label="Menos acessos" style="border: 0; background: #F4F7F6; width: 44px; height: 44px; font-size: 20px; font-weight: 800; cursor: pointer">−</button>
+                  <span style="min-width: 64px; text-align: center; font-size: 20px; font-weight: 800">{{ eqAcessos }}</span>
+                  <button sc-camel-on-click="{{ eqMais }}" aria-label="Mais acessos" style="border: 0; background: #F4F7F6; width: 44px; height: 44px; font-size: 20px; font-weight: 800; cursor: pointer">+</button>
+                </div>
+                <p style="margin: 6px 0 0; font-size: 12.5px; color: #7A8B91">Ciclo: escolha mensal ou anual no topo da página.</p>
+              </div>
+              <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 700; color: #3D5058">Empresa ou órgão
+                <input type="text" value="{{ eqOrg }}" sc-camel-on-input="{{ onEqOrg }}" placeholder="Ex.: Prefeitura de Maricá — Secretaria de Compras" style="border: 1px solid #DDE4E3; border-radius: 11px; padding: 12px 14px; font-size: 15px; font-weight: 400">
+              </label>
+              <label style="display: grid; gap: 6px; font-size: 13px; font-weight: 700; color: #3D5058">CNPJ (opcional)
+                <input type="text" value="{{ eqCnpj }}" sc-camel-on-input="{{ onEqCnpj }}" placeholder="00.000.000/0000-00" style="border: 1px solid #DDE4E3; border-radius: 11px; padding: 12px 14px; font-size: 15px; font-weight: 400">
+              </label>
+            </div>
+            <div style="background: #F6FAF9; border: 1px solid #DCE8E6; border-radius: 16px; padding: 22px">
+              <sc-if value="{{ eqNormal }}" hint-placeholder-val="{{ true }}">
+                <div style="display: flex; align-items: baseline; gap: 6px"><span style="font-size: 34px; font-weight: 800; letter-spacing: -0.03em">{{ eqPorAcesso }}</span><span style="font-size: 14px; color: #6A7B82">por acesso/mês</span></div>
+                <p style="margin: 4px 0 0; font-size: 15px; font-weight: 800; color: #0A7A50">Total: {{ eqTotal }}</p>
+                <p style="margin: 6px 0 0; font-size: 12.5px; color: #6A7B82">{{ eqDescontoTxt }}</p>
+              </sc-if>
+              <sc-if value="{{ eqSobConsulta }}" hint-placeholder-val="{{ false }}">
+                <p style="margin: 0; font-size: 18px; font-weight: 800">Mais de 25 acessos: preço sob consulta</p>
+                <p style="margin: 6px 0 0; font-size: 13.5px; color: #55666D">Peça a proposta e montamos as condições para a sua equipe.</p>
+              </sc-if>
+              <ul style="list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px">
+                <sc-for list="{{ eqInclui }}" as="i" hint-placeholder-count="4">
+                  <li style="display: flex; gap: 9px; font-size: 13.5px; line-height: 1.5; color: #3D5058"><span style="color: #0FA36B; font-weight: 800">✓</span><span>{{ i }}</span></li>
+                </sc-for>
+              </ul>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px">
+                <sc-if value="{{ eqNormal }}" hint-placeholder-val="{{ true }}">
+                  <button sc-camel-on-click="{{ eqContratar }}" style="border: 0; border-radius: 11px; padding: 12px 16px; font-size: 14.5px; font-weight: 700; cursor: pointer; background: #0FA36B; color: #06251A">{{ eqBotao }}</button>
+                </sc-if>
+                <button sc-camel-on-click="{{ eqProposta }}" style="border: 1px solid #0A1F2A; border-radius: 11px; padding: 12px 16px; font-size: 14.5px; font-weight: 700; cursor: pointer; background: #0A1F2A; color: #fff">Pedir proposta (empenho)</button>
+                <sc-if value="{{ eqNormal }}" hint-placeholder-val="{{ true }}">
+                  <button sc-camel-on-click="{{ eqPdf }}" style="border: 1px solid #DDE4E3; border-radius: 11px; padding: 12px 16px; font-size: 14.5px; font-weight: 700; cursor: pointer; background: #fff; color: #3D5058">Baixar proposta preliminar</button>
+                </sc-if>
+              </div>
+              <sc-if value="{{ temEqMsg }}" hint-placeholder-val="{{ false }}"><p style="margin: 12px 0 0; font-size: 13.5px; font-weight: 700; color: #0A7A50">{{ eqMsg }}</p></sc-if>
+              <sc-if value="{{ temEqErro }}" hint-placeholder-val="{{ false }}"><p style="margin: 12px 0 0; font-size: 13.5px; font-weight: 700; color: #8A1230">{{ eqErro }}</p></sc-if>
+              <p style="margin: 14px 0 0; font-size: 12px; line-height: 1.5; color: #7A8B91">Contratar online: quem paga vira o gestor da equipe e libera os acessos na aba Equipe da Minha conta. Órgãos públicos: peça a proposta para empenho; os acessos são liberados após a confirmação.</p>
+            </div>
+          </div>
+        </section>
+
         <section aria-label="Formas de pagamento" style="margin-top: 34px; background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 30px 32px">
           <div style="display: flex; align-items: flex-start; gap: 18px; flex-wrap: wrap">
             <div style="flex: 1; min-width: 280px">
@@ -2873,6 +2934,16 @@ const COMPRADORES = {
 const PAGINAS = ["home", "forum", "cursos", "consultoria", "agente", "planos", "conta", "institucional", "login", "cadastro", "recuperar", "nova-senha"];
 const EXIGE_LOGIN = ["forum", "cursos", "conta"];
 const PLANO_NOME = { teste: "Teste", basico: "Básico", premium: "Premium", pro: "Pro" };
+// Planos para equipes: mesmas regras do servidor (supabase/functions/_shared/precos.ts)
+const EQ_MENSAL = { basico: 119.9, premium: 199.9, pro: 479.9 };
+const EQ_MIN = 3, EQ_MAX = 25;
+const eqDesconto = (n) => (n >= 11 ? 0.2 : n >= 6 ? 0.15 : n >= 3 ? 0.1 : 0);
+const eqPreco = (plano, n, anual) => { const pa = Math.round(EQ_MENSAL[plano] * (1 - eqDesconto(n)) * (anual ? 0.9 : 1) * 100) / 100; return { pa, total: Math.round(pa * n * (anual ? 12 : 1) * 100) / 100 }; };
+const EQ_INCLUI = {
+  basico: ["Biblioteca Jurídica completa e fórum (leitura e participação) para cada acesso", "Descontos do Básico em cursos, consultoria e análises do Agente IA"],
+  premium: ["Tudo do Premium para cada acesso: Biblioteca, fórum, cursos e consultoria com desconto", "Agente IA com 15% de desconto por análise"],
+  pro: ["Tudo do Pro para cada acesso", "Agente IA: 6 análises por acesso por mês, somadas para a equipe", "1 consultoria por escrito por mês para a organização; as demais com 30% de desconto"]
+};
 const PLANO_BENEFICIOS = {
   teste: ["Biblioteca Jurídica completa durante o teste", "Leitura do fórum da comunidade", "Sem cobrança automática ao final"],
   basico: ["Biblioteca Jurídica completa, com anotações, marcadores e dossiês", "Fórum: leitura e participação", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "Agente IA: análise com 10% de desconto (R$ 261,00)"],
@@ -2981,6 +3052,7 @@ class Component extends DCLogic {
     favoritos: {},
     topico: "Reajuste de Preços",
     anual: false,
+    equipePlano: "pro", equipeAcessos: 4, equipeOrg: "", equipeCnpj: "", equipeMsg: "", equipeErro: "", equipeEnviando: false,
     email: "",
     inscrito: false,
     esperaErro: "",
@@ -3817,6 +3889,62 @@ class Component extends DCLogic {
   }
 
   // ------------------------------------------------------------ planos e checkout
+  // ------------------------------------------------------------ planos para equipes (empresas e órgãos)
+  async contratarEquipe() {
+    const s = this.state;
+    if (this.sb && !this.u) { this.setState({ volta: "planos" }); this.irPara("cadastro"); return; }
+    if (!this.sb) { this.setState({ equipeErro: "As contas ainda não foram ativadas neste site (modo demonstração)." }); return; }
+    if (s.admin) { this.setState({ equipeErro: "Você é administrador: crie equipes pelo painel." }); return; }
+    if (s.equipeOrg.trim().length < 3) { this.setState({ equipeErro: "Informe o nome da empresa ou do órgão." }); return; }
+    this.setState({ equipeEnviando: true, equipeErro: "", equipeMsg: "" });
+    const { data, error } = await this.sb.functions.invoke("mp-checkout", { body: {
+      acao: "criar", tipo: "equipe", plano: s.equipePlano, acessos: s.equipeAcessos, ciclo: s.anual ? "anual" : "mensal",
+      organizacao: s.equipeOrg.trim(), cnpj: s.equipeCnpj, contratante: s.comprador, metodo: "", parcelas: s.anual ? 12 : 1, retorno: baseSite() + "index.html" } });
+    if (error || !data || !data.url) { this.setState({ equipeEnviando: false, equipeErro: error ? await erroDaFuncao(error) : "Não foi possível abrir o pagamento." }); return; }
+    this.setState({ equipeMsg: "Abrindo o checkout do Mercado Pago…" });
+    window.location.href = data.url;
+  }
+
+  async pedirPropostaEquipe() {
+    const s = this.state, p = s.perfil || {};
+    if (s.equipeOrg.trim().length < 3) { this.setState({ equipeErro: "Informe o nome do órgão ou da empresa." }); return; }
+    const email = p.email || (s.usuario && s.usuario.email) || "";
+    if (!email) { this.setState({ volta: "planos" }); this.irPara("cadastro"); return; }
+    const pr = eqPreco(s.equipePlano, s.equipeAcessos, s.anual);
+    this.setState({ equipeEnviando: true, equipeErro: "" });
+    const { error } = this.sb ? await this.sb.from("contatos").insert({
+      nome: p.nome || "Interessado", email, assunto: "Assinatura e cobrança",
+      mensagem: "Pedido de proposta — plano " + PLANO_NOME[s.equipePlano] + " para equipes · " + s.equipeAcessos + " acessos · " + (s.anual ? "12 meses" : "1 mês") + " · " + s.equipeOrg.trim() + (s.equipeCnpj ? " (CNPJ " + s.equipeCnpj + ")" : "") + " · tabela: " + brlSimples(pr.total) + ".",
+      detalhes: { tipo: "proposta_equipe", plano: s.equipePlano, acessos: s.equipeAcessos, ciclo: s.anual ? "anual" : "mensal", organizacao: s.equipeOrg.trim(), cnpj: s.equipeCnpj, contratante: s.comprador, valor_tabela: pr.total, usuario_id: s.usuario ? s.usuario.id : null }
+    }) : { error: null };
+    this.setState({ equipeEnviando: false, equipeErro: error ? "Não foi possível registrar o pedido agora." : "", equipeMsg: error ? "" : "✓ Pedido registrado. Enviamos a proposta oficial para " + email + " em dias úteis. Se precisar já, baixe a proposta preliminar." });
+  }
+
+  gerarPropostaEquipe() {
+    const s = this.state, n = s.equipeAcessos, pr = eqPreco(s.equipePlano, n, s.anual), hoje = new Date();
+    const val = new Date(hoje.getTime() + 30 * 864e5);
+    const esc = (t) => String(t || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    const dt = (d) => d.toLocaleDateString("pt-BR");
+    const itens = EQ_INCLUI[s.equipePlano].concat(["Acessos nominais (um por pessoa, por e-mail), com verificação em duas etapas opcional", "O gestor indicado inclui, retira e troca as pessoas a qualquer momento, dentro da quantidade contratada", "Acesso pelo navegador, sem instalação de software; suporte por e-mail em dias úteis"]);
+    const html = `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Proposta Licitacon — ${esc(s.equipeOrg)}</title>
+<style>body{font-family:Arial,Helvetica,sans-serif;color:#0A1F2A;max-width:780px;margin:32px auto;padding:0 24px;line-height:1.5;font-size:14px}h1{font-size:22px;margin:0}h2{font-size:15px;margin:22px 0 6px;text-transform:uppercase;letter-spacing:.04em;color:#0F6B7E}table{width:100%;border-collapse:collapse;margin-top:6px}td,th{border:1px solid #D6DEDD;padding:8px 10px;text-align:left}th{background:#F1F6F5}.fraco{color:#55666D;font-size:12.5px}.aviso{background:#FFF7E6;border:1px solid #F1D9A6;padding:10px 12px;border-radius:6px;font-size:12.5px}@media print{.aviso{break-inside:avoid}}</style></head><body>
+<p class="fraco">Licitacon · Tudo sobre licitações · renatogarciagestorp-cpu.github.io/licitaverso</p>
+<h1>Proposta comercial preliminar</h1><p class="fraco">Emitida em ${dt(hoje)} · válida até ${dt(val)}</p>
+<h2>Contratante</h2><p>${esc(s.equipeOrg) || "—"}${s.equipeCnpj ? " · CNPJ " + esc(s.equipeCnpj) : ""}</p>
+<h2>Objeto</h2><p>Licença de uso da plataforma Licitacon (software como serviço, acesso pela internet), plano <b>${PLANO_NOME[s.equipePlano]} para equipes</b>, com <b>${n} acessos nominais</b>, pelo período de <b>${s.anual ? "12 (doze) meses" : "1 (um) mês"}</b>.</p>
+<h2>Preço</h2><table><tr><th>Item</th><th>Qtd.</th><th>Valor unitário</th><th>Valor total</th></tr>
+<tr><td>Acesso ${PLANO_NOME[s.equipePlano]} (${s.anual ? "por mês, ciclo anual" : "por mês"})</td><td>${n}</td><td>${brlSimples(pr.pa)}</td><td>${brlSimples(pr.pa * n)} / mês</td></tr>
+<tr><th colspan="3">Total ${s.anual ? "do período de 12 meses" : "mensal"}</th><th>${brlSimples(pr.total)}</th></tr></table>
+<p class="fraco">Inclui desconto de ${Math.round(eqDesconto(n) * 100)}% por acesso pela quantidade contratada${s.anual ? " e mais 10% pelo ciclo anual" : ""}. Preço de tabela individual: ${brlSimples(EQ_MENSAL[s.equipePlano])} por acesso/mês.</p>
+<h2>O que está incluído</h2><ul>${itens.map((i) => "<li>" + esc(i) + "</li>").join("")}</ul>
+<h2>Condições</h2><ul><li>Pagamento: nota de empenho e ordem bancária, boleto, Pix ou cartão (inclusive corporativo), em parcela única${s.anual ? " ou parcelado no cartão" : ""}.</li><li>Liberação dos acessos em até 1 dia útil após a confirmação do empenho ou do pagamento.</li><li>Vigência a partir da liberação; prorrogável por acordo entre as partes.</li><li>Sugestão de enquadramento para órgãos públicos: contratação direta por dispensa em razão do valor (art. 75, II, da Lei nº 14.133/2021), observado o limite vigente e o planejamento do órgão.</li></ul>
+<p class="aviso">Proposta preliminar gerada pelo simulador do site. A proposta oficial, com os dados cadastrais e bancários do fornecedor, é enviada pela equipe do Licitacon por e-mail a pedido do órgão ou da empresa.</p>
+<script>setTimeout(()=>print(),400)<\/script></body></html>`;
+    const w = window.open("", "_blank");
+    if (!w) { this.setState({ equipeErro: "O navegador bloqueou a nova janela. Permita pop-ups para este site e tente de novo." }); return; }
+    w.document.open(); w.document.write(html); w.document.close();
+  }
+
   comPlanos = (lista) => lista.map((pl) => ({
     ...pl,
     contratar: () => {
@@ -4558,6 +4686,11 @@ class Component extends DCLogic {
         if (!s.usuario) return "Valor por análise: R$ 290,00. Assinantes Básico e Premium têm desconto; o Pro inclui 2 análises por semana.";
         if (this.creditoAnalise()) return "Você já tem uma análise liberada aguardando os documentos. Siga para a página de envio.";
         if (s.admin) return "Conta de administrador: análises sem limite e sem cobrança.";
+        if (s.plano === "pro" && c && c.equipe) {
+          const resta = Math.max(0, Number(c.limite) - Number(c.usadas));
+          return resta > 0 ? "Plano da equipe (" + c.organizacao + "): restam " + resta + " de " + c.limite + " análises neste mês, sem custo adicional (renova no dia 1º)."
+            : "A equipe já usou as " + c.limite + " análises do mês. Esta análise sai com 30% de desconto: " + brlSimples(this.precoAnalise()) + ".";
+        }
         if (s.plano === "pro" && c) {
           const resta = Math.max(0, Number(c.limite) - Number(c.usadas));
           return resta > 0 ? "Você tem " + resta + " de " + c.limite + " análises disponíveis nesta semana, sem custo adicional (renova na segunda-feira)."
@@ -4717,7 +4850,7 @@ class Component extends DCLogic {
           ["Forma de pagamento", METODO_NOME[vig.metodo] || vig.metodo || "—"],
           ["Renovação", (() => { const r = this.renovacaoAtiva(); return r ? "Automática no cartão (Mercado Pago)" + (r.status === "pausada" ? " · pausada" : "") + (r.proxima_cobranca ? " · próxima cobrança em " + dataBR(r.proxima_cobranca) : "") : "Manual: avisamos por e-mail antes do fim do período"; })()]
         ];
-        if (vig.plano === "pro" && cota) linhas.push(["Agente IA nesta semana", Math.max(0, Number(cota.limite) - Number(cota.usadas)) + " de " + cota.limite + " análises disponíveis (renova na segunda-feira)"]);
+        if (vig.plano === "pro" && cota && !cota.equipe) linhas.push(["Agente IA nesta semana", Math.max(0, Number(cota.limite) - Number(cota.usadas)) + " de " + cota.limite + " análises disponíveis (renova na segunda-feira)"]);
         else if (vig.plano !== "teste") linhas.push(["Agente IA", brlSimples(this.precoAnalise()) + " por análise, com o desconto do plano"]);
         return linhas.map(([rot, val]) => ({ rot, val }));
       })(),
@@ -4739,11 +4872,30 @@ class Component extends DCLogic {
       isNotificacoes: s.contaTab === "notificacoes",
       isPrivacidade: s.contaTab === "privacidade",
       isEquipe: s.contaTab === "equipe" && !!s.organizacao,
+      // planos para equipes (aba Planos)
+      eqPlanos: ["basico", "premium", "pro"].map((k) => ({ label: PLANO_NOME[k], ativo: s.equipePlano === k, escolher: () => this.setState({ equipePlano: k, equipeMsg: "", equipeErro: "" }),
+        bg: s.equipePlano === k ? "#0A1F2A" : "#fff", cor: s.equipePlano === k ? "#fff" : "#3D5058" })),
+      eqAcessos: s.equipeAcessos,
+      eqMenos: () => this.setState((x) => ({ equipeAcessos: Math.max(EQ_MIN, x.equipeAcessos - 1), equipeMsg: "" })),
+      eqMais: () => this.setState((x) => ({ equipeAcessos: Math.min(EQ_MAX + 1, x.equipeAcessos + 1), equipeMsg: "" })),
+      eqSobConsulta: s.equipeAcessos > EQ_MAX,
+      eqNormal: s.equipeAcessos <= EQ_MAX,
+      eqPorAcesso: brlSimples(eqPreco(s.equipePlano, Math.min(s.equipeAcessos, EQ_MAX), s.anual).pa),
+      eqTotal: brlSimples(eqPreco(s.equipePlano, Math.min(s.equipeAcessos, EQ_MAX), s.anual).total) + (s.anual ? " por 12 meses" : " por mês"),
+      eqDescontoTxt: "Desconto de " + Math.round(eqDesconto(Math.min(s.equipeAcessos, EQ_MAX)) * 100) + "% por acesso" + (s.anual ? " + 10% no anual" : "") + " · tabela individual: " + brlSimples(EQ_MENSAL[s.equipePlano]) + " por acesso/mês",
+      eqFaixas: "3 a 5 acessos: 10% · 6 a 10: 15% · 11 a 25: 20% de desconto por acesso. No anual, mais 10%. Acima de 25 acessos, sob consulta.",
+      eqInclui: EQ_INCLUI[s.equipePlano].concat(["Acessos nominais por e-mail; o gestor inclui e troca as pessoas", "Pagamento por empenho, boleto, Pix ou cartão"]),
+      eqOrg: s.equipeOrg, eqCnpj: s.equipeCnpj,
+      onEqOrg: (e) => this.setState({ equipeOrg: e.target.value, equipeErro: "" }),
+      onEqCnpj: (e) => this.setState({ equipeCnpj: e.target.value.replace(/[^\d./-]/g, "").slice(0, 18) }),
+      eqContratar: () => this.contratarEquipe(), eqProposta: () => this.pedirPropostaEquipe(), eqPdf: () => this.gerarPropostaEquipe(),
+      eqBotao: s.equipeEnviando ? "Aguarde…" : "Contratar online",
+      eqMsg: s.equipeMsg, eqErro: s.equipeErro, temEqMsg: !!s.equipeMsg, temEqErro: !!s.equipeErro,
       equipeNome: (s.organizacao && s.organizacao.nome) || "",
       equipeLinhas: (() => { const o = s.organizacao; if (!o) return [];
         const l = [["Plano", { basico: "Básico", premium: "Premium", pro: "Pro" }[o.plano] + " para equipes"], ["Acessos", o.usados + " de " + o.acessos + " em uso"],
           ["Vigência", "até " + brData(String(o.fim).slice(0, 10))], ["Seu papel", o.gestor ? "Gestor (inclui e retira acessos)" : "Membro"]];
-        if (o.plano === "pro") { l.push(["Agente IA", o.analises_semana + " de " + o.limite_semana + " análises usadas nesta semana (franquia da equipe)"]); l.push(["Consultoria", "1 consultoria por escrito por mês incluída para a equipe"]); }
+        if (o.plano === "pro") { l.push(["Agente IA", o.analises_mes + " de " + o.limite_mes + " análises usadas neste mês (franquia da equipe)"]); l.push(["Consultoria", "1 consultoria por escrito por mês incluída para a equipe"]); }
         return l.map(([rot, val]) => ({ rot, val })); })(),
       equipeGestor: !!(s.organizacao && s.organizacao.gestor),
       abrirEquipe: async () => { if (!window.LV_EQUIPE) await carregarScript(baseSite() + "equipe.js?v=1"); window.LV_EQUIPE.abrir(() => this.carregarDados()); },

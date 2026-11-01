@@ -164,10 +164,10 @@ const TELAS = {
       q(sb.from("organizacao_membros").select("*").order("papel").order("email").limit(5000))
     ]);
     const porOrg = {}; membros.forEach((m) => (porOrg[m.org_id] = porOrg[m.org_id] || []).push(m));
-    const desc = (n) => n >= 11 ? 0.25 : n >= 6 ? 0.2 : n >= 3 ? 0.15 : 0;
+    const desc = (n) => n >= 11 ? 0.2 : n >= 6 ? 0.15 : n >= 3 ? 0.1 : 0;
     const MENSAL = { basico: 119.9, premium: 199.9, pro: 479.9 };
-    const preco = (plano, n, ciclo) => { const pa = MENSAL[plano] * (1 - desc(n)) * (ciclo === "anual" ? 0.8 : 1); return { pa, total: pa * n * (ciclo === "anual" ? 12 : 1) }; };
-    el.innerHTML = '<h1>Equipes (empresas e órgãos)</h1><p class="sub">Planos com vários acessos nominais por e-mail. Desconto por acesso: 3–5 = 15%, 6–10 = 20%, 11+ = 25% (o anual soma mais 20%). No Pro, as análises do agente são somadas para a equipe (2 por acesso por semana) e a consultoria por escrito incluída é 1 por mês para a organização.</p>' +
+    const preco = (plano, n, ciclo) => { const pa = MENSAL[plano] * (1 - desc(n)) * (ciclo === "anual" ? 0.9 : 1); return { pa, total: pa * n * (ciclo === "anual" ? 12 : 1) }; };
+    el.innerHTML = '<h1>Equipes (empresas e órgãos)</h1><p class="sub">Planos com vários acessos nominais por e-mail. Desconto por acesso: 3–5 = 10%, 6–10 = 15%, 11+ = 20% (o anual soma mais 10%). No Pro, as análises do agente são somadas para a equipe (6 por acesso por mês) e a consultoria por escrito incluída é 1 por mês para a organização.</p>' +
       '<div class="caixa"><h2>Nova equipe</h2><div class="form">' +
       '<label>Nome<input type="text" id="oNome" placeholder="Ex.: Prefeitura de Maricá — Secretaria de Compras"></label>' +
       '<label>CNPJ<input type="text" id="oCnpj"></label>' +
@@ -194,7 +194,7 @@ const TELAS = {
     const $ = (id) => document.getElementById(id);
     $("oIni").value = hoje.toISOString().slice(0, 10); $("oFim").value = umAno.toISOString().slice(0, 10);
     const atualizaPreco = () => { const n = Math.max(1, Number($("oAcessos").value) || 1); const r = preco($("oPlano").value, n, $("oCiclo").value);
-      $("oPreco").textContent = "Tabela: " + brl(r.pa) + " por acesso/mês (desconto de " + Math.round(desc(n) * 100) + "%" + ($("oCiclo").value === "anual" ? " + 20% do anual" : "") + ") → total " + brl(r.total) + ($("oCiclo").value === "anual" ? " por ano" : " por mês") + (n > 25 ? " · acima de 25 acessos, preço sob consulta" : "");
+      $("oPreco").textContent = "Tabela: " + brl(r.pa) + " por acesso/mês (desconto de " + Math.round(desc(n) * 100) + "%" + ($("oCiclo").value === "anual" ? " + 10% do anual" : "") + ") → total " + brl(r.total) + ($("oCiclo").value === "anual" ? " por ano" : " por mês") + (n > 25 ? " · acima de 25 acessos, preço sob consulta" : "");
       if (!$("oValor").dataset.mexido) $("oValor").value = r.total.toFixed(2); };
     ["oAcessos", "oPlano", "oCiclo"].forEach((k) => $(k).oninput = atualizaPreco); $("oValor").oninput = () => { $("oValor").dataset.mexido = "1"; }; atualizaPreco();
     $("oCriar").onclick = async () => {
