@@ -539,13 +539,29 @@
   .lvh-dif-item b { font-size: 16px; }
   .lvh-dif-item > span { font-size: 14.5px; line-height: 1.55; color: #9FB4BC; }
   .lvh-final { margin-top: 84px; background: radial-gradient(700px 300px at 50% 0%, rgba(15,163,107,0.22), transparent 70%), #0A1F2A; color: #fff; padding: 72px 24px; text-align: center; }
-  .lvh-final-in { max-width: 820px; margin: 0 auto; display: grid; justify-items: center; }
-  .lvh-final .lvh-h2 { max-width: none; }
-  .lvh-gratis { list-style: none; padding: 0; margin: 24px 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-  .lvh-gratis li { border: 1px solid rgba(127,227,182,0.35); background: rgba(15,163,107,0.1); color: #D7F5E7; border-radius: 999px; padding: 9px 15px; font-size: 14.5px; font-weight: 700; }
-  .lvh-gratis li::before { content: "✓ "; color: #7FE3B6; }
-  .lvh-fund { margin: 22px 0 0; font-size: 14.5px; line-height: 1.5; color: #E8DCC2; }
-  .lvh-fund b { color: #F7C76A; }
+  .lvh-final-in { max-width: 1100px; margin: 0 auto; display: grid; justify-items: center; }
+  .lvh-final .lvh-h2 { max-width: none; font-size: 44px; }
+  .lvh-final-sub { margin: 12px 0 0; font-size: 17px; color: #B8CBD2; }
+  .lvh-free { width: 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 34px; text-align: left; }
+  .lvh-free-card { font: inherit; color: #fff; text-align: left; cursor: pointer; display: flex; flex-direction: column; gap: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 24px; transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease; }
+  .lvh-free-card:hover { transform: translateY(-3px); border-color: #0FA36B; background: rgba(15,163,107,0.1); }
+  .lvh-free-ic { width: 44px; height: 44px; border-radius: 12px; background: rgba(15,163,107,0.18); color: #7FE3B6; display: grid; place-items: center; font-size: 20px; font-weight: 700; }
+  .lvh-free-selo { align-self: flex-start; margin-top: 6px; font-size: 11.5px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #06251A; background: #7FE3B6; border-radius: 999px; padding: 4px 10px; }
+  .lvh-free-t { font-size: 20px; font-weight: 800; letter-spacing: -0.01em; }
+  .lvh-free-d { font-size: 14.5px; line-height: 1.55; color: #A9BEC6; }
+  .lvh-free-cta { margin-top: auto; padding-top: 8px; font-size: 14.5px; font-weight: 800; color: #7FE3B6; }
+  .lvh-ticket { width: 100%; margin-top: 22px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 24px; align-items: center; text-align: left; background: linear-gradient(90deg, rgba(242,181,68,0.16), rgba(242,181,68,0.05)); border: 1px dashed rgba(242,181,68,0.7); border-radius: 20px; padding: 20px 24px; }
+  .lvh-ticket-off { display: grid; gap: 2px; padding-right: 24px; border-right: 1px dashed rgba(242,181,68,0.5); }
+  .lvh-ticket-off > span { font-size: 11.5px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #F2B544; }
+  .lvh-ticket-off > b { font-family: 'Source Serif 4', Georgia, serif; font-size: 36px; line-height: 1; font-weight: 600; color: #F7C76A; }
+  .lvh-ticket-txt { display: grid; gap: 4px; }
+  .lvh-ticket-txt > b { font-size: 16px; color: #fff; }
+  .lvh-ticket-txt > span { font-size: 14px; line-height: 1.5; color: #E8DCC2; }
+  .lvh-ticket-vagas { display: grid; justify-items: center; gap: 2px; }
+  .lvh-ticket-vagas > b { font-family: 'Source Serif 4', Georgia, serif; font-size: 34px; line-height: 1; font-weight: 600; color: #fff; }
+  .lvh-ticket-vagas > span { font-size: 12px; color: #E8DCC2; }
+  .lvh-ticket-btn { border: 0; border-radius: 12px; background: #F2B544; color: #3A2600; padding: 14px 20px; font-size: 15px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+  .lvh-ticket-btn:hover { background: #F7C76A; }
   @media (max-width: 960px) {
     .lvh-hero { padding: 44px 16px 56px; }
     .lvh-hero-in { grid-template-columns: minmax(0, 1fr); gap: 36px; }
@@ -561,11 +577,17 @@
     .lvh-f.lvh-f-big { grid-row: auto; }
     .lvh-dif { grid-template-columns: minmax(0, 1fr); padding: 28px 20px; gap: 24px; }
     .lvh-final { margin-top: 60px; padding: 52px 16px; }
+    .lvh-final .lvh-h2 { font-size: 32px; }
+    .lvh-free { grid-template-columns: minmax(0, 1fr); }
+    .lvh-ticket { grid-template-columns: minmax(0, 1fr) auto; gap: 16px; padding: 18px; }
+    .lvh-ticket-off { grid-column: 1 / -1; border-right: 0; padding-right: 0; border-bottom: 1px dashed rgba(242,181,68,0.5); padding-bottom: 12px; }
+    .lvh-ticket-txt { grid-column: 1 / -1; }
+    .lvh-ticket-btn { grid-column: 2; }
   }
   @media (prefers-reduced-motion: reduce) {
     .lvh-scan { display: none; }
     .lvh-ach { animation: none; opacity: 1; transform: none; }
-    .lvh-f { transition: none; }
+    .lvh-f, .lvh-free-card { transition: none; }
   }
   /* ---------- página Planos ---------- */
   .lvp-hero { background: #0A1F2A; color: #fff; padding: 56px 24px 120px; }
@@ -919,17 +941,31 @@
 
       <section class="lvh-final">
         <div class="lvh-final-in">
-          <h2 class="lvh-h2" style="color: #fff; margin: 0">Comece pelo que é grátis.</h2>
-          <ul class="lvh-gratis">
-            <sc-for list="{{ homeGratis }}" as="g" hint-placeholder-count="3"><li>{{ g }}</li></sc-for>
-          </ul>
-          <sc-if value="{{ temFundador }}" hint-placeholder-val="{{ true }}">
-            <p class="lvh-fund"><b>{{ fundTitulo }}</b> · {{ fundTexto }}</p>
-          </sc-if>
-          <div class="lvh-ctas" style="justify-content: center">
-            <button class="lvh-btn" sc-camel-on-click="{{ finalAcao }}">{{ finalCta }}</button>
-            <button class="lvh-btn-sec" sc-camel-on-click="{{ goPlanos }}">Ver planos</button>
+          <p class="lvh-kicker" style="color: #7FE3B6">Sem cartão de crédito</p>
+          <h2 class="lvh-h2" style="color: #fff; margin: 10px 0 0">Comece pelo que é grátis.</h2>
+          <p class="lvh-final-sub">Três formas de conhecer o Licitacon antes de assinar. Você só paga se quiser mais.</p>
+          <div class="lvh-free">
+            <sc-for list="{{ homeGratis }}" as="g" hint-placeholder-count="3">
+              <button class="lvh-free-card" sc-camel-on-click="{{ g.go }}">
+                <span class="lvh-free-ic" aria-hidden="true">{{ g.icon }}</span>
+                <span class="lvh-free-selo">{{ g.selo }}</span>
+                <span class="lvh-free-t">{{ g.t }}</span>
+                <span class="lvh-free-d">{{ g.d }}</span>
+                <span class="lvh-free-cta">{{ g.cta }} →</span>
+              </button>
+            </sc-for>
           </div>
+          <sc-if value="{{ temFundador }}" hint-placeholder-val="{{ true }}">
+            <div class="lvh-ticket">
+              <div class="lvh-ticket-off"><span>Preço de fundador</span><b>30% OFF</b></div>
+              <div class="lvh-ticket-txt">
+                <b>{{ fundTicketTitulo }}</b>
+                <span>{{ fundTextoCurto }}</span>
+              </div>
+              <div class="lvh-ticket-vagas"><b>{{ fundVagasNum }}</b><span>{{ fundVagasRot }}</span></div>
+              <button class="lvh-ticket-btn" sc-camel-on-click="{{ goPlanos }}">{{ fundCta }}</button>
+            </div>
+          </sc-if>
         </div>
       </section>
     </sc-if>
@@ -4726,7 +4762,16 @@ class Component extends DCLogic {
         { n: "2", t: "O agente confere item a item", d: "Com o texto da lei, com o roteiro de verificação do Licitacon e com a jurisprudência da Biblioteca." },
         { n: "3", t: "Receba o parecer", d: "Em PDF e Word, no formato ABNT: cada apontamento com gravidade, fundamento, providência e redação sugerida." }
       ],
-      homeGratis: ["Biblioteca Jurídica com cadastro gratuito", "1ª análise do Agente IA grátis", "Teste de 7 dias, sem cartão"],
+      homeGratis: [
+        { icon: "⌕", selo: "Grátis com cadastro", t: "Biblioteca Jurídica", d: "Pesquise jurisprudência de todo o país, com filtros e o link oficial de cada decisão.", cta: s.usuario ? "Pesquisar agora" : "Criar conta e pesquisar", go: s.usuario ? this.nav("biblioteca") : this.nav("cadastro") },
+        { icon: "✦", selo: this.cortesiaAnalise() ? "1 por CPF" : "Agente de IA", t: this.cortesiaAnalise() ? "Primeira análise grátis" : "Análise de documentos", d: "Envie até 3 documentos da contratação e receba o parecer técnico em PDF e Word.", cta: this.cortesiaAnalise() ? "Fazer minha análise grátis" : "Analisar um documento", go: this.nav("agente") },
+        { icon: "◍", selo: "Sem cartão", t: "Teste de 7 dias", d: "Conheça o fórum da comunidade e a plataforma antes de escolher um plano.", cta: "Começar o teste", go: this.nav("planos") }
+      ],
+      fundTextoCurto: s.oferta && s.oferta.sou_fundador ? "Seu desconto está garantido enquanto a assinatura continuar ativa." : "Para os primeiros " + ((s.oferta && s.oferta.limite) || 100) + " assinantes, travado enquanto a assinatura continuar ativa. Vale no Básico, no Premium e no Pro.",
+      fundTicketTitulo: s.oferta && s.oferta.sou_fundador ? "Você é fundador do Licitacon" : "Assine agora e trave 30% de desconto",
+      fundVagasNum: s.oferta && s.oferta.sou_fundador ? "✓" : String(Number((s.oferta && s.oferta.vagas) || 0)),
+      fundVagasRot: s.oferta && s.oferta.sou_fundador ? "você é fundador" : "vagas restantes",
+      fundCta: s.oferta && s.oferta.sou_fundador ? "Ver meu plano" : "Garantir meu preço",
       finalCta: s.usuario ? "Ir para o Agente IA" : "Criar minha conta grátis",
       finalAcao: s.usuario ? this.nav("agente") : this.nav("cadastro"),
 
