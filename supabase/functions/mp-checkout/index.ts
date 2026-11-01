@@ -10,8 +10,7 @@
 // POST { acao: "conferir", referencia: "assinatura:<id>" | "consultoria:<id>" | "analise:<id>" }
 
 import {
-  aplicarPagamento, clienteServico, conferirRenovacao, CORS, env, erro, mp, resposta, usuarioDaRequisicao,
-} from "../_shared/comum.ts";
+  aplicarPagamento, clienteServico, conferirRenovacao, CORS, env, erro, mp, resposta, usuarioDaRequisicao, nivelDoToken } from "../_shared/comum.ts";
 import {
   CONSULTORIA, type Ciclo, FRANQUIA_PRO_SEMANA, inicioMesBR, MAX_DOCS_ANALISE, MAX_PAGINAS_ANALISE, type Modalidade, type Plano, PLANOS,
   precoAnalise, precoConsultoria, precoPlano, TIPOS_DOC_ANALISE,
@@ -165,10 +164,27 @@ Deno.serve(async (req) => {
       return resposta({ ok: true, status: "cancelada" });
     }
 
+    // ------------------------------------------------- remover verificação em duas etapas de um assinante (só admin)
+    if (acao === "remover_2fa") {
+      const { data: eu } = await admin.from("perfis").select("admin").eq("id", usuario.id).maybeSingle();
+      if (!eu?.admin || nivelDoToken(req) !== "aal2") return erro("Somente a administração, com verificação em duas etapas, pode fazer isso.", 403);
+      const alvo = String(corpo.usuario_id ?? "");
+      if (!/^[0-9a-f-]{36}$/.test(alvo)) return erro("Usuário inválido.");
+      const { data: fat, error: e1 } = await admin.auth.admin.mfa.listFactors({ userId: alvo });
+      if (e1) return erro("Não foi possível consultar a verificação desse usuário.");
+      let removidos = 0;
+      for (const f of fat?.factors ?? []) {
+        const { error: e2 } = await admin.auth.admin.mfa.deleteFactor({ id: f.id, userId: alvo });
+        if (!e2) removidos++;
+      }
+      await admin.from("registro_admin").insert({ admin_id: usuario.id, acao: "remover_2fa", detalhes: { usuario_id: alvo, removidos } }).then(() => {}, () => {});
+      return resposta({ ok: true, removidos });
+    }
+
     if (acao !== "criar") return erro("Ação desconhecida.");
 
     const { data: perfil } = await admin.from("perfis").select("nome, email, admin").eq("id", usuario.id).maybeSingle();
-    const ehAdmin = !!perfil?.admin; // administrador: acesso total, sem cobrança
+    const ehAdmin = !!perfil?.admin && nivelDoToken(req) === "aal2"; // administrador (com verificação em duas etapas): sem cobrança
     const { data: vigente } = await admin.rpc("plano_vigente", { uid: usuario.id });
     const retorno = urlDeRetorno(corpo.retorno);
     const metodo = String(corpo.metodo ?? "");

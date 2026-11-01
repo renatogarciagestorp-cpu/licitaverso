@@ -18,7 +18,7 @@ if not m:
     sys.exit("shim não encontrado no <head>")
 cab = cab[:m.start()] + "<script>\n" + shim + "\n</script>" + cab[m.end():]
 if "licitaverso-auth.js" not in cab:
-    cab = cab.replace("<script>\n" + shim, '<script src="licitaverso-auth.js?v=4"></script>\n<script>\n' + shim, 1)
+    cab = cab.replace("<script>\n" + shim, '<script src="licitaverso-auth.js?v=5"></script>\n<script>\n' + shim, 1)
 html = cab + sep + corpo
 
 # 2) barra: links de conta
@@ -40,7 +40,7 @@ if 'rel="manifest"' not in html:
 
 # 3) assistente de dúvidas
 if "chatbot.js" not in html:
-    html = html.replace('<script src="licitaverso-auth.js?v=4"></script>', '<script src="licitaverso-auth.js?v=4"></script><script src="chatbot.js?v=4" defer></script>', 1)
+    html = html.replace('<script src="licitaverso-auth.js?v=5"></script>', '<script src="licitaverso-auth.js?v=5"></script><script src="chatbot.js?v=4" defer></script>', 1)
 
 # 4) busca e compartilhamento
 SITE = "https://renatogarciagestorp-cpu.github.io/licitaverso/"

@@ -43,6 +43,15 @@ export async function usuarioDaRequisicao(req: Request, admin: SupabaseClient) {
   return data.user;
 }
 
+/** Nível de garantia do login (aal1 = só senha; aal2 = senha + código do aplicativo). O token já foi validado por getUser. */
+export function nivelDoToken(req: Request): string {
+  try {
+    const token = (req.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "");
+    const corpo = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+    return String(JSON.parse(atob(corpo + "=".repeat((4 - corpo.length % 4) % 4))).aal ?? "aal1");
+  } catch { return "aal1"; }
+}
+
 export async function mp(caminho: string, init: RequestInit = {}) {
   const r = await fetch(MP_API + caminho, {
     ...init,

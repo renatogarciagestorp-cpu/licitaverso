@@ -3104,7 +3104,7 @@ class Component extends DCLogic {
   async iniciarContas() {
     let sb = null;
     try {
-      if (!window.LV) await carregarScript(baseSite() + "licitaverso-auth.js?v=4");
+      if (!window.LV) await carregarScript(baseSite() + "licitaverso-auth.js?v=5");
       sb = await window.LV.pronto;
     } catch (e) { sb = null; }
     if (!window.LV_CHAT) carregarScript(baseSite() + "chatbot.js?v=" + CHAT_VERSAO).catch(() => {});
@@ -4805,6 +4805,7 @@ class Component extends DCLogic {
       })),
 
       direitos: [
+        { titulo: "Verificação em duas etapas", desc: "Além da senha, o login pede um código do seu aplicativo autenticador (Google Authenticator, Microsoft Authenticator, Authy). Opcional para assinantes; obrigatória para a administração.", cta: "Gerenciar", btnBg: "#0FA36B", btnCor: "#06251A", btnBorda: "#0FA36B", acao: () => { if (window.LV && window.LV.mfa) window.LV.mfa.gerenciar(); } },
         { titulo: "Baixar meus dados", desc: "Arquivo com cadastro, plano e renovação, pagamentos, consultorias, análises do Agente IA, normas enviadas, participações no fórum e anotações da Biblioteca.", cta: "Gerar arquivo", btnBg: "#0A1F2A", btnCor: "#fff", btnBorda: "#0A1F2A", acao: () => this.exportarDados("acesso") },
         { titulo: "Corrigir dados", desc: "Ajuste cadastro e vínculo profissional direto na aba Perfil.", cta: "Ir para o Perfil", btnBg: "#fff", btnCor: "#3D5058", btnBorda: "#DDE4E3", acao: this.setContaTab("perfil") },
         { titulo: "Portabilidade", desc: "Exportação em formato aberto (JSON) para levar seus dados a outro serviço.", cta: "Exportar agora", btnBg: "#fff", btnCor: "#3D5058", btnBorda: "#DDE4E3", acao: () => this.exportarDados("portabilidade") },

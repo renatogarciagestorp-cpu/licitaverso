@@ -21,6 +21,7 @@ on:
       - "supabase/emails/**"
       - "scripts/configurar-emails.py"
       - "scripts/configurar-login.py"
+      - "scripts/configurar-mfa.py"
       - ".github/workflows/supabase-funcoes.yml"
       - "ETAPAS.md"
 
@@ -94,6 +95,10 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: python3 scripts/configurar-login.py
+
+      - name: Ligar verificação em duas etapas (TOTP)
+        if: steps.chaves.outputs.ok == 'true'
+        run: python3 scripts/configurar-mfa.py
 
       - name: Publicar funções (pagamentos e avisos)
         if: steps.chaves.outputs.ok == 'true'

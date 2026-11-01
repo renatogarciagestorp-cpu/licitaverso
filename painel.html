@@ -83,7 +83,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--verde);background:#ff
 </div></header>
 <div id="app"><div class="centro"><div class="caixa">Carregando…</div></div></div>
 
-<script src="licitaverso-auth.js?v=4"></script>
+<script src="licitaverso-auth.js?v=5"></script>
 <script>
 (function(){
 const $app = document.getElementById("app");
@@ -195,7 +195,7 @@ const TELAS = {
       return "<tr><td><b>" + esc(p.nome || "—") + "</b>" + (p.admin ? ' <span class="etq">admin</span>' : "") + '<br><span class="fraco">' + esc(p.email) + "</span></td>" +
         "<td>" + esc(p.celular) + "</td><td>" + esc([p.cargo, p.orgao].filter(Boolean).join(" · ")) + '<br><span class="fraco">' + esc(p.setor) + "</span></td>" +
         "<td>" + (v ? '<span class="etq ok">' + PLANO[v.plano] + '</span><br><span class="fraco">até ' + data(v.fim) + "</span>" : '<span class="fraco">sem plano</span>') + "</td>" +
-        "<td>" + data(p.criado_em) + '</td><td><button class="btn claro" data-conceder="' + p.id + '">Conceder plano</button></td></tr>';
+        "<td>" + data(p.criado_em) + '</td><td><button class="btn claro" data-conceder="' + p.id + '">Conceder plano</button>' + (p.admin ? "" : ' <button class="btn claro" data-2fa="' + p.id + '" title="Use quando o assinante perder o celular, depois de confirmar a identidade">Remover 2 etapas</button>') + '</td></tr>';
     }).join("");
     el.innerHTML = '<h1>Assinantes</h1><p class="sub">' + cache.perfis.length + ' contas. "Conceder plano" serve para empenho de órgão público, cortesia ou ajuste manual.</p>' +
       '<div class="caixa"><div class="barra"><input type="search" id="busca" placeholder="Buscar por nome, e-mail ou órgão" style="flex:1;min-width:220px"></div>' +
@@ -209,7 +209,18 @@ const TELAS = {
           '</td><td><span class="etq ' + cls + '">' + esc(a.status) + "</span>" + (a.metodo ? '<br><span class="fraco">' + esc(a.metodo) + "</span>" : "") + "</td><td>" + (a.inicio ? data(a.inicio) + " a " + data(a.fim) : "—") +
           "</td><td>" + (a.status === "ativa" ? '<button class="btn perigo" data-encerrar="' + a.id + '">Encerrar</button>' : "") + "</td></tr>";
       }).join("") + "</tbody></table></div></div>";
-    const bind = () => el.querySelectorAll("[data-conceder]").forEach((b) => b.onclick = () => abrirConceder(b.dataset.conceder, ppid));
+    const bind = () => {
+      el.querySelectorAll("[data-conceder]").forEach((b) => b.onclick = () => abrirConceder(b.dataset.conceder, ppid));
+      el.querySelectorAll("[data-2fa]").forEach((b) => b.onclick = async () => {
+        const p = ppid[b.dataset["2fa"]] || {};
+        if (!confirm("Remover a verificação em duas etapas de " + (p.nome || p.email || "este assinante") + "? Faça isso só depois de confirmar a identidade da pessoa.")) return;
+        b.disabled = true;
+        const { data: r, error } = await sb.functions.invoke("mp-checkout", { body: { acao: "remover_2fa", usuario_id: b.dataset["2fa"] } });
+        b.disabled = false;
+        if (error || !r || r.erro) { alert("Não foi possível remover: " + ((r && r.erro) || (error && error.message) || "erro")); return; }
+        b.textContent = r.removidos ? "Removida" : "Não tinha"; b.disabled = true;
+      });
+    };
     bind();
     document.getElementById("busca").oninput = (e) => { document.getElementById("corpo").innerHTML = linhas(e.target.value.trim().toLowerCase()); bind(); };
     el.querySelectorAll("[data-encerrar]").forEach((b) => b.onclick = async () => {
