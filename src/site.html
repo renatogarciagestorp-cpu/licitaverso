@@ -548,6 +548,17 @@
     .lvp-card.lvp-dest { transform: none; }
     .lvp-garantia { border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.16); }
   }
+  .lvp-equipes { margin-top: 40px; background: #0F3F4D; color: #fff; border-radius: 22px; padding: 30px 32px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; align-items: center; }
+  .lvp-equipes-txt p { margin: 12px 0 0; font-size: 15.5px; line-height: 1.6; color: #CFE3E8; max-width: 52ch; }
+  .lvp-cta.lvp-cta-verde { background: #0FA36B; color: #06251A; padding: 14px 20px; margin-top: 18px; }
+  .lvp-cta.lvp-cta-verde:hover { background: #12B97A; }
+  .lvp-equipes-tab { background: #fff; color: #0B1F2A; border-radius: 16px; overflow: hidden; }
+  .lvp-eq-linha { display: grid; grid-template-columns: 1.3fr 1fr 1fr; border-bottom: 1px solid #EEF3F2; }
+  .lvp-eq-linha > span { padding: 13px 16px; font-size: 14.5px; }
+  .lvp-eq-cab > span { font-weight: 800; background: #F4F8F7; }
+  .lvp-eq-linha b { font-family: 'Source Serif 4', Georgia, serif; font-size: 18px; font-weight: 600; color: #0A7A50; }
+  .lvp-eq-nota { margin: 0; padding: 12px 16px; font-size: 12.5px; color: #6A7B82; }
+  @media (max-width: 960px) { .lvp-equipes { grid-template-columns: minmax(0, 1fr); padding: 22px 18px; } }
   @media (prefers-reduced-motion: reduce) { .lvp-chip { transition: none; } }
 </style>
 </helmet>
@@ -1610,6 +1621,23 @@
             </article>
           </sc-for>
         </div>
+
+        <sc-if value="{{ modoIndividual }}" hint-placeholder-val="{{ true }}">
+        <section class="lvp-equipes" aria-labelledby="lvp-eq-t">
+          <div class="lvp-equipes-txt">
+            <h2 id="lvp-eq-t" class="lvp-h2" style="color: #fff; margin: 0">Para empresas e órgãos: preço por acesso</h2>
+            <p>Contrate de 3 a 25 acessos, um por pessoa, com desconto por quantidade. Um gestor da sua equipe inclui e troca as pessoas. Órgãos públicos recebem proposta para empenho.</p>
+            <button class="lvp-cta lvp-cta-verde" sc-camel-on-click="{{ verEquipes }}">Ver preços para equipes</button>
+          </div>
+          <div class="lvp-equipes-tab" role="table" aria-label="Preço do Pro por acesso">
+            <div class="lvp-eq-linha lvp-eq-cab" role="row"><span role="columnheader">Pro, por acesso</span><span role="columnheader">Mensal</span><span role="columnheader">Anual</span></div>
+            <sc-for list="{{ eqTeaser }}" as="t" hint-placeholder-count="3">
+              <div class="lvp-eq-linha" role="row"><span role="rowheader">{{ t.faixa }}</span><span role="cell">{{ t.mensal }}</span><span role="cell"><b>{{ t.anual }}</b></span></div>
+            </sc-for>
+            <p class="lvp-eq-nota">Valores por acesso por mês. Básico e Premium também têm versão para equipes.</p>
+          </div>
+        </section>
+        </sc-if>
 
         <sc-if value="{{ modoEquipe }}" hint-placeholder-val="{{ false }}">
         <section id="contratar-equipe" aria-label="Contratar para a equipe" style="margin-top: 34px; background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 30px 32px">
@@ -5018,6 +5046,11 @@ class Component extends DCLogic {
       eqTotal: brlSimples(eqPreco(s.equipePlano, Math.min(s.equipeAcessos, EQ_MAX), s.anual).total) + (s.anual ? " por 12 meses" : " por mês"),
       eqDescontoTxt: brlSimples(eqPreco(s.equipePlano, Math.min(s.equipeAcessos, EQ_MAX), s.anual).pa) + " por acesso/mês · " + Math.round(eqDesconto(Math.min(s.equipeAcessos, EQ_MAX)) * 100) + "% de desconto por quantidade" + (s.anual ? " + 20% do anual (o mesmo de todos os planos)" : ""),
       modoEquipe: !!s.modoEquipe,
+      modoIndividual: !s.modoEquipe,
+      eqTeaser: [[3, "3 a 5 acessos"], [6, "6 a 10 acessos"], [11, "11 a 25 acessos"]].map(([n, faixa]) => ({ faixa,
+        mensal: brlSimples(eqPreco("pro", n, false).pa), anual: brlSimples(eqPreco("pro", n, true).pa) })),
+      verEquipes: () => { this.setState((x) => ({ modoEquipe: true, comprador: x.comprador === "fisica" ? "privada" : x.comprador, equipeMsg: "", equipeErro: "" }));
+        setTimeout(() => { const el = document.querySelector(".lvp-cfg"); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 60); },
       provasPlanos: ["Decisões do TCU, dos Tribunais de Contas, PGEs e TJs de todo o país, sempre com o link oficial",
         "Agente IA que lê edital, ETP e TR e entrega um parecer técnico com os pontos de risco", "Teste de 7 dias grátis, sem cartão"],
       compCols: ["Básico", "Premium", "Pro"],
