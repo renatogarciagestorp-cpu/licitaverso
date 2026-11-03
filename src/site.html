@@ -1538,7 +1538,7 @@
               </sc-if>
               <label class="lvc-campo"><span>Calcular até (mês de referência)</span><input type="month" value="{{ calcReferencia }}" sc-camel-on-input="{{ calcOnReferencia }}" sc-camel-on-change="{{ calcOnReferencia }}"><small>Até quando contar os ciclos e a diferença acumulada. Em branco, usa o mês atual.</small></label>
               <label class="lvc-campo"><span>Fim da vigência (opcional)</span><input type="month" value="{{ calcFim }}" sc-camel-on-input="{{ calcOnFim }}" sc-camel-on-change="{{ calcOnFim }}"></label>
-              <p class="lvc-metodo"><b>Metodologia do Banco Central.</b> Como na Calculadora do Cidadão, o índice de cada ciclo vai do mês da data-base até o 11º mês seguinte, contando os dois. Exemplo: data-base em fevereiro/2025 → índice de fevereiro/2025 a janeiro/2026, e o reajuste vale a partir de fevereiro/2026.</p>
+              <p class="lvc-metodo"><b>{{ calcMetodoTit }}</b> {{ calcMetodoTxt }}</p>
               <details class="lvc-det"><summary>Dados para a nota técnica (opcional)</summary>
                 <label class="lvc-campo"><span>Contrato / processo</span><input type="text" value="{{ calcContrato }}" sc-camel-on-input="{{ calcOnContrato }}"></label>
                 <label class="lvc-campo"><span>Contratada</span><input type="text" value="{{ calcContratada }}" sc-camel-on-input="{{ calcOnContratada }}"></label>
@@ -3866,19 +3866,21 @@ class Component extends DCLogic {
     const ciclos = [];
     let fatorTot = 1, pendente = false;
     for (let k = 1; baseN + 12 * k <= refN && k <= 10; k++) {
-      // metodologia da Calculadora do Cidadão (Banco Central): usa os índices da data inicial e da final;
-      // no ciclo de 12 meses, do mês da data-base ao 11º mês seguinte (ex.: fev/2025 a jan/2026)
-      const ini = baseN + 12 * (k - 1);
+      // IPCA: metodologia da Calculadora do Cidadão (Banco Central), com os índices da data inicial e da final:
+      //   do mês da data-base ao 11º mês seguinte (ex.: fev/2025 a jan/2026), 12 variações.
+      // Demais índices (INCC, IGP-M, IGP-DI, INPC, IPCA-E): do mês da data-base ao mês do aniversário, inclusive
+      //   (ex.: jan/2025 a jan/2026), 13 variações.
+      const ini = baseN + 12 * (k - 1), nMeses = c.indice === "ipca" ? 12 : 13;
       const lista = [];
       let f = 1, falta = false;
-      for (let m = ini; m < ini + 12; m++) {
+      for (let m = ini; m < ini + nMeses; m++) {
         const v = serie.mensal[ym(m)];
         if (typeof v !== "number") { falta = true; lista.push({ mes: ym(m), v: null }); continue; }
         f *= 1 + v / 100; lista.push({ mes: ym(m), v });
       }
       if (falta) pendente = true;
       fatorTot *= f;
-      ciclos.push({ k, aniversario: ym(baseN + 12 * k), ini: ym(ini), fim: ym(ini + 11), fator: f, falta, lista, valor: valor * fatorTot });
+      ciclos.push({ k, aniversario: ym(baseN + 12 * k), ini: ym(ini), fim: ym(ini + nMeses - 1), fator: f, falta, lista, valor: valor * fatorTot });
     }
     const proximo = ym(baseN + 12 * (ciclos.length + 1));
     // diferença acumulada desde o primeiro aniversário até o mês de referência (valor pago sem reajuste)
@@ -3940,7 +3942,10 @@ class Component extends DCLogic {
       par(FUND[c.regime]);
       par("O reajuste por índice recompõe a variação ordinária dos custos, é devido a cada período de 12 meses contados da data-base e não caracteriza alteração contratual, podendo ser registrado por simples apostila.");
       titulo("3. Metodologia");
-      par("Adota-se a metodologia da Calculadora do Cidadão do Banco Central do Brasil, que usa no cálculo os índices do mês inicial e do mês final. Em cada ciclo de 12 meses, o período vai do mês da data-base ao 11º mês seguinte, inclusive (por exemplo, data-base em fevereiro: índices de fevereiro a janeiro do ano seguinte). O fator de correção é o produto de (1 + variação mensal) dos 12 meses. Fonte dos índices: " + r.serie.fonte + ".");
+      par((c.indice === "ipca"
+        ? "Adota-se a metodologia da Calculadora do Cidadão do Banco Central do Brasil, que usa no cálculo os índices do mês inicial e do mês final. Em cada ciclo, o período vai do mês da data-base ao 11º mês seguinte, inclusive (por exemplo, data-base em fevereiro: IPCA de fevereiro a janeiro do ano seguinte, 12 meses)."
+        : "Em cada ciclo, o período do índice vai do mês da data-base ao mês do aniversário, inclusive (por exemplo, data-base em janeiro: índice de janeiro a janeiro do ano seguinte, 13 meses), conforme a prática adotada nos reajustes de obras e serviços de engenharia.")
+        + " O fator de correção é o produto de (1 + variação mensal) dos meses do período. Fonte dos índices: " + r.serie.fonte + ".");
       titulo("4. Resultado");
       tabela(["Ciclo", "Vale a partir de", "Período do índice", "Variação acumulada", "Valor mensal"],
         r.ciclos.map((ci) => [ci.k + "º", mesBR(ci.aniversario), mesBR(ci.ini) + " a " + mesBR(ci.fim), pct(ci.fator) + (ci.falta ? " (parcial)" : ""), brlN(ci.valor)]));
@@ -5291,6 +5296,10 @@ class Component extends DCLogic {
           calcTemCiclos: !!ultimoCiclo,
           calcCiclos: r.pronto ? r.ciclos.map((ci) => ({ k: ci.k + "º", aniv: mesBR(ci.aniversario), periodo: mesBR(ci.ini) + " a " + mesBR(ci.fim), var: pct(ci.fator) + (ci.falta ? "*" : ""), valor: brlN(ci.valor) })) : [],
           calcBaixarNota: () => this.baixarNotaReajuste(),
+          calcMetodoTit: c.indice === "ipca" ? "IPCA: metodologia do Banco Central." : "Período do índice:",
+          calcMetodoTxt: c.indice === "ipca"
+            ? "Como na Calculadora do Cidadão, o índice de cada ciclo vai do mês da data-base até o 11º mês seguinte, contando os dois (12 meses). Exemplo: data-base em fevereiro/2025 → IPCA de fevereiro/2025 a janeiro/2026; o reajuste vale a partir de fevereiro/2026."
+            : "Para este índice, o período vai do mês da data-base até o mês do aniversário, contando os dois (13 meses), como nos reajustes de obras e serviços de engenharia. Exemplo: data-base em janeiro/2025 → índice de janeiro/2025 a janeiro/2026; o reajuste vale a partir de janeiro/2026.",
           calcBotaoPdf: s.gerandoPdf ? "Gerando o PDF…" : "Baixar nota técnica em PDF",
           calcFonte: r.pronto && r.serie ? "Fonte: " + r.serie.fonte + " · último mês disponível: " + mesBR(r.ultimoDisp) + (s.indices && s.indices.gerado_em ? " · atualizado em " + new Date(s.indices.gerado_em).toLocaleDateString("pt-BR") : "") : ""
         };
