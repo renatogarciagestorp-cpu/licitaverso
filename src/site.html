@@ -432,9 +432,13 @@
   :focus-visible { outline: 3px solid #0FA36B; outline-offset: 2px; }
   mark { background: #CFF3E3; color: #06382A; padding: 0 2px; border-radius: 2px; }
   [aria-label="Abrir menu"] { display: none !important; }
-  @media (max-width: 860px) {
+  /* com 8 itens, o menu completo só cabe em telas largas; abaixo disso vira o botão de menu */
+  nav[aria-label="Navegação principal"] { flex-wrap: nowrap !important; white-space: nowrap; }
+  @media (max-width: 1200px) {
     nav[aria-label="Navegação principal"] { display: none !important; }
     [aria-label="Abrir menu"] { display: grid !important; }
+  }
+  @media (max-width: 860px) {
     header > div { gap: 12px !important; padding: 0 16px !important; height: 60px !important; }
     header > div > div button { padding: 9px 12px !important; font-size: 13.5px !important; }
     header [aria-label="Licitacon — página inicial"] span:last-child { font-size: 17px !important; }
@@ -1980,6 +1984,7 @@
             <p class="lva-lead">Envie até 3 documentos da contratação. O agente confere cada item com a lei e com a jurisprudência da Biblioteca e devolve um parecer em PDF e Word, no formato ABNT, com a gravidade, o fundamento, a providência e a redação sugerida.</p>
             <div class="lvh-ctas">
               <button class="lvh-btn" sc-camel-on-click="{{ anIrIniciar }}">{{ anHeroCta }}</button>
+              <button class="lvh-btn-sec" sc-camel-on-click="{{ goElaborar }}">Criar ETP, TR ou Projeto Básico</button>
             </div>
             <p class="lvh-micro">{{ anHeroMicro }}</p>
           </div>
@@ -3676,7 +3681,7 @@ function cnpjValido(v) {
   return calc(12) === Number(d[12]) && calc(13) === Number(d[13]);
 }
 // Elaboração de documentos pelo agente (Lei 14.133/2021). GERACAO_ATIVA só vira true quando a redação automática estiver pronta.
-const GERACAO_ATIVA = false;
+const GERACAO_ATIVA = true;
 const ELAB_COMUM = { t: "Identificação", d: "Dados que entram no cabeçalho e orientam a redação.", campos: [
   { k: "orgao", rot: "Órgão ou entidade", tipo: "linha", obrig: true, dica: "Ex.: Prefeitura Municipal de Maricá" },
   { k: "uf", rot: "UF e município", tipo: "linha", dica: "Usada para buscar a jurisprudência do Tribunal de Contas do seu estado. Ex.: RJ · Maricá" },
@@ -3851,13 +3856,13 @@ const eqPreco = (plano, n, anual) => { const pa = Math.round(EQ_MENSAL[plano] * 
 const EQ_INCLUI = {
   basico: ["Fórum (leitura e participação) para cada acesso", "Descontos do Básico em cursos, consultoria e análises do Agente IA"],
   premium: ["Tudo do Premium para cada acesso: fórum, cursos e consultoria com desconto", "Agente IA com 15% de desconto por análise"],
-  pro: ["Tudo do Pro para cada acesso", "Agente IA: 6 análises por acesso por mês, somadas para a equipe", "1 consultoria por escrito por mês para a organização; as demais com 30% de desconto"]
+  pro: ["Tudo do Pro para cada acesso", "Agente IA: 6 por acesso por mês, somados para a equipe, entre analisar documentos e criar ETP, TR ou Projeto Básico", "1 consultoria por escrito por mês para a organização; as demais com 30% de desconto"]
 };
 const PLANO_BENEFICIOS = {
   teste: ["Leitura do fórum da comunidade", "Biblioteca Jurídica (grátis com cadastro)", "Sem cobrança automática ao final"],
   basico: ["Fórum: leitura e participação", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "Agente IA: análise com 10% de desconto (R$ 261,00)"],
   premium: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Agente IA: análise com 15% de desconto (R$ 246,50)", "Prioridade na agenda do especialista"],
-  pro: ["Tudo do Premium", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "Agente IA: 2 análises por semana sem custo; a partir da 3ª, 30% de desconto (R$ 203,00)", "Selo de resposta oficial no fórum", "Suporte prioritário"]
+  pro: ["Tudo do Premium", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "Agente IA: 2 por semana sem custo, entre analisar documentos e criar ETP, TR ou Projeto Básico; a partir do 3º, 30% de desconto (R$ 203,00)", "Selo de resposta oficial no fórum", "Suporte prioritário"]
 };
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
@@ -4176,6 +4181,15 @@ class Component extends DCLogic {
     if (!this.sb) { this.setState({ el: { ...el, erro: "A elaboração ainda não está ativa neste site (modo demonstração)." } }); return; }
     if (!this.u) { this.setState({ volta: "elaborar" }); this.irPara("login"); return; }
     this.setState({ el: { ...el, enviando: true, erro: "" } });
+    const pend = (this.state.analises || []).find((a) => a.tipo === "geracao" && a.documento === el.doc && a.status === "aguardando_documentos");
+    if (pend) {  // já paga ou liberada: só envia as respostas
+      const r0 = await this.sb.functions.invoke("mp-checkout", { body: { acao: "enviar_geracao", id: pend.id, respostas: el.respostas } });
+      if (r0.error) { this.setState({ el: { ...this.state.el, enviando: false, erro: await erroDaFuncao(r0.error) } }); return; }
+      try { localStorage.removeItem("lv-elab-" + el.doc); } catch (e) {}
+      this.setState({ el: { ...this.state.el, enviando: false, ok: "✓ Respostas enviadas. O " + d.sigla + " entra na fila e você recebe um e-mail quando ficar pronto." } });
+      this.carregarDados();
+      return;
+    }
     const { data, error } = await this.sb.functions.invoke("mp-checkout", { body: { acao: "criar", tipo: "geracao", documento: el.doc, aceite: true, termo_versao: "elab-1", metodo: "pix", retorno: baseSite() + "index.html" } });
     if (error) { this.setState({ el: { ...this.state.el, enviando: false, erro: await erroDaFuncao(error) } }); return; }
     if (data && data.gratuito) {
@@ -4428,7 +4442,7 @@ class Component extends DCLogic {
       sb.from("forum_seguindo").select("topico_id, forum_topicos(nome)"),
       sb.from("biblioteca_pessoal").select("chave, dados, atualizado_em").like("chave", "nota-%").limit(1000),
       sb.rpc("meu_cupom_curso"),
-      sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg, documentos, liberar_em").order("criado_em", { ascending: false }).limit(30),
+      sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg, documentos, liberar_em, tipo").order("criado_em", { ascending: false }).limit(30),
       sb.rpc("minha_cota_analises"),
       sb.from("normas_usuario").select("id, nome, arquivo, tamanho, criado_em").order("criado_em", { ascending: false }).limit(30),
       sb.from("renovacoes").select("id, plano, ciclo, valor, status, proxima_cobranca, criado_em").order("criado_em", { ascending: false }).limit(10),
@@ -4872,7 +4886,7 @@ class Component extends DCLogic {
 
   // análise paga ou da cota do Pro que ainda espera os documentos (etapa 2)
   creditoAnalise() {
-    return (this.state.analises || []).find((a) => a.status === "aguardando_documentos") || null;
+    return (this.state.analises || []).find((a) => a.status === "aguardando_documentos" && a.tipo !== "geracao") || null;
   }
 
   // etapa 1: aceite e pagamento (Pro com cota: sem pagamento)
@@ -5384,8 +5398,8 @@ class Component extends DCLogic {
     const conectado = s.sb && logado;
 
     const navDefs = [
-      ["Biblioteca Jurídica", "biblioteca"], ["Fórum", "forum"], ["Cursos", "cursos"],
-      ["Consultoria", "consultoria"], ["Agente IA", "agente"], ["Calculadora", "calculadora"], ["Planos", "planos"]
+      ["Biblioteca", "biblioteca"], ["Fórum", "forum"], ["Cursos", "cursos"],
+      ["Consultoria", "consultoria"], ["Agente IA", "agente"], ["Criar documento", "elaborar"], ["Calculadora", "calculadora"], ["Planos", "planos"]
     ];
 
     const filtradosTodos = this.filtrar();
@@ -5671,6 +5685,7 @@ class Component extends DCLogic {
         const faltaObrig = todos.filter((c) => c.obrig && !String(el.respostas[c.k] || "").trim());
         const cota = s.cotaAnalise;
         const condicao = s.admin ? "Conta de administrador: sem cobrança."
+          : (s.analises || []).some((a) => a.tipo === "geracao" && a.documento === el.doc && a.status === "aguardando_documentos") ? "Pagamento confirmado: é só enviar as respostas."
           : (s.plano === "pro" && cota) ? (Math.max(0, Number(cota.limite) - Number(cota.usadas)) > 0
               ? "Usa 1 da sua franquia do Pro (" + Math.max(0, Number(cota.limite) - Number(cota.usadas)) + " de " + cota.limite + " disponíveis, somando análises e elaborações)."
               : "Franquia usada: este documento sai por R$ 203,00 (30% de desconto).")
@@ -5850,7 +5865,7 @@ class Component extends DCLogic {
         { titulo: "IA que cita a lei e a decisão", desc: "O agente confere o texto legal e usa a jurisprudência da Biblioteca em cada apontamento. O parecer é opinativo: a decisão é sempre sua." },
         { titulo: "Os dois lados do balcão", desc: "Agentes de contratação, pregoeiros e controle interno ao lado de fornecedores e consultores." }
       ],
-      goAgente: this.nav("agente"),
+      goAgente: this.nav("agente"), goElaborar: this.nav("elaborar"),
       heroCta: this.cortesiaAnalise() ? "Fazer minha primeira análise grátis" : "Analisar um documento",
       heroMicro: this.cortesiaAnalise() ? "1 análise grátis por CPF · sem cartão · parecer em PDF e Word" : "Parecer em PDF e Word · até 3 documentos por análise",
       heroAchados: [
@@ -6115,7 +6130,7 @@ class Component extends DCLogic {
       anEtapaPedido: s.an.etapa === "pedido" && !!this.creditoAnalise(),
       anIrIniciar: () => { const el = document.getElementById("an-iniciar"); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); },
       anHeroCta: this.creditoAnalise() ? "Ir para o envio dos documentos" : (this.cortesiaAnalise() && (!s.usuario || this.precoAnalise() === 0) ? "Fazer minha análise grátis" : (this.precoAnalise() === 0 && s.usuario ? "Começar uma análise (sem custo)" : "Começar uma análise")),
-      anHeroMicro: this.cortesiaAnalise() ? "Primeira análise grátis, uma por CPF · parecer em PDF e Word" : (s.plano === "pro" ? "Plano Pro: 2 análises por semana incluídas" : "R$ 290,00 por análise · assinantes têm desconto · o Pro inclui 2 por semana"),
+      anHeroMicro: this.cortesiaAnalise() ? "Primeira análise grátis, uma por CPF · parecer em PDF e Word" : (s.plano === "pro" ? "Plano Pro: 2 por semana incluídas, entre analisar e criar documentos" : "R$ 290,00 por análise · assinantes têm desconto · o Pro inclui 2 por semana"),
       anAmostra: [
         ["Constatação", "O termo de referência exige atestado de execução de 100% do quantitativo do objeto."],
         ["Texto legal", "Lei 14.133/2021, art. 67, § 2º: a exigência de quantidades mínimas em atestados é limitada a 50% das parcelas de maior relevância."],
@@ -6125,7 +6140,7 @@ class Component extends DCLogic {
       ].map(([r, t]) => ({ r, t })),
       anComoFunciona: [
         ["1", "Leia as condições e aceite", "Nesta página estão as regras, o que o agente faz e o que ele precisa. O aceite é obrigatório."],
-        ["2", "Pagamento ou cota do Pro", "Assinante Pro usa uma das 2 análises da semana, sem custo. Os demais pagam antes de seguir para o envio."],
+        ["2", "Pagamento ou cota do Pro", "Assinante Pro usa uma das 2 da semana (somadas com a criação de documentos), sem custo. Os demais pagam antes de seguir para o envio."],
         ["3", "Envie até 3 documentos", "Na página de envio você escolhe os tipos de documento, anexa os arquivos e vê a estimativa de duração."],
         ["4", "Receba o parecer", "O agente analisa e você recebe um e-mail. O parecer fica nesta página, em PDF e Word."]
       ].map(([n, t, d]) => ({ n, t, d })),
@@ -6145,7 +6160,7 @@ class Component extends DCLogic {
         "Serviço com dedicação exclusiva de mão de obra: a planilha de custos de mão de obra (IN 05/2017) é obrigatória, e a convenção ou acordo coletivo vai como anexo extra (não conta no limite de 3).",
         "Parceria pela Lei 13.019/2014: a planilha de custos da parceria é obrigatória; o plano de trabalho substitui o termo de referência.",
         "Opcional: link da contratação no PNCP e até 3 normas próprias (decreto estadual ou municipal, regulamento de estatal), que não contam no limite.",
-        "Plano Pro: 2 análises por semana sem custo adicional (de segunda a domingo, sem acúmulo). Básico e Premium: análises ilimitadas, pagas com desconto. Sem plano: R$ 290,00 por análise."
+        "Plano Pro: 2 por semana sem custo adicional, somando análises e documentos criados (de segunda a domingo, sem acúmulo). Básico e Premium: análises ilimitadas, pagas com desconto. Sem plano: R$ 290,00 por análise."
       ],
       anDados: [
         "Os arquivos são processados por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos.",
@@ -6176,12 +6191,12 @@ class Component extends DCLogic {
         if (s.admin) return "Conta de administrador: análises sem limite e sem cobrança.";
         if (s.plano === "pro" && c && c.equipe) {
           const resta = Math.max(0, Number(c.limite) - Number(c.usadas));
-          return resta > 0 ? "Plano da equipe (" + c.organizacao + "): restam " + resta + " de " + c.limite + " análises neste mês, sem custo adicional (renova no dia 1º)."
+          return resta > 0 ? "Plano da equipe (" + c.organizacao + "): restam " + resta + " de " + c.limite + " neste mês, entre análises e documentos criados, sem custo adicional (renova no dia 1º)."
             : "A equipe já usou as " + c.limite + " análises do mês. Esta análise sai com 30% de desconto: " + brlSimples(this.precoAnalise()) + ".";
         }
         if (s.plano === "pro" && c) {
           const resta = Math.max(0, Number(c.limite) - Number(c.usadas));
-          return resta > 0 ? "Você tem " + resta + " de " + c.limite + " análises disponíveis nesta semana, sem custo adicional (renova na segunda-feira)."
+          return resta > 0 ? "Você tem " + resta + " de " + c.limite + " disponíveis nesta semana, entre análises e documentos criados, sem custo adicional (renova na segunda-feira)."
             : "Você já usou as " + c.limite + " análises desta semana. Esta análise sai com 30% de desconto: " + brlSimples(this.precoAnalise()) + ".";
         }
         if (this.cortesiaAnalise() && this.precoAnalise() === 0) {
@@ -6196,7 +6211,7 @@ class Component extends DCLogic {
         return "Valor por análise: R$ 290,00, pago antes de seguir para o envio dos documentos.";
       })(),
       anTabelaPrecos: [["Sem plano", "R$ 290,00 por análise"], ["Básico", brlSimples(AN_PRECO * 0.9) + " por análise (10% de desconto)"],
-        ["Premium", brlSimples(AN_PRECO * 0.85) + " por análise (15% de desconto)"], ["Pro", "2 análises por semana sem custo; a partir da 3ª, " + brlSimples(AN_PRECO * 0.7) + " (30% de desconto)"]]
+        ["Premium", brlSimples(AN_PRECO * 0.85) + " por análise (15% de desconto)"], ["Pro", "2 por semana sem custo (análises e documentos criados, somados); a partir do 3º, " + brlSimples(AN_PRECO * 0.7) + " (30% de desconto)"]]
         .map(([p, v]) => { const atual = (p === "Sem plano" && s.usuario && !s.plano) || (p === "Básico" && s.plano === "basico") || (p === "Premium" && s.plano === "premium") || (p === "Pro" && s.plano === "pro"); return { p, v, fundo: atual ? "#E3F2EA" : "#F6F8F7" }; }),
       anTemCredito: !!this.creditoAnalise(),
       anSemCredito: !this.creditoAnalise(),
@@ -6276,24 +6291,28 @@ class Component extends DCLogic {
         const st = STATUS_ANALISE[a.status] || [a.status, "#6A7B82", "#EEF1F2"];
         const r = a.resumo || {};
         const docs = Array.isArray(a.documentos) ? a.documentos : [];
-        const titulo = docs.length ? docs.map((d) => (AN_TIPO[d.tipo] || { nome: d.tipo }).nome).join(" + ") : (AN_DOC_NOME[a.documento] || a.documento);
-        const base = "Analise-" + String(a.id).slice(0, 8);
+        const ger = a.tipo === "geracao";
+        const titulo = ger ? "Elaboração · " + ((ELAB[a.documento] || {}).nome || a.documento)
+          : docs.length ? docs.map((d) => (AN_TIPO[d.tipo] || { nome: d.tipo }).nome).join(" + ") : (AN_DOC_NOME[a.documento] || a.documento);
+        const base = (ger ? ((ELAB[a.documento] || {}).sigla || "Documento") + "-" : "Analise-") + String(a.id).slice(0, 8);
         return {
           doc: titulo, status: st[0], cor: st[1], fundo: st[2], data: dataBR(a.criado_em),
           detalhe: a.status === "erro" ? (a.erro_msg || "Não foi possível concluir a análise.")
+            : a.status === "aguardando_documentos" && ger ? "Elaboração liberada · envie as respostas do questionário para iniciar"
+            : ger && a.status === "concluida" ? (r.objeto || a.nome_arquivo || "") + " · " + Number(r.pendencias || 0) + " pendências para completar"
             : a.status === "aguardando_documentos" ? "Análise liberada · envie os documentos para iniciar" + (a.liberar_em && new Date(a.liberar_em).getTime() > Date.now() ? " (análise grátis: processada a partir de " + dataBR(a.liberar_em) + ", com prioridade)" : "")
             : a.status === "na_fila" && a.liberar_em && new Date(a.liberar_em).getTime() > Date.now() ? "Análise grátis na fila: o limite diário foi atingido; ela é processada a partir de " + dataBR(a.liberar_em) + ", com prioridade"
             : ((docs.length ? docs.map((d) => d.nome_arquivo).join(" · ") : (a.origem === "pncp" ? "PNCP" : (a.nome_arquivo || "PDF enviado")))
                + " · " + (a.cobranca === "franquia_pro" ? "incluída no Pro" : a.cobranca === "franquia_org" ? "incluída no plano da equipe" : brlSimples(Number(a.valor || 0)))),
-          temResumo: a.status === "concluida" && !!r.situacao,
+          temResumo: a.status === "concluida" && !!r.situacao && !ger,
           situacao: r.situacao || "",
           contagem: "Apontamentos: " + Number(r.alta || 0) + " de gravidade alta, " + Number(r.media || 0) + " média e " + Number(r.baixa || 0) + " baixa.",
-          pronta: a.status === "concluida" && !!a.parecer_pdf,
-          baixarPdf: () => this.baixarParecer(a.parecer_pdf, "Parecer Licitacon - " + base + ".pdf"),
-          baixarDocx: () => this.baixarParecer(a.parecer_docx, "Parecer Licitacon - " + base + ".docx"),
+          pronta: a.status === "concluida" && !!(a.parecer_pdf || a.parecer_docx),
+          baixarPdf: () => a.parecer_pdf ? this.baixarParecer(a.parecer_pdf, (ger ? "Minuta Licitacon - " : "Parecer Licitacon - ") + base + ".pdf") : this.aviso("Este documento está disponível em Word.", "erro"),
+          baixarDocx: () => this.baixarParecer(a.parecer_docx, (ger ? "Minuta Licitacon - " : "Parecer Licitacon - ") + base + ".docx"),
           aguardaPagamento: a.status === "aguardando_pagamento",
           aguardaDocs: a.status === "aguardando_documentos",
-          enviarDocs: () => this.irParaEnvio(),
+          enviarDocs: () => ger ? (this.irPara("elaborar"), this.elEscolher(a.documento)) : this.irParaEnvio(),
           conferir: () => { this.aviso("Conferindo com o Mercado Pago…"); this.conferirPagamento("analise:" + a.id, false); }
         };
       }),
@@ -6328,7 +6347,7 @@ class Component extends DCLogic {
         { nome: "Premium", base: 199.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(199.9), unidade: unidadePlano, nota: notaPlano(199.9), detalhePreco: detalhePlano(199.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
           itens: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Análise de documentos com IA com 15% de desconto", "Prioridade na agenda do especialista"] },
         { nome: "Pro", base: 479.9, publico: "Profissionais avançados e empresas.", preco: precoPlano(479.9), unidade: unidadePlano, nota: notaPlano(479.9), detalhePreco: detalhePlano(479.9), destaque: destaque === "Pro", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Tudo do Premium", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "2 análises de documentos por semana com parecer técnico (edital, ETP, TR e outros); a partir da 3ª, 30% de desconto", "Selo de resposta oficial no fórum para o especialista", "Suporte prioritário"] }
+          itens: ["Tudo do Premium", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "2 por semana entre análises com parecer técnico e criação de ETP, TR ou Projeto Básico; a partir do 3º, 30% de desconto", "Selo de resposta oficial no fórum para o especialista", "Suporte prioritário"] }
       ]),
 
       // área do assinante
@@ -6409,7 +6428,7 @@ class Component extends DCLogic {
           ["Fórum da comunidade", ["Ler e participar", "Ler e participar", "Ler, participar e selo de resposta oficial"]],
           ["Cursos", ["10% de desconto", "15% de desconto", "50% de desconto"]],
           ["Consultoria técnica", ["10% de desconto", "15% de desconto", eq ? "1 por escrito por mês para a equipe; demais com 30%" : "1 por escrito por mês incluída; demais com 30%"]],
-          ["Agente IA (parecer de edital, ETP, TR…)", ["10% de desconto", "15% de desconto", eq ? "6 análises por acesso por mês, somadas para a equipe" : "2 análises por semana incluídas; demais com 30%"]],
+          ["Agente IA: análises e criação de ETP, TR e Projeto Básico", ["10% de desconto", "15% de desconto", eq ? "6 por acesso por mês, somados para a equipe" : "2 por semana incluídos, entre analisar e criar; demais com 30%"]],
           ["Prioridade na agenda do especialista", ["—", "Sim", "Sim"]],
           ["Suporte prioritário", ["—", "—", "Sim"]]
         ];
@@ -6426,7 +6445,7 @@ class Component extends DCLogic {
         ["Posso cancelar quando quiser?", "Sim. Não há fidelidade nem multa. Sem a renovação automática, o plano simplesmente termina no fim do período pago e avisamos antes. Se você ativou a renovação no cartão, desligue a qualquer momento em Minha conta → Assinatura."],
         ["Órgão público pode contratar? Como funciona?", "Pode. Escolha “órgão público”, monte o plano e peça a proposta para empenho — ou baixe a proposta preliminar para instruir o processo. O enquadramento (por exemplo, dispensa por valor, art. 75, II, da Lei nº 14.133/2021) cabe ao órgão. Os acessos são liberados após a nota de empenho. Quem preferir também pode assinar como pessoa física."],
         ["Como funciona o plano para equipes?", "Você contrata a quantidade de acessos e quem contrata vira o gestor. Ele inclui as pessoas pelo e-mail e troca quando alguém sai da equipe. Cada acesso é de uma pessoa, e o desconto cresce com a quantidade: 5% de 3 a 5 acessos, 10% de 6 a 10 e 15% de 11 a 25, além dos 20% do anual."],
-        ["O que o Agente IA faz e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. O Pro inclui 2 análises por semana; equipes Pro têm 6 por acesso por mês, somadas. Nos demais planos a análise é paga com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
+        ["O que o Agente IA faz e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. Ele também cria a minuta do ETP, do Termo de Referência ou do Projeto Básico a partir de um questionário, já conferida. O Pro inclui 2 por semana, somando análises e documentos criados; equipes Pro têm 6 por acesso por mês, somados. Nos demais planos cada análise ou documento é pago com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
         ["O que é o preço de fundador?", "É o preço de lançamento para os primeiros " + ((s.oferta && s.oferta.limite) || 100) + " assinantes: 30% de desconto no Básico, no Premium ou no Pro, no mensal ou no anual (não se soma ao desconto de 20% do anual nem aos planos de equipe). O preço fica travado enquanto a sua assinatura continuar ativa; se ela ficar mais de 30 dias sem renovação, o preço de fundador deixa de valer."],
         ["A primeira análise do Agente IA é grátis mesmo?", "Sim. Cada CPF tem direito a uma análise grátis, com até 3 documentos, assinante ou não: basta informar o CPF no perfil e confirmar o e-mail. Se a análise não puder ser concluída por falha técnica, a cortesia continua disponível. Quando o limite diário de análises grátis é atingido, a sua entra na fila e é processada no dia seguinte, com prioridade."],
         ["Posso mudar de plano depois?", "Sim. Basta contratar o novo plano; se for o mesmo plano, o tempo que ainda falta é somado ao novo período."]
