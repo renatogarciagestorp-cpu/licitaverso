@@ -72,6 +72,13 @@ export const DESCONTO_ANALISE: Record<string, number> = { basico: 0.1, premium: 
 export const FRANQUIA_PRO_SEMANA = 2;
 export const MAX_PAGINAS_ANALISE = 200;
 
+/** Elaboração de documento pelo agente (Lei 14.133/2021). Mesmo preço e descontos da análise; no Pro, entra na mesma
+ *  franquia (2 por semana somando análises e elaborações; equipes: 6 por acesso por mês, somados). */
+export const DOC_GERACAO: Record<string, string> = {
+  etp: "Estudo Técnico Preliminar (ETP)", tr: "Termo de Referência", projeto_basico: "Projeto Básico",
+};
+export const MAX_RESPOSTAS_GERACAO = 60000; // caracteres do questionário
+
 export function precoAnalise(planoVigente: string | null): number {
   const desconto = planoVigente ? DESCONTO_ANALISE[planoVigente] ?? 0 : 0;
   return centavos(ANALISE_AVULSA * (1 - desconto));

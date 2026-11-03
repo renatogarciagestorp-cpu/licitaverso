@@ -338,7 +338,7 @@ def processar(a):
 
 def main():
     if "--verificar" in sys.argv:
-        r = urllib.request.urlopen(urllib.request.Request(f"{SUPA}/rest/v1/analises?status=eq.na_fila&or=(liberar_em.is.null,liberar_em.lte.{datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})&select=id&limit=1", headers=cab()), timeout=60)
+        r = urllib.request.urlopen(urllib.request.Request(f"{SUPA}/rest/v1/analises?status=eq.na_fila&tipo=eq.analise&or=(liberar_em.is.null,liberar_em.lte.{datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})&select=id&limit=1", headers=cab()), timeout=60)
         tem = bool(json.loads(r.read()))
         stuck = json.loads(urllib.request.urlopen(urllib.request.Request(
             f"{SUPA}/rest/v1/analises?status=eq.processando&iniciado_em=lt."

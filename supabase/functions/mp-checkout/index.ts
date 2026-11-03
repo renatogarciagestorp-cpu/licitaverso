@@ -13,7 +13,7 @@ import {
   aplicarPagamento, clienteServico, conferirRenovacao, CORS, env, erro, mp, resposta, usuarioDaRequisicao, nivelDoToken } from "../_shared/comum.ts";
 import {
   CONSULTORIA, type Ciclo, FRANQUIA_PRO_SEMANA, inicioMesBR, MAX_DOCS_ANALISE, MAX_PAGINAS_ANALISE, type Modalidade, type Plano, PLANOS,
-  precoAnalise, precoConsultoria, precoPlano, TIPOS_DOC_ANALISE, FRANQUIA_EQUIPE_MES, MIN_ACESSOS_EQUIPE, MAX_ACESSOS_EQUIPE, precoEquipe,
+  precoAnalise, precoConsultoria, DOC_GERACAO, MAX_RESPOSTAS_GERACAO, precoPlano, TIPOS_DOC_ANALISE, FRANQUIA_EQUIPE_MES, MIN_ACESSOS_EQUIPE, MAX_ACESSOS_EQUIPE, precoEquipe,
 } from "../_shared/precos.ts";
 import { avisarEquipeNovaConsultoria } from "../_shared/consultoria.ts";
 
@@ -96,8 +96,8 @@ Deno.serve(async (req) => {
     // ---------------------------------------------------------------- enviar documentos da análise (etapa 2)
     if (acao === "enviar_analise") {
       const id = String(corpo.id ?? "");
-      const { data: an } = await admin.from("analises").select("id, usuario_id, status").eq("id", id).maybeSingle();
-      if (!an || an.usuario_id !== usuario.id) return erro("Análise não encontrada.", 404);
+      const { data: an } = await admin.from("analises").select("id, usuario_id, status, tipo").eq("id", id).maybeSingle();
+      if (!an || an.usuario_id !== usuario.id || (an.tipo && an.tipo !== "analise")) return erro("Análise não encontrada.", 404);
       if (an.status !== "aguardando_documentos") return erro("Esta análise não está aguardando documentos (verifique o pagamento).");
       const regime = ["lei-14133", "lei-13303", "lei-13019"].includes(String(corpo.regime)) ? String(corpo.regime) : "";
       if (!regime) return erro("Escolha o regime da contratação.");
@@ -147,6 +147,29 @@ Deno.serve(async (req) => {
         pncp_link: /^https:\/\/(www\.)?pncp\.gov\.br\/.*\d{14}\/\d{4}\/\d+/.test(pncp) ? pncp : null,
         nome_arquivo: documentos.map((d) => d.nome_arquivo).join(" · ").slice(0, 160),
         status: "na_fila", enviado_em: new Date().toISOString(),
+      }).eq("id", id).eq("status", "aguardando_documentos");
+      if (error) throw error;
+      return resposta({ ok: true, id });
+    }
+
+    // ---------------------------------------------------------------- respostas do questionário da elaboração (etapa 2)
+    if (acao === "enviar_geracao") {
+      const id = String(corpo.id ?? "");
+      const { data: g } = await admin.from("analises").select("id, usuario_id, status, tipo, documento").eq("id", id).maybeSingle();
+      if (!g || g.usuario_id !== usuario.id || g.tipo !== "geracao") return erro("Elaboração não encontrada.", 404);
+      if (g.status !== "aguardando_documentos") return erro("Esta elaboração não está aguardando as respostas (verifique o pagamento).");
+      const respostas = corpo.respostas && typeof corpo.respostas === "object" && !Array.isArray(corpo.respostas) ? corpo.respostas : null;
+      if (!respostas) return erro("Responda ao questionário para continuar.");
+      const limpo: Record<string, string> = {};
+      for (const [k, v] of Object.entries(respostas)) {
+        if (!/^[a-z0-9_]{1,40}$/.test(k)) continue;
+        limpo[k] = String(v ?? "").slice(0, 8000);
+      }
+      if (JSON.stringify(limpo).length > MAX_RESPOSTAS_GERACAO) return erro("O questionário ficou grande demais. Resuma as respostas mais longas.");
+      if (!String(limpo.objeto ?? "").trim() || !String(limpo.necessidade ?? "").trim()) return erro("Informe pelo menos o objeto e a necessidade da contratação.");
+      const { error } = await admin.from("analises").update({
+        respostas: limpo, status: "na_fila", enviado_em: new Date().toISOString(),
+        nome_arquivo: String(limpo.objeto).slice(0, 160),
       }).eq("id", id).eq("status", "aguardando_documentos");
       if (error) throw error;
       return resposta({ ok: true, id });
@@ -314,15 +337,23 @@ Deno.serve(async (req) => {
       if (e2) throw e2;
       referencia = `equipe:${nova.id}`;
     // ---------------------------------------------------------------- análise
-    } else if (corpo.tipo === "analise") {
-      // Etapa 1 do agente: aceite das condições e pagamento (ou cota do Pro). Os documentos são enviados depois (acao "enviar_analise").
-      if (corpo.aceite !== true) return erro("Aceite as condições da análise para continuar.");
+    } else if (corpo.tipo === "analise" || corpo.tipo === "geracao") {
+      // Etapa 1 do agente: aceite das condições e pagamento (ou cota do Pro). Depois: documentos (acao "enviar_analise")
+      // ou, na elaboração de ETP/TR/Projeto Básico, as respostas do questionário (acao "enviar_geracao").
+      // A franquia do Pro é a mesma para analisar e elaborar (2 por semana; equipes: 6 por acesso por mês, somados).
+      const geracao = corpo.tipo === "geracao";
+      const docG = geracao ? String(corpo.documento ?? "") : "";
+      if (geracao && !DOC_GERACAO[docG]) return erro("Escolha o documento: ETP, Termo de Referência ou Projeto Básico.");
+      const base = geracao
+        ? { tipo: "geracao", documento: docG, origem: "questionario", regime: "lei-14133" }
+        : { tipo: "analise", documento: "multiplos", origem: "arquivos" };
+      if (corpo.aceite !== true) return erro(geracao ? "Aceite as condições da elaboração para continuar." : "Aceite as condições da análise para continuar.");
       if (ehAdmin) {
         const { data: pend } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
-          .eq("status", "aguardando_documentos").limit(1).maybeSingle();
+          .eq("status", "aguardando_documentos").eq("tipo", base.tipo).eq("documento", base.documento).limit(1).maybeSingle();
         if (pend) return resposta({ gratuito: true, referencia: `analise:${pend.id}`, id: pend.id });
         const { data: nova, error } = await admin.from("analises").insert({
-          usuario_id: usuario.id, documento: "multiplos", origem: "arquivos", cobranca: "cortesia_admin", plano: "pro", valor: 0,
+          usuario_id: usuario.id, ...base, cobranca: "cortesia_admin", plano: "pro", valor: 0,
           termo_aceito_em: new Date().toISOString(), termo_versao: String(corpo.termo_versao ?? "").slice(0, 20), status: "aguardando_documentos",
         }).select("id").single();
         if (error) throw error;
@@ -331,12 +362,12 @@ Deno.serve(async (req) => {
       // plano de equipe Pro: franquia somada (6 análises por acesso por mês), compartilhada pela equipe
       if (orgPro) {
         const { data: pendOrg } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
-          .eq("status", "aguardando_documentos").eq("cobranca", "franquia_org").limit(1).maybeSingle();
+          .eq("status", "aguardando_documentos").eq("cobranca", "franquia_org").eq("tipo", base.tipo).eq("documento", base.documento).limit(1).maybeSingle();
         if (pendOrg) return resposta({ gratuito: true, referencia: `analise:${pendOrg.id}`, id: pendOrg.id });
         const { data: usadasOrg } = await admin.rpc("analises_usadas_org", { org: org!.id });
         if (Number(usadasOrg ?? 0) < FRANQUIA_EQUIPE_MES * Number(org!.acessos)) {
           const { data: nova, error } = await admin.from("analises").insert({
-            usuario_id: usuario.id, documento: "multiplos", origem: "arquivos", arquivo: null, pncp_link: null,
+            usuario_id: usuario.id, ...base, arquivo: null, pncp_link: null,
             cobranca: "franquia_org", plano: "pro", valor: 0, org_id: org!.id,
             termo_aceito_em: new Date().toISOString(), termo_versao: String(corpo.termo_versao ?? "").slice(0, 20), status: "aguardando_documentos",
           }).select("id").single();
@@ -348,13 +379,13 @@ Deno.serve(async (req) => {
       if (vigente === "pro" && !orgPro) {
         // reaproveita uma análise da cota ainda sem documentos, para não consumir a cota duas vezes
         const { data: pendente } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
-          .eq("status", "aguardando_documentos").eq("cobranca", "franquia_pro").limit(1).maybeSingle();
+          .eq("status", "aguardando_documentos").eq("cobranca", "franquia_pro").eq("tipo", base.tipo).eq("documento", base.documento).limit(1).maybeSingle();
         if (pendente) return resposta({ gratuito: true, referencia: `analise:${pendente.id}`, id: pendente.id });
         const { data: usadas } = await admin.rpc("analises_usadas_semana", { uid: usuario.id });
         franquia = Number(usadas ?? 0) < FRANQUIA_PRO_SEMANA;
       }
       // primeira análise grátis (uma por CPF e por conta, com e-mail confirmado), quando não há franquia
-      if (!franquia) {
+      if (!franquia && !geracao) {
         const { data: pendC } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
           .eq("status", "aguardando_documentos").eq("cobranca", "cortesia_boas_vindas").limit(1).maybeSingle();
         if (pendC) return resposta({ gratuito: true, cortesia: true, referencia: `analise:${pendC.id}`, id: pendC.id });
@@ -366,9 +397,9 @@ Deno.serve(async (req) => {
         }
       }
       valor = franquia ? 0 : precoAnalise(vigente ?? null);
-      titulo = "Licitacon · Análise pelo Agente IA (até 3 documentos)";
+      titulo = geracao ? `Licitacon · Elaboração de ${DOC_GERACAO[docG]} pelo Agente IA` : "Licitacon · Análise pelo Agente IA (até 3 documentos)";
       const { data: nova, error } = await admin.from("analises").insert({
-        usuario_id: usuario.id, documento: "multiplos", origem: "arquivos", arquivo: null, pncp_link: null,
+        usuario_id: usuario.id, ...base, arquivo: null, pncp_link: null,
         cobranca: franquia ? "franquia_pro" : "avulsa", plano: vigente ?? null, valor,
         termo_aceito_em: new Date().toISOString(), termo_versao: String(corpo.termo_versao ?? "").slice(0, 20),
         status: franquia ? "aguardando_documentos" : "aguardando_pagamento",
