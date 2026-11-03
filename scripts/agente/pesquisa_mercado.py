@@ -309,6 +309,7 @@ def pesquisar(objeto, uf="", natureza="", max_ref=12, limite_s=150):
                     "modalidade": h.get("modalidade_licitacao_nome") or "", "situacao": h.get("situacao_nome") or "",
                     "data": str(h.get("data_publicacao_pncp") or "")[:10],
                     "objeto": re.sub(r"\s+", " ", str(h.get("description") or h.get("title") or ""))[:300],
+                    "numero": re.sub(r"\s+", " ", str(h.get("title") or ""))[:120],
                     "valor_total_estimado": _num(h.get("valor_total_estimado")), "valor_global": _num(h.get("valor_global")),
                     "link": BASE + "/app" + url.replace("/compras/", "/editais/") if url else "", "itens": itens})
                 n_sol += 1

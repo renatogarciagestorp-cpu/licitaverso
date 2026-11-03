@@ -92,6 +92,7 @@ INSTRUCOES = (
     "assistência e demais custos de cada solução; valores só com dados da pesquisa ou do requisitante; sem dado, null), itens da solução escolhida (valor_unitario null se não houver dado) e viabilidade. "
     "Em tco e itens, todo componente precisa de valor_unitario e valores: use a mediana do preço praticado ([C#]) ou o valor unitário "
     "da contratação semelhante ([P#]) que você citou no texto; nunca deixe null quando o texto mencionar um valor. "
+    "No texto, cite as fontes só pelo código [P#]/[C#], com órgão, número da contratação e valor; não escreva links (eles ficam na seção de referências). "
     "Se o objeto não for de TIC, não cite a IN SGD/ME nº 94/2022 nem o SISP."
 )
 
@@ -214,7 +215,10 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
         r.font.size = Pt(tam or TAM)
         if cor: r.font.color.rgb = RGBColor.from_string(cor)
 
-    def escrever(p, texto, negrito=False, tam=None, cor=None):
+    def escrever(p, texto, negrito=False, tam=None, cor=None, links=False):
+        if not links:  # links só na seção de referências
+            texto = re.sub(r"\s*\(?(Dispon[ií]vel em:?\s*)?https?://[^\s)]*[^\s).,;]\)?", "", str(texto))
+            texto = re.sub(r"\.\s*\.", ".", texto)
         for trecho in re.split(r"(\[PREENCHER[^\]]*\]|\*\*[^*]+\*\*)", str(texto)):
             if not trecho:
                 continue
@@ -225,7 +229,7 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
             if trecho.startswith("[PREENCHER"):
                 r.font.highlight_color = 7
 
-    def par(texto="", negrito=False, centro=False, tam=None, antes=0, depois=4, recuo=0.0, pendente=0.0, alinhar="j", cor=None):
+    def par(texto="", negrito=False, centro=False, tam=None, antes=0, depois=4, recuo=0.0, pendente=0.0, alinhar="j", cor=None, links=False):
         p = w.add_paragraph()
         p.alignment = {"j": WD_ALIGN_PARAGRAPH.JUSTIFY, "c": WD_ALIGN_PARAGRAPH.CENTER, "e": WD_ALIGN_PARAGRAPH.LEFT, "d": WD_ALIGN_PARAGRAPH.RIGHT}["c" if centro else alinhar]
         pf = p.paragraph_format
@@ -235,7 +239,7 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
             if pendente:
                 pf.tab_stops.add_tab_stop(Cm(recuo + pendente))
         if texto != "":
-            escrever(p, texto, negrito, tam, cor)
+            escrever(p, texto, negrito, tam, cor, links)
         return p
 
     def sombrear(el_pr, cor):
@@ -449,8 +453,8 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
     if refs_p:
         n61.p("Na pesquisa em bases oficiais (PNCP e Compras.gov.br), encontrei as seguintes contratações e atas semelhantes:")
         for n, r_ in enumerate(refs_p[:12], 1):
-            par(f"•\t[P{n}] {r_['orgao']} ({r_['municipio']}/{r_['uf']}) – {r_.get('tipo', '')}, publicada em {'/'.join(reversed(r_['data'].split('-'))) if r_.get('data') else ''}"
-                + (f", valor total estimado {brl(r_.get('valor_total_estimado'))}" if r_.get("valor_total_estimado") else "") + f". {r_['link']}", recuo=1.6, pendente=0.5, tam=9.5, alinhar="e")
+            par(f"•\t[P{n}] {r_['orgao']} ({r_['municipio']}/{r_['uf']}) – " + (r_.get("numero") or r_.get("tipo", "")) + f", publicada em {'/'.join(reversed(r_['data'].split('-'))) if r_.get('data') else ''}"
+                + (f", valor total estimado {brl(r_.get('valor_total_estimado'))}" if r_.get("valor_total_estimado") else "") + ".", recuo=1.6, pendente=0.5, tam=9.5, alinhar="e")
     pp = (pesquisa or {}).get("precos_praticados") or []
     if pp:
         n61.p("Preços unitários praticados nos últimos 12 meses (módulo de pesquisa de preços do Compras.gov.br):")
@@ -565,11 +569,14 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
     if refs or refs_p or pp:
         n_sec += 1; secao(n_sec, "Referências")
         for j in refs or []:
-            par("•\t" + (j.get("citacao_abnt") or f"{j.get('orgao','')} {j.get('numero','')}") + (f" Disponível em: {j['fonte_url']}." if j.get("fonte_url") else ""), recuo=0.5, pendente=0.5, tam=9.5, alinhar="e")
-        if pp:
-            par("•\tCompras.gov.br – dados abertos, módulo de pesquisa de preços (preços praticados). Disponível em: https://dadosabertos.compras.gov.br.", recuo=0.5, pendente=0.5, tam=9.5, alinhar="e")
-        if refs_p:
-            par("•\tPortal Nacional de Contratações Públicas (PNCP). Disponível em: https://pncp.gov.br.", recuo=0.5, pendente=0.5, tam=9.5, alinhar="e")
+            par("•\t" + (j.get("citacao_abnt") or f"{j.get('orgao','')} {j.get('numero','')}") + (f" Disponível em: {j['fonte_url']}." if j.get("fonte_url") else ""), recuo=0.5, pendente=0.5, tam=9.5, alinhar="e", links=True)
+        for n, r_ in enumerate(refs_p[:12], 1):
+            par(f"•\t[P{n}] {r_['orgao'].upper()}. " + (r_.get("numero") or r_.get("tipo", "")) + f". {r_.get('objeto', '')[:180]}"
+                + f" Portal Nacional de Contratações Públicas (PNCP), publicada em {'/'.join(reversed(r_['data'].split('-'))) if r_.get('data') else ''}. Disponível em: {r_['link']}.",
+                recuo=0.5, pendente=0.5, tam=9, alinhar="e", links=True)
+        for n, x in enumerate(pp[:10], 1):
+            par(f"•\t[C{n}] BRASIL. Compras.gov.br – dados abertos, módulo de pesquisa de preços: {x['catalogo']}, {x['n']} compras dos últimos 12 meses. "
+                "Disponível em: https://dadosabertos.compras.gov.br.", recuo=0.5, pendente=0.5, tam=9, alinhar="e", links=True)
 
     # responsáveis e aprovação
     n_sec += 1; secao(n_sec, "Responsáveis pela elaboração")

@@ -198,7 +198,7 @@ Deno.serve(async (req) => {
       const url = String(h.item_url ?? "");
       refs.push({ solucao: rotulo, abrangencia: abr, tipo: tipo === "ata" ? "ata de registro de preços" : "contratação",
         orgao: h.orgao_nome ?? "", municipio: h.municipio_nome ?? "", uf: h.uf ?? "", data: String(h.data_publicacao_pncp ?? "").slice(0, 10),
-        objeto: String(h.description ?? h.title ?? "").replace(/\s+/g, " ").slice(0, 220), valor_total_estimado: num(h.valor_total_estimado),
+        objeto: String(h.description ?? h.title ?? "").replace(/\s+/g, " ").slice(0, 220), numero: String(h.title ?? "").replace(/\s+/g, " ").slice(0, 120), valor_total_estimado: num(h.valor_total_estimado),
         link: url ? PNCP + "/app" + url.replace("/compras/", "/editais/") : "", itens: its });
     }
   }
