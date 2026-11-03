@@ -111,6 +111,7 @@ jobs:
           supabase functions deploy consultoria-aviso --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
           supabase functions deploy boas-vindas --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
           supabase functions deploy analise-aviso --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+          supabase functions deploy pesquisa-mercado --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
 
       - name: Conferir se a função responde
         if: steps.chaves.outputs.ok == 'true'
