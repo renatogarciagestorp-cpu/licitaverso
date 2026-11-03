@@ -790,6 +790,8 @@
   }
   .lvc-erro { color: #B83232 !important; font-weight: 700; }
   .lvc-captura { display: block; }
+  /* no celular a barra do topo não flutua: rola junto com a página, com fundo sólido */
+  @media (max-width: 960px) { .lv-topo { position: relative !important; } }
   .lvc-metodo { margin: 0; font-size: 13px; line-height: 1.55; color: #3D5058; background: #F1F6F5; border: 1px solid #E0EAE8; border-radius: 12px; padding: 11px 13px; }
   .lvc-campo > small { font-size: 12.5px; color: #7A8B91; line-height: 1.4; }
   .lvc-check { display: flex; gap: 10px; align-items: center; font-size: 14.5px; font-weight: 700; color: #26393F; cursor: pointer; }
@@ -979,7 +981,7 @@
 
 <div style="min-height: 100vh; display: flex; flex-direction: column">
 
-  <header style="position: sticky; top: 0; z-index: 40; background: rgba(10,31,42,0.97); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.09)">
+  <header class="lv-topo" style="position: sticky; top: 0; z-index: 40; background: #0A1F2A; border-bottom: 1px solid rgba(255,255,255,0.09)">
     <div style="max-width: 1240px; margin: 0 auto; padding: 0 24px; height: 68px; display: flex; align-items: center; gap: 28px">
       <button sc-camel-on-click="{{ goHome }}" aria-label="Licitacon — página inicial" style="display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 0; cursor: pointer">
         <span style="width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(150deg, #0FA36B, #0F6B7E); display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 15px">L</span>
@@ -1648,6 +1650,9 @@
                 <div class="lvc-campo"><span>Regime</span>
                   <div class="lvc-chips" role="group"><sc-for list="{{ calcRegimes }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></div>
                 <div class="lvc-campo"><span>Fim da vigência (opcional)</span><div class="lvc-mp"><button type="button" class="{{ mpFim.btnClasse }}" sc-camel-on-click="{{ mpFim.alternar }}" aria-expanded="{{ mpFim.aberto }}"><span>{{ mpFim.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">▾</span></button><sc-if value="{{ mpFim.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpFim.topo }}</div><div class="lvw-cab"><span class="lvw-titulo">{{ mpFim.titulo }}</span><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpFim.ant }}" aria-label="Ano anterior">▲</button><button type="button" sc-camel-on-click="{{ mpFim.prox }}" aria-label="Próximo ano">▼</button></span></div><sc-if value="{{ mpFim.vistaMeses }}" hint-placeholder-val="{{ true }}"><div class="lvw-meses"><sc-for list="{{ mpFim.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpFim.hoje }}">Mês atual</button><sc-if value="{{ mpFim.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpFim.limpar }}">Limpar</button></sc-if></div></div></sc-if></div><small>Para calcular o impacto até o fim do contrato.</small></div>
+                <div class="lvc-campo"><span>Como o contrato conta o período</span>
+                  <div class="lvc-chips" role="group"><sc-for list="{{ calcContagens }}" as="o" hint-placeholder-count="2"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div>
+                  <small>Confira na cláusula de reajuste. Em ambos os casos são 12 meses de variação.</small></div>
                 <p class="lvc-metodo"><b>{{ calcMetodoTit }}</b> {{ calcMetodoTxt }}</p>
               </section>
 
@@ -3837,7 +3842,7 @@ class Component extends DCLogic {
     forumErro: "",
     nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
     indices: null, indicesErro: false, mpAberto: "", mpAno: 0, mpMes: 0, mpVista: "dias",
-    calc: { regime: "14133", indice: "ipca", valor: "", dataBase: "", houveReajuste: false, ultimo: "", referencia: "", fim: "", metodo: "a", contrato: "", contratada: "", cnpj: "", objeto: "" },
+    calc: { regime: "14133", indice: "ipca", valor: "", dataBase: "", houveReajuste: false, ultimo: "", referencia: "", fim: "", metodo: "a", contagem: "base", contrato: "", contratada: "", cnpj: "", objeto: "" },
     threadAberta: null, forumFiltro: "todas", forumRank: { mes: [], geral: [], destaque: null }, forumVerRanking: false, rankPeriodo: "mes",
     respondendo: null, resposta: "", citacao: "", respEnviando: false, respErro: "",
 
@@ -3998,14 +4003,17 @@ class Component extends DCLogic {
     const ultimoDisp = meses[meses.length - 1];
     const ciclos = [];
     let fatorTot = 1, pendente = false;
-    const nMesesCiclo = c.indice === "ipca" ? 12 : 13;
+    const nMesesCiclo = c.contagem === "indice" ? 13 : 12; // último mês do índice = data-base + 11 ("base") ou + 12 ("indice")
     // um ciclo entra no cálculo quando a data final alcança o último mês do índice daquele ciclo
     for (let k = 1; baseN + 12 * (k - 1) + nMesesCiclo - 1 <= refN && k <= 10; k++) {
       // IPCA: metodologia da Calculadora do Cidadão (Banco Central), com os índices da data inicial e da final:
       //   do mês da data-base ao 11º mês seguinte (ex.: fev/2025 a jan/2026), 12 variações.
       // Demais índices (INCC, IGP-M, IGP-DI, INPC, IPCA-E): do mês da data-base ao mês do aniversário, inclusive
       //   (ex.: jan/2025 a jan/2026), 13 variações.
-      const ini = baseN + 12 * (k - 1), nMeses = c.indice === "ipca" ? 12 : 13;
+      // 12 variações mensais em todos os índices. Contagem conforme a cláusula do contrato:
+      //  "base": inclui o mês da data-base (Calculadora do Cidadão): data-base fev/2025 → fev/2025 a jan/2026
+      //  "indice": número-índice (I0 = mês da data-base; Decreto 1.054/1994, art. 5º): data-base jan/2025 → fev/2025 a jan/2026
+      const ini = baseN + 12 * (k - 1) + (c.contagem === "indice" ? 1 : 0), nMeses = 12;
       const lista = [];
       let f = 1, falta = false;
       for (let m = ini; m < ini + nMeses; m++) {
@@ -4120,9 +4128,9 @@ class Component extends DCLogic {
       par(FUND[c.regime]);
       par("O reajuste por índice recompõe a variação ordinária dos custos e é devido a cada período de 12 meses contados da data-base.");
       secao(3, "Metodologia");
-      par((c.indice === "ipca"
-        ? "Metodologia da Calculadora do Cidadão do Banco Central do Brasil, que usa no cálculo os índices do mês inicial e do mês final: em cada ciclo, o período vai do mês da data-base ao 11º mês seguinte, inclusive (12 meses)."
-        : "Em cada ciclo, o período do índice vai do mês da data-base ao mês do aniversário, inclusive (13 meses), conforme a prática adotada nos reajustes de obras e serviços de engenharia.")
+      par((c.contagem === "indice"
+        ? "Contagem por número-índice: o índice inicial é o do mês da data-base e o final, o do mês do aniversário (Decreto nº 1.054/1994, art. 5º), o que corresponde às variações mensais do mês seguinte à data-base até o mês do aniversário (12 meses)."
+        : "Contagem que inclui o mês da data-base, conforme a metodologia da Calculadora do Cidadão do Banco Central do Brasil, que usa no cálculo os índices do mês inicial e do mês final: do mês da data-base ao 11º mês seguinte (12 meses).")
         + " Fator de correção = produto de (1 + variação mensal) dos meses do período. Fonte dos índices: " + r.serie.fonte + ".");
       secao(4, "Memória de cálculo");
       r.ciclos.forEach((ci) => {
@@ -5480,30 +5488,31 @@ class Component extends DCLogic {
           calcTemCiclos: !!ultimoCiclo,
           calcCiclos: r.pronto ? r.ciclos.map((ci) => ({ k: ci.k + "º", aniv: mesBR(ci.aniversario), periodo: mesBR(ci.ini) + " a " + mesBR(ci.fim), var: pct(ci.fator) + (ci.falta ? "*" : ""), valor: brlN(ci.valor) })) : [],
           calcBaixarNota: () => this.baixarNotaReajuste(),
-          calcDataFinalAjuda: c.indice === "ipca" ? "Como na Calculadora do Cidadão: com data-base em fevereiro/2025, a data final é janeiro/2026. Em branco, usa o último mês divulgado." : "Com data-base em janeiro/2025, a data final é janeiro/2026. Em branco, usa o último mês divulgado.",
+          calcDataFinalAjuda: c.contagem === "indice" ? "Com data-base em janeiro/2025, a data final é janeiro/2026. Em branco, usa o último mês divulgado." : "Como na Calculadora do Cidadão: com data-base em fevereiro/2025, a data final é janeiro/2026. Em branco, usa o último mês divulgado.",
           calcIdxCards: idxNomes.map(([id, nome]) => {
             const se = s.indices && s.indices.series && s.indices.series[id];
             const ks = se ? Object.keys(se.mensal).sort() : [], uk = ks[ks.length - 1];
             const [sigla, fonte] = nome.replace(")", "").split(" (");
             return { sigla, fonte, sel: c.indice === id, classe: "lvc-idx-c" + (c.indice === id ? " sel" : ""),
               ultimo: uk ? mesBR(uk) + ": " + String(se.mensal[uk]).replace(".", ",") + "%" : "",
-              regra: id === "ipca" ? "Regra do Banco Central · 12 meses" : "Data-base ao aniversário · 13 meses",
+              regra: "Variação de 12 meses",
               escolher: () => this.setState((x) => ({ calc: { ...x.calc, indice: id } })) };
           }),
           ...(() => {
             if (!r.pronto) return { calcTemLinha: false, calcLinha: [], calcLinhaLeg: "", calcResumo: [] };
             const ci = r.ciclos.length ? r.ciclos[r.ciclos.length - 1] : null;
-            const ini = ci ? r.mesNum(ci.ini) : r.baseN, n = c.indice === "ipca" ? 12 : 13;
+            const ini = ci ? r.mesNum(ci.ini) : r.baseN + (c.contagem === "indice" ? 1 : 0), n = 12;
             const linha = [];
             for (let k = 0; k < n; k++) {
               const ymk = r.ym(ini + k), v = r.serie.mensal[ymk];
               linha.push({ rot: mesBR(ymk).replace("/20", "/"), titulo: mesBR(ymk) + (typeof v === "number" ? ": " + String(v).replace(".", ",") + "%" : ": não divulgado"),
                 classe: "lvc-lm" + (typeof v === "number" ? "" : " falta") + (ci ? " ok" : "") });
             }
-            linha.push({ rot: "▶ " + mesBR(r.ym(ini + 12)).replace("/20", "/"), titulo: "Reajuste vale a partir daqui", classe: "lvc-lm vale" });
+            const vale = (ci ? r.mesNum(ci.aniversario) : r.baseN + 12);
+            linha.push({ rot: "▶ " + mesBR(r.ym(vale)).replace("/20", "/"), titulo: "Reajuste vale a partir daqui", classe: "lvc-lm vale" });
             return {
               calcTemLinha: true, calcLinha: linha,
-              calcLinhaLeg: (ci ? "Índice de " + mesBR(ci.ini) + " a " + mesBR(ci.fim) : "Período necessário: " + mesBR(r.ym(ini)) + " a " + mesBR(r.ym(ini + n - 1))) + " · o reajuste vale a partir de " + mesBR(r.ym(ini + 12)) + ".",
+              calcLinhaLeg: (ci ? "Índice de " + mesBR(ci.ini) + " a " + mesBR(ci.fim) : "Período necessário: " + mesBR(r.ym(ini)) + " a " + mesBR(r.ym(ini + n - 1))) + " · o reajuste vale a partir de " + mesBR(r.ym(vale)) + ".",
               calcResumo: [
                 { r: "Índice", v: r.serie.nome },
                 { r: "Data-base", v: mesBR(r.baseYm) },
@@ -5519,10 +5528,12 @@ class Component extends DCLogic {
             this.setState((x) => ({ calc: { ...x.calc, cnpj: m } })); },
           calcCnpjInvalido: String(c.cnpj || "").replace(/\D/g, "").length === 14 && !cnpjValido(c.cnpj),
           calcVerResultado: () => { const el = document.getElementById("lvc-resultado"); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); },
-          calcMetodoTit: c.indice === "ipca" ? "IPCA: metodologia do Banco Central." : "Período do índice:",
-          calcMetodoTxt: c.indice === "ipca"
-            ? "Como na Calculadora do Cidadão, o índice de cada ciclo vai do mês da data-base até o 11º mês seguinte, contando os dois (12 meses). Exemplo: data-base em fevereiro/2025 → IPCA de fevereiro/2025 a janeiro/2026; o reajuste vale a partir de fevereiro/2026."
-            : "Para este índice, o período vai do mês da data-base até o mês do aniversário, contando os dois (13 meses), como nos reajustes de obras e serviços de engenharia. Exemplo: data-base em janeiro/2025 → índice de janeiro/2025 a janeiro/2026; o reajuste vale a partir de janeiro/2026.",
+          calcMetodoTit: c.contagem === "indice" ? "Número-índice:" : "Inclui o mês da data-base:",
+          calcMetodoTxt: c.contagem === "indice"
+            ? "o índice inicial é o do mês da data-base e o final, o do mês do aniversário (Decreto nº 1.054/1994, art. 5º; prática do DNIT). Exemplo: data-base em janeiro/2025 → variações de fevereiro/2025 a janeiro/2026 (12 meses); o reajuste vale a partir de janeiro/2026."
+            : "como na Calculadora do Cidadão do Banco Central, contam o mês inicial e o final. Exemplo: data-base em fevereiro/2025 → variações de fevereiro/2025 a janeiro/2026 (12 meses); o reajuste vale a partir de fevereiro/2026.",
+          calcContagens: [["base", "Inclui o mês da data-base"], ["indice", "Número-índice"]].map(([id, nome]) => ({ id, nome, sel: c.contagem === id,
+            escolher: () => this.setState((x) => ({ calc: { ...x.calc, contagem: id } })) })),
           ...(() => {
             const NOMES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
             const LONGOS = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
