@@ -166,7 +166,7 @@ Deno.serve(async (req) => {
         limpo[k] = String(v ?? "").slice(0, 8000);
       }
       if (JSON.stringify(limpo).length > MAX_RESPOSTAS_GERACAO) return erro("O questionário ficou grande demais. Resuma as respostas mais longas.");
-      if (!String(limpo.objeto ?? "").trim() || !String(limpo.necessidade ?? "").trim()) return erro("Informe pelo menos o objeto e a necessidade da contratação.");
+      if (String(limpo.objeto ?? "").trim().length < 8) return erro("Diga em uma frase o que você precisa contratar.");
       const { error } = await admin.from("analises").update({
         respostas: limpo, status: "na_fila", enviado_em: new Date().toISOString(),
         nome_arquivo: String(limpo.objeto).slice(0, 160),

@@ -48,6 +48,7 @@ CAMPOS_ROTULO = {
     "gestao": "Modelo de gestão e fiscalização", "medicao": "Medição e pagamento", "selecao": "Seleção do fornecedor",
     "orcamento": "Orçamento", "levantamentos": "Levantamentos e estudos", "solucoes": "Soluções técnicas", "servicos": "Serviços e materiais",
     "metodos": "Métodos construtivos", "plano_obra": "Plano da obra",
+    "prazo": "Prazo", "observacoes": "Observações do requisitante",
 }
 UFS = {"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
 
@@ -111,7 +112,11 @@ def montar_pedido(doc, respostas):
         "usando o texto oficial fornecido; (4) siga o roteiro de verificação fornecido para que o documento atenda a cada item; "
         "(5) jurisprudência: só a fornecida, citando órgão, número e ano, e só quando pertinente; informe os ids usados; "
         "(6) não use marca ou especificação que restrinja a competição sem justificativa técnica; "
-        f"(7) produza as seções na ordem: {'; '.join(d['secoes'])}. Entregue com a ferramenta entregar_documento."
+        "(7) o requisitante informa de propósito só o essencial (criação rápida): redija o documento completo e bem fundamentado, "
+        "com texto técnico adequado ao objeto para todos os itens que não dependem de dados específicos do órgão (requisitos usuais, "
+        "modelo de execução e de gestão, critérios de medição, justificativas de parcelamento, sustentabilidade, riscos etc.); reserve "
+        "[PREENCHER] apenas para dados factuais que só o órgão tem (valores, quantidades, datas, nomes, números de processo, dotação); "
+        f"(8) produza as seções na ordem: {'; '.join(d['secoes'])}. Entregue com a ferramenta entregar_documento."
     )
     usuario = (
         f"RESPOSTAS DO REQUISITANTE ({d['nome']}):\n{texto_resp}\n\n"
