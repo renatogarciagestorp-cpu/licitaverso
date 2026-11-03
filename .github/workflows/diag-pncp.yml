@@ -7,15 +7,12 @@ jobs:
       - run: |
           set +e
           B=https://dadosabertos.compras.gov.br
-          for u in "$B/modulo-material/4_consultarItemMaterial?pagina=1&tamanhoPagina=10&descricaoItem=notebook" \
-                   "$B/modulo-servico/6_consultarItemServico?pagina=1&tamanhoPagina=10&descricaoItem=limpeza" \
-                   "$B/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=10&codigoItemCatalogo=150425" \
-                   "$B/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=10&codigoItemCatalogo=150425&estado=RJ" \
-                   "$B/modulo-pesquisa-preco/3_consultarServico?pagina=1&tamanhoPagina=10&codigoItemCatalogo=5550" \
-                   "$B/v3/api-docs" ; do
-            echo "== $u"; curl -sS -m 30 -o /tmp/r -w "HTTP %{http_code} %{time_total}s\n" "$u"; head -c 1500 /tmp/r; echo; done
           curl -sS -m 30 "$B/v3/api-docs" -o /tmp/d.json; python3 -c "
           import json;d=json.load(open('/tmp/d.json'))
           for p,v in d.get('paths',{}).items():
-            if 'preco' in p or 'ItemMaterial' in p or 'ItemServico' in p:
+            if ('contrata' in p or 'arp' in p) and 'CSV' not in p:
               for m,o in v.items(): print(p, [x.get('name')+('*' if x.get('required') else '') for x in o.get('parameters',[])])"
+          for u in "$B/modulo-contratacoes/2_consultarItensContratacoes_PNCP_14133?pagina=1&tamanhoPagina=10&numeroControlePNCP=29138385000130-1-000066/2026" \
+                   "$B/modulo-contratacoes/1_consultarContratacoes_PNCP_14133?pagina=1&tamanhoPagina=10&numeroControlePNCP=29138385000130-1-000066/2026" \
+                   "$B/modulo-material/4_consultarItemMaterial?pagina=1&tamanhoPagina=10&descricaoItem=NOTEBOOK"; do
+            echo "== $u"; curl -sS -m 40 -o /tmp/r -w "HTTP %{http_code} %{time_total}s\n" "$u"; head -c 1800 /tmp/r; echo; done
