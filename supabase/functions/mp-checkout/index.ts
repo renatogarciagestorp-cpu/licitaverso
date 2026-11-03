@@ -189,6 +189,36 @@ Deno.serve(async (req) => {
       return resposta({ ok: true, id });
     }
 
+    // ---------------------------------------------------------------- respostas às perguntas do agente durante a elaboração
+    if (acao === "responder_geracao") {
+      const id = String(corpo.id ?? "");
+      const { data: g } = await admin.from("analises").select("id, usuario_id, status, tipo, perguntas, respostas, fase").eq("id", id).maybeSingle();
+      if (!g || g.usuario_id !== usuario.id || g.tipo !== "geracao") return erro("Elaboração não encontrada.", 404);
+      if (g.status !== "aguardando_informacoes") return erro("Esta elaboração não está aguardando informações.");
+      const perguntas: any[] = Array.isArray(g.perguntas) ? g.perguntas : [];
+      const enviadas: any[] = Array.isArray(corpo.respostas) ? corpo.respostas : [];
+      const r: Record<string, string> = { ...(g.respostas || {}) };
+      let escl: any[] = []; try { escl = JSON.parse(r.esclarecimentos || "[]"); } catch { escl = []; }
+      let lac: Record<string, string> = {}; try { lac = JSON.parse(r.lacunas || "{}"); } catch { lac = {}; }
+      let sem = String(r.sem_info || "");
+      for (const p of perguntas) {
+        const e = enviadas.find((x) => x && x.id === p.id) || {};
+        const resp = String(e.resposta ?? "").trim().slice(0, 2000), semInfo = !!e.sem_info || !resp;
+        if (!resp && !e.sem_info) return erro("Responda a todas as perguntas ou marque que não tem a informação.");
+        if (semInfo) sem += (sem ? "\n" : "") + `[${String(p.tema || "").slice(0, 60)}] ${String(p.pergunta || "").slice(0, 300)}`;
+        if (p.lacuna) lac[String(p.lacuna)] = semInfo ? "" : resp;
+        else escl.push({ tema: p.tema, pergunta: p.pergunta, resposta: semInfo ? "Não tenho essa informação (completar depois)." : resp });
+      }
+      r.esclarecimentos = JSON.stringify(escl).slice(0, 7900);
+      r.lacunas = JSON.stringify(lac).slice(0, 7900);
+      r.sem_info = sem.slice(0, 7900);
+      if (g.fase !== "completar") r.pre_rodadas = String(Number(r.pre_rodadas || 0) + 1);
+      const { error } = await admin.from("analises").update({ respostas: r, status: "na_fila", perguntas: null, progresso: null, avisado_status: null })
+        .eq("id", id).eq("status", "aguardando_informacoes");
+      if (error) throw error;
+      return resposta({ ok: true, id });
+    }
+
     // ---------------------------------------------------------------- cancelar a renovação automática
     if (acao === "cancelar_renovacao") {
       const { data: ren } = await admin.from("renovacoes").select("id, usuario_id, status, mp_preapproval").eq("id", String(corpo.id ?? "")).maybeSingle();

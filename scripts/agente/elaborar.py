@@ -259,6 +259,107 @@ def simulado(doc, respostas):
 
 
 # ------------------------------------------------------------------ Word (ABNT)
+LACUNA = re.compile(r"\[PREENCHER:?\s*([^\]]*)\]")
+
+
+def textos(obj):
+    """Percorre todas as strings do documento (para achar e preencher lacunas)."""
+    if isinstance(obj, str):
+        yield obj
+    elif isinstance(obj, dict):
+        for v in obj.values():
+            yield from textos(v)
+    elif isinstance(obj, list):
+        for v in obj:
+            yield from textos(v)
+
+
+def trocar_textos(obj, f):
+    if isinstance(obj, str):
+        return f(obj)
+    if isinstance(obj, dict):
+        return {k: trocar_textos(v, f) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [trocar_textos(v, f) for v in obj]
+    return obj
+
+
+def lacunas_do_documento(docj, sem_info=""):
+    """Lacunas [PREENCHER: ...] que ainda precisam ser perguntadas (as que o assinante já disse não ter ficam de fora)."""
+    vistas, saida = set(), []
+    base = set(re.findall(r"[a-zà-ú]{4,}", (sem_info or "").lower()))
+    for t in textos({k: v for k, v in docj.items() if k not in ("pendencias", "jurisprudencia_ids")}):
+        for m in LACUNA.finditer(t):
+            alvo = m.group(0)
+            if alvo in vistas:
+                continue
+            vistas.add(alvo)
+            palavras = set(re.findall(r"[a-zà-ú]{4,}", m.group(1).lower()))
+            if palavras and base and len(palavras & base) / len(palavras) >= 0.5:
+                continue
+            saida.append(alvo)
+    return saida
+
+
+def aplicar_lacunas(docj, respostas_lacunas):
+    """Preenche as lacunas com as respostas do assinante (sem custo de API) e refaz a lista de pendências."""
+    preenchidas = {k: v.strip() for k, v in (respostas_lacunas or {}).items() if str(v or "").strip()}
+    def f(t):
+        for k, v in preenchidas.items():
+            t = t.replace(k, v)
+        return t
+    docj = trocar_textos(docj, f)
+    restantes = []
+    for t in textos({k: v for k, v in docj.items() if k not in ("pendencias", "jurisprudencia_ids")}):
+        for m in LACUNA.finditer(t):
+            if m.group(1).strip() and m.group(1).strip() not in restantes:
+                restantes.append(m.group(1).strip())
+    docj["pendencias"] = restantes
+    return docj
+
+
+FERRAMENTA_DUVIDAS = {
+    "name": "registrar_duvidas",
+    "description": "Registra as informações que o requisitante precisa fornecer antes da redação.",
+    "input_schema": {"type": "object", "properties": {"perguntas": {"type": "array", "maxItems": 8, "items": {"type": "object", "properties": {
+        "tema": {"type": "string"}, "pergunta": {"type": "string", "description": "pergunta direta, em segunda pessoa"},
+        "por_que": {"type": "string"}, "opcoes": {"type": "array", "items": {"type": "string"}, "maxItems": 4}},
+        "required": ["tema", "pergunta", "por_que"]}}}, "required": ["perguntas"]},
+}
+
+
+def pre_analise(doc, respostas, pesquisa, usuario_pedido):
+    """Antes de redigir (a parte cara), confere com os dados da pesquisa se falta alguma informação que só o requisitante tem."""
+    d = DOCS[doc]
+    system = (f"Você vai redigir o {d['nome']} (Lei 14.133/2021) e precisa que ele saia COMPLETO, sem lacunas. Leia as respostas, os "
+              "esclarecimentos e a pesquisa de mercado e liste somente as informações que só o requisitante pode dar e que faltam para "
+              "preencher todos os campos e fazer o estudo de custo das soluções (ex.: vida útil esperada do bem quando depender do uso no "
+              "órgão, garantia exigida, se há equipe própria de manutenção, ata de registro de preços específica que pretende aderir, "
+              "dados de consumo, quantidades por local). Não pergunte o que você pode obter da pesquisa, da lei, de referências técnicas "
+              "usuais ou redigir com texto padrão. Não repita perguntas já respondidas nem o que ele disse não ter. Máximo 8 perguntas; "
+              "se nada faltar, devolva a lista vazia.")
+    original = an.FERRAMENTA
+    an.FERRAMENTA = FERRAMENTA_DUVIDAS
+    try:
+        r = an.chamar(system, usuario_pedido[:90000], max_tokens=2000)
+    finally:
+        an.FERRAMENTA = original
+    b = next((c for c in r.get("content", []) if c.get("type") == "tool_use"), None)
+    ps = ((b or {}).get("input") or {}).get("perguntas") or []
+    return [{"id": f"p{i + 1}", "tema": str(x.get("tema", ""))[:80], "pergunta": str(x.get("pergunta", ""))[:600],
+             "por_que": str(x.get("por_que", ""))[:400], "opcoes": [str(o)[:120] for o in (x.get("opcoes") or [])][:4]} for i, x in enumerate(ps)
+            if x.get("pergunta")], an.custo(r.get("usage") or {})
+
+
+def aguardar(pasta, perguntas, fase, custo, docj=None):
+    """Pausa a elaboração: grava as perguntas para o site mostrar ao assinante."""
+    (pasta / "perguntas.json").write_text(json.dumps(perguntas, ensure_ascii=False), encoding="utf-8")
+    if docj is not None:
+        (pasta / "documento.json").write_text(json.dumps(docj, ensure_ascii=False, indent=1), encoding="utf-8")
+    (pasta / "execucao.json").write_text(json.dumps({"aguardando": True, "fase": fase, "custo_usd": round(custo, 4), "perguntas": len(perguntas)}), encoding="utf-8")
+    print(f"aguardando informações do requisitante ({len(perguntas)}; fase {fase}) · custo US$ {round(custo, 4)}")
+
+
 def refs_usadas(docj, juris):
     usados = list(dict.fromkeys(docj.get("jurisprudencia_ids") or []))
     try:
@@ -404,9 +505,30 @@ def main():
     ap.add_argument("--modelo", help="Word do assinante para servir de modelo")
     ap.add_argument("--logo", help="imagem da logo do órgão")
     ap.add_argument("--preco-pdf", action="append", default=[], help="PDF de referência de preço (nome=caminho)")
+    ap.add_argument("--docj", help="completar: documento já redigido (JSON); só preenche as lacunas, sem chamar a API")
     a = ap.parse_args()
     pasta = pathlib.Path(a.pasta); pasta.mkdir(parents=True, exist_ok=True)
     respostas = {k: str(v) for k, v in json.loads(pathlib.Path(a.respostas).read_text(encoding="utf-8")).items()}
+    padrao = a.doc == "etp" and not a.modelo
+    if a.docj:  # fase "completar": o assinante respondeu às lacunas; nenhum custo de API
+        docj = json.loads(pathlib.Path(a.docj).read_text(encoding="utf-8"))
+        try:
+            lac = json.loads(respostas.get("lacunas") or "{}")
+        except Exception:
+            lac = {}
+        docj = aplicar_lacunas(docj, lac)
+        pesquisa = json.loads((pathlib.Path(a.docj).parent / "pesquisa.json").read_text(encoding="utf-8")) if (pathlib.Path(a.docj).parent / "pesquisa.json").exists() else None
+        print("ETAPA: word", flush=True)
+        if padrao:
+            me.gerar(docj, respostas, pasta / "documento.docx", a.logo, pesquisa, refs_usadas(docj, []), None)
+        else:
+            gerar_docx(a.doc, docj, respostas, [], None, pasta / "documento.docx", pesquisa, a.modelo, a.logo)
+        (pasta / "documento.json").write_text(json.dumps(docj, ensure_ascii=False, indent=1), encoding="utf-8")
+        if shutil.which("soffice"):
+            subprocess.run(["soffice", "--headless", "--convert-to", "pdf", "--outdir", str(pasta), str(pasta / "documento.docx")], capture_output=True, timeout=300)
+        (pasta / "execucao.json").write_text(json.dumps({"custo_usd": 0, "segundos": 0, "uso": {}, "pendencias": len(docj.get("pendencias") or []), "alta": 0, "media": 0}), encoding="utf-8")
+        print("lacunas preenchidas · custo US$ 0")
+        return
     print("ETAPA: pesquisa", flush=True)
     pesquisa = None
     if a.doc in ("etp", "tr") and not (a.doc == "tr" and respostas.get("valor", "").strip()):
@@ -418,10 +540,20 @@ def main():
     precos = bloco_precos_assinante(respostas, pdfs)
     if precos:
         print(f"referências de preço do requisitante: {len(precos)} caracteres")
-    padrao = a.doc == "etp" and not a.modelo  # modelo padrão Licitacon do ETP (o Word do assinante, se enviado, prevalece)
+    # modelo padrão Licitacon do ETP (o Word do assinante, se enviado, prevalece)
     system, usuario, juris = montar_pedido(a.doc, respostas, pesquisa, precos, padrao)
     print(f"pedido: {len(system) + len(usuario)} caracteres (~{(len(system) + len(usuario)) // 4} tokens de entrada); jurisprudência: {len(juris)}")
     t0, custo_usd, uso = time.time(), 0.0, {}
+    if not a.simular and int(respostas.get("pre_rodadas") or 0) < 2:
+        print("ETAPA: preanalise", flush=True)
+        try:
+            perguntas, c = pre_analise(a.doc, respostas, pesquisa, usuario)
+            custo_usd += c
+            if perguntas:
+                aguardar(pasta, perguntas, "pre", custo_usd)
+                return
+        except Exception as e:
+            print(f"pré-análise não concluída ({type(e).__name__}); seguindo para a redação")
     print("ETAPA: redacao", flush=True)
     if a.simular:
         docj = me.simulado(respostas) if padrao else simulado(a.doc, respostas)
@@ -467,6 +599,15 @@ def main():
                     print(f"correção automática não concluída ({type(e).__name__})")
         else:
             print("conferência não concluída (o documento é entregue sem os pontos de atenção)")
+    if not a.simular:
+        lac = lacunas_do_documento(docj, respostas.get("sem_info", ""))
+        if lac:  # o texto já está pago; as lacunas são preenchidas com as respostas do assinante, sem novo custo
+            perguntas = [{"id": f"l{i + 1}", "tema": (LACUNA.match(x).group(1) or "Informação")[:80].strip() or "Informação",
+                          "pergunta": "Informe: " + (LACUNA.match(x).group(1) or "a informação pendente").strip(),
+                          "por_que": "Este dado entra no documento; com ele o texto fica completo.", "opcoes": [], "lacuna": x} for i, x in enumerate(lac[:25])]
+            aguardar(pasta, perguntas, "completar", custo_usd, docj)
+            return
+    docj = aplicar_lacunas(docj, {})
     print("ETAPA: word", flush=True)
     if padrao:
         try:

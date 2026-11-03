@@ -1839,6 +1839,33 @@
               <sc-if value="{{ elAcompanhando }}" hint-placeholder-val="{{ false }}">
                 <div class="lve-status">
                   <div class="lve-status-cab"><span class="lve-status-ic">{{ elStIcone }}</span><div><h3>{{ elStTitulo }}</h3><p>{{ elStTexto }}</p></div></div>
+                  <sc-if value="{{ elAgPerguntando }}" hint-placeholder-val="{{ false }}">
+                    <div class="lve-tri-card">
+                      <span class="lve-tri-tema">Pergunta {{ elAgN }} de {{ elAgTotal }} · {{ elAgTema }}</span>
+                      <div class="lve-tri-pontos"><sc-for list="{{ elAgPontos }}" as="pt" hint-placeholder-count="3"><span class="{{ pt.cls }}"></span></sc-for></div>
+                      <p class="lve-tri-perg">{{ elAgPergunta }}</p>
+                      <small class="lve-tri-pq">{{ elAgPorQue }}</small>
+                      <sc-if value="{{ elAgTemOpcoes }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ elAgOpcoes }}" as="o" hint-placeholder-count="2"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
+                      <textarea rows="3" aria-label="Sua resposta" value="{{ elAgRascunho }}" sc-camel-on-input="{{ elOnAgRascunho }}" placeholder="Escreva a resposta"></textarea>
+                      <sc-if value="{{ elAgErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro">{{ elAgErro }}</p></sc-if>
+                      <div class="lve-nav">
+                        <sc-if value="{{ elAgTemAnterior }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ elAgAnterior }}">← Anterior</button></sc-if>
+                        <button type="button" class="lve-voltar" sc-camel-on-click="{{ elAgSemInfo }}">Não tenho essa informação</button>
+                        <button type="button" class="lvh-btn lve-continuar" sc-camel-on-click="{{ elAgConfirma }}">{{ elAgBotao }}</button>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ elAgConfirmar }}" hint-placeholder-val="{{ false }}">
+                    <div class="lve-tri-card">
+                      <p class="lve-tri-perg">Você informou que não tem estas informações:</p>
+                      <ul class="lve-tri-sem"><sc-for list="{{ elAgSemLista }}" as="x" hint-placeholder-count="1"><li>{{ x.t }}</li></sc-for></ul>
+                      <p>Posso concluir o documento assim mesmo? Esses pontos ficam destacados em amarelo para você completar depois.</p>
+                      <div class="lve-nav">
+                        <button type="button" class="lve-voltar" sc-camel-on-click="{{ elAgVoltar }}">← Voltar e responder</button>
+                        <button type="button" class="lvh-btn lve-continuar" sc-camel-on-click="{{ elAgEnviarTudo }}">{{ elAgBotaoEnviar }}</button>
+                      </div>
+                    </div>
+                  </sc-if>
                   <ol class="lve-st-lista"><sc-for list="{{ elStEtapas }}" as="e" hint-placeholder-count="6"><li class="{{ e.cls }}"><span class="lve-st-bola">{{ e.marca }}</span><div><b>{{ e.t }}</b><small>{{ e.d }}</small></div></li></sc-for></ol>
                   <sc-if value="{{ elStPronto }}" hint-placeholder-val="{{ false }}"><div class="lve-st-baixar">
                     <button type="button" class="lvh-btn" sc-camel-on-click="{{ elStBaixarDocx }}">Baixar em Word</button>
@@ -4266,7 +4293,7 @@ const AN_TERMO = [
 const STATUS_ANALISE = {
   aguardando_pagamento: ["aguardando pagamento", "#8A4A12", "#FDF1E3"], aguardando_documentos: ["aguardando documentos", "#8A4A12", "#FDF1E3"],
   na_fila: ["na fila", "#0F6B7E", "#E3F1F5"],
-  processando: ["em análise", "#0F6B7E", "#E3F1F5"], concluida: ["parecer pronto", "#0A7A50", "#E3F2EA"],
+  processando: ["em análise", "#0F6B7E", "#E3F1F5"], aguardando_informacoes: ["precisa da sua informação", "#8A4A12", "#FDF1E3"], concluida: ["parecer pronto", "#0A7A50", "#E3F2EA"],
   erro: ["não concluída", "#8A1230", "#F8E6E8"], cancelada: ["cancelada", "#6A7B82", "#EEF1F2"]
 };
 const CONS_TERMO_VERSAO = "2026-10-27";
@@ -4910,6 +4937,18 @@ class Component extends DCLogic {
     this.setState({ el: { ...this.state.el, enviando: false, validOk: false, erro: "Não foi possível abrir o pagamento. Tente de novo." } });
   }
 
+  // respostas às perguntas que o agente fez durante a elaboração (preencher lacunas não tem novo custo)
+  async elAgEnviar() {
+    const el = this.state.el, ag = el.ag || {}, id = el.acompanhar;
+    if (!id || !this.sb) return;
+    this.setState((x) => ({ el: { ...x.el, ag: { ...ag, enviando: true, erro: "" } } }));
+    const { error } = await this.sb.functions.invoke("mp-checkout", { body: { acao: "responder_geracao", id,
+      respostas: Object.entries(ag.resp || {}).map(([pid, r]) => ({ id: pid, resposta: r.resposta || "", sem_info: !!r.semInfo })) } });
+    if (error) { const m = await erroDaFuncao(error); this.setState((x) => ({ el: { ...x.el, ag: { ...x.el.ag, enviando: false, erro: m } } })); return; }
+    this.setState((s) => ({ el: { ...s.el, ag: null }, analises: (s.analises || []).map((a) => a.id === id ? { ...a, status: "na_fila", perguntas: null, progresso: null } : a) }));
+    this.elAcompanhar();
+  }
+
   // atualiza o andamento a cada 15 s enquanto houver documento em elaboração e a página estiver aberta
   elAcompanhar() {
     if (this._elTimer) return;
@@ -4918,7 +4957,7 @@ class Component extends DCLogic {
       const a = id && (this.state.analises || []).find((x) => x.id === id);
       if (!id || this.state.page !== "elaborar" || (a && (a.status === "concluida" || a.status === "erro"))) { clearInterval(this._elTimer); this._elTimer = null; return; }
       if (document.hidden || !this.sb) return;
-      const { data } = await this.sb.from("analises").select("id, status, progresso, parecer_pdf, parecer_docx, erro_msg, liberar_em, resumo").eq("id", id).maybeSingle();
+      const { data } = await this.sb.from("analises").select("id, status, progresso, parecer_pdf, parecer_docx, erro_msg, liberar_em, resumo, perguntas, fase").eq("id", id).maybeSingle();
       if (data) this.setState((s) => ({ analises: (s.analises || []).some((x) => x.id === id) ? s.analises.map((x) => x.id === id ? { ...x, ...data } : x) : [{ ...data, tipo: "geracao", documento: s.el.doc }].concat(s.analises || []) }));
     }, 15000);
   }
@@ -5161,7 +5200,7 @@ class Component extends DCLogic {
       sb.from("forum_seguindo").select("topico_id, forum_topicos(nome)"),
       sb.from("biblioteca_pessoal").select("chave, dados, atualizado_em").like("chave", "nota-%").limit(1000),
       sb.rpc("meu_cupom_curso"),
-      sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg, documentos, liberar_em, tipo, progresso").order("criado_em", { ascending: false }).limit(30),
+      sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg, documentos, liberar_em, tipo, progresso, perguntas, fase, custo_usd").order("criado_em", { ascending: false }).limit(30),
       sb.rpc("minha_cota_analises"),
       sb.from("normas_usuario").select("id, nome, arquivo, tamanho, criado_em").order("criado_em", { ascending: false }).limit(30),
       sb.from("renovacoes").select("id, plano, ciclo, valor, status, proxima_cobranca, criado_em").order("criado_em", { ascending: false }).limit(10),
@@ -6533,12 +6572,40 @@ class Component extends DCLogic {
             });
             const pronto = st === "concluida", erro = st === "erro";
             const base = sig + "-" + String(el.acompanhar || "").slice(0, 8);
+            const aguardando = st === "aguardando_informacoes";
+            const pergs = aguardando && Array.isArray(a.perguntas) ? a.perguntas : [];
+            const ag = el.ag || {}, ai = Math.min(ag.i || 0, Math.max(0, pergs.length - 1)), pa = pergs[ai];
+            const resp = ag.resp || {}, atual = pa ? (resp[pa.id] || {}) : {};
+            const rasc = ag.rasc != null ? ag.rasc : (atual.resposta || "");
+            const setAg = (mud) => this.setState((x) => ({ el: { ...x.el, ag: { ...(x.el.ag || {}), ...mud } } }));
+            const responder = (semInfo) => {
+              if (!pa) return;
+              if (!semInfo && !String(rasc || "").trim()) { setAg({ erro: "Escreva a resposta ou clique em \"Não tenho essa informação\"." }); return; }
+              const nr = { ...resp, [pa.id]: { resposta: semInfo ? "" : String(rasc).trim(), semInfo } };
+              const fim = ai + 1 >= pergs.length, temSem = Object.values(nr).some((r) => r.semInfo);
+              setAg({ resp: nr, rasc: null, erro: "", i: fim ? ai : ai + 1, confirmar: fim && temSem });
+              if (fim && !temSem) setTimeout(() => this.elAgEnviar(), 0);
+            };
+            const agProps = {
+              elAgPerguntando: !!(pa && !ag.confirmar), elAgConfirmar: !!(aguardando && ag.confirmar),
+              elAgN: ai + 1, elAgTotal: pergs.length, elAgTema: pa ? pa.tema : "", elAgPergunta: pa ? pa.pergunta : "", elAgPorQue: pa ? pa.por_que : "",
+              elAgPontos: pergs.map((q, j) => ({ cls: j === ai && !ag.confirmar ? "atual" : (resp[q.id] || {}).semInfo ? "sem" : (resp[q.id] || {}).resposta ? "ok" : "" })),
+              elAgTemOpcoes: !!(pa && pa.opcoes && pa.opcoes.length), elAgOpcoes: pa && pa.opcoes ? pa.opcoes.map((o) => ({ nome: o, sel: rasc === o, escolher: () => setAg({ rasc: o, erro: "" }) })) : [],
+              elAgRascunho: rasc, elOnAgRascunho: (e) => setAg({ rasc: e.target.value, erro: "" }), elAgErro: ag.erro || "",
+              elAgTemAnterior: ai > 0, elAgAnterior: () => setAg({ i: Math.max(0, ai - 1), rasc: null }),
+              elAgConfirma: () => responder(false), elAgSemInfo: () => responder(true),
+              elAgBotao: ai + 1 >= pergs.length ? (ag.enviando ? "Enviando…" : "Responder e concluir →") : "Responder →",
+              elAgSemLista: pergs.filter((q) => (resp[q.id] || {}).semInfo).map((q) => ({ t: q.tema + ": " + q.pergunta })),
+              elAgVoltar: () => setAg({ confirmar: false, i: Math.max(0, pergs.findIndex((q) => (resp[q.id] || {}).semInfo)) }),
+              elAgEnviarTudo: () => this.elAgEnviar(), elAgBotaoEnviar: ag.enviando ? "Enviando…" : "Concluir assim mesmo"
+            };
             return {
+              ...agProps,
               elRecentes: (s.analises || []).filter((x) => x.tipo === "geracao" && x.status !== "aguardando_documentos" && x.status !== "cancelada").slice(0, 4).map((x) => {
                 const pr = x.status === "concluida", er = x.status === "erro";
                 return { sigla: (ELAB[x.documento] || {}).sigla || "DOC", objeto: (x.resumo && x.resumo.objeto) || x.nome_arquivo || "Documento",
-                  situacao: pr ? "Pronto · " + new Date(x.criado_em).toLocaleDateString("pt-BR") : er ? "Não concluído" : "Em elaboração",
-                  acao: pr ? "Baixar" : er ? "Ver motivo" : "Acompanhar",
+                  situacao: pr ? "Pronto · " + new Date(x.criado_em).toLocaleDateString("pt-BR") : er ? "Não concluído" : x.status === "aguardando_informacoes" ? "Precisa da sua informação" : "Em elaboração",
+                  acao: pr ? "Baixar" : er ? "Ver motivo" : x.status === "aguardando_informacoes" ? "Responder" : "Acompanhar",
                   abrir: () => { this.setState({ el: { doc: x.documento, passo: 0, respostas: {}, aceite: false, acompanhar: x.id } }); this.elAcompanhar(); } };
               }),
               elTemRecentes: (s.analises || []).some((x) => x.tipo === "geracao" && x.status !== "aguardando_documentos" && x.status !== "cancelada"),
@@ -6563,9 +6630,10 @@ class Component extends DCLogic {
                   elTriGerarAssim: () => this.elTriConcluir(el.tri)
                 };
               })(),
-              elStIcone: pronto ? "✓" : erro ? "!" : "⏳",
-              elStTitulo: pronto ? "Seu " + sig + " está pronto" : erro ? "Não foi possível concluir" : "Seu " + sig + " está sendo elaborado",
-              elStTexto: pronto ? "Baixe abaixo em Word (editável) ou PDF. As lacunas para completar estão destacadas em amarelo."
+              elStIcone: pronto ? "✓" : erro ? "!" : aguardando ? "?" : "⏳",
+              elStTitulo: pronto ? "Seu " + sig + " está pronto" : erro ? "Não foi possível concluir" : aguardando ? "Preciso de " + (pergs.length === 1 ? "uma informação sua" : pergs.length + " informações suas") : "Seu " + sig + " está sendo elaborado",
+              elStTexto: aguardando ? (a.fase === "completar" ? "O texto já está redigido. Responda abaixo e eu preencho os campos, sem novo custo." : "Antes de redigir, preciso destas informações para que o documento saia completo.")
+                : pronto ? "Baixe abaixo em Word (editável) ou PDF."
                 : erro ? (a.erro_msg || "Falha no processamento.") + " Nossa equipe foi avisada. Se foi um problema nos dados, corrija e crie de novo."
                 : "Os dados foram conferidos e estão corretos. Você pode acompanhar aqui ou fechar a página: avisamos por e-mail quando terminar.",
               elStEtapas: erro ? etapas.map((e, i) => i === 0 ? e : { ...e, cls: "", marca: String(i + 1) }) : etapas, elStPronto: pronto,
@@ -7180,7 +7248,8 @@ class Component extends DCLogic {
           doc: titulo, status: st[0], cor: st[1], fundo: st[2], data: dataBR(a.criado_em),
           detalhe: a.status === "erro" ? (a.erro_msg || "Não foi possível concluir a análise.")
             : a.status === "aguardando_documentos" && ger ? "Elaboração liberada · envie as respostas do questionário para iniciar"
-            : ger && a.status === "concluida" ? (r.objeto || a.nome_arquivo || "") + " · " + Number(r.pendencias || 0) + " pendências para completar"
+            : ger && a.status === "concluida" ? (r.objeto || a.nome_arquivo || "") + (Number(r.pendencias || 0) ? " · " + Number(r.pendencias) + " informações para completar" : "")
+            : ger && a.status === "aguardando_informacoes" ? "O agente precisa de informações suas para concluir. Clique em Continuar."
             : a.status === "aguardando_documentos" ? "Análise liberada · envie os documentos para iniciar" + (a.liberar_em && new Date(a.liberar_em).getTime() > Date.now() ? " (análise grátis: processada a partir de " + dataBR(a.liberar_em) + ", com prioridade)" : "")
             : a.status === "na_fila" && a.liberar_em && new Date(a.liberar_em).getTime() > Date.now() ? "Análise grátis na fila: o limite diário foi atingido; ela é processada a partir de " + dataBR(a.liberar_em) + ", com prioridade"
             : ((docs.length ? docs.map((d) => d.nome_arquivo).join(" · ") : (a.origem === "pncp" ? "PNCP" : (a.nome_arquivo || "PDF enviado")))
@@ -7194,8 +7263,9 @@ class Component extends DCLogic {
           id: a.id, tipoRot: ger ? "Criado" : "Analisado", tipoCor: ger ? "#0F6B7E" : "#6B4A0A", tipoFundo: ger ? "#E6F2F4" : "#FFF4DC",
           rotPdf: ger ? "Baixar em PDF" : "Baixar parecer (PDF)",
           aguardaPagamento: a.status === "aguardando_pagamento",
-          aguardaDocs: a.status === "aguardando_documentos",
-          enviarDocs: () => ger ? (this.irPara("elaborar"), this.elEscolher(a.documento)) : this.irParaEnvio(),
+          aguardaDocs: a.status === "aguardando_documentos" || (ger && a.status === "aguardando_informacoes"),
+          enviarDocs: () => ger && a.status === "aguardando_informacoes" ? (this.irPara("elaborar"), this.setState({ el: { doc: a.documento, passo: 0, respostas: {}, aceite: false, acompanhar: a.id } }), this.elAcompanhar())
+            : ger ? (this.irPara("elaborar"), this.elEscolher(a.documento)) : this.irParaEnvio(),
           conferir: () => { this.aviso("Conferindo com o Mercado Pago…"); this.conferirPagamento("analise:" + a.id, false); }
         };
       }),

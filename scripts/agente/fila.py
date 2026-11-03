@@ -377,6 +377,15 @@ def processar_geracao(a):
             for i, f in enumerate(pdfs[:5] if isinstance(pdfs, list) else []):
                 arq = baixar((f or {}).get("arquivo"), f"preco{i + 1}.pdf")
                 if arq: extra += ["--preco-pdf", f"{str((f or {}).get('nome') or 'PDF')[:80].replace('=', '-')}={arq}"]
+            base_rascunho = f"{a['usuario_id']}/pareceres/{aid}-rascunho"
+            if a.get("fase") == "completar":  # só preencher as lacunas no texto já redigido: baixa o rascunho
+                (pasta / "rascunho").mkdir(exist_ok=True)
+                (pasta / "rascunho" / "documento.json").write_bytes(http("GET", f"{SUPA}/storage/v1/object/analises/{base_rascunho}.json", cab=cab(), binario=True, timeout=300))
+                try:
+                    (pasta / "rascunho" / "pesquisa.json").write_bytes(http("GET", f"{SUPA}/storage/v1/object/analises/{base_rascunho}-pesquisa.json", cab=cab(), binario=True, timeout=300))
+                except Exception:
+                    pass
+                extra += ["--docj", str(pasta / "rascunho" / "documento.json")]
             etapa_paga = True  # a partir daqui há custo de API: falha não volta para a fila automaticamente
             proc = subprocess.Popen([sys.executable, str(RAIZ / "scripts/agente/elaborar.py"), "--doc", a["documento"], "--respostas",
                                      str(pasta / "respostas.json"), "--pasta", str(pasta / "saida")] + extra,
@@ -395,9 +404,23 @@ def processar_geracao(a):
                 raise RuntimeError("".join(saida_txt)[-800:])
             saida = pasta / "saida"
             exe = json.loads((saida / "execucao.json").read_text(encoding="utf-8"))
+            custo_ant = float(a.get("custo_usd") or 0)
+            if exe.get("aguardando"):  # o agente precisa de informações do assinante: pausa e avisa no site e por e-mail
+                perguntas = json.loads((saida / "perguntas.json").read_text(encoding="utf-8"))
+                if exe.get("fase") == "completar":
+                    http("POST", f"{SUPA}/storage/v1/object/analises/{base_rascunho}.json", (saida / "documento.json").read_bytes(),
+                         cab({"Content-Type": "application/json", "x-upsert": "true"}), timeout=300)
+                    if (saida / "pesquisa.json").exists():
+                        http("POST", f"{SUPA}/storage/v1/object/analises/{base_rascunho}-pesquisa.json", (saida / "pesquisa.json").read_bytes(),
+                             cab({"Content-Type": "application/json", "x-upsert": "true"}), timeout=300)
+                atualizar(aid, {"status": "aguardando_informacoes", "perguntas": perguntas, "fase": exe.get("fase") if exe.get("fase") == "completar" else None,
+                                "progresso": None, "custo_usd": round(custo_ant + float(exe.get("custo_usd") or 0), 4)})
+                print(f"::notice title=Fila::elaboração {aid}: aguardando {len(perguntas)} informações do assinante")
+                avisar(aid)
+                return
             base = f"{a['usuario_id']}/pareceres/{aid}"
-            campos = {"status": "concluida", "progresso": "pronto", "concluido_em": datetime.datetime.now(datetime.timezone.utc).isoformat(), "erro_msg": None,
-                      "custo_usd": exe.get("custo_usd"), "parecer_docx": base + ".docx",
+            campos = {"status": "concluida", "progresso": "pronto", "fase": None, "perguntas": None, "concluido_em": datetime.datetime.now(datetime.timezone.utc).isoformat(), "erro_msg": None,
+                      "custo_usd": round(custo_ant + float(exe.get("custo_usd") or 0), 4), "parecer_docx": base + ".docx",
                       "resumo": {"situacao": "elaborado", "pendencias": exe.get("pendencias", 0), "alta": exe.get("alta", 0), "media": exe.get("media", 0),
                                  "objeto": str(respostas.get("objeto", ""))[:200], "orgao": str(respostas.get("orgao", ""))[:200]}}
             http("POST", f"{SUPA}/storage/v1/object/analises/{base}.docx", (saida / "documento.docx").read_bytes(),

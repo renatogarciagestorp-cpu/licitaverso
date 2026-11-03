@@ -191,7 +191,7 @@ def filtrar_discrepantes(vals):
     return ok, len(vals) - len(ok)
 
 
-def precos_praticados(objeto, natureza="", uf="", extra=None, max_linhas=12):
+def precos_praticados(objeto, natureza="", uf="", extra=None, max_linhas=12, ate=None):
     """Preços unitários praticados em compras públicas (módulo de pesquisa de preços do Compras.gov.br), últimos 12 meses."""
     import datetime
     nat = sem_acento(natureza)
@@ -199,6 +199,8 @@ def precos_praticados(objeto, natureza="", uf="", extra=None, max_linhas=12):
     inicio = (datetime.date.today() - datetime.timedelta(days=365)).isoformat()
     saida = []
     for cod, nome in codigos_catalogo(objeto, tipo, extra):
+        if ate and time.time() > ate:
+            break
         linhas = []
         for est in ([uf] if uf else []) + [""]:
             p = {"pagina": 1, "tamanhoPagina": 50, "dataCompraInicio": inicio, "dataCompraFim": datetime.date.today().isoformat()}
@@ -247,8 +249,8 @@ def solucoes_para(natureza, objeto):
         return [("execução indireta (contratação da obra ou serviço)", "")]
     if "bem" in nat or "compra" in nat or "locacao" in nat:
         return [("aquisição", ""), ("locação", "locacao"), ("serviço com fornecimento do bem (outsourcing)", "outsourcing"),
-                ("manutenção do bem (custo que se soma à aquisição)", "manutencao")]
-    return [("contratação do serviço", "")]
+                ("manutenção do bem (custo que se soma à aquisição)", "manutencao"), ("adesão a ata de registro de preços vigente", "__ata__")]
+    return [("contratação do serviço", ""), ("adesão a ata de registro de preços vigente", "__ata__")]
 
 
 def pesquisar(objeto, uf="", natureza="", max_ref=12, limite_s=150):
@@ -268,8 +270,9 @@ def pesquisar(objeto, uf="", natureza="", max_ref=12, limite_s=150):
             achados = []
             for abr, u in ((("estado", uf),) if uf else ()) + (("nacional", None),):
                 for n in (2, 1):  # termos mais específicos primeiro
-                    q = " ".join(([extra] if extra else []) + chaves[:n])
-                    for tipo in ("edital", "ata"):
+                    so_ata = extra == "__ata__"
+                    q = " ".join(([extra] if extra and not so_ata else []) + chaves[:n])
+                    for tipo in (("ata",) if so_ata else ("edital", "ata")):
                         try:
                             hits = _buscar(q, u, tipo)
                         except Exception as e:
@@ -278,7 +281,7 @@ def pesquisar(objeto, uf="", natureza="", max_ref=12, limite_s=150):
                         for h in hits:
                             ctrl = h.get("numero_controle_pncp") or h.get("item_url")
                             texto = (h.get("description") or "") + " " + (h.get("title") or "")
-                            if extra and extra[:5] not in sem_acento(texto):
+                            if extra and not so_ata and extra[:5] not in sem_acento(texto):
                                 continue
                             if re.search(r"revogad|anulad|cancelad|desert|fracassad", sem_acento(h.get("situacao_nome") or "")):
                                 continue
@@ -316,7 +319,9 @@ def pesquisar(objeto, uf="", natureza="", max_ref=12, limite_s=150):
     saida["precos_praticados"] = []
     try:
         for rotulo, extra in sols:
-            for linha in precos_praticados(objeto, natureza, uf, extra or None):
+            if extra == "__ata__":
+                continue
+            for linha in precos_praticados(objeto, natureza, uf, extra or None, ate=t0 + limite_s + 120):
                 linha["solucao"] = rotulo
                 saida["precos_praticados"].append(linha)
     except Exception as e:

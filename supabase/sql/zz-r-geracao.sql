@@ -56,3 +56,10 @@ alter table public.analises add column if not exists progresso text;
 create table if not exists public.elab_triagens (id bigserial primary key, usuario_id uuid not null, criado_em timestamptz not null default now());
 alter table public.elab_triagens enable row level security;
 create index if not exists elab_triagens_usuario on public.elab_triagens (usuario_id, criado_em desc);
+
+-- Pausa para pedir informações ao assinante (antes de redigir ou para preencher lacunas depois da redação, sem novo custo de API)
+alter table public.analises drop constraint if exists analises_status_check;
+alter table public.analises add constraint analises_status_check
+  check (status in ('aguardando_pagamento', 'aguardando_documentos', 'na_fila', 'processando', 'aguardando_informacoes', 'concluida', 'erro', 'cancelada'));
+alter table public.analises add column if not exists perguntas jsonb;   -- [{id, tema, pergunta, por_que, opcoes, lacuna}]
+alter table public.analises add column if not exists fase text;         -- null (normal) | 'completar' (só preencher lacunas no texto já redigido)

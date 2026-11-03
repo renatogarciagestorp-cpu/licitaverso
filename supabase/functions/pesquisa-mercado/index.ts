@@ -119,8 +119,8 @@ async function precosPraticados(objeto: string, natureza: string, uf: string, ex
 function solucoes(natureza: string): [string, string][] {
   const n = semAcento(natureza);
   if (/obra|engenharia|reforma/.test(n)) return [["execução da obra ou serviço", ""]];
-  if (/bem|compra|locacao/.test(n)) return [["aquisição", ""], ["locação", "locacao"], ["serviço com fornecimento do bem (outsourcing)", "outsourcing"], ["manutenção do bem (soma-se à aquisição)", "manutencao"]];
-  return [["contratação do serviço", ""]];
+  if (/bem|compra|locacao/.test(n)) return [["aquisição", ""], ["locação", "locacao"], ["serviço com fornecimento do bem (outsourcing)", "outsourcing"], ["manutenção do bem (soma-se à aquisição)", "manutencao"], ["adesão a ata de registro de preços vigente", "__ata__"]];
+  return [["contratação do serviço", ""], ["adesão a ata de registro de preços vigente", "__ata__"]];
 }
 
 let pncpItensOk = true;  // se a API de itens do PNCP não responder uma vez, não tenta de novo nesta pesquisa
@@ -167,8 +167,9 @@ Deno.serve(async (req) => {
     const achados: [string, string, any][] = [];
     for (const [abr, u] of (uf ? [["estado", uf], ["nacional", ""]] : [["nacional", ""]]) as [string, string][]) {
       for (const n of [2, 1]) {
-        const q = [extra, ...chaves.slice(0, n)].filter(Boolean).join(" ");
-        for (const tipo of ["edital", "ata"]) {
+        const soAta = extra === "__ata__";
+        const q = [soAta ? "" : extra, ...chaves.slice(0, n)].filter(Boolean).join(" ");
+        for (const tipo of soAta ? ["ata"] : ["edital", "ata"]) {
           if (Date.now() - inicio > 35000) break;
           try {
             const p = new URLSearchParams({ q, tipos_documento: tipo, ordenacao: "-data", pagina: "1", tam_pagina: "40", status: "todos" });
@@ -177,7 +178,7 @@ Deno.serve(async (req) => {
             for (const h of hits) {
               const ctrl = String(h.numero_controle_pncp ?? h.item_url ?? "");
               const texto = `${h.description ?? ""} ${h.title ?? ""}`;
-              if (extra && !semAcento(texto).includes(extra.slice(0, 5))) continue;
+              if (extra && !soAta && !semAcento(texto).includes(extra.slice(0, 5))) continue;
               if (/revogad|anulad|cancelad|desert|fracassad/.test(semAcento(h.situacao_nome))) continue;
               if (vistos.has(ctrl) || pontos(texto, raizes) < Math.min(2, raizes.length)) continue;
               vistos.add(ctrl); achados.push([abr, tipo, h]);
@@ -203,6 +204,7 @@ Deno.serve(async (req) => {
   }
   const precos: any[] = [];
   for (const [rotulo, extra] of sols) {
+    if (extra === "__ata__") continue;
     try { for (const x of await precosPraticados(objeto, String(corpo.natureza ?? ""), uf, extra, inicio + 55000)) precos.push({ ...x, solucao: rotulo }); }
     catch { /* catálogo ou API indisponível: segue com o PNCP */ }
   }

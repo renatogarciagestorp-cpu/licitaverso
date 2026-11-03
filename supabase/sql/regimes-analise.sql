@@ -13,7 +13,7 @@ alter table public.analises add constraint analises_documento_check
   check (documento in ('edital', 'etp', 'tr', 'riscos', 'planilha', 'plano_trabalho', 'multiplos', 'projeto_basico'));
 alter table public.analises drop constraint if exists analises_status_check;
 alter table public.analises add constraint analises_status_check
-  check (status in ('aguardando_pagamento', 'aguardando_documentos', 'na_fila', 'processando', 'concluida', 'erro', 'cancelada'));
+  check (status in ('aguardando_pagamento', 'aguardando_documentos', 'na_fila', 'processando', 'aguardando_informacoes', 'concluida', 'erro', 'cancelada'));
 alter table public.analises drop constraint if exists analises_origem_check;
 alter table public.analises add constraint analises_origem_check check (origem in ('pdf', 'pncp', 'arquivos', 'questionario'));
 

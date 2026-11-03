@@ -28,7 +28,14 @@ FERRAMENTA = {
                    "description": "parágrafos de cada seção; um parágrafo começando com '### ' vira subtítulo"},
         "solucoes": {"type": "array", "items": {"type": "object", "properties": {
             "id": {"type": "integer"}, "nome": {"type": "string"}, "descricao": {"type": "string"},
-            "viavel": {"type": "boolean"}, "motivo_inviabilidade": {"type": "string"}}, "required": ["id", "nome", "descricao", "viavel"]}},
+            "mercado": LISTA, "custo_total": {"type": ["number", "null"], "description": "custo total para a administração no horizonte (vida útil), da tabela de custos"},
+            "vantagens": LISTA, "desvantagens": LISTA, "riscos": LISTA,
+            "viavel": {"type": "boolean"}, "motivo_inviabilidade": {"type": "string"}}, "required": ["id", "nome", "descricao", "mercado", "riscos", "viavel"]}},
+        "vida_util": {"type": "object", "properties": {"anos": {"type": "number"}, "fundamento": {"type": "string", "description": "de onde vem a vida útil adotada"}}},
+        "resumo": {"type": "object", "description": "quadro-resumo no início do estudo", "properties": {
+            "necessidade": {"type": "string", "description": "uma frase"}, "solucao": {"type": "string", "description": "solução indicada, em uma frase"},
+            "por_que": {"type": "string", "description": "o principal motivo da escolha, em uma frase, com números"},
+            "custo_total": {"type": ["number", "null"]}, "horizonte": {"type": "string", "description": "ex.: 5 anos (vida útil)"}}},
         "escolhida": {"type": "integer", "description": "id da solução indicada como a mais vantajosa"},
         "comparativo": {"type": "array", "items": {"type": "object", "properties": {
             "tipo": {"type": "string", "description": "Negócio, Técnico ou Econômico"}, "requisito": {"type": "string"},
@@ -46,7 +53,7 @@ FERRAMENTA = {
                     "valores": {"type": "array", "items": {"type": ["number", "null"]}, "description": "custo total do componente em cada ano; null se não houver dado"},
                     "fonte": {"type": "string", "description": "ex.: [C1] mediana dos preços praticados; [P3]; referência do requisitante"}},
                     "required": ["componente", "valores"]}}}, "required": ["id", "componentes"]}}}},
-        "itens": {"type": "array", "description": "itens da solução escolhida, para a estimativa de custo total", "items": {"type": "object", "properties": {
+        "itens": {"type": "array", "description": "TODOS os componentes de custo da solução escolhida no horizonte (bem, manutenção, garantia, instalação etc.), com valor unitário e quantidade", "items": {"type": "object", "properties": {
             "item": {"type": "string"}, "descricao": {"type": "string"}, "unidade": {"type": "string"},
             "quantidade": {"type": ["number", "null"]}, "valor_unitario": {"type": ["number", "null"]}, "fonte": {"type": "string"}},
             "required": ["item", "descricao"]}},
@@ -72,6 +79,13 @@ INSTRUCOES = (
     "ou não (inciso VIII), seguindo a decisão do requisitante; beneficios: resultados pretendidos (inciso IX); providencias: providências prévias, "
     "inclusive capacitação de fiscais e gestores (inciso X); correlatas: contratações correlatas e interdependentes (inciso XI); ambientais: impactos "
     "ambientais e medidas mitigadoras (inciso XII); viabilidade_justificativa: posicionamento conclusivo (inciso XIII). "
+    "Em solucoes, para CADA solução (inclusive adesão a ata e as inviáveis) escreva em 'mercado' o que a pesquisa encontrou para ela "
+    "(contratações e atas semelhantes, preços unitários, faixa e mediana, fontes [P#]/[C#]), em 'custo_total' o custo para a administração no "
+    "horizonte, e liste vantagens, desvantagens e riscos (ex.: adesão: vigência e saldo da ata, aceite do órgão gerenciador e do fornecedor, "
+    "limites do art. 86, compatibilidade da especificação; locação: dependência do fornecedor, reajuste; aquisição: obsolescência, manutenção). "
+    "Vida útil (vida_util): defina-a com fundamento (referência técnica ou contábil usual para o bem, ou a informação do requisitante) e use-a "
+    "como horizonte do estudo de custos (tco.anos), comparando compra e locação no MESMO horizonte. Em itens, inclua o bem E a manutenção "
+    "(e demais custos da solução escolhida), cada um com unidade, quantidade e valor unitário. Preencha o resumo (quadro do início do estudo). "
     "Preencha também: solucoes (todas, viáveis e inviáveis), escolhida, comparativo, tco (o estudo de custo total de cada solução viável: "
     "para cada componente informe unidade, quantidade, valor unitário da pesquisa, o custo de cada ano e a fonte; inclua manutenção, "
     "assistência e demais custos de cada solução; valores só com dados da pesquisa ou do requisitante; sem dado, null), itens da solução escolhida (valor_unitario null se não houver dado) e viabilidade. "
@@ -122,19 +136,30 @@ def texto_plano(docj):
 
 def simulado(respostas):
     obj = respostas.get("objeto", "[PREENCHER: objeto]")
-    s = {k: [f"[Texto de exemplo da seção '{k}'. Na elaboração real, o agente redige a partir das respostas e da pesquisa: {obj}.]"] for k in CHAVES}
-    return {"eh_tic": False, "categoria": respostas.get("natureza", "Serviço"), "secoes": s,
-            "solucoes": [{"id": 1, "nome": "Contratação do serviço com fornecimento de materiais", "descricao": "Empresa especializada executa o serviço.", "viavel": True},
-                         {"id": 2, "nome": "Execução direta", "descricao": "Servidores do quadro executam o serviço.", "viavel": False, "motivo_inviabilidade": "Não há cargos com essa atribuição."},
-                         {"id": 3, "nome": "Adesão a ata de registro de preços", "descricao": "Adesão a ata vigente de outro órgão.", "viavel": True}],
+    s = {k: [f"[Texto de exemplo da seção '{k}'. Na elaboração real, eu redijo a partir das respostas e da pesquisa: {obj}.]"] for k in CHAVES}
+    return {"eh_tic": False, "categoria": respostas.get("natureza", "Bem"), "secoes": s,
+            "vida_util": {"anos": 5, "fundamento": "vida útil usual de equipamentos de informática na depreciação patrimonial"},
+            "resumo": {"necessidade": "Substituir 40 notebooks obsoletos das escolas.", "solucao": "Aquisição com garantia on-site de 36 meses e manutenção nos anos 4 e 5.",
+                       "por_que": "Menor custo total em 5 anos: R$ 236.000 contra R$ 288.000 da locação.", "custo_total": 236000, "horizonte": "5 anos (vida útil)"},
+            "solucoes": [{"id": 1, "nome": "Aquisição com garantia de 36 meses", "descricao": "Compra dos equipamentos com garantia on-site.", "viavel": True, "custo_total": 236000,
+                          "mercado": ["Encontrei 40 compras de notebooks no RJ nos últimos 12 meses [C1]; mediana de R$ 5.122 por unidade."],
+                          "vantagens": ["Menor custo total no horizonte"], "desvantagens": ["Manutenção após a garantia"], "riscos": ["Obsolescência antes do fim da vida útil"]},
+                         {"id": 2, "nome": "Locação com manutenção incluída", "descricao": "Locação mensal com suporte.", "viavel": True, "custo_total": 288000,
+                          "mercado": ["Contratações de locação de notebooks [P5][P6] indicam R$ 120 por unidade/mês."], "vantagens": ["Manutenção incluída"],
+                          "desvantagens": ["Custo maior em 5 anos"], "riscos": ["Reajuste anual", "Dependência do fornecedor"]},
+                         {"id": 3, "nome": "Adesão a ata de registro de preços", "descricao": "Adesão a ata vigente de outro órgão.", "viavel": True, "custo_total": 241000,
+                          "mercado": ["Ata [P8] com item compatível a R$ 5.300 por unidade."], "riscos": ["Vigência e saldo da ata", "Aceite do órgão gerenciador e do fornecedor (art. 86)"]},
+                         {"id": 4, "nome": "Execução direta", "descricao": "Uso de equipamentos próprios.", "viavel": False, "mercado": ["Não se aplica."], "riscos": [], "motivo_inviabilidade": "Não há equipamentos disponíveis."}],
             "escolhida": 1,
-            "comparativo": [{"tipo": "Negócio", "requisito": "Continuidade do serviço", "avaliacao": ["Atende", "Atende parcialmente"]},
-                            {"tipo": "Econômico", "requisito": "Menor custo total", "avaliacao": ["Atende", "Não atende"]}],
-            "tco": {"anos": 1, "solucoes": [{"id": 1, "componentes": [{"componente": "Serviço (12 meses)", "valores": [850000], "fonte": "[C1]"}]},
-                                            {"id": 3, "componentes": [{"componente": "Serviço (12 meses)", "valores": [None], "fonte": "sem dado"}]}]},
-            "itens": [{"item": "1", "descricao": "Limpeza de áreas internas", "unidade": "m²/mês", "quantidade": 6200, "valor_unitario": 9.8, "fonte": "[C1]"},
-                      {"item": "2", "descricao": "Limpeza de áreas externas", "unidade": "m²/mês", "quantidade": 1800, "valor_unitario": None}],
-            "viabilidade": "Viável", "pendencias": ["[Exemplo] Informar o número do processo administrativo."], "jurisprudencia_ids": []}
+            "comparativo": [{"tipo": "Negócio", "requisito": "Disponibilidade contínua", "avaliacao": ["Atende", "Atende", "Atende"]},
+                            {"tipo": "Econômico", "requisito": "Menor custo total", "avaliacao": ["Atende", "Não atende", "Atende parcialmente"]}],
+            "tco": {"anos": 5, "solucoes": [
+                {"id": 1, "componentes": [{"componente": "Notebook", "unidade": "unidade", "quantidade": 40, "valor_unitario": 5122, "valores": [204880, 0, 0, 0, 0], "fonte": "[C1]"},
+                                          {"componente": "Manutenção (anos 4 e 5)", "unidade": "unidade/ano", "quantidade": 40, "valor_unitario": 390, "valores": [0, 0, 0, 15600, 15600], "fonte": "[C3]"}]},
+                {"id": 2, "componentes": [{"componente": "Locação com manutenção", "unidade": "unidade/mês", "quantidade": 40, "valor_unitario": 120, "valores": [57600] * 5, "fonte": "[P5]"}]}]},
+            "itens": [{"item": "1", "descricao": "Notebook conforme especificação", "unidade": "unidade", "quantidade": 40, "valor_unitario": 5122, "fonte": "[C1]"},
+                      {"item": "2", "descricao": "Manutenção corretiva após a garantia (2 anos)", "unidade": "unidade/ano", "quantidade": 80, "valor_unitario": 390, "fonte": "[C3]"}],
+            "viabilidade": "Viável", "pendencias": [], "jurisprudencia_ids": []}
 
 
 def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferencia=None):
@@ -164,37 +189,76 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
             if trecho.startswith("[PREENCHER"):
                 r.font.highlight_color = 7
 
-    def novo_par(texto="", negrito=False, centro=False, tam=None, antes=57, depois=119):
+    def novo_par(texto="", negrito=False, centro=False, tam=None, antes=0, depois=120, cor=None, recuo=None):
         p = w.add_paragraph(style="Standard")
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER if centro else WD_ALIGN_PARAGRAPH.JUSTIFY
         p.paragraph_format.space_before = Pt(antes / 20); p.paragraph_format.space_after = Pt(depois / 20)
+        p.paragraph_format.line_spacing = 1.15
+        if recuo is not None:
+            p.paragraph_format.left_indent = Cm(recuo)
         if texto:
             escrever(p, texto, negrito, tam)
+            if cor:
+                for r in p.runs:
+                    if not r.font.highlight_color: r.font.color.rgb = RGBColor.from_string(cor)
         return p
 
-    def nova_tabela(cab, linhas, larguras=None, total=None):
-        t = w.add_table(rows=1, cols=len(cab))
+    def faixa(texto):  # subtítulo interno: negrito, cor da marca, respiro antes
+        return novo_par(texto, negrito=True, antes=200, depois=80, cor="0F4C5C", tam=11.5)
+
+    def sombrear(cel, cor):
+        shd = OxmlElement("w:shd"); shd.set(qn("w:val"), "clear"); shd.set(qn("w:color"), "auto"); shd.set(qn("w:fill"), cor)
+        cel._tc.get_or_add_tcPr().append(shd)
+
+    def nova_tabela(cab, linhas, larguras=None, total=None, chave_valor=False):
+        t = w.add_table(rows=1 if cab else 0, cols=len(cab) if cab else 2)
         try:
             t.style = w.styles["Table Grid"]
         except KeyError:
             pass
-        for i, c in enumerate(cab):
-            cel = t.rows[0].cells[i]; cel.text = ""
-            p = cel.paragraphs[0]; p.alignment = WD_ALIGN_PARAGRAPH.CENTER; escrever(p, c, True, 10)
-            shd = OxmlElement("w:shd"); shd.set(qn("w:val"), "clear"); shd.set(qn("w:color"), "auto"); shd.set(qn("w:fill"), "D9D9D9")
-            cel._tc.get_or_add_tcPr().append(shd)
-        for ln in linhas + ([total] if total else []):
+        tblW = t._tbl.tblPr.find(qn("w:tblW"))
+        if tblW is None:
+            tblW = OxmlElement("w:tblW"); t._tbl.tblPr.append(tblW)
+        tblW.set(qn("w:w"), "5000"); tblW.set(qn("w:type"), "pct")
+        if cab:
+            for i, c in enumerate(cab):
+                cel = t.rows[0].cells[i]; cel.text = ""
+                p = cel.paragraphs[0]; p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                r = p.add_run(c); run_fmt(r, True, 9.5, "FFFFFF")
+                sombrear(cel, "1F3B45")
+        for n, ln in enumerate(linhas + ([total] if total else [])):
             cells = t.add_row().cells
             for i, v in enumerate(ln):
                 cells[i].text = ""
                 p = cells[i].paragraphs[0]
-                p.alignment = WD_ALIGN_PARAGRAPH.LEFT if i == 0 or (larguras and larguras[i] >= 5) else WD_ALIGN_PARAGRAPH.CENTER
-                escrever(p, v, ln is total, 10)
+                esquerda = i == 0 or chave_valor or (larguras and larguras[i] >= 5)
+                p.alignment = WD_ALIGN_PARAGRAPH.LEFT if esquerda else WD_ALIGN_PARAGRAPH.CENTER
+                escrever(p, v, ln is total or (chave_valor and i == 0), 9.5)
+                if ln is total:
+                    sombrear(cells[i], "DCE8E4")
+                elif chave_valor and i == 0:
+                    sombrear(cells[i], "EEF3F2")
+                elif n % 2 == 1:
+                    sombrear(cells[i], "F5F8F7")
         if larguras:
+            t.autofit = False
+            total_cm = sum(larguras)
+            prop = [l * 16.0 / total_cm for l in larguras]  # largura útil ~16 cm
+            grid = t._tbl.tblGrid
+            for i, gc in enumerate(grid.findall(qn("w:gridCol"))):
+                if i < len(prop): gc.set(qn("w:w"), str(int(Cm(prop[i]).twips)))
             for row in t.rows:
                 for i, c in enumerate(row.cells):
-                    c.width = Cm(larguras[i])
+                    c.width = Cm(prop[i])
         return t
+
+    def lista(cur, titulo, itens):
+        itens = [str(x).strip() for x in itens or [] if str(x).strip()]
+        if not itens:
+            return
+        cur.add(novo_par(titulo, negrito=True, antes=60, depois=40))
+        for x in itens:
+            cur.add(novo_par("• " + x, recuo=0.5, depois=40))
 
     class Cursor:
         def __init__(self, el): self.el = el
@@ -207,13 +271,13 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
                 if not t:
                     continue
                 if t.startswith("### "):
-                    self.add(novo_par(t[4:], negrito=True, antes=160))
+                    self.add(faixa(t[4:]))
                 else:
                     self.add(novo_par(t))
         def sub(self, titulo):
-            self.add(novo_par(titulo, negrito=True, antes=160))
+            self.add(faixa(titulo))
         def espaco(self):
-            self.add(novo_par("", antes=0, depois=0))
+            self.add(novo_par("", antes=0, depois=60))
 
     def texto_tabela(tb):
         return sem_acento(" ".join(c.text for r in tb.rows for c in r.cells)).strip()
@@ -338,6 +402,19 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
     anos = max(1, int(tco.get("anos") or 1))
     escolhida = docj.get("escolhida")
 
+    rs = docj.get("resumo") or {}
+    if rs:
+        primeiro = cabecalhos[0][1]
+        antes_el = primeiro.getprevious()
+        cur = Cursor(antes_el if antes_el is not None else primeiro)
+        cur.add(faixa("RESUMO DO ESTUDO"))
+        linhas_r = [["Necessidade", rs.get("necessidade") or ""], ["Solução indicada", rs.get("solucao") or ""],
+                    ["Por que", rs.get("por_que") or ""],
+                    ["Custo total estimado", brl(rs.get("custo_total")) + (f" — {rs['horizonte']}" if rs.get("horizonte") else "")],
+                    ["Viabilidade", docj.get("viabilidade") or ""]]
+        cur.add(nova_tabela([], [l for l in linhas_r if l[1]], [4.3, 11.7], chave_valor=True))
+        cur.espaco()
+
     for chave, el, tb in cabecalhos:
         c = Cursor(el)
         c.espaco()
@@ -360,7 +437,20 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
         elif chave == "levantamento":
             c.pars(S.get("levantamento"))
             if sols:
-                c.add(nova_tabela(["Id", "Solução", "Descrição"], [[str(x.get("id")), x.get("nome", ""), x.get("descricao", "")] for x in sols], [1.2, 5, 9.8]))
+                c.add(nova_tabela(["Id", "Solução", "Custo total no horizonte", "Situação"],
+                                  [[str(x.get("id")), x.get("nome", ""), brl(x.get("custo_total")) if x.get("viavel") else "—",
+                                    ("Indicada" if x.get("id") == escolhida else "Viável") if x.get("viavel") else "Inviável"] for x in sols], [1.2, 8, 4, 2.8]))
+                for x in sols:
+                    c.sub(f"Solução {x.get('id')} — {x.get('nome', '')}")
+                    c.add(novo_par(x.get("descricao", "")))
+                    if x.get("mercado"):
+                        c.add(novo_par("O que a pesquisa de mercado mostrou", negrito=True, antes=60, depois=40))
+                        c.pars(x.get("mercado"))
+                    if x.get("custo_total") is not None:
+                        c.add(novo_par(f"Custo total estimado para a administração: {brl(x.get('custo_total'))}" + (f" ({hz})" if (hz := (docj.get('resumo') or {}).get('horizonte')) else "") + ".", negrito=True))
+                    lista(c, "Vantagens", x.get("vantagens")); lista(c, "Desvantagens", x.get("desvantagens")); lista(c, "Riscos", x.get("riscos"))
+                    if not x.get("viavel") and x.get("motivo_inviabilidade"):
+                        c.add(novo_par("Por que é inviável: " + x["motivo_inviabilidade"]))
         elif chave == "comparativa":
             c.pars(S.get("comparativa"))
             comp = docj.get("comparativo") or []
@@ -376,24 +466,24 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
             elif not S.get("inviaveis"):
                 c.add(novo_par("Não foram identificadas soluções inviáveis entre as levantadas."))
         elif chave == "custos":
+            vu = docj.get("vida_util") or {}
+            if vu.get("anos"):
+                c.add(novo_par(f"Horizonte da análise: {num(vu.get('anos'))} anos, correspondente à vida útil do objeto" + (f" ({vu['fundamento']})" if vu.get("fundamento") else "") + ".", negrito=True))
             c.pars(S.get("custos"))
         elif chave == "tco":
             for s_ in tco.get("solucoes") or []:
                 comps = s_.get("componentes") or []
-                c.add(novo_par(f"Solução {s_.get('id')} – {nome_sol.get(s_.get('id'), '')}", negrito=True, antes=160))
-                cab = ["Componente de custo", "Unidade", "Qtd.", "Valor unitário"] + [f"Ano {i + 1}" for i in range(anos)] + ["Total", "Fonte"]
-                ln, tot_anos = [], [0.0] * anos
-                falta = [False] * anos
+                c.sub(f"Solução {s_.get('id')} – {nome_sol.get(s_.get('id'), '')}")
+                ln, soma, falta = [], 0.0, False
                 for cp in comps:
-                    vs = list(cp.get("valores") or [])[:anos] + [None] * max(0, anos - len(cp.get("valores") or []))
-                    for i, v in enumerate(vs):
-                        if v is None: falta[i] = True
-                        else: tot_anos[i] += float(v)
-                    tot = None if any(v is None for v in vs) else sum(float(v) for v in vs)
-                    ln.append([cp.get("componente", ""), cp.get("unidade") or "", num(cp.get("quantidade")) if cp.get("quantidade") is not None else "",
-                               brl(cp.get("valor_unitario")) if cp.get("valor_unitario") is not None else ""] + [brl(v) for v in vs] + [brl(tot), cp.get("fonte", "")])
-                total = ["Total", "", "", ""] + [brl(None if falta[i] else tot_anos[i]) for i in range(anos)] + [brl(None if any(falta) else sum(tot_anos)), ""]
-                c.add(nova_tabela(cab, ln, total=total))
+                    vs = list(cp.get("valores") or [])[:anos]
+                    tot = None if (not vs or any(v is None for v in vs)) else sum(float(v) for v in vs)
+                    if tot is None: falta = True
+                    else: soma += tot
+                    ln.append([cp.get("componente", ""), cp.get("unidade") or "—", num(cp.get("quantidade")) if cp.get("quantidade") is not None else "—",
+                               brl(cp.get("valor_unitario")) if cp.get("valor_unitario") is not None else "—", brl(tot), cp.get("fonte", "")])
+                c.add(nova_tabela(["Componente de custo", "Unidade", "Qtd.", "Valor unitário", f"Total em {anos} ano(s)", "Fonte"], ln, [5.2, 2.2, 1.4, 2.6, 2.8, 1.8],
+                                  total=["Custo total da solução", "", "", "", brl(None if falta else soma), ""]))
             if not tco.get("solucoes"):
                 c.add(novo_par("[PREENCHER: cálculo dos custos totais das soluções viáveis.]"))
         elif chave == "mapa":
@@ -406,7 +496,7 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
                 tot = None if any(v is None for v in por_ano) else sum(por_ano)
                 linhas.append([f"Solução {s_.get('id')} – {nome_sol.get(s_.get('id'), '')}"] + [brl(v) for v in por_ano] + [brl(tot)])
             if linhas:
-                c.add(nova_tabela(["Solução"] + [f"Ano {i + 1}" for i in range(anos)] + ["Total"], linhas))
+                c.add(nova_tabela(["Solução"] + [f"Ano {i + 1}" for i in range(anos)] + ["Total"], linhas, [4.6] + [2.0] * anos + [2.6]))
         elif chave == "estimativa":
             c.pars(S.get("estimativa"))
             itens = docj.get("itens") or []
@@ -486,6 +576,8 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
             c.pars(S.get(chave))
             if not S.get(chave):
                 c.add(novo_par("[PREENCHER]"))
+        if chave not in ("responsaveis", "aprovacao"):
+            c.espaco()
 
     # ---------------------------------------------------------------- anexo: só o que o assinante optou por completar depois
     pend = [t for t in (docj.get("pendencias") or []) if str(t).strip()]
@@ -500,6 +592,26 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
     vermelhos = [r for r in corpo.iter(qn("w:color")) if (r.get(qn("w:val")) or "").upper() in ("FF0000", "FF3333", "0000FF")]
     for cor in vermelhos:
         cor.set(qn("w:val"), "000000")
+    def padronizar_fonte(raiz):
+        for rf in raiz.iter(qn("w:rFonts")):
+            for att in list(rf.attrib):
+                if att.endswith("Theme"):
+                    del rf.attrib[att]
+            for k in ("w:ascii", "w:hAnsi", "w:cs", "w:eastAsia"):
+                rf.set(qn(k), "Calibri")
+    padronizar_fonte(w.element)
+    padronizar_fonte(w.styles.element)
+    for sec_ in w.sections:
+        for parte in (sec_.header, sec_.footer, sec_.first_page_header, sec_.first_page_footer):
+            try:
+                padronizar_fonte(parte._element)
+            except Exception:
+                pass
+    for st in w.styles:
+        try:
+            if st.font is not None: st.font.name = "Calibri"
+        except Exception:
+            pass
     w.core_properties.author = "Agente Licitacon"
     w.core_properties.title = "Estudo Técnico Preliminar"
     w.save(str(saida))

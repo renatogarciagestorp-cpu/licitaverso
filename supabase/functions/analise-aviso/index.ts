@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
   const { data: a } = await admin.from("analises").select("*").eq("id", String(id ?? "")).maybeSingle();
   if (!a) return resposta({ erro: "análise não encontrada" }, 404);
   if (a.avisado_status === a.status) return resposta({ ok: true, enviado: false, motivo: "já avisado" });
-  if (a.status !== "concluida" && a.status !== "erro") return resposta({ ok: true, enviado: false, motivo: "status sem aviso" });
+  if (a.status !== "concluida" && a.status !== "erro" && a.status !== "aguardando_informacoes") return resposta({ ok: true, enviado: false, motivo: "status sem aviso" });
 
   const { data: p } = await admin.from("perfis").select("nome, email").eq("id", a.usuario_id).maybeSingle();
   const geracao = a.tipo === "geracao";
@@ -28,7 +28,14 @@ Deno.serve(async (req) => {
 
   try {
     if (p?.email) {
-      if (a.status === "concluida" && geracao) {
+      if (a.status === "aguardando_informacoes" && geracao) {
+        const n = Array.isArray(a.perguntas) ? a.perguntas.length : 0;
+        const html = moldura(`Precisamos de ${n === 1 ? "uma informação" : n + " informações"} para concluir o seu ${esc(doc)}`, [
+          `${esc(primeiro)}, para que o <strong>${esc(doc)}</strong> saia completo, sem campos em branco, preciso que você responda ${n === 1 ? "a uma pergunta" : "a " + n + " perguntas"}.`,
+          `Abra a página de criação do documento: as perguntas aparecem uma por vez. Assim que você responder, eu termino o documento.`,
+        ], { texto: "Responder agora", url: link }, undefined, "Andamento de consultoria");
+        await enviarEmail({ email: p.email, nome: p.nome }, `${doc}: preciso de informações para concluir`, html);
+      } else if (a.status === "concluida" && geracao) {
         const r = a.resumo || {};
         // quem escolheu receber por e-mail recebe o Word e o PDF anexados (até ~8 MB no total)
         const anexos: { name: string; content: string }[] = [];
@@ -51,7 +58,7 @@ Deno.serve(async (req) => {
           r.objeto ? `<strong>Objeto:</strong> ${esc(String(r.objeto).slice(0, 300))}` : "",
           anexos.length ? `O documento segue <strong>anexado a este e-mail</strong>, em Word (editável) e PDF, e também fica disponível na sua área.`
             : `O documento está disponível em Word (editável) e PDF na sua área, em <em>Criar documento</em> e em <em>Minha conta</em>.`,
-          `No anexo final do documento estão as <strong>${Number(r.pendencias || 0)} pendências</strong> para você completar e os pontos de atenção da conferência automática.`,
+          Number(r.pendencias || 0) ? `No anexo final estão as <strong>${Number(r.pendencias)} informações</strong> que você optou por completar depois, destacadas em amarelo no texto.` : "",
           `Lembre-se: é uma minuta elaborada por inteligência artificial. Revise todo o texto e complete as lacunas destacadas antes de juntar ao processo.`,
         ].filter(Boolean), { texto: "Abrir o documento", url: link }, undefined, "Andamento de consultoria");
         await enviarEmail({ email: p.email, nome: p.nome }, `${doc} pronto para revisão`, html, anexos);
