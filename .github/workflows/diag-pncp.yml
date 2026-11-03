@@ -9,10 +9,9 @@ jobs:
           B=https://dadosabertos.compras.gov.br
           curl -sS -m 30 "$B/v3/api-docs" -o /tmp/d.json; python3 -c "
           import json;d=json.load(open('/tmp/d.json'))
-          for p,v in d.get('paths',{}).items():
-            if ('contrata' in p or 'arp' in p) and 'CSV' not in p:
-              for m,o in v.items(): print(p, [x.get('name')+('*' if x.get('required') else '') for x in o.get('parameters',[])])"
-          for u in "$B/modulo-contratacoes/2_consultarItensContratacoes_PNCP_14133?pagina=1&tamanhoPagina=10&numeroControlePNCP=29138385000130-1-000066/2026" \
-                   "$B/modulo-contratacoes/1_consultarContratacoes_PNCP_14133?pagina=1&tamanhoPagina=10&numeroControlePNCP=29138385000130-1-000066/2026" \
-                   "$B/modulo-material/4_consultarItemMaterial?pagina=1&tamanhoPagina=10&descricaoItem=NOTEBOOK"; do
-            echo "== $u"; curl -sS -m 40 -o /tmp/r -w "HTTP %{http_code} %{time_total}s\n" "$u"; head -c 1800 /tmp/r; echo; done
+          for p in ['/modulo-contratacoes/2.1_consultarItensContratacoes_PNCP_14133_Id','/modulo-contratacoes/3.1_consultarResultadoItensContratacoes_PNCP_14133_Id']:
+            for m,o in d['paths'][p].items(): print(p, json.dumps(o.get('parameters'),ensure_ascii=False)[:1500])"
+          N="29138385000130-1-000066/2026"
+          for t in idCompra numeroControlePNCP numeroControlePncpCompra; do
+            u="$B/modulo-contratacoes/2.1_consultarItensContratacoes_PNCP_14133_Id?tipo=$t&codigo=$N"
+            echo "== $u"; curl -sS -m 40 -G --data-urlencode "tipo=$t" --data-urlencode "codigo=$N" -o /tmp/r -w "HTTP %{http_code} %{time_total}s\n" "$B/modulo-contratacoes/2.1_consultarItensContratacoes_PNCP_14133_Id"; head -c 1500 /tmp/r; echo; done
