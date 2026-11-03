@@ -54,6 +54,8 @@ CAMPOS_ROTULO = {
     "parc_motivo": "Motivo do parcelamento ou não (escolha do requisitante)", "adjudicacao": "Forma de adjudicação (escolha do requisitante)",
     "criterio": "Critério de julgamento (escolha do requisitante)", "regime_exec": "Regime de execução (escolha do requisitante)",
     "local": "Local da obra ou serviço",
+    "especificacoes": "Especificações e requisitos", "gestor": "Gestor do contrato", "fiscais": "Fiscais do contrato / comissão de fiscalização",
+    "fonte": "Fonte orçamentária e dotação",
 }
 UFS = {"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
 
@@ -176,7 +178,9 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante=""):
         "(6) não use marca ou especificação que restrinja a competição sem justificativa técnica; "
         "(7) nunca decida nem presuma pelo requisitante: as escolhas dele (parcelamento e motivo, forma de adjudicação, modalidade, "
         "critério de julgamento, regime de execução, solução indicada no TR ou no Projeto Básico, prazo) devem ser seguidas exatamente "
-        "como informadas, apenas fundamentadas; se faltar uma informação exigida pela lei, não a escolha: use [PREENCHER] e registre "
+        "como informadas, apenas fundamentadas (exceção: se o parcelamento vier como \"Analisar no ETP e recomendar\", analise as "
+        "opções à luz da pesquisa de mercado, recomende a mais adequada com justificativa e escreva [PREENCHER: confirmar a decisão "
+        "sobre o parcelamento], registrando a pendência); se faltar uma informação exigida pela lei, não a escolha: use [PREENCHER] e registre "
         "a pendência; (8) o requisitante informa de propósito só o essencial (criação rápida): redija com texto técnico adequado ao "
         "objeto apenas a parte descritiva que não depende de decisão nem de dado do órgão (requisitos usuais de qualidade, rotinas de "
         "fiscalização, sustentabilidade, riscos, providências), deixando [PREENCHER] para dados factuais (valores oficiais, datas, "

@@ -712,7 +712,7 @@
   .lve-campo > span { text-transform: none !important; letter-spacing: 0 !important; font-size: 14.5px !important; color: #0B1F2A !important; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
   .lve-rapido textarea { width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 15px; line-height: 1.55; color: #0B1F2A; background: #FBFCFC; resize: vertical; min-height: 72px; }
   .lve-rapido textarea:focus { outline: 2px solid #0FA36B; outline-offset: 1px; background: #fff; }
-  .lve-campo textarea { width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 15px; line-height: 1.55; color: #0B1F2A; background: #FBFCFC; resize: vertical; min-height: 110px; }
+  .lve-campo textarea { width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 15px; line-height: 1.55; color: #0B1F2A; background: #FBFCFC; resize: vertical; min-height: 88px; }
   .lve-campo textarea:focus { outline: 2px solid #0FA36B; outline-offset: 1px; background: #fff; }
   .lve-obrig { font-style: normal; font-size: 10.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #8A5A00; background: #FFF4DC; border-radius: 6px; padding: 2px 6px; }
   .lve-nav { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
@@ -749,6 +749,66 @@
   .lve-assin > div { display: grid; gap: 10px; align-content: start; }
   .lve-assin-t { font-size: 14px; color: #0F6B7E; }
   @media (max-width: 700px) { .lve-2arq, .lve-assin { grid-template-columns: minmax(0, 1fr); } }
+  /* criador: passo a passo */
+  .lve-como { margin-top: -28px; position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .lve-como > div { background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 18px 20px; box-shadow: 0 12px 30px rgba(11,31,42,0.07); display: grid; gap: 4px; }
+  .lve-como b { font-size: 15.5px; color: #0B1F2A; }
+  .lve-como p { margin: 0; font-size: 13.5px; color: #55666E; line-height: 1.5; }
+  .lve-como-n { width: 28px; height: 28px; border-radius: 50%; background: #E3F6EC; color: #0A7A50; font-weight: 800; display: grid; place-items: center; font-size: 14px; margin-bottom: 4px; }
+  .lve-h2 { font-size: 22px; margin: 34px 0 14px; color: #0B1F2A; }
+  .lve-como + .lve-h2 + .lve-docs { margin-top: 0; }
+  .lve-wiz { margin-top: -28px; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
+  .lve-principal { background: #fff; border: 1px solid #E3E9E8; border-radius: 22px; padding: 24px 28px 28px; box-shadow: 0 16px 40px rgba(11,31,42,0.08); display: grid; gap: 18px; min-width: 0; }
+  .lve-w-cab { display: flex; align-items: center; gap: 12px; }
+  .lve-w-cab > div { flex: 1; display: grid; min-width: 0; }
+  .lve-w-cab b { font-size: 17px; color: #0B1F2A; }
+  .lve-w-cab small { color: #7A8B91; font-size: 12.5px; }
+  .lve-w-cab .lve-trocar { margin: 0; }
+  .lve-passos { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .lve-passos button { width: 100%; display: flex; align-items: center; gap: 8px; background: none; border: 0; padding: 4px 0; font: inherit; cursor: pointer; text-align: left; color: #7A8B91; }
+  .lve-passo-n { flex: none; width: 26px; height: 26px; border-radius: 50%; border: 2px solid #D5DFDD; display: grid; place-items: center; font-size: 12.5px; font-weight: 800; background: #fff; }
+  .lve-passo-t { font-size: 13px; font-weight: 700; line-height: 1.25; }
+  .lve-passos .atual button { color: #0B1F2A; }
+  .lve-passos .atual .lve-passo-n { border-color: #0FA36B; background: #0FA36B; color: #fff; }
+  .lve-passos .feita button { color: #0A7A50; }
+  .lve-passos .feita .lve-passo-n { border-color: #0FA36B; color: #0A7A50; background: #E3F6EC; }
+  .lve-prog { height: 6px; background: #EEF2F1; border-radius: 99px; overflow: hidden; margin-top: -8px; }
+  .lve-prog span { display: block; height: 100%; background: linear-gradient(90deg, #0FA36B, #2BC48A); border-radius: 99px; transition: width 0.3s ease; }
+  .lve-etapa { display: grid; gap: 18px; }
+  .lve-etapa-cab small { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #0FA36B; }
+  .lve-etapa-cab h3 { margin: 4px 0 4px; font-size: 22px; color: #0B1F2A; font-family: "Source Serif 4", Georgia, serif; }
+  .lve-etapa-cab p { margin: 0; color: #55666E; font-size: 14.5px; line-height: 1.5; }
+  .lve-bloco-pesq { border-top: 0; padding-top: 0; }
+  .lve-nav { display: flex; gap: 12px; align-items: center; justify-content: space-between; border-top: 1px solid #EDF2F1; padding-top: 18px; }
+  .lve-nav .lvh-btn { margin-left: auto; }
+  .lve-voltar { background: none; border: 1px solid #DDE4E3; border-radius: 12px; padding: 13px 18px; font: inherit; font-weight: 800; color: #26393F; cursor: pointer; }
+  .lve-continuar { font-size: 16px; padding: 14px 26px; }
+  .lve-resumo { background: #F7FAF9; border: 1px solid #E3E9E8; border-radius: 16px; padding: 16px 18px; display: grid; gap: 8px; }
+  .lve-resumo dl { margin: 0; display: grid; gap: 6px; }
+  .lve-resumo dl > div { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 10px; font-size: 13.5px; }
+  .lve-resumo dt { color: #66757F; font-weight: 700; }
+  .lve-resumo dd { margin: 0; color: #0B1F2A; overflow-wrap: anywhere; }
+  .lve-lado { position: sticky; top: 90px; background: #0B1F2A; color: #DCE7E5; border-radius: 20px; padding: 22px; display: grid; gap: 12px; }
+  .lve-lado h4 { margin: 0; color: #fff; font-size: 16px; }
+  .lve-lado ol { margin: 0; padding: 0; list-style: none; counter-reset: m; display: grid; gap: 12px; }
+  .lve-lado li { counter-increment: m; display: grid; grid-template-columns: 24px minmax(0, 1fr); column-gap: 10px; font-size: 13px; line-height: 1.45; }
+  .lve-lado li::before { content: counter(m); grid-row: span 2; width: 22px; height: 22px; border-radius: 50%; background: #13392F; color: #7FE3B6; font-weight: 800; font-size: 12px; display: grid; place-items: center; }
+  .lve-lado li b { color: #fff; font-size: 13.5px; }
+  .lve-lado-nota { margin: 0; font-size: 12.5px; color: #9FB3B0; border-top: 1px solid #22404A; padding-top: 12px; }
+  @media (max-width: 960px) {
+    .lve-wiz { grid-template-columns: minmax(0, 1fr); }
+    .lve-lado { position: static; order: 2; }
+    .lve-como { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .lve-principal { padding: 18px; }
+    .lve-passos { gap: 4px; }
+    .lve-passo-t { display: none; }
+    .lve-passos .atual .lve-passo-t { display: block; }
+    .lve-passos { grid-template-columns: auto auto auto auto; justify-content: start; }
+    .lve-resumo dl > div { grid-template-columns: minmax(0, 1fr); gap: 0; }
+    .lve-continuar, .lve-gerar { flex: 1; }
+  }
   .lve-reap-box { border: 1px solid #BFE6D2; background: #F3FBF7; border-radius: 16px; padding: 18px; display: grid; gap: 10px; }
   .lve-reap-box p { margin: 0; color: #43535C; font-size: 14px; }
   .lve-reap-lista { display: grid; gap: 6px; }
@@ -1685,11 +1745,17 @@
         <div class="lvc-hero-in">
           <span class="lvh-eyebrow">Agente de IA · Lei 14.133/2021</span>
           <h1 class="lva-h1" style="max-width: 22ch">ETP, TR ou Projeto Básico em minutos, não em dias.</h1>
-          <p class="lva-lead">Você informa o essencial e marca as decisões que a lei exige. O agente faz a pesquisa de mercado, redige o documento completo, confere com a lei e com a jurisprudência do Tribunal de Contas do seu estado e entrega em Word, pronto para ajustar.</p>
+          <p class="lva-lead">Você informa a contratação. Nós pesquisamos o mercado, comparamos as soluções e entregamos o documento pronto para revisar.</p>
         </div>
       </section>
       <section class="lvc-corpo" id="el-topo">
-                <sc-if value="{{ elSemDoc }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ elSemDoc }}" hint-placeholder-val="{{ true }}">
+          <div class="lve-como">
+            <div><span class="lve-como-n">1</span><b>Você informa</b><p>O que precisa, por quê, quantidades, especificações e quem vai gerir, fiscalizar e assinar.</p></div>
+            <div><span class="lve-como-n">2</span><b>Pesquisamos o mercado</b><p>Contratações de outros órgãos (PNCP) e preços praticados (Compras.gov.br), primeiro no seu estado.</p></div>
+            <div><span class="lve-como-n">3</span><b>O agente monta o documento</b><p>Compara as soluções, indica a melhor, cumpre cada item da lei e entrega em Word.</p></div>
+          </div>
+          <h2 class="lve-h2">Qual documento você quer criar?</h2>
           <div class="lve-docs">
             <sc-for list="{{ elDocs }}" as="dc" hint-placeholder-count="3">
               <button type="button" class="lve-doc" sc-camel-on-click="{{ dc.escolher }}">
@@ -1699,12 +1765,13 @@
           </div>
         </sc-if>
         <sc-if value="{{ elComDoc }}" hint-placeholder-val="{{ false }}">
-          <div class="lve-rapido">
-            <div class="lve-r-cab">
-              <div><span class="lve-doc-sig">{{ elSigla }}</span><h2 class="lva-h2" style="margin-top: 8px">{{ elNome }} em poucos minutos</h2>
-                <p class="lva-sub">Você informa o essencial e toma as decisões que a lei exige; o agente redige, fundamenta e marca o que faltar.</p></div>
-              <button type="button" class="lve-trocar" sc-camel-on-click="{{ elTrocar }}">Trocar de documento</button>
-            </div>
+          <div class="lve-wiz">
+            <div class="lve-principal">
+              <div class="lve-w-cab">
+                <span class="lve-doc-sig">{{ elSigla }}</span>
+                <div><b>{{ elNome }}</b><small>{{ elBase }}</small></div>
+                <button type="button" class="lve-trocar" sc-camel-on-click="{{ elTrocar }}">Trocar</button>
+              </div>
             <sc-if value="{{ elReapAberto }}" hint-placeholder-val="{{ false }}">
               <div class="lve-reap-box">
                 <strong>Quer aproveitar algo do seu último documento{{ elReapDe }}?</strong>
@@ -1716,16 +1783,23 @@
                   <button type="button" class="lve-trocar" sc-camel-on-click="{{ elReapNao }}">Começar em branco</button></div>
               </div>
             </sc-if>
-            <sc-if value="{{ elFormVisivel }}" hint-placeholder-val="{{ true }}">
-            <sc-if value="{{ elRascunho }}" hint-placeholder-val="{{ false }}"><p class="lve-reap">Continuando o rascunho que você não enviou. <button type="button" class="lve-trocar" sc-camel-on-click="{{ elEmBranco }}">Começar em branco</button></p></sc-if>
+              <sc-if value="{{ elFormVisivel }}" hint-placeholder-val="{{ true }}">
+              <ol class="lve-passos"><sc-for list="{{ elEtapas }}" as="e" hint-placeholder-count="4"><li class="{{ e.cls }}"><button type="button" sc-camel-on-click="{{ e.ir }}" aria-current="{{ e.atual }}"><span class="lve-passo-n">{{ e.n }}</span><span class="lve-passo-t">{{ e.t }}</span></button></li></sc-for></ol>
+              <div class="lve-prog" aria-hidden="true"><span style="width: {{ elProgPct }}%"></span></div>
 
-            <div class="lve-2col">
-              <label class="lvc-campo"><span>Órgão ou entidade<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elOrgao }}" sc-camel-on-input="{{ elOnOrgao }}" placeholder="Ex.: Prefeitura Municipal de Maricá"></label>
-              <label class="lvc-campo"><span>UF<em class="lve-obrig">obrigatório</em></span><input type="text" maxlength="2" value="{{ elUf }}" sc-camel-on-input="{{ elOnUf }}" placeholder="RJ"></label>
-            </div>
-            <small class="lve-nota-uf">A UF define a jurisprudência do Tribunal de Contas e a pesquisa de mercado com contratações do seu estado.</small>
+              <div class="lve-etapa">
+                <div class="lve-etapa-cab"><small>Etapa {{ elEtapaN }} de {{ elEtapaTotal }}</small><h3>{{ elEtapaTitulo }}</h3><p>{{ elEtapaDesc }}</p></div>
+                <sc-if value="{{ elRascunho }}" hint-placeholder-val="{{ false }}"><p class="lve-reap">Continuando o rascunho que você não enviou. <button type="button" class="lve-trocar" sc-camel-on-click="{{ elEmBranco }}">Começar em branco</button></p></sc-if>
 
-            <sc-for list="{{ elCampos }}" as="c" hint-placeholder-count="6">
+                <sc-if value="{{ elEtapaContratacao }}" hint-placeholder-val="{{ true }}">
+                  <div class="lve-2col">
+                    <label class="lvc-campo"><span>Órgão ou entidade<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elOrgao }}" sc-camel-on-input="{{ elOnOrgao }}" placeholder="Ex.: Prefeitura Municipal de Maricá"></label>
+                    <label class="lvc-campo"><span>UF<em class="lve-obrig">obrigatório</em></span><input type="text" maxlength="2" value="{{ elUf }}" sc-camel-on-input="{{ elOnUf }}" placeholder="RJ"></label>
+                  </div>
+                  <small class="lve-nota-uf">A UF define a jurisprudência do Tribunal de Contas e a pesquisa de mercado no seu estado.</small>
+                </sc-if>
+
+            <sc-for list="{{ elCamposA }}" as="c" hint-placeholder-count="6">
               <div class="lvc-campo lve-campo">
                 <span>{{ c.rot }}<sc-if value="{{ c.obrig }}" hint-placeholder-val="{{ true }}"><em class="lve-obrig">obrigatório</em></sc-if><sc-if value="{{ c.opcional }}" hint-placeholder-val="{{ false }}"><em class="lve-opc">opcional</em></sc-if></span>
                 <sc-if value="{{ c.ehTexto }}" hint-placeholder-val="{{ true }}"><textarea rows="2" aria-label="{{ c.rot }}" value="{{ c.valor }}" sc-camel-on-input="{{ c.onInput }}" placeholder="{{ c.ph }}"></textarea></sc-if>
@@ -1737,9 +1811,9 @@
               </div>
             </sc-for>
 
+                <sc-if value="{{ elEtapaMercado }}" hint-placeholder-val="{{ false }}">
             <sc-if value="{{ elMostraPesquisa }}" hint-placeholder-val="{{ false }}">
-              <div class="lve-bloco">
-                <h3 class="lve-bloco-t">Pesquisa de mercado</h3>
+              <div class="lve-bloco lve-bloco-pesq">
                 <p class="lve-pesq">{{ elTextoPesquisa }}</p>
                 <div class="lve-pesq-acao"><button type="button" class="lve-btn2" sc-camel-on-click="{{ elPesquisar }}">{{ elPesqBotao }}</button><span class="lve-pesq-st">{{ elPesqStatus }}</span></div>
                 <sc-if value="{{ elPesqTemRefs }}" hint-placeholder-val="{{ false }}"><ul class="lve-pesq-lista"><sc-for list="{{ elPesqRefs }}" as="r" hint-placeholder-count="3"><li><a href="{{ r.link }}" target="_blank" rel="noopener">{{ r.titulo }}</a><span>{{ r.det }}</span></li></sc-for></ul></sc-if>
@@ -1756,8 +1830,40 @@
               </div>
             </sc-if>
 
+                </sc-if>
+
+            <sc-for list="{{ elCamposB }}" as="c" hint-placeholder-count="6">
+              <div class="lvc-campo lve-campo">
+                <span>{{ c.rot }}<sc-if value="{{ c.obrig }}" hint-placeholder-val="{{ true }}"><em class="lve-obrig">obrigatório</em></sc-if><sc-if value="{{ c.opcional }}" hint-placeholder-val="{{ false }}"><em class="lve-opc">opcional</em></sc-if></span>
+                <sc-if value="{{ c.ehTexto }}" hint-placeholder-val="{{ true }}"><textarea rows="2" aria-label="{{ c.rot }}" value="{{ c.valor }}" sc-camel-on-input="{{ c.onInput }}" placeholder="{{ c.ph }}"></textarea></sc-if>
+                <sc-if value="{{ c.ehLinha }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}" value="{{ c.valor }}" sc-camel-on-input="{{ c.onInput }}" placeholder="{{ c.ph }}"></sc-if>
+                <sc-if value="{{ c.ehChips }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ c.op }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
+                <sc-if value="{{ c.mostraOutro }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}: detalhe" value="{{ c.outroValor }}" sc-camel-on-input="{{ c.onOutro }}" placeholder="Qual?"></sc-if>
+                <sc-if value="{{ c.temExemplos }}" hint-placeholder-val="{{ false }}"><div class="lve-exemplos"><span>Exemplos:</span><sc-for list="{{ elExemplos }}" as="ex" hint-placeholder-count="4"><button type="button" class="lvc-chip" sc-camel-on-click="{{ ex.usar }}">{{ ex.rot }}</button></sc-for></div></sc-if>
+                <sc-if value="{{ c.dica }}" hint-placeholder-val="{{ false }}"><small>{{ c.dica }}</small></sc-if>
+              </div>
+            </sc-for>
+
+                <sc-if value="{{ elEtapaPessoas }}" hint-placeholder-val="{{ false }}">
             <div class="lve-bloco">
-              <h3 class="lve-bloco-t">Modelo, logo e rodapé</h3>
+              <h4 class="lve-bloco-t">Quem assina</h4>
+              <div class="lve-assin">
+                <div><b class="lve-assin-t">Responsável pela elaboração</b>
+                  <label class="lvc-campo"><span>Nome<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elElabNome }}" sc-camel-on-input="{{ elOnElabNome }}"></label>
+                  <label class="lvc-campo"><span>Cargo<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elElabCargo }}" sc-camel-on-input="{{ elOnElabCargo }}" placeholder="Ex.: Agente de Contratação"></label>
+                  <label class="lvc-campo"><span>Matrícula</span><input type="text" value="{{ elElabMat }}" sc-camel-on-input="{{ elOnElabMat }}"></label></div>
+                <div><b class="lve-assin-t">Responsável pelo setor</b>
+                  <label class="lvc-campo"><span>Nome<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elRespNome }}" sc-camel-on-input="{{ elOnRespNome }}"></label>
+                  <label class="lvc-campo"><span>Cargo<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elRespCargo }}" sc-camel-on-input="{{ elOnRespCargo }}" placeholder="Ex.: Secretário Municipal de Administração"></label>
+                  <label class="lvc-campo"><span>Matrícula</span><input type="text" value="{{ elRespMat }}" sc-camel-on-input="{{ elOnRespMat }}"></label></div>
+              </div>
+            </div>
+
+                </sc-if>
+
+                <sc-if value="{{ elEtapaFinal }}" hint-placeholder-val="{{ false }}">
+            <div class="lve-bloco">
+              <h4 class="lve-bloco-t">Modelo, logo e rodapé</h4>
               <div class="lve-2arq">
                 <div class="lvc-campo"><span>Modelo do seu órgão em Word<em class="lve-opc">opcional</em></span>
                   <label class="lve-arq"><input type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" sc-camel-on-change="{{ elOnModelo }}"><span>{{ elModeloRot }}</span></label>
@@ -1773,31 +1879,33 @@
                 <sc-if value="{{ elRodapeSim }}" hint-placeholder-val="{{ false }}"><textarea rows="2" aria-label="Texto do rodapé" value="{{ elRodape }}" sc-camel-on-input="{{ elOnRodape }}" placeholder="Ex.: Rua Álvares de Castro, 346, Centro, Maricá/RJ, CEP 24900-880 · (21) 2637-2052 · compras@marica.rj.gov.br"></textarea></sc-if></div>
             </div>
 
-            <div class="lve-bloco">
-              <h3 class="lve-bloco-t">Quem assina</h3>
-              <div class="lve-assin">
-                <div><b class="lve-assin-t">Responsável pela elaboração</b>
-                  <label class="lvc-campo"><span>Nome<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elElabNome }}" sc-camel-on-input="{{ elOnElabNome }}"></label>
-                  <label class="lvc-campo"><span>Cargo<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elElabCargo }}" sc-camel-on-input="{{ elOnElabCargo }}" placeholder="Ex.: Agente de Contratação"></label>
-                  <label class="lvc-campo"><span>Matrícula</span><input type="text" value="{{ elElabMat }}" sc-camel-on-input="{{ elOnElabMat }}"></label></div>
-                <div><b class="lve-assin-t">Responsável pelo setor</b>
-                  <label class="lvc-campo"><span>Nome<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elRespNome }}" sc-camel-on-input="{{ elOnRespNome }}"></label>
-                  <label class="lvc-campo"><span>Cargo<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elRespCargo }}" sc-camel-on-input="{{ elOnRespCargo }}" placeholder="Ex.: Secretário Municipal de Administração"></label>
-                  <label class="lvc-campo"><span>Matrícula</span><input type="text" value="{{ elRespMat }}" sc-camel-on-input="{{ elOnRespMat }}"></label></div>
-              </div>
-            </div>
-
             <label class="lvc-campo lve-campo"><span>Algo mais que o agente deve saber?<em class="lve-opc">opcional</em></span><textarea rows="2" value="{{ elObs }}" sc-camel-on-input="{{ elOnObs }}" placeholder="Ex.: horário de funcionamento, exigência de sustentabilidade, unidade requisitante"></textarea></label>
 
-            <div class="lve-fim">
-              <p class="lve-cond">{{ elCondicao }}</p>
-              <label class="lvc-check"><input type="checkbox" checked="{{ elAceite }}" sc-camel-on-change="{{ elOnAceite }}"><span>Entendo que é uma minuta elaborada por inteligência artificial, que devo revisar e completar, e que a decisão e a responsabilidade pelo conteúdo final são minhas.</span></label>
-              <sc-if value="{{ elErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ elErro }}</p></sc-if>
-              <sc-if value="{{ elOk }}" hint-placeholder-val="{{ false }}"><p class="lve-ok" role="status">{{ elOk }}</p></sc-if>
-              <button type="button" class="lvh-btn lve-gerar" sc-camel-on-click="{{ elEnviar }}">{{ elBotao }}</button>
-              <small class="lve-tempo">O documento fica pronto em poucos minutos e chega por e-mail, em Word, com as lacunas destacadas.</small>
+                  <div class="lve-resumo"><h4 class="lve-bloco-t">Confira antes de criar</h4>
+                    <dl><sc-for list="{{ elResumo }}" as="r" hint-placeholder-count="5"><div><dt>{{ r.rot }}</dt><dd>{{ r.valor }}</dd></div></sc-for></dl>
+                    <button type="button" class="lve-trocar" sc-camel-on-click="{{ elIrInicio }}">Corrigir alguma informação</button></div>
+                  <div class="lve-fim">
+                    <p class="lve-cond">{{ elCondicao }}</p>
+                    <label class="lvc-check"><input type="checkbox" checked="{{ elAceite }}" sc-camel-on-change="{{ elOnAceite }}"><span>Entendo que é uma minuta elaborada por inteligência artificial, que devo revisar e completar, e que a decisão e a responsabilidade pelo conteúdo final são minhas.</span></label>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ elErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ elErro }}</p></sc-if>
+                <sc-if value="{{ elOk }}" hint-placeholder-val="{{ false }}"><p class="lve-ok" role="status">{{ elOk }}</p></sc-if>
+                <div class="lve-nav">
+                  <sc-if value="{{ elTemVoltar }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ elVoltar }}">← Voltar</button></sc-if>
+                  <sc-if value="{{ elEtapaFinal }}" hint-placeholder-val="{{ false }}"><button type="button" class="lvh-btn lve-gerar" sc-camel-on-click="{{ elEnviar }}">{{ elBotao }}</button></sc-if>
+                  <sc-if value="{{ elNaoFinal }}" hint-placeholder-val="{{ true }}"><button type="button" class="lvh-btn lve-continuar" sc-camel-on-click="{{ elAvancar }}">{{ elBotaoAvancar }}</button></sc-if>
+                </div>
+              </div>
+              </sc-if>
             </div>
-            </sc-if>
+
+            <aside class="lve-lado">
+              <h4>Como o {{ elSigla }} é montado</h4>
+              <ol><sc-for list="{{ elMontagem }}" as="m" hint-placeholder-count="6"><li><b>{{ m.t }}</b><span>{{ m.d }}</span></li></sc-for></ol>
+              <p class="lve-lado-nota">Pronto em poucos minutos, por e-mail e na sua conta, em Word e PDF, com as lacunas destacadas em amarelo.</p>
+            </aside>
           </div>
         </sc-if>
       </section>
@@ -3840,66 +3948,124 @@ const ELAB = {
   ] }
 };
 // criação rápida: o que o assinante informa em cada documento (obrig = exigido pela Lei 14.133/2021; o agente nunca decide por ele)
-const ELAB_ROT = { orgao: "Órgão ou entidade", uf: "UF", objeto: "Objeto", necessidade: "Necessidade / fundamentação", quantidades: "Quantidades e especificações",
+const ELAB_ROT = { orgao: "Órgão ou entidade", uf: "UF", objeto: "Objeto", necessidade: "Necessidade / fundamentação", quantidades: "Quantidades",
   natureza: "Natureza / solução", prazo: "Prazo", prazo_outro: "Prazo (detalhe)", pca: "Plano de Contratações Anual", parcelamento: "Parcelamento",
   parc_motivo: "Motivo do parcelamento", adjudicacao: "Adjudicação", selecao: "Forma de seleção", criterio: "Critério de julgamento",
   regime_exec: "Regime de execução", local: "Local", valor: "Valor estimado", observacoes: "Observações", unidade: "Unidade requisitante",
   elab_nome: "Elaboração: nome", elab_cargo: "Elaboração: cargo", elab_matricula: "Elaboração: matrícula",
   resp_nome: "Responsável pelo setor: nome", resp_cargo: "Responsável pelo setor: cargo", resp_matricula: "Responsável pelo setor: matrícula",
-  rodape_incluir: "Informações no rodapé", rodape: "Texto do rodapé", modelo_arquivo: "Modelo em Word", logo_arquivo: "Logo" };
+  rodape_incluir: "Informações no rodapé", rodape: "Texto do rodapé", modelo_arquivo: "Modelo em Word", logo_arquivo: "Logo",
+  especificacoes: "Especificações", gestor: "Gestor do contrato", fiscais: "Fiscais", fonte: "Fonte orçamentária", correlatas: "Contratações ligadas" };
 // dados do órgão e de quem assina: podem ir para qualquer documento (se o assinante marcar)
-const ELAB_GERAIS = ["orgao", "uf", "observacoes", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
+const ELAB_GERAIS = ["orgao", "uf", "observacoes", "gestor", "fiscais", "fonte", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
 const ELAB_PARES = { modelo_arquivo: "modelo_nome", logo_arquivo: "logo_nome" };
 const ELAB_RAPIDO = {
   etp: [
-    { k: "objeto", rot: "O que você precisa contratar?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
-    { k: "necessidade", rot: "Por que é preciso contratar?", tipo: "texto", obrig: true, ph: "Ex.: o contrato atual termina em março e o quadro próprio não executa esse serviço", dica: "Descrição da necessidade (art. 18, § 1º, I)." },
-    { k: "quantidades", rot: "Quantidades e especificações", tipo: "texto", obrig: true, ph: "Ex.: 6.200 m² de área interna e 1.800 m² externa; limpeza diária, de segunda a sexta", dica: "Estimativa das quantidades (inciso IV). Se souber, diga de onde vêm os números: área, consumo do ano anterior, número de usuários." },
-    { k: "natureza", rot: "Natureza da necessidade", tipo: "chips", obrig: true, op: ["Bem", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva"], dica: "Compra, locação ou outra forma de atender não precisa ser escolhida agora: o ETP compara as soluções." },
-    { k: "prazo", rot: "Prazo pretendido", tipo: "chips", obrig: true, outro: true, op: ["Entrega única", "12 meses", "30 meses", "Outro"] },
-    { k: "pca", rot: "A contratação está no Plano de Contratações Anual?", tipo: "chips", obrig: true, op: ["Sim", "Não", "O órgão não tem PCA"] },
-    { k: "parcelamento", rot: "Parcelamento", tipo: "chips", obrig: true, op: ["Parcelar por itens", "Parcelar por lotes", "Não parcelar"], dica: "Decisão sua (inciso VIII, obrigatório). O agente só redige a justificativa." },
-    { k: "parc_motivo", rot: "Motivo da decisão de parcelar ou não", tipo: "chips", obrig: true, multi: true, outro: true, op: ["Ampliar a competição", "Itens de natureza diferente", "Ganho de escala", "Serviço indivisível ou gestão única", "Risco técnico em dividir", "Outro"] }
+    { k: "objeto", etapa: "contratacao", rot: "O que você precisa contratar?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
+    { k: "necessidade", etapa: "contratacao", rot: "Por que é preciso contratar?", tipo: "texto", obrig: true, ph: "Ex.: o contrato atual termina em março e o quadro próprio não executa esse serviço", dica: "Descrição da necessidade (art. 18, § 1º, I)." },
+    { k: "quantidades", etapa: "contratacao", rot: "Quantidades", tipo: "texto", obrig: true, ph: "Ex.: 6.200 m² de área interna e 1.800 m² externa", dica: "Se souber, diga de onde vêm os números: área, consumo do ano anterior, número de usuários (inciso IV)." },
+    { k: "especificacoes", etapa: "contratacao", rot: "Especificações e requisitos", tipo: "texto", obrig: true, ph: "Ex.: limpeza diária, de segunda a sexta, das 7h às 16h; produtos com registro na Anvisa", dica: "Padrões de qualidade, desempenho, horários, garantia (inciso III)." },
+    { k: "natureza", etapa: "contratacao", rot: "O que será contratado é", tipo: "chips", obrig: true, op: ["Bem", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva"], dica: "Compra, locação ou outra forma não é escolhida agora: o ETP compara as soluções e indica a melhor." },
+    { k: "prazo", etapa: "contratacao", rot: "Por quanto tempo precisa?", tipo: "chips", obrig: true, outro: true, op: ["Entrega única", "12 meses", "30 meses", "Outro"] },
+    { k: "pca", etapa: "contratacao", rot: "Está no Plano de Contratações Anual?", tipo: "chips", obrig: true, op: ["Sim", "Não", "O órgão não tem PCA"] },
+    { k: "correlatas", etapa: "contratacao", rot: "Há contratações ligadas a esta?", tipo: "linha", ph: "Ex.: fornecimento de material de limpeza (contrato 12/2026)" },
+    { k: "parcelamento", etapa: "mercado", depois: true, rot: "Parcelamento", tipo: "chips", obrig: true, op: ["Parcelar por itens", "Parcelar por lotes", "Não parcelar", "Analisar no ETP e recomendar"], dica: "Decisão sua (inciso VIII). Se preferir, o agente analisa à luz da pesquisa e recomenda; a confirmação fica marcada para você." },
+    { k: "parc_motivo", etapa: "mercado", depois: true, rot: "Motivo da sua decisão", tipo: "chips", obrig: true, multi: true, outro: true, seParc: true, op: ["Ampliar a competição", "Itens de natureza diferente", "Ganho de escala", "Serviço indivisível ou gestão única", "Risco técnico em dividir", "Outro"] },
+    { k: "gestor", etapa: "pessoas", rot: "Gestor do contrato", tipo: "linha", ph: "Nome, cargo e matrícula", dica: "Se ainda não foi designado, deixe em branco: o documento marca para preencher." },
+    { k: "fiscais", etapa: "pessoas", rot: "Fiscais do contrato ou comissão de fiscalização", tipo: "texto", ph: "Um por linha: nome, cargo, matrícula e função (fiscal técnico, administrativo, suplente)" },
+    { k: "fonte", etapa: "pessoas", rot: "Fonte orçamentária e dotação", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" }
   ],
   tr: [
-    { k: "objeto", rot: "O que será contratado?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
-    { k: "necessidade", rot: "Fundamentação: número do ETP ou motivo da contratação", tipo: "texto", obrig: true, ph: "Ex.: ETP nº 12/2026, processo 1234/2026", dica: "Alínea \"b\" do art. 6º, XXIII." },
-    { k: "quantidades", rot: "Quantidades e especificações", tipo: "texto", obrig: true, ph: "Ex.: 6.200 m² de área interna; limpeza diária, de segunda a sexta, das 7h às 16h" },
-    { k: "natureza", rot: "Solução escolhida", tipo: "chips", obrig: true, op: ["Compra", "Locação", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva"] },
-    { k: "prazo", rot: "Prazo", tipo: "chips", obrig: true, outro: true, op: ["Entrega única", "12 meses", "30 meses", "Outro"] },
-    { k: "adjudicacao", rot: "Adjudicação", tipo: "chips", obrig: true, op: ["Por item", "Por lote", "Global (lote único)"] },
-    { k: "selecao", rot: "Forma de seleção do fornecedor", tipo: "chips", obrig: true, op: ["Pregão", "Concorrência", "Dispensa", "Inexigibilidade", "Adesão a ata"] },
-    { k: "criterio", rot: "Critério de julgamento", tipo: "chips", obrig: true, op: ["Menor preço", "Maior desconto", "Técnica e preço", "Melhor técnica"] },
-    { k: "valor", rot: "Valor estimado da pesquisa de preços", tipo: "linha", ph: "Ex.: R$ 850.000,00 por ano", dica: "Se ainda não tiver, deixe em branco: o agente traz contratações semelhantes do PNCP como referência e marca o valor para completar." }
+    { k: "objeto", etapa: "contratacao", rot: "O que será contratado?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
+    { k: "necessidade", etapa: "contratacao", rot: "Fundamentação: número do ETP ou motivo da contratação", tipo: "texto", obrig: true, ph: "Ex.: ETP nº 12/2026, processo 1234/2026", dica: "Alínea \"b\" do art. 6º, XXIII." },
+    { k: "quantidades", etapa: "contratacao", rot: "Quantidades", tipo: "texto", obrig: true, ph: "Ex.: 6.200 m² de área interna" },
+    { k: "especificacoes", etapa: "contratacao", rot: "Especificações e requisitos", tipo: "texto", obrig: true, ph: "Ex.: limpeza diária, de segunda a sexta, das 7h às 16h" },
+    { k: "natureza", etapa: "contratacao", rot: "Solução escolhida (do ETP)", tipo: "chips", obrig: true, op: ["Compra", "Locação", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva"] },
+    { k: "prazo", etapa: "contratacao", rot: "Prazo", tipo: "chips", obrig: true, outro: true, op: ["Entrega única", "12 meses", "30 meses", "Outro"] },
+    { k: "valor", etapa: "mercado", rot: "Valor estimado da sua pesquisa de preços", tipo: "linha", ph: "Ex.: R$ 850.000,00 por ano", dica: "Se ainda não tiver, deixe em branco: pesquisamos contratações e preços praticados como referência." },
+    { k: "adjudicacao", etapa: "mercado", depois: true, rot: "Adjudicação", tipo: "chips", obrig: true, op: ["Por item", "Por lote", "Global (lote único)"] },
+    { k: "selecao", etapa: "mercado", depois: true, rot: "Forma de seleção do fornecedor", tipo: "chips", obrig: true, op: ["Pregão", "Concorrência", "Dispensa", "Inexigibilidade", "Adesão a ata"] },
+    { k: "criterio", etapa: "mercado", depois: true, rot: "Critério de julgamento", tipo: "chips", obrig: true, op: ["Menor preço", "Maior desconto", "Técnica e preço", "Melhor técnica"] },
+    { k: "gestor", etapa: "pessoas", rot: "Gestor do contrato", tipo: "linha", ph: "Nome, cargo e matrícula", dica: "Se ainda não foi designado, deixe em branco: o documento marca para preencher." },
+    { k: "fiscais", etapa: "pessoas", rot: "Fiscais do contrato ou comissão de fiscalização", tipo: "texto", ph: "Um por linha: nome, cargo, matrícula e função (fiscal técnico, administrativo, suplente)" },
+    { k: "fonte", etapa: "pessoas", rot: "Fonte orçamentária e dotação", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" }
   ],
   projeto_basico: [
-    { k: "objeto", rot: "Qual é a obra ou o serviço de engenharia?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: reforma e acessibilidade da Escola Municipal X" },
-    { k: "necessidade", rot: "Por que é preciso fazer?", tipo: "texto", obrig: true, ph: "Ex.: o telhado tem infiltrações e a escola não tem rampa de acesso" },
-    { k: "local", rot: "Local da obra", tipo: "linha", obrig: true, ph: "Ex.: Rua das Flores, 100, Centro, Maricá" },
-    { k: "quantidades", rot: "Principais serviços e quantidades", tipo: "texto", obrig: true, ph: "Ex.: 850 m² de cobertura; 2 rampas; 4 banheiros adaptados" },
-    { k: "natureza", rot: "Natureza", tipo: "chips", obrig: true, op: ["Obra", "Serviço de engenharia", "Reforma"] },
-    { k: "prazo", rot: "Prazo de execução", tipo: "chips", obrig: true, outro: true, op: ["6 meses", "12 meses", "Outro"] },
-    { k: "regime_exec", rot: "Regime de execução", tipo: "chips", obrig: true, op: ["Empreitada por preço unitário", "Empreitada por preço global", "Empreitada integral", "Contratação por tarefa"] },
-    { k: "adjudicacao", rot: "Parcelamento", tipo: "chips", obrig: true, op: ["Lote único", "Por lotes ou etapas"] },
-    { k: "selecao", rot: "Forma de seleção", tipo: "chips", obrig: true, op: ["Concorrência", "Pregão (serviço comum de engenharia)", "Dispensa"] },
-    { k: "criterio", rot: "Critério de julgamento", tipo: "chips", obrig: true, op: ["Menor preço", "Maior desconto", "Técnica e preço"] },
-    { k: "valor", rot: "Orçamento, se já tiver", tipo: "linha", ph: "Ex.: R$ 1.250.000,00 (SINAPI 09/2026)", dica: "Se não tiver, o orçamento fica marcado para completar." }
+    { k: "objeto", etapa: "contratacao", rot: "Qual é a obra ou o serviço de engenharia?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: reforma e acessibilidade da Escola Municipal X" },
+    { k: "necessidade", etapa: "contratacao", rot: "Por que é preciso fazer?", tipo: "texto", obrig: true, ph: "Ex.: o telhado tem infiltrações e a escola não tem rampa de acesso" },
+    { k: "local", etapa: "contratacao", rot: "Local da obra", tipo: "linha", obrig: true, ph: "Ex.: Rua das Flores, 100, Centro, Maricá" },
+    { k: "quantidades", etapa: "contratacao", rot: "Principais serviços e quantidades", tipo: "texto", obrig: true, ph: "Ex.: 850 m² de cobertura; 2 rampas; 4 banheiros adaptados" },
+    { k: "especificacoes", etapa: "contratacao", rot: "Especificações e padrões de acabamento", tipo: "texto", ph: "Ex.: telha termoacústica; piso cerâmico PEI 4; NBR 9050" },
+    { k: "natureza", etapa: "contratacao", rot: "Natureza", tipo: "chips", obrig: true, op: ["Obra", "Serviço de engenharia", "Reforma"] },
+    { k: "prazo", etapa: "contratacao", rot: "Prazo de execução", tipo: "chips", obrig: true, outro: true, op: ["6 meses", "12 meses", "Outro"] },
+    { k: "regime_exec", etapa: "mercado", rot: "Regime de execução", tipo: "chips", obrig: true, op: ["Empreitada por preço unitário", "Empreitada por preço global", "Empreitada integral", "Contratação por tarefa"] },
+    { k: "adjudicacao", etapa: "mercado", rot: "Parcelamento", tipo: "chips", obrig: true, op: ["Lote único", "Por lotes ou etapas"] },
+    { k: "selecao", etapa: "mercado", rot: "Forma de seleção", tipo: "chips", obrig: true, op: ["Concorrência", "Pregão (serviço comum de engenharia)", "Dispensa"] },
+    { k: "criterio", etapa: "mercado", rot: "Critério de julgamento", tipo: "chips", obrig: true, op: ["Menor preço", "Maior desconto", "Técnica e preço"] },
+    { k: "valor", etapa: "mercado", rot: "Orçamento, se já tiver", tipo: "linha", ph: "Ex.: R$ 1.250.000,00 (SINAPI 09/2026)", dica: "Se não tiver, o orçamento fica marcado para completar." },
+    { k: "gestor", etapa: "pessoas", rot: "Gestor do contrato", tipo: "linha", ph: "Nome, cargo e matrícula", dica: "Se ainda não foi designado, deixe em branco: o documento marca para preencher." },
+    { k: "fiscais", etapa: "pessoas", rot: "Fiscais do contrato ou comissão de fiscalização", tipo: "texto", ph: "Um por linha: nome, cargo, matrícula e função (fiscal técnico, administrativo, suplente)" },
+    { k: "fonte", etapa: "pessoas", rot: "Fonte orçamentária e dotação", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" }
   ]
 };
+const ELAB_ETAPAS = {
+  etp: [
+    { id: "contratacao", t: "A contratação", d: "O que, por quê, quanto e como deve ser. É a base de todo o estudo." },
+    { id: "mercado", t: "Mercado e soluções", d: "Pesquisamos contratações de outros órgãos e preços praticados para cada solução possível. O agente compara todas no ETP e indica a melhor." },
+    { id: "pessoas", t: "Pessoas e orçamento", d: "Quem vai gerir, fiscalizar e assinar, e de onde sai o recurso." },
+    { id: "final", t: "Revisar e criar", d: "Modelo do seu órgão, logo, rodapé e conferência final." } ],
+  tr: [
+    { id: "contratacao", t: "A contratação", d: "O objeto já definido no ETP: quantidades, especificações e a solução escolhida." },
+    { id: "mercado", t: "Preço e forma de contratação", d: "Valor estimado (ou nossa pesquisa de referência) e como o fornecedor será escolhido." },
+    { id: "pessoas", t: "Pessoas e orçamento", d: "Quem vai gerir, fiscalizar e assinar, e a dotação orçamentária." },
+    { id: "final", t: "Revisar e criar", d: "Modelo do seu órgão, logo, rodapé e conferência final." } ],
+  projeto_basico: [
+    { id: "contratacao", t: "A obra", d: "O que será feito, onde, por quê e as quantidades principais." },
+    { id: "mercado", t: "Execução e contratação", d: "Regime de execução, parcelamento, seleção e orçamento." },
+    { id: "pessoas", t: "Pessoas e orçamento", d: "Quem vai gerir, fiscalizar e assinar, e a dotação orçamentária." },
+    { id: "final", t: "Revisar e criar", d: "Modelo do seu órgão, logo, rodapé e conferência final." } ]
+};
+const ELAB_MONTAGEM = {
+  etp: [
+    ["Suas informações", "Objeto, necessidade, quantidades, especificações e pessoas responsáveis entram como você escreveu."],
+    ["Pesquisa de mercado", "Contratações semelhantes no PNCP e preços unitários praticados no Compras.gov.br, primeiro no seu estado, mais as referências que você enviar."],
+    ["Todas as soluções", "Compra, locação, serviço, adesão a ata, execução direta: cada uma com vantagens, desvantagens e custo estimado."],
+    ["A melhor solução", "O agente indica a mais vantajosa com base nos dados e justifica; a escolha final continua sua."],
+    ["Os 13 itens da lei", "Cada inciso do art. 18, § 1º, da Lei 14.133/2021, com a jurisprudência do Tribunal de Contas do seu estado."],
+    ["Conferência e Word", "O agente revisa o próprio texto, lista pendências e entrega em Word e PDF."] ],
+  tr: [
+    ["Suas informações", "Objeto, solução escolhida no ETP, quantidades, especificações e responsáveis."],
+    ["Preço", "Seu valor estimado ou, se não tiver, contratações e preços praticados como referência."],
+    ["Forma de contratação", "Adjudicação, modalidade e critério que você escolheu, fundamentados."],
+    ["As 10 alíneas da lei", "Art. 6º, XXIII: execução, gestão, medição e pagamento, seleção, valor e orçamento."],
+    ["Conferência e Word", "O agente revisa o próprio texto, lista pendências e entrega em Word e PDF."] ],
+  projeto_basico: [
+    ["Suas informações", "Obra, local, serviços, quantidades e responsáveis."],
+    ["Execução", "Regime, parcelamento, seleção e critério que você escolheu, fundamentados."],
+    ["Elementos técnicos", "Art. 6º, XXV: levantamentos, soluções técnicas, serviços e materiais, métodos e programação."],
+    ["Orçamento", "Seu orçamento ou a estrutura pronta para completar (SINAPI, EMOP, BDI)."],
+    ["Conferência e Word", "O agente revisa o próprio texto, lista pendências e entrega em Word e PDF."] ]
+};
 // campos obrigatórios que faltam (inclui órgão e UF e o detalhe quando marcar "Outro")
-function elFaltando(doc, R) {
-  const vazio = (k) => !String((R || {})[k] || "").trim();
+function elFaltando(doc, R, etapa) {
+  R = R || {};
+  const vazio = (k) => !String(R[k] || "").trim();
+  const nesta = (e) => !etapa || etapa === e;
   const f = [];
-  if (vazio("orgao")) f.push("órgão");
-  if (vazio("uf")) f.push("UF");
+  if (nesta("contratacao") && vazio("orgao")) f.push("órgão");
+  if (nesta("contratacao") && vazio("uf")) f.push("UF");
   (ELAB_RAPIDO[doc] || []).forEach((c) => {
+    if (!nesta(c.etapa)) return;
+    if (c.seParc && String(R.parcelamento || "").startsWith("Analisar")) return;
     const nome = (ELAB_ROT[c.k] || c.rot).toLowerCase();
     if (c.obrig && vazio(c.k)) f.push(nome);
     else if (c.outro && String(R[c.k] || "").split("; ").includes("Outro") && vazio(c.k + "_outro")) f.push("o detalhe de \"" + nome + "\" (você marcou Outro)");
   });
-  if (vazio("rodape_incluir")) f.push("se quer informações no rodapé");
-  else if (R.rodape_incluir === "Sim" && vazio("rodape")) f.push("texto do rodapé");
-  ["elab_nome", "elab_cargo", "resp_nome", "resp_cargo"].forEach((k) => { if (vazio(k)) f.push(ELAB_ROT[k].toLowerCase()); });
+  if (nesta("pessoas")) ["elab_nome", "elab_cargo", "resp_nome", "resp_cargo"].forEach((k) => { if (vazio(k)) f.push(ELAB_ROT[k].toLowerCase()); });
+  if (nesta("final")) {
+    if (vazio("rodape_incluir")) f.push("se quer informações no rodapé");
+    else if (R.rodape_incluir === "Sim" && vazio("rodape")) f.push("texto do rodapé");
+  }
   return f;
 }
 const MESES_NOME = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
@@ -4339,7 +4505,7 @@ class Component extends DCLogic {
     const p = this.state.perfil || {};
     const base = temRasc ? rasc : {};
     if (!base.orgao && p.orgao) base.orgao = p.orgao;
-    this.setState({ el: { doc, passo: 0, respostas: base, rascunho: temRasc, reap, reapAnterior: reap.docAnterior || "", reapAberto: reap.length > 0,
+    this.setState({ el: { doc, passo: 0, maxPasso: 0, respostas: base, rascunho: temRasc, reap, reapAnterior: reap.docAnterior || "", reapAberto: reap.length > 0,
       aceite: false, enviando: false, erro: "", ok: "" } });
     try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {}
   }
@@ -4411,29 +4577,61 @@ class Component extends DCLogic {
     try { localStorage.removeItem("lv-elab-" + doc); localStorage.setItem("lv-elab-ultimo", JSON.stringify({ doc, respostas, em: Date.now() })); } catch (e) {}
   }
 
-  elIr(passo) {
-    const n = this.elPassos(this.state.el.doc).length;
-    this.setState((s) => ({ el: { ...s.el, passo: Math.max(0, Math.min(n, passo)), erro: "" } }));
+  elIrEtapa(n) {
+    const tot = (ELAB_ETAPAS[this.state.el.doc] || []).length;
+    const passo = Math.max(0, Math.min(tot - 1, n));
+    this.setState((s) => ({ el: { ...s.el, passo, maxPasso: Math.max(s.el.maxPasso || 0, passo), erro: "" } }));
     try { document.getElementById("el-topo").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {}
+    const et = (ELAB_ETAPAS[this.state.el.doc] || [])[passo];
+    const R = this.state.el.respostas || {};
+    if (et && et.id === "mercado" && this.elPrecisaPesquisa() && this.sb && this.u) {  // pesquisa automática ao chegar na etapa
+      const pq = this.state.el.pesq;
+      if (!pq || pq.chave !== [R.objeto, R.uf, R.natureza].join("|")) this.elPesquisar();
+    }
+  }
+
+  elPrecisaPesquisa() {
+    const el = this.state.el, R = el.respostas || {};
+    return el.doc === "etp" || (el.doc === "tr" && !String(R.valor || "").trim());
+  }
+
+  // pesquisa feita e, se não achou nada, o assinante forneceu referências ou escolheu completar depois
+  async elChecarPesquisa() {
+    if (!this.elPrecisaPesquisa() || !this.sb || !this.u || !GERACAO_ATIVA) return true;
+    const R0 = this.state.el.respostas || {};
+    let pq = this.state.el.pesq;
+    if (!pq || pq.chave !== [R0.objeto, R0.uf, R0.natureza].join("|") || pq.estado === "buscando") pq = await this.elPesquisar();
+    if (!pq) return false;
+    const R = this.state.el.respostas || {};
+    const proprias = String(R.precos_links || "").trim() || String(R.precos_manual || "").trim() || String(R.precos_pdfs || "").length > 2;
+    if (pq.estado === "falhou" && !proprias && R.precos_sem !== "sim") {
+      this.setState((s) => ({ el: { ...s.el, erro: "A pesquisa de mercado não encontrou dados. Forneça referências de preço ou marque que vai completar depois." } }));
+      return false;
+    }
+    return true;
+  }
+
+  async elAvancar() {
+    const el = this.state.el, et = (ELAB_ETAPAS[el.doc] || [])[el.passo || 0];
+    if (!et) return;
+    const falta = elFaltando(el.doc, el.respostas, et.id);
+    if (falta.length) { this.setState({ el: { ...el, erro: "Falta informar: " + falta.join(", ") + "." } }); return; }
+    if (et.id === "contratacao" && String((el.respostas || {}).objeto || "").trim().length < 8) { this.setState({ el: { ...el, erro: "Descreva o objeto com um pouco mais de detalhe." } }); return; }
+    if (et.id === "mercado" && !(await this.elChecarPesquisa())) return;
+    this.elIrEtapa((el.passo || 0) + 1);
   }
 
   async elEnviar() {
     const el = this.state.el, d = ELAB[el.doc];
     const falta = elFaltando(el.doc, el.respostas);
-    if (falta.length) { this.setState({ el: { ...el, erro: "Falta informar: " + falta.join(", ") + "." } }); return; }
+    if (falta.length) {  // volta para a primeira etapa com pendência
+      const ets = ELAB_ETAPAS[el.doc] || [], i = ets.findIndex((e) => elFaltando(el.doc, el.respostas, e.id).length);
+      if (i >= 0 && i !== el.passo) this.elIrEtapa(i);
+      this.setState((x) => ({ el: { ...x.el, erro: "Falta informar: " + falta.join(", ") + "." } })); return;
+    }
     if (String(el.respostas.objeto || "").trim().length < 8) { this.setState({ el: { ...el, erro: "Descreva o objeto com um pouco mais de detalhe." } }); return; }
     if (!el.aceite) { this.setState({ el: { ...el, erro: "Leia e aceite as condições para continuar." } }); return; }
-    const R0 = el.respostas || {}, precisaPesq = el.doc === "etp" || (el.doc === "tr" && !String(R0.valor || "").trim());
-    if (precisaPesq && this.sb && this.u && GERACAO_ATIVA) {
-      let pq = el.pesq;
-      if (!pq || pq.chave !== [R0.objeto, R0.uf, R0.natureza].join("|") || pq.estado === "buscando") pq = await this.elPesquisar();
-      if (!pq) return;
-      const proprias = String(R0.precos_links || "").trim() || String(R0.precos_manual || "").trim() || String(R0.precos_pdfs || "").length > 2;
-      if (pq.estado === "falhou" && !proprias && R0.precos_sem !== "sim") {
-        this.setState((s) => ({ el: { ...s.el, erro: "A pesquisa de mercado não encontrou dados. Forneça referências de preço ou marque que vai completar depois." } }));
-        return;
-      }
-    }
+    if (!(await this.elChecarPesquisa())) return;
     if (!GERACAO_ATIVA) { this.setState({ el: { ...this.state.el, ok: "Tudo certo com as respostas, e elas ficam salvas neste aparelho. A elaboração automática está na fase final de testes e será liberada em breve.", erro: "" } }); return; }
     if (!this.sb) { this.setState({ el: { ...this.state.el, erro: "A elaboração ainda não está ativa neste site (modo demonstração)." } }); return; }
     if (!this.u) { this.setState({ volta: "elaborar" }); this.irPara("login"); return; }
@@ -5955,7 +6153,7 @@ class Component extends DCLogic {
           elExemplos: (EX[el.doc] || []).map(([rot, txt]) => ({ rot, usar: () => set("objeto", txt) })),
           elOrgao: R.orgao || "", elOnOrgao: this.elResponder("orgao"),
           elUf: R.uf || "", elOnUf: (e) => set("uf", String(e.target.value).toUpperCase().replace(/[^A-Z]/g, "").slice(0, 2)),
-          elCampos: (ELAB_RAPIDO[el.doc] || []).map((c) => {
+          ...(() => { const mapa = (c) => {
             const v = String(R[c.k] || ""), sel = v ? v.split("; ") : [];
             const alterna = (nome) => {
               if (!c.multi) return set(c.k, v === nome ? "" : nome);
@@ -5967,7 +6165,38 @@ class Component extends DCLogic {
               valor: v, onInput: this.elResponder(c.k),
               op: (c.op || []).map((nome) => ({ nome, sel: sel.includes(nome), escolher: () => alterna(nome) })),
               mostraOutro: !!c.outro && sel.includes("Outro"), outroValor: R[c.k + "_outro"] || "", onOutro: this.elResponder(c.k + "_outro") };
-          }),
+          };
+            const et = (ELAB_ETAPAS[el.doc] || [])[el.passo || 0] || {};
+            const vis = (c) => c.etapa === et.id && !(c.seParc && String(R.parcelamento || "").startsWith("Analisar"));
+            return { elCamposA: (ELAB_RAPIDO[el.doc] || []).filter((c) => vis(c) && !c.depois).map(mapa),
+                     elCamposB: (ELAB_RAPIDO[el.doc] || []).filter((c) => vis(c) && c.depois).map(mapa) };
+          })(),
+          ...(() => {
+            const ets = ELAB_ETAPAS[el.doc] || [], i = Math.min(el.passo || 0, Math.max(0, ets.length - 1)), et = ets[i] || {};
+            const resumo = [];
+            if (et.id === "final") {
+              const add = (k, rot) => { const v = String(R[k] || "").trim(); if (v) resumo.push({ rot, valor: (v + (R[k + "_outro"] ? " (" + R[k + "_outro"] + ")" : "")).slice(0, 160) + (v.length > 160 ? "…" : "") }); };
+              add("orgao", "Órgão"); add("uf", "UF");
+              (ELAB_RAPIDO[el.doc] || []).forEach((c) => add(c.k, ELAB_ROT[c.k] || c.rot));
+              add("elab_nome", "Elaboração"); add("resp_nome", "Responsável pelo setor");
+              const pq = el.pesq;
+              if (pq && pq.estado === "ok") resumo.push({ rot: "Pesquisa de mercado", valor: pq.refs.length + " contratações e " + (pq.precos || []).length + " grupos de preços praticados" });
+              else if (R.precos_sem === "sim") resumo.push({ rot: "Pesquisa de mercado", valor: "valores a completar depois" });
+            }
+            return {
+              elBase: d ? d.base : "",
+              elEtapas: ets.map((e, j) => ({ n: j < i ? "✓" : String(j + 1), t: e.t, atual: j === i ? "step" : "false",
+                cls: j === i ? "atual" : j < i ? "feita" : "", ir: () => { if (j <= Math.max(i, el.maxPasso || 0)) this.elIrEtapa(j); } })),
+              elProgPct: ets.length ? Math.round(((i + 1) / ets.length) * 100) : 0,
+              elEtapaN: i + 1, elEtapaTotal: ets.length, elEtapaTitulo: et.t || "", elEtapaDesc: et.d || "",
+              elEtapaContratacao: et.id === "contratacao", elEtapaMercado: et.id === "mercado", elEtapaPessoas: et.id === "pessoas", elEtapaFinal: et.id === "final",
+              elNaoFinal: et.id !== "final", elTemVoltar: i > 0, elVoltar: () => this.elIrEtapa(i - 1), elIrInicio: () => this.elIrEtapa(0),
+              elAvancar: () => this.elAvancar(),
+              elBotaoAvancar: et.id === "mercado" && el.pesq && el.pesq.estado === "buscando" ? "Pesquisando…" : "Continuar →",
+              elResumo: resumo,
+              elMontagem: (ELAB_MONTAGEM[el.doc] || []).map(([t, dd]) => ({ t, d: dd }))
+            };
+          })(),
           elMostraPesquisa: el.doc === "etp" || (el.doc === "tr" && !String(R.valor || "").trim()),
           elTextoPesquisa: el.doc === "etp"
             ? "No ETP não se informa valor estimado. Pesquisamos no PNCP contratações de outros órgãos e, no Compras.gov.br, os preços unitários praticados, priorizando o seu estado, para todas as soluções possíveis (compra, locação, serviço…); o agente compara as soluções no estudo, com as fontes."
