@@ -802,7 +802,7 @@
   .lve-como p { margin: 0; font-size: 13.5px; color: #55666E; line-height: 1.5; }
   .lve-como-n { width: 28px; height: 28px; border-radius: 50%; background: #E3F6EC; color: #0A7A50; font-weight: 800; display: grid; place-items: center; font-size: 14px; margin-bottom: 4px; }
   .lve-h2 { font-size: 22px; margin: 34px 0 14px; color: #0B1F2A; font-family: Manrope, system-ui, sans-serif; font-weight: 800; }
-  .lve-como + .lve-h2 + .lve-docs { margin-top: 0; }
+  .lve-como + .lve-h2 + .lve-docs, .lve-h2 + .lve-docs { margin-top: 0; }
   .lve-wiz { margin-top: -28px; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
   .lve-principal { background: #fff; border: 1px solid #E3E9E8; border-radius: 22px; padding: 24px 28px 28px; box-shadow: 0 16px 40px rgba(11,31,42,0.08); display: grid; gap: 18px; min-width: 0; }
   .lve-w-cab { display: flex; align-items: center; gap: 12px; }
@@ -2870,6 +2870,13 @@
                     </sc-if>
                     <sc-if value="{{ ma.aguardaPagamento }}" hint-placeholder-val="{{ false }}">
                       <button sc-camel-on-click="{{ ma.conferir }}" style="margin-top: 12px; background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 9px; padding: 9px 14px; font-size: 13px; font-weight: 700; cursor: pointer">Conferir pagamento</button>
+                    </sc-if>
+                    <sc-if value="{{ ma.podeExcluir }}" hint-placeholder-val="{{ false }}">
+                      <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; align-items: center">
+                        <button sc-camel-on-click="{{ ma.excluir }}" style="background: #FDECEC; border: 1px solid #F3C2C2; color: #9B2C2C; border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 800; cursor: pointer">{{ ma.excluirTxt }}</button>
+                        <sc-if value="{{ ma.confirmando }}" hint-placeholder-val="{{ false }}"><button sc-camel-on-click="{{ ma.cancelarExcluir }}" style="background: none; border: 0; color: #66757F; font-size: 13px; font-weight: 700; cursor: pointer">Cancelar</button>
+                          <span style="font-size: 12.5px; color: #66757F">A tentativa sai da lista. Não há cobrança envolvida.</span></sc-if>
+                      </div>
                     </sc-if>
                   </div>
                 </sc-for>
@@ -5853,6 +5860,15 @@ class Component extends DCLogic {
     this.setState({ normasUsuario: (this.state.normasUsuario || []).filter((x) => x.id !== n.id), an: { ...this.state.an, normas: (this.state.an.normas || []).filter((x) => x !== n.id) } });
   }
 
+  async excluirAnalise(id) {
+    if (!this.sb) return;
+    this.setState({ excluindoAgora: true });
+    const { error } = await this.sb.functions.invoke("mp-checkout", { body: { acao: "excluir_analise", id } });
+    if (error) { this.setState({ excluindoAgora: false }); this.aviso(await erroDaFuncao(error), "erro"); return; }
+    this.setState((s) => ({ excluindoAgora: false, excluirId: null, analises: (s.analises || []).filter((a) => a.id !== id) }));
+    this.aviso("Tentativa excluída.");
+  }
+
   async baixarParecer(caminho, nome) {
     if (!this.sb || !caminho) return;
     const { data, error } = await this.sb.storage.from("analises").createSignedUrl(caminho, 300, { download: nome });
@@ -7260,6 +7276,10 @@ class Component extends DCLogic {
           pronta: a.status === "concluida" && !!(a.parecer_pdf || a.parecer_docx),
           baixarPdf: () => a.parecer_pdf ? this.baixarParecer(a.parecer_pdf, (ger ? "Minuta Licitacon - " : "Parecer Licitacon - ") + base + ".pdf") : this.aviso("Este documento está disponível em Word.", "erro"),
           baixarDocx: () => this.baixarParecer(a.parecer_docx, (ger ? "Minuta Licitacon - " : "Parecer Licitacon - ") + base + ".docx"),
+          podeExcluir: a.status === "erro" || a.status === "cancelada", confirmando: s.excluirId === a.id,
+          excluirTxt: s.excluirId === a.id ? (s.excluindoAgora ? "Excluindo…" : "Confirmar exclusão") : "Excluir",
+          excluir: () => s.excluirId === a.id ? this.excluirAnalise(a.id) : this.setState({ excluirId: a.id }),
+          cancelarExcluir: () => this.setState({ excluirId: null }),
           id: a.id, tipoRot: ger ? "Criado" : "Analisado", tipoCor: ger ? "#0F6B7E" : "#6B4A0A", tipoFundo: ger ? "#E6F2F4" : "#FFF4DC",
           rotPdf: ger ? "Baixar em PDF" : "Baixar parecer (PDF)",
           aguardaPagamento: a.status === "aguardando_pagamento",

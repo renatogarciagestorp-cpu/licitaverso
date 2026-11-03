@@ -189,6 +189,18 @@ Deno.serve(async (req) => {
       return resposta({ ok: true, id });
     }
 
+    // ---------------------------------------------------------------- excluir tentativa que falhou (Minha conta → Meus documentos)
+    if (acao === "excluir_analise") {
+      const id = String(corpo.id ?? "");
+      const { data: g } = await admin.from("analises").select("id, usuario_id, status").eq("id", id).maybeSingle();
+      if (!g || g.usuario_id !== usuario.id) return erro("Documento não encontrado.", 404);
+      if (g.status !== "erro" && g.status !== "cancelada") return erro("Só é possível excluir tentativas que não foram concluídas.");
+      await admin.storage.from("analises").remove([`${usuario.id}/pareceres/${id}-rascunho.json`, `${usuario.id}/pareceres/${id}-rascunho-pesquisa.json`]).catch(() => null);
+      const { error } = await admin.from("analises").delete().eq("id", id).eq("usuario_id", usuario.id);
+      if (error) throw error;
+      return resposta({ ok: true });
+    }
+
     // ---------------------------------------------------------------- respostas às perguntas do agente durante a elaboração
     if (acao === "responder_geracao") {
       const id = String(corpo.id ?? "");
