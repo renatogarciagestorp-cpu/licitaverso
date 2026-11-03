@@ -1575,7 +1575,7 @@
               <sc-if value="{{ calcHouve }}" hint-placeholder-val="{{ false }}">
                 <div class="lvc-campo"><span>Mês em que o último reajuste passou a valer</span><div class="lvc-mp"><button type="button" class="{{ mpUltimo.btnClasse }}" sc-camel-on-click="{{ mpUltimo.alternar }}" aria-expanded="{{ mpUltimo.aberto }}"><span>{{ mpUltimo.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">📅</span></button><sc-if value="{{ mpUltimo.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpUltimo.topo }}</div><div class="lvw-cab"><button type="button" class="lvw-titulo" sc-camel-on-click="{{ mpUltimo.trocarVista }}">{{ mpUltimo.titulo }}</button><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpUltimo.ant }}" aria-label="Anterior">▲</button><button type="button" sc-camel-on-click="{{ mpUltimo.prox }}" aria-label="Próximo">▼</button></span></div><sc-if value="{{ mpUltimo.vistaDias }}" hint-placeholder-val="{{ true }}"><div class="lvw-sem"><span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span></div><div class="lvw-dias"><sc-for list="{{ mpUltimo.dias }}" as="dd" hint-placeholder-count="42"><button type="button" class="{{ dd.classe }}" sc-camel-on-click="{{ dd.escolher }}" aria-label="{{ dd.aria }}">{{ dd.n }}</button></sc-for></div></sc-if><sc-if value="{{ mpUltimo.vistaMeses }}" hint-placeholder-val="{{ false }}"><div class="lvw-meses"><sc-for list="{{ mpUltimo.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpUltimo.hoje }}">Hoje</button><sc-if value="{{ mpUltimo.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpUltimo.limpar }}">Limpar</button></sc-if></div></div></sc-if></div><small>O próximo ciclo conta 12 meses a partir daqui.</small></div>
               </sc-if>
-              <div class="lvc-campo"><span>Calcular até (mês de referência)</span><div class="lvc-mp"><button type="button" class="{{ mpRef.btnClasse }}" sc-camel-on-click="{{ mpRef.alternar }}" aria-expanded="{{ mpRef.aberto }}"><span>{{ mpRef.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">📅</span></button><sc-if value="{{ mpRef.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpRef.topo }}</div><div class="lvw-cab"><button type="button" class="lvw-titulo" sc-camel-on-click="{{ mpRef.trocarVista }}">{{ mpRef.titulo }}</button><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpRef.ant }}" aria-label="Anterior">▲</button><button type="button" sc-camel-on-click="{{ mpRef.prox }}" aria-label="Próximo">▼</button></span></div><sc-if value="{{ mpRef.vistaDias }}" hint-placeholder-val="{{ true }}"><div class="lvw-sem"><span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span></div><div class="lvw-dias"><sc-for list="{{ mpRef.dias }}" as="dd" hint-placeholder-count="42"><button type="button" class="{{ dd.classe }}" sc-camel-on-click="{{ dd.escolher }}" aria-label="{{ dd.aria }}">{{ dd.n }}</button></sc-for></div></sc-if><sc-if value="{{ mpRef.vistaMeses }}" hint-placeholder-val="{{ false }}"><div class="lvw-meses"><sc-for list="{{ mpRef.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpRef.hoje }}">Hoje</button><sc-if value="{{ mpRef.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpRef.limpar }}">Limpar</button></sc-if></div></div></sc-if></div><small>Até quando contar os ciclos e a diferença acumulada. Em branco, usa o mês atual.</small></div>
+              <div class="lvc-campo"><span>Data final (último mês do índice)</span><div class="lvc-mp"><button type="button" class="{{ mpRef.btnClasse }}" sc-camel-on-click="{{ mpRef.alternar }}" aria-expanded="{{ mpRef.aberto }}"><span>{{ mpRef.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">📅</span></button><sc-if value="{{ mpRef.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpRef.topo }}</div><div class="lvw-cab"><button type="button" class="lvw-titulo" sc-camel-on-click="{{ mpRef.trocarVista }}">{{ mpRef.titulo }}</button><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpRef.ant }}" aria-label="Anterior">▲</button><button type="button" sc-camel-on-click="{{ mpRef.prox }}" aria-label="Próximo">▼</button></span></div><sc-if value="{{ mpRef.vistaDias }}" hint-placeholder-val="{{ true }}"><div class="lvw-sem"><span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span></div><div class="lvw-dias"><sc-for list="{{ mpRef.dias }}" as="dd" hint-placeholder-count="42"><button type="button" class="{{ dd.classe }}" sc-camel-on-click="{{ dd.escolher }}" aria-label="{{ dd.aria }}">{{ dd.n }}</button></sc-for></div></sc-if><sc-if value="{{ mpRef.vistaMeses }}" hint-placeholder-val="{{ false }}"><div class="lvw-meses"><sc-for list="{{ mpRef.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpRef.hoje }}">Hoje</button><sc-if value="{{ mpRef.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpRef.limpar }}">Limpar</button></sc-if></div></div></sc-if></div><small>{{ calcDataFinalAjuda }}</small></div>
               <div class="lvc-campo"><span>Fim da vigência (opcional)</span><div class="lvc-mp"><button type="button" class="{{ mpFim.btnClasse }}" sc-camel-on-click="{{ mpFim.alternar }}" aria-expanded="{{ mpFim.aberto }}"><span>{{ mpFim.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">📅</span></button><sc-if value="{{ mpFim.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpFim.topo }}</div><div class="lvw-cab"><button type="button" class="lvw-titulo" sc-camel-on-click="{{ mpFim.trocarVista }}">{{ mpFim.titulo }}</button><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpFim.ant }}" aria-label="Anterior">▲</button><button type="button" sc-camel-on-click="{{ mpFim.prox }}" aria-label="Próximo">▼</button></span></div><sc-if value="{{ mpFim.vistaDias }}" hint-placeholder-val="{{ true }}"><div class="lvw-sem"><span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span></div><div class="lvw-dias"><sc-for list="{{ mpFim.dias }}" as="dd" hint-placeholder-count="42"><button type="button" class="{{ dd.classe }}" sc-camel-on-click="{{ dd.escolher }}" aria-label="{{ dd.aria }}">{{ dd.n }}</button></sc-for></div></sc-if><sc-if value="{{ mpFim.vistaMeses }}" hint-placeholder-val="{{ false }}"><div class="lvw-meses"><sc-for list="{{ mpFim.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpFim.hoje }}">Hoje</button><sc-if value="{{ mpFim.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpFim.limpar }}">Limpar</button></sc-if></div></div></sc-if></div></div>
               <p class="lvc-metodo"><b>{{ calcMetodoTit }}</b> {{ calcMetodoTxt }}</p>
               <details class="lvc-det"><summary>Dados para a nota técnica (opcional)</summary>
@@ -3896,7 +3896,9 @@ class Component extends DCLogic {
     const mesNum = (ym) => { const m = /^(\d{4})-(\d{2})$/.exec(ym || ""); return m ? Number(m[1]) * 12 + Number(m[2]) - 1 : null; };
     const ym = (n) => Math.floor(n / 12) + "-" + String(n % 12 + 1).padStart(2, "0");
     const hoje = new Date(Date.now() - 3 * 3600000);
-    const refN = mesNum(c.referencia) ?? (hoje.getUTCFullYear() * 12 + hoje.getUTCMonth());
+    const meses0 = Object.keys(serie ? serie.mensal : {}).sort();
+    // data final: último mês de índice considerado; em branco, o último mês já divulgado
+    const refN = mesNum(c.referencia) ?? (meses0.length ? mesNum(meses0[meses0.length - 1]) : hoje.getUTCFullYear() * 12 + hoje.getUTCMonth());
     const baseOrig = mesNum(c.dataBase);
     const baseN = c.houveReajuste && mesNum(c.ultimo) !== null ? mesNum(c.ultimo) : baseOrig;
     if (!serie || baseN === null || !(valor > 0)) return { pronto: false, serie };
@@ -3904,7 +3906,9 @@ class Component extends DCLogic {
     const ultimoDisp = meses[meses.length - 1];
     const ciclos = [];
     let fatorTot = 1, pendente = false;
-    for (let k = 1; baseN + 12 * k <= refN && k <= 10; k++) {
+    const nMesesCiclo = c.indice === "ipca" ? 12 : 13;
+    // um ciclo entra no cálculo quando a data final alcança o último mês do índice daquele ciclo
+    for (let k = 1; baseN + 12 * (k - 1) + nMesesCiclo - 1 <= refN && k <= 10; k++) {
       // IPCA: metodologia da Calculadora do Cidadão (Banco Central), com os índices da data inicial e da final:
       //   do mês da data-base ao 11º mês seguinte (ex.: fev/2025 a jan/2026), 12 variações.
       // Demais índices (INCC, IGP-M, IGP-DI, INPC, IPCA-E): do mês da data-base ao mês do aniversário, inclusive
@@ -3922,6 +3926,7 @@ class Component extends DCLogic {
       ciclos.push({ k, aniversario: ym(baseN + 12 * k), ini: ym(ini), fim: ym(ini + nMeses - 1), fator: f, falta, lista, valor: valor * fatorTot });
     }
     const proximo = ym(baseN + 12 * (ciclos.length + 1));
+    const proximoFinal = ym(baseN + 12 * ciclos.length + nMesesCiclo - 1);
     // diferença acumulada desde o primeiro aniversário até o mês de referência (valor pago sem reajuste)
     let retro = 0;
     ciclos.forEach((ci, i) => {
@@ -3931,7 +3936,7 @@ class Component extends DCLogic {
     const fimN = mesNum(c.fim);
     const restante = fimN !== null && fimN > refN ? fimN - refN : 0;
     const novo = ciclos.length ? ciclos[ciclos.length - 1].valor : valor;
-    return { pronto: true, serie, valor, ciclos, novo, fatorTot, pendente, ultimoDisp, proximo, retro, restante, impactoRestante: (novo - valor) * restante,
+    return { pronto: true, serie, valor, ciclos, novo, fatorTot, pendente, ultimoDisp, proximo, proximoFinal, retro, restante, impactoRestante: (novo - valor) * restante,
       baseN, refN, mesNum, ym, baseYm: ym(baseN) };
   }
 
@@ -3967,7 +3972,7 @@ class Component extends DCLogic {
       };
       const FUND = {
         "14133": "Lei nº 14.133/2021, art. 25, § 7º (índice de reajuste com data-base vinculada à data do orçamento estimado), art. 92, V e § 3º (cláusula de reajuste), e art. 136, I (formalização por apostila); Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual).",
-        "8666": "Lei nº 8.666/1993, art. 40, XI, art. 55, III, e art. 65, § 8º (formalização por apostila); Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual).",
+        "13019": "Lei nº 13.019/2014 e cláusula de atualização de valores do termo de colaboração ou de fomento; no âmbito federal, a revisão de valores do plano de trabalho pode ser feita por termo aditivo ou por apostila (Decreto nº 8.726/2016, art. 43).",
         "13303": "Lei nº 13.303/2016, art. 69, III (data-base e periodicidade do reajustamento como cláusula necessária), e regulamento interno de licitações e contratos da empresa; Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual)."
       };
       const ult = r.ciclos[r.ciclos.length - 1];
@@ -5302,17 +5307,19 @@ class Component extends DCLogic {
           .filter(([id]) => !s.indices || (s.indices.series && s.indices.series[id]));
         const alertas = [];
         if (r.pronto) {
-          if (!r.ciclos.length) alertas.push({ cls: "lvc-al info", t: "Ainda não se passaram 12 meses desde a data-base. O primeiro reajuste só é devido a partir de " + mesBR(r.proximo) + " (Lei nº 10.192/2001)." });
+          if (!r.ciclos.length) alertas.push({ cls: "lvc-al info", t: "Com essa data final ainda não se completa o período do índice. O primeiro reajuste usa o índice até " + mesBR(r.proximoFinal) + " e vale a partir de " + mesBR(r.proximo) + " (Lei nº 10.192/2001)." });
           if (r.pendente) alertas.push({ cls: "lvc-al aviso", t: "Parte do período ainda não tem índice divulgado (último disponível: " + mesBR(r.ultimoDisp) + "). O cálculo considera só os meses já publicados." });
           if (r.ciclos.length > 1) alertas.push({ cls: "lvc-al aviso", t: "Há " + r.ciclos.length + " ciclos anuais acumulados. Confira se o contrato foi prorrogado sem que o reajuste tenha sido pedido ou ressalvado: há entendimento do TCU de que, nesse caso, o direito pode ter precluído." });
-          if (r.ciclos.length) alertas.push({ cls: "lvc-al ok", t: "O reajuste por índice não altera o contrato: é registrado por simples apostila" + (c.regime === "14133" ? " (Lei nº 14.133/2021, art. 136, I)." : c.regime === "8666" ? " (Lei nº 8.666/1993, art. 65, § 8º)." : ", conforme o regulamento da estatal.") });
+          if (r.ciclos.length) alertas.push({ cls: "lvc-al ok", t: c.regime === "13019"
+            ? "Na parceria, a atualização de valores segue a cláusula do termo de colaboração ou de fomento; no âmbito federal, pode ser feita por apostila ao plano de trabalho (Decreto nº 8.726/2016, art. 43)."
+            : "O reajuste por índice não altera o contrato: é registrado por simples apostila" + (c.regime === "14133" ? " (Lei nº 14.133/2021, art. 136, I)." : ", conforme o regulamento da estatal.") });
         }
         const ultimoCiclo = r.pronto && r.ciclos.length ? r.ciclos[r.ciclos.length - 1] : null;
         return {
           calcLiberada: liberada, calcBloqueada: !liberada,
           calcBloqTexto: s.usuario ? "Comece o teste grátis de 7 dias ou escolha um plano para usar a calculadora e baixar a nota técnica." : "Entre na sua conta para usar. Se ainda não assina, o teste de 7 dias é grátis e sem cartão.",
           calcBloqCta: s.usuario ? "Ver teste e planos" : "Entrar ou criar conta", calcBloqAcao: s.usuario ? this.nav("planos") : () => { this.setState({ volta: "calculadora" }); this.irPara("login"); },
-          calcRegimes: opt([["14133", "Lei 14.133/2021"], ["8666", "Lei 8.666/1993"], ["13303", "Lei 13.303/2016 (estatais)"]], c.regime, "regime"),
+          calcRegimes: opt([["14133", "Lei 14.133/2021"], ["13303", "Lei 13.303/2016 (estatais)"], ["13019", "Lei 13.019/2014 (parcerias)"]], c.regime, "regime"),
           calcIndices: opt(idxNomes, c.indice, "indice"),
           calcMetodos: opt([["a", "A partir do mês da data-base (ex.: mar a fev)"], ["b", "A partir do mês seguinte (ex.: abr a mar)"]], c.metodo, "metodo"),
           calcValor: c.valor, calcDataBase: c.dataBase, calcHouve: !!c.houveReajuste, calcUltimo: c.ultimo, calcReferencia: c.referencia, calcFim: c.fim,
@@ -5335,6 +5342,7 @@ class Component extends DCLogic {
           calcTemCiclos: !!ultimoCiclo,
           calcCiclos: r.pronto ? r.ciclos.map((ci) => ({ k: ci.k + "º", aniv: mesBR(ci.aniversario), periodo: mesBR(ci.ini) + " a " + mesBR(ci.fim), var: pct(ci.fator) + (ci.falta ? "*" : ""), valor: brlN(ci.valor) })) : [],
           calcBaixarNota: () => this.baixarNotaReajuste(),
+          calcDataFinalAjuda: c.indice === "ipca" ? "Como na Calculadora do Cidadão: com data-base em fevereiro/2025, a data final é janeiro/2026. Em branco, usa o último mês divulgado." : "Com data-base em janeiro/2025, a data final é janeiro/2026. Em branco, usa o último mês divulgado.",
           calcMetodoTit: c.indice === "ipca" ? "IPCA: metodologia do Banco Central." : "Período do índice:",
           calcMetodoTxt: c.indice === "ipca"
             ? "Como na Calculadora do Cidadão, o índice de cada ciclo vai do mês da data-base até o 11º mês seguinte, contando os dois (12 meses). Exemplo: data-base em fevereiro/2025 → IPCA de fevereiro/2025 a janeiro/2026; o reajuste vale a partir de fevereiro/2026."
@@ -5380,7 +5388,7 @@ class Component extends DCLogic {
               };
             };
             return { mpBase: mk("dataBase", "Escolher o mês"), mpUltimo: mk("ultimo", "Escolher o mês"),
-              mpRef: mk("referencia", "Mês atual (" + LONGOS[mesAtual - 1] + " de " + anoAtual + ")", true), mpFim: mk("fim", "Não informado", true) };
+              mpRef: mk("referencia", "Último mês divulgado", true), mpFim: mk("fim", "Não informado", true) };
           })(),
           calcBotaoPdf: s.gerandoPdf ? "Gerando o PDF…" : "Baixar nota técnica em PDF",
           calcFonte: r.pronto && r.serie ? "Fonte: " + r.serie.fonte + " · último mês disponível: " + mesBR(r.ultimoDisp) + (s.indices && s.indices.gerado_em ? " · atualizado em " + new Date(s.indices.gerado_em).toLocaleDateString("pt-BR") : "") : ""
