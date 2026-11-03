@@ -1,0 +1,21 @@
+name: Diagnóstico (temporário)
+on: workflow_dispatch
+jobs:
+  d:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          set +e
+          B=https://dadosabertos.compras.gov.br
+          curl -sS -m 30 "$B/v3/api-docs" -o /tmp/d.json; python3 -c "
+          import json;d=json.load(open('/tmp/d.json'))
+          for p,v in d.get('paths',{}).items():
+            if ('material' in p or 'servico' in p) and 'CSV' not in p and 'preco' not in p:
+              for m,o in v.items(): print(p, [x.get('name')+('*' if x.get('required') else '') for x in o.get('parameters',[])])"
+          for u in "$B/modulo-material/3_consultarPdmMaterial?pagina=1&tamanhoPagina=10&nomePdm=NOTEBOOK" \
+                   "$B/modulo-material/4_consultarItemMaterial?pagina=1&tamanhoPagina=10&codigoPdm=7282" \
+                   "$B/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=10&tipo=pdm&codigo=7282&estado=RJ" \
+                   "$B/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=10&tipo=item&codigo=150425" \
+                   "$B/modulo-servico/5_consultarSubclasseServico?pagina=1&tamanhoPagina=10" \
+                   "$B/modulo-pesquisa-preco/3_consultarServico?pagina=1&tamanhoPagina=10&codigoItemCatalogo=26034&estado=RJ"; do
+            echo "== $u"; curl -sS -m 40 -o /tmp/r -w "HTTP %{http_code} %{time_total}s\n" "$u"; head -c 1200 /tmp/r; echo; done
