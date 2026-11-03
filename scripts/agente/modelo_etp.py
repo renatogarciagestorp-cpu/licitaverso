@@ -90,6 +90,8 @@ INSTRUCOES = (
     "Preencha também: solucoes (todas, viáveis e inviáveis), escolhida, comparativo, tco (o estudo de custo total de cada solução viável: "
     "para cada componente informe unidade, quantidade, valor unitário da pesquisa, o custo de cada ano e a fonte; inclua manutenção, "
     "assistência e demais custos de cada solução; valores só com dados da pesquisa ou do requisitante; sem dado, null), itens da solução escolhida (valor_unitario null se não houver dado) e viabilidade. "
+    "Em tco e itens, todo componente precisa de valor_unitario e valores: use a mediana do preço praticado ([C#]) ou o valor unitário "
+    "da contratação semelhante ([P#]) que você citou no texto; nunca deixe null quando o texto mencionar um valor. "
     "Se o objeto não for de TIC, não cite a IN SGD/ME nº 94/2022 nem o SISP."
 )
 
@@ -367,8 +369,7 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
     if unidade:
         pu = cab.add_paragraph(); pu.alignment = WD_ALIGN_PARAGRAPH.CENTER; pu.paragraph_format.space_after = Pt(0)
         r = pu.add_run(unidade.upper()); fmt(r, False, 9)
-    pt = cab.add_paragraph(); pt.alignment = WD_ALIGN_PARAGRAPH.CENTER; pt.paragraph_format.space_after = Pt(6)
-    r = pt.add_run("ESTUDO TÉCNICO PRELIMINAR"); fmt(r, True, 10); r.underline = True
+    ult = cab.paragraphs[-1]; ult.paragraph_format.space_after = Pt(6)
     rod = sec.footer; rod.is_linked_to_previous = False
     if respostas.get("rodape_incluir") == "Sim" and respostas.get("rodape", "").strip():
         pr = rod.paragraphs[0]; pr.alignment = WD_ALIGN_PARAGRAPH.CENTER

@@ -186,8 +186,12 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
         "artificial, agente ou questionário. Quem ler deve entender que quem escreveu é quem assina. "
         "Regras: (1) use exclusivamente as informações do requisitante; nunca invente números, valores, datas, nomes, quantitativos, "
         "marcas ou fontes de pesquisa de preços; (2) as dúvidas foram resolvidas com o requisitante antes desta redação (veja os "
-        "esclarecimentos): preencha TODOS os campos; use [PREENCHER: o que falta] SOMENTE para as informações listadas como \"declarou "
-        "não ter\" e para valores que a pesquisa não encontrou, e registre só esses itens em pendencias; não deixe dúvidas, ressalvas ou "
+        "esclarecimentos): preencha TODOS os campos; use [PREENCHER: o que falta — por que é necessário] SOMENTE para dados que só o órgão "
+        "tem (nomes, números, datas internas) e que estejam listados como \"declarou não ter\"; NUNCA deixe em branco preço, custo ou valor: "
+        "encontrar e calcular valores é seu trabalho (use a pesquisa de mercado; se não houver referência do mesmo estado, use a nacional; "
+        "se não houver nenhuma, diga isso no texto e indique o valor de referência mais próximo encontrado); os valores citados no texto do "
+        "levantamento de mercado DEVEM estar também nos quadros (tco e itens) com o mesmo valor unitário e a fonte [C#]/[P#]; registre em "
+        "pendencias só os dados do órgão que ficaram em branco; não deixe dúvidas, ressalvas ou "
         "pedidos de confirmação no texto nem nas pendências; (3) cite os dispositivos legais corretos e vigentes, "
         "usando o texto oficial fornecido; (4) siga o roteiro de verificação fornecido para que o documento atenda a cada item; "
         "(5) jurisprudência: só a fornecida, citando órgão, número e ano, e só quando pertinente; informe os ids usados; "
@@ -284,21 +288,105 @@ def trocar_textos(obj, f):
     return obj
 
 
+NOMES_SECAO = {"informacoes": "Previsão no PCA e alinhamento", "necessidade": "Descrição da necessidade", "motivacao": "Motivação",
+               "area": "Área requisitante", "negocio": "Necessidades de negócio", "tecnologicas": "Requisitos técnicos", "requisitos": "Requisitos",
+               "demanda": "Estimativa das quantidades", "levantamento": "Levantamento de mercado", "comparativa": "Análise das alternativas",
+               "inviaveis": "Soluções inviáveis", "custos": "Análise de custos", "solucao": "Descrição da solução", "estimativa": "Estimativa do valor",
+               "just_tecnica": "Justificativa técnica", "parcelamento_tecnico": "Parcelamento", "just_economica": "Justificativa econômica",
+               "parcelamento_economico": "Parcelamento", "beneficios": "Resultados pretendidos", "providencias": "Providências prévias",
+               "correlatas": "Contratações correlatas", "ambientais": "Impactos ambientais", "viabilidade_justificativa": "Posicionamento conclusivo",
+               "solucoes": "Alternativas do mercado", "itens": "Estimativa de custo", "tco": "Custos das soluções", "resumo": "Síntese do estudo"}
+VALOR = re.compile(r"valor|pre[cç]o|custo|r\$|mediana|or[cç]amento estimado|cota[cç]", re.I)
+TEXTO_VALOR = "conforme a pesquisa de preços a ser juntada aos autos (art. 23 da Lei nº 14.133/2021)"
+
+
+def completar_valores(docj, pesquisa):
+    """Quadros de custo sem valor unitário: usa a mediana do preço praticado citado na fonte ([C#]) e calcula os totais.
+    Assim o valor que aparece no levantamento de mercado também aparece nos quadros."""
+    pp = (pesquisa or {}).get("precos_praticados") or []
+    def mediana_da_fonte(fonte):
+        m = re.search(r"\[?C(\d+)\]?", str(fonte or ""))
+        if m and 0 < int(m.group(1)) <= len(pp):
+            return pp[int(m.group(1)) - 1].get("mediana")
+        return None
+    tco = docj.get("tco") or {}
+    anos = max(1, int(tco.get("anos") or (docj.get("vida_util") or {}).get("anos") or 1))
+    for s_ in tco.get("solucoes") or []:
+        for cp in s_.get("componentes") or []:
+            if cp.get("valor_unitario") is None:
+                cp["valor_unitario"] = mediana_da_fonte(cp.get("fonte"))
+            q, vu = cp.get("quantidade"), cp.get("valor_unitario")
+            vals = list(cp.get("valores") or [])
+            if q is not None and vu is not None and (not vals or all(v is None for v in vals)):
+                un = sem_acento_simples(cp.get("unidade"))
+                if "mes" in un:
+                    cp["valores"] = [round(float(q) * float(vu) * 12, 2)] * anos
+                elif "ano" in un:
+                    cp["valores"] = [round(float(q) * float(vu), 2)] * anos
+                else:
+                    cp["valores"] = [round(float(q) * float(vu), 2)] + [0] * (anos - 1)
+    for it in docj.get("itens") or []:
+        if it.get("valor_unitario") is None:
+            it["valor_unitario"] = mediana_da_fonte(it.get("fonte"))
+    return docj
+
+
+def sem_acento_simples(t):
+    import unicodedata
+    return "".join(c for c in unicodedata.normalize("NFD", str(t or "").lower()) if unicodedata.category(c) != "Mn")
+
+
+def com_caminho(obj, caminho=()):
+    if isinstance(obj, str):
+        yield caminho, obj
+    elif isinstance(obj, dict):
+        for k, v in obj.items():
+            yield from com_caminho(v, caminho + (k,))
+    elif isinstance(obj, list):
+        for i, v in enumerate(obj):
+            yield from com_caminho(v, caminho + (i,))
+
+
+def numerar_lacunas(docj):
+    """Cada lacuna ganha um número próprio ([PREENCHER#3: ...]), para que respostas iguais não preencham lugares diferentes."""
+    n = [0]
+    def f(t):
+        def troca(m):
+            if re.match(r"\[PREENCHER#\d+", m.group(0)):
+                return m.group(0)
+            n[0] += 1
+            return f"[PREENCHER#{n[0]}: {m.group(1).strip()}]"
+        return LACUNA.sub(troca, t)
+    corpo = {k: v for k, v in docj.items() if k not in ("pendencias", "jurisprudencia_ids")}
+    corpo = trocar_textos(corpo, f)
+    return {**docj, **corpo}
+
+
 def lacunas_do_documento(docj, sem_info=""):
-    """Lacunas [PREENCHER: ...] que ainda precisam ser perguntadas (as que o assinante já disse não ter ficam de fora)."""
-    vistas, saida = set(), []
+    """Lacunas que precisam ser perguntadas ao assinante, com o trecho do documento em que aparecem.
+    Valores e preços nunca são perguntados: são trabalho da pesquisa de mercado do agente."""
     base = set(re.findall(r"[a-zà-ú]{4,}", (sem_info or "").lower()))
-    for t in textos({k: v for k, v in docj.items() if k not in ("pendencias", "jurisprudencia_ids")}):
-        for m in LACUNA.finditer(t):
-            alvo = m.group(0)
-            if alvo in vistas:
+    saida, auto = [], {}
+    corpo = {k: v for k, v in docj.items() if k not in ("pendencias", "jurisprudencia_ids")}
+    for caminho, t in com_caminho(corpo):
+        for m in re.finditer(r"\[PREENCHER#\d+:?\s*([^\]]*)\]", t):
+            alvo, desc = m.group(0), m.group(1).strip()
+            antes, depois = t[max(0, m.start() - 200):m.start()], t[m.end():m.end() + 140]
+            antes = re.sub(r"\[PREENCHER[^\]]*\]", "___", antes); depois = re.sub(r"\[PREENCHER[^\]]*\]", "___", depois)
+            if VALOR.search(desc) or (not desc and (VALOR.search(antes[-60:]) or VALOR.search(depois[:40]))):
+                auto[alvo] = TEXTO_VALOR
                 continue
-            vistas.add(alvo)
-            palavras = set(re.findall(r"[a-zà-ú]{4,}", m.group(1).lower()))
+            palavras = set(re.findall(r"[a-zà-ú]{4,}", desc.lower()))
             if palavras and base and len(palavras & base) / len(palavras) >= 0.5:
                 continue
-            saida.append(alvo)
-    return saida
+            o_que, _, motivo = desc.partition("—")
+            secao = next((NOMES_SECAO[c] for c in caminho if isinstance(c, str) and c in NOMES_SECAO), "Documento")
+            trecho = ("…" if m.start() > 200 else "") + antes.lstrip() + " ____ " + depois.rstrip() + ("…" if len(t) - m.end() > 140 else "")
+            saida.append({"lacuna": alvo, "tema": (o_que.strip() or secao)[:80], "secao": secao,
+                          "pergunta": ("Preciso que você informe: " + o_que.strip().rstrip(".") + ".") if o_que.strip() else "Que informação completa o trecho abaixo?",
+                          "por_que": motivo.strip() or f"Esse dado entra na seção “{secao}” e, sem ele, o trecho fica incompleto no documento oficial.",
+                          "trecho": re.sub(r"\s+", " ", trecho)[:420]})
+    return saida, auto
 
 
 def aplicar_lacunas(docj, respostas_lacunas):
@@ -309,6 +397,8 @@ def aplicar_lacunas(docj, respostas_lacunas):
             t = t.replace(k, v)
         return t
     docj = trocar_textos(docj, f)
+    docj = trocar_textos(docj, lambda t: re.sub(r"\[PREENCHER#\d+:?\s*", "[PREENCHER: ", t))
+    docj = trocar_textos(docj, lambda t: t.replace("[PREENCHER: ]", "[PREENCHER]"))
     restantes = []
     for t in textos({k: v for k, v in docj.items() if k not in ("pendencias", "jurisprudencia_ids")}):
         for m in LACUNA.finditer(t):
@@ -599,12 +689,18 @@ def main():
                     print(f"correção automática não concluída ({type(e).__name__})")
         else:
             print("conferência não concluída (o documento é entregue sem os pontos de atenção)")
+    docj = completar_valores(docj, pesquisa)
     if not a.simular:
-        lac = lacunas_do_documento(docj, respostas.get("sem_info", ""))
+        docj = numerar_lacunas(docj)
+        lac, auto = lacunas_do_documento(docj, respostas.get("sem_info", ""))
+        if auto:  # valores: nunca perguntados ao assinante
+            def trocar_auto(t):
+                for k, v in auto.items():
+                    t = t.replace(k, v)
+                return t
+            docj = trocar_textos(docj, trocar_auto)
         if lac:  # o texto já está pago; as lacunas são preenchidas com as respostas do assinante, sem novo custo
-            perguntas = [{"id": f"l{i + 1}", "tema": (LACUNA.match(x).group(1) or "Informação")[:80].strip() or "Informação",
-                          "pergunta": "Informe: " + (LACUNA.match(x).group(1) or "a informação pendente").strip(),
-                          "por_que": "Este dado entra no documento; com ele o texto fica completo.", "opcoes": [], "lacuna": x} for i, x in enumerate(lac[:25])]
+            perguntas = [{"id": f"l{i + 1}", "opcoes": [], **x} for i, x in enumerate(lac[:25])]
             aguardar(pasta, perguntas, "completar", custo_usd, docj)
             return
     docj = aplicar_lacunas(docj, {})

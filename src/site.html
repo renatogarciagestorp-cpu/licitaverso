@@ -769,6 +769,8 @@
   .lve-tri-tema { justify-self: start; font-size: 12px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: #0A7A50; background: #E3F6EC; border-radius: 6px; padding: 3px 8px; }
   .lve-tri-perg { margin: 0; font-size: 16px; font-weight: 700; color: #0B1F2A; line-height: 1.45; }
   .lve-tri-pq { color: #66757F; font-size: 13px; line-height: 1.45; }
+  .lve-tri-trecho { margin: 0; border-left: 3px solid #0FA36B; background: #F3FBF7; border-radius: 0 10px 10px 0; padding: 10px 14px; font-size: 14px; line-height: 1.5; color: #26393F; font-style: italic; }
+  .lve-tri-trecho small { display: block; font-style: normal; font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: #0A7A50; margin-bottom: 4px; }
   .lve-tri-sem { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: #43535C; }
   .lve-status { display: grid; gap: 16px; }
   .lve-status-cab { display: flex; gap: 14px; align-items: flex-start; }
@@ -1844,7 +1846,8 @@
                       <span class="lve-tri-tema">Pergunta {{ elAgN }} de {{ elAgTotal }} · {{ elAgTema }}</span>
                       <div class="lve-tri-pontos"><sc-for list="{{ elAgPontos }}" as="pt" hint-placeholder-count="3"><span class="{{ pt.cls }}"></span></sc-for></div>
                       <p class="lve-tri-perg">{{ elAgPergunta }}</p>
-                      <small class="lve-tri-pq">{{ elAgPorQue }}</small>
+                      <sc-if value="{{ elAgTemTrecho }}" hint-placeholder-val="{{ false }}"><blockquote class="lve-tri-trecho"><small>Onde entra no documento · {{ elAgSecao }}</small>{{ elAgTrecho }}</blockquote></sc-if>
+                      <small class="lve-tri-pq"><b>Por que preciso:</b> {{ elAgPorQue }}</small>
                       <sc-if value="{{ elAgTemOpcoes }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ elAgOpcoes }}" as="o" hint-placeholder-count="2"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
                       <textarea rows="3" aria-label="Sua resposta" value="{{ elAgRascunho }}" sc-camel-on-input="{{ elOnAgRascunho }}" placeholder="Escreva a resposta"></textarea>
                       <sc-if value="{{ elAgErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro">{{ elAgErro }}</p></sc-if>
@@ -6604,6 +6607,7 @@ class Component extends DCLogic {
             };
             const agProps = {
               elAgPerguntando: !!(pa && !ag.confirmar), elAgConfirmar: !!(aguardando && ag.confirmar),
+              elAgTemTrecho: !!(pa && pa.trecho), elAgTrecho: pa ? (pa.trecho || "") : "", elAgSecao: pa ? (pa.secao || "") : "",
               elAgN: ai + 1, elAgTotal: pergs.length, elAgTema: pa ? pa.tema : "", elAgPergunta: pa ? pa.pergunta : "", elAgPorQue: pa ? pa.por_que : "",
               elAgPontos: pergs.map((q, j) => ({ cls: j === ai && !ag.confirmar ? "atual" : (resp[q.id] || {}).semInfo ? "sem" : (resp[q.id] || {}).resposta ? "ok" : "" })),
               elAgTemOpcoes: !!(pa && pa.opcoes && pa.opcoes.length), elAgOpcoes: pa && pa.opcoes ? pa.opcoes.map((o) => ({ nome: o, sel: rasc === o, escolher: () => setAg({ rasc: o, erro: "" }) })) : [],
