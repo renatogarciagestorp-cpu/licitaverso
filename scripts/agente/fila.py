@@ -331,7 +331,10 @@ def processar(a):
                 atualizar(aid, {"status": "na_fila"})
                 print(f"::notice title=Fila::análise {aid}: falhou, volta à fila ({type(e).__name__}: {str(e)[:200]})")
                 return
-            atualizar(aid, {"status": "erro", "erro_msg": "Falha técnica no processamento automático."})
+            try:
+                atualizar(aid, {"status": "erro", "erro_msg": "Falha técnica no processamento automático.", "erro_tecnico": f"{type(e).__name__}: {e}"[-1500:]})
+            except Exception:
+                atualizar(aid, {"status": "erro", "erro_msg": "Falha técnica no processamento automático."})
             print(f"::notice title=Fila::análise {aid}: erro definitivo ({type(e).__name__})")
     avisar(aid)
 
@@ -407,12 +410,22 @@ def processar_geracao(a):
             custo_ant = float(a.get("custo_usd") or 0)
             if exe.get("aguardando"):  # o agente precisa de informações do assinante: pausa e avisa no site e por e-mail
                 perguntas = json.loads((saida / "perguntas.json").read_text(encoding="utf-8"))
+                guardou = True
                 if exe.get("fase") == "completar":
-                    http("POST", f"{SUPA}/storage/v1/object/analises/{base_rascunho}.json", (saida / "documento.json").read_bytes(),
-                         cab({"Content-Type": "application/json", "x-upsert": "true"}), timeout=300)
-                    if (saida / "pesquisa.json").exists():
-                        http("POST", f"{SUPA}/storage/v1/object/analises/{base_rascunho}-pesquisa.json", (saida / "pesquisa.json").read_bytes(),
+                    try:
+                        http("POST", f"{SUPA}/storage/v1/object/analises/{base_rascunho}.json", (saida / "documento.json").read_bytes(),
                              cab({"Content-Type": "application/json", "x-upsert": "true"}), timeout=300)
+                        if (saida / "pesquisa.json").exists():
+                            http("POST", f"{SUPA}/storage/v1/object/analises/{base_rascunho}-pesquisa.json", (saida / "pesquisa.json").read_bytes(),
+                                 cab({"Content-Type": "application/json", "x-upsert": "true"}), timeout=300)
+                    except Exception as e:  # sem onde guardar o rascunho: entrega o documento já pago, com as lacunas destacadas
+                        guardou = False
+                        print(f"elaboração {aid}: rascunho não guardado ({type(e).__name__}); entregando com as lacunas destacadas")
+                        rodar([sys.executable, str(RAIZ / "scripts/agente/elaborar.py"), "--doc", a["documento"], "--respostas", str(pasta / "respostas.json"),
+                               "--pasta", str(pasta / "saida"), "--docj", str(saida / "documento.json")] + [x for x in extra if x != "--docj"], timeout=900)
+                        exe = {**json.loads((saida / "execucao.json").read_text(encoding="utf-8")), "custo_usd": exe.get("custo_usd")}
+            if exe.get("aguardando"):
+                perguntas = json.loads((saida / "perguntas.json").read_text(encoding="utf-8"))
                 atualizar(aid, {"status": "aguardando_informacoes", "perguntas": perguntas, "fase": exe.get("fase") if exe.get("fase") == "completar" else None,
                                 "progresso": None, "custo_usd": round(custo_ant + float(exe.get("custo_usd") or 0), 4)})
                 print(f"::notice title=Fila::elaboração {aid}: aguardando {len(perguntas)} informações do assinante")
@@ -436,7 +449,10 @@ def processar_geracao(a):
         except Exception as e:
             if not locals().get("etapa_paga") and int(a.get("tentativas") or 1) < 3:
                 atualizar(aid, {"status": "na_fila"}); return
-            atualizar(aid, {"status": "erro", "erro_msg": "Falha técnica no processamento automático."})
+            try:
+                atualizar(aid, {"status": "erro", "erro_msg": "Falha técnica no processamento automático.", "erro_tecnico": f"{type(e).__name__}: {e}"[-1500:]})
+            except Exception:
+                atualizar(aid, {"status": "erro", "erro_msg": "Falha técnica no processamento automático."})
             print(f"::notice title=Fila::elaboração {aid}: erro definitivo ({type(e).__name__})")
     avisar(aid)
 

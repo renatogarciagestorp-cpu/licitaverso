@@ -63,3 +63,6 @@ alter table public.analises add constraint analises_status_check
   check (status in ('aguardando_pagamento', 'aguardando_documentos', 'na_fila', 'processando', 'aguardando_informacoes', 'concluida', 'erro', 'cancelada'));
 alter table public.analises add column if not exists perguntas jsonb;   -- [{id, tema, pergunta, por_que, opcoes, lacuna}]
 alter table public.analises add column if not exists fase text;         -- null (normal) | 'completar' (só preencher lacunas no texto já redigido)
+
+-- Detalhe técnico de falhas (só para a administração; não aparece para o assinante nem nos logs públicos)
+alter table public.analises add column if not exists erro_tecnico text;

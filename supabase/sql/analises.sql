@@ -47,7 +47,8 @@ values ('analises', 'analises', false, 26214400, array['application/pdf',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel',
   'application/vnd.ms-excel.sheet.macroEnabled.12', 'application/vnd.oasis.opendocument.spreadsheet',
-  'image/png', 'image/jpeg'])  -- imagens: logo do órgão na elaboração de documentos
+  'image/png', 'image/jpeg',  -- imagens: logo do órgão na elaboração de documentos
+  'application/json'])        -- rascunho da elaboração enquanto aguarda as respostas do assinante
 on conflict (id) do update set public = false, file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
 
