@@ -730,6 +730,14 @@
   }
   .lve-rapido { margin-top: -28px; position: relative; background: #fff; border: 1px solid #E3E9E8; border-radius: 22px; padding: 28px; display: grid; gap: 18px; box-shadow: 0 16px 40px rgba(11,31,42,0.08); max-width: 860px; }
   .lve-r-cab { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+  .lve-reap-box { border: 1px solid #BFE6D2; background: #F3FBF7; border-radius: 16px; padding: 18px; display: grid; gap: 10px; }
+  .lve-reap-box p { margin: 0; color: #43535C; font-size: 14px; }
+  .lve-reap-lista { display: grid; gap: 6px; }
+  .lve-reap-item { background: #fff; border: 1px solid #E3E9E8; border-radius: 10px; padding: 8px 10px; font-size: 13.5px; }
+  .lve-reap-acoes { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .lve-opc { font-style: normal; margin-left: 8px; font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; color: #66757F; background: #EEF2F1; border-radius: 6px; padding: 2px 6px; }
+  .lve-pesq { margin: 0; background: #EEF6FB; color: #123B52; border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.5; }
+  .lve-nota-uf { margin-top: -10px; color: #66757F; font-size: 12.5px; }
   .lve-reap { margin: 0; background: #E3F6EC; color: #0A5C3D; border-radius: 10px; padding: 9px 12px; font-size: 13.5px; font-weight: 700; }
   .lve-exemplos { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: -8px; }
   .lve-exemplos > span { font-size: 12.5px; color: #7A8B91; font-weight: 700; }
@@ -1658,7 +1666,7 @@
         <div class="lvc-hero-in">
           <span class="lvh-eyebrow">Agente de IA · Lei 14.133/2021</span>
           <h1 class="lva-h1" style="max-width: 22ch">ETP, TR ou Projeto Básico em minutos, não em dias.</h1>
-          <p class="lva-lead">Você descreve em uma frase o que precisa contratar e marca algumas opções. O agente redige o documento completo, confere com a lei e com a jurisprudência do Tribunal de Contas do seu estado e entrega em Word, pronto para ajustar.</p>
+          <p class="lva-lead">Você informa o essencial e marca as decisões que a lei exige. O agente faz a pesquisa de mercado, redige o documento completo, confere com a lei e com a jurisprudência do Tribunal de Contas do seu estado e entrega em Word, pronto para ajustar.</p>
         </div>
       </section>
       <section class="lvc-corpo" id="el-topo">
@@ -1674,36 +1682,45 @@
         <sc-if value="{{ elComDoc }}" hint-placeholder-val="{{ false }}">
           <div class="lve-rapido">
             <div class="lve-r-cab">
-              <div><span class="lve-doc-sig">{{ elSigla }}</span><h2 class="lva-h2" style="margin-top: 8px">{{ elNome }} em menos de 2 minutos</h2>
-                <p class="lva-sub">Diga o essencial. O agente redige o documento inteiro e deixa marcado só o que depende de dados do seu órgão.</p></div>
+              <div><span class="lve-doc-sig">{{ elSigla }}</span><h2 class="lva-h2" style="margin-top: 8px">{{ elNome }} em poucos minutos</h2>
+                <p class="lva-sub">Você informa o essencial e toma as decisões que a lei exige; o agente redige, fundamenta e marca o que faltar.</p></div>
               <button type="button" class="lve-trocar" sc-camel-on-click="{{ elTrocar }}">Trocar de documento</button>
             </div>
-            <sc-if value="{{ elReaproveitou }}" hint-placeholder-val="{{ false }}"><p class="lve-reap">Reaproveitamos os dados do seu último documento. Confira e ajuste se precisar.</p></sc-if>
-
-            <label class="lvc-campo lve-campo"><span>O que você precisa contratar?<em class="lve-obrig">obrigatório</em></span>
-              <textarea rows="3" value="{{ elObjeto }}" sc-camel-on-input="{{ elOnObjeto }}" placeholder="Ex.: limpeza dos 3 prédios da sede, cerca de 6.000 m², porque o contrato acabou em agosto"></textarea>
-              <small>Uma ou duas frases bastam: o objeto e, se quiser, o motivo.</small></label>
-            <div class="lve-exemplos"><span>Exemplos:</span><sc-for list="{{ elExemplos }}" as="ex" hint-placeholder-count="4"><button type="button" class="lvc-chip" sc-camel-on-click="{{ ex.usar }}">{{ ex.rot }}</button></sc-for></div>
-
-            <div class="lvc-campo"><span>Tipo de contratação</span>
-              <div class="lvc-chips"><sc-for list="{{ elNaturezas }}" as="o" hint-placeholder-count="5"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></div>
+            <sc-if value="{{ elReapAberto }}" hint-placeholder-val="{{ false }}">
+              <div class="lve-reap-box">
+                <strong>Quer aproveitar algo do seu último documento{{ elReapDe }}?</strong>
+                <p>Cada contratação tem suas particularidades. Marque só o que vale também para esta; o resto começa em branco.</p>
+                <div class="lve-reap-lista"><sc-for list="{{ elReapLista }}" as="x" hint-placeholder-count="4">
+                  <label class="lvc-check lve-reap-item"><input type="checkbox" checked="{{ x.marcado }}" sc-camel-on-change="{{ x.marcar }}"><span><b>{{ x.rot }}:</b> {{ x.valor }}</span></label>
+                </sc-for></div>
+                <div class="lve-reap-acoes"><button type="button" class="lvh-btn" sc-camel-on-click="{{ elReapUsar }}">Aproveitar os marcados</button>
+                  <button type="button" class="lve-trocar" sc-camel-on-click="{{ elReapNao }}">Começar em branco</button></div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ elFormVisivel }}" hint-placeholder-val="{{ true }}">
+            <sc-if value="{{ elRascunho }}" hint-placeholder-val="{{ false }}"><p class="lve-reap">Continuando o rascunho que você não enviou. <button type="button" class="lve-trocar" sc-camel-on-click="{{ elEmBranco }}">Começar em branco</button></p></sc-if>
 
             <div class="lve-2col">
-              <label class="lvc-campo"><span>Órgão ou entidade</span><input type="text" value="{{ elOrgao }}" sc-camel-on-input="{{ elOnOrgao }}" placeholder="Ex.: Prefeitura Municipal de Maricá"></label>
-              <label class="lvc-campo"><span>UF</span><input type="text" maxlength="2" value="{{ elUf }}" sc-camel-on-input="{{ elOnUf }}" placeholder="RJ"><small>Para usar a jurisprudência do Tribunal de Contas do seu estado.</small></label>
+              <label class="lvc-campo"><span>Órgão ou entidade<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elOrgao }}" sc-camel-on-input="{{ elOnOrgao }}" placeholder="Ex.: Prefeitura Municipal de Maricá"></label>
+              <label class="lvc-campo"><span>UF<em class="lve-obrig">obrigatório</em></span><input type="text" maxlength="2" value="{{ elUf }}" sc-camel-on-input="{{ elOnUf }}" placeholder="RJ"></label>
             </div>
+            <small class="lve-nota-uf">A UF define a jurisprudência do Tribunal de Contas e a pesquisa de mercado com contratações do seu estado.</small>
 
-            <div class="lve-3col">
-              <label class="lvc-campo"><span>Quantidade (opcional)</span><input type="text" value="{{ elQtd }}" sc-camel-on-input="{{ elOnQtd }}" placeholder="Ex.: 6.200 m², 40 notebooks"></label>
-              <label class="lvc-campo"><span>Valor estimado (opcional)</span><input type="text" value="{{ elValor }}" sc-camel-on-input="{{ elOnValor }}" placeholder="Ex.: R$ 850.000,00 por ano"></label>
-              <div class="lvc-campo"><span>Prazo</span><div class="lvc-chips"><sc-for list="{{ elPrazos }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></div>
-            </div>
+            <sc-for list="{{ elCampos }}" as="c" hint-placeholder-count="6">
+              <div class="lvc-campo lve-campo">
+                <span>{{ c.rot }}<sc-if value="{{ c.obrig }}" hint-placeholder-val="{{ true }}"><em class="lve-obrig">obrigatório</em></sc-if><sc-if value="{{ c.opcional }}" hint-placeholder-val="{{ false }}"><em class="lve-opc">opcional</em></sc-if></span>
+                <sc-if value="{{ c.ehTexto }}" hint-placeholder-val="{{ true }}"><textarea rows="2" aria-label="{{ c.rot }}" value="{{ c.valor }}" sc-camel-on-input="{{ c.onInput }}" placeholder="{{ c.ph }}"></textarea></sc-if>
+                <sc-if value="{{ c.ehLinha }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}" value="{{ c.valor }}" sc-camel-on-input="{{ c.onInput }}" placeholder="{{ c.ph }}"></sc-if>
+                <sc-if value="{{ c.ehChips }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ c.op }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
+                <sc-if value="{{ c.mostraOutro }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}: detalhe" value="{{ c.outroValor }}" sc-camel-on-input="{{ c.onOutro }}" placeholder="Qual?"></sc-if>
+                <sc-if value="{{ c.temExemplos }}" hint-placeholder-val="{{ false }}"><div class="lve-exemplos"><span>Exemplos:</span><sc-for list="{{ elExemplos }}" as="ex" hint-placeholder-count="4"><button type="button" class="lvc-chip" sc-camel-on-click="{{ ex.usar }}">{{ ex.rot }}</button></sc-for></div></sc-if>
+                <sc-if value="{{ c.dica }}" hint-placeholder-val="{{ false }}"><small>{{ c.dica }}</small></sc-if>
+              </div>
+            </sc-for>
 
-            <details class="lvc-det"><summary>Ajustes opcionais (o agente decide se você não marcar)</summary>
-              <div class="lvc-campo"><span>Divisão</span><div class="lvc-chips"><sc-for list="{{ elParcelas }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></div>
-              <div class="lvc-campo"><span>Forma de contratação</span><div class="lvc-chips"><sc-for list="{{ elSelecoes }}" as="o" hint-placeholder-count="4"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></div>
-              <label class="lvc-campo"><span>Algo mais que o agente deve saber?</span><textarea rows="2" value="{{ elObs }}" sc-camel-on-input="{{ elOnObs }}" placeholder="Ex.: horário de funcionamento, exigência de sustentabilidade, número do ETP"></textarea></label>
-            </details>
+            <sc-if value="{{ elMostraPesquisa }}" hint-placeholder-val="{{ false }}"><p class="lve-pesq">🔎 <b>Sem valor por enquanto.</b> {{ elTextoPesquisa }}</p></sc-if>
+
+            <label class="lvc-campo lve-campo"><span>Algo mais que o agente deve saber?<em class="lve-opc">opcional</em></span><textarea rows="2" value="{{ elObs }}" sc-camel-on-input="{{ elOnObs }}" placeholder="Ex.: horário de funcionamento, exigência de sustentabilidade, unidade requisitante"></textarea></label>
 
             <div class="lve-fim">
               <p class="lve-cond">{{ elCondicao }}</p>
@@ -1713,6 +1730,7 @@
               <button type="button" class="lvh-btn lve-gerar" sc-camel-on-click="{{ elEnviar }}">{{ elBotao }}</button>
               <small class="lve-tempo">O documento fica pronto em poucos minutos e chega por e-mail, em Word, com as lacunas destacadas.</small>
             </div>
+            </sc-if>
           </div>
         </sc-if>
       </section>
@@ -3754,6 +3772,60 @@ const ELAB = {
       { k: "orcamento", rot: "Orçamento detalhado do custo global (alínea f)", obrig: true, dica: "Valor global, referências (SINAPI, SICRO, EMOP…), data-base, BDI e regime de execução." } ] }
   ] }
 };
+// criação rápida: o que o assinante informa em cada documento (obrig = exigido pela Lei 14.133/2021; o agente nunca decide por ele)
+const ELAB_ROT = { orgao: "Órgão ou entidade", uf: "UF", objeto: "Objeto", necessidade: "Necessidade / fundamentação", quantidades: "Quantidades e especificações",
+  natureza: "Natureza / solução", prazo: "Prazo", prazo_outro: "Prazo (detalhe)", pca: "Plano de Contratações Anual", parcelamento: "Parcelamento",
+  parc_motivo: "Motivo do parcelamento", adjudicacao: "Adjudicação", selecao: "Forma de seleção", criterio: "Critério de julgamento",
+  regime_exec: "Regime de execução", local: "Local", valor: "Valor estimado", observacoes: "Observações", unidade: "Unidade requisitante" };
+const ELAB_RAPIDO = {
+  etp: [
+    { k: "objeto", rot: "O que você precisa contratar?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
+    { k: "necessidade", rot: "Por que é preciso contratar?", tipo: "texto", obrig: true, ph: "Ex.: o contrato atual termina em março e o quadro próprio não executa esse serviço", dica: "Descrição da necessidade (art. 18, § 1º, I)." },
+    { k: "quantidades", rot: "Quantidades e especificações", tipo: "texto", obrig: true, ph: "Ex.: 6.200 m² de área interna e 1.800 m² externa; limpeza diária, de segunda a sexta", dica: "Estimativa das quantidades (inciso IV). Se souber, diga de onde vêm os números: área, consumo do ano anterior, número de usuários." },
+    { k: "natureza", rot: "Natureza da necessidade", tipo: "chips", obrig: true, op: ["Bem", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva"], dica: "Compra, locação ou outra forma de atender não precisa ser escolhida agora: o ETP compara as soluções." },
+    { k: "prazo", rot: "Prazo pretendido", tipo: "chips", obrig: true, outro: true, op: ["Entrega única", "12 meses", "30 meses", "Outro"] },
+    { k: "pca", rot: "A contratação está no Plano de Contratações Anual?", tipo: "chips", obrig: true, op: ["Sim", "Não", "O órgão não tem PCA"] },
+    { k: "parcelamento", rot: "Parcelamento", tipo: "chips", obrig: true, op: ["Parcelar por itens", "Parcelar por lotes", "Não parcelar"], dica: "Decisão sua (inciso VIII, obrigatório). O agente só redige a justificativa." },
+    { k: "parc_motivo", rot: "Motivo da decisão de parcelar ou não", tipo: "chips", obrig: true, multi: true, outro: true, op: ["Ampliar a competição", "Itens de natureza diferente", "Ganho de escala", "Serviço indivisível ou gestão única", "Risco técnico em dividir", "Outro"] }
+  ],
+  tr: [
+    { k: "objeto", rot: "O que será contratado?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
+    { k: "necessidade", rot: "Fundamentação: número do ETP ou motivo da contratação", tipo: "texto", obrig: true, ph: "Ex.: ETP nº 12/2026, processo 1234/2026", dica: "Alínea \"b\" do art. 6º, XXIII." },
+    { k: "quantidades", rot: "Quantidades e especificações", tipo: "texto", obrig: true, ph: "Ex.: 6.200 m² de área interna; limpeza diária, de segunda a sexta, das 7h às 16h" },
+    { k: "natureza", rot: "Solução escolhida", tipo: "chips", obrig: true, op: ["Compra", "Locação", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva"] },
+    { k: "prazo", rot: "Prazo", tipo: "chips", obrig: true, outro: true, op: ["Entrega única", "12 meses", "30 meses", "Outro"] },
+    { k: "adjudicacao", rot: "Adjudicação", tipo: "chips", obrig: true, op: ["Por item", "Por lote", "Global (lote único)"] },
+    { k: "selecao", rot: "Forma de seleção do fornecedor", tipo: "chips", obrig: true, op: ["Pregão", "Concorrência", "Dispensa", "Inexigibilidade", "Adesão a ata"] },
+    { k: "criterio", rot: "Critério de julgamento", tipo: "chips", obrig: true, op: ["Menor preço", "Maior desconto", "Técnica e preço", "Melhor técnica"] },
+    { k: "valor", rot: "Valor estimado da pesquisa de preços", tipo: "linha", ph: "Ex.: R$ 850.000,00 por ano", dica: "Se ainda não tiver, deixe em branco: o agente traz contratações semelhantes do PNCP como referência e marca o valor para completar." }
+  ],
+  projeto_basico: [
+    { k: "objeto", rot: "Qual é a obra ou o serviço de engenharia?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: reforma e acessibilidade da Escola Municipal X" },
+    { k: "necessidade", rot: "Por que é preciso fazer?", tipo: "texto", obrig: true, ph: "Ex.: o telhado tem infiltrações e a escola não tem rampa de acesso" },
+    { k: "local", rot: "Local da obra", tipo: "linha", obrig: true, ph: "Ex.: Rua das Flores, 100, Centro, Maricá" },
+    { k: "quantidades", rot: "Principais serviços e quantidades", tipo: "texto", obrig: true, ph: "Ex.: 850 m² de cobertura; 2 rampas; 4 banheiros adaptados" },
+    { k: "natureza", rot: "Natureza", tipo: "chips", obrig: true, op: ["Obra", "Serviço de engenharia", "Reforma"] },
+    { k: "prazo", rot: "Prazo de execução", tipo: "chips", obrig: true, outro: true, op: ["6 meses", "12 meses", "Outro"] },
+    { k: "regime_exec", rot: "Regime de execução", tipo: "chips", obrig: true, op: ["Empreitada por preço unitário", "Empreitada por preço global", "Empreitada integral", "Contratação por tarefa"] },
+    { k: "adjudicacao", rot: "Parcelamento", tipo: "chips", obrig: true, op: ["Lote único", "Por lotes ou etapas"] },
+    { k: "selecao", rot: "Forma de seleção", tipo: "chips", obrig: true, op: ["Concorrência", "Pregão (serviço comum de engenharia)", "Dispensa"] },
+    { k: "criterio", rot: "Critério de julgamento", tipo: "chips", obrig: true, op: ["Menor preço", "Maior desconto", "Técnica e preço"] },
+    { k: "valor", rot: "Orçamento, se já tiver", tipo: "linha", ph: "Ex.: R$ 1.250.000,00 (SINAPI 09/2026)", dica: "Se não tiver, o orçamento fica marcado para completar." }
+  ]
+};
+// campos obrigatórios que faltam (inclui órgão e UF e o detalhe quando marcar "Outro")
+function elFaltando(doc, R) {
+  const vazio = (k) => !String((R || {})[k] || "").trim();
+  const f = [];
+  if (vazio("orgao")) f.push("órgão");
+  if (vazio("uf")) f.push("UF");
+  (ELAB_RAPIDO[doc] || []).forEach((c) => {
+    const nome = (ELAB_ROT[c.k] || c.rot).toLowerCase();
+    if (c.obrig && vazio(c.k)) f.push(nome);
+    else if (c.outro && String(R[c.k] || "").split("; ").includes("Outro") && vazio(c.k + "_outro")) f.push("o detalhe de \"" + nome + "\" (você marcou Outro)");
+  });
+  return f;
+}
 const MESES_NOME = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
 // níveis do fórum pelos pontos do ranking geral
 const nivelForum = (p) => p >= 150 ? { nome: "Mestre", cls: "n4" } : p >= 50 ? { nome: "Referência", cls: "n3" } : p >= 10 ? { nome: "Colaborador", cls: "n2" } : { nome: "Iniciante", cls: "n1" };
@@ -4165,26 +4237,66 @@ class Component extends DCLogic {
   elPassos(doc) { const d = ELAB[doc]; return d ? [ELAB_COMUM].concat(d.passos) : []; }
 
   elEscolher(doc) {
-    // reaproveita o rascunho deste documento ou, se não houver, os dados do último documento (ex.: TR depois do ETP)
-    let salvo = {}, reap = false;
-    try { salvo = JSON.parse(localStorage.getItem("lv-elab-" + doc) || "{}") || {}; } catch (e) { salvo = {}; }
-    if (!salvo.objeto) {
-      try { const ult = JSON.parse(localStorage.getItem("lv-elab-ultimo") || "{}") || {}; if (ult.objeto) { salvo = ult; reap = true; } } catch (e) {}
+    // 1) rascunho não enviado deste documento: continua; 2) senão, lista os dados do último documento enviado para o assinante
+    //    escolher o que aproveitar (cada contratação tem suas particularidades: nada é copiado sem ele marcar)
+    let rasc = {};
+    try { rasc = JSON.parse(localStorage.getItem("lv-elab-" + doc) || "{}") || {}; } catch (e) { rasc = {}; }
+    const temRasc = Object.keys(rasc).some((k) => k !== "orgao" && k !== "uf" && String(rasc[k] || "").trim());
+    let reap = [];
+    if (!temRasc) {
+      try {
+        const u = JSON.parse(localStorage.getItem("lv-elab-ultimo") || "null");
+        const r = u && (u.respostas || u), ok = r && typeof r === "object" ? r : {};
+        // só o que existe no documento novo (e, nas opções, só valores que ele aceita)
+        const campo = (k) => (ELAB_RAPIDO[doc] || []).find((c) => c.k === k);
+        const cabe = (k) => {
+          if (k === "orgao" || k === "uf" || k === "observacoes") return true;
+          const c = campo(k); if (!c) return false;
+          return c.tipo !== "chips" || String(ok[k]).split("; ").every((v) => c.op.includes(v));
+        };
+        reap = Object.keys(ok).filter((k) => ELAB_ROT[k] && String(ok[k] || "").trim() && !k.endsWith("_outro") && cabe(k))
+          .map((k) => ({ k, rot: ELAB_ROT[k], valor: String(ok[k]) + (ok[k + "_outro"] ? " (" + ok[k + "_outro"] + ")" : ""), bruto: ok[k], outro: ok[k + "_outro"] || "", marcado: false }));
+        if (reap.length) reap.docAnterior = (ELAB[u.doc] || {}).sigla || "";
+      } catch (e) { reap = []; }
     }
     const p = this.state.perfil || {};
-    if (!salvo.orgao && p.orgao) salvo = { ...salvo, orgao: p.orgao };
-    this.setState({ el: { doc, passo: 0, respostas: salvo, reaproveitou: reap, aceite: false, enviando: false, erro: "", ok: "" } });
+    const base = temRasc ? rasc : {};
+    if (!base.orgao && p.orgao) base.orgao = p.orgao;
+    this.setState({ el: { doc, passo: 0, respostas: base, rascunho: temRasc, reap, reapAnterior: reap.docAnterior || "", reapAberto: reap.length > 0,
+      aceite: false, enviando: false, erro: "", ok: "" } });
     try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {}
+  }
+
+  elReapMarcar(k) {
+    this.setState((s) => ({ el: { ...s.el, reap: s.el.reap.map((x) => x.k === k ? { ...x, marcado: !x.marcado } : x) } }));
+  }
+
+  elReapAplicar(usar) {
+    this.setState((s) => {
+      const respostas = { ...s.el.respostas };
+      if (usar) s.el.reap.filter((x) => x.marcado).forEach((x) => { respostas[x.k] = x.bruto; if (x.outro) respostas[x.k + "_outro"] = x.outro; });
+      return { el: { ...s.el, respostas, reapAberto: false } };
+    });
+  }
+
+  elEmBranco() {
+    try { localStorage.removeItem("lv-elab-" + this.state.el.doc); } catch (e) {}
+    const p = this.state.perfil || {};
+    this.setState((s) => ({ el: { ...s.el, respostas: p.orgao ? { orgao: p.orgao } : {}, rascunho: false, erro: "" } }));
   }
 
   elResponder = (k) => (e) => {
     const v = e && e.target ? e.target.value : e;
     this.setState((s) => {
       const respostas = { ...s.el.respostas, [k]: v };
-      try { localStorage.setItem("lv-elab-" + s.el.doc, JSON.stringify(respostas)); localStorage.setItem("lv-elab-ultimo", JSON.stringify(respostas)); } catch (er) {}
+      try { localStorage.setItem("lv-elab-" + s.el.doc, JSON.stringify(respostas)); } catch (er) {}
       return { el: { ...s.el, respostas, erro: "" } };
     });
   };
+
+  elGuardarUltimo(doc, respostas) {
+    try { localStorage.removeItem("lv-elab-" + doc); localStorage.setItem("lv-elab-ultimo", JSON.stringify({ doc, respostas, em: Date.now() })); } catch (e) {}
+  }
 
   elIr(passo) {
     const n = this.elPassos(this.state.el.doc).length;
@@ -4194,8 +4306,9 @@ class Component extends DCLogic {
 
   async elEnviar() {
     const el = this.state.el, d = ELAB[el.doc];
-    const falta = this.elPassos(el.doc).flatMap((p) => p.campos).filter((c) => c.obrig && !String(el.respostas[c.k] || "").trim());
-    if (String(el.respostas.objeto || "").trim().length < 8) { this.setState({ el: { ...el, erro: "Diga em uma frase o que você precisa contratar." } }); return; }
+    const falta = elFaltando(el.doc, el.respostas);
+    if (falta.length) { this.setState({ el: { ...el, erro: "Falta informar: " + falta.join(", ") + "." } }); return; }
+    if (String(el.respostas.objeto || "").trim().length < 8) { this.setState({ el: { ...el, erro: "Descreva o objeto com um pouco mais de detalhe." } }); return; }
     if (!el.aceite) { this.setState({ el: { ...el, erro: "Leia e aceite as condições para continuar." } }); return; }
     if (!GERACAO_ATIVA) { this.setState({ el: { ...el, ok: "Tudo certo com as respostas, e elas ficam salvas neste aparelho. A elaboração automática está na fase final de testes e será liberada em breve.", erro: "" } }); return; }
     if (!this.sb) { this.setState({ el: { ...el, erro: "A elaboração ainda não está ativa neste site (modo demonstração)." } }); return; }
@@ -4205,7 +4318,7 @@ class Component extends DCLogic {
     if (pend) {  // já paga ou liberada: só envia as respostas
       const r0 = await this.sb.functions.invoke("mp-checkout", { body: { acao: "enviar_geracao", id: pend.id, respostas: el.respostas } });
       if (r0.error) { this.setState({ el: { ...this.state.el, enviando: false, erro: await erroDaFuncao(r0.error) } }); return; }
-      try { localStorage.removeItem("lv-elab-" + el.doc); } catch (e) {}
+      this.elGuardarUltimo(el.doc, el.respostas);
       this.setState({ el: { ...this.state.el, enviando: false, ok: "✓ Respostas enviadas. O " + d.sigla + " entra na fila e você recebe um e-mail quando ficar pronto." } });
       this.carregarDados();
       return;
@@ -4215,7 +4328,7 @@ class Component extends DCLogic {
     if (data && data.gratuito) {
       const r2 = await this.sb.functions.invoke("mp-checkout", { body: { acao: "enviar_geracao", id: data.id, respostas: el.respostas } });
       if (r2.error) { this.setState({ el: { ...this.state.el, enviando: false, erro: await erroDaFuncao(r2.error) } }); return; }
-      try { localStorage.removeItem("lv-elab-" + el.doc); } catch (e) {}
+      this.elGuardarUltimo(el.doc, el.respostas);
       this.setState({ el: { ...this.state.el, enviando: false, ok: "✓ Pedido recebido. O " + d.sigla + " entra na fila e você recebe um e-mail quando ficar pronto." } });
       this.carregarDados();
       return;
@@ -5713,19 +5826,33 @@ class Component extends DCLogic {
         return {
           elSemDoc: !d, elComDoc: !!d,
           elDocs: Object.entries(ELAB).map(([k, x]) => ({ sigla: x.sigla, nome: x.nome, desc: x.desc, base: x.base, escolher: () => this.elEscolher(k) })),
-          elNome: d ? d.nome : "", elSigla: d ? d.sigla : "", elReaproveitou: !!el.reaproveitou,
+          elNome: d ? d.nome : "", elSigla: d ? d.sigla : "",
           elTrocar: () => this.setState({ el: { ...s.el, doc: "", passo: 0 } }),
-          elObjeto: R.objeto || "", elOnObjeto: this.elResponder("objeto"),
           elExemplos: (EX[el.doc] || []).map(([rot, txt]) => ({ rot, usar: () => set("objeto", txt) })),
-          elNaturezas: chips("natureza", el.doc === "projeto_basico" ? ["Obra", "Serviço de engenharia", "Reforma"] : ["Bem (compra)", "Serviço comum", "Serviço contínuo", "Mão de obra exclusiva", "Locação"]),
           elOrgao: R.orgao || "", elOnOrgao: this.elResponder("orgao"),
           elUf: R.uf || "", elOnUf: (e) => set("uf", String(e.target.value).toUpperCase().replace(/[^A-Z]/g, "").slice(0, 2)),
-          elQtd: R.quantidades || "", elOnQtd: this.elResponder("quantidades"),
-          elValor: R.valor || "", elOnValor: this.elResponder("valor"),
-          elPrazos: chips("prazo", el.doc === "projeto_basico" ? ["6 meses", "12 meses", "Outro"] : ["Entrega única", "12 meses", "30 meses", "Outro"]),
-          elParcelas: chips("parcelamento", ["Lote único", "Por itens", "Por lotes"]),
-          elSelecoes: chips("selecao", el.doc === "projeto_basico" ? ["Concorrência", "Pregão (serviço comum de engenharia)", "Dispensa"] : ["Pregão", "Concorrência", "Dispensa", "Inexigibilidade", "Adesão a ata"]),
+          elCampos: (ELAB_RAPIDO[el.doc] || []).map((c) => {
+            const v = String(R[c.k] || ""), sel = v ? v.split("; ") : [];
+            const alterna = (nome) => {
+              if (!c.multi) return set(c.k, v === nome ? "" : nome);
+              const n = sel.includes(nome) ? sel.filter((x) => x !== nome) : sel.concat(nome);
+              set(c.k, n.join("; "));
+            };
+            return { rot: c.rot, obrig: !!c.obrig, opcional: !c.obrig, ph: c.ph || "", dica: c.dica || "",
+              ehTexto: c.tipo === "texto", ehLinha: c.tipo === "linha", ehChips: c.tipo === "chips", temExemplos: !!c.exemplos,
+              valor: v, onInput: this.elResponder(c.k),
+              op: (c.op || []).map((nome) => ({ nome, sel: sel.includes(nome), escolher: () => alterna(nome) })),
+              mostraOutro: !!c.outro && sel.includes("Outro"), outroValor: R[c.k + "_outro"] || "", onOutro: this.elResponder(c.k + "_outro") };
+          }),
+          elMostraPesquisa: el.doc === "etp" || (el.doc === "tr" && !String(R.valor || "").trim()),
+          elTextoPesquisa: el.doc === "etp"
+            ? "No ETP não se informa valor estimado. O agente faz uma pesquisa de mercado no PNCP com contratações de outros órgãos, priorizando o seu estado, compara todas as soluções possíveis (compra, locação, serviço…) e coloca a análise no estudo, com as fontes."
+            : "O agente traz contratações semelhantes do PNCP, priorizando o seu estado, como referência; o valor final deve vir da sua pesquisa de preços formal (art. 23).",
           elObs: R.observacoes || "", elOnObs: this.elResponder("observacoes"),
+          elReapAberto: !!el.reapAberto, elFormVisivel: !el.reapAberto, elRascunho: !!el.rascunho, elEmBranco: () => this.elEmBranco(),
+          elReapDe: el.reapAnterior ? " (" + el.reapAnterior + ")" : "",
+          elReapLista: (el.reap || []).map((x) => ({ rot: x.rot, valor: x.valor.length > 140 ? x.valor.slice(0, 140) + "…" : x.valor, marcado: !!x.marcado, marcar: () => this.elReapMarcar(x.k) })),
+          elReapUsar: () => this.elReapAplicar(true), elReapNao: () => this.elReapAplicar(false),
           elCondicao: condicao,
           elAceite: !!el.aceite, elOnAceite: (e) => { const v = !!e.target.checked; this.setState((x) => ({ el: { ...x.el, aceite: v, erro: "" } })); },
           elEnviar: () => this.elEnviar(), elBotao: el.enviando ? "Aguarde…" : "Criar o " + (d ? d.sigla : "documento"),

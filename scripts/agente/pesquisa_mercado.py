@@ -156,6 +156,8 @@ def pesquisar(objeto, uf="", natureza="", max_ref=12, limite_s=150):
                             texto = (h.get("description") or "") + " " + (h.get("title") or "")
                             if extra and extra[:5] not in sem_acento(texto):
                                 continue
+                            if re.search(r"revogad|anulad|cancelad|desert|fracassad", sem_acento(h.get("situacao_nome") or "")):
+                                continue
                             if ctrl in vistos or _pontos(texto, raizes) < min(2, len(raizes)):
                                 continue
                             vistos.add(ctrl)
