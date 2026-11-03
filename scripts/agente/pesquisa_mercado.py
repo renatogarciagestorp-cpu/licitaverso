@@ -28,9 +28,11 @@ def palavras_chave(objeto, n=4):
     return list(dict.fromkeys(ps))[:n]
 
 
-def _get(caminho, params=None, timeout=20):
+COMPRAS = "https://dadosabertos.compras.gov.br"
+
+
+def _curl(url, timeout=25):
     # o PNCP recusa a conexão do urllib (firewall); o curl é aceito
-    url = BASE + caminho + ("?" + urllib.parse.urlencode(params, quote_via=urllib.parse.quote) if params else "")
     r = subprocess.run(["curl", "-sS", "-m", str(timeout), "-A", UA["User-Agent"], "-H", "Accept: application/json",
                         "-w", "\n%{http_code}", url], capture_output=True, text=True, timeout=timeout + 5)
     if r.returncode != 0:
@@ -43,21 +45,17 @@ def _get(caminho, params=None, timeout=20):
     return json.loads(corpo)
 
 
-def _buscar(q, uf=None, n=15):
-    p = {"q": q, "tipos_documento": "edital", "ordenacao": "-data", "pagina": 1, "tam_pagina": n, "status": "todos"}
+def _get(caminho, params=None, timeout=25, base=BASE):
+    return _curl(base + caminho + ("?" + urllib.parse.urlencode(params, quote_via=urllib.parse.quote) if params else ""), timeout)
+
+
+def _buscar(q, uf=None, tipo="edital", n=50):
+    """Busca do PNCP (inclui estados e municípios). Ordena por data; a relevância é filtrada aqui pelas palavras-chave."""
+    p = {"q": q, "tipos_documento": tipo, "ordenacao": "-data", "pagina": 1, "tam_pagina": n, "status": "todos"}
     if uf:
         p["ufs"] = uf
     j = _get("/api/search/", p) or {}
     return j.get("items") or []
-
-
-def _ident(h):
-    cnpj, ano, seq = h.get("orgao_cnpj"), h.get("ano"), h.get("numero_sequencial")
-    if not (cnpj and ano and seq):
-        m = re.search(r"/(\d{14})/(\d{4})/(\d+)", str(h.get("item_url") or ""))
-        if m:
-            cnpj, ano, seq = m.groups()
-    return (str(cnpj), str(ano), str(seq)) if cnpj and ano and seq else None
 
 
 def _num(v):
@@ -67,31 +65,45 @@ def _num(v):
         return None
 
 
-def _itens_parecidos(ident, chaves, max_itens=3):
-    cnpj, ano, seq = ident
-    itens = _get(f"/api/pncp/v1/orgaos/{cnpj}/compras/{ano}/{seq}/itens", {"pagina": 1, "tamanhoPagina": 100}) or []
-    raizes = [c[:5] for c in chaves]
-    pont = []
-    for it in itens:
-        d = sem_acento(it.get("descricao"))
-        s = sum(1 for r in raizes if r in d)
-        if s >= min(2, len(raizes)):
-            pont.append((s, it))
-    pont.sort(key=lambda x: -x[0])
+def _pontos(texto, raizes):
+    t = sem_acento(texto)
+    return sum(1 for r in raizes if r in t)
+
+
+def _campo(d, *nomes):
+    for n in nomes:
+        if d.get(n) not in (None, ""):
+            return d[n]
+    return None
+
+
+def _itens_parecidos(controle, raizes, max_itens=3):
+    """Itens da contratação com preço unitário (dados abertos do Compras.gov.br, quando a compra passou por lá)."""
+    if not controle:
+        return []
+    q = {"tipo": "numeroControlePNCPCompra", "codigo": controle}
+    itens = (_get("/modulo-contratacoes/2.1_consultarItensContratacoes_PNCP_14133_Id", q, base=COMPRAS) or {}).get("resultado") or []
+    minimo = min(2, len(raizes))
+    pont = sorted(((_pontos(_campo(it, "descricaoResumida", "descricao") or "", raizes), it) for it in itens), key=lambda x: -x[0])
+    pont = [(p, it) for p, it in pont if p >= minimo][:max_itens]
+    if not pont:
+        return []
+    homolog = {}
+    try:
+        res = (_get("/modulo-contratacoes/3.1_consultarResultadoItensContratacoes_PNCP_14133_Id", q, base=COMPRAS) or {}).get("resultado") or []
+        for r in res:
+            v = _num(_campo(r, "valorUnitarioHomologado"))
+            k = _campo(r, "idCompraItem", "numeroItemPncp")
+            if v and k is not None:
+                homolog[str(k)] = min(v, homolog.get(str(k), v))
+    except Exception:
+        pass
     saida = []
-    for _, it in pont[:max_itens]:
-        e = {"descricao": re.sub(r"\s+", " ", str(it.get("descricao") or ""))[:220], "unidade": it.get("unidadeMedida"),
-             "quantidade": _num(it.get("quantidade")), "valor_unitario_estimado": _num(it.get("valorUnitarioEstimado")),
-             "valor_unitario_homologado": None}
-        if it.get("temResultado") and it.get("numeroItem") is not None:
-            try:
-                res = _get(f"/api/pncp/v1/orgaos/{cnpj}/compras/{ano}/{seq}/itens/{it['numeroItem']}/resultados") or []
-                vals = [_num(r.get("valorUnitarioHomologado")) for r in res if _num(r.get("valorUnitarioHomologado"))]
-                if vals:
-                    e["valor_unitario_homologado"] = min(vals)
-            except Exception:
-                pass
-        saida.append(e)
+    for _, it in pont:
+        saida.append({"descricao": re.sub(r"\s+", " ", str(_campo(it, "descricaoResumida", "descricao") or ""))[:220],
+                      "unidade": _campo(it, "unidadeMedida"), "quantidade": _num(_campo(it, "quantidade")),
+                      "valor_unitario_estimado": _num(_campo(it, "valorUnitarioEstimado")),
+                      "valor_unitario_homologado": homolog.get(str(_campo(it, "idCompraItem"))) or homolog.get(str(_campo(it, "numeroItemPncp")))})
     return saida
 
 
@@ -108,47 +120,54 @@ def solucoes_para(natureza, objeto):
 def pesquisar(objeto, uf="", natureza="", max_ref=12, limite_s=150):
     t0 = time.time()
     chaves = palavras_chave(objeto)
-    saida = {"fonte": "PNCP — Portal Nacional de Contratações Públicas (pncp.gov.br)", "palavras_chave": chaves, "uf": uf,
+    raizes = [c[:5] for c in chaves]
+    saida = {"fonte": "PNCP (pncp.gov.br) e dados abertos do Compras.gov.br", "palavras_chave": chaves, "uf": uf,
              "referencias": [], "erro": ""}
     if not chaves:
         saida["erro"] = "objeto sem palavras-chave"
         return saida
+    sols = solucoes_para(natureza, objeto)
+    por_sol = max(3, max_ref // len(sols))
     vistos = set()
     try:
-        for rotulo, extra in solucoes_para(natureza, objeto):
+        for rotulo, extra in sols:
             achados = []
-            for n in (3, 2, 1):  # da busca mais específica para a mais ampla
-                q = " ".join(([extra] if extra else []) + chaves[:n])
-                for abr, u in ((("estado", uf),) if uf else ()) + (("nacional", None),):
-                    hits = _buscar(q, u)
-                    for h in hits:
-                        i = _ident(h)
-                        if i and i not in vistos and all(i != x[2] for x in achados):
-                            achados.append((abr, h, i))
-                    if len([a for a in achados if a[0] == "estado"]) >= 3:
+            for abr, u in ((("estado", uf),) if uf else ()) + (("nacional", None),):
+                for n in (2, 1):  # termos mais específicos primeiro
+                    q = " ".join(([extra] if extra else []) + chaves[:n])
+                    for tipo in ("edital", "ata"):
+                        for h in _buscar(q, u, tipo):
+                            ctrl = h.get("numero_controle_pncp") or h.get("item_url")
+                            texto = (h.get("description") or "") + " " + (h.get("title") or "")
+                            if extra and extra[:5] not in sem_acento(texto):
+                                continue
+                            if ctrl in vistos or _pontos(texto, raizes) < min(2, len(raizes)):
+                                continue
+                            vistos.add(ctrl)
+                            achados.append((abr, tipo, h))
+                    if len(achados) >= por_sol:
                         break
-                if len(achados) >= 3:
+                if len([a for a in achados if a[0] == "estado"]) >= por_sol:
                     break
-            por_solucao = 0
-            for abr, h, i in achados:
-                if por_solucao >= max(3, max_ref // len(solucoes_para(natureza, objeto))) or time.time() - t0 > limite_s:
+            n_sol = 0
+            for abr, tipo, h in achados:
+                if n_sol >= por_sol or time.time() - t0 > limite_s:
                     break
-                vistos.add(i)
+                controle = str(h.get("numero_controle_pncp") or "")
                 try:
-                    itens = _itens_parecidos(i, chaves)
+                    itens = _itens_parecidos(re.sub(r"-\d{6}$", "", controle) if tipo == "ata" else controle, raizes)
                 except Exception:
                     itens = []
-                if not itens:
-                    continue
-                cnpj, ano, seq = i
+                url = str(h.get("item_url") or "")
                 saida["referencias"].append({
-                    "solucao": rotulo, "abrangencia": abr,
-                    "orgao": h.get("orgao_nome") or "", "unidade": h.get("unidade_nome") or "",
-                    "municipio": h.get("municipio_nome") or "", "uf": h.get("uf") or "",
-                    "modalidade": h.get("modalidade_licitacao_nome") or "", "data": str(h.get("data_publicacao_pncp") or "")[:10],
+                    "solucao": rotulo, "abrangencia": abr, "tipo": "ata de registro de preços" if tipo == "ata" else "contratação",
+                    "orgao": h.get("orgao_nome") or "", "municipio": h.get("municipio_nome") or "", "uf": h.get("uf") or "",
+                    "modalidade": h.get("modalidade_licitacao_nome") or "", "situacao": h.get("situacao_nome") or "",
+                    "data": str(h.get("data_publicacao_pncp") or "")[:10],
                     "objeto": re.sub(r"\s+", " ", str(h.get("description") or h.get("title") or ""))[:300],
-                    "link": f"{BASE}/app/editais/{cnpj}/{ano}/{seq}", "itens": itens})
-                por_solucao += 1
+                    "valor_total_estimado": _num(h.get("valor_total_estimado")), "valor_global": _num(h.get("valor_global")),
+                    "link": BASE + "/app" + url.replace("/compras/", "/editais/") if url else "", "itens": itens})
+                n_sol += 1
             if len(saida["referencias"]) >= max_ref or time.time() - t0 > limite_s:
                 break
     except Exception as e:
@@ -165,11 +184,14 @@ def bloco_prompt(p):
     if not p or not p.get("referencias"):
         return ("PESQUISA DE MERCADO NO PNCP: nenhuma contratação semelhante encontrada automaticamente"
                 + (f" ({p.get('erro')})" if p and p.get("erro") else "") + ". Não estime valores: use [PREENCHER] e registre a pendência.")
-    linhas = [f"PESQUISA DE MERCADO NO PNCP (dados reais, coletados automaticamente; UF do órgão: {p.get('uf') or 'não informada'}):"]
+    linhas = [f"PESQUISA DE MERCADO (PNCP e Compras.gov.br; dados reais, coletados automaticamente; UF do órgão: {p.get('uf') or 'não informada'}):"]
     for n, r in enumerate(p["referencias"], 1):
         linhas.append(f"[P{n}] Solução pesquisada: {r['solucao']} · {r['orgao']} ({r['municipio']}/{r['uf']}) · {r['modalidade']} · "
                       f"publicado em {r['data']} · {'mesmo estado' if r['abrangencia'] == 'estado' else 'outro estado'} · {r['link']}\n"
-                      f"     Objeto: {r['objeto']}")
+                      f"     Tipo: {r.get('tipo','')} · situação: {r.get('situacao','')} · valor total estimado: {brl(r.get('valor_total_estimado'))}"
+                      + (f" · valor global: {brl(r.get('valor_global'))}" if r.get('valor_global') else "") + f"\n     Objeto: {r['objeto']}")
+        if not r["itens"]:
+            linhas.append("     (preço unitário dos itens não disponível nos dados abertos: use só como referência de objeto e valor total)")
         for it in r["itens"]:
             linhas.append(f"     - {it['descricao']} | unidade: {it['unidade'] or '—'} | qtd: {it['quantidade'] if it['quantidade'] is not None else '—'}"
                           f" | estimado: {brl(it['valor_unitario_estimado'])} | homologado: {brl(it['valor_unitario_homologado'])}")

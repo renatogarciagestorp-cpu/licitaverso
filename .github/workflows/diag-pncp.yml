@@ -4,13 +4,7 @@ jobs:
   d:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - run: |
-          set +e
-          B=https://dadosabertos.compras.gov.br
-          curl -sS -m 30 "$B/v3/api-docs" -o /tmp/d.json; python3 -c "
-          import json;d=json.load(open('/tmp/d.json'))
-          for p in ['/modulo-contratacoes/2.1_consultarItensContratacoes_PNCP_14133_Id','/modulo-contratacoes/3.1_consultarResultadoItensContratacoes_PNCP_14133_Id']:
-            for m,o in d['paths'][p].items(): print(p, json.dumps(o.get('parameters'),ensure_ascii=False)[:1500])"
-          for N in 29138385000130-1-000066/2026 00394502000144-1-014828/2026; do t=numeroControlePNCPCompra; for E in 2.1_consultarItensContratacoes_PNCP_14133_Id 3.1_consultarResultadoItensContratacoes_PNCP_14133_Id; do
-            u="$B/modulo-contratacoes/2.1_consultarItensContratacoes_PNCP_14133_Id?tipo=$t&codigo=$N"
-            echo "== $u"; curl -sS -m 40 -G --data-urlencode "tipo=$t" --data-urlencode "codigo=$N" -o /tmp/r -w "HTTP %{http_code} %{time_total}s\n" "$B/modulo-contratacoes/$E"; head -c 1300 /tmp/r; echo; done; done
+          python3 scripts/agente/pesquisa_mercado.py --objeto "Serviços contínuos de limpeza, asseio e conservação predial" --uf RJ --natureza "Serviço contínuo" | tail -45
+          python3 scripts/agente/pesquisa_mercado.py --objeto "Aquisição de notebooks para as escolas municipais" --uf RJ --natureza "Bem" | tail -70
