@@ -694,6 +694,13 @@
   .lvc-campo > span { font-size: 12.5px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: #0F6B7E; }
   .lvc-campo input, .lvc-campo select { width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 11px; padding: 11px 13px; font: inherit; font-size: 15px; color: #0B1F2A; background: #FBFCFC; }
   .lvc-campo input:focus, .lvc-campo select:focus { outline: 2px solid #0FA36B; outline-offset: 1px; background: #fff; }
+  .lvc-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .lvc-chip { border: 1px solid #D5E2DF; background: #fff; color: #3D5058; border-radius: 999px; padding: 9px 13px; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+  .lvc-chip[aria-pressed="true"] { background: #0A1F2A; border-color: #0A1F2A; color: #fff; }
+  .lvc-form, .lvc-res, .lvc-campo { min-width: 0; }
+  .lvc-campo input { display: block; min-width: 0; max-width: 100%; -webkit-appearance: none; appearance: none; min-height: 46px; }
+  .lvc-campo input[type="month"] { text-align: left; }
+  .lvc-campo input[type="month"]::-webkit-date-and-time-value { text-align: left; }
   .lvc-campo > small { font-size: 12.5px; color: #7A8B91; line-height: 1.4; }
   .lvc-check { display: flex; gap: 10px; align-items: center; font-size: 14.5px; font-weight: 700; color: #26393F; cursor: pointer; }
   .lvc-check input { width: 18px; height: 18px; accent-color: #0FA36B; }
@@ -1516,23 +1523,23 @@
           <div class="lvc-grid">
             <div class="lvc-form">
               <h2 class="lva-h2" style="font-size: 22px">Dados do contrato</h2>
-              <label class="lvc-campo"><span>Regime do contrato</span>
-                <select sc-camel-on-change="{{ calcOnRegime }}"><sc-for list="{{ calcRegimes }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
-              <label class="lvc-campo"><span>Índice previsto no contrato</span>
-                <select sc-camel-on-change="{{ calcOnIndice }}"><sc-for list="{{ calcIndices }}" as="o" hint-placeholder-count="6"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+              <div class="lvc-campo"><span>Regime do contrato</span>
+                <div class="lvc-chips" role="group"><sc-for list="{{ calcRegimes }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></div>
+              <div class="lvc-campo"><span>Índice previsto no contrato</span>
+                <div class="lvc-chips" role="group"><sc-for list="{{ calcIndices }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></div>
               <label class="lvc-campo"><span>Valor mensal atual do contrato (R$)</span>
                 <input type="text" inputmode="decimal" value="{{ calcValor }}" sc-camel-on-input="{{ calcOnValor }}" placeholder="Ex.: 48.500,00"></label>
               <label class="lvc-campo"><span>Data-base (mês do orçamento estimado)</span>
-                <input type="month" value="{{ calcDataBase }}" sc-camel-on-input="{{ calcOnDataBase }}"><small>Pela Lei 14.133, é a data do orçamento estimado, salvo se o contrato indicar outra.</small></label>
+                <input type="month" value="{{ calcDataBase }}" sc-camel-on-input="{{ calcOnDataBase }}" sc-camel-on-change="{{ calcOnDataBase }}"><small>Pela Lei 14.133, é a data do orçamento estimado, salvo se o contrato indicar outra.</small></label>
               <label class="lvc-check"><input type="checkbox" checked="{{ calcHouve }}" sc-camel-on-change="{{ calcOnHouve }}"><span>Já houve reajuste neste contrato</span></label>
               <sc-if value="{{ calcHouve }}" hint-placeholder-val="{{ false }}">
-                <label class="lvc-campo"><span>Mês em que o último reajuste passou a valer</span><input type="month" value="{{ calcUltimo }}" sc-camel-on-input="{{ calcOnUltimo }}"><small>O próximo ciclo conta 12 meses a partir daqui.</small></label>
+                <label class="lvc-campo"><span>Mês em que o último reajuste passou a valer</span><input type="month" value="{{ calcUltimo }}" sc-camel-on-input="{{ calcOnUltimo }}" sc-camel-on-change="{{ calcOnUltimo }}"><small>O próximo ciclo conta 12 meses a partir daqui.</small></label>
               </sc-if>
-              <label class="lvc-campo"><span>Calcular até (mês de referência)</span><input type="month" value="{{ calcReferencia }}" sc-camel-on-input="{{ calcOnReferencia }}"><small>Deixe em branco para usar o mês atual.</small></label>
-              <label class="lvc-campo"><span>Fim da vigência (opcional)</span><input type="month" value="{{ calcFim }}" sc-camel-on-input="{{ calcOnFim }}"></label>
-              <label class="lvc-campo"><span>Período do índice em cada ciclo</span>
-                <select sc-camel-on-change="{{ calcOnMetodo }}"><sc-for list="{{ calcMetodos }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select>
-                <small>Use o que diz a cláusula de reajuste do seu contrato.</small></label>
+              <label class="lvc-campo"><span>Calcular até (mês de referência)</span><input type="month" value="{{ calcReferencia }}" sc-camel-on-input="{{ calcOnReferencia }}" sc-camel-on-change="{{ calcOnReferencia }}"><small>Deixe em branco para usar o mês atual.</small></label>
+              <label class="lvc-campo"><span>Fim da vigência (opcional)</span><input type="month" value="{{ calcFim }}" sc-camel-on-input="{{ calcOnFim }}" sc-camel-on-change="{{ calcOnFim }}"></label>
+              <div class="lvc-campo"><span>Período do índice em cada ciclo</span>
+                <div class="lvc-chips" role="group"><sc-for list="{{ calcMetodos }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div>
+                <small>Use o que diz a cláusula de reajuste do seu contrato.</small></div>
               <details class="lvc-det"><summary>Dados para a nota técnica (opcional)</summary>
                 <label class="lvc-campo"><span>Contrato / processo</span><input type="text" value="{{ calcContrato }}" sc-camel-on-input="{{ calcOnContrato }}"></label>
                 <label class="lvc-campo"><span>Contratada</span><input type="text" value="{{ calcContratada }}" sc-camel-on-input="{{ calcOnContratada }}"></label>
@@ -1881,7 +1888,7 @@
                   </div>
                   <select sc-camel-on-change="{{ d.onTipo }}" aria-label="Tipo do documento {{ d.n }}" style="width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 10px; padding: 10px 12px; font-size: 14px; background: #fff">
                     <option value="">Escolha o tipo do documento…</option>
-                    <sc-for list="{{ d.opcoes }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for>
+                    <sc-for list="{{ d.opcoes }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}" label="{{ o.nome }}">{{ o.nome }}</option></sc-for>
                   </select>
                   <span style="font-size: 12.5px; line-height: 1.45; color: #7A8B91">{{ d.dica }}</span>
                   <sc-if value="{{ d.temTipo }}" hint-placeholder-val="{{ false }}">
@@ -5208,7 +5215,7 @@ ${juris.length ? "<h2>Jurisprudência relacionada (Biblioteca Licitacon)</h2><ul
         const brlN = (v) => "R$ " + v.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         const pct = (f) => ((f - 1) * 100).toFixed(2).replace(".", ",") + "%";
         const mesBR = (x) => { const [a, m] = String(x).split("-"); return ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"][Number(m) - 1] + "/" + a; };
-        const opt = (lista, atual) => lista.map(([id, nome]) => ({ id, nome, sel: id === atual }));
+        const opt = (lista, atual, campo) => lista.map(([id, nome]) => ({ id, nome, sel: id === atual, escolher: () => this.setState((x) => ({ calc: { ...x.calc, [campo]: id } })) }));
         const idxNomes = [["ipca", "IPCA (IBGE)"], ["ipca_e", "IPCA-E (IBGE)"], ["inpc", "INPC (IBGE)"], ["igpm", "IGP-M (FGV)"], ["igpdi", "IGP-DI (FGV)"], ["incc", "INCC-DI (FGV)"]]
           .filter(([id]) => !s.indices || (s.indices.series && s.indices.series[id]));
         const alertas = [];
@@ -5223,9 +5230,9 @@ ${juris.length ? "<h2>Jurisprudência relacionada (Biblioteca Licitacon)</h2><ul
           calcLiberada: liberada, calcBloqueada: !liberada,
           calcBloqTexto: s.usuario ? "Comece o teste grátis de 7 dias ou escolha um plano para usar a calculadora e baixar a nota técnica." : "Entre na sua conta para usar. Se ainda não assina, o teste de 7 dias é grátis e sem cartão.",
           calcBloqCta: s.usuario ? "Ver teste e planos" : "Entrar ou criar conta", calcBloqAcao: s.usuario ? this.nav("planos") : () => { this.setState({ volta: "calculadora" }); this.irPara("login"); },
-          calcRegimes: opt([["14133", "Lei 14.133/2021"], ["8666", "Lei 8.666/1993 (contrato antigo)"], ["13303", "Lei 13.303/2016 (estatais)"]], c.regime),
-          calcIndices: opt(idxNomes, c.indice),
-          calcMetodos: opt([["a", "12 meses a partir do mês da data-base (ex.: mar a fev)"], ["b", "12 meses a partir do mês seguinte (ex.: abr a mar)"]], c.metodo),
+          calcRegimes: opt([["14133", "Lei 14.133/2021"], ["8666", "Lei 8.666/1993"], ["13303", "Lei 13.303/2016 (estatais)"]], c.regime, "regime"),
+          calcIndices: opt(idxNomes, c.indice, "indice"),
+          calcMetodos: opt([["a", "A partir do mês da data-base (ex.: mar a fev)"], ["b", "A partir do mês seguinte (ex.: abr a mar)"]], c.metodo, "metodo"),
           calcValor: c.valor, calcDataBase: c.dataBase, calcHouve: !!c.houveReajuste, calcUltimo: c.ultimo, calcReferencia: c.referencia, calcFim: c.fim,
           calcContrato: c.contrato, calcContratada: c.contratada, calcObjeto: c.objeto,
           calcOnRegime: this.onCalc("regime"), calcOnIndice: this.onCalc("indice"), calcOnValor: this.onCalc("valor"), calcOnDataBase: this.onCalc("dataBase"),
