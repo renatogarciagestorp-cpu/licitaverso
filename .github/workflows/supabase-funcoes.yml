@@ -8,6 +8,7 @@
 #   BREVO_API_KEY          (Brevo → SMTP e API → aba Chaves API)
 #   EMAIL_REMETENTE        (e-mail verificado como remetente na Brevo)
 #   AVISOS_SECRET          (qualquer senha longa; protege a função de avisos)
+#   ANTHROPIC_API_KEY      (a mesma do agente; usada na conferência das informações antes de criar documentos)
 name: Publicar funções de pagamento
 
 on:
@@ -39,6 +40,7 @@ jobs:
       BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
       EMAIL_REMETENTE: ${{ secrets.EMAIL_REMETENTE }}
       AVISOS_SECRET: ${{ secrets.AVISOS_SECRET }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       PROJECT_REF: umnhhztdqersjfrzqcea
       SITE_URL: https://renatogarciagestorp-cpu.github.io/licitaverso/
     steps:
@@ -70,6 +72,7 @@ jobs:
           [ -n "$BREVO_API_KEY" ] && args="$args BREVO_API_KEY=$BREVO_API_KEY"
           [ -n "$EMAIL_REMETENTE" ] && args="$args EMAIL_REMETENTE=$EMAIL_REMETENTE"
           [ -n "$AVISOS_SECRET" ] && args="$args AVISOS_SECRET=$AVISOS_SECRET"
+          [ -n "$ANTHROPIC_API_KEY" ] && args="$args ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY"
           supabase secrets set --yes --project-ref "$PROJECT_REF" $args
 
       - name: Atualizar o banco (ajustes idempotentes)
@@ -112,6 +115,7 @@ jobs:
           supabase functions deploy boas-vindas --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
           supabase functions deploy analise-aviso --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
           supabase functions deploy pesquisa-mercado --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+          supabase functions deploy elab-triagem --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
 
       - name: Conferir se a função responde
         if: steps.chaves.outputs.ok == 'true'

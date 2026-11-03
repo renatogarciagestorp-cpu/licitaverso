@@ -40,7 +40,10 @@ FERRAMENTA = {
                 "id": {"type": "integer"},
                 "componentes": {"type": "array", "items": {"type": "object", "properties": {
                     "componente": {"type": "string"},
-                    "valores": {"type": "array", "items": {"type": ["number", "null"]}, "description": "um por ano; null se não houver dado"},
+                    "unidade": {"type": "string", "description": "ex.: unidade, unidade/mês, serviço/ano"},
+                    "quantidade": {"type": ["number", "null"]},
+                    "valor_unitario": {"type": ["number", "null"], "description": "valor unitário encontrado na pesquisa (preço praticado ou item de contratação semelhante)"},
+                    "valores": {"type": "array", "items": {"type": ["number", "null"]}, "description": "custo total do componente em cada ano; null se não houver dado"},
                     "fonte": {"type": "string", "description": "ex.: [C1] mediana dos preços praticados; [P3]; referência do requisitante"}},
                     "required": ["componente", "valores"]}}}, "required": ["id", "componentes"]}}}},
         "itens": {"type": "array", "description": "itens da solução escolhida, para a estimativa de custo total", "items": {"type": "object", "properties": {
@@ -69,8 +72,9 @@ INSTRUCOES = (
     "ou não (inciso VIII), seguindo a decisão do requisitante; beneficios: resultados pretendidos (inciso IX); providencias: providências prévias, "
     "inclusive capacitação de fiscais e gestores (inciso X); correlatas: contratações correlatas e interdependentes (inciso XI); ambientais: impactos "
     "ambientais e medidas mitigadoras (inciso XII); viabilidade_justificativa: posicionamento conclusivo (inciso XIII). "
-    "Preencha também: solucoes (todas, viáveis e inviáveis), escolhida, comparativo, tco (valores só com dados da pesquisa ou do requisitante; "
-    "sem dado, null), itens da solução escolhida (valor_unitario null se não houver dado) e viabilidade. "
+    "Preencha também: solucoes (todas, viáveis e inviáveis), escolhida, comparativo, tco (o estudo de custo total de cada solução viável: "
+    "para cada componente informe unidade, quantidade, valor unitário da pesquisa, o custo de cada ano e a fonte; inclua manutenção, "
+    "assistência e demais custos de cada solução; valores só com dados da pesquisa ou do requisitante; sem dado, null), itens da solução escolhida (valor_unitario null se não houver dado) e viabilidade. "
     "Se o objeto não for de TIC, não cite a IN SGD/ME nº 94/2022 nem o SISP."
 )
 
@@ -268,7 +272,7 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
                     r.font.size = Pt(18 if len(obj) <= 110 else 15)
                 p.paragraph_format.line_spacing = 1.15
         elif "<Local>" in t:
-            preencher_paragrafo(p, f"[PREENCHER: local], {MESES[hoje.month - 1]} de {hoje.year}", negrito=False)
+            preencher_paragrafo(p, f"{respostas.get('municipio', '').strip() or '[PREENCHER: local]'}, {MESES[hoje.month - 1]} de {hoje.year}", negrito=False)
         elif "Perguntas frequentes" in t or "perguntas-frequentes" in t:
             p._p.getparent().remove(p._p)
     for p in list(w.paragraphs):  # links do modelo federal (página de orientação)
@@ -377,7 +381,7 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
             for s_ in tco.get("solucoes") or []:
                 comps = s_.get("componentes") or []
                 c.add(novo_par(f"Solução {s_.get('id')} – {nome_sol.get(s_.get('id'), '')}", negrito=True, antes=160))
-                cab = ["Componente de custo"] + [f"Ano {i + 1}" for i in range(anos)] + ["Total", "Fonte"]
+                cab = ["Componente de custo", "Unidade", "Qtd.", "Valor unitário"] + [f"Ano {i + 1}" for i in range(anos)] + ["Total", "Fonte"]
                 ln, tot_anos = [], [0.0] * anos
                 falta = [False] * anos
                 for cp in comps:
@@ -386,8 +390,9 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
                         if v is None: falta[i] = True
                         else: tot_anos[i] += float(v)
                     tot = None if any(v is None for v in vs) else sum(float(v) for v in vs)
-                    ln.append([cp.get("componente", "")] + [brl(v) for v in vs] + [brl(tot), cp.get("fonte", "")])
-                total = ["Total"] + [brl(None if falta[i] else tot_anos[i]) for i in range(anos)] + [brl(None if any(falta) else sum(tot_anos)), ""]
+                    ln.append([cp.get("componente", ""), cp.get("unidade") or "", num(cp.get("quantidade")) if cp.get("quantidade") is not None else "",
+                               brl(cp.get("valor_unitario")) if cp.get("valor_unitario") is not None else ""] + [brl(v) for v in vs] + [brl(tot), cp.get("fonte", "")])
+                total = ["Total", "", "", ""] + [brl(None if falta[i] else tot_anos[i]) for i in range(anos)] + [brl(None if any(falta) else sum(tot_anos)), ""]
                 c.add(nova_tabela(cab, ln, total=total))
             if not tco.get("solucoes"):
                 c.add(novo_par("[PREENCHER: cálculo dos custos totais das soluções viáveis.]"))
@@ -445,7 +450,7 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
                 for n, x in enumerate(pesquisa.get("precos_praticados") or [], 1):
                     c.add(novo_par(f"[C{n}] Compras.gov.br, preços praticados: {x['catalogo']}, unidade {x['unidade']}, {x['n']} compras, mediana {brl(x['mediana'])}. Disponível em: https://dadosabertos.compras.gov.br.", tam=9))
         elif chave == "responsaveis":
-            c.add(novo_par(f"[PREENCHER: local], {hoje.day} de {MESES[hoje.month - 1]} de {hoje.year}."))
+            c.add(novo_par(f"{respostas.get('municipio', '').strip() or '[PREENCHER: local]'}, {hoje.day} de {MESES[hoje.month - 1]} de {hoje.year}."))
             quadro = next((x for x in (el.itersiblings()) if x.tag == qn("w:tbl")), None)
             if quadro is not None:
                 from docx.table import Table
@@ -471,7 +476,10 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
                 trocar_texto_celula(q.rows[0].cells[0], "AUTORIDADE MÁXIMA DA ÁREA DE TIC (OU AUTORIDADE SUPERIOR)" if tic else "AUTORIDADE COMPETENTE")
                 cel = q.rows[-1].cells[0]
                 trocar_texto_celula(cel, "\n\n_____________________________", negrito=False)
-                for linha, neg in (("[PREENCHER: nome da autoridade]", True), ("[PREENCHER: cargo] · Matrícula [PREENCHER]", False)):
+                aut = [x.strip() for x in re.split(r"[,;·]", respostas.get("autoridade", "")) if x.strip()]
+                linhas_aut = ((aut[0], True), (" · ".join(aut[1:]) or "[PREENCHER: cargo]", False)) if aut else \
+                    (("[PREENCHER: nome da autoridade]", True), ("[PREENCHER: cargo] · Matrícula [PREENCHER]", False))
+                for linha, neg in linhas_aut:
                     pp = cel.add_paragraph(); pp.alignment = WD_ALIGN_PARAGRAPH.CENTER; escrever(pp, linha, neg, 10)
                 cel.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
         else:
@@ -479,23 +487,14 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
             if not S.get(chave):
                 c.add(novo_par("[PREENCHER]"))
 
-    # ---------------------------------------------------------------- anexo: pendências e conferência
-    fim = novo_par(""); fim.add_run().add_break(WD_BREAK.PAGE)
-    novo_par("ANEXO — PENDÊNCIAS E PONTOS DE ATENÇÃO (retire antes de juntar ao processo)", negrito=True, centro=True)
-    novo_par("Minuta elaborada por inteligência artificial a partir das respostas do requisitante e conferida automaticamente pelo "
-             "Agente Licitacon. Revise todo o texto e complete as lacunas destacadas em amarelo.", tam=10)
-    if docj.get("pendencias"):
-        novo_par("Pendências para completar", negrito=True)
-        for t in docj["pendencias"]:
+    # ---------------------------------------------------------------- anexo: só o que o assinante optou por completar depois
+    pend = [t for t in (docj.get("pendencias") or []) if str(t).strip()]
+    if pend:
+        fim = novo_par(""); fim.add_run().add_break(WD_BREAK.PAGE)
+        novo_par("ANEXO — INFORMAÇÕES PARA COMPLETAR (retire antes de juntar ao processo)", negrito=True, centro=True)
+        novo_par("Estes são os pontos que você informou não ter no momento da elaboração. Eles estão destacados em amarelo no texto.", tam=10)
+        for t in pend:
             novo_par("• " + t, tam=10)
-    achados = [r for r in (conferencia or {}).get("resultados", []) if r.get("resultado") in ("nao_conforme", "parcial")]
-    achados += (conferencia or {}).get("outros_apontamentos", []) or []
-    if achados:
-        novo_par("Pontos de atenção da conferência automática", negrito=True)
-        ordem = {"alta": 0, "media": 1, "baixa": 2}
-        for r in sorted(achados, key=lambda x: ordem.get(x.get("gravidade"), 3)):
-            g = {"alta": "Alta", "media": "Média", "baixa": "Baixa"}.get(r.get("gravidade"), "")
-            novo_par(f"[{g}] {r.get('titulo') or r.get('item') or ''}: {r.get('constatacao') or ''} {('Providência: ' + r['correcao']) if r.get('correcao') else ''}".strip(), tam=10)
 
     # segurança: nenhuma orientação em vermelho do modelo pode sobrar no documento
     vermelhos = [r for r in corpo.iter(qn("w:color")) if (r.get(qn("w:val")) or "").upper() in ("FF0000", "FF3333", "0000FF")]

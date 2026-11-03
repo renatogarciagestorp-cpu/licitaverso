@@ -11,7 +11,7 @@ Uso:
       o pedido, mostra o tamanho e gera um Word de exemplo com texto fictício, para testar o fluxo)
 Saídas na pasta: documento.json, documento.docx (e documento.pdf se houver LibreOffice), conferencia.json.
 """
-import argparse, importlib.util, json, pathlib, re, shutil, subprocess, sys, time
+import argparse, datetime, importlib.util, json, pathlib, re, shutil, subprocess, sys, time
 
 RAIZ = pathlib.Path(__file__).resolve().parents[2]
 _spec = importlib.util.spec_from_file_location("analisar", RAIZ / "scripts" / "agente" / "analisar.py")
@@ -55,7 +55,9 @@ CAMPOS_ROTULO = {
     "prazo": "Prazo", "prazo_outro": "Prazo (detalhe)", "observacoes": "Observações do requisitante",
     "parc_motivo": "Motivo do parcelamento ou não (escolha do requisitante)", "adjudicacao": "Forma de adjudicação (escolha do requisitante)",
     "criterio": "Critério de julgamento (escolha do requisitante)", "regime_exec": "Regime de execução (escolha do requisitante)",
-    "local": "Local da obra ou serviço",
+    "local": "Local da obra ou serviço", "municipio": "Município", "autoridade": "Autoridade que aprova o documento",
+    "esclarecimentos": "Esclarecimentos dados pelo requisitante (dúvidas resolvidas antes da redação)",
+    "sem_info": "Informações que o requisitante declarou não ter (somente aqui use [PREENCHER])",
     "especificacoes": "Especificações e requisitos", "gestor": "Gestor do contrato", "fiscais": "Fiscais do contrato / comissão de fiscalização",
     "fonte": "Fonte orçamentária e dotação",
 }
@@ -103,7 +105,7 @@ def jurisprudencia_do_estado(uf, consulta, n=6):
     return saida[:n]
 
 
-CHAVES_INTERNAS = {"modelo_arquivo", "modelo_nome", "logo_arquivo", "logo_nome", "precos_pdfs", "precos_links", "precos_manual", "precos_sem",
+CHAVES_INTERNAS = {"entrega", "modelo_arquivo", "modelo_nome", "logo_arquivo", "logo_nome", "precos_pdfs", "precos_links", "precos_manual", "precos_sem",
                    "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula"}
 
 
@@ -162,7 +164,14 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
     d = DOCS[doc]
     roteiro = an.carregar_roteiro("lei-14133")
     itens, _ = an.montar_itens(roteiro, d["roteiro"], "lei-14133", d["objetos"])
-    texto_resp = "\n".join(f"- {CAMPOS_ROTULO.get(k, k)}: {str(v).strip()}" for k, v in respostas.items() if str(v).strip() and k not in CHAVES_INTERNAS)
+    def valor_legivel(k, v):
+        if k == "esclarecimentos":
+            try:
+                return "".join(f"\n    · {x.get('tema','')}: {x.get('pergunta','')} → {x.get('resposta','')}" for x in json.loads(v))
+            except Exception:
+                return v
+        return v
+    texto_resp = "\n".join(f"- {CAMPOS_ROTULO.get(k, k)}: {valor_legivel(k, str(v).strip())}" for k, v in respostas.items() if str(v).strip() and k not in CHAVES_INTERNAS)
     if respostas.get("precos_sem") == "sim":
         texto_resp += "\n- Pesquisa de preços: o requisitante optou por completar os valores depois (use [PREENCHER] nos valores e registre a pendência)"
     uf = uf_de(respostas.get("uf", ""))
@@ -171,10 +180,15 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
     bloco_juris = "\n".join(f"- [{j['id']}] {j.get('orgao','')} {j.get('numero','')} ({j.get('data','')[:4]}): {(j.get('tese') or j.get('titulo') or '')[:500]}" for j in juris) or "(nenhuma)"
     system = (
         f"Você é especialista em planejamento de contratações públicas e redige o {d['nome']} conforme o {d['base']}. "
-        "Escreva em português formal, claro e técnico, na terceira pessoa, pronto para o processo administrativo. "
+        "Escreva em português formal, claro e técnico, NA PRIMEIRA PESSOA, como o próprio responsável pela elaboração que assina o "
+        "documento (ex.: \"verifiquei\", \"constatei\", \"proponho\", \"indico\", \"esta unidade necessita\"); nunca se refira ao "
+        "\"requisitante\" em terceira pessoa (não escreva \"foi a solução indicada pelo requisitante\") e nunca mencione inteligência "
+        "artificial, agente ou questionário. Quem ler deve entender que quem escreveu é quem assina. "
         "Regras: (1) use exclusivamente as informações do requisitante; nunca invente números, valores, datas, nomes, quantitativos, "
-        "marcas ou fontes de pesquisa de preços; (2) onde faltar dado essencial, escreva o trecho-modelo com a lacuna entre colchetes, "
-        "no formato [PREENCHER: o que falta], e registre o item em pendencias; (3) cite os dispositivos legais corretos e vigentes, "
+        "marcas ou fontes de pesquisa de preços; (2) as dúvidas foram resolvidas com o requisitante antes desta redação (veja os "
+        "esclarecimentos): preencha TODOS os campos; use [PREENCHER: o que falta] SOMENTE para as informações listadas como \"declarou "
+        "não ter\" e para valores que a pesquisa não encontrou, e registre só esses itens em pendencias; não deixe dúvidas, ressalvas ou "
+        "pedidos de confirmação no texto nem nas pendências; (3) cite os dispositivos legais corretos e vigentes, "
         "usando o texto oficial fornecido; (4) siga o roteiro de verificação fornecido para que o documento atenda a cada item; "
         "(5) jurisprudência: só a fornecida, citando órgão, número e ano, e só quando pertinente; informe os ids usados; "
         "(6) não use marca ou especificação que restrinja a competição sem justificativa técnica; "
@@ -182,8 +196,7 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
         "critério de julgamento, regime de execução, solução indicada no TR ou no Projeto Básico, prazo) devem ser seguidas exatamente "
         "como informadas, apenas fundamentadas (exceção: se o parcelamento vier como \"Analisar no ETP e recomendar\", analise as "
         "opções à luz da pesquisa de mercado, recomende a mais adequada com justificativa e escreva [PREENCHER: confirmar a decisão "
-        "sobre o parcelamento], registrando a pendência); se faltar uma informação exigida pela lei, não a escolha: use [PREENCHER] e registre "
-        "a pendência; (8) o requisitante informa de propósito só o essencial (criação rápida): redija com texto técnico adequado ao "
+        "sobre o parcelamento], registrando a pendência); (8) o requisitante informa de propósito só o essencial (criação rápida): redija com texto técnico adequado ao "
         "objeto apenas a parte descritiva que não depende de decisão nem de dado do órgão (requisitos usuais de qualidade, rotinas de "
         "fiscalização, sustentabilidade, riscos, providências), deixando [PREENCHER] para dados factuais (valores oficiais, datas, "
         "nomes, números de processo, dotação); (9) pesquisa de mercado: use apenas os dados do PNCP e do Compras.gov.br fornecidos e as "
@@ -192,11 +205,17 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
         "solução, informe faixa e mediana dos valores unitários comparáveis (prefira os preços praticados do Compras.gov.br, que são "
         "preços unitários reais, e depois o homologado ao estimado, e as contratações do "
         "mesmo estado) e alerte quando unidades ou especificações não forem comparáveis; "
-        + ("no ETP, o levantamento de mercado deve considerar todas as soluções possíveis (por exemplo, aquisição, locação, serviço "
-           "com fornecimento do bem, adesão a ata ou execução direta, conforme o objeto), comparar vantagens, desvantagens e custos de cada "
-           "uma com base na pesquisa, e a estimativa do valor deve ser apresentada como preliminar (art. 18, § 1º, VI), dependente da "
-           "pesquisa de preços formal do art. 23 da Lei 14.133/2021; o posicionamento conclusivo indica a solução que os dados mostram "
-           "mais vantajosa, registrando que a escolha final cabe ao requisitante; " if doc == "etp" else
+        + ("no ETP, o levantamento de mercado deve considerar todas as soluções possíveis (aquisição, locação, serviço com "
+           "fornecimento do bem, adesão a ata ou execução direta, conforme o objeto) e a escolha da melhor solução é um ESTUDO DE CUSTO TOTAL "
+           "no mesmo horizonte de tempo e para a mesma quantidade e especificação: para cada solução, some todos os custos que a "
+           "administração terá (aquisição: preço unitário × quantidade + manutenção e assistência fora da garantia + outros custos; "
+           "locação: valor mensal unitário × meses × quantidade, verificando se a manutenção está incluída; se não estiver, some a "
+           "manutenção à parte), usando os preços unitários encontrados na pesquisa (preços praticados e itens de contratações "
+           "semelhantes, com especificação igual ou parecida); exemplo: se a aquisição custa R$ 3.000 por unidade e a locação R$ 2.800 "
+           "no período com manutenção incluída, a locação é mais vantajosa; se a locação custa R$ 2.800 mas a manutenção custa R$ 400 à "
+           "parte, a aquisição é mais vantajosa; mostre esse cálculo nos quadros de custos, com unidade, quantidade, valor unitário e "
+           "fonte de cada componente, e indique a solução de menor custo total que atenda aos requisitos, justificando também os aspectos "
+           "qualitativos; a estimativa do valor é preliminar (art. 18, § 1º, VI), dependente da pesquisa de preços do art. 23; " if doc == "etp" else
            "se o requisitante não informou o valor, apresente os dados do PNCP como referência preliminar, em mapa resumido, registrando "
            "que o valor estimado deve vir da pesquisa de preços formal do art. 23 da Lei 14.133/2021 ([PREENCHER] no valor final); ")
         + (f"(10) siga o modelo padrão de ETP descrito a seguir e entregue com a ferramenta entregar_documento.\n{me.INSTRUCOES}" if padrao else
@@ -354,7 +373,7 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
                 + (f" · {x['excluidos']} valores discrepantes excluídos" if x.get("excluidos") else "")
                 + (f" · compras de exemplo: {ids}" if ids else "") + ". Disponível em: https://dadosabertos.compras.gov.br.", recuo=False, tam=10)
     w.add_paragraph()
-    par("[PREENCHER: local], [PREENCHER: data].", recuo=False)
+    par(f"{respostas.get('municipio', '').strip() or '[PREENCHER: local]'}, {datetime.date.today().strftime('%d/%m/%Y')}.", recuo=False)
 
     def assinatura(titulo, nome, cargo, mat):  # bloco inteiro na mesma página
         ps = [w.add_paragraph(), par("_______________________________________________", centro=True),
@@ -365,23 +384,13 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
             x.paragraph_format.keep_with_next = True
     assinatura("Responsável pela elaboração", respostas.get("elab_nome", ""), respostas.get("elab_cargo", ""), respostas.get("elab_matricula", ""))
     assinatura("Responsável pelo setor", respostas.get("resp_nome", ""), respostas.get("resp_cargo", ""), respostas.get("resp_matricula", ""))
-    # anexo: pendências e conferência
-    w.add_page_break()
-    par("ANEXO — PENDÊNCIAS E PONTOS DE ATENÇÃO", negrito=True, centro=True)
-    par("Esta minuta foi elaborada por inteligência artificial a partir das respostas do requisitante e conferida automaticamente "
-        "pelo Agente Licitacon. Revise todo o texto, complete as lacunas destacadas e remova este anexo antes de juntar ao processo.", tam=10)
+    # anexo: só o que o requisitante optou por completar depois (as dúvidas foram resolvidas antes da redação)
     if docj.get("pendencias"):
-        par("Pendências para completar", negrito=True, recuo=False)
+        w.add_page_break()
+        par("ANEXO — INFORMAÇÕES PARA COMPLETAR (retire antes de juntar ao processo)", negrito=True, centro=True)
+        par("Estes são os pontos que você informou não ter no momento da elaboração. Eles estão destacados em amarelo no texto.", tam=10)
         for t in docj["pendencias"]:
             par("• " + t, recuo=False, tam=11)
-    achados = [r for r in (conferencia or {}).get("resultados", []) if r.get("resultado") in ("nao_conforme", "parcial")]
-    achados += (conferencia or {}).get("outros_apontamentos", []) or []
-    if achados:
-        par("Pontos de atenção da conferência automática", negrito=True, recuo=False)
-        ordem = {"alta": 0, "media": 1, "baixa": 2}
-        for r in sorted(achados, key=lambda x: ordem.get(x.get("gravidade"), 3)):
-            g = {"alta": "Alta", "media": "Média", "baixa": "Baixa"}.get(r.get("gravidade"), "")
-            par(f"[{g}] {r.get('titulo') or r.get('item') or ''}: {r.get('constatacao') or ''} {('Providência: ' + r['correcao']) if r.get('correcao') else ''}".strip(), recuo=False, tam=11)
     w.save(str(saida))
 
 
@@ -438,6 +447,24 @@ def main():
         if r.returncode == 0 and conf.exists():
             conferencia = json.loads(conf.read_text(encoding="utf-8"))
             custo_usd += float((conferencia.get("_execucao") or {}).get("custo_usd") or 0)
+            achados = [x for x in conferencia.get("resultados", []) if x.get("resultado") in ("nao_conforme", "parcial") and x.get("gravidade") in ("alta", "media")]
+            if achados:  # o agente corrige o próprio texto em vez de deixar a lista para o assinante
+                print("ETAPA: correcao", flush=True)
+                lista = "\n".join(f"- [{x.get('gravidade')}] {x.get('titulo') or x.get('item')}: {x.get('constatacao','')} Correção: {x.get('correcao','')}" for x in achados)
+                pedido = (f"DOCUMENTO JÁ REDIGIDO (JSON):\n{json.dumps(docj, ensure_ascii=False)}\n\nAPONTAMENTOS DA CONFERÊNCIA (corrija todos no "
+                          f"próprio texto; não acrescente ressalvas nem pendências por causa deles):\n{lista}\n\nDADOS ORIGINAIS:\n{usuario[:60000]}")
+                try:
+                    r2 = chamar(system + " Agora você revisa o documento que redigiu: devolva o documento completo, corrigido, pela mesma ferramenta.",
+                                pedido, me.FERRAMENTA if padrao else None)
+                    custo_usd += an.custo(r2.get("usage") or {})
+                    b2 = next((c for c in r2.get("content", []) if c.get("type") == "tool_use"), None)
+                    if b2 and b2.get("input"):
+                        docj = b2["input"]
+                        conferencia["corrigidos"] = len(achados)
+                        conferencia["resultados"] = [x for x in conferencia.get("resultados", []) if x not in achados]
+                        (pasta / "documento.json").write_text(json.dumps(docj, ensure_ascii=False, indent=1), encoding="utf-8")
+                except Exception as e:
+                    print(f"correção automática não concluída ({type(e).__name__})")
         else:
             print("conferência não concluída (o documento é entregue sem os pontos de atenção)")
     print("ETAPA: word", flush=True)

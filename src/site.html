@@ -759,6 +759,17 @@
   .lve-valid-erro li { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
   .lve-valid-erro .lve-trocar { margin: 0; color: #9B2C2C; }
   .lve-valid-ok { background: #E3F6EC; color: #0A5C3D; border: 1px solid #BFE6D2; display: block; }
+  .lve-tri { display: grid; gap: 16px; }
+  .lve-tri-pontos { display: flex; gap: 6px; flex-wrap: wrap; }
+  .lve-tri-pontos span { width: 26px; height: 6px; border-radius: 99px; background: #E3E9E8; }
+  .lve-tri-pontos span.ok { background: #0FA36B; }
+  .lve-tri-pontos span.sem { background: #F0B44C; }
+  .lve-tri-pontos span.atual { background: #0B1F2A; }
+  .lve-tri-card { border: 1px solid #E3E9E8; border-radius: 16px; padding: 18px 20px; display: grid; gap: 12px; background: #FBFCFC; }
+  .lve-tri-tema { justify-self: start; font-size: 12px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: #0A7A50; background: #E3F6EC; border-radius: 6px; padding: 3px 8px; }
+  .lve-tri-perg { margin: 0; font-size: 16px; font-weight: 700; color: #0B1F2A; line-height: 1.45; }
+  .lve-tri-pq { color: #66757F; font-size: 13px; line-height: 1.45; }
+  .lve-tri-sem { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: #43535C; }
   .lve-status { display: grid; gap: 16px; }
   .lve-status-cab { display: flex; gap: 14px; align-items: flex-start; }
   .lve-status-cab h3 { margin: 0 0 4px; font-size: 21px; color: #0B1F2A; }
@@ -1834,6 +1845,41 @@
                     <button type="button" class="lve-voltar" sc-camel-on-click="{{ elStBaixarPdf }}">Baixar em PDF</button></div></sc-if>
                   <p class="lve-st-nota">{{ elStNota }}</p>
                   <button type="button" class="lve-trocar" sc-camel-on-click="{{ elStNovo }}">Criar outro documento</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ elTriando }}" hint-placeholder-val="{{ false }}"><div class="lve-valid lve-valid-ok" role="status"><b>Conferindo suas informações…</b> O agente está verificando se há alguma dúvida ou inconsistência antes de criar o documento.</div></sc-if>
+              <sc-if value="{{ elTriAtivo }}" hint-placeholder-val="{{ false }}">
+                <div class="lve-tri">
+                  <div class="lve-etapa-cab"><small>Antes de criar · ponto {{ elTriN }} de {{ elTriTotal }}</small><h3>Preciso confirmar alguns pontos com você</h3>
+                    <p>Assim o documento sai completo e correto, sem lacunas para você resolver depois.</p></div>
+                  <sc-if value="{{ elTriAviso }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso">{{ elTriAviso }}</p></sc-if>
+                  <div class="lve-tri-pontos"><sc-for list="{{ elTriPontos }}" as="pt" hint-placeholder-count="4"><span class="{{ pt.cls }}" title="{{ pt.t }}"></span></sc-for></div>
+                  <sc-if value="{{ elTriPerguntando }}" hint-placeholder-val="{{ true }}">
+                    <div class="lve-tri-card">
+                      <span class="lve-tri-tema">{{ elTriTema }}</span>
+                      <p class="lve-tri-perg">{{ elTriPergunta }}</p>
+                      <small class="lve-tri-pq">{{ elTriPorQue }}</small>
+                      <sc-if value="{{ elTriTemOpcoes }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ elTriOpcoes }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
+                      <textarea rows="3" aria-label="Sua resposta" value="{{ elTriRascunho }}" sc-camel-on-input="{{ elOnTriRascunho }}" placeholder="{{ elTriPh }}"></textarea>
+                      <sc-if value="{{ elTriErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro">{{ elTriErro }}</p></sc-if>
+                      <div class="lve-nav">
+                        <sc-if value="{{ elTriTemAnterior }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ elTriAnterior }}">← Anterior</button></sc-if>
+                        <button type="button" class="lve-voltar" sc-camel-on-click="{{ elTriSemInfo }}">Não tenho essa informação</button>
+                        <button type="button" class="lvh-btn lve-continuar" sc-camel-on-click="{{ elTriConfirma }}">Confirmar resposta →</button>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ elTriConfirmar }}" hint-placeholder-val="{{ false }}">
+                    <div class="lve-tri-card">
+                      <p class="lve-tri-perg">Você informou que não tem estas informações:</p>
+                      <ul class="lve-tri-sem"><sc-for list="{{ elTriSemLista }}" as="x" hint-placeholder-count="2"><li>{{ x.t }}</li></sc-for></ul>
+                      <p>Posso gerar o documento assim mesmo? Esses pontos ficam destacados em amarelo para você completar depois.</p>
+                      <div class="lve-nav">
+                        <button type="button" class="lve-voltar" sc-camel-on-click="{{ elTriVoltarResponder }}">← Voltar e responder</button>
+                        <button type="button" class="lvh-btn lve-continuar" sc-camel-on-click="{{ elTriGerarAssim }}">Gerar assim mesmo</button>
+                      </div>
+                    </div>
+                  </sc-if>
                 </div>
               </sc-if>
               <sc-if value="{{ elFormVisivel }}" hint-placeholder-val="{{ true }}">
@@ -4066,12 +4112,18 @@ const ELAB_ROT = { orgao: "Órgão ou entidade", uf: "UF", objeto: "Objeto", nec
   elab_nome: "Elaboração: nome", elab_cargo: "Elaboração: cargo", elab_matricula: "Elaboração: matrícula",
   resp_nome: "Responsável pelo setor: nome", resp_cargo: "Responsável pelo setor: cargo", resp_matricula: "Responsável pelo setor: matrícula",
   entrega: "Forma de entrega", rodape_incluir: "Informações no rodapé", rodape: "Texto do rodapé", modelo_arquivo: "Modelo em Word", logo_arquivo: "Logo",
-  especificacoes: "Especificações", processo: "Nº do processo", gestor: "Gestor do contrato", fiscais: "Fiscais", fonte: "Fonte orçamentária", correlatas: "Contratações ligadas" };
+  especificacoes: "Especificações", processo: "Nº do processo", municipio: "Município", autoridade: "Autoridade que aprova", gestor: "Gestor do contrato", fiscais: "Fiscais", fonte: "Fonte orçamentária", correlatas: "Contratações ligadas" };
 // dados do órgão e de quem assina: podem ir para qualquer documento (se o assinante marcar)
-const ELAB_GERAIS = ["orgao", "uf", "observacoes", "unidade", "gestor", "fiscais", "fonte", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
+const ELAB_GERAIS = ["orgao", "uf", "observacoes", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
 const ELAB_PARES = { modelo_arquivo: "modelo_nome", logo_arquivo: "logo_nome" };
 const ELAB_PROCESSO = { k: "processo", etapa: "contratacao", rot: "Nº do processo administrativo", tipo: "linha", ph: "Se já houver. Ex.: 1234/2026" };
 const ELAB_UNIDADE = { k: "unidade", etapa: "pessoas", rot: "Unidade requisitante", tipo: "linha", ph: "Ex.: Secretaria Municipal de Administração" };
+const ELAB_FINAIS = [
+  { k: "municipio", etapa: "pessoas", rot: "Município (local e data do documento)", tipo: "linha", ph: "Ex.: Maricá" },
+  { k: "autoridade", etapa: "pessoas", rot: "Autoridade que aprova o documento", tipo: "linha", ph: "Nome, cargo e matrícula. Ex.: Maria Lima, Secretária de Administração, 4321" }];
+// informações que entram no documento: se estiverem em branco, o assinante é perguntado antes de criar
+const ELAB_NECESSARIOS = { etp: ["processo", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade"],
+  tr: ["processo", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade"], projeto_basico: ["processo", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade"] };
 const ELAB_RAPIDO = {
   etp: [
     { k: "objeto", etapa: "contratacao", rot: "O que você precisa contratar?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
@@ -4088,7 +4140,8 @@ const ELAB_RAPIDO = {
     ELAB_UNIDADE,
     { k: "gestor", etapa: "pessoas", rot: "Gestor do contrato", tipo: "linha", ph: "Nome, cargo e matrícula", dica: "Se ainda não foi designado, deixe em branco: o documento marca para preencher." },
     { k: "fiscais", etapa: "pessoas", rot: "Fiscais do contrato ou comissão de fiscalização", tipo: "texto", ph: "Um por linha: nome, cargo, matrícula e função (fiscal técnico, administrativo, suplente)" },
-    { k: "fonte", etapa: "pessoas", rot: "Fonte orçamentária e dotação", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" }
+    { k: "fonte", etapa: "pessoas", rot: "Fonte orçamentária e dotação", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" },
+    ...ELAB_FINAIS
   ],
   tr: [
     { k: "objeto", etapa: "contratacao", rot: "O que será contratado?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
@@ -4105,7 +4158,8 @@ const ELAB_RAPIDO = {
     ELAB_UNIDADE,
     { k: "gestor", etapa: "pessoas", rot: "Gestor do contrato", tipo: "linha", ph: "Nome, cargo e matrícula", dica: "Se ainda não foi designado, deixe em branco: o documento marca para preencher." },
     { k: "fiscais", etapa: "pessoas", rot: "Fiscais do contrato ou comissão de fiscalização", tipo: "texto", ph: "Um por linha: nome, cargo, matrícula e função (fiscal técnico, administrativo, suplente)" },
-    { k: "fonte", etapa: "pessoas", rot: "Fonte orçamentária e dotação", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" }
+    { k: "fonte", etapa: "pessoas", rot: "Fonte orçamentária e dotação", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" },
+    ...ELAB_FINAIS
   ],
   projeto_basico: [
     { k: "objeto", etapa: "contratacao", rot: "Qual é a obra ou o serviço de engenharia?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: reforma e acessibilidade da Escola Municipal X" },
@@ -4124,7 +4178,8 @@ const ELAB_RAPIDO = {
     ELAB_UNIDADE,
     { k: "gestor", etapa: "pessoas", rot: "Gestor do contrato", tipo: "linha", ph: "Nome, cargo e matrícula", dica: "Se ainda não foi designado, deixe em branco: o documento marca para preencher." },
     { k: "fiscais", etapa: "pessoas", rot: "Fiscais do contrato ou comissão de fiscalização", tipo: "texto", ph: "Um por linha: nome, cargo, matrícula e função (fiscal técnico, administrativo, suplente)" },
-    { k: "fonte", etapa: "pessoas", rot: "Fonte orçamentária e dotação", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" }
+    { k: "fonte", etapa: "pessoas", rot: "Fonte orçamentária e dotação", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" },
+    ...ELAB_FINAIS
   ]
 };
 const ELAB_ETAPAS = {
@@ -4653,7 +4708,7 @@ class Component extends DCLogic {
     this.setState((s) => {
       const respostas = { ...s.el.respostas, [k]: v };
       try { localStorage.setItem("lv-elab-" + s.el.doc, JSON.stringify(respostas)); } catch (er) {}
-      return { el: { ...s.el, respostas, erro: "" } };
+      return { el: { ...s.el, respostas, erro: "", triagemOk: false } };
     });
   };
 
@@ -4754,6 +4809,68 @@ class Component extends DCLogic {
     return probs;
   }
 
+  // conferência prévia: dados que faltam (do formulário) + dúvidas e inconsistências apontadas pelo agente
+  async elTriar(rodada) {
+    const el = this.state.el, R = el.respostas || {};
+    const perguntas = [];
+    if (rodada === 1) {
+      (ELAB_NECESSARIOS[el.doc] || []).forEach((k) => {
+        if (String(R[k] || "").trim() || String(R.sem_info || "").includes("[" + k + "]")) return;
+        const c = (ELAB_RAPIDO[el.doc] || []).find((x) => x.k === k) || {};
+        perguntas.push({ id: "campo_" + k, campo: k, tema: c.rot || ELAB_ROT[k], pergunta: "Informe: " + (c.rot || ELAB_ROT[k]).toLowerCase() + ".",
+          por_que: "Essa informação entra no documento. Sem ela, o campo sai em branco.", opcoes: [], ph: String(c.ph || "").replace(/^Se já houver\. /, ""), resposta: "", semInfo: false });
+      });
+    }
+    let indisponivel = false;
+    if (this.sb && this.u && GERACAO_ATIVA) {
+      this.setState((x) => ({ el: { ...x.el, triando: true, erro: "" } }));
+      try {
+        const { data, error } = await this.sb.functions.invoke("elab-triagem", { body: { doc: el.doc, respostas: R } });
+        if (error) throw error;
+        indisponivel = !!(data && data.indisponivel);
+        ((data && data.perguntas) || []).forEach((p) => perguntas.push({ ...p, id: "r" + rodada + p.id, resposta: "", semInfo: false }));
+      } catch (er) { indisponivel = true; }
+    }
+    this.setState((x) => ({ el: { ...x.el, triando: false } }));
+    if (!perguntas.length) { this.setState((x) => ({ el: { ...x.el, tri: null, triagemOk: true, validOk: true } })); return true; }
+    this.setState((x) => ({ el: { ...x.el, validOk: false, tri: { rodada, i: 0, perguntas, confirmar: false, aviso: indisponivel ? "A conferência automática não respondeu agora; confira os pontos abaixo." : "" } } }));
+    try { document.getElementById("el-topo").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {}
+    return false;
+  }
+
+  elTriResponder(resposta, semInfo) {
+    const t = this.state.el.tri; if (!t) return;
+    const ps = t.perguntas.map((p, j) => j === t.i ? { ...p, resposta: semInfo ? "" : String(resposta || "").trim(), semInfo: !!semInfo } : p);
+    const fim = t.i + 1 >= ps.length, temSem = ps.some((p) => p.semInfo);
+    const novo = { ...t, perguntas: ps, i: fim ? t.i : t.i + 1, confirmar: fim && temSem };
+    this.setState((x) => ({ el: { ...x.el, tri: novo, triRascunho: "" } }));
+    if (fim && !temSem) this.elTriConcluir(novo);
+  }
+
+  // grava as respostas no questionário; se houve respostas novas às dúvidas do agente, confere de novo (até 3 rodadas)
+  async elTriConcluir(tri) {
+    const el = this.state.el, t = tri || el.tri; if (!t) return;
+    const R = { ...el.respostas };
+    let escl = []; try { escl = JSON.parse(R.esclarecimentos || "[]") || []; } catch (e) { escl = []; }
+    let semInfo = String(R.sem_info || "");
+    let respondeuAgente = false;
+    t.perguntas.forEach((p) => {
+      if (p.semInfo) { semInfo += (semInfo ? "\n" : "") + "[" + (p.campo || p.tema) + "] " + p.tema + ": " + p.pergunta; if (!p.campo) escl.push({ tema: p.tema, pergunta: p.pergunta, resposta: "Não tenho essa informação (completar depois)." }); return; }
+      if (p.campo) R[p.campo] = p.resposta;
+      else { escl.push({ tema: p.tema, pergunta: p.pergunta, resposta: p.resposta }); respondeuAgente = true; }
+    });
+    R.esclarecimentos = JSON.stringify(escl).slice(0, 7900);
+    R.sem_info = semInfo.slice(0, 7900);
+    try { localStorage.setItem("lv-elab-" + el.doc, JSON.stringify(R)); } catch (e) {}
+    this.setState((x) => ({ el: { ...x.el, respostas: R, tri: null } }));
+    if (respondeuAgente && t.rodada < 3) {
+      const ok = await this.elTriar(t.rodada + 1);
+      if (!ok) return;
+    }
+    this.setState((x) => ({ el: { ...x.el, triagemOk: true } }));
+    this.elEnviar();
+  }
+
   async elEnviar() {
     const el = this.state.el, d = ELAB[el.doc];
     const probs = this.elValidar();
@@ -4763,6 +4880,7 @@ class Component extends DCLogic {
     }
     this.setState((x) => ({ el: { ...x.el, problemas: [], validOk: true, erro: "" } }));
     if (!(await this.elChecarPesquisa())) { this.setState((x) => ({ el: { ...x.el, validOk: false } })); return; }
+    if (!this.state.el.triagemOk) { const ok = await this.elTriar(1); if (!ok) return; }
     if (!GERACAO_ATIVA) { this.setState({ el: { ...this.state.el, ok: "Tudo certo com as respostas, e elas ficam salvas neste aparelho. A elaboração automática está na fase final de testes e será liberada em breve.", erro: "" } }); return; }
     if (!this.sb) { this.setState({ el: { ...this.state.el, validOk: false, erro: "A elaboração ainda não está ativa neste site (modo demonstração)." } }); return; }
     if (!this.u) { this.setState({ volta: "elaborar" }); this.irPara("login"); return; }
@@ -6424,7 +6542,27 @@ class Component extends DCLogic {
                   abrir: () => { this.setState({ el: { doc: x.documento, passo: 0, respostas: {}, aceite: false, acompanhar: x.id } }); this.elAcompanhar(); } };
               }),
               elTemRecentes: (s.analises || []).some((x) => x.tipo === "geracao" && x.status !== "aguardando_documentos" && x.status !== "cancelada"),
-              elAcompanhando: !!el.acompanhar, elFormVisivel: !el.reapAberto && !el.acompanhar,
+              elAcompanhando: !!el.acompanhar, elFormVisivel: !el.reapAberto && !el.acompanhar && !el.tri && !el.triando,
+              ...(() => {
+                const t = el.tri, p = t ? t.perguntas[t.i] : null;
+                const rasc = el.triRascunho != null && el.triRascunho !== "" ? el.triRascunho : (p ? p.resposta : "");
+                const setR = (v) => this.setState((x) => ({ el: { ...x.el, triRascunho: v, triErro: "" } }));
+                return {
+                  elTriando: !!el.triando, elTriAtivo: !!t, elTriN: t ? t.i + 1 : 0, elTriTotal: t ? t.perguntas.length : 0, elTriAviso: t ? t.aviso : "",
+                  elTriPontos: t ? t.perguntas.map((q, j) => ({ t: q.tema, cls: j === t.i && !t.confirmar ? "atual" : q.semInfo ? "sem" : (q.resposta ? "ok" : "") })) : [],
+                  elTriPerguntando: !!(t && !t.confirmar), elTriConfirmar: !!(t && t.confirmar),
+                  elTriTema: p ? p.tema : "", elTriPergunta: p ? p.pergunta : "", elTriPorQue: p ? p.por_que : "", elTriPh: p && p.ph ? p.ph : "Escreva a resposta ou escolha uma opção acima",
+                  elTriTemOpcoes: !!(p && p.opcoes && p.opcoes.length), elTriOpcoes: p && p.opcoes ? p.opcoes.map((o) => ({ nome: o, sel: rasc === o, escolher: () => setR(o) })) : [],
+                  elTriRascunho: rasc, elOnTriRascunho: (e) => setR(e.target.value), elTriErro: el.triErro || "",
+                  elTriTemAnterior: !!(t && t.i > 0),
+                  elTriAnterior: () => this.setState((x) => ({ el: { ...x.el, triRascunho: "", tri: { ...x.el.tri, i: Math.max(0, x.el.tri.i - 1) } } })),
+                  elTriConfirma: () => { if (!String(rasc || "").trim()) { this.setState((x) => ({ el: { ...x.el, triErro: "Escreva a resposta ou escolha uma opção. Se não tiver a informação, clique em \"Não tenho essa informação\"." } })); return; } this.elTriResponder(rasc, false); },
+                  elTriSemInfo: () => this.elTriResponder("", true),
+                  elTriSemLista: t ? t.perguntas.filter((q) => q.semInfo).map((q) => ({ t: q.tema + ": " + q.pergunta })) : [],
+                  elTriVoltarResponder: () => this.setState((x) => ({ el: { ...x.el, tri: { ...x.el.tri, confirmar: false, i: Math.max(0, x.el.tri.perguntas.findIndex((q) => q.semInfo)) } } })),
+                  elTriGerarAssim: () => this.elTriConcluir(el.tri)
+                };
+              })(),
               elStIcone: pronto ? "✓" : erro ? "!" : "⏳",
               elStTitulo: pronto ? "Seu " + sig + " está pronto" : erro ? "Não foi possível concluir" : "Seu " + sig + " está sendo elaborado",
               elStTexto: pronto ? "Baixe abaixo em Word (editável) ou PDF. As lacunas para completar estão destacadas em amarelo."

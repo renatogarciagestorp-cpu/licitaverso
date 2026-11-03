@@ -51,3 +51,8 @@ grant execute on function public.geracao_proxima() to service_role;
 
 -- Andamento da elaboração, para o site mostrar em que etapa o documento está (pesquisa, redação, conferência, Word)
 alter table public.analises add column if not exists progresso text;
+
+-- Conferência prévia das informações (antes de criar o documento): registro para limitar o uso (custo de API)
+create table if not exists public.elab_triagens (id bigserial primary key, usuario_id uuid not null, criado_em timestamptz not null default now());
+alter table public.elab_triagens enable row level security;
+create index if not exists elab_triagens_usuario on public.elab_triagens (usuario_id, criado_em desc);

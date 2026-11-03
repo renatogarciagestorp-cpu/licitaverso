@@ -234,7 +234,7 @@ def precos_praticados(objeto, natureza="", uf="", extra=None, max_linhas=12):
                                         "uf": r.get("estado") or "", "data": str(r.get("dataCompra") or r.get("dataResultado") or "")[:10],
                                         "descricao": re.sub(r"\s+", " ", str(r.get("descricaoDetalhadaItem") or r.get("descricaoItem") or ""))[:160],
                                         "quantidade": _num(r.get("quantidade")), "preco_unitario": _num(r.get("precoUnitario")),
-                                        "id_compra": r.get("idCompra")} for r in rs[:4]]})
+                                        "id_compra": r.get("idCompra")} for r in rs[:8]]})
         if len(saida) >= max_linhas:
             break
     return saida
@@ -246,7 +246,8 @@ def solucoes_para(natureza, objeto):
     if "obra" in nat or "engenharia" in nat or "reforma" in nat:
         return [("execução indireta (contratação da obra ou serviço)", "")]
     if "bem" in nat or "compra" in nat or "locacao" in nat:
-        return [("aquisição", ""), ("locação", "locacao"), ("serviço com fornecimento do bem (outsourcing)", "outsourcing")]
+        return [("aquisição", ""), ("locação", "locacao"), ("serviço com fornecimento do bem (outsourcing)", "outsourcing"),
+                ("manutenção do bem (custo que se soma à aquisição)", "manutencao")]
     return [("contratação do serviço", "")]
 
 

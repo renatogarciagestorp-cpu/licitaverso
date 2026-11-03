@@ -119,7 +119,7 @@ async function precosPraticados(objeto: string, natureza: string, uf: string, ex
 function solucoes(natureza: string): [string, string][] {
   const n = semAcento(natureza);
   if (/obra|engenharia|reforma/.test(n)) return [["execução da obra ou serviço", ""]];
-  if (/bem|compra|locacao/.test(n)) return [["aquisição", ""], ["locação", "locacao"], ["serviço com fornecimento do bem (outsourcing)", "outsourcing"]];
+  if (/bem|compra|locacao/.test(n)) return [["aquisição", ""], ["locação", "locacao"], ["serviço com fornecimento do bem (outsourcing)", "outsourcing"], ["manutenção do bem (soma-se à aquisição)", "manutencao"]];
   return [["contratação do serviço", ""]];
 }
 
