@@ -58,8 +58,9 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return erro("Método não permitido", 405);
   const admin = clienteServico();
-  const usuario = await usuarioDaRequisicao(req, admin);
-  if (!usuario) return erro("Entre na sua conta para fazer a pesquisa.", 401);
+  const segredo = Deno.env.get("AVISOS_SECRET") ?? "";
+  const interno = segredo.length >= 16 && req.headers.get("x-avisos") === segredo;  // teste interno (GitHub Actions)
+  if (!interno && !(await usuarioDaRequisicao(req, admin))) return erro("Entre na sua conta para fazer a pesquisa.", 401);
   const corpo = await req.json().catch(() => ({}));
   const objeto = String(corpo.objeto ?? "").slice(0, 500);
   const uf = String(corpo.uf ?? "").toUpperCase().replace(/[^A-Z]/g, "").slice(0, 2);
