@@ -11,7 +11,7 @@ Uso para teste:  python3 scripts/agente/pesquisa_mercado.py --objeto "limpeza pr
 import argparse, json, re, subprocess, time, unicodedata, urllib.parse
 
 BASE = "https://pncp.gov.br"
-UA = {"User-Agent": "Licitacon-pesquisa/1.0", "Accept": "application/json"}
+UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36", "Accept": "application/json"}
 PARADAS = set("""a o as os de da do das dos e em no na nos nas para por com sem ao aos um uma uns umas que se sua seu
 contratacao contratar aquisicao adquirir servico servicos prestacao fornecimento empresa empresas especializada
 especializado eventual eventuais futura futuras registro precos preco objeto visando atender atendimento demanda demandas
@@ -31,8 +31,18 @@ def palavras_chave(objeto, n=4):
 COMPRAS = "https://dadosabertos.compras.gov.br"
 
 
-def _curl(url, timeout=25):
-    # o PNCP recusa a conexão do urllib (firewall); o curl é aceito
+def _curl(url, timeout=25, tentativas=3):
+    # o PNCP recusa a conexão do urllib (firewall) e às vezes derruba conexões: tenta de novo com espera
+    for t in range(tentativas):
+        try:
+            return _curl1(url, timeout)
+        except RuntimeError as e:
+            if t == tentativas - 1 or "HTTP 4" in str(e):
+                raise
+            time.sleep(2 + 3 * t)
+
+
+def _curl1(url, timeout):
     r = subprocess.run(["curl", "-sS", "-m", str(timeout), "-A", UA["User-Agent"], "-H", "Accept: application/json",
                         "-w", "\n%{http_code}", url], capture_output=True, text=True, timeout=timeout + 5)
     if r.returncode != 0:
@@ -136,7 +146,12 @@ def pesquisar(objeto, uf="", natureza="", max_ref=12, limite_s=150):
                 for n in (2, 1):  # termos mais específicos primeiro
                     q = " ".join(([extra] if extra else []) + chaves[:n])
                     for tipo in ("edital", "ata"):
-                        for h in _buscar(q, u, tipo):
+                        try:
+                            hits = _buscar(q, u, tipo)
+                        except Exception as e:
+                            saida["erro"] = f"{type(e).__name__}: {e}"[:300]
+                            continue
+                        for h in hits:
                             ctrl = h.get("numero_controle_pncp") or h.get("item_url")
                             texto = (h.get("description") or "") + " " + (h.get("title") or "")
                             if extra and extra[:5] not in sem_acento(texto):
