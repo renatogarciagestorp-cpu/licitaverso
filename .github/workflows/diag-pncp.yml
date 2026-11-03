@@ -11,7 +11,6 @@ jobs:
           import json;d=json.load(open('/tmp/d.json'))
           for p in ['/modulo-contratacoes/2.1_consultarItensContratacoes_PNCP_14133_Id','/modulo-contratacoes/3.1_consultarResultadoItensContratacoes_PNCP_14133_Id']:
             for m,o in d['paths'][p].items(): print(p, json.dumps(o.get('parameters'),ensure_ascii=False)[:1500])"
-          N="29138385000130-1-000066/2026"
-          for t in idCompra numeroControlePNCP numeroControlePncpCompra; do
+          for N in 29138385000130-1-000066/2026 00394502000144-1-014828/2026; do t=numeroControlePNCPCompra; for E in 2.1_consultarItensContratacoes_PNCP_14133_Id 3.1_consultarResultadoItensContratacoes_PNCP_14133_Id; do
             u="$B/modulo-contratacoes/2.1_consultarItensContratacoes_PNCP_14133_Id?tipo=$t&codigo=$N"
-            echo "== $u"; curl -sS -m 40 -G --data-urlencode "tipo=$t" --data-urlencode "codigo=$N" -o /tmp/r -w "HTTP %{http_code} %{time_total}s\n" "$B/modulo-contratacoes/2.1_consultarItensContratacoes_PNCP_14133_Id"; head -c 1500 /tmp/r; echo; done
+            echo "== $u"; curl -sS -m 40 -G --data-urlencode "tipo=$t" --data-urlencode "codigo=$N" -o /tmp/r -w "HTTP %{http_code} %{time_total}s\n" "$B/modulo-contratacoes/$E"; head -c 1300 /tmp/r; echo; done; done
