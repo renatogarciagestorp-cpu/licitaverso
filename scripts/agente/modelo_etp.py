@@ -64,8 +64,9 @@ FERRAMENTA = {
 }
 
 INSTRUCOES = (
-    "MODELO PADRÃO DO ETP (preencha cada chave de 'secoes' com parágrafos; use '### ' para subtítulos internos):\n"
-    "informacoes: processo, categoria do objeto e previsão no Plano de Contratações Anual (inciso II); "
+    "MODELO PADRÃO DO ETP (preencha cada chave de 'secoes' com parágrafos curtos, uma ideia por parágrafo; a numeração 2.1, 2.1.1 é "
+    "automática, então não numere; use **negrito** só para o dado principal do parágrafo e '- ' para itens de lista):\n"
+    "informacoes: previsão no Plano de Contratações Anual (inciso II) e alinhamento com o planejamento do órgão; "
     "necessidade: descrição da necessidade e do problema, sob a perspectiva do interesse público (inciso I); motivacao: motivação e justificativa; "
     "area: área requisitante e responsáveis (gestor e fiscais informados); negocio: necessidades de negócio (resultados que a solução deve entregar); "
     "tecnologicas: se TIC, necessidades tecnológicas; se não, requisitos técnicos da solução; requisitos: demais requisitos necessários e "
@@ -163,456 +164,446 @@ def simulado(respostas):
 
 
 def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferencia=None):
+    """ETP no formato Licitacon: cabeçalho institucional, seções numeradas com faixa cinza, parágrafos numerados em níveis
+    (2.1, 2.1.1), quadros de identificação, de alternativas (uma tabela por solução), de requisitos e de custos, e fonte única."""
     from docx import Document
-    from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK
-    from docx.oxml.ns import qn
+    from docx.enum.section import WD_SECTION
+    from docx.enum.table import WD_TABLE_ALIGNMENT
+    from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK, WD_TAB_ALIGNMENT
     from docx.oxml import OxmlElement
+    from docx.oxml.ns import qn
     from docx.shared import Cm, Pt, RGBColor
 
-    w = Document(str(MODELO))
-    corpo = w.element.body
+    FONTE, TAM = "Arial", 10.5
+    w = Document()
+    sec = w.sections[0]
+    sec.page_height, sec.page_width = Cm(29.7), Cm(21)
+    sec.top_margin, sec.bottom_margin, sec.left_margin, sec.right_margin = Cm(2.2), Cm(2), Cm(2.5), Cm(2)
+    sec.header_distance, sec.footer_distance = Cm(1), Cm(1)
+    for st in w.styles:
+        try:
+            if st.font is not None:
+                st.font.name = FONTE
+                rpr = st.element.get_or_add_rPr(); rf = rpr.find(qn("w:rFonts"))
+                if rf is None: rf = OxmlElement("w:rFonts"); rpr.append(rf)
+                for k in ("w:ascii", "w:hAnsi", "w:cs", "w:eastAsia"): rf.set(qn(k), FONTE)
+        except Exception:
+            pass
+    nrm = w.styles["Normal"]; nrm.font.size = Pt(TAM)
+    nrm.paragraph_format.space_after = Pt(4); nrm.paragraph_format.line_spacing = 1.2
+
     tic = bool(docj.get("eh_tic"))
     S = docj.get("secoes") or {}
     hoje = datetime.date.today()
+    sols = docj.get("solucoes") or []
+    viaveis = [x for x in sols if x.get("viavel")]
+    nome_sol = {x.get("id"): x.get("nome") for x in sols}
+    escolhida = docj.get("escolhida")
+    tco = docj.get("tco") or {}
+    anos = max(1, int(tco.get("anos") or (docj.get("vida_util") or {}).get("anos") or 1))
+    orgao = (respostas.get("orgao") or "[PREENCHER: órgão ou entidade]").strip()
+    unidade = (respostas.get("unidade") or "").strip()
+    processo = (respostas.get("processo") or "").strip() or "[PREENCHER: nº do processo]"
+    municipio = (respostas.get("municipio") or "").strip() or "[PREENCHER: local]"
 
-    # ---------------------------------------------------------------- utilitários
-    def run_fmt(r, negrito=False, tam=None, cor=None):
-        r.font.name = "Calibri"; r.bold = negrito
-        if tam: r.font.size = Pt(tam)
+    # ------------------------------------------------------------------ primitivas
+    def fmt(r, negrito=False, tam=None, cor=None, italico=False):
+        r.font.name = FONTE; r.bold = negrito; r.italic = italico
+        r.font.size = Pt(tam or TAM)
         if cor: r.font.color.rgb = RGBColor.from_string(cor)
 
-    def escrever(p, texto, negrito=False, tam=None):
-        for trecho in re.split(r"(\[PREENCHER[^\]]*\])", str(texto)):
+    def escrever(p, texto, negrito=False, tam=None, cor=None):
+        for trecho in re.split(r"(\[PREENCHER[^\]]*\]|\*\*[^*]+\*\*)", str(texto)):
             if not trecho:
                 continue
-            r = p.add_run(trecho); run_fmt(r, negrito, tam)
+            neg = negrito
+            if trecho.startswith("**") and trecho.endswith("**"):
+                trecho, neg = trecho[2:-2], True
+            r = p.add_run(trecho); fmt(r, neg, tam, cor)
             if trecho.startswith("[PREENCHER"):
                 r.font.highlight_color = 7
 
-    def novo_par(texto="", negrito=False, centro=False, tam=None, antes=0, depois=120, cor=None, recuo=None):
-        p = w.add_paragraph(style="Standard")
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER if centro else WD_ALIGN_PARAGRAPH.JUSTIFY
-        p.paragraph_format.space_before = Pt(antes / 20); p.paragraph_format.space_after = Pt(depois / 20)
-        p.paragraph_format.line_spacing = 1.15
-        if recuo is not None:
-            p.paragraph_format.left_indent = Cm(recuo)
-        if texto:
-            escrever(p, texto, negrito, tam)
-            if cor:
-                for r in p.runs:
-                    if not r.font.highlight_color: r.font.color.rgb = RGBColor.from_string(cor)
+    def par(texto="", negrito=False, centro=False, tam=None, antes=0, depois=4, recuo=0.0, pendente=0.0, alinhar="j", cor=None):
+        p = w.add_paragraph()
+        p.alignment = {"j": WD_ALIGN_PARAGRAPH.JUSTIFY, "c": WD_ALIGN_PARAGRAPH.CENTER, "e": WD_ALIGN_PARAGRAPH.LEFT, "d": WD_ALIGN_PARAGRAPH.RIGHT}["c" if centro else alinhar]
+        pf = p.paragraph_format
+        pf.space_before, pf.space_after = Pt(antes), Pt(depois)
+        if recuo or pendente:
+            pf.left_indent = Cm(recuo + pendente); pf.first_line_indent = Cm(-pendente) if pendente else None
+            if pendente:
+                pf.tab_stops.add_tab_stop(Cm(recuo + pendente))
+        if texto != "":
+            escrever(p, texto, negrito, tam, cor)
         return p
 
-    def faixa(texto):  # subtítulo interno: negrito, cor da marca, respiro antes
-        return novo_par(texto, negrito=True, antes=200, depois=80, cor="0F4C5C", tam=11.5)
-
-    def sombrear(cel, cor):
+    def sombrear(el_pr, cor):
         shd = OxmlElement("w:shd"); shd.set(qn("w:val"), "clear"); shd.set(qn("w:color"), "auto"); shd.set(qn("w:fill"), cor)
-        cel._tc.get_or_add_tcPr().append(shd)
+        el_pr.append(shd)
 
-    def nova_tabela(cab, linhas, larguras=None, total=None, chave_valor=False):
-        t = w.add_table(rows=1 if cab else 0, cols=len(cab) if cab else 2)
-        try:
-            t.style = w.styles["Table Grid"]
-        except KeyError:
-            pass
-        tblW = t._tbl.tblPr.find(qn("w:tblW"))
-        if tblW is None:
-            tblW = OxmlElement("w:tblW"); t._tbl.tblPr.append(tblW)
-        tblW.set(qn("w:w"), "5000"); tblW.set(qn("w:type"), "pct")
-        if cab:
-            for i, c in enumerate(cab):
-                cel = t.rows[0].cells[i]; cel.text = ""
-                p = cel.paragraphs[0]; p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                r = p.add_run(c); run_fmt(r, True, 9.5, "FFFFFF")
-                sombrear(cel, "1F3B45")
-        for n, ln in enumerate(linhas + ([total] if total else [])):
-            cells = t.add_row().cells
-            for i, v in enumerate(ln):
-                cells[i].text = ""
-                p = cells[i].paragraphs[0]
-                esquerda = i == 0 or chave_valor or (larguras and larguras[i] >= 5)
-                p.alignment = WD_ALIGN_PARAGRAPH.LEFT if esquerda else WD_ALIGN_PARAGRAPH.CENTER
-                escrever(p, v, ln is total or (chave_valor and i == 0), 9.5)
-                if ln is total:
-                    sombrear(cells[i], "DCE8E4")
-                elif chave_valor and i == 0:
-                    sombrear(cells[i], "EEF3F2")
-                elif n % 2 == 1:
-                    sombrear(cells[i], "F5F8F7")
-        if larguras:
-            t.autofit = False
-            total_cm = sum(larguras)
-            prop = [l * 16.0 / total_cm for l in larguras]  # largura útil ~16 cm
-            grid = t._tbl.tblGrid
-            for i, gc in enumerate(grid.findall(qn("w:gridCol"))):
-                if i < len(prop): gc.set(qn("w:w"), str(int(Cm(prop[i]).twips)))
-            for row in t.rows:
-                for i, c in enumerate(row.cells):
-                    c.width = Cm(prop[i])
-        return t
+    def secao(n, titulo):
+        p = par("", antes=14, depois=6, alinhar="e")
+        r = p.add_run(f"{n}.\t{titulo.upper()}"); fmt(r, True, 11)
+        p.paragraph_format.tab_stops.add_tab_stop(Cm(0.9))
+        p.paragraph_format.keep_with_next = True
+        sombrear(p._p.get_or_add_pPr(), "D9D9D9")
+        return p
 
-    def lista(cur, titulo, itens):
-        itens = [str(x).strip() for x in itens or [] if str(x).strip()]
-        if not itens:
-            return
-        cur.add(novo_par(titulo, negrito=True, antes=60, depois=40))
-        for x in itens:
-            cur.add(novo_par("• " + x, recuo=0.5, depois=40))
+    def subsecao(cod, titulo):
+        p = par("", antes=8, depois=4, alinhar="e", recuo=0.5)
+        r = p.add_run(f"{cod}\t{titulo.upper()}"); fmt(r, True, 10.5)
+        p.paragraph_format.tab_stops.add_tab_stop(Cm(1.9))
+        p.paragraph_format.keep_with_next = True
+        sombrear(p._p.get_or_add_pPr(), "EDEDED")
+        return p
 
-    class Cursor:
-        def __init__(self, el): self.el = el
-        def add(self, obj):
-            el = obj._p if hasattr(obj, "_p") else obj._tbl
-            self.el.addnext(el); self.el = el
-        def pars(self, lista):
+    class Num:
+        """Numeração dos parágrafos em níveis: 2.1, 2.1.1 ..."""
+        def __init__(self, base): self.base, self.n = base, 0
+        def p(self, texto, nivel_recuo=0.5):
+            self.n += 1
+            cod = f"{self.base}.{self.n}."
+            larg = 0.4 + 0.22 * len(cod)
+            pp = par("", recuo=nivel_recuo, pendente=larg)
+            r = pp.add_run(cod + "\t"); fmt(r)
+            escrever(pp, texto)
+            return pp
+        def varios(self, lista, nivel_recuo=0.5):
+            sub = None
             for t in lista or []:
                 t = str(t).strip()
                 if not t:
                     continue
-                if t.startswith("### "):
-                    self.add(faixa(t[4:]))
-                else:
-                    self.add(novo_par(t))
-        def sub(self, titulo):
-            self.add(faixa(titulo))
-        def espaco(self):
-            self.add(novo_par("", antes=0, depois=60))
+                if t.startswith("### "):  # subtítulo do agente vira um parágrafo em negrito numerado
+                    self.p(f"**{t[4:].strip()}**", nivel_recuo); continue
+                if t.startswith(("- ", "• ")) and self.n:
+                    par("•\t" + t[2:].strip(), recuo=nivel_recuo + 0.4 + 0.22 * len(f"{self.base}.{self.n}."), pendente=0.5)
+                    continue
+                self.p(t, nivel_recuo)
 
-    def texto_tabela(tb):
-        return sem_acento(" ".join(c.text for r in tb.rows for c in r.cells)).strip()
+    def celula_txt(cel, texto, negrito=False, tam=9.5, alinhar="e", fundo=None, cor=None):
+        cel.text = ""
+        p = cel.paragraphs[0]
+        p.alignment = {"e": WD_ALIGN_PARAGRAPH.LEFT, "c": WD_ALIGN_PARAGRAPH.CENTER, "d": WD_ALIGN_PARAGRAPH.RIGHT, "j": WD_ALIGN_PARAGRAPH.JUSTIFY}[alinhar]
+        p.paragraph_format.space_after = Pt(1); p.paragraph_format.space_before = Pt(1)
+        linhas = texto if isinstance(texto, list) else [texto]
+        for i, ln in enumerate(linhas):
+            if i:
+                p = cel.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.LEFT; p.paragraph_format.space_after = Pt(1)
+            escrever(p, ln, negrito, tam, cor)
+        if fundo:
+            sombrear(cel._tc.get_or_add_tcPr(), fundo)
 
-    def trocar_texto_celula(cel, texto, negrito=True):
-        ps = cel.paragraphs
-        for p in ps[1:]:
-            p._p.getparent().remove(p._p)
-        p = ps[0]
-        for r in list(p.runs):
-            r._r.getparent().remove(r._r)
-        r = p.add_run(texto); run_fmt(r, negrito, cor="000000")
+    def tabela(cab, linhas, larguras, total=None, alinhar=None, chave_valor=False):
+        t = w.add_table(rows=0, cols=len(larguras))
+        t.style = w.styles["Table Grid"]; t.alignment = WD_TABLE_ALIGNMENT.CENTER; t.autofit = False
+        tot = sum(larguras); prop = [l * 16.5 / tot for l in larguras]
+        for i, gc in enumerate(t._tbl.tblGrid.findall(qn("w:gridCol"))):
+            gc.set(qn("w:w"), str(int(Cm(prop[i]).twips)))
+        al = alinhar or (["e"] + ["c"] * (len(larguras) - 1))
+        if cab:
+            row = t.add_row()
+            trpr = row._tr.get_or_add_trPr(); h = OxmlElement("w:tblHeader"); h.set(qn("w:val"), "true"); trpr.append(h)
+            for i, c in enumerate(cab):
+                celula_txt(row.cells[i], c, True, 9, "c", "D9D9D9")
+        for ln in linhas:
+            row = t.add_row()
+            for i, v in enumerate(ln):
+                celula_txt(row.cells[i], v, chave_valor and i == 0, 9.5, "e" if chave_valor else al[i], "F2F2F2" if chave_valor and i == 0 else None)
+        if total:
+            row = t.add_row()
+            for i, v in enumerate(total):
+                celula_txt(row.cells[i], v, True, 9.5, al[i], "EDEDED")
+        for row in t.rows:
+            for i, c in enumerate(row.cells):
+                c.width = Cm(prop[i])
+        par("", depois=2)
+        return t
 
-    def preencher_paragrafo(p, texto, negrito=None, cor="000000"):
-        neg = p.runs[0].bold if negrito is None and p.runs else negrito
-        tam = p.runs[0].font.size if p.runs else None
-        for r in list(p.runs):
-            r._r.getparent().remove(r._r)
-        for trecho in re.split(r"(\[PREENCHER[^\]]*\])", texto):
-            if trecho:
-                r = p.add_run(trecho); run_fmt(r, bool(neg), cor=cor)
-                if tam: r.font.size = tam
-                if trecho.startswith("[PREENCHER"): r.font.highlight_color = 7
+    def quadro_solucao(x):
+        """Uma tabela por solução, como nos ETPs dos tribunais: descrição, mercado, vantagens, desvantagens, riscos, custo, resultado."""
+        t = w.add_table(rows=0, cols=2)
+        t.style = w.styles["Table Grid"]; t.alignment = WD_TABLE_ALIGNMENT.CENTER; t.autofit = False
+        for i, gc in enumerate(t._tbl.tblGrid.findall(qn("w:gridCol"))):
+            gc.set(qn("w:w"), str(int(Cm([3.6, 12.9][i]).twips)))
+        res = ("INDICADA" if x.get("id") == escolhida else "ATENDE") if x.get("viavel") else "NÃO ATENDE / INVIÁVEL"
+        linhas = [("Solução", f"{x.get('id')} – {x.get('nome', '')}", True),
+                  ("Descrição", x.get("descricao", ""), False),
+                  ("Pesquisa de mercado", [m for m in (x.get("mercado") or []) if str(m).strip()] or "—", False),
+                  ("Vantagens", ["• " + v for v in (x.get("vantagens") or []) if str(v).strip()] or "—", False),
+                  ("Desvantagens", ["• " + v for v in (x.get("desvantagens") or []) if str(v).strip()] or "—", False),
+                  ("Riscos", ["• " + v for v in (x.get("riscos") or []) if str(v).strip()] or "—", False)]
+        if x.get("viavel"):
+            linhas.append(("Custo total", f"{brl(x.get('custo_total'))} em {num(anos)} ano(s)", True))
+        else:
+            linhas.append(("Motivo", x.get("motivo_inviabilidade") or "[PREENCHER]", False))
+        linhas.append(("Resultado", res, True))
+        for rot, val, neg in linhas:
+            row = t.add_row()
+            celula_txt(row.cells[0], rot, True, 9.5, "e", "F2F2F2")
+            celula_txt(row.cells[1], val, neg, 9.5, "j" if not isinstance(val, list) else "e",
+                       ("DCEFE4" if rot == "Resultado" and x.get("id") == escolhida else None))
+        for row in t.rows:
+            row.cells[0].width, row.cells[1].width = Cm(3.6), Cm(12.9)
+        par("", depois=4)
 
-    # ---------------------------------------------------------------- cabeçalho, rodapé
-    sec = w.sections[0]
-    orgao = (respostas.get("orgao") or "[PREENCHER: órgão ou entidade]").strip()
-    for tb in sec.header.tables:
-        for row in tb.rows:
-            for cel in row.cells:
-                if "ESPACO DESTINADO" in sem_acento(cel.text):
-                    trocar_texto_celula(cel, orgao.upper())
-                    cel.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
-                    if logo:
-                        try:
-                            pl = cel.paragraphs[0].insert_paragraph_before()
-                            pl.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                            pl.add_run().add_picture(str(logo), height=Cm(1.8))
-                        except Exception as e:
-                            print(f"logo não incluída ({type(e).__name__})")
+    def campo(fld):
+        p_run = OxmlElement("w:fldSimple"); p_run.set(qn("w:instr"), fld)
+        r = OxmlElement("w:r"); rpr = OxmlElement("w:rPr"); rf = OxmlElement("w:rFonts")
+        for k in ("w:ascii", "w:hAnsi"): rf.set(qn(k), FONTE)
+        sz = OxmlElement("w:sz"); sz.set(qn("w:val"), "16"); rpr.append(rf); rpr.append(sz); r.append(rpr)
+        t = OxmlElement("w:t"); t.text = "1"; r.append(t); p_run.append(r)
+        return p_run
+
+    # ------------------------------------------------------------------ cabeçalho e rodapé
+    cab = sec.header; cab.is_linked_to_previous = False
+    p0 = cab.paragraphs[0]; p0.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    if logo:
+        try:
+            p0.add_run().add_picture(str(logo), height=Cm(1.6)); p0 = cab.add_paragraph(); p0.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        except Exception as e:
+            print(f"logo não incluída ({type(e).__name__})")
+    r = p0.add_run(orgao.upper()); fmt(r, True, 10)
+    p0.paragraph_format.space_after = Pt(0)
+    if unidade:
+        pu = cab.add_paragraph(); pu.alignment = WD_ALIGN_PARAGRAPH.CENTER; pu.paragraph_format.space_after = Pt(0)
+        r = pu.add_run(unidade.upper()); fmt(r, False, 9)
+    pt = cab.add_paragraph(); pt.alignment = WD_ALIGN_PARAGRAPH.CENTER; pt.paragraph_format.space_after = Pt(6)
+    r = pt.add_run("ESTUDO TÉCNICO PRELIMINAR"); fmt(r, True, 10); r.underline = True
+    rod = sec.footer; rod.is_linked_to_previous = False
     if respostas.get("rodape_incluir") == "Sim" and respostas.get("rodape", "").strip():
-        pr = sec.footer.add_paragraph(); pr.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        r = pr.add_run(re.sub(r"\s+", " ", respostas["rodape"].strip())[:500]); run_fmt(r, tam=8)
+        pr = rod.paragraphs[0]; pr.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        r = pr.add_run(re.sub(r"\s+", " ", respostas["rodape"].strip())[:500]); fmt(r, False, 8, "555555")
+        pf = rod.add_paragraph()
+    else:
+        pf = rod.paragraphs[0]
+    bdr = OxmlElement("w:pBdr"); top = OxmlElement("w:top")
+    for k, v in (("w:val", "single"), ("w:sz", "4"), ("w:space", "4"), ("w:color", "999999")): top.set(qn(k), v)
+    bdr.append(top); pf._p.get_or_add_pPr().append(bdr)
+    pf.paragraph_format.tab_stops.add_tab_stop(Cm(16.5), WD_TAB_ALIGNMENT.RIGHT)
+    r = pf.add_run(f"Estudo Técnico Preliminar – ETP · Processo {processo if not processo.startswith('[') else 'nº ____'}\tPágina "); fmt(r, False, 8, "555555")
+    pf._p.append(campo("PAGE"))
+    r = pf.add_run(" de "); fmt(r, False, 8, "555555")
+    pf._p.append(campo("NUMPAGES"))
 
-    # ---------------------------------------------------------------- capa e páginas iniciais
-    processo = (respostas.get("processo") or "").strip() or "[PREENCHER: nº do processo]"
-    for p in w.paragraphs:
-        t = p.text
-        if "<XXXXXXXX>" in t:
-            preencher_paragrafo(p, t.replace("<XXXXXXXX>", processo))
-        elif "<Nome do Projeto" in t:
-            obj = (respostas.get("objeto") or "").strip()[:180] or "[PREENCHER: objeto]"
-            preencher_paragrafo(p, obj)
-            if len(obj) > 50:  # título longo não pode empurrar o local e a data para a página seguinte
-                for r in p.runs:
-                    r.font.size = Pt(18 if len(obj) <= 110 else 15)
-                p.paragraph_format.line_spacing = 1.15
-        elif "<Local>" in t:
-            preencher_paragrafo(p, f"{respostas.get('municipio', '').strip() or '[PREENCHER: local]'}, {MESES[hoje.month - 1]} de {hoje.year}", negrito=False)
-        elif "Perguntas frequentes" in t or "perguntas-frequentes" in t:
-            p._p.getparent().remove(p._p)
-    for p in list(w.paragraphs):  # links do modelo federal (página de orientação)
-        if re.search(r"gov\.br/compras|comprasnet", p.text) and len(p.text) < 200:
-            p._p.getparent().remove(p._p)
+    # ------------------------------------------------------------------ corpo
+    tit = par("", centro=True, antes=0, depois=2)
+    r = tit.add_run("ESTUDO TÉCNICO PRELIMINAR"); fmt(r, True, 14)
+    sub = par(re.sub(r"\s+", " ", (respostas.get("objeto") or "").strip())[:240], centro=True, depois=2, tam=10.5)
+    par(f"Processo administrativo nº {processo}", centro=True, depois=10, tam=9.5)
 
-    tabelas = list(w.tables)
-    # histórico de revisões
-    hist = next((t for t in tabelas if "HISTORICO" in texto_tabela(t) or (len(t.columns) == 4 and "VERSAO" in texto_tabela(t))), None)
-    if hist is not None:
-        linhas = hist.rows
-        vals = [hoje.strftime("%d/%m/%Y"), "1.0", "Minuta elaborada com apoio do Agente Licitacon", respostas.get("elab_nome", "").strip() or "[PREENCHER]"]
-        for i, c in enumerate(linhas[1].cells):
-            trocar_texto_celula(c, vals[i], negrito=False)
-        for row in linhas[2:]:
-            for c in row.cells:
-                trocar_texto_celula(c, "", negrito=False)
-    # caixa "ATENÇÃO" do modelo
-    for t in tabelas:
-        if texto_tabela(t).startswith("ATENCAO"):
-            t._tbl.getparent().remove(t._tbl)
-    # introdução: referência legal
-    for t in w.tables:
-        if texto_tabela(t).startswith("INTRODUCAO"):
-            for p in t.rows[-1].cells[0].paragraphs:
-                if p.text.strip().startswith("Referência") and not tic:
-                    preencher_paragrafo(p, "Referência: art. 6º, inciso XX, e art. 18 da Lei nº 14.133, de 1º de abril de 2021.", negrito=True)
-
-    # ---------------------------------------------------------------- seções
-    cabecalhos = []
-    for el in corpo.iterchildren():
-        if el.tag == qn("w:tbl"):
-            from docx.table import Table
-            tb = Table(el, w)
-            if len(tb.rows) == 1 and len(tb.columns) == 1:
-                txt = texto_tabela(tb)
-                chave = next((k for pref, k in SECOES_MODELO if txt.startswith(pref)), None)
-                if chave:
-                    cabecalhos.append((chave, el, tb))
-    if len(cabecalhos) < 15:
-        raise RuntimeError(f"modelo do ETP sem as seções esperadas ({len(cabecalhos)})")
-
-    # apaga o conteúdo de orientação entre os cabeçalhos (mantém os quadros de assinatura)
-    ids = {id(el) for _, el, _ in cabecalhos}
-    for n, (chave, el, tb) in enumerate(cabecalhos):
-        prox = cabecalhos[n + 1][1] if n + 1 < len(cabecalhos) else None
-        x = el.getnext()
-        while x is not None and x is not prox and x.tag != qn("w:sectPr"):
-            seguinte = x.getnext()
-            manter = chave in ("responsaveis", "aprovacao") and x.tag == qn("w:tbl")
-            if not manter:
-                corpo.remove(x)
-            x = seguinte
-        if not tic and chave in TITULOS_NAO_TIC:
-            trocar_texto_celula(tb.rows[0].cells[0], TITULOS_NAO_TIC[chave])
-        elif not tic and re.search(r"\bDE TIC\b", tb.rows[0].cells[0].text):
-            trocar_texto_celula(tb.rows[0].cells[0], re.sub(r"\s+DE TIC\b", "", tb.rows[0].cells[0].text).strip())
-
-    sols = docj.get("solucoes") or []
-    viaveis = [x for x in sols if x.get("viavel")]
-    nome_sol = {x.get("id"): x.get("nome") for x in sols}
-    tco = docj.get("tco") or {}
-    anos = max(1, int(tco.get("anos") or 1))
-    escolhida = docj.get("escolhida")
-
+    # 1. Identificação
+    secao(1, "Identificação da unidade demandante")
+    fiscais = [f.strip() for f in respostas.get("fiscais", "").splitlines() if f.strip()]
+    ident = [["Órgão ou entidade", orgao],
+             ["Unidade demandante", unidade or "[PREENCHER: unidade requisitante]"],
+             ["Processo administrativo", processo],
+             ["Responsável pela elaboração", " · ".join(x for x in [respostas.get("elab_nome", "").strip(), respostas.get("elab_cargo", "").strip()] if x) or "[PREENCHER]"],
+             ["Responsável pelo setor", " · ".join(x for x in [respostas.get("resp_nome", "").strip(), respostas.get("resp_cargo", "").strip()] if x) or "[PREENCHER]"],
+             ["Gestor do contrato", respostas.get("gestor", "").strip() or "[PREENCHER: nome, cargo e matrícula]"],
+             ["Fiscal(is) do contrato", fiscais or "[PREENCHER: fiscais do contrato]"],
+             ["Categoria do objeto", docj.get("categoria") or "[PREENCHER]"]]
+    tabela(None, ident, [5, 11.5], chave_valor=True)
     rs = docj.get("resumo") or {}
     if rs:
-        primeiro = cabecalhos[0][1]
-        antes_el = primeiro.getprevious()
-        cur = Cursor(antes_el if antes_el is not None else primeiro)
-        cur.add(faixa("RESUMO DO ESTUDO"))
-        linhas_r = [["Necessidade", rs.get("necessidade") or ""], ["Solução indicada", rs.get("solucao") or ""],
-                    ["Por que", rs.get("por_que") or ""],
-                    ["Custo total estimado", brl(rs.get("custo_total")) + (f" — {rs['horizonte']}" if rs.get("horizonte") else "")],
-                    ["Viabilidade", docj.get("viabilidade") or ""]]
-        cur.add(nova_tabela([], [l for l in linhas_r if l[1]], [4.3, 11.7], chave_valor=True))
-        cur.espaco()
+        subsecao("1.1.", "Síntese do estudo")
+        tabela(None, [l for l in [["Necessidade", rs.get("necessidade") or ""], ["Solução indicada", rs.get("solucao") or ""],
+                                  ["Principal motivo", rs.get("por_que") or ""],
+                                  ["Custo total estimado", brl(rs.get("custo_total")) + (f" ({rs['horizonte']})" if rs.get("horizonte") else "")],
+                                  ["Viabilidade", docj.get("viabilidade") or ""]] if l[1]], [5, 11.5], chave_valor=True)
 
-    for chave, el, tb in cabecalhos:
-        c = Cursor(el)
-        c.espaco()
-        if chave == "informacoes":
-            c.add(novo_par(f"Processo administrativo nº {processo}."))
-            c.add(novo_par(f"Categoria do objeto: {docj.get('categoria') or '[PREENCHER]'}."))
-            c.pars(S.get("informacoes"))
-        elif chave == "necessidade":
-            c.pars(S.get("necessidade"))
-            if S.get("motivacao"):
-                c.sub("Motivação/Justificativa"); c.pars(S.get("motivacao"))
-        elif chave == "area":
-            c.pars(S.get("area"))
-            linhas = [["Área requisitante", respostas.get("unidade", "").strip() or "[PREENCHER: unidade requisitante]"],
-                      ["Gestor do contrato", respostas.get("gestor", "").strip() or "[PREENCHER: nome, cargo e matrícula]"]]
-            fiscais = [f.strip() for f in respostas.get("fiscais", "").splitlines() if f.strip()]
-            for f in fiscais or ["[PREENCHER: fiscais do contrato]"]:
-                linhas.append(["Fiscal do contrato", f])
-            c.add(nova_tabela(["Função", "Nome, cargo e matrícula"], linhas, [5, 11]))
-        elif chave == "levantamento":
-            c.pars(S.get("levantamento"))
-            if sols:
-                c.add(nova_tabela(["Id", "Solução", "Custo total no horizonte", "Situação"],
-                                  [[str(x.get("id")), x.get("nome", ""), brl(x.get("custo_total")) if x.get("viavel") else "—",
-                                    ("Indicada" if x.get("id") == escolhida else "Viável") if x.get("viavel") else "Inviável"] for x in sols], [1.2, 8, 4, 2.8]))
-                for x in sols:
-                    c.sub(f"Solução {x.get('id')} — {x.get('nome', '')}")
-                    c.add(novo_par(x.get("descricao", "")))
-                    if x.get("mercado"):
-                        c.add(novo_par("O que a pesquisa de mercado mostrou", negrito=True, antes=60, depois=40))
-                        c.pars(x.get("mercado"))
-                    if x.get("custo_total") is not None:
-                        c.add(novo_par(f"Custo total estimado para a administração: {brl(x.get('custo_total'))}" + (f" ({hz})" if (hz := (docj.get('resumo') or {}).get('horizonte')) else "") + ".", negrito=True))
-                    lista(c, "Vantagens", x.get("vantagens")); lista(c, "Desvantagens", x.get("desvantagens")); lista(c, "Riscos", x.get("riscos"))
-                    if not x.get("viavel") and x.get("motivo_inviabilidade"):
-                        c.add(novo_par("Por que é inviável: " + x["motivo_inviabilidade"]))
-        elif chave == "comparativa":
-            c.pars(S.get("comparativa"))
-            comp = docj.get("comparativo") or []
-            if comp and viaveis:
-                cab = ["Tipo", "Requisito"] + [f"Solução {x.get('id')}" for x in viaveis]
-                ln = [[r.get("tipo", ""), r.get("requisito", "")] + [(r.get("avaliacao") or [])[i] if i < len(r.get("avaliacao") or []) else "" for i in range(len(viaveis))] for r in comp]
-                c.add(nova_tabela(cab, ln))
-        elif chave == "inviaveis":
-            c.pars(S.get("inviaveis"))
-            inv = [x for x in sols if not x.get("viavel")]
-            if inv:
-                c.add(nova_tabela(["Id", "Solução", "Motivo da inviabilidade"], [[str(x.get("id")), x.get("nome", ""), x.get("motivo_inviabilidade") or "[PREENCHER]"] for x in inv], [1.2, 5, 9.8]))
-            elif not S.get("inviaveis"):
-                c.add(novo_par("Não foram identificadas soluções inviáveis entre as levantadas."))
-        elif chave == "custos":
-            vu = docj.get("vida_util") or {}
-            if vu.get("anos"):
-                c.add(novo_par(f"Horizonte da análise: {num(vu.get('anos'))} anos, correspondente à vida útil do objeto" + (f" ({vu['fundamento']})" if vu.get("fundamento") else "") + ".", negrito=True))
-            c.pars(S.get("custos"))
-        elif chave == "tco":
-            for s_ in tco.get("solucoes") or []:
-                comps = s_.get("componentes") or []
-                c.sub(f"Solução {s_.get('id')} – {nome_sol.get(s_.get('id'), '')}")
-                ln, soma, falta = [], 0.0, False
-                for cp in comps:
-                    vs = list(cp.get("valores") or [])[:anos]
-                    tot = None if (not vs or any(v is None for v in vs)) else sum(float(v) for v in vs)
-                    if tot is None: falta = True
-                    else: soma += tot
-                    ln.append([cp.get("componente", ""), cp.get("unidade") or "—", num(cp.get("quantidade")) if cp.get("quantidade") is not None else "—",
-                               brl(cp.get("valor_unitario")) if cp.get("valor_unitario") is not None else "—", brl(tot), cp.get("fonte", "")])
-                c.add(nova_tabela(["Componente de custo", "Unidade", "Qtd.", "Valor unitário", f"Total em {anos} ano(s)", "Fonte"], ln, [5.2, 2.2, 1.4, 2.6, 2.8, 1.8],
-                                  total=["Custo total da solução", "", "", "", brl(None if falta else soma), ""]))
-            if not tco.get("solucoes"):
-                c.add(novo_par("[PREENCHER: cálculo dos custos totais das soluções viáveis.]"))
-        elif chave == "mapa":
-            linhas = []
-            for s_ in tco.get("solucoes") or []:
-                por_ano = []
-                for i in range(anos):
-                    vs = [(cp.get("valores") or [None] * anos)[i] if i < len(cp.get("valores") or []) else None for cp in s_.get("componentes") or []]
-                    por_ano.append(None if (not vs or any(v is None for v in vs)) else sum(float(v) for v in vs))
-                tot = None if any(v is None for v in por_ano) else sum(por_ano)
-                linhas.append([f"Solução {s_.get('id')} – {nome_sol.get(s_.get('id'), '')}"] + [brl(v) for v in por_ano] + [brl(tot)])
-            if linhas:
-                c.add(nova_tabela(["Solução"] + [f"Ano {i + 1}" for i in range(anos)] + ["Total"], linhas, [4.6] + [2.0] * anos + [2.6]))
-        elif chave == "estimativa":
-            c.pars(S.get("estimativa"))
-            itens = docj.get("itens") or []
-            if itens:
-                ln, soma, falta = [], 0.0, False
-                for it in itens:
-                    q, vu = it.get("quantidade"), it.get("valor_unitario")
-                    vt = None if q is None or vu is None else float(q) * float(vu)
-                    if vt is None: falta = True
-                    else: soma += vt
-                    ln.append([str(it.get("item", "")), it.get("descricao", ""), it.get("unidade") or "", num(q), brl(vu), brl(vt)])
-                c.add(nova_tabela(["Item", "Descrição", "Unidade", "Qtd.", "Valor unitário", "Valor total"], ln, [1.2, 6.3, 2, 1.6, 2.5, 2.4],
-                                  total=["", "Total estimado", "", "", "", brl(None if falta else soma)]))
-                c.add(novo_par("Estimativa preliminar (art. 18, § 1º, VI, da Lei nº 14.133/2021), a ser confirmada pela pesquisa de preços do art. 23.", tam=9))
-        elif chave == "just_tecnica":
-            c.pars(S.get("just_tecnica"))
-            if S.get("parcelamento_tecnico"):
-                c.sub("Do parcelamento da contratação decorrente de aspectos técnicos"); c.pars(S.get("parcelamento_tecnico"))
-        elif chave == "just_economica":
-            c.pars(S.get("just_economica"))
-            if S.get("parcelamento_economico"):
-                c.sub("Do parcelamento da contratação decorrente de aspectos econômicos"); c.pars(S.get("parcelamento_economico"))
-        elif chave == "providencias":
-            c.pars(S.get("providencias"))
-            c.sub("Contratações correlatas e/ou interdependentes"); c.pars(S.get("correlatas") or ["Não foram identificadas contratações correlatas ou interdependentes."])
-            c.sub("Impactos ambientais e medidas mitigadoras"); c.pars(S.get("ambientais") or ["[PREENCHER: impactos ambientais e medidas mitigadoras.]"])
-        elif chave == "viabilidade":
-            v = docj.get("viabilidade") or "[PREENCHER]"
-            sol = f" A solução indicada é a Solução {escolhida} – {nome_sol.get(escolhida, '')}." if escolhida in nome_sol else ""
-            c.add(novo_par(f"Com base nas análises deste estudo, declara-se que a contratação é: {v.upper()}.{sol}", negrito=True))
-            c.sub("Justificativa"); c.pars(S.get("viabilidade_justificativa"))
-            # referências e fontes, antes dos responsáveis
-            if refs:
-                c.sub("Referências")
-                for j in refs:
-                    c.add(novo_par((j.get("citacao_abnt") or f"{j.get('orgao','')} {j.get('numero','')}") + (f" Disponível em: {j['fonte_url']}." if j.get("fonte_url") else ""), tam=9))
-            if pesquisa and (pesquisa.get("referencias") or pesquisa.get("precos_praticados")):
-                c.sub("Fontes da pesquisa de mercado")
-                for n, r in enumerate(pesquisa.get("referencias") or [], 1):
-                    c.add(novo_par(f"[P{n}] {r['orgao']} ({r['municipio']}/{r['uf']}), {r.get('tipo','')}, publicada em {r['data']}. Disponível em: {r['link']}.", tam=9))
-                for n, x in enumerate(pesquisa.get("precos_praticados") or [], 1):
-                    c.add(novo_par(f"[C{n}] Compras.gov.br, preços praticados: {x['catalogo']}, unidade {x['unidade']}, {x['n']} compras, mediana {brl(x['mediana'])}. Disponível em: https://dadosabertos.compras.gov.br.", tam=9))
-        elif chave == "responsaveis":
-            c.add(novo_par(f"{respostas.get('municipio', '').strip() or '[PREENCHER: local]'}, {hoje.day} de {MESES[hoje.month - 1]} de {hoje.year}."))
-            quadro = next((x for x in (el.itersiblings()) if x.tag == qn("w:tbl")), None)
-            if quadro is not None:
-                from docx.table import Table
-                q = Table(quadro, w)
-                trocar_texto_celula(q.rows[0].cells[0], "RESPONSÁVEL PELA ELABORAÇÃO")
-                trocar_texto_celula(q.rows[0].cells[1], "RESPONSÁVEL PELO SETOR")
-                for i, pre in enumerate(("elab", "resp")):
-                    cel = q.rows[1].cells[i]
-                    nome = respostas.get(pre + "_nome", "").strip() or "[PREENCHER: nome]"
-                    cargo = respostas.get(pre + "_cargo", "").strip() or "[PREENCHER: cargo]"
-                    mat = respostas.get(pre + "_matricula", "").strip()
-                    trocar_texto_celula(cel, "\n\n_____________________________", negrito=False)
-                    for linha, neg in ((nome, True), (cargo + (f" · Matrícula {mat}" if mat else ""), False)):
-                        pp = cel.add_paragraph(); pp.alignment = WD_ALIGN_PARAGRAPH.CENTER; escrever(pp, linha, neg, 10)
-                    cel.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
-        elif chave == "aprovacao":
-            norma = "da Lei nº 14.133/2021" + (" e da Instrução Normativa SGD/ME nº 94/2022" if tic else "")
-            c.add(novo_par(f"Aprovo este Estudo Técnico Preliminar e atesto sua conformidade às disposições {norma}."))
-            quadro = next((x for x in el.itersiblings() if x.tag == qn("w:tbl")), None)
-            if quadro is not None:
-                from docx.table import Table
-                q = Table(quadro, w)
-                trocar_texto_celula(q.rows[0].cells[0], "AUTORIDADE MÁXIMA DA ÁREA DE TIC (OU AUTORIDADE SUPERIOR)" if tic else "AUTORIDADE COMPETENTE")
-                cel = q.rows[-1].cells[0]
-                trocar_texto_celula(cel, "\n\n_____________________________", negrito=False)
-                aut = [x.strip() for x in re.split(r"[,;·]", respostas.get("autoridade", "")) if x.strip()]
-                linhas_aut = ((aut[0], True), (" · ".join(aut[1:]) or "[PREENCHER: cargo]", False)) if aut else \
-                    (("[PREENCHER: nome da autoridade]", True), ("[PREENCHER: cargo] · Matrícula [PREENCHER]", False))
-                for linha, neg in linhas_aut:
-                    pp = cel.add_paragraph(); pp.alignment = WD_ALIGN_PARAGRAPH.CENTER; escrever(pp, linha, neg, 10)
-                cel.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
-        else:
-            c.pars(S.get(chave))
-            if not S.get(chave):
-                c.add(novo_par("[PREENCHER]"))
-        if chave not in ("responsaveis", "aprovacao"):
-            c.espaco()
+    # 2. Necessidade
+    secao(2, "Descrição da necessidade da contratação")
+    Num("2").varios(S.get("necessidade"))
+    if S.get("motivacao") or S.get("negocio"):
+        subsecao("2.1.", "Motivação e necessidades de negócio")
+        n21 = Num("2.1"); n21.varios(S.get("motivacao")); n21.varios(S.get("negocio"))
 
-    # ---------------------------------------------------------------- anexo: só o que o assinante optou por completar depois
-    pend = [t for t in (docj.get("pendencias") or []) if str(t).strip()]
+    # 3. PCA e alinhamento
+    secao(3, "Previsão no plano de contratações anual e alinhamento estratégico")
+    Num("3").varios(S.get("informacoes") or ["[PREENCHER: previsão no Plano de Contratações Anual.]"])
+
+    # 4. Requisitos
+    secao(4, "Requisitos da contratação")
+    k = 0
+    for chave, titulo in (("tecnologicas", "Requisitos tecnológicos" if tic else "Requisitos técnicos"), ("requisitos", "Demais requisitos e sustentabilidade")):
+        if S.get(chave):
+            k += 1; subsecao(f"4.{k}.", titulo); Num(f"4.{k}").varios(S.get(chave))
+    if S.get("area"):
+        k += 1; subsecao(f"4.{k}.", "Área requisitante e gestão"); Num(f"4.{k}").varios(S.get("area"))
+
+    # 5. Quantidades
+    secao(5, "Estimativa das quantidades")
+    Num("5").varios(S.get("demanda"))
+    itens = docj.get("itens") or []
+    if itens:
+        tabela(["Item", "Especificação", "Unidade", "Quantidade"], [[str(it.get("item", "")), it.get("descricao", ""), it.get("unidade") or "—", num(it.get("quantidade"))] for it in itens],
+               [1.2, 10.3, 2.5, 2.5], alinhar=["c", "j", "c", "c"])
+
+    # 6. Levantamento de mercado
+    secao(6, "Levantamento de mercado")
+    subsecao("6.1.", "Contratações similares de outros órgãos e entidades")
+    n61 = Num("6.1")
+    n61.varios(S.get("levantamento"))
+    refs_p = (pesquisa or {}).get("referencias") or []
+    if refs_p:
+        n61.p("Na pesquisa em bases oficiais (PNCP e Compras.gov.br), encontrei as seguintes contratações e atas semelhantes:")
+        for n, r_ in enumerate(refs_p[:12], 1):
+            par(f"•\t[P{n}] {r_['orgao']} ({r_['municipio']}/{r_['uf']}) – {r_.get('tipo', '')}, publicada em {'/'.join(reversed(r_['data'].split('-'))) if r_.get('data') else ''}"
+                + (f", valor total estimado {brl(r_.get('valor_total_estimado'))}" if r_.get("valor_total_estimado") else "") + f". {r_['link']}", recuo=1.6, pendente=0.5, tam=9.5, alinhar="e")
+    pp = (pesquisa or {}).get("precos_praticados") or []
+    if pp:
+        n61.p("Preços unitários praticados nos últimos 12 meses (módulo de pesquisa de preços do Compras.gov.br):")
+        tabela(["Ref.", "Item do catálogo", "Unid.", "Compras", "Mínimo", "Mediana", "Máximo"],
+               [[f"C{n}", f"{x['catalogo']} ({x.get('solucao', '')})", x["unidade"], str(x["n"]), brl(x["minimo"]), brl(x["mediana"]), brl(x["maximo"])] for n, x in enumerate(pp[:10], 1)],
+               [1.0, 5.6, 1.2, 1.3, 2.4, 2.4, 2.6], alinhar=["c", "e", "c", "c", "d", "d", "d"])
+    subsecao("6.2.", "Alternativas do mercado")
+    Num("6.2").p("Considerando os requisitos desta demanda, identifiquei as seguintes alternativas para atender à necessidade:")
+    for x in sols:
+        quadro_solucao(x)
+    comp = docj.get("comparativo") or []
+    n63 = Num("6.3")
+    if comp and viaveis or S.get("comparativa") or S.get("inviaveis"):
+        subsecao("6.3.", "Análise das alternativas e atendimento aos requisitos")
+        n63.varios(S.get("comparativa"))
+    if comp and viaveis:
+        larg = [2.2, 6.3] + [8.0 / len(viaveis)] * len(viaveis)
+        tabela(["Tipo", "Requisito"] + [f"Solução {x.get('id')}" for x in viaveis],
+               [[r_.get("tipo", ""), r_.get("requisito", "")] + [((r_.get("avaliacao") or []) + [""] * len(viaveis))[i] for i in range(len(viaveis))] for r_ in comp], larg,
+               alinhar=["c", "e"] + ["c"] * len(viaveis))
+    n63.varios(S.get("inviaveis"))
+    subsecao("6.4.", "Análise e comparação entre os custos totais das soluções")
+    n64 = Num("6.4")
+    vu = docj.get("vida_util") or {}
+    if vu.get("anos"):
+        n64.p(f"**Horizonte da análise: {num(vu.get('anos'))} anos**, correspondente à vida útil do objeto" + (f" ({vu['fundamento']})" if vu.get("fundamento") else "") + ". Comparei todas as soluções nesse mesmo período, para a mesma quantidade e especificação.")
+    n64.varios(S.get("custos"))
+    for s_ in tco.get("solucoes") or []:
+        comps = s_.get("componentes") or []
+        par(f"Solução {s_.get('id')} – {nome_sol.get(s_.get('id'), '')}", negrito=True, antes=6, depois=3, alinhar="e")
+        ln, soma, falta = [], 0.0, False
+        for cp in comps:
+            vs = list(cp.get("valores") or [])[:anos]
+            tot_c = None if (not vs or any(v is None for v in vs)) else sum(float(v) for v in vs)
+            if tot_c is None: falta = True
+            else: soma += tot_c
+            ln.append([cp.get("componente", ""), cp.get("unidade") or "—", num(cp.get("quantidade")) if cp.get("quantidade") is not None else "—",
+                       brl(cp.get("valor_unitario")) if cp.get("valor_unitario") is not None else "—", brl(tot_c), cp.get("fonte", "")])
+        tabela(["Componente de custo", "Unidade", "Qtd.", "Valor unitário", f"Total em {num(anos)} ano(s)", "Fonte"], ln, [5.4, 2.2, 1.4, 2.6, 3, 1.9],
+               total=["Custo total da solução", "", "", "", brl(None if falta else soma), ""], alinhar=["e", "c", "c", "d", "d", "c"])
+    if len(tco.get("solucoes") or []) > 1:
+        par("Mapa comparativo", negrito=True, antes=6, depois=3, alinhar="e")
+        linhas_m = []
+        for s_ in tco.get("solucoes") or []:
+            por_ano = []
+            for i_ in range(anos):
+                vs = [(cp.get("valores") or [])[i_] if i_ < len(cp.get("valores") or []) else None for cp in s_.get("componentes") or []]
+                por_ano.append(None if (not vs or any(v is None for v in vs)) else sum(float(v) for v in vs))
+            tot_s = None if any(v is None for v in por_ano) else sum(por_ano)
+            linhas_m.append([f"Solução {s_.get('id')} – {nome_sol.get(s_.get('id'), '')}"] + [brl(v) for v in por_ano] + [brl(tot_s)])
+        if anos <= 3:
+            tabela(["Solução"] + [f"Ano {i_ + 1}" for i_ in range(anos)] + ["Total"], linhas_m, [5.5] + [2.6] * anos + [3], alinhar=["e"] + ["d"] * (anos + 1))
+        else:  # muitos anos: total e média anual (mais fácil de comparar)
+            def media(v):
+                try:
+                    return brl(float(str(v).replace("R$", "").replace(".", "").replace(",", ".").strip()) / anos)
+                except ValueError:
+                    return v
+            tabela(["Solução", f"Total em {num(anos)} anos", "Média por ano"], [[l_[0], l_[-1], media(l_[-1])] for l_ in linhas_m], [9, 4, 3.5], alinhar=["e", "d", "d"])
+
+    # 7. Estimativa do valor
+    secao(7, "Estimativa preliminar do valor da contratação")
+    n7 = Num("7")
+    n7.varios(S.get("estimativa"))
+    if itens:
+        ln, soma, falta = [], 0.0, False
+        for it in itens:
+            q, v_u = it.get("quantidade"), it.get("valor_unitario")
+            vt = None if q is None or v_u is None else float(q) * float(v_u)
+            if vt is None: falta = True
+            else: soma += vt
+            ln.append([str(it.get("item", "")), it.get("descricao", ""), it.get("unidade") or "—", num(q), brl(v_u), brl(vt)])
+        tabela(["Item", "Descrição", "Unidade", "Qtd.", "Valor unitário (mediana)", "Valor total"], ln, [1.1, 6.6, 1.9, 1.5, 2.7, 2.7],
+               total=["", "TOTAL ESTIMADO", "", "", "", brl(None if falta else soma)], alinhar=["c", "j", "c", "c", "d", "d"])
+        n7.p("Estimativa preliminar (art. 18, § 1º, VI, da Lei nº 14.133/2021), a ser confirmada pela pesquisa de preços do art. 23, cujos documentos integram os autos.")
+
+    # 8. Escolha da solução
+    secao(8, "Escolha da solução")
+    subsecao("8.1.", "Descrição da solução escolhida")
+    n81 = Num("8.1")
+    if escolhida in nome_sol:
+        n81.p(f"**Solução {escolhida} – {nome_sol.get(escolhida)}.**")
+    subsecao("8.2.", "Justificativa")
+    n82 = Num("8.2"); n82.varios(S.get("just_tecnica")); n82.varios(S.get("just_economica"))
+
+    # 9..16
+    secao(9, "Descrição da solução como um todo")
+    Num("9").varios(S.get("solucao"))
+    secao(10, "Justificativas para o parcelamento ou não da solução")
+    n10 = Num("10"); n10.varios(S.get("parcelamento_tecnico")); n10.varios(S.get("parcelamento_economico"))
+    parc = sem_acento(respostas.get("parcelamento", ""))
+    divisivel = "PARCELAR" in parc and "NAO" not in parc
+    par("Avaliação da divisibilidade do objeto considerando o mercado fornecedor:", negrito=True, antes=4, recuo=0.5)
+    par(f"( {'x' if divisivel else ' '} ) É possível a contratação de forma divisível, sem prejuízo técnico, econômico ou de competitividade (adjudicação por item).", recuo=0.5, tam=10)
+    par(f"( {' ' if divisivel else 'x'} ) Os itens devem ser agrupados para fornecimento por uma única empresa (adjudicação por lote ou global).", recuo=0.5, tam=10)
+    secao(11, "Resultados pretendidos")
+    Num("11").varios(S.get("beneficios"))
+    secao(12, "Providências prévias à contratação")
+    Num("12").varios(S.get("providencias") or ["Não se aplica."])
+    secao(13, "Contratações correlatas e/ou interdependentes")
+    Num("13").varios(S.get("correlatas") or ["Não há contratações correlatas ou interdependentes."])
+    secao(14, "Possíveis impactos ambientais e medidas mitigadoras")
+    Num("14").varios(S.get("ambientais") or ["[PREENCHER: impactos ambientais e medidas mitigadoras.]"])
+    secao(15, "Posicionamento conclusivo sobre a adequação da contratação")
+    Num("15").varios(S.get("viabilidade_justificativa"))
+    secao(16, "Declaração de viabilidade da contratação")
+    v = docj.get("viabilidade") or "[PREENCHER]"
+    Num("16").p(f"Com base nos estudos e justificativas apresentados, declaro que a contratação é **{v.upper()}**"
+                + (f", sendo indicada a Solução {escolhida} – {nome_sol.get(escolhida)}" if escolhida in nome_sol else "") + ".")
+
+    n_sec = 16
+    if refs or refs_p or pp:
+        n_sec += 1; secao(n_sec, "Referências")
+        for j in refs or []:
+            par("•\t" + (j.get("citacao_abnt") or f"{j.get('orgao','')} {j.get('numero','')}") + (f" Disponível em: {j['fonte_url']}." if j.get("fonte_url") else ""), recuo=0.5, pendente=0.5, tam=9.5, alinhar="e")
+        if pp:
+            par("•\tCompras.gov.br – dados abertos, módulo de pesquisa de preços (preços praticados). Disponível em: https://dadosabertos.compras.gov.br.", recuo=0.5, pendente=0.5, tam=9.5, alinhar="e")
+        if refs_p:
+            par("•\tPortal Nacional de Contratações Públicas (PNCP). Disponível em: https://pncp.gov.br.", recuo=0.5, pendente=0.5, tam=9.5, alinhar="e")
+
+    # responsáveis e aprovação
+    n_sec += 1; secao(n_sec, "Responsáveis pela elaboração")
+    par(f"{municipio}, {hoje.day} de {MESES[hoje.month - 1]} de {hoje.year}.", alinhar="d", antes=4, depois=18)
+    t = w.add_table(rows=1, cols=2); t.alignment = WD_TABLE_ALIGNMENT.CENTER
+    for i, pre in enumerate(("elab", "resp")):
+        cel = t.rows[0].cells[i]; cel.text = ""
+        nome = respostas.get(pre + "_nome", "").strip() or "[PREENCHER: nome]"
+        cargo = respostas.get(pre + "_cargo", "").strip() or "[PREENCHER: cargo]"
+        mat = respostas.get(pre + "_matricula", "").strip()
+        p_ = cel.paragraphs[0]; p_.alignment = WD_ALIGN_PARAGRAPH.CENTER; escrever(p_, "\n\n________________________________", False, 10)
+        for linha, neg, tam_ in ((nome.upper(), True, 10), (cargo + (f" · Matrícula {mat}" if mat else ""), False, 9.5),
+                                 ("Responsável pela elaboração" if pre == "elab" else "Responsável pelo setor", False, 9)):
+            q = cel.add_paragraph(); q.alignment = WD_ALIGN_PARAGRAPH.CENTER; q.paragraph_format.space_after = Pt(0); escrever(q, linha, neg, tam_)
+    n_sec += 1; secao(n_sec, "Aprovação do estudo técnico preliminar")
+    norma = "da Lei nº 14.133/2021" + (" e da Instrução Normativa SGD/ME nº 94/2022" if tic else "")
+    par(f"Aprovo este Estudo Técnico Preliminar e atesto sua conformidade às disposições {norma}.", recuo=0.5, antes=2, depois=18).paragraph_format.keep_with_next = True
+    aut = [x.strip() for x in re.split(r"[,;·]", respostas.get("autoridade", "")) if x.strip()]
+    bloco = [par("________________________________", centro=True, antes=12, depois=0),
+             par((aut[0] if aut else "[PREENCHER: nome da autoridade]").upper(), negrito=True, centro=True, depois=0),
+             par(" · ".join(aut[1:]) if len(aut) > 1 else "[PREENCHER: cargo e matrícula]", centro=True, tam=9.5, depois=0),
+             par("Autoridade competente", centro=True, tam=9, depois=0)]
+    for b_ in bloco[:-1]:
+        b_.paragraph_format.keep_with_next = True
+
+    # anexo: só o que o assinante optou por completar depois
+    pend = [t_ for t_ in (docj.get("pendencias") or []) if str(t_).strip()]
     if pend:
-        fim = novo_par(""); fim.add_run().add_break(WD_BREAK.PAGE)
-        novo_par("ANEXO — INFORMAÇÕES PARA COMPLETAR (retire antes de juntar ao processo)", negrito=True, centro=True)
-        novo_par("Estes são os pontos que você informou não ter no momento da elaboração. Eles estão destacados em amarelo no texto.", tam=10)
-        for t in pend:
-            novo_par("• " + t, tam=10)
+        q = par(""); q.add_run().add_break(WD_BREAK.PAGE)
+        par("ANEXO – INFORMAÇÕES PARA COMPLETAR (retire antes de juntar ao processo)", negrito=True, centro=True, depois=6)
+        par("Estes são os pontos que você informou não ter no momento da elaboração. Eles estão destacados em amarelo no texto.", tam=9.5)
+        for t_ in pend:
+            par("•\t" + t_, recuo=0.5, pendente=0.5, tam=10, alinhar="e")
 
-    # segurança: nenhuma orientação em vermelho do modelo pode sobrar no documento
-    vermelhos = [r for r in corpo.iter(qn("w:color")) if (r.get(qn("w:val")) or "").upper() in ("FF0000", "FF3333", "0000FF")]
-    for cor in vermelhos:
-        cor.set(qn("w:val"), "000000")
-    def padronizar_fonte(raiz):
-        for rf in raiz.iter(qn("w:rFonts")):
-            for att in list(rf.attrib):
-                if att.endswith("Theme"):
-                    del rf.attrib[att]
-            for k in ("w:ascii", "w:hAnsi", "w:cs", "w:eastAsia"):
-                rf.set(qn(k), "Calibri")
-    padronizar_fonte(w.element)
-    padronizar_fonte(w.styles.element)
-    for sec_ in w.sections:
-        for parte in (sec_.header, sec_.footer, sec_.first_page_header, sec_.first_page_footer):
-            try:
-                padronizar_fonte(parte._element)
-            except Exception:
-                pass
-    for st in w.styles:
-        try:
-            if st.font is not None: st.font.name = "Calibri"
-        except Exception:
-            pass
-    w.core_properties.author = "Agente Licitacon"
+    w.core_properties.author = "Licitacon"
     w.core_properties.title = "Estudo Técnico Preliminar"
     w.save(str(saida))
-    return len(vermelhos)
+    return 0
