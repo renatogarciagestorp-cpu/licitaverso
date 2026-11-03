@@ -34,6 +34,88 @@ async function obter(url: string, ms = 12000): Promise<any> {
   }
 }
 
+// ---------------------------------------------------------------- preços praticados (Compras.gov.br), mesma lógica do agente
+const CATALOGO_URL = "https://renatogarciagestorp-cpu.github.io/licitaverso/catalogo-compras.json";
+const SINONIMOS: Record<string, string[]> = { notebook: ["computador"], notebooks: ["computador"], laptop: ["notebook", "computador"],
+  desktop: ["microcomputador"], carro: ["veiculo"], carros: ["veiculo"], automovel: ["veiculo"], veiculos: ["veiculo"], onibus: ["veiculo"],
+  predial: ["areas", "internas"], faxina: ["limpeza"], seguranca: ["vigilancia"], vigia: ["vigilancia"], climatizacao: ["condicionado"],
+  impressao: ["impressora", "reprografia"], copias: ["reprografia"] };
+let catalogo: { pdm: [number, string, string][]; servico: [number, string, string][] } | null = null;
+
+async function obterCatalogo() {
+  if (!catalogo) catalogo = await (await fetch(CATALOGO_URL, { signal: AbortSignal.timeout(10000) })).json();
+  return catalogo!;
+}
+
+const raiz = (w: string) => w.length <= 3 ? w : w.slice(0, Math.max(5, w.length - 1));
+const casa = (w: string, r: string) => r.length >= 6 ? w.startsWith(r) : (w === r || w === r + "s" || w === r + "es");
+
+async function codigosCatalogo(objeto: string, tipo: "material" | "servico", extra: string) {
+  const chaves = [...(extra ? [extra] : []), ...chavesDe(objeto).slice(0, 5), ...((semAcento(objeto).match(/\b[a-z]\d{1,2}\b/g) ?? []).slice(0, 1))];
+  const raizes: string[] = [];
+  for (const c of chaves) for (const x of [c, ...(SINONIMOS[c] ?? [])]) if (!raizes.includes(raiz(x))) raizes.push(raiz(x));
+  if (!raizes.length) return [];
+  const obrig = raiz(chaves[0]), sin = (SINONIMOS[chaves[0]] ?? []).map(raiz);
+  const cat = await obterCatalogo();
+  const cand: [number, number, number, number, string][] = [];
+  for (const [cod, nome] of (tipo === "material" ? cat.pdm : cat.servico)) {
+    const nm = semAcento(String(nome ?? "").replace(/-\s*/g, ""));
+    if (nm.includes("inativo")) continue;
+    const pal = nm.match(/[a-z0-9]+/g) ?? [];
+    if (!pal.some((w) => casa(w, obrig)) && !sin.some((r) => pal.some((w) => casa(w, r)))) continue;
+    const p = raizes.filter((r) => pal.some((w) => casa(w, r))).length;
+    const ini = pal.length && raizes.some((r) => casa(pal[0]!, r)) ? 1 : 0;
+    cand.push([p, ini, -pal.length, cod, nome]);
+  }
+  cand.sort((a, b) => b[0] - a[0] || b[1] - a[1] || b[2] - a[2]);
+  if (!cand.length || cand[0][0] < 1) return [];
+  const emp = cand.filter((c) => c[0] === cand[0][0] && c[1] === cand[0][1]);
+  if (cand[0][0] === 1 && emp.length > 10) return emp.filter((c) => c[2] === -1).slice(0, 1).map((c) => [c[3], c[4]] as [number, string]);
+  return emp.slice(0, 3).map((c) => [c[3], c[4]] as [number, string]);
+}
+
+function semDiscrepantes(v: number[]) {
+  v = [...v].sort((a, b) => a - b);
+  if (v.length < 4) return v;
+  const q1 = v[Math.floor(v.length / 4)], q3 = v[Math.floor(3 * v.length / 4)], iqr = q3 - q1;
+  const ok = v.filter((x) => x >= q1 - 1.5 * iqr && x <= q3 + 1.5 * iqr);
+  return ok.length ? ok : v;
+}
+const mediana = (v: number[]) => { const s = [...v].sort((a, b) => a - b), m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : Math.round((s[m - 1] + s[m]) * 50) / 100; };
+
+async function precosPraticados(objeto: string, natureza: string, uf: string, extra: string, limite: number) {
+  const n = semAcento(natureza);
+  const tipo: "material" | "servico" = /bem|compra/.test(n) && !extra ? "material" : "servico";
+  const hoje = new Date(), ini = new Date(hoje.getTime() - 365 * 864e5).toISOString().slice(0, 10), fim = hoje.toISOString().slice(0, 10);
+  const saida: any[] = [];
+  for (const [cod, nome] of await codigosCatalogo(objeto, tipo, extra)) {
+    if (Date.now() > limite) break;
+    let linhas: any[] = [];
+    for (const est of uf ? [uf, ""] : [""]) {
+      const p = new URLSearchParams({ pagina: "1", tamanhoPagina: "50", dataCompraInicio: ini, dataCompraFim: fim });
+      if (est) p.set("estado", est);
+      let url;
+      if (tipo === "material") { p.set("tipo", "codigoPdm"); p.set("codigo", String(cod)); url = `${COMPRAS}/modulo-pesquisa-preco/1_consultarMaterial?${p}`; }
+      else { p.set("codigoItemCatalogo", String(cod)); url = `${COMPRAS}/modulo-pesquisa-preco/3_consultarServico?${p}`; }
+      try { linhas = (((await obter(url, 15000)) ?? {}).resultado ?? []).filter((r: any) => (num(r.precoUnitario) ?? 0) > 0.01 && String(r.dataCompra ?? r.dataResultado ?? "9").slice(0, 10) >= ini); }
+      catch { linhas = []; }
+      if (linhas.length >= 3) break;
+    }
+    const porUn: Record<string, any[]> = {};
+    for (const r of linhas) {
+      let un = String(r.siglaUnidadeFornecimento ?? r.siglaUnidadeMedida ?? r.nomeUnidadeFornecimento ?? r.nomeUnidadeMedida ?? "—").trim().toUpperCase();
+      un = ({ UNIDADE: "UN", UND: "UN", "METRO QUADRADO": "M2", "M²": "M2" } as Record<string, string>)[un] ?? un;
+      (porUn[un] ??= []).push(r);
+    }
+    for (const [un, rs] of Object.entries(porUn).sort((a, b) => b[1].length - a[1].length)) {
+      const todos = rs.map((r) => num(r.precoUnitario)!), vals = semDiscrepantes(todos);
+      saida.push({ catalogo: `${tipo === "material" ? "PDM" : "CATSER"} ${cod} — ${nome}`, unidade: un, n: vals.length, excluidos: todos.length - vals.length,
+        minimo: vals[0], mediana: mediana(vals), maximo: vals[vals.length - 1], abrangencia: uf && rs.every((r) => r.estado === uf) ? "estado" : "nacional" });
+    }
+  }
+  return saida;
+}
+
 function solucoes(natureza: string): [string, string][] {
   const n = semAcento(natureza);
   if (/obra|engenharia|reforma/.test(n)) return [["execução da obra ou serviço", ""]];
@@ -119,5 +201,11 @@ Deno.serve(async (req) => {
         link: url ? PNCP + "/app" + url.replace("/compras/", "/editais/") : "", itens: its });
     }
   }
-  return resposta({ referencias: refs, erro: refs.length ? "" : (falha || "Nenhuma contratação semelhante encontrada no PNCP.") });
+  const precos: any[] = [];
+  for (const [rotulo, extra] of sols) {
+    try { for (const x of await precosPraticados(objeto, String(corpo.natureza ?? ""), uf, extra, inicio + 55000)) precos.push({ ...x, solucao: rotulo }); }
+    catch { /* catálogo ou API indisponível: segue com o PNCP */ }
+  }
+  const nada = !refs.length && !precos.length;
+  return resposta({ referencias: refs, precos_praticados: precos, erro: nada ? (falha || "Nenhuma contratação semelhante nem preço praticado encontrado.") : "" });
 });

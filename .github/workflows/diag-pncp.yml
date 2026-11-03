@@ -5,14 +5,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          curl -sS -m 40 "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=10&tipo=codigoPdm&codigo=8435&estado=RJ" | head -c 1500; echo
-          python3 - <<'PY'
-          import sys, json; sys.path.insert(0, "scripts/agente"); import pesquisa_mercado as pm
-          for o, n, uf, e in [("Aquisição de notebooks para as escolas", "Bem", "RJ", None), ("notebooks para escolas", "Bem", "RJ", "locacao"),
-                              ("Serviços contínuos de limpeza, asseio e conservação predial", "Serviço contínuo", "RJ", None),
-                              ("Aquisição de cadeiras giratórias", "Bem", "RJ", None)]:
-              r = pm.precos_praticados(o, n, uf, e)
-              print("==", o, e, len(r))
-              for x in r: print("  ", x["catalogo"][:60], x["unidade"], x["n"], x["abrangencia"], x["minimo"], x["mediana"], x["maximo"], "|", x["exemplos"][0]["orgao"][:30], x["exemplos"][0]["data"])
-          PY
+      - env: { S: "${{ secrets.AVISOS_SECRET }}" }
+        run: |
+          python3 scripts/agente/pesquisa_mercado.py --objeto "Aquisição de notebooks para as escolas municipais" --uf RJ --natureza "Bem" | grep -A40 "PREÇOS PRATICADOS" | cut -c1-250
+          for c in '{"objeto":"Serviços contínuos de limpeza, asseio e conservação predial","uf":"RJ","natureza":"Serviço contínuo"}' '{"objeto":"Aquisição de notebooks para as escolas","uf":"RJ","natureza":"Bem"}'; do
+            curl -sS -m 90 -X POST https://umnhhztdqersjfrzqcea.supabase.co/functions/v1/pesquisa-mercado -H "x-avisos: $S" -H "Content-Type: application/json" -d "$c" -w "\nHTTP %{http_code} %{time_total}s\n" | python3 -c "
+          import sys,json;t=sys.stdin.read();c,_,r=t.rpartition('\nHTTP');print('HTTP',r.strip())
+          j=json.loads(c);print('erro:',j.get('erro'),'refs',len(j.get('referencias',[])),'precos',len(j.get('precos_praticados',[])))
+          for x in j.get('precos_praticados',[])[:6]: print(' -',x['solucao'],x['catalogo'][:50],x['unidade'],x['n'],x['excluidos'],x['abrangencia'],x['minimo'],x['mediana'],x['maximo'])"
+          done

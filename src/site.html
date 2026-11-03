@@ -739,6 +739,7 @@
   .lve-pesq-st { font-size: 13.5px; color: #43535C; font-weight: 700; }
   .lve-pesq-lista { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 13.5px; }
   .lve-pesq-lista a { color: #0F6B7E; font-weight: 700; overflow-wrap: anywhere; }
+  .lve-pesq-sub { margin: 0; font-size: 12.5px; color: #66757F; font-weight: 700; }
   .lve-pesq-lista span { display: block; color: #66757F; font-size: 12.5px; }
   .lve-aviso { margin: 0; background: #FFF4E5; color: #6B3D00; border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.5; }
   .lve-arq { position: relative; display: block; border: 1.5px dashed #BFD3D0; border-radius: 10px; padding: 11px 13px; cursor: pointer; background: #FBFCFC; font-size: 13.5px; font-weight: 700; color: #0F6B7E; overflow-wrap: anywhere; }
@@ -1742,6 +1743,7 @@
                 <p class="lve-pesq">{{ elTextoPesquisa }}</p>
                 <div class="lve-pesq-acao"><button type="button" class="lve-btn2" sc-camel-on-click="{{ elPesquisar }}">{{ elPesqBotao }}</button><span class="lve-pesq-st">{{ elPesqStatus }}</span></div>
                 <sc-if value="{{ elPesqTemRefs }}" hint-placeholder-val="{{ false }}"><ul class="lve-pesq-lista"><sc-for list="{{ elPesqRefs }}" as="r" hint-placeholder-count="3"><li><a href="{{ r.link }}" target="_blank" rel="noopener">{{ r.titulo }}</a><span>{{ r.det }}</span></li></sc-for></ul></sc-if>
+                <sc-if value="{{ elPesqTemPrecos }}" hint-placeholder-val="{{ false }}"><p class="lve-pesq-sub">Preços unitários praticados (Compras.gov.br, últimos 12 meses):</p><ul class="lve-pesq-lista"><sc-for list="{{ elPesqPrecos }}" as="r" hint-placeholder-count="2"><li><b>{{ r.titulo }}</b><span>{{ r.det }}</span></li></sc-for></ul><p class="lve-pesq-sub">Confira se o item do catálogo corresponde ao que você vai contratar.</p></sc-if>
                 <sc-if value="{{ elPesqFalhou }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso" role="alert"><b>Não conseguimos fazer a pesquisa automaticamente.</b> {{ elPesqErro }} Para seguir, forneça abaixo referências de preço (link, PDF ou valores digitados) ou marque que vai completar depois.</p></sc-if>
                 <details class="lvc-det" open="{{ elPesqAbrirProprias }}"><summary>Fornecer minhas referências de preço{{ elPesqPropriasRot }}</summary>
                   <label class="lvc-campo"><span>Links de contratações, atas ou cotações (um por linha)</span><textarea rows="2" value="{{ elPrecosLinks }}" sc-camel-on-input="{{ elOnPrecosLinks }}" placeholder="Ex.: https://pncp.gov.br/app/editais/..."></textarea></label>
@@ -4395,8 +4397,9 @@ class Component extends DCLogic {
     try {
       const { data, error } = await this.sb.functions.invoke("pesquisa-mercado", { body: { objeto: R.objeto, uf: R.uf, natureza: R.natureza } });
       if (error) throw error;
-      const refs = (data && data.referencias) || [];
-      pesq = refs.length ? { estado: "ok", chave, refs } : { estado: "falhou", chave, refs: [], erro: (data && data.erro) || "Nenhuma contratação semelhante encontrada." };
+      const refs = (data && data.referencias) || [], precos = (data && data.precos_praticados) || [];
+      pesq = refs.length || precos.length ? { estado: "ok", chave, refs, precos }
+        : { estado: "falhou", chave, refs: [], precos: [], erro: (data && data.erro) || "Nenhuma contratação semelhante encontrada." };
     } catch (er) {
       pesq = { estado: "falhou", chave, refs: [], erro: "O serviço de pesquisa não respondeu agora." };
     }
@@ -5967,8 +5970,8 @@ class Component extends DCLogic {
           }),
           elMostraPesquisa: el.doc === "etp" || (el.doc === "tr" && !String(R.valor || "").trim()),
           elTextoPesquisa: el.doc === "etp"
-            ? "No ETP não se informa valor estimado. Pesquisamos no PNCP contratações de outros órgãos, priorizando o seu estado, para todas as soluções possíveis (compra, locação, serviço…); o agente compara as soluções no estudo, com as fontes."
-            : "O agente traz contratações semelhantes do PNCP, priorizando o seu estado, como referência; o valor final deve vir da sua pesquisa de preços formal (art. 23).",
+            ? "No ETP não se informa valor estimado. Pesquisamos no PNCP contratações de outros órgãos e, no Compras.gov.br, os preços unitários praticados, priorizando o seu estado, para todas as soluções possíveis (compra, locação, serviço…); o agente compara as soluções no estudo, com as fontes."
+            : "O agente traz contratações semelhantes do PNCP e preços unitários praticados do Compras.gov.br, priorizando o seu estado, como referência; o valor final deve vir da sua pesquisa de preços formal (art. 23).",
           elObs: R.observacoes || "", elOnObs: this.elResponder("observacoes"),
           ...(() => {
             const pq = el.pesq && el.pesq.chave === [R.objeto, R.uf, R.natureza].join("|") ? el.pesq : null;
@@ -5981,8 +5984,13 @@ class Component extends DCLogic {
               elPesquisar: () => this.elPesquisar(),
               elPesqBotao: pq && pq.estado === "buscando" ? "Pesquisando…" : pq ? "Refazer a pesquisa" : "Fazer a pesquisa agora",
               elPesqStatus: !pq ? "Se você não clicar, a pesquisa é feita ao criar o documento." : pq.estado === "buscando" ? "Consultando o PNCP e o Compras.gov.br…"
-                : pq.estado === "ok" ? "✓ " + pq.refs.length + " contratações semelhantes encontradas" + (R.uf ? " (" + nEst + " no seu estado)" : "") + ". O agente vai analisá-las no documento." : "",
-              elPesqTemRefs: !!(pq && pq.estado === "ok"),
+                : pq.estado === "ok" ? "✓ " + pq.refs.length + " contratações semelhantes" + (R.uf ? " (" + nEst + " no seu estado)" : "")
+                  + ((pq.precos || []).length ? " e preços praticados de " + (pq.precos || []).reduce((t, x) => t + x.n, 0) + " compras" : "") + ". O agente vai analisá-los no documento." : "",
+              elPesqTemRefs: !!(pq && pq.estado === "ok" && pq.refs.length),
+              elPesqTemPrecos: !!(pq && pq.estado === "ok" && (pq.precos || []).length),
+              elPesqPrecos: pq && pq.precos ? pq.precos.slice(0, 6).map((x) => ({ titulo: x.catalogo + " · " + x.unidade,
+                det: x.solucao + " · " + x.n + " compras " + (x.abrangencia === "estado" ? "no seu estado" : "no país") + " · mediana " + brl(x.mediana) + " (mín. " + brl(x.minimo) + ", máx. " + brl(x.maximo) + ")"
+                  + (x.excluidos ? " · " + x.excluidos + " valores discrepantes excluídos" : "") })) : [],
               elPesqRefs: pq && pq.refs ? pq.refs.slice(0, 6).map((r) => ({ link: r.link, titulo: r.orgao + " (" + (r.municipio ? r.municipio + "/" : "") + r.uf + ")",
                 det: r.solucao + " · " + r.tipo + " · " + (r.data || "").split("-").reverse().join("/") + (r.valor_total_estimado ? " · valor total " + brl(r.valor_total_estimado) : "") + (r.itens && r.itens.length ? " · com preço unitário" : "") })) : [],
               elPesqFalhou: !!(pq && pq.estado === "falhou"), elPesqErro: pq && pq.erro ? pq.erro : "",

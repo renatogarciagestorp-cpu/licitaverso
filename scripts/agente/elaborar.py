@@ -183,7 +183,8 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante=""):
         "nomes, números de processo, dotação); (9) pesquisa de mercado: use apenas os dados do PNCP e do Compras.gov.br fornecidos e as "
         "referências de preço enviadas pelo requisitante, citando órgão (ou fonte), "
         "município/UF, data e link de cada contratação usada; nunca invente preço, fornecedor ou fonte; separe os resultados por "
-        "solução, informe faixa e mediana dos valores unitários comparáveis (prefira o homologado ao estimado e as contratações do "
+        "solução, informe faixa e mediana dos valores unitários comparáveis (prefira os preços praticados do Compras.gov.br, que são "
+        "preços unitários reais, e depois o homologado ao estimado, e as contratações do "
         "mesmo estado) e alerte quando unidades ou especificações não forem comparáveis; "
         + ("no ETP, o levantamento de mercado deve considerar todas as soluções possíveis (por exemplo, aquisição, locação, serviço "
            "com fornecimento do bem, adesão a ata ou execução direta, conforme o objeto), comparar vantagens, desvantagens e custos de cada "
@@ -328,6 +329,13 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
         for n, r in enumerate(pesquisa["referencias"], 1):
             par(f"[P{n}] {r['orgao']} ({r['municipio']}/{r['uf']}). {r.get('modalidade') or r.get('tipo','')}, publicada em {r['data']}. Solução: {r['solucao']}. "
                 f"Disponível em: {r['link']}.", recuo=False, tam=10)
+    if pesquisa and pesquisa.get("precos_praticados"):
+        par("PREÇOS PRATICADOS CONSULTADOS (COMPRAS.GOV.BR — MÓDULO DE PESQUISA DE PREÇOS)", negrito=True, recuo=False)
+        for n, x in enumerate(pesquisa["precos_praticados"], 1):
+            ids = ", ".join(str(e.get("id_compra")) for e in x.get("exemplos", []) if e.get("id_compra"))
+            par(f"[C{n}] {x['catalogo']} · unidade {x['unidade']} · {x['n']} compras dos últimos 12 meses · mediana {pm.brl(x['mediana'])}"
+                + (f" · {x['excluidos']} valores discrepantes excluídos" if x.get("excluidos") else "")
+                + (f" · compras de exemplo: {ids}" if ids else "") + ". Disponível em: https://dadosabertos.compras.gov.br.", recuo=False, tam=10)
     w.add_paragraph()
     par("[PREENCHER: local], [PREENCHER: data].", recuo=False)
 

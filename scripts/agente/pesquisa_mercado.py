@@ -174,6 +174,23 @@ def codigos_catalogo(objeto, tipo, extra=None, n=3):
     return [(c[3], c[4]) for c in cand if c[0] == melhor and c[1] == ini][:n]  # só os de maior pontuação
 
 
+def mediana(v):
+    v = sorted(v)
+    return v[len(v) // 2] if len(v) % 2 else round((v[len(v) // 2 - 1] + v[len(v) // 2]) / 2, 2)
+
+
+def filtrar_discrepantes(vals):
+    """Tira valores muito fora do conjunto (inexequíveis ou excessivos), pelo critério de Tukey: fora de 1,5 × a distância
+    interquartil. Só com 4 ou mais valores. Devolve (mantidos, quantidade excluída)."""
+    if len(vals) < 4:
+        return vals, 0
+    q1, q3 = vals[len(vals) // 4], vals[(3 * len(vals)) // 4]
+    iqr = q3 - q1
+    lo, hi = q1 - 1.5 * iqr, q3 + 1.5 * iqr
+    ok = [v for v in vals if lo <= v <= hi] or vals
+    return ok, len(vals) - len(ok)
+
+
 def precos_praticados(objeto, natureza="", uf="", extra=None, max_linhas=12):
     """Preços unitários praticados em compras públicas (módulo de pesquisa de preços do Compras.gov.br), últimos 12 meses."""
     import datetime
@@ -184,7 +201,7 @@ def precos_praticados(objeto, natureza="", uf="", extra=None, max_linhas=12):
     for cod, nome in codigos_catalogo(objeto, tipo, extra):
         linhas = []
         for est in ([uf] if uf else []) + [""]:
-            p = {"pagina": 1, "tamanhoPagina": 50, "dataCompraInicio": inicio}
+            p = {"pagina": 1, "tamanhoPagina": 50, "dataCompraInicio": inicio, "dataCompraFim": datetime.date.today().isoformat()}
             if est:
                 p["estado"] = est
             if tipo == "material":
@@ -195,19 +212,22 @@ def precos_praticados(objeto, natureza="", uf="", extra=None, max_linhas=12):
                 res = (_get(caminho, p, base=COMPRAS, timeout=30) or {}).get("resultado") or []
             except Exception:
                 res = []
-            linhas = [r for r in res if (_num(r.get("precoUnitario")) or 0) > 0.01]
+            linhas = [r for r in res if (_num(r.get("precoUnitario")) or 0) > 0.01 and str(r.get("dataCompra") or r.get("dataResultado") or "9")[:10] >= inicio]
             if len(linhas) >= 3:
                 break
         if not linhas:
             continue
         por_un = {}
         for r in linhas:
-            un = r.get("siglaUnidadeMedida") or r.get("nomeUnidadeFornecimento") or r.get("nomeUnidadeMedida") or "—"
+            un = str(r.get("siglaUnidadeFornecimento") or r.get("siglaUnidadeMedida") or r.get("nomeUnidadeFornecimento") or r.get("nomeUnidadeMedida") or "—").strip().upper()
+            un = {"UNIDADE": "UN", "UND": "UN", "METRO QUADRADO": "M2", "M²": "M2", "MES": "MÊS"}.get(un, un)
             por_un.setdefault(un, []).append(r)
         for un, rs in sorted(por_un.items(), key=lambda x: -len(x[1])):
-            vals = sorted(_num(r["precoUnitario"]) for r in rs)
-            med = vals[len(vals) // 2] if len(vals) % 2 else round((vals[len(vals) // 2 - 1] + vals[len(vals) // 2]) / 2, 2)
-            saida.append({"catalogo": f"{'PDM' if tipo == 'material' else 'CATSER'} {cod} — {nome}", "unidade": un, "n": len(vals),
+            todos = sorted(_num(r["precoUnitario"]) for r in rs)
+            vals, excl = filtrar_discrepantes(todos)
+            rs = [r for r in rs if vals[0] <= _num(r["precoUnitario"]) <= vals[-1]]
+            med = mediana(vals)
+            saida.append({"catalogo": f"{'PDM' if tipo == 'material' else 'CATSER'} {cod} — {nome}", "unidade": un, "n": len(vals), "excluidos": excl,
                           "minimo": vals[0], "mediana": med, "maximo": vals[-1],
                           "abrangencia": "estado" if uf and all((r.get("estado") or "") == uf for r in rs) else "nacional",
                           "exemplos": [{"orgao": r.get("nomeOrgao") or r.get("nomeUasg") or "", "municipio": r.get("municipio") or "",
@@ -315,7 +335,8 @@ def bloco_precos(p):
     linhas = ["PREÇOS PRATICADOS (módulo de pesquisa de preços do Compras.gov.br, compras dos últimos 12 meses; preço unitário real):"]
     for n, x in enumerate(pp, 1):
         linhas.append(f"[C{n}] Solução: {x.get('solucao','')} · {x['catalogo']} · unidade {x['unidade']} · {x['n']} compras "
-                      f"({'mesmo estado' if x['abrangencia'] == 'estado' else 'país'}) · mínimo {brl(x['minimo'])} · mediana {brl(x['mediana'])} · máximo {brl(x['maximo'])}")
+                      f"({'mesmo estado' if x['abrangencia'] == 'estado' else 'país'}) · mínimo {brl(x['minimo'])} · mediana {brl(x['mediana'])} · máximo {brl(x['maximo'])}"
+                      + (f" · {x['excluidos']} valores discrepantes excluídos (fora de 1,5 × intervalo interquartil)" if x.get("excluidos") else ""))
         for e in x["exemplos"]:
             linhas.append(f"     - {e['orgao']} ({e['municipio']}/{e['uf']}) em {e['data']}: {e['descricao']} · qtd {e['quantidade']} · {brl(e['preco_unitario'])} (compra {e['id_compra']})")
     linhas.append("Atenção: confira se o item do catálogo corresponde de fato ao objeto e à especificação antes de usar o valor.")
