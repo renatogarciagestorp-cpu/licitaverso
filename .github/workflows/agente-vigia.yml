@@ -1,0 +1,56 @@
+name: Agente — vigia da fila (processa em até 1 minuto)
+
+# O agendamento de 5 em 5 minutos do GitHub atrasa horas em repositórios gratuitos. Este vigia fica de plantão:
+# confere a fila a cada minuto e processa na hora o que chegar (análises e elaborações). Perto do limite de 6 horas
+# de um job, ele dispara um novo vigia e encerra. O agendamento de hora em hora só reacende a corrente se ela cair.
+# Repositório público: o log mostra só ids, nunca dados do cliente.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency: { group: agente-vigia, cancel-in-progress: false }
+
+jobs:
+  vigia:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      AVISOS_SECRET: ${{ secrets.AVISOS_SECRET }}
+      PROJECT_REF: umnhhztdqersjfrzqcea
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Plantão
+        run: |
+          inicio=$(date +%s); prontas=0
+          while [ $(( $(date +%s) - inicio )) -lt 19200 ]; do   # 5h20
+            if python3 scripts/agente/fila.py --verificar 2>/dev/null | grep -q "tem=true"; then
+              if [ "$prontas" = 0 ]; then
+                sudo apt-get update -qq >/dev/null
+                sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-por libreoffice-writer-nogui fonts-liberation unzip >/dev/null
+                pip install -q python-docx matplotlib
+                prontas=1
+              fi
+              git pull -q --ff-only || true
+              python3 scripts/agente/fila.py || echo "::warning::rodada da fila terminou com erro"
+              if [ -d /tmp/jurisprudencia-nova ] && [ -n "$(ls -A /tmp/jurisprudencia-nova)" ]; then
+                ( rm -rf /tmp/t; git fetch -q origin agente-testes && git worktree add -q -f /tmp/t origin/agente-testes && cd /tmp/t \
+                  && mkdir -p jurisprudencia-nova && cp /tmp/jurisprudencia-nova/*.json jurisprudencia-nova/ \
+                  && git config user.name "Licitacon — agente" && git config user.email "actions@users.noreply.github.com" \
+                  && git checkout -q -B agente-testes && git add jurisprudencia-nova && git commit -q -m "Jurisprudência nova achada pelo agente" \
+                  && (git push -q origin agente-testes || (git pull -q --rebase origin agente-testes && git push -q origin agente-testes)) ) || true
+                rm -rf /tmp/jurisprudencia-nova; git worktree remove -f /tmp/t 2>/dev/null || true
+              fi
+            fi
+            sleep 60
+          done
+      - name: Passar o plantão para um novo vigia
+        if: always()
+        run: gh workflow run agente-vigia.yml --ref "${GITHUB_REF_NAME}" -R "${GITHUB_REPOSITORY}"
