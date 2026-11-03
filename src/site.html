@@ -701,6 +701,7 @@
   .lvc-campo input { display: block; min-width: 0; max-width: 100%; -webkit-appearance: none; appearance: none; min-height: 46px; }
   .lvc-campo input[type="month"] { text-align: left; }
   .lvc-campo input[type="month"]::-webkit-date-and-time-value { text-align: left; }
+  .lvc-metodo { margin: 0; font-size: 13px; line-height: 1.55; color: #3D5058; background: #F1F6F5; border: 1px solid #E0EAE8; border-radius: 12px; padding: 11px 13px; }
   .lvc-campo > small { font-size: 12.5px; color: #7A8B91; line-height: 1.4; }
   .lvc-check { display: flex; gap: 10px; align-items: center; font-size: 14.5px; font-weight: 700; color: #26393F; cursor: pointer; }
   .lvc-check input { width: 18px; height: 18px; accent-color: #0FA36B; }
@@ -1502,7 +1503,7 @@
         <div class="lvc-hero-in">
           <span class="lvh-eyebrow">Calculadora · gestão de contratos</span>
           <h1 class="lva-h1" style="max-width: 22ch">Reajuste de contrato calculado certo, com a nota técnica pronta.</h1>
-          <p class="lva-lead">Índices oficiais atualizados todos os dias, conferência dos 12 meses, ciclos acumulados e memória de cálculo mês a mês. No fim, você baixa a nota técnica em Word para juntar ao processo.</p>
+          <p class="lva-lead">Índices oficiais atualizados todos os dias, conferência dos 12 meses, ciclos acumulados e memória de cálculo mês a mês. No fim, você baixa a nota técnica em PDF para juntar ao processo.</p>
         </div>
       </section>
       <section class="lvc-corpo">
@@ -1535,11 +1536,9 @@
               <sc-if value="{{ calcHouve }}" hint-placeholder-val="{{ false }}">
                 <label class="lvc-campo"><span>Mês em que o último reajuste passou a valer</span><input type="month" value="{{ calcUltimo }}" sc-camel-on-input="{{ calcOnUltimo }}" sc-camel-on-change="{{ calcOnUltimo }}"><small>O próximo ciclo conta 12 meses a partir daqui.</small></label>
               </sc-if>
-              <label class="lvc-campo"><span>Calcular até (mês de referência)</span><input type="month" value="{{ calcReferencia }}" sc-camel-on-input="{{ calcOnReferencia }}" sc-camel-on-change="{{ calcOnReferencia }}"><small>Deixe em branco para usar o mês atual.</small></label>
+              <label class="lvc-campo"><span>Calcular até (mês de referência)</span><input type="month" value="{{ calcReferencia }}" sc-camel-on-input="{{ calcOnReferencia }}" sc-camel-on-change="{{ calcOnReferencia }}"><small>Até quando contar os ciclos e a diferença acumulada. Em branco, usa o mês atual.</small></label>
               <label class="lvc-campo"><span>Fim da vigência (opcional)</span><input type="month" value="{{ calcFim }}" sc-camel-on-input="{{ calcOnFim }}" sc-camel-on-change="{{ calcOnFim }}"></label>
-              <div class="lvc-campo"><span>Período do índice em cada ciclo</span>
-                <div class="lvc-chips" role="group"><sc-for list="{{ calcMetodos }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div>
-                <small>Use o que diz a cláusula de reajuste do seu contrato.</small></div>
+              <p class="lvc-metodo"><b>Metodologia do Banco Central.</b> Como na Calculadora do Cidadão, o índice de cada ciclo vai do mês da data-base até o 11º mês seguinte, contando os dois. Exemplo: data-base em fevereiro/2025 → índice de fevereiro/2025 a janeiro/2026, e o reajuste vale a partir de fevereiro/2026.</p>
               <details class="lvc-det"><summary>Dados para a nota técnica (opcional)</summary>
                 <label class="lvc-campo"><span>Contrato / processo</span><input type="text" value="{{ calcContrato }}" sc-camel-on-input="{{ calcOnContrato }}"></label>
                 <label class="lvc-campo"><span>Contratada</span><input type="text" value="{{ calcContratada }}" sc-camel-on-input="{{ calcOnContratada }}"></label>
@@ -1566,7 +1565,7 @@
                       <div class="lvc-ci" role="row"><span role="cell">{{ ci.k }}</span><span role="cell">{{ ci.aniv }}</span><span role="cell">{{ ci.periodo }}</span><span role="cell">{{ ci.var }}</span><span role="cell"><b>{{ ci.valor }}</b></span></div>
                     </sc-for>
                   </div>
-                  <button class="lvh-btn" style="margin-top: 16px; width: 100%" sc-camel-on-click="{{ calcBaixarNota }}">Baixar nota técnica (Word)</button>
+                  <button class="lvh-btn" style="margin-top: 16px; width: 100%" sc-camel-on-click="{{ calcBaixarNota }}">{{ calcBotaoPdf }}</button>
                 </sc-if>
                 <p class="lvc-fonte">{{ calcFonte }}</p>
               </sc-if>
@@ -3867,7 +3866,9 @@ class Component extends DCLogic {
     const ciclos = [];
     let fatorTot = 1, pendente = false;
     for (let k = 1; baseN + 12 * k <= refN && k <= 10; k++) {
-      const ini = baseN + 12 * (k - 1) + (c.metodo === "b" ? 1 : 0);
+      // metodologia da Calculadora do Cidadão (Banco Central): usa os índices da data inicial e da final;
+      // no ciclo de 12 meses, do mês da data-base ao 11º mês seguinte (ex.: fev/2025 a jan/2026)
+      const ini = baseN + 12 * (k - 1);
       const lista = [];
       let f = 1, falta = false;
       for (let m = ini; m < ini + 12; m++) {
@@ -3893,45 +3894,82 @@ class Component extends DCLogic {
       baseN, refN, mesNum, ym, baseYm: ym(baseN) };
   }
 
-  baixarNotaReajuste() {
+  async baixarNotaReajuste() {
     const r = this.calcularReajuste(), c = this.state.calc;
     if (!r.pronto || !r.ciclos.length) { this.aviso("Preencha os dados e confira se já há reajuste devido para gerar a nota.", "erro"); return; }
-    const brlN = (v) => "R$ " + v.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    const pct = (f) => ((f - 1) * 100).toFixed(4).replace(".", ",") + "%";
-    const mesBR = (x) => { const [a, m] = x.split("-"); return ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"][Number(m) - 1] + "/" + a; };
-    const esc = (t) => String(t || "").replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[ch]));
-    const FUND = {
-      "14133": "Lei nº 14.133/2021, art. 25, § 7º (índice de reajuste com data-base vinculada à data do orçamento estimado), art. 92, V e § 3º (cláusula de reajuste), e art. 136, I (formalização por apostila); Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual).",
-      "8666": "Lei nº 8.666/1993, art. 40, XI, art. 55, III, e art. 65, § 8º (formalização por apostila); Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual).",
-      "13303": "Lei nº 13.303/2016, art. 69, III (data-base e periodicidade do reajustamento como cláusula necessária), e regulamento interno de licitações e contratos da empresa; Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual)."
-    };
-    const juris = DOCS.filter((d) => /reajust/i.test([d.titulo, d.ementa, (d.temas || []).join(" ")].join(" "))).slice(0, 3);
-    const linhasCiclo = r.ciclos.map((ci) => "<tr><td>" + ci.k + "º</td><td>" + mesBR(ci.aniversario) + "</td><td>" + mesBR(ci.ini) + " a " + mesBR(ci.fim) + "</td><td>" + pct(ci.fator) + (ci.falta ? " (parcial)" : "") + "</td><td>" + brlN(ci.valor) + "</td></tr>").join("");
-    const memoria = r.ciclos.map((ci) => "<p><b>" + ci.k + "º ciclo</b> (" + mesBR(ci.ini) + " a " + mesBR(ci.fim) + "):</p><table><tr><th>Mês</th><th>Variação mensal</th></tr>" +
-      ci.lista.map((l) => "<tr><td>" + mesBR(l.mes) + "</td><td>" + (l.v === null ? "não divulgado" : String(l.v).replace(".", ",") + "%") + "</td></tr>").join("") +
-      "<tr><td><b>Acumulado</b></td><td><b>" + pct(ci.fator) + "</b></td></tr></table>").join("");
-    const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>Nota técnica de reajuste</title>
-<style>@page{size:21cm 29.7cm;margin:3cm 2cm 2cm 3cm}body{font-family:"Times New Roman",serif;font-size:12pt;line-height:1.5;text-align:justify}h1{font-size:14pt;text-align:center;text-transform:uppercase}h2{font-size:12pt;text-transform:uppercase;margin-top:18pt}table{border-collapse:collapse;width:100%;margin:6pt 0}td,th{border:1px solid #444;padding:4pt 6pt;font-size:11pt;text-align:left}th{background:#eee}.peq{font-size:10pt;color:#444}</style></head><body>
-<h1>Nota técnica — cálculo de reajuste contratual</h1>
-<p><b>Contrato/processo:</b> ${esc(c.contrato) || "____________"}<br><b>Contratada:</b> ${esc(c.contratada) || "____________"}<br><b>Objeto:</b> ${esc(c.objeto) || "____________"}</p>
-<h2>1. Objeto</h2><p>Esta nota apresenta o cálculo do reajuste do valor contratual pelo índice ${esc(r.serie.nome)}, previsto no contrato, a partir da data-base de ${mesBR(r.baseYm)}${c.houveReajuste ? " (mês em que passou a valer o último reajuste concedido)" : " (data do orçamento estimado ou a indicada no contrato)"}.</p>
-<h2>2. Fundamentação</h2><p>${FUND[c.regime]}</p><p>O reajuste por índice recompõe a variação ordinária dos custos, é devido a cada período de 12 meses contados da data-base e não caracteriza alteração contratual, podendo ser registrado por simples apostila.</p>
-<h2>3. Resultado</h2><table><tr><th>Ciclo</th><th>Vigência a partir de</th><th>Período do índice</th><th>Variação acumulada</th><th>Valor mensal reajustado</th></tr>${linhasCiclo}</table>
-<p>Valor mensal antes do reajuste: <b>${brlN(r.valor)}</b>. Valor mensal reajustado: <b>${brlN(r.novo)}</b> (variação total de ${pct(r.fatorTot)}). Diferença mensal: <b>${brlN(r.novo - r.valor)}</b>.</p>
-${r.retro > 0 ? `<p>Diferença acumulada estimada desde o primeiro aniversário até ${mesBR(r.ym(r.refN))}, considerando o valor pago sem reajuste: <b>${brlN(r.retro)}</b>. O valor a pagar depende das medições efetivamente realizadas no período.</p>` : ""}
-${r.restante > 0 ? `<p>Impacto estimado até o fim da vigência (${r.restante} meses): <b>${brlN(r.impactoRestante)}</b>.</p>` : ""}
-<h2>4. Memória de cálculo</h2><p>Fonte: ${esc(r.serie.fonte)}. Fórmula: valor reajustado = valor anterior × Π (1 + variação mensal), sobre os 12 meses de cada ciclo.</p>${memoria}
-${r.ciclos.length > 1 ? "<h2>5. Observação</h2><p>Há mais de um ciclo anual acumulado. Confira se o contrato foi prorrogado sem que o reajuste tenha sido pedido ou ressalvado, pois há entendimento do TCU de que, nessa situação, o direito pode ter precluído.</p>" : ""}
-${juris.length ? "<h2>Jurisprudência relacionada (Biblioteca Licitacon)</h2><ul>" + juris.map((d) => "<li>" + esc(d.titulo) + (d.link ? " — " + esc(d.link) : "") + "</li>").join("") + "</ul>" : ""}
-<h2>Conclusão</h2><p>Pelo exposto, o valor mensal do contrato passa de ${brlN(r.valor)} para ${brlN(r.novo)}, com efeitos a partir de ${mesBR(r.ciclos[r.ciclos.length - 1].aniversario)}, a ser formalizado por apostila, após a conferência da cláusula de reajuste do contrato e da disponibilidade orçamentária.</p>
-<p>____________________________<br>Responsável</p>
-<p class="peq">Cálculo gerado pela Calculadora de reajuste do Licitacon em ${new Date().toLocaleDateString("pt-BR")}. Confira os dados de entrada, a cláusula contratual e os índices na fonte oficial antes de usar no processo.</p>
-</body></html>`;
-    const blob = new Blob(["\ufeff" + html], { type: "application/msword" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "Nota-tecnica-reajuste" + (c.contrato ? "-" + c.contrato.replace(/[^\w-]+/g, "-") : "") + ".doc";
-    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    if (this.state.gerandoPdf) return;
+    this.setState({ gerandoPdf: true });
+    try {
+      if (!window.jspdf) await carregarScript(baseSite() + "vendor/jspdf-2.5.1.umd.min.js");
+      if (!(window.jspdf && window.jspdf.jsPDF && window.jspdf.jsPDF.API.autoTable)) await carregarScript(baseSite() + "vendor/jspdf-autotable-3.8.2.min.js");
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: "mm", format: "a4" });
+      const ML = 30, MR = 20, MT = 30, MB = 20, W = 210 - ML - MR;
+      let y = MT;
+      const brlN = (v) => "R$ " + v.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      const pct = (f, d) => ((f - 1) * 100).toFixed(d || 4).replace(".", ",") + "%";
+      const mesBR = (x) => { const [a, m] = x.split("-"); return ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"][Number(m) - 1] + "/" + a; };
+      const quebra = (h) => { if (y + h > 297 - MB) { doc.addPage(); y = MT; } };
+      const par = (t, op) => {
+        const o = op || {};
+        doc.setFont("times", o.negrito ? "bold" : "normal"); doc.setFontSize(o.tam || 12);
+        const linhas = doc.splitTextToSize(t, W);
+        linhas.forEach((ln) => { quebra(6.2); doc.text(ln, o.centro ? 105 : ML, y, o.centro ? { align: "center" } : undefined); y += 6.2; });
+        y += o.depois === undefined ? 2 : o.depois;
+      };
+      const titulo = (t) => { y += 3; par(t.toUpperCase(), { negrito: true, depois: 1 }); };
+      const tabela = (head, body) => {
+        doc.autoTable({ startY: y, head: [head], body, margin: { left: ML, right: MR }, theme: "grid",
+          styles: { font: "times", fontSize: 10.5, cellPadding: 1.8, textColor: 20, lineColor: 120, lineWidth: 0.2 },
+          headStyles: { fillColor: [235, 235, 235], textColor: 20, fontStyle: "bold" } });
+        y = doc.lastAutoTable.finalY + 5;
+      };
+      const FUND = {
+        "14133": "Lei nº 14.133/2021, art. 25, § 7º (índice de reajuste com data-base vinculada à data do orçamento estimado), art. 92, V e § 3º (cláusula de reajuste), e art. 136, I (formalização por apostila); Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual).",
+        "8666": "Lei nº 8.666/1993, art. 40, XI, art. 55, III, e art. 65, § 8º (formalização por apostila); Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual).",
+        "13303": "Lei nº 13.303/2016, art. 69, III (data-base e periodicidade do reajustamento como cláusula necessária), e regulamento interno de licitações e contratos da empresa; Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual)."
+      };
+      const ult = r.ciclos[r.ciclos.length - 1];
+      par("NOTA TÉCNICA — CÁLCULO DE REAJUSTE CONTRATUAL", { negrito: true, tam: 14, centro: true, depois: 6 });
+      par("Contrato/processo: " + (c.contrato || "____________________"), { depois: 0 });
+      par("Contratada: " + (c.contratada || "____________________"), { depois: 0 });
+      par("Objeto: " + (c.objeto || "____________________"), { depois: 4 });
+      titulo("1. Objeto");
+      par("Esta nota apresenta o cálculo do reajuste do valor contratual pelo índice " + r.serie.nome + ", previsto no contrato, a partir da data-base de " + mesBR(r.baseYm) + (c.houveReajuste ? " (mês em que passou a valer o último reajuste concedido)." : " (data do orçamento estimado ou a indicada no contrato)."));
+      titulo("2. Fundamentação");
+      par(FUND[c.regime]);
+      par("O reajuste por índice recompõe a variação ordinária dos custos, é devido a cada período de 12 meses contados da data-base e não caracteriza alteração contratual, podendo ser registrado por simples apostila.");
+      titulo("3. Metodologia");
+      par("Adota-se a metodologia da Calculadora do Cidadão do Banco Central do Brasil, que usa no cálculo os índices do mês inicial e do mês final. Em cada ciclo de 12 meses, o período vai do mês da data-base ao 11º mês seguinte, inclusive (por exemplo, data-base em fevereiro: índices de fevereiro a janeiro do ano seguinte). O fator de correção é o produto de (1 + variação mensal) dos 12 meses. Fonte dos índices: " + r.serie.fonte + ".");
+      titulo("4. Resultado");
+      tabela(["Ciclo", "Vale a partir de", "Período do índice", "Variação acumulada", "Valor mensal"],
+        r.ciclos.map((ci) => [ci.k + "º", mesBR(ci.aniversario), mesBR(ci.ini) + " a " + mesBR(ci.fim), pct(ci.fator) + (ci.falta ? " (parcial)" : ""), brlN(ci.valor)]));
+      par("Valor mensal antes do reajuste: " + brlN(r.valor) + ". Valor mensal reajustado: " + brlN(r.novo) + " (variação total de " + pct(r.fatorTot) + "). Diferença mensal: " + brlN(r.novo - r.valor) + ".");
+      if (r.retro > 0) par("Diferença acumulada estimada desde o primeiro aniversário até " + mesBR(r.ym(r.refN)) + ", considerando o valor pago sem reajuste: " + brlN(r.retro) + ". O valor a pagar depende das medições efetivamente realizadas no período.");
+      if (r.restante > 0) par("Impacto estimado até o fim da vigência (" + r.restante + " meses): " + brlN(r.impactoRestante) + ".");
+      if (r.pendente) par("Observação: parte do período ainda não tem índice divulgado (último disponível: " + mesBR(r.ultimoDisp) + "); o cálculo considera só os meses já publicados e deve ser refeito após a divulgação.");
+      titulo("5. Memória de cálculo");
+      r.ciclos.forEach((ci) => {
+        par(ci.k + "º ciclo — " + mesBR(ci.ini) + " a " + mesBR(ci.fim), { negrito: true, depois: 0 });
+        tabela(["Mês", "Variação mensal", "Fator"], ci.lista.map((l) => [mesBR(l.mes), l.v === null ? "não divulgado" : String(l.v).replace(".", ",") + "%", l.v === null ? "—" : (1 + l.v / 100).toFixed(6).replace(".", ",")])
+          .concat([["Acumulado", pct(ci.fator), ci.fator.toFixed(6).replace(".", ",")]]));
+      });
+      if (r.ciclos.length > 1) { titulo("6. Observação"); par("Há mais de um ciclo anual acumulado. Confira se o contrato foi prorrogado sem que o reajuste tenha sido pedido ou ressalvado, pois há entendimento do TCU de que, nessa situação, o direito pode ter precluído."); }
+      const juris = DOCS.filter((d) => /reajust/i.test([d.titulo, d.ementa, (d.temas || []).join(" ")].join(" "))).slice(0, 3);
+      if (juris.length) { titulo("Jurisprudência relacionada (Biblioteca Licitacon)"); juris.forEach((d) => par("• " + d.titulo + (d.link ? " — " + d.link : ""), { tam: 11, depois: 1 })); }
+      titulo("Conclusão");
+      par("Pelo exposto, o valor mensal do contrato passa de " + brlN(r.valor) + " para " + brlN(r.novo) + ", com efeitos a partir de " + mesBR(ult.aniversario) + ", a ser formalizado por apostila, após a conferência da cláusula de reajuste do contrato e da disponibilidade orçamentária.");
+      y += 10; quebra(20); par("______________________________", { depois: 0 }); par("Responsável", { depois: 6 });
+      par("Cálculo gerado pela Calculadora de reajuste do Licitacon em " + new Date().toLocaleDateString("pt-BR") + ". Confira os dados de entrada, a cláusula contratual e os índices na fonte oficial antes de usar no processo.", { tam: 9 });
+      const n = doc.getNumberOfPages();
+      for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFont("times", "normal"); doc.setFontSize(9); doc.text(String(i), 210 - MR, 15, { align: "right" }); }
+      doc.save("Nota-tecnica-reajuste" + (c.contrato ? "-" + c.contrato.replace(/[^\w-]+/g, "-") : "") + ".pdf");
+    } catch (e) {
+      console.error(e);
+      this.aviso("Não foi possível gerar o PDF agora. Tente de novo.", "erro");
+    } finally {
+      this.setState({ gerandoPdf: false });
+    }
   }
 
   // ofertas de lançamento: vagas de fundador, se a pessoa é fundadora e se ainda tem a primeira análise grátis
@@ -5253,6 +5291,7 @@ ${juris.length ? "<h2>Jurisprudência relacionada (Biblioteca Licitacon)</h2><ul
           calcTemCiclos: !!ultimoCiclo,
           calcCiclos: r.pronto ? r.ciclos.map((ci) => ({ k: ci.k + "º", aniv: mesBR(ci.aniversario), periodo: mesBR(ci.ini) + " a " + mesBR(ci.fim), var: pct(ci.fator) + (ci.falta ? "*" : ""), valor: brlN(ci.valor) })) : [],
           calcBaixarNota: () => this.baixarNotaReajuste(),
+          calcBotaoPdf: s.gerandoPdf ? "Gerando o PDF…" : "Baixar nota técnica em PDF",
           calcFonte: r.pronto && r.serie ? "Fonte: " + r.serie.fonte + " · último mês disponível: " + mesBR(r.ultimoDisp) + (s.indices && s.indices.gerado_em ? " · atualizado em " + new Date(s.indices.gerado_em).toLocaleDateString("pt-BR") : "") : ""
         };
       })(),
