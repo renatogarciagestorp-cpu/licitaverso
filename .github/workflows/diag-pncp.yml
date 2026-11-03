@@ -4,11 +4,7 @@ jobs:
   d:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - run: |
-          for ua in "Licitacon-pesquisa/1.0" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36"; do
-            for u in "https://pncp.gov.br/api/search/?q=limpeza&tipos_documento=edital&ordenacao=-data&pagina=1&tam_pagina=2&status=todos&ufs=RJ" \
-                     "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20261001&dataFinal=20261010&codigoModalidadeContratacao=6&uf=RJ&pagina=1&tamanhoPagina=10" \
-                     "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=10&codigoItemCatalogo=150425"; do
-              echo "== $ua :: $u"; curl -sS -m 25 -A "$ua" -H "Accept: application/json" -o /tmp/r -w "HTTP %{http_code}\n" "$u"; head -c 700 /tmp/r; echo
-            done
-          done
+          python3 scripts/agente/pesquisa_mercado.py --objeto "Serviços contínuos de limpeza, asseio e conservação predial" --uf RJ --natureza "Serviço contínuo" | tail -40
+          python3 scripts/agente/pesquisa_mercado.py --objeto "Aquisição de notebooks para as escolas municipais" --uf RJ --natureza "Bem" | tail -60

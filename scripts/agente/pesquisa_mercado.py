@@ -8,7 +8,7 @@ Usa só a API pública do PNCP (sem custo). Nunca interrompe a elaboração: em 
 
 Uso para teste:  python3 scripts/agente/pesquisa_mercado.py --objeto "limpeza predial" --uf RJ --natureza "Bem"
 """
-import argparse, json, re, time, unicodedata, urllib.parse, urllib.request
+import argparse, json, re, subprocess, time, unicodedata, urllib.parse
 
 BASE = "https://pncp.gov.br"
 UA = {"User-Agent": "Licitacon-pesquisa/1.0", "Accept": "application/json"}
@@ -29,11 +29,18 @@ def palavras_chave(objeto, n=4):
 
 
 def _get(caminho, params=None, timeout=20):
-    url = BASE + caminho + ("?" + urllib.parse.urlencode(params) if params else "")
-    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
-        if r.status == 204:
-            return None
-        return json.loads(r.read().decode("utf-8") or "null")
+    # o PNCP recusa a conexão do urllib (firewall); o curl é aceito
+    url = BASE + caminho + ("?" + urllib.parse.urlencode(params, quote_via=urllib.parse.quote) if params else "")
+    r = subprocess.run(["curl", "-sS", "-m", str(timeout), "-A", UA["User-Agent"], "-H", "Accept: application/json",
+                        "-w", "\n%{http_code}", url], capture_output=True, text=True, timeout=timeout + 5)
+    if r.returncode != 0:
+        raise RuntimeError(f"curl {r.returncode}: {r.stderr.strip()[:200]}")
+    corpo, _, cod = r.stdout.rpartition("\n")
+    if cod == "204" or not corpo.strip():
+        return None
+    if not cod.startswith("2"):
+        raise RuntimeError(f"HTTP {cod}")
+    return json.loads(corpo)
 
 
 def _buscar(q, uf=None, n=15):
@@ -68,7 +75,7 @@ def _itens_parecidos(ident, chaves, max_itens=3):
     for it in itens:
         d = sem_acento(it.get("descricao"))
         s = sum(1 for r in raizes if r in d)
-        if s:
+        if s >= min(2, len(raizes)):
             pont.append((s, it))
     pont.sort(key=lambda x: -x[0])
     saida = []
