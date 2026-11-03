@@ -190,8 +190,13 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida):
             par(t)
         if s.get("fundamento"):
             par("Fundamento: " + s["fundamento"], recuo=False, tam=10, cor="66757F")
-    usados = set(docj.get("jurisprudencia_ids") or [])
-    refs = [j for j in juris if j["id"] in usados]
+    usados = list(dict.fromkeys(docj.get("jurisprudencia_ids") or []))
+    try:  # as decisões citadas podem vir do roteiro (candidatas de cada item) ou da seleção do estado: busca todas na Biblioteca
+        por_id = {it["id"]: it for it in json.loads((RAIZ / "acervo.json").read_text(encoding="utf-8")).get("itens", [])}
+    except Exception:
+        por_id = {}
+    por_id.update({j["id"]: j for j in juris})
+    refs = [por_id[i] for i in usados if i in por_id]
     if refs:
         par("REFERÊNCIAS", negrito=True, recuo=False)
         for j in refs:
