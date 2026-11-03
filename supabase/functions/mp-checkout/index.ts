@@ -168,6 +168,19 @@ Deno.serve(async (req) => {
       if (JSON.stringify(limpo).length > MAX_RESPOSTAS_GERACAO) return erro("O questionário ficou grande demais. Resuma as respostas mais longas.");
       const faltam = ["orgao", "uf", "objeto", "necessidade", "quantidades"].filter((k) => !String(limpo[k] ?? "").trim());
       if (faltam.length || String(limpo.objeto ?? "").trim().length < 8) return erro("Preencha os campos obrigatórios (órgão, UF, objeto, necessidade e quantidades).");
+      const assin = ["elab_nome", "elab_cargo", "resp_nome", "resp_cargo"].filter((k) => !String(limpo[k] ?? "").trim());
+      if (assin.length) return erro("Informe nome e cargo de quem elabora e do responsável pelo setor.");
+      // arquivos enviados pelo assinante (modelo em Word, logo, documentos de preço): só da pasta dele
+      const pasta = usuario.id + "/elab-arquivos/";
+      const caminhoOk = (c: unknown) => typeof c === "string" && c.startsWith(pasta) && !c.includes("..") && c.length < 300;
+      for (const k of ["modelo_arquivo", "logo_arquivo"]) {
+        if (limpo[k] && !caminhoOk(limpo[k])) return erro("Arquivo inválido.");
+      }
+      if (limpo.precos_pdfs) {
+        let lista: unknown;
+        try { lista = JSON.parse(limpo.precos_pdfs); } catch { return erro("Arquivo inválido."); }
+        if (!Array.isArray(lista) || lista.length > 5 || !lista.every((x) => x && caminhoOk((x as { arquivo?: unknown }).arquivo))) return erro("Arquivo inválido.");
+      }
       const { error } = await admin.from("analises").update({
         respostas: limpo, status: "na_fila", enviado_em: new Date().toISOString(),
         nome_arquivo: String(limpo.objeto).slice(0, 160),

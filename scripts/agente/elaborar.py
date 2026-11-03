@@ -99,11 +99,68 @@ def jurisprudencia_do_estado(uf, consulta, n=6):
     return saida[:n]
 
 
-def montar_pedido(doc, respostas, pesquisa=None):
+CHAVES_INTERNAS = {"modelo_arquivo", "modelo_nome", "logo_arquivo", "logo_nome", "precos_pdfs", "precos_links", "precos_manual", "precos_sem",
+                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula"}
+
+
+def texto_de_link(url):
+    """Lê um link de preço informado pelo assinante. Contratações do PNCP viram itens com preço (dados abertos);
+    outras páginas e PDFs públicos viram texto (limitado). Falha devolve aviso, nunca interrompe."""
+    m = re.search(r"pncp\.gov\.br/app/editais/(\d{14})/(\d{4})/(\d+)", url)
+    try:
+        if m:
+            ctrl = f"{m.group(1)}-1-{int(m.group(3)):06d}/{m.group(2)}"
+            q = {"tipo": "numeroControlePNCPCompra", "codigo": ctrl}
+            its = (pm._get("/modulo-contratacoes/2.1_consultarItensContratacoes_PNCP_14133_Id", q, base=pm.COMPRAS) or {}).get("resultado") or []
+            cab_ = pm._get(f"/api/consulta/v1/orgaos/{m.group(1)}/compras/{m.group(2)}/{m.group(3)}") or {}
+            linhas = [f"Contratação PNCP {ctrl}: {(cab_.get('orgaoEntidade') or {}).get('razaoSocial','')} · {cab_.get('objetoCompra','')[:300]} · "
+                      f"valor total estimado {pm.brl(pm._num(cab_.get('valorTotalEstimado')))} · homologado {pm.brl(pm._num(cab_.get('valorTotalHomologado')))}"]
+            for it in its[:40]:
+                linhas.append(f"  - {str(it.get('descricaoResumida') or '')[:160]} | {it.get('unidadeMedida') or '—'} | qtd {it.get('quantidade')} | "
+                              f"estimado {pm.brl(pm._num(it.get('valorUnitarioEstimado')))}")
+            return "\n".join(linhas)
+        r = subprocess.run(["curl", "-sSL", "-m", "25", "--max-filesize", "15000000", "-A", pm.UA["User-Agent"], "-o", "/tmp/_link", "-w", "%{content_type}", url],
+                           capture_output=True, text=True, timeout=35)
+        tipo = r.stdout.lower()
+        if r.returncode != 0:
+            return f"(link não pôde ser lido: {url})"
+        if "pdf" in tipo:
+            t = subprocess.run(["pdftotext", "-layout", "-l", "15", "/tmp/_link", "-"], capture_output=True, text=True, timeout=60).stdout
+        else:
+            t = re.sub(r"<[^>]+>", " ", re.sub(r"(?is)<(script|style).*?</\1>", " ", pathlib.Path("/tmp/_link").read_text(encoding="utf-8", errors="ignore")))
+        t = re.sub(r"\s+", " ", t).strip()
+        return f"Conteúdo de {url}:\n{t[:6000]}" if t else f"(link sem texto legível: {url})"
+    except Exception as e:
+        return f"(link não pôde ser lido: {url} · {type(e).__name__})"
+
+
+def bloco_precos_assinante(respostas, pdfs_locais):
+    partes = []
+    if respostas.get("precos_manual", "").strip():
+        partes.append("Valores digitados pelo requisitante:\n" + respostas["precos_manual"].strip()[:4000])
+    for url in [u.strip() for u in respostas.get("precos_links", "").splitlines() if u.strip().startswith(("http://", "https://"))][:5]:
+        partes.append(texto_de_link(url))
+    for nome, arq in pdfs_locais[:5]:
+        try:
+            t = subprocess.run(["pdftotext", "-layout", "-l", "20", str(arq), "-"], capture_output=True, text=True, timeout=90).stdout
+        except Exception:
+            t = ""
+        t = re.sub(r"[ \t]+", " ", t).strip()
+        partes.append(f"PDF enviado pelo requisitante ({nome}):\n{t[:8000]}" if t else f"PDF enviado pelo requisitante ({nome}): sem texto legível (digitalizado); "
+                      "registre como pendência a conferência manual dos valores.")
+    if not partes:
+        return ""
+    return ("REFERÊNCIAS DE PREÇO FORNECIDAS PELO REQUISITANTE (use-as na pesquisa de mercado e na estimativa, citando a fonte; extraia apenas "
+            "valores que estejam escritos nelas; não invente):\n" + "\n\n".join(partes))[:30000]
+
+
+def montar_pedido(doc, respostas, pesquisa=None, precos_assinante=""):
     d = DOCS[doc]
     roteiro = an.carregar_roteiro("lei-14133")
     itens, _ = an.montar_itens(roteiro, d["roteiro"], "lei-14133", d["objetos"])
-    texto_resp = "\n".join(f"- {CAMPOS_ROTULO.get(k, k)}: {str(v).strip()}" for k, v in respostas.items() if str(v).strip())
+    texto_resp = "\n".join(f"- {CAMPOS_ROTULO.get(k, k)}: {str(v).strip()}" for k, v in respostas.items() if str(v).strip() and k not in CHAVES_INTERNAS)
+    if respostas.get("precos_sem") == "sim":
+        texto_resp += "\n- Pesquisa de preços: o requisitante optou por completar os valores depois (use [PREENCHER] nos valores e registre a pendência)"
     uf = uf_de(respostas.get("uf", ""))
     juris = jurisprudencia_do_estado(uf, " ".join([respostas.get("objeto", ""), respostas.get("necessidade", "")]))
     refs = an.selecionar_referencias(itens, texto_resp, limite=10)
@@ -123,7 +180,8 @@ def montar_pedido(doc, respostas, pesquisa=None):
         "a pendência; (8) o requisitante informa de propósito só o essencial (criação rápida): redija com texto técnico adequado ao "
         "objeto apenas a parte descritiva que não depende de decisão nem de dado do órgão (requisitos usuais de qualidade, rotinas de "
         "fiscalização, sustentabilidade, riscos, providências), deixando [PREENCHER] para dados factuais (valores oficiais, datas, "
-        "nomes, números de processo, dotação); (9) pesquisa de mercado: use apenas os dados do PNCP fornecidos, citando órgão, "
+        "nomes, números de processo, dotação); (9) pesquisa de mercado: use apenas os dados do PNCP e do Compras.gov.br fornecidos e as "
+        "referências de preço enviadas pelo requisitante, citando órgão (ou fonte), "
         "município/UF, data e link de cada contratação usada; nunca invente preço, fornecedor ou fonte; separe os resultados por "
         "solução, informe faixa e mediana dos valores unitários comparáveis (prefira o homologado ao estimado e as contratações do "
         "mesmo estado) e alerte quando unidades ou especificações não forem comparáveis; "
@@ -142,6 +200,7 @@ def montar_pedido(doc, respostas, pesquisa=None):
         f"{an.bloco_referencias(refs)}\n\n"
         f"JURISPRUDÊNCIA DA BIBLIOTECA (priorize o Tribunal de Contas do estado{(' ' + uf) if uf else ''}):\n{bloco_juris}\n"
         + (f"\n{pm.bloco_prompt(pesquisa)}\n" if pesquisa is not None else "")
+        + (f"\n{precos_assinante}\n" if precos_assinante else "")
     )
     return system, usuario, juris
 
@@ -173,17 +232,56 @@ def simulado(doc, respostas):
 
 
 # ------------------------------------------------------------------ Word (ABNT)
-def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None):
+def abrir_modelo(modelo):
+    """Abre o Word do assinante e esvazia o corpo, mantendo cabeçalho, rodapé, margens e estilos. None se não der."""
+    from docx import Document
+    try:
+        w = Document(str(modelo))
+        corpo = w.element.body
+        for el in list(corpo):
+            if not el.tag.endswith("}sectPr"):
+                corpo.remove(el)
+        return w
+    except Exception as e:
+        print(f"modelo do assinante não pôde ser usado ({type(e).__name__}); usando o modelo Licitacon")
+        return None
+
+
+def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, modelo=None, logo=None):
     from docx import Document
     from docx.enum.text import WD_ALIGN_PARAGRAPH
     from docx.shared import Cm, Pt, RGBColor
     d = DOCS[doc]
-    w = Document()
+    w = abrir_modelo(modelo) if modelo else None
+    do_assinante = w is not None
+    if not do_assinante:
+        w = Document()
+        sec = w.sections[0]
+        sec.page_height, sec.page_width = Cm(29.7), Cm(21)
+        sec.top_margin, sec.left_margin, sec.bottom_margin, sec.right_margin = Cm(3), Cm(3), Cm(2), Cm(2)
+        est = w.styles["Normal"]; est.font.name = "Arial"; est.font.size = Pt(12)
+        est.paragraph_format.line_spacing = 1.5; est.paragraph_format.space_after = Pt(6)
     sec = w.sections[0]
-    sec.page_height, sec.page_width = Cm(29.7), Cm(21)
-    sec.top_margin, sec.left_margin, sec.bottom_margin, sec.right_margin = Cm(3), Cm(3), Cm(2), Cm(2)
-    est = w.styles["Normal"]; est.font.name = "Arial"; est.font.size = Pt(12)
-    est.paragraph_format.line_spacing = 1.5; est.paragraph_format.space_after = Pt(6)
+    # logo: centralizada no topo do cabeçalho (antes do que o modelo já tiver)
+    if logo:
+        try:
+            cab_ = sec.header; cab_.is_linked_to_previous = False
+            if not cab_.paragraphs:
+                p0 = cab_.add_paragraph()
+            elif not cab_.paragraphs[0].text.strip() and "graphic" not in cab_.paragraphs[0]._p.xml:
+                p0 = cab_.paragraphs[0]   # primeiro parágrafo vazio: usa
+            else:
+                p0 = cab_.paragraphs[0].insert_paragraph_before()  # modelo já tem cabeçalho: a logo vai acima
+            p0.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            p0.add_run().add_picture(str(logo), height=Cm(2))
+        except Exception as e:
+            print(f"logo não pôde ser incluída ({type(e).__name__})")
+    # rodapé com os dados do órgão (texto informado pelo assinante)
+    if respostas.get("rodape_incluir") == "Sim" and respostas.get("rodape", "").strip():
+        rod = sec.footer; rod.is_linked_to_previous = False
+        pr = rod.add_paragraph() if (do_assinante or (rod.paragraphs and rod.paragraphs[0].text.strip())) else rod.paragraphs[0]
+        pr.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        r = pr.add_run(re.sub(r"\s+", " ", respostas["rodape"].strip())[:500]); r.font.size = Pt(9)
 
     def par(texto, negrito=False, centro=False, tam=None, recuo=True, cor=None):
         p = w.add_paragraph()
@@ -226,13 +324,22 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None):
         for j in refs:
             par((j.get("citacao_abnt") or f"{j.get('orgao','')} {j.get('numero','')}") + (f" Disponível em: {j['fonte_url']}." if j.get("fonte_url") else ""), recuo=False, tam=10)
     if pesquisa and pesquisa.get("referencias"):
-        par("FONTES DA PESQUISA DE MERCADO (PNCP)", negrito=True, recuo=False)
+        par("FONTES DA PESQUISA DE MERCADO (PNCP E COMPRAS.GOV.BR)", negrito=True, recuo=False)
         for n, r in enumerate(pesquisa["referencias"], 1):
-            par(f"[P{n}] {r['orgao']} ({r['municipio']}/{r['uf']}). {r['modalidade']}, publicada em {r['data']}. Solução: {r['solucao']}. "
+            par(f"[P{n}] {r['orgao']} ({r['municipio']}/{r['uf']}). {r.get('modalidade') or r.get('tipo','')}, publicada em {r['data']}. Solução: {r['solucao']}. "
                 f"Disponível em: {r['link']}.", recuo=False, tam=10)
     w.add_paragraph()
-    par("Local e data: ____________________", recuo=False)
-    par("Responsável pela elaboração: ____________________ (nome, cargo e matrícula)", recuo=False)
+    par("[PREENCHER: local], [PREENCHER: data].", recuo=False)
+
+    def assinatura(titulo, nome, cargo, mat):  # bloco inteiro na mesma página
+        ps = [w.add_paragraph(), par("_______________________________________________", centro=True),
+              par(nome.strip() or "[PREENCHER: nome]", negrito=True, centro=True),
+              par((cargo.strip() or "[PREENCHER: cargo]") + (f" · Matrícula {mat.strip()}" if mat.strip() else ""), centro=True, tam=11),
+              par(titulo, centro=True, tam=10, cor="66757F")]
+        for x in ps[:-1]:
+            x.paragraph_format.keep_with_next = True
+    assinatura("Responsável pela elaboração", respostas.get("elab_nome", ""), respostas.get("elab_cargo", ""), respostas.get("elab_matricula", ""))
+    assinatura("Responsável pelo setor", respostas.get("resp_nome", ""), respostas.get("resp_cargo", ""), respostas.get("resp_matricula", ""))
     # anexo: pendências e conferência
     w.add_page_break()
     par("ANEXO — PENDÊNCIAS E PONTOS DE ATENÇÃO", negrito=True, centro=True)
@@ -260,6 +367,9 @@ def main():
     ap.add_argument("--pasta", required=True)
     ap.add_argument("--simular", action="store_true", help="não chama a API: monta o pedido e gera um Word de exemplo")
     ap.add_argument("--sem-conferencia", action="store_true")
+    ap.add_argument("--modelo", help="Word do assinante para servir de modelo")
+    ap.add_argument("--logo", help="imagem da logo do órgão")
+    ap.add_argument("--preco-pdf", action="append", default=[], help="PDF de referência de preço (nome=caminho)")
     a = ap.parse_args()
     pasta = pathlib.Path(a.pasta); pasta.mkdir(parents=True, exist_ok=True)
     respostas = {k: str(v) for k, v in json.loads(pathlib.Path(a.respostas).read_text(encoding="utf-8")).items()}
@@ -269,7 +379,11 @@ def main():
                                 uf_de(respostas.get("uf", "")), respostas.get("natureza", ""))
         (pasta / "pesquisa.json").write_text(json.dumps(pesquisa, ensure_ascii=False, indent=1), encoding="utf-8")
         print(f"pesquisa de mercado: {len(pesquisa['referencias'])} referências no PNCP ({pesquisa.get('segundos')} s) {pesquisa.get('erro') or ''}")
-    system, usuario, juris = montar_pedido(a.doc, respostas, pesquisa)
+    pdfs = [(x.split("=", 1)[0], pathlib.Path(x.split("=", 1)[-1])) for x in a.preco_pdf]
+    precos = bloco_precos_assinante(respostas, pdfs)
+    if precos:
+        print(f"referências de preço do requisitante: {len(precos)} caracteres")
+    system, usuario, juris = montar_pedido(a.doc, respostas, pesquisa, precos)
     print(f"pedido: {len(system) + len(usuario)} caracteres (~{(len(system) + len(usuario)) // 4} tokens de entrada); jurisprudência: {len(juris)}")
     t0, custo_usd, uso = time.time(), 0.0, {}
     if a.simular:
@@ -297,7 +411,7 @@ def main():
             custo_usd += float((conferencia.get("_execucao") or {}).get("custo_usd") or 0)
         else:
             print("conferência não concluída (o documento é entregue sem os pontos de atenção)")
-    gerar_docx(a.doc, docj, respostas, juris, conferencia, pasta / "documento.docx", pesquisa)
+    gerar_docx(a.doc, docj, respostas, juris, conferencia, pasta / "documento.docx", pesquisa, a.modelo, a.logo)
     if shutil.which("soffice"):
         subprocess.run(["soffice", "--headless", "--convert-to", "pdf", "--outdir", str(pasta), str(pasta / "documento.docx")],
                        capture_output=True, timeout=300)

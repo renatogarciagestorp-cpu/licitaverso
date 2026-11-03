@@ -710,6 +710,8 @@
   .lve-form { background: #fff; border: 1px solid #E3E9E8; border-radius: 20px; padding: 26px; display: grid; gap: 16px; }
   .lve-n { font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: #0F6B7E; }
   .lve-campo > span { text-transform: none !important; letter-spacing: 0 !important; font-size: 14.5px !important; color: #0B1F2A !important; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .lve-rapido textarea { width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 15px; line-height: 1.55; color: #0B1F2A; background: #FBFCFC; resize: vertical; min-height: 72px; }
+  .lve-rapido textarea:focus { outline: 2px solid #0FA36B; outline-offset: 1px; background: #fff; }
   .lve-campo textarea { width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 15px; line-height: 1.55; color: #0B1F2A; background: #FBFCFC; resize: vertical; min-height: 110px; }
   .lve-campo textarea:focus { outline: 2px solid #0FA36B; outline-offset: 1px; background: #fff; }
   .lve-obrig { font-style: normal; font-size: 10.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #8A5A00; background: #FFF4DC; border-radius: 6px; padding: 2px 6px; }
@@ -730,6 +732,22 @@
   }
   .lve-rapido { margin-top: -28px; position: relative; background: #fff; border: 1px solid #E3E9E8; border-radius: 22px; padding: 28px; display: grid; gap: 18px; box-shadow: 0 16px 40px rgba(11,31,42,0.08); max-width: 860px; }
   .lve-r-cab { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+  .lve-bloco { border-top: 1px solid #E3E9E8; padding-top: 16px; display: grid; gap: 12px; }
+  .lve-bloco-t { margin: 0; font-size: 16px; color: #0B1F2A; }
+  .lve-pesq-acao { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .lve-btn2 { background: #0B1F2A; color: #fff; border: 0; border-radius: 10px; padding: 10px 14px; font-weight: 800; font-size: 14px; cursor: pointer; }
+  .lve-pesq-st { font-size: 13.5px; color: #43535C; font-weight: 700; }
+  .lve-pesq-lista { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 13.5px; }
+  .lve-pesq-lista a { color: #0F6B7E; font-weight: 700; overflow-wrap: anywhere; }
+  .lve-pesq-lista span { display: block; color: #66757F; font-size: 12.5px; }
+  .lve-aviso { margin: 0; background: #FFF4E5; color: #6B3D00; border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.5; }
+  .lve-arq { position: relative; display: block; border: 1.5px dashed #BFD3D0; border-radius: 10px; padding: 11px 13px; cursor: pointer; background: #FBFCFC; font-size: 13.5px; font-weight: 700; color: #0F6B7E; overflow-wrap: anywhere; }
+  .lve-arq input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .lve-arq-nome { display: flex; gap: 8px; align-items: center; font-size: 13.5px; margin-top: 6px; overflow-wrap: anywhere; }
+  .lve-2arq, .lve-assin { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+  .lve-assin > div { display: grid; gap: 10px; align-content: start; }
+  .lve-assin-t { font-size: 14px; color: #0F6B7E; }
+  @media (max-width: 700px) { .lve-2arq, .lve-assin { grid-template-columns: minmax(0, 1fr); } }
   .lve-reap-box { border: 1px solid #BFE6D2; background: #F3FBF7; border-radius: 16px; padding: 18px; display: grid; gap: 10px; }
   .lve-reap-box p { margin: 0; color: #43535C; font-size: 14px; }
   .lve-reap-lista { display: grid; gap: 6px; }
@@ -1718,7 +1736,54 @@
               </div>
             </sc-for>
 
-            <sc-if value="{{ elMostraPesquisa }}" hint-placeholder-val="{{ false }}"><p class="lve-pesq">🔎 <b>Sem valor por enquanto.</b> {{ elTextoPesquisa }}</p></sc-if>
+            <sc-if value="{{ elMostraPesquisa }}" hint-placeholder-val="{{ false }}">
+              <div class="lve-bloco">
+                <h3 class="lve-bloco-t">Pesquisa de mercado</h3>
+                <p class="lve-pesq">{{ elTextoPesquisa }}</p>
+                <div class="lve-pesq-acao"><button type="button" class="lve-btn2" sc-camel-on-click="{{ elPesquisar }}">{{ elPesqBotao }}</button><span class="lve-pesq-st">{{ elPesqStatus }}</span></div>
+                <sc-if value="{{ elPesqTemRefs }}" hint-placeholder-val="{{ false }}"><ul class="lve-pesq-lista"><sc-for list="{{ elPesqRefs }}" as="r" hint-placeholder-count="3"><li><a href="{{ r.link }}" target="_blank" rel="noopener">{{ r.titulo }}</a><span>{{ r.det }}</span></li></sc-for></ul></sc-if>
+                <sc-if value="{{ elPesqFalhou }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso" role="alert"><b>Não conseguimos fazer a pesquisa automaticamente.</b> {{ elPesqErro }} Para seguir, forneça abaixo referências de preço (link, PDF ou valores digitados) ou marque que vai completar depois.</p></sc-if>
+                <details class="lvc-det" open="{{ elPesqAbrirProprias }}"><summary>Fornecer minhas referências de preço{{ elPesqPropriasRot }}</summary>
+                  <label class="lvc-campo"><span>Links de contratações, atas ou cotações (um por linha)</span><textarea rows="2" value="{{ elPrecosLinks }}" sc-camel-on-input="{{ elOnPrecosLinks }}" placeholder="Ex.: https://pncp.gov.br/app/editais/..."></textarea></label>
+                  <div class="lvc-campo"><span>PDFs (contratos, atas, propostas; até 5)</span>
+                    <label class="lve-arq"><input type="file" accept="application/pdf,.pdf" sc-camel-on-change="{{ elOnPdf }}"><span>+ Enviar PDF</span></label>
+                    <sc-for list="{{ elPdfs }}" as="f" hint-placeholder-count="0"><span class="lve-arq-nome">📄 {{ f.nome }} <button type="button" class="lve-trocar" sc-camel-on-click="{{ f.remover }}">remover</button></span></sc-for></div>
+                  <label class="lvc-campo"><span>Valores digitados (um por linha: fonte · item · unidade · valor unitário · data)</span><textarea rows="3" value="{{ elPrecosManual }}" sc-camel-on-input="{{ elOnPrecosManual }}" placeholder="Ex.: Prefeitura de Niterói, contrato 45/2026 · limpeza predial · m²/mês · R$ 9,80 · 03/2026"></textarea></label>
+                  <sc-if value="{{ elPesqFalhou }}" hint-placeholder-val="{{ false }}"><label class="lvc-check"><input type="checkbox" checked="{{ elPrecosSem }}" sc-camel-on-change="{{ elOnPrecosSem }}"><span>Prosseguir sem valores: vou completar depois (o documento sai com os valores marcados para preencher).</span></label></sc-if>
+                </details>
+              </div>
+            </sc-if>
+
+            <div class="lve-bloco">
+              <h3 class="lve-bloco-t">Modelo, logo e rodapé</h3>
+              <div class="lve-2arq">
+                <div class="lvc-campo"><span>Modelo do seu órgão em Word<em class="lve-opc">opcional</em></span>
+                  <label class="lve-arq"><input type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" sc-camel-on-change="{{ elOnModelo }}"><span>{{ elModeloRot }}</span></label>
+                  <small>Usamos o cabeçalho, o rodapé, as margens e os estilos do seu arquivo. Sem ele, usamos o modelo Licitacon (ABNT).</small>
+                  <sc-if value="{{ elTemModelo }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-trocar" sc-camel-on-click="{{ elTirarModelo }}">Não usar este modelo</button></sc-if></div>
+                <div class="lvc-campo"><span>Logo do órgão ou empresa<em class="lve-opc">opcional</em></span>
+                  <label class="lve-arq"><input type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" sc-camel-on-change="{{ elOnLogo }}"><span>{{ elLogoRot }}</span></label>
+                  <small>PNG ou JPG, até 2 MB. Entra centralizada no cabeçalho, acima do nome do órgão.</small>
+                  <sc-if value="{{ elTemLogo }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-trocar" sc-camel-on-click="{{ elTirarLogo }}">Não usar logo</button></sc-if></div>
+              </div>
+              <div class="lvc-campo"><span>Incluir informações do órgão no rodapé?<em class="lve-obrig">obrigatório</em></span>
+                <div class="lvc-chips"><sc-for list="{{ elRodapeOp }}" as="o" hint-placeholder-count="2"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div>
+                <sc-if value="{{ elRodapeSim }}" hint-placeholder-val="{{ false }}"><textarea rows="2" aria-label="Texto do rodapé" value="{{ elRodape }}" sc-camel-on-input="{{ elOnRodape }}" placeholder="Ex.: Rua Álvares de Castro, 346, Centro, Maricá/RJ, CEP 24900-880 · (21) 2637-2052 · compras@marica.rj.gov.br"></textarea></sc-if></div>
+            </div>
+
+            <div class="lve-bloco">
+              <h3 class="lve-bloco-t">Quem assina</h3>
+              <div class="lve-assin">
+                <div><b class="lve-assin-t">Responsável pela elaboração</b>
+                  <label class="lvc-campo"><span>Nome<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elElabNome }}" sc-camel-on-input="{{ elOnElabNome }}"></label>
+                  <label class="lvc-campo"><span>Cargo<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elElabCargo }}" sc-camel-on-input="{{ elOnElabCargo }}" placeholder="Ex.: Agente de Contratação"></label>
+                  <label class="lvc-campo"><span>Matrícula</span><input type="text" value="{{ elElabMat }}" sc-camel-on-input="{{ elOnElabMat }}"></label></div>
+                <div><b class="lve-assin-t">Responsável pelo setor</b>
+                  <label class="lvc-campo"><span>Nome<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elRespNome }}" sc-camel-on-input="{{ elOnRespNome }}"></label>
+                  <label class="lvc-campo"><span>Cargo<em class="lve-obrig">obrigatório</em></span><input type="text" value="{{ elRespCargo }}" sc-camel-on-input="{{ elOnRespCargo }}" placeholder="Ex.: Secretário Municipal de Administração"></label>
+                  <label class="lvc-campo"><span>Matrícula</span><input type="text" value="{{ elRespMat }}" sc-camel-on-input="{{ elOnRespMat }}"></label></div>
+              </div>
+            </div>
 
             <label class="lvc-campo lve-campo"><span>Algo mais que o agente deve saber?<em class="lve-opc">opcional</em></span><textarea rows="2" value="{{ elObs }}" sc-camel-on-input="{{ elOnObs }}" placeholder="Ex.: horário de funcionamento, exigência de sustentabilidade, unidade requisitante"></textarea></label>
 
@@ -3776,7 +3841,13 @@ const ELAB = {
 const ELAB_ROT = { orgao: "Órgão ou entidade", uf: "UF", objeto: "Objeto", necessidade: "Necessidade / fundamentação", quantidades: "Quantidades e especificações",
   natureza: "Natureza / solução", prazo: "Prazo", prazo_outro: "Prazo (detalhe)", pca: "Plano de Contratações Anual", parcelamento: "Parcelamento",
   parc_motivo: "Motivo do parcelamento", adjudicacao: "Adjudicação", selecao: "Forma de seleção", criterio: "Critério de julgamento",
-  regime_exec: "Regime de execução", local: "Local", valor: "Valor estimado", observacoes: "Observações", unidade: "Unidade requisitante" };
+  regime_exec: "Regime de execução", local: "Local", valor: "Valor estimado", observacoes: "Observações", unidade: "Unidade requisitante",
+  elab_nome: "Elaboração: nome", elab_cargo: "Elaboração: cargo", elab_matricula: "Elaboração: matrícula",
+  resp_nome: "Responsável pelo setor: nome", resp_cargo: "Responsável pelo setor: cargo", resp_matricula: "Responsável pelo setor: matrícula",
+  rodape_incluir: "Informações no rodapé", rodape: "Texto do rodapé", modelo_arquivo: "Modelo em Word", logo_arquivo: "Logo" };
+// dados do órgão e de quem assina: podem ir para qualquer documento (se o assinante marcar)
+const ELAB_GERAIS = ["orgao", "uf", "observacoes", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
+const ELAB_PARES = { modelo_arquivo: "modelo_nome", logo_arquivo: "logo_nome" };
 const ELAB_RAPIDO = {
   etp: [
     { k: "objeto", rot: "O que você precisa contratar?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
@@ -3824,6 +3895,9 @@ function elFaltando(doc, R) {
     if (c.obrig && vazio(c.k)) f.push(nome);
     else if (c.outro && String(R[c.k] || "").split("; ").includes("Outro") && vazio(c.k + "_outro")) f.push("o detalhe de \"" + nome + "\" (você marcou Outro)");
   });
+  if (vazio("rodape_incluir")) f.push("se quer informações no rodapé");
+  else if (R.rodape_incluir === "Sim" && vazio("rodape")) f.push("texto do rodapé");
+  ["elab_nome", "elab_cargo", "resp_nome", "resp_cargo"].forEach((k) => { if (vazio(k)) f.push(ELAB_ROT[k].toLowerCase()); });
   return f;
 }
 const MESES_NOME = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
@@ -4250,12 +4324,13 @@ class Component extends DCLogic {
         // só o que existe no documento novo (e, nas opções, só valores que ele aceita)
         const campo = (k) => (ELAB_RAPIDO[doc] || []).find((c) => c.k === k);
         const cabe = (k) => {
-          if (k === "orgao" || k === "uf" || k === "observacoes") return true;
+          if (ELAB_GERAIS.includes(k)) return true;
           const c = campo(k); if (!c) return false;
           return c.tipo !== "chips" || String(ok[k]).split("; ").every((v) => c.op.includes(v));
         };
         reap = Object.keys(ok).filter((k) => ELAB_ROT[k] && String(ok[k] || "").trim() && !k.endsWith("_outro") && cabe(k))
-          .map((k) => ({ k, rot: ELAB_ROT[k], valor: String(ok[k]) + (ok[k + "_outro"] ? " (" + ok[k + "_outro"] + ")" : ""), bruto: ok[k], outro: ok[k + "_outro"] || "", marcado: false }));
+          .map((k) => ({ k, rot: ELAB_ROT[k], valor: (ELAB_PARES[k] ? (ok[ELAB_PARES[k]] || "arquivo enviado") : String(ok[k])) + (ok[k + "_outro"] ? " (" + ok[k + "_outro"] + ")" : ""),
+            bruto: ok[k], outro: ok[k + "_outro"] || "", par: ELAB_PARES[k] ? [ELAB_PARES[k], ok[ELAB_PARES[k]] || ""] : null, marcado: false }));
         if (reap.length) reap.docAnterior = (ELAB[u.doc] || {}).sigla || "";
       } catch (e) { reap = []; }
     }
@@ -4274,7 +4349,7 @@ class Component extends DCLogic {
   elReapAplicar(usar) {
     this.setState((s) => {
       const respostas = { ...s.el.respostas };
-      if (usar) s.el.reap.filter((x) => x.marcado).forEach((x) => { respostas[x.k] = x.bruto; if (x.outro) respostas[x.k + "_outro"] = x.outro; });
+      if (usar) s.el.reap.filter((x) => x.marcado).forEach((x) => { respostas[x.k] = x.bruto; if (x.outro) respostas[x.k + "_outro"] = x.outro; if (x.par) respostas[x.par[0]] = x.par[1]; });
       return { el: { ...s.el, respostas, reapAberto: false } };
     });
   }
@@ -4294,6 +4369,41 @@ class Component extends DCLogic {
     });
   };
 
+  async elSubir(e, rot, aceitos, maxMb) {
+    const f = e && e.target && e.target.files && e.target.files[0];
+    if (e && e.target) try { e.target.value = ""; } catch (er) {}
+    if (!f) return null;
+    const ext = (f.name.match(/\.[a-z0-9]+$/i) || [""])[0].toLowerCase();
+    const falha = (m) => { this.setState((s) => ({ el: { ...s.el, erro: m } })); return null; };
+    if (!aceitos[ext]) return falha("Formato não aceito: " + f.name + ".");
+    if (f.size > maxMb * 1024 * 1024) return falha("Arquivo grande demais (máximo " + maxMb + " MB).");
+    if (!this.sb || !this.u) return falha("Entre na sua conta para enviar arquivos.");
+    const limpo = f.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\.[a-z0-9]+$/i, "").replace(/[^A-Za-z0-9._-]+/g, "-").slice(-50) || rot;
+    const caminho = this.u.id + "/elab-arquivos/" + Date.now().toString(36) + "-" + rot + "-" + limpo + ext;
+    const up = await this.sb.storage.from("analises").upload(caminho, f, { upsert: false, contentType: aceitos[ext] });
+    if (up.error) return falha("Não foi possível enviar " + f.name + ". Tente de novo.");
+    return { arquivo: caminho, nome: f.name };
+  }
+
+  async elPesquisar() {
+    const el = this.state.el, R = el.respostas || {};
+    const chave = [R.objeto, R.uf, R.natureza].join("|");
+    if (String(R.objeto || "").trim().length < 8) { this.setState({ el: { ...el, erro: "Descreva o objeto antes de pesquisar." } }); return null; }
+    if (!this.sb || !this.u) { this.setState({ el: { ...el, erro: "Entre na sua conta para fazer a pesquisa de mercado." } }); return null; }
+    this.setState((s) => ({ el: { ...s.el, pesq: { estado: "buscando", chave }, erro: "" } }));
+    let pesq;
+    try {
+      const { data, error } = await this.sb.functions.invoke("pesquisa-mercado", { body: { objeto: R.objeto, uf: R.uf, natureza: R.natureza } });
+      if (error) throw error;
+      const refs = (data && data.referencias) || [];
+      pesq = refs.length ? { estado: "ok", chave, refs } : { estado: "falhou", chave, refs: [], erro: (data && data.erro) || "Nenhuma contratação semelhante encontrada." };
+    } catch (er) {
+      pesq = { estado: "falhou", chave, refs: [], erro: "O serviço de pesquisa não respondeu agora." };
+    }
+    this.setState((s) => ({ el: { ...s.el, pesq } }));
+    return pesq;
+  }
+
   elGuardarUltimo(doc, respostas) {
     try { localStorage.removeItem("lv-elab-" + doc); localStorage.setItem("lv-elab-ultimo", JSON.stringify({ doc, respostas, em: Date.now() })); } catch (e) {}
   }
@@ -4310,10 +4420,21 @@ class Component extends DCLogic {
     if (falta.length) { this.setState({ el: { ...el, erro: "Falta informar: " + falta.join(", ") + "." } }); return; }
     if (String(el.respostas.objeto || "").trim().length < 8) { this.setState({ el: { ...el, erro: "Descreva o objeto com um pouco mais de detalhe." } }); return; }
     if (!el.aceite) { this.setState({ el: { ...el, erro: "Leia e aceite as condições para continuar." } }); return; }
-    if (!GERACAO_ATIVA) { this.setState({ el: { ...el, ok: "Tudo certo com as respostas, e elas ficam salvas neste aparelho. A elaboração automática está na fase final de testes e será liberada em breve.", erro: "" } }); return; }
-    if (!this.sb) { this.setState({ el: { ...el, erro: "A elaboração ainda não está ativa neste site (modo demonstração)." } }); return; }
+    const R0 = el.respostas || {}, precisaPesq = el.doc === "etp" || (el.doc === "tr" && !String(R0.valor || "").trim());
+    if (precisaPesq && this.sb && this.u && GERACAO_ATIVA) {
+      let pq = el.pesq;
+      if (!pq || pq.chave !== [R0.objeto, R0.uf, R0.natureza].join("|") || pq.estado === "buscando") pq = await this.elPesquisar();
+      if (!pq) return;
+      const proprias = String(R0.precos_links || "").trim() || String(R0.precos_manual || "").trim() || String(R0.precos_pdfs || "").length > 2;
+      if (pq.estado === "falhou" && !proprias && R0.precos_sem !== "sim") {
+        this.setState((s) => ({ el: { ...s.el, erro: "A pesquisa de mercado não encontrou dados. Forneça referências de preço ou marque que vai completar depois." } }));
+        return;
+      }
+    }
+    if (!GERACAO_ATIVA) { this.setState({ el: { ...this.state.el, ok: "Tudo certo com as respostas, e elas ficam salvas neste aparelho. A elaboração automática está na fase final de testes e será liberada em breve.", erro: "" } }); return; }
+    if (!this.sb) { this.setState({ el: { ...this.state.el, erro: "A elaboração ainda não está ativa neste site (modo demonstração)." } }); return; }
     if (!this.u) { this.setState({ volta: "elaborar" }); this.irPara("login"); return; }
-    this.setState({ el: { ...el, enviando: true, erro: "" } });
+    this.setState({ el: { ...this.state.el, enviando: true, erro: "" } });
     const pend = (this.state.analises || []).find((a) => a.tipo === "geracao" && a.documento === el.doc && a.status === "aguardando_documentos");
     if (pend) {  // já paga ou liberada: só envia as respostas
       const r0 = await this.sb.functions.invoke("mp-checkout", { body: { acao: "enviar_geracao", id: pend.id, respostas: el.respostas } });
@@ -5846,9 +5967,49 @@ class Component extends DCLogic {
           }),
           elMostraPesquisa: el.doc === "etp" || (el.doc === "tr" && !String(R.valor || "").trim()),
           elTextoPesquisa: el.doc === "etp"
-            ? "No ETP não se informa valor estimado. O agente faz uma pesquisa de mercado no PNCP com contratações de outros órgãos, priorizando o seu estado, compara todas as soluções possíveis (compra, locação, serviço…) e coloca a análise no estudo, com as fontes."
+            ? "No ETP não se informa valor estimado. Pesquisamos no PNCP contratações de outros órgãos, priorizando o seu estado, para todas as soluções possíveis (compra, locação, serviço…); o agente compara as soluções no estudo, com as fontes."
             : "O agente traz contratações semelhantes do PNCP, priorizando o seu estado, como referência; o valor final deve vir da sua pesquisa de preços formal (art. 23).",
           elObs: R.observacoes || "", elOnObs: this.elResponder("observacoes"),
+          ...(() => {
+            const pq = el.pesq && el.pesq.chave === [R.objeto, R.uf, R.natureza].join("|") ? el.pesq : null;
+            let pdfs = []; try { pdfs = JSON.parse(R.precos_pdfs || "[]") || []; } catch (e) { pdfs = []; }
+            const proprias = !!(String(R.precos_links || "").trim() || String(R.precos_manual || "").trim() || pdfs.length);
+            const brl = (v) => v == null ? "" : "R$ " + Number(v).toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            const subirArq = (rot, aceitos, mb, k, kNome) => async (e) => { const r = await this.elSubir(e, rot, aceitos, mb); if (r) { set(k, r.arquivo); set(kNome, r.nome); } };
+            const nEst = pq && pq.refs ? pq.refs.filter((r) => r.abrangencia === "estado").length : 0;
+            return {
+              elPesquisar: () => this.elPesquisar(),
+              elPesqBotao: pq && pq.estado === "buscando" ? "Pesquisando…" : pq ? "Refazer a pesquisa" : "Fazer a pesquisa agora",
+              elPesqStatus: !pq ? "Se você não clicar, a pesquisa é feita ao criar o documento." : pq.estado === "buscando" ? "Consultando o PNCP e o Compras.gov.br…"
+                : pq.estado === "ok" ? "✓ " + pq.refs.length + " contratações semelhantes encontradas" + (R.uf ? " (" + nEst + " no seu estado)" : "") + ". O agente vai analisá-las no documento." : "",
+              elPesqTemRefs: !!(pq && pq.estado === "ok"),
+              elPesqRefs: pq && pq.refs ? pq.refs.slice(0, 6).map((r) => ({ link: r.link, titulo: r.orgao + " (" + (r.municipio ? r.municipio + "/" : "") + r.uf + ")",
+                det: r.solucao + " · " + r.tipo + " · " + (r.data || "").split("-").reverse().join("/") + (r.valor_total_estimado ? " · valor total " + brl(r.valor_total_estimado) : "") + (r.itens && r.itens.length ? " · com preço unitário" : "") })) : [],
+              elPesqFalhou: !!(pq && pq.estado === "falhou"), elPesqErro: pq && pq.erro ? pq.erro : "",
+              elPesqAbrirProprias: !!(pq && pq.estado === "falhou") || proprias, elPesqPropriasRot: proprias ? " (fornecidas)" : " (opcional)",
+              elPrecosLinks: R.precos_links || "", elOnPrecosLinks: this.elResponder("precos_links"),
+              elPrecosManual: R.precos_manual || "", elOnPrecosManual: this.elResponder("precos_manual"),
+              elPdfs: pdfs.map((f, i) => ({ nome: f.nome, remover: () => set("precos_pdfs", JSON.stringify(pdfs.filter((_, j) => j !== i))) })),
+              elOnPdf: async (e) => {
+                if (pdfs.length >= 5) { this.setState((x) => ({ el: { ...x.el, erro: "Envie no máximo 5 PDFs." } })); return; }
+                const r = await this.elSubir(e, "preco", { ".pdf": "application/pdf" }, 20);
+                if (r) { let atual = []; try { atual = JSON.parse(this.state.el.respostas.precos_pdfs || "[]") || []; } catch (er) {} set("precos_pdfs", JSON.stringify(atual.concat([r]))); }
+              },
+              elPrecosSem: R.precos_sem === "sim", elOnPrecosSem: (e) => set("precos_sem", e.target.checked ? "sim" : ""),
+              elOnModelo: subirArq("modelo", { ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }, 10, "modelo_arquivo", "modelo_nome"),
+              elModeloRot: R.modelo_arquivo ? "📄 " + (R.modelo_nome || "modelo enviado") + " (trocar)" : "+ Enviar modelo (.docx)", elTemModelo: !!R.modelo_arquivo,
+              elTirarModelo: () => { set("modelo_arquivo", ""); set("modelo_nome", ""); },
+              elOnLogo: subirArq("logo", { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg" }, 2, "logo_arquivo", "logo_nome"),
+              elLogoRot: R.logo_arquivo ? "🖼️ " + (R.logo_nome || "logo enviada") + " (trocar)" : "+ Enviar logo (PNG ou JPG)", elTemLogo: !!R.logo_arquivo,
+              elTirarLogo: () => { set("logo_arquivo", ""); set("logo_nome", ""); },
+              elRodapeOp: ["Sim", "Não"].map((nome) => ({ nome, sel: R.rodape_incluir === nome, escolher: () => set("rodape_incluir", nome) })),
+              elRodapeSim: R.rodape_incluir === "Sim", elRodape: R.rodape || "", elOnRodape: this.elResponder("rodape"),
+              elElabNome: R.elab_nome || "", elOnElabNome: this.elResponder("elab_nome"), elElabCargo: R.elab_cargo || "", elOnElabCargo: this.elResponder("elab_cargo"),
+              elElabMat: R.elab_matricula || "", elOnElabMat: this.elResponder("elab_matricula"),
+              elRespNome: R.resp_nome || "", elOnRespNome: this.elResponder("resp_nome"), elRespCargo: R.resp_cargo || "", elOnRespCargo: this.elResponder("resp_cargo"),
+              elRespMat: R.resp_matricula || "", elOnRespMat: this.elResponder("resp_matricula")
+            };
+          })(),
           elReapAberto: !!el.reapAberto, elFormVisivel: !el.reapAberto, elRascunho: !!el.rascunho, elEmBranco: () => this.elEmBranco(),
           elReapDe: el.reapAnterior ? " (" + el.reapAnterior + ")" : "",
           elReapLista: (el.reap || []).map((x) => ({ rot: x.rot, valor: x.valor.length > 140 ? x.valor.slice(0, 140) + "…" : x.valor, marcado: !!x.marcado, marcar: () => this.elReapMarcar(x.k) })),

@@ -349,9 +349,33 @@ def processar_geracao(a):
             if not str(respostas.get("objeto", "")).strip():
                 raise ErroCliente("O questionário chegou sem o objeto da contratação.")
             (pasta / "respostas.json").write_text(json.dumps(respostas, ensure_ascii=False), encoding="utf-8")
+            # arquivos do assinante (modelo em Word, logo, PDFs de preço): só da pasta dele; falha em um arquivo não impede o documento
+            extra, prefixo = [], f"{a['usuario_id']}/elab-arquivos/"
+            def baixar(caminho, nome):
+                if not isinstance(caminho, str) or not caminho.startswith(prefixo) or ".." in caminho:
+                    return None
+                try:
+                    destino = pasta / "arquivos" / nome; destino.parent.mkdir(exist_ok=True)
+                    destino.write_bytes(http("GET", f"{SUPA}/storage/v1/object/analises/{caminho}", cab=cab(), binario=True, timeout=300))
+                    return destino
+                except Exception:
+                    print(f"elaboração {aid}: arquivo do assinante não baixado ({nome.split('.')[0]})")
+                    return None
+            mod = baixar(respostas.get("modelo_arquivo"), "modelo.docx")
+            if mod: extra += ["--modelo", str(mod)]
+            ext_logo = ".png" if str(respostas.get("logo_arquivo", "")).lower().endswith(".png") else ".jpg"
+            logo = baixar(respostas.get("logo_arquivo"), "logo" + ext_logo)
+            if logo: extra += ["--logo", str(logo)]
+            try:
+                pdfs = json.loads(respostas.get("precos_pdfs") or "[]")
+            except Exception:
+                pdfs = []
+            for i, f in enumerate(pdfs[:5] if isinstance(pdfs, list) else []):
+                arq = baixar((f or {}).get("arquivo"), f"preco{i + 1}.pdf")
+                if arq: extra += ["--preco-pdf", f"{str((f or {}).get('nome') or 'PDF')[:80].replace('=', '-')}={arq}"]
             etapa_paga = True  # a partir daqui há custo de API: falha não volta para a fila automaticamente
             rodar([sys.executable, str(RAIZ / "scripts/agente/elaborar.py"), "--doc", a["documento"], "--respostas", str(pasta / "respostas.json"),
-                   "--pasta", str(pasta / "saida")], timeout=3300)
+                   "--pasta", str(pasta / "saida")] + extra, timeout=3300)
             saida = pasta / "saida"
             exe = json.loads((saida / "execucao.json").read_text(encoding="utf-8"))
             base = f"{a['usuario_id']}/pareceres/{aid}"
