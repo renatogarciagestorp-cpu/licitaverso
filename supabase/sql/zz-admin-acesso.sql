@@ -17,7 +17,7 @@ returns text language sql stable security definer set search_path = public as $$
 $$;
 
 alter table public.analises drop constraint if exists analises_cobranca_check;
-alter table public.analises add constraint analises_cobranca_check check (cobranca in ('franquia_pro', 'franquia_org', 'avulsa', 'cortesia_admin'));
+alter table public.analises add constraint analises_cobranca_check check (cobranca in ('franquia_pro', 'franquia_org', 'avulsa', 'cortesia_admin', 'cortesia_boas_vindas'));
 
 -- cota do agente: admin sem limite
 create or replace function public.minha_cota_analises()

@@ -100,7 +100,7 @@ $$;
 -- Franquia de análises da equipe
 alter table public.analises add column if not exists org_id uuid references public.organizacoes on delete set null;
 alter table public.analises drop constraint if exists analises_cobranca_check;
-alter table public.analises add constraint analises_cobranca_check check (cobranca in ('franquia_pro', 'franquia_org', 'avulsa', 'cortesia_admin'));
+alter table public.analises add constraint analises_cobranca_check check (cobranca in ('franquia_pro', 'franquia_org', 'avulsa', 'cortesia_admin', 'cortesia_boas_vindas'));
 alter table public.consultorias add column if not exists org_id uuid references public.organizacoes on delete set null;
 
 -- Início do mês corrente (dia 1, 00:00, horário de Brasília)

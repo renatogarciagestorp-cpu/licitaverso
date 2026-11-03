@@ -10,12 +10,12 @@ alter table public.analises add column if not exists documentos jsonb not null d
 alter table public.analises add column if not exists enviado_em timestamptz;
 alter table public.analises drop constraint if exists analises_documento_check;
 alter table public.analises add constraint analises_documento_check
-  check (documento in ('edital', 'etp', 'tr', 'riscos', 'planilha', 'plano_trabalho', 'multiplos'));
+  check (documento in ('edital', 'etp', 'tr', 'riscos', 'planilha', 'plano_trabalho', 'multiplos', 'projeto_basico'));
 alter table public.analises drop constraint if exists analises_status_check;
 alter table public.analises add constraint analises_status_check
   check (status in ('aguardando_pagamento', 'aguardando_documentos', 'na_fila', 'processando', 'concluida', 'erro', 'cancelada'));
 alter table public.analises drop constraint if exists analises_origem_check;
-alter table public.analises add constraint analises_origem_check check (origem in ('pdf', 'pncp', 'arquivos'));
+alter table public.analises add constraint analises_origem_check check (origem in ('pdf', 'pncp', 'arquivos', 'questionario'));
 
 -- LGPD: data em que os documentos enviados foram apagados automaticamente (o parecer continua na conta)
 alter table public.analises add column if not exists documentos_excluidos_em timestamptz;
