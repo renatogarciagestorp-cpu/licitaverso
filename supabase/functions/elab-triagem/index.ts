@@ -50,7 +50,7 @@ Deno.serve(async (req) => {
   const usuario = interno ? { id: "00000000-0000-0000-0000-000000000000" } : await usuarioDaRequisicao(req, admin);
   if (!usuario) return erro("Entre na sua conta para continuar.", 401);
   const chave = Deno.env.get("ANTHROPIC_API_KEY");
-  if (!chave) return resposta({ perguntas: [], indisponivel: true });
+  if (!chave) return resposta({ perguntas: [], indisponivel: true, detalhe: "sem chave" });
 
   const desde = new Date(Date.now() - 864e5).toISOString();
   const { count } = await admin.from("elab_triagens").select("id", { count: "exact", head: true }).eq("usuario_id", usuario.id).gte("criado_em", desde);
@@ -88,7 +88,11 @@ Seja específico e objetivo; no máximo 8 perguntas, das mais importantes para a
       messages: [{ role: "user", content: usuarioMsg }] }),
     signal: AbortSignal.timeout(90000),
   }).catch(() => null);
-  if (!resp || !resp.ok) return resposta({ perguntas: [], indisponivel: true });
+  if (!resp || !resp.ok) {
+    const det = resp ? `${resp.status} ${(await resp.text().catch(() => "")).slice(0, 200)}` : "sem resposta";
+    console.log("triagem indisponível:", det);
+    return resposta({ perguntas: [], indisponivel: true, detalhe: det.replace(/sk-[A-Za-z0-9_-]+/g, "***") });
+  }
   const j = await resp.json().catch(() => ({}));
   const bloco = (j.content ?? []).find((c: any) => c.type === "tool_use");
   const perguntas = ((bloco?.input?.perguntas ?? []) as any[]).slice(0, 8).map((p, i) => ({
