@@ -5,14 +5,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          A="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130 Safari/537.36"
           set +e
-          for u in "https://pncp.gov.br/api/pncp/v1/orgaos/29138385000130/compras/2026/66/itens?pagina=1&tamanhoPagina=5" \
-                   "https://pncp.gov.br/api/pncp/v1/orgaos/29138385000130/compras/2026/66" \
-                   "https://pncp.gov.br/pncp-api/v1/orgaos/29138385000130/compras/2026/66/itens?pagina=1&tamanhoPagina=5" \
-                   "https://pncp.gov.br/api/pncp/v1/orgaos/00394502000144/compras/2026/14828/itens?pagina=1&tamanhoPagina=5" \
-                   "https://pncp.gov.br/api/consulta/v1/orgaos/29138385000130/compras/2026/66" \
-                   "https://pncp.gov.br/api/search/?q=notebook&tipos_documento=ata&ordenacao=-data&pagina=1&tam_pagina=2&status=todos&ufs=RJ" \
-                   "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=10&codigoItemCatalogo=451899&estado=RJ" \
-                   "https://dadosabertos.compras.gov.br/modulo-material/4_consultarItemMaterial?pagina=1&tamanhoPagina=5&descricaoItem=notebook"; do
-            echo "== $u"; curl -sS -m 25 -A "$A" -o /tmp/r -w "HTTP %{http_code} %{time_total}s\n" "$u"; head -c 900 /tmp/r; echo; done
+          B=https://dadosabertos.compras.gov.br
+          for u in "$B/modulo-material/4_consultarItemMaterial?pagina=1&tamanhoPagina=10&descricaoItem=notebook" \
+                   "$B/modulo-servico/6_consultarItemServico?pagina=1&tamanhoPagina=10&descricaoItem=limpeza" \
+                   "$B/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=10&codigoItemCatalogo=150425" \
+                   "$B/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=10&codigoItemCatalogo=150425&estado=RJ" \
+                   "$B/modulo-pesquisa-preco/3_consultarServico?pagina=1&tamanhoPagina=10&codigoItemCatalogo=5550" \
+                   "$B/v3/api-docs" ; do
+            echo "== $u"; curl -sS -m 30 -o /tmp/r -w "HTTP %{http_code} %{time_total}s\n" "$u"; head -c 1500 /tmp/r; echo; done
+          curl -sS -m 30 "$B/v3/api-docs" -o /tmp/d.json; python3 -c "
+          import json;d=json.load(open('/tmp/d.json'))
+          for p,v in d.get('paths',{}).items():
+            if 'preco' in p or 'ItemMaterial' in p or 'ItemServico' in p:
+              for m,o in v.items(): print(p, [x.get('name')+('*' if x.get('required') else '') for x in o.get('parameters',[])])"
