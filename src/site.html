@@ -1867,7 +1867,7 @@
               <div class="lve-2arq">
                 <div class="lvc-campo"><span>Modelo do seu órgão em Word<em class="lve-opc">opcional</em></span>
                   <label class="lve-arq"><input type="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" sc-camel-on-change="{{ elOnModelo }}"><span>{{ elModeloRot }}</span></label>
-                  <small>Usamos o cabeçalho, o rodapé, as margens e os estilos do seu arquivo. Sem ele, usamos o modelo Licitacon (ABNT).</small>
+                  <small>{{ elModeloDica }}</small>
                   <sc-if value="{{ elTemModelo }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-trocar" sc-camel-on-click="{{ elTirarModelo }}">Não usar este modelo</button></sc-if></div>
                 <div class="lvc-campo"><span>Logo do órgão ou empresa<em class="lve-opc">opcional</em></span>
                   <label class="lve-arq"><input type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" sc-camel-on-change="{{ elOnLogo }}"><span>{{ elLogoRot }}</span></label>
@@ -3955,10 +3955,12 @@ const ELAB_ROT = { orgao: "Órgão ou entidade", uf: "UF", objeto: "Objeto", nec
   elab_nome: "Elaboração: nome", elab_cargo: "Elaboração: cargo", elab_matricula: "Elaboração: matrícula",
   resp_nome: "Responsável pelo setor: nome", resp_cargo: "Responsável pelo setor: cargo", resp_matricula: "Responsável pelo setor: matrícula",
   rodape_incluir: "Informações no rodapé", rodape: "Texto do rodapé", modelo_arquivo: "Modelo em Word", logo_arquivo: "Logo",
-  especificacoes: "Especificações", gestor: "Gestor do contrato", fiscais: "Fiscais", fonte: "Fonte orçamentária", correlatas: "Contratações ligadas" };
+  especificacoes: "Especificações", processo: "Nº do processo", gestor: "Gestor do contrato", fiscais: "Fiscais", fonte: "Fonte orçamentária", correlatas: "Contratações ligadas" };
 // dados do órgão e de quem assina: podem ir para qualquer documento (se o assinante marcar)
-const ELAB_GERAIS = ["orgao", "uf", "observacoes", "gestor", "fiscais", "fonte", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
+const ELAB_GERAIS = ["orgao", "uf", "observacoes", "unidade", "gestor", "fiscais", "fonte", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
 const ELAB_PARES = { modelo_arquivo: "modelo_nome", logo_arquivo: "logo_nome" };
+const ELAB_PROCESSO = { k: "processo", etapa: "contratacao", rot: "Nº do processo administrativo", tipo: "linha", ph: "Se já houver. Ex.: 1234/2026" };
+const ELAB_UNIDADE = { k: "unidade", etapa: "pessoas", rot: "Unidade requisitante", tipo: "linha", ph: "Ex.: Secretaria Municipal de Administração" };
 const ELAB_RAPIDO = {
   etp: [
     { k: "objeto", etapa: "contratacao", rot: "O que você precisa contratar?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
@@ -3969,8 +3971,10 @@ const ELAB_RAPIDO = {
     { k: "prazo", etapa: "contratacao", rot: "Por quanto tempo precisa?", tipo: "chips", obrig: true, outro: true, op: ["Entrega única", "12 meses", "30 meses", "Outro"] },
     { k: "pca", etapa: "contratacao", rot: "Está no Plano de Contratações Anual?", tipo: "chips", obrig: true, op: ["Sim", "Não", "O órgão não tem PCA"] },
     { k: "correlatas", etapa: "contratacao", rot: "Há contratações ligadas a esta?", tipo: "linha", ph: "Ex.: fornecimento de material de limpeza (contrato 12/2026)" },
+    ELAB_PROCESSO,
     { k: "parcelamento", etapa: "mercado", depois: true, rot: "Parcelamento", tipo: "chips", obrig: true, op: ["Parcelar por itens", "Parcelar por lotes", "Não parcelar", "Analisar no ETP e recomendar"], dica: "Decisão sua (inciso VIII). Se preferir, o agente analisa à luz da pesquisa e recomenda; a confirmação fica marcada para você." },
     { k: "parc_motivo", etapa: "mercado", depois: true, rot: "Motivo da sua decisão", tipo: "chips", obrig: true, multi: true, outro: true, seParc: true, op: ["Ampliar a competição", "Itens de natureza diferente", "Ganho de escala", "Serviço indivisível ou gestão única", "Risco técnico em dividir", "Outro"] },
+    ELAB_UNIDADE,
     { k: "gestor", etapa: "pessoas", rot: "Gestor do contrato", tipo: "linha", ph: "Nome, cargo e matrícula", dica: "Se ainda não foi designado, deixe em branco: o documento marca para preencher." },
     { k: "fiscais", etapa: "pessoas", rot: "Fiscais do contrato ou comissão de fiscalização", tipo: "texto", ph: "Um por linha: nome, cargo, matrícula e função (fiscal técnico, administrativo, suplente)" },
     { k: "fonte", etapa: "pessoas", rot: "Fonte orçamentária e dotação", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" }
@@ -3982,10 +3986,12 @@ const ELAB_RAPIDO = {
     { k: "especificacoes", etapa: "contratacao", rot: "Especificações e requisitos", tipo: "texto", obrig: true, ph: "Ex.: limpeza diária, de segunda a sexta, das 7h às 16h" },
     { k: "natureza", etapa: "contratacao", rot: "Solução escolhida (do ETP)", tipo: "chips", obrig: true, op: ["Compra", "Locação", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva"] },
     { k: "prazo", etapa: "contratacao", rot: "Prazo", tipo: "chips", obrig: true, outro: true, op: ["Entrega única", "12 meses", "30 meses", "Outro"] },
+    ELAB_PROCESSO,
     { k: "valor", etapa: "mercado", rot: "Valor estimado da sua pesquisa de preços", tipo: "linha", ph: "Ex.: R$ 850.000,00 por ano", dica: "Se ainda não tiver, deixe em branco: pesquisamos contratações e preços praticados como referência." },
     { k: "adjudicacao", etapa: "mercado", depois: true, rot: "Adjudicação", tipo: "chips", obrig: true, op: ["Por item", "Por lote", "Global (lote único)"] },
     { k: "selecao", etapa: "mercado", depois: true, rot: "Forma de seleção do fornecedor", tipo: "chips", obrig: true, op: ["Pregão", "Concorrência", "Dispensa", "Inexigibilidade", "Adesão a ata"] },
     { k: "criterio", etapa: "mercado", depois: true, rot: "Critério de julgamento", tipo: "chips", obrig: true, op: ["Menor preço", "Maior desconto", "Técnica e preço", "Melhor técnica"] },
+    ELAB_UNIDADE,
     { k: "gestor", etapa: "pessoas", rot: "Gestor do contrato", tipo: "linha", ph: "Nome, cargo e matrícula", dica: "Se ainda não foi designado, deixe em branco: o documento marca para preencher." },
     { k: "fiscais", etapa: "pessoas", rot: "Fiscais do contrato ou comissão de fiscalização", tipo: "texto", ph: "Um por linha: nome, cargo, matrícula e função (fiscal técnico, administrativo, suplente)" },
     { k: "fonte", etapa: "pessoas", rot: "Fonte orçamentária e dotação", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" }
@@ -3998,11 +4004,13 @@ const ELAB_RAPIDO = {
     { k: "especificacoes", etapa: "contratacao", rot: "Especificações e padrões de acabamento", tipo: "texto", ph: "Ex.: telha termoacústica; piso cerâmico PEI 4; NBR 9050" },
     { k: "natureza", etapa: "contratacao", rot: "Natureza", tipo: "chips", obrig: true, op: ["Obra", "Serviço de engenharia", "Reforma"] },
     { k: "prazo", etapa: "contratacao", rot: "Prazo de execução", tipo: "chips", obrig: true, outro: true, op: ["6 meses", "12 meses", "Outro"] },
+    ELAB_PROCESSO,
     { k: "regime_exec", etapa: "mercado", rot: "Regime de execução", tipo: "chips", obrig: true, op: ["Empreitada por preço unitário", "Empreitada por preço global", "Empreitada integral", "Contratação por tarefa"] },
     { k: "adjudicacao", etapa: "mercado", rot: "Parcelamento", tipo: "chips", obrig: true, op: ["Lote único", "Por lotes ou etapas"] },
     { k: "selecao", etapa: "mercado", rot: "Forma de seleção", tipo: "chips", obrig: true, op: ["Concorrência", "Pregão (serviço comum de engenharia)", "Dispensa"] },
     { k: "criterio", etapa: "mercado", rot: "Critério de julgamento", tipo: "chips", obrig: true, op: ["Menor preço", "Maior desconto", "Técnica e preço"] },
     { k: "valor", etapa: "mercado", rot: "Orçamento, se já tiver", tipo: "linha", ph: "Ex.: R$ 1.250.000,00 (SINAPI 09/2026)", dica: "Se não tiver, o orçamento fica marcado para completar." },
+    ELAB_UNIDADE,
     { k: "gestor", etapa: "pessoas", rot: "Gestor do contrato", tipo: "linha", ph: "Nome, cargo e matrícula", dica: "Se ainda não foi designado, deixe em branco: o documento marca para preencher." },
     { k: "fiscais", etapa: "pessoas", rot: "Fiscais do contrato ou comissão de fiscalização", tipo: "texto", ph: "Um por linha: nome, cargo, matrícula e função (fiscal técnico, administrativo, suplente)" },
     { k: "fonte", etapa: "pessoas", rot: "Fonte orçamentária e dotação", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" }
@@ -6234,6 +6242,8 @@ class Component extends DCLogic {
               },
               elPrecosSem: R.precos_sem === "sim", elOnPrecosSem: (e) => set("precos_sem", e.target.checked ? "sim" : ""),
               elOnModelo: subirArq("modelo", { ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }, 10, "modelo_arquivo", "modelo_nome"),
+              elModeloDica: el.doc === "etp" ? "Usamos o cabeçalho, o rodapé, as margens e os estilos do seu arquivo. Sem ele, o ETP sai no modelo padrão Licitacon: capa, histórico de revisões, seções numeradas, quadros de soluções, comparativo e custos, e quadros de assinatura."
+                : "Usamos o cabeçalho, o rodapé, as margens e os estilos do seu arquivo. Sem ele, usamos o modelo Licitacon (ABNT).",
               elModeloRot: R.modelo_arquivo ? "📄 " + (R.modelo_nome || "modelo enviado") + " (trocar)" : "+ Enviar modelo (.docx)", elTemModelo: !!R.modelo_arquivo,
               elTirarModelo: () => { set("modelo_arquivo", ""); set("modelo_nome", ""); },
               elOnLogo: subirArq("logo", { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg" }, 2, "logo_arquivo", "logo_nome"),

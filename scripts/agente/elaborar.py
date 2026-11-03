@@ -18,6 +18,8 @@ _spec = importlib.util.spec_from_file_location("analisar", RAIZ / "scripts" / "a
 an = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(an)
 _spec2 = importlib.util.spec_from_file_location("pesquisa_mercado", RAIZ / "scripts" / "agente" / "pesquisa_mercado.py")
 pm = importlib.util.module_from_spec(_spec2); _spec2.loader.exec_module(pm)
+_spec3 = importlib.util.spec_from_file_location("modelo_etp", RAIZ / "scripts" / "agente" / "modelo_etp.py")
+me = importlib.util.module_from_spec(_spec3); _spec3.loader.exec_module(me)
 rel = an.rel
 
 DOCS = {
@@ -156,7 +158,7 @@ def bloco_precos_assinante(respostas, pdfs_locais):
             "valores que estejam escritos nelas; não invente):\n" + "\n\n".join(partes))[:30000]
 
 
-def montar_pedido(doc, respostas, pesquisa=None, precos_assinante=""):
+def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=False):
     d = DOCS[doc]
     roteiro = an.carregar_roteiro("lei-14133")
     itens, _ = an.montar_itens(roteiro, d["roteiro"], "lei-14133", d["objetos"])
@@ -197,7 +199,8 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante=""):
            "mais vantajosa, registrando que a escolha final cabe ao requisitante; " if doc == "etp" else
            "se o requisitante não informou o valor, apresente os dados do PNCP como referência preliminar, em mapa resumido, registrando "
            "que o valor estimado deve vir da pesquisa de preços formal do art. 23 da Lei 14.133/2021 ([PREENCHER] no valor final); ")
-        + f"(10) produza as seções na ordem: {'; '.join(d['secoes'])}. Entregue com a ferramenta entregar_documento."
+        + (f"(10) siga o modelo padrão de ETP descrito a seguir e entregue com a ferramenta entregar_documento.\n{me.INSTRUCOES}" if padrao else
+           f"(10) produza as seções na ordem: {'; '.join(d['secoes'])}. Entregue com a ferramenta entregar_documento.")
     )
     usuario = (
         f"RESPOSTAS DO REQUISITANTE ({d['nome']}):\n{texto_resp}\n\n"
@@ -210,10 +213,10 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante=""):
     return system, usuario, juris
 
 
-def chamar(system, usuario):
+def chamar(system, usuario, ferramenta=None):
     """Usa a mesma conexão do analisar.py, com a ferramenta de entrega do documento."""
     original = an.FERRAMENTA
-    an.FERRAMENTA = FERRAMENTA
+    an.FERRAMENTA = ferramenta or FERRAMENTA
     try:
         return an.chamar(system, usuario, max_tokens=32000)
     finally:
@@ -237,6 +240,16 @@ def simulado(doc, respostas):
 
 
 # ------------------------------------------------------------------ Word (ABNT)
+def refs_usadas(docj, juris):
+    usados = list(dict.fromkeys(docj.get("jurisprudencia_ids") or []))
+    try:
+        por_id = {it["id"]: it for it in json.loads((RAIZ / "acervo.json").read_text(encoding="utf-8")).get("itens", [])}
+    except Exception:
+        por_id = {}
+    por_id.update({j["id"]: j for j in juris})
+    return [por_id[i] for i in usados if i in por_id]
+
+
 def abrir_modelo(modelo):
     """Abre o Word do assinante e esvazia o corpo, mantendo cabeçalho, rodapé, margens e estilos. None se não der."""
     from docx import Document
@@ -395,13 +408,14 @@ def main():
     precos = bloco_precos_assinante(respostas, pdfs)
     if precos:
         print(f"referências de preço do requisitante: {len(precos)} caracteres")
-    system, usuario, juris = montar_pedido(a.doc, respostas, pesquisa, precos)
+    padrao = a.doc == "etp" and not a.modelo  # modelo padrão Licitacon do ETP (o Word do assinante, se enviado, prevalece)
+    system, usuario, juris = montar_pedido(a.doc, respostas, pesquisa, precos, padrao)
     print(f"pedido: {len(system) + len(usuario)} caracteres (~{(len(system) + len(usuario)) // 4} tokens de entrada); jurisprudência: {len(juris)}")
     t0, custo_usd, uso = time.time(), 0.0, {}
     if a.simular:
-        docj = simulado(a.doc, respostas)
+        docj = me.simulado(respostas) if padrao else simulado(a.doc, respostas)
     else:
-        resp = chamar(system, usuario)
+        resp = chamar(system, usuario, me.FERRAMENTA if padrao else None)
         uso = resp.get("usage") or {}
         custo_usd += an.custo(uso)
         bloco = next((c for c in resp.get("content", []) if c.get("type") == "tool_use"), None)
@@ -411,7 +425,7 @@ def main():
     (pasta / "documento.json").write_text(json.dumps(docj, ensure_ascii=False, indent=1), encoding="utf-8")
     conferencia = None
     if not a.simular and not a.sem_conferencia:
-        txt = pasta / "documento.txt"; txt.write_text(texto_plano(docj), encoding="utf-8")
+        txt = pasta / "documento.txt"; txt.write_text(me.texto_plano(docj) if padrao else texto_plano(docj), encoding="utf-8")
         conf = pasta / "conferencia.json"
         args = [sys.executable, str(RAIZ / "scripts/agente/analisar.py"), "--doc", DOCS[a.doc]["roteiro"], "--texto", str(txt),
                 "--saida", str(conf), "--fonte", "minuta elaborada pelo agente"]
@@ -423,7 +437,15 @@ def main():
             custo_usd += float((conferencia.get("_execucao") or {}).get("custo_usd") or 0)
         else:
             print("conferência não concluída (o documento é entregue sem os pontos de atenção)")
-    gerar_docx(a.doc, docj, respostas, juris, conferencia, pasta / "documento.docx", pesquisa, a.modelo, a.logo)
+    if padrao:
+        try:
+            me.gerar(docj, respostas, pasta / "documento.docx", a.logo, pesquisa, refs_usadas(docj, juris), conferencia)
+        except Exception as e:  # nunca perde o texto já pago: cai para o Word genérico
+            print(f"modelo padrão do ETP falhou ({type(e).__name__}: {e}); gerando no formato genérico")
+            secs = [{"titulo": k, "paragrafos": v} for k, v in (docj.get("secoes") or {}).items() if v]
+            gerar_docx(a.doc, {**docj, "secoes": secs}, respostas, juris, conferencia, pasta / "documento.docx", pesquisa, None, a.logo)
+    else:
+        gerar_docx(a.doc, docj, respostas, juris, conferencia, pasta / "documento.docx", pesquisa, a.modelo, a.logo)
     if shutil.which("soffice"):
         subprocess.run(["soffice", "--headless", "--convert-to", "pdf", "--outdir", str(pasta), str(pasta / "documento.docx")],
                        capture_output=True, timeout=300)
