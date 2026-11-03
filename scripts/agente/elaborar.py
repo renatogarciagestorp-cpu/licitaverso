@@ -16,6 +16,8 @@ import argparse, importlib.util, json, pathlib, re, shutil, subprocess, sys, tim
 RAIZ = pathlib.Path(__file__).resolve().parents[2]
 _spec = importlib.util.spec_from_file_location("analisar", RAIZ / "scripts" / "agente" / "analisar.py")
 an = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(an)
+_spec2 = importlib.util.spec_from_file_location("pesquisa_mercado", RAIZ / "scripts" / "agente" / "pesquisa_mercado.py")
+pm = importlib.util.module_from_spec(_spec2); _spec2.loader.exec_module(pm)
 rel = an.rel
 
 DOCS = {
@@ -39,16 +41,19 @@ DOCS = {
                                   "Programação, estratégia de suprimentos e normas de fiscalização", "Orçamento detalhado do custo global"]},
 }
 CAMPOS_ROTULO = {
-    "orgao": "Órgão ou entidade", "uf": "UF e município", "unidade": "Unidade requisitante", "natureza": "Natureza do objeto",
+    "orgao": "Órgão ou entidade", "uf": "UF e município", "unidade": "Unidade requisitante", "natureza": "Natureza do objeto / solução indicada",
     "objeto": "Objeto", "necessidade": "Necessidade", "pca": "Plano de contratações anual", "requisitos": "Requisitos",
-    "quantidades": "Quantidades e memória de cálculo", "mercado": "Levantamento de mercado", "valor": "Estimativa de valor",
-    "solucao": "Solução", "parcelamento": "Parcelamento", "resultados": "Resultados pretendidos", "providencias": "Providências prévias",
+    "quantidades": "Quantidades e memória de cálculo", "mercado": "Levantamento de mercado", "valor": "Valor estimado informado pelo requisitante",
+    "solucao": "Solução", "parcelamento": "Parcelamento (escolha do requisitante)", "resultados": "Resultados pretendidos", "providencias": "Providências prévias",
     "correlatas": "Contratações correlatas", "ambiental": "Impactos ambientais", "conclusao": "Conclusão do requisitante",
     "definicao": "Definição do objeto", "fundamentacao": "Fundamentação (ETP)", "execucao": "Modelo de execução",
-    "gestao": "Modelo de gestão e fiscalização", "medicao": "Medição e pagamento", "selecao": "Seleção do fornecedor",
+    "gestao": "Modelo de gestão e fiscalização", "medicao": "Medição e pagamento", "selecao": "Forma de seleção do fornecedor (escolha do requisitante)",
     "orcamento": "Orçamento", "levantamentos": "Levantamentos e estudos", "solucoes": "Soluções técnicas", "servicos": "Serviços e materiais",
     "metodos": "Métodos construtivos", "plano_obra": "Plano da obra",
-    "prazo": "Prazo", "observacoes": "Observações do requisitante",
+    "prazo": "Prazo", "prazo_outro": "Prazo (detalhe)", "observacoes": "Observações do requisitante",
+    "parc_motivo": "Motivo do parcelamento ou não (escolha do requisitante)", "adjudicacao": "Forma de adjudicação (escolha do requisitante)",
+    "criterio": "Critério de julgamento (escolha do requisitante)", "regime_exec": "Regime de execução (escolha do requisitante)",
+    "local": "Local da obra ou serviço",
 }
 UFS = {"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
 
@@ -94,7 +99,7 @@ def jurisprudencia_do_estado(uf, consulta, n=6):
     return saida[:n]
 
 
-def montar_pedido(doc, respostas):
+def montar_pedido(doc, respostas, pesquisa=None):
     d = DOCS[doc]
     roteiro = an.carregar_roteiro("lei-14133")
     itens, _ = an.montar_itens(roteiro, d["roteiro"], "lei-14133", d["objetos"])
@@ -112,17 +117,31 @@ def montar_pedido(doc, respostas):
         "usando o texto oficial fornecido; (4) siga o roteiro de verificação fornecido para que o documento atenda a cada item; "
         "(5) jurisprudência: só a fornecida, citando órgão, número e ano, e só quando pertinente; informe os ids usados; "
         "(6) não use marca ou especificação que restrinja a competição sem justificativa técnica; "
-        "(7) o requisitante informa de propósito só o essencial (criação rápida): redija o documento completo e bem fundamentado, "
-        "com texto técnico adequado ao objeto para todos os itens que não dependem de dados específicos do órgão (requisitos usuais, "
-        "modelo de execução e de gestão, critérios de medição, justificativas de parcelamento, sustentabilidade, riscos etc.); reserve "
-        "[PREENCHER] apenas para dados factuais que só o órgão tem (valores, quantidades, datas, nomes, números de processo, dotação); "
-        f"(8) produza as seções na ordem: {'; '.join(d['secoes'])}. Entregue com a ferramenta entregar_documento."
+        "(7) nunca decida nem presuma pelo requisitante: as escolhas dele (parcelamento e motivo, forma de adjudicação, modalidade, "
+        "critério de julgamento, regime de execução, solução indicada no TR ou no Projeto Básico, prazo) devem ser seguidas exatamente "
+        "como informadas, apenas fundamentadas; se faltar uma informação exigida pela lei, não a escolha: use [PREENCHER] e registre "
+        "a pendência; (8) o requisitante informa de propósito só o essencial (criação rápida): redija com texto técnico adequado ao "
+        "objeto apenas a parte descritiva que não depende de decisão nem de dado do órgão (requisitos usuais de qualidade, rotinas de "
+        "fiscalização, sustentabilidade, riscos, providências), deixando [PREENCHER] para dados factuais (valores oficiais, datas, "
+        "nomes, números de processo, dotação); (9) pesquisa de mercado: use apenas os dados do PNCP fornecidos, citando órgão, "
+        "município/UF, data e link de cada contratação usada; nunca invente preço, fornecedor ou fonte; separe os resultados por "
+        "solução, informe faixa e mediana dos valores unitários comparáveis (prefira o homologado ao estimado e as contratações do "
+        "mesmo estado) e alerte quando unidades ou especificações não forem comparáveis; "
+        + ("no ETP, o levantamento de mercado deve considerar todas as soluções possíveis (por exemplo, aquisição, locação, serviço "
+           "com fornecimento do bem, adesão a ata ou execução direta, conforme o objeto), comparar vantagens, desvantagens e custos de cada "
+           "uma com base na pesquisa, e a estimativa do valor deve ser apresentada como preliminar (art. 18, § 1º, VI), dependente da "
+           "pesquisa de preços formal do art. 23 da Lei 14.133/2021; o posicionamento conclusivo indica a solução que os dados mostram "
+           "mais vantajosa, registrando que a escolha final cabe ao requisitante; " if doc == "etp" else
+           "se o requisitante não informou o valor, apresente os dados do PNCP como referência preliminar, em mapa resumido, registrando "
+           "que o valor estimado deve vir da pesquisa de preços formal do art. 23 da Lei 14.133/2021 ([PREENCHER] no valor final); ")
+        + f"(10) produza as seções na ordem: {'; '.join(d['secoes'])}. Entregue com a ferramenta entregar_documento."
     )
     usuario = (
         f"RESPOSTAS DO REQUISITANTE ({d['nome']}):\n{texto_resp}\n\n"
         f"ROTEIRO DE VERIFICAÇÃO (o documento deve atender a estes itens):\n{an.bloco_roteiro(itens)}\n\n"
         f"{an.bloco_referencias(refs)}\n\n"
         f"JURISPRUDÊNCIA DA BIBLIOTECA (priorize o Tribunal de Contas do estado{(' ' + uf) if uf else ''}):\n{bloco_juris}\n"
+        + (f"\n{pm.bloco_prompt(pesquisa)}\n" if pesquisa is not None else "")
     )
     return system, usuario, juris
 
@@ -154,7 +173,7 @@ def simulado(doc, respostas):
 
 
 # ------------------------------------------------------------------ Word (ABNT)
-def gerar_docx(doc, docj, respostas, juris, conferencia, saida):
+def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None):
     from docx import Document
     from docx.enum.text import WD_ALIGN_PARAGRAPH
     from docx.shared import Cm, Pt, RGBColor
@@ -206,6 +225,11 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida):
         par("REFERÊNCIAS", negrito=True, recuo=False)
         for j in refs:
             par((j.get("citacao_abnt") or f"{j.get('orgao','')} {j.get('numero','')}") + (f" Disponível em: {j['fonte_url']}." if j.get("fonte_url") else ""), recuo=False, tam=10)
+    if pesquisa and pesquisa.get("referencias"):
+        par("FONTES DA PESQUISA DE MERCADO (PNCP)", negrito=True, recuo=False)
+        for n, r in enumerate(pesquisa["referencias"], 1):
+            par(f"[P{n}] {r['orgao']} ({r['municipio']}/{r['uf']}). {r['modalidade']}, publicada em {r['data']}. Solução: {r['solucao']}. "
+                f"Disponível em: {r['link']}.", recuo=False, tam=10)
     w.add_paragraph()
     par("Local e data: ____________________", recuo=False)
     par("Responsável pela elaboração: ____________________ (nome, cargo e matrícula)", recuo=False)
@@ -239,7 +263,13 @@ def main():
     a = ap.parse_args()
     pasta = pathlib.Path(a.pasta); pasta.mkdir(parents=True, exist_ok=True)
     respostas = {k: str(v) for k, v in json.loads(pathlib.Path(a.respostas).read_text(encoding="utf-8")).items()}
-    system, usuario, juris = montar_pedido(a.doc, respostas)
+    pesquisa = None
+    if a.doc in ("etp", "tr") and not (a.doc == "tr" and respostas.get("valor", "").strip()):
+        pesquisa = pm.pesquisar(respostas.get("objeto", ""),
+                                uf_de(respostas.get("uf", "")), respostas.get("natureza", ""))
+        (pasta / "pesquisa.json").write_text(json.dumps(pesquisa, ensure_ascii=False, indent=1), encoding="utf-8")
+        print(f"pesquisa de mercado: {len(pesquisa['referencias'])} referências no PNCP ({pesquisa.get('segundos')} s) {pesquisa.get('erro') or ''}")
+    system, usuario, juris = montar_pedido(a.doc, respostas, pesquisa)
     print(f"pedido: {len(system) + len(usuario)} caracteres (~{(len(system) + len(usuario)) // 4} tokens de entrada); jurisprudência: {len(juris)}")
     t0, custo_usd, uso = time.time(), 0.0, {}
     if a.simular:
@@ -267,7 +297,7 @@ def main():
             custo_usd += float((conferencia.get("_execucao") or {}).get("custo_usd") or 0)
         else:
             print("conferência não concluída (o documento é entregue sem os pontos de atenção)")
-    gerar_docx(a.doc, docj, respostas, juris, conferencia, pasta / "documento.docx")
+    gerar_docx(a.doc, docj, respostas, juris, conferencia, pasta / "documento.docx", pesquisa)
     if shutil.which("soffice"):
         subprocess.run(["soffice", "--headless", "--convert-to", "pdf", "--outdir", str(pasta), str(pasta / "documento.docx")],
                        capture_output=True, timeout=300)
