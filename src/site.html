@@ -785,6 +785,8 @@
     .lvc-passo { padding: 18px 16px; }
     .lvc-calc-btn { display: block; }
   }
+  .lvc-erro { color: #B83232 !important; font-weight: 700; }
+  .lvc-captura { display: block; }
   .lvc-metodo { margin: 0; font-size: 13px; line-height: 1.55; color: #3D5058; background: #F1F6F5; border: 1px solid #E0EAE8; border-radius: 12px; padding: 11px 13px; }
   .lvc-campo > small { font-size: 12.5px; color: #7A8B91; line-height: 1.4; }
   .lvc-check { display: flex; gap: 10px; align-items: center; font-size: 14.5px; font-weight: 700; color: #26393F; cursor: pointer; }
@@ -1642,13 +1644,18 @@
                   <span class="lvc-valor-in"><i>R$</i><input type="text" inputmode="decimal" value="{{ calcValor }}" sc-camel-on-input="{{ calcOnValor }}" placeholder="0,00"></span></label>
                 <div class="lvc-campo"><span>Regime</span>
                   <div class="lvc-chips" role="group"><sc-for list="{{ calcRegimes }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></div>
-                <details class="lvc-det"><summary>Mais opções: fim da vigência e dados para a nota técnica</summary>
-                  <div class="lvc-campo"><span>Fim da vigência</span><div class="lvc-mp"><button type="button" class="{{ mpFim.btnClasse }}" sc-camel-on-click="{{ mpFim.alternar }}" aria-expanded="{{ mpFim.aberto }}"><span>{{ mpFim.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">▾</span></button><sc-if value="{{ mpFim.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpFim.topo }}</div><div class="lvw-cab"><span class="lvw-titulo">{{ mpFim.titulo }}</span><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpFim.ant }}" aria-label="Ano anterior">▲</button><button type="button" sc-camel-on-click="{{ mpFim.prox }}" aria-label="Próximo ano">▼</button></span></div><sc-if value="{{ mpFim.vistaMeses }}" hint-placeholder-val="{{ true }}"><div class="lvw-meses"><sc-for list="{{ mpFim.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpFim.hoje }}">Mês atual</button><sc-if value="{{ mpFim.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpFim.limpar }}">Limpar</button></sc-if></div></div></sc-if></div><small>Para calcular o impacto até o fim do contrato.</small></div>
-                  <label class="lvc-campo"><span>Contrato / processo</span><input type="text" value="{{ calcContrato }}" sc-camel-on-input="{{ calcOnContrato }}"></label>
-                  <label class="lvc-campo"><span>Contratada</span><input type="text" value="{{ calcContratada }}" sc-camel-on-input="{{ calcOnContratada }}"></label>
-                  <label class="lvc-campo"><span>Objeto</span><input type="text" value="{{ calcObjeto }}" sc-camel-on-input="{{ calcOnObjeto }}"></label>
-                </details>
+                <div class="lvc-campo"><span>Fim da vigência (opcional)</span><div class="lvc-mp"><button type="button" class="{{ mpFim.btnClasse }}" sc-camel-on-click="{{ mpFim.alternar }}" aria-expanded="{{ mpFim.aberto }}"><span>{{ mpFim.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">▾</span></button><sc-if value="{{ mpFim.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpFim.topo }}</div><div class="lvw-cab"><span class="lvw-titulo">{{ mpFim.titulo }}</span><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpFim.ant }}" aria-label="Ano anterior">▲</button><button type="button" sc-camel-on-click="{{ mpFim.prox }}" aria-label="Próximo ano">▼</button></span></div><sc-if value="{{ mpFim.vistaMeses }}" hint-placeholder-val="{{ true }}"><div class="lvw-meses"><sc-for list="{{ mpFim.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpFim.hoje }}">Mês atual</button><sc-if value="{{ mpFim.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpFim.limpar }}">Limpar</button></sc-if></div></div></sc-if></div><small>Para calcular o impacto até o fim do contrato.</small></div>
                 <p class="lvc-metodo"><b>{{ calcMetodoTit }}</b> {{ calcMetodoTxt }}</p>
+              </section>
+
+              <section class="lvc-passo">
+                <div class="lvc-passo-cab"><span class="lvc-n">4</span><div><h2>Dados do contrato para a nota técnica</h2><p>Opcionais. Entram no cabeçalho do PDF.</p></div></div>
+                <div class="lvc-datas">
+                  <label class="lvc-campo"><span>Número do contrato</span><input type="text" value="{{ calcContrato }}" sc-camel-on-input="{{ calcOnContrato }}" placeholder="Ex.: 012/2025"></label>
+                  <label class="lvc-campo"><span>CNPJ da contratada</span><input type="text" inputmode="numeric" value="{{ calcCnpj }}" sc-camel-on-input="{{ calcOnCnpj }}" placeholder="00.000.000/0000-00"><sc-if value="{{ calcCnpjInvalido }}" hint-placeholder-val="{{ false }}"><small class="lvc-erro">CNPJ inválido. Confira os números.</small></sc-if></label>
+                </div>
+                <label class="lvc-campo"><span>Empresa contratada</span><input type="text" value="{{ calcContratada }}" sc-camel-on-input="{{ calcOnContratada }}" placeholder="Razão social"></label>
+                <label class="lvc-campo"><span>Objeto (opcional)</span><input type="text" value="{{ calcObjeto }}" sc-camel-on-input="{{ calcOnObjeto }}" placeholder="Ex.: serviços de limpeza predial"></label>
                 <button type="button" class="lvh-btn lvc-calc-btn" sc-camel-on-click="{{ calcVerResultado }}">Ver resultado</button>
               </section>
             </div>
@@ -1658,6 +1665,7 @@
                 <div class="lvc-vazio"><b>Preencha o valor mensal e a data-base</b><span>O resultado aparece aqui, na hora.</span></div>
               </sc-if>
               <sc-if value="{{ calcPronto }}" hint-placeholder-val="{{ false }}">
+                <div id="lvc-captura" class="lvc-captura">
                 <span class="lvc-res-rot">{{ calcRotulo }}</span>
                 <div class="lvc-res-valor">{{ calcNovo }}</div>
                 <p class="lvc-res-sub">{{ calcSub }}</p>
@@ -1675,6 +1683,9 @@
                       <div class="lvc-ci" role="row"><span role="cell">{{ ci.k }}</span><span role="cell">{{ ci.aniv }}</span><span role="cell">{{ ci.periodo }}</span><span role="cell">{{ ci.var }}</span><span role="cell"><b>{{ ci.valor }}</b></span></div>
                     </sc-for>
                   </div>
+                </sc-if>
+                </div>
+                <sc-if value="{{ calcTemCiclos }}" hint-placeholder-val="{{ false }}">
                   <button class="lvh-btn" style="margin-top: 16px; width: 100%" sc-camel-on-click="{{ calcBaixarNota }}">{{ calcBotaoPdf }}</button>
                 </sc-if>
                 <p class="lvc-fonte">{{ calcFonte }}</p>
@@ -3538,6 +3549,13 @@ const AN_MAX_PAGINAS = 200;
 const AN_ANEXO_MB = 25;
 const AN_PRECO = 290;
 const DESCONTO_FUNDADOR = 0.3; // o mesmo de supabase/functions/_shared/precos.ts
+// CNPJ: confere os dígitos verificadores
+function cnpjValido(v) {
+  const d = String(v || "").replace(/\D/g, "");
+  if (d.length !== 14 || /^(\d)\1{13}$/.test(d)) return false;
+  const calc = (n) => { let s = 0, p = n - 7; for (let i = 0; i < n; i++) { s += Number(d[i]) * p--; if (p < 2) p = 9; } const r = s % 11; return r < 2 ? 0 : 11 - r; };
+  return calc(12) === Number(d[12]) && calc(13) === Number(d[13]);
+}
 const MESES_NOME = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
 // níveis do fórum pelos pontos do ranking geral
 const nivelForum = (p) => p >= 150 ? { nome: "Mestre", cls: "n4" } : p >= 50 ? { nome: "Referência", cls: "n3" } : p >= 10 ? { nome: "Colaborador", cls: "n2" } : { nome: "Iniciante", cls: "n1" };
@@ -3816,7 +3834,7 @@ class Component extends DCLogic {
     forumErro: "",
     nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
     indices: null, indicesErro: false, mpAberto: "", mpAno: 0, mpMes: 0, mpVista: "dias",
-    calc: { regime: "14133", indice: "ipca", valor: "", dataBase: "", houveReajuste: false, ultimo: "", referencia: "", fim: "", metodo: "a", contrato: "", contratada: "", objeto: "" },
+    calc: { regime: "14133", indice: "ipca", valor: "", dataBase: "", houveReajuste: false, ultimo: "", referencia: "", fim: "", metodo: "a", contrato: "", contratada: "", cnpj: "", objeto: "" },
     threadAberta: null, forumFiltro: "todas", forumRank: { mes: [], geral: [], destaque: null }, forumVerRanking: false, rankPeriodo: "mes",
     respondendo: null, resposta: "", citacao: "", respEnviando: false, respErro: "",
 
@@ -4019,70 +4037,116 @@ class Component extends DCLogic {
     try {
       if (!window.jspdf) await carregarScript(baseSite() + "vendor/jspdf-2.5.1.umd.min.js");
       if (!(window.jspdf && window.jspdf.jsPDF && window.jspdf.jsPDF.API.autoTable)) await carregarScript(baseSite() + "vendor/jspdf-autotable-3.8.2.min.js");
+      if (!window.html2canvas) await carregarScript(baseSite() + "vendor/html2canvas-1.4.1.min.js");
+      // o quadro do resultado, exatamente como aparece na tela
+      const alvo = document.getElementById("lvc-captura");
+      let imagem = null;
+      if (alvo && window.html2canvas) {
+        const canvas = await window.html2canvas(alvo, { scale: 2, backgroundColor: "#0A1F2A", windowWidth: 1320, useCORS: true, logging: false,
+          onclone: (d) => { const el = d.getElementById("lvc-captura"); if (el) { el.style.width = "560px"; el.style.padding = "24px"; el.style.background = "#0A1F2A"; el.style.borderRadius = "0"; } } });
+        imagem = { data: canvas.toDataURL("image/png"), w: canvas.width, h: canvas.height };
+      }
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ unit: "mm", format: "a4" });
-      const ML = 30, MR = 20, MT = 30, MB = 20, W = 210 - ML - MR;
-      let y = MT;
+      const ML = 25, MR = 20, W = 210 - ML - MR, TOPO = 24, BASE = 280;
+      const hojeTxt = new Date().toLocaleDateString("pt-BR");
+      let y = 0;
       const brlN = (v) => "R$ " + v.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
       const pct = (f, d) => ((f - 1) * 100).toFixed(d || 4).replace(".", ",") + "%";
       const mesBR = (x) => { const [a, m] = x.split("-"); return ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"][Number(m) - 1] + "/" + a; };
-      const quebra = (h) => { if (y + h > 297 - MB) { doc.addPage(); y = MT; } };
+      const VERDE = [15, 163, 107], ESCURO = [10, 31, 42], CINZA = [85, 102, 109];
+      const quebra = (h) => { if (y + h > BASE) { doc.addPage(); y = TOPO; } };
       const par = (t, op) => {
         const o = op || {};
-        doc.setFont("times", o.negrito ? "bold" : "normal"); doc.setFontSize(o.tam || 12);
-        const linhas = doc.splitTextToSize(t, W);
-        linhas.forEach((ln) => { quebra(6.2); doc.text(ln, o.centro ? 105 : ML, y, o.centro ? { align: "center" } : undefined); y += 6.2; });
+        doc.setFont("helvetica", o.negrito ? "bold" : "normal"); doc.setFontSize(o.tam || 10.5); doc.setTextColor(...(o.cor || [30, 40, 45]));
+        doc.splitTextToSize(t, o.w || W).forEach((ln) => { quebra(5.4); doc.text(ln, o.x || ML, y); y += 5.4; });
         y += o.depois === undefined ? 2 : o.depois;
       };
-      const titulo = (t) => { y += 3; par(t.toUpperCase(), { negrito: true, depois: 1 }); };
-      const tabela = (head, body) => {
-        doc.autoTable({ startY: y, head: [head], body, margin: { left: ML, right: MR }, theme: "grid",
-          styles: { font: "times", fontSize: 10.5, cellPadding: 1.8, textColor: 20, lineColor: 120, lineWidth: 0.2 },
-          headStyles: { fillColor: [235, 235, 235], textColor: 20, fontStyle: "bold" } });
+      const secao = (n, t) => {
+        quebra(24); y += 4;
+        doc.setFillColor(...VERDE); doc.circle(ML + 3, y - 1.4, 3, "F");
+        doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(6, 37, 26); doc.text(String(n), ML + 3, y - 0.2, { align: "center" });
+        doc.setFontSize(12); doc.setTextColor(...ESCURO); doc.text(t, ML + 9, y);
+        y += 6;
+      };
+      const tabela = (head, body, op) => {
+        doc.autoTable({ startY: y, head: [head], body, margin: { left: ML, right: MR }, theme: "plain",
+          styles: { font: "helvetica", fontSize: 9, cellPadding: 1.8, textColor: [30, 40, 45] },
+          headStyles: { fillColor: [244, 248, 247], textColor: CINZA, fontStyle: "bold" },
+          alternateRowStyles: { fillColor: [250, 252, 251] }, ...(op || {}) });
         y = doc.lastAutoTable.finalY + 5;
       };
+      // faixa de título
+      doc.setFillColor(...ESCURO); doc.rect(0, 0, 210, 34, "F");
+      doc.setFillColor(...VERDE); doc.rect(0, 34, 210, 1.2, "F");
+      doc.setFont("helvetica", "bold"); doc.setFontSize(8.5); doc.setTextColor(127, 227, 182); doc.text("LICITACON · CALCULADORA DE REAJUSTE", ML, 13);
+      doc.setFontSize(17); doc.setTextColor(255, 255, 255); doc.text("Nota técnica — reajuste contratual", ML, 23);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(184, 203, 210); doc.text("Emitida em " + hojeTxt, 210 - MR, 23, { align: "right" });
+      y = 44;
+      // dados do contrato
+      const dados = [
+        ["Contrato nº", c.contrato || "—", "CNPJ", c.cnpj || "—"],
+        ["Contratada", c.contratada || "—", "", ""],
+        ["Objeto", c.objeto || "—", "", ""],
+        ["Regime", { "14133": "Lei nº 14.133/2021", "13303": "Lei nº 13.303/2016", "13019": "Lei nº 13.019/2014" }[c.regime] || "", "Índice", r.serie.nome]
+      ];
+      doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(...VERDE); doc.text("DADOS DO CONTRATO", ML, y); y += 2.5;
+      doc.autoTable({ startY: y, body: dados.map((l) => l[2] ? l : [l[0], { content: l[1], colSpan: 3 }]), margin: { left: ML, right: MR }, theme: "grid",
+        styles: { font: "helvetica", fontSize: 9.5, cellPadding: 2.2, textColor: [30, 40, 45], lineColor: [221, 228, 227], lineWidth: 0.2 },
+        columnStyles: { 0: { fontStyle: "bold", textColor: CINZA, cellWidth: 26 }, 2: { fontStyle: "bold", textColor: CINZA, cellWidth: 18 } } });
+      y = doc.lastAutoTable.finalY + 7;
+      // quadro do resultado (imagem da tela)
+      doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(...VERDE); doc.text("RESULTADO DO CÁLCULO", ML, y); y += 2.5;
+      if (imagem) {
+        let iw = W * 0.86, ih = iw * imagem.h / imagem.w;
+        if (ih > BASE - y) { ih = BASE - y; iw = ih * imagem.w / imagem.h; }
+        doc.addImage(imagem.data, "PNG", ML + (W - iw) / 2, y, iw, ih);
+        y += ih + 6;
+      } else {
+        par("Valor mensal reajustado: " + brlN(r.novo) + " a partir de " + mesBR(r.ciclos[r.ciclos.length - 1].aniversario) + " (variação de " + pct(r.fatorTot) + ").", { negrito: true });
+      }
       const FUND = {
         "14133": "Lei nº 14.133/2021, art. 25, § 7º (índice de reajuste com data-base vinculada à data do orçamento estimado), art. 92, V e § 3º (cláusula de reajuste), e art. 136, I (formalização por apostila); Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual).",
-        "13019": "Lei nº 13.019/2014 e cláusula de atualização de valores do termo de colaboração ou de fomento; no âmbito federal, a revisão de valores do plano de trabalho pode ser feita por termo aditivo ou por apostila (Decreto nº 8.726/2016, art. 43).",
-        "13303": "Lei nº 13.303/2016, art. 69, III (data-base e periodicidade do reajustamento como cláusula necessária), e regulamento interno de licitações e contratos da empresa; Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual)."
+        "13303": "Lei nº 13.303/2016, art. 69, III (data-base e periodicidade do reajustamento como cláusula necessária), e regulamento interno de licitações e contratos da empresa; Lei nº 10.192/2001, art. 2º, § 1º, e art. 3º, § 1º (periodicidade anual).",
+        "13019": "Lei nº 13.019/2014 e cláusula de atualização de valores do termo de colaboração ou de fomento; no âmbito federal, a revisão de valores do plano de trabalho pode ser feita por termo aditivo ou por apostila (Decreto nº 8.726/2016, art. 43)."
       };
       const ult = r.ciclos[r.ciclos.length - 1];
-      par("NOTA TÉCNICA — CÁLCULO DE REAJUSTE CONTRATUAL", { negrito: true, tam: 14, centro: true, depois: 6 });
-      par("Contrato/processo: " + (c.contrato || "____________________"), { depois: 0 });
-      par("Contratada: " + (c.contratada || "____________________"), { depois: 0 });
-      par("Objeto: " + (c.objeto || "____________________"), { depois: 4 });
-      titulo("1. Objeto");
-      par("Esta nota apresenta o cálculo do reajuste do valor contratual pelo índice " + r.serie.nome + ", previsto no contrato, a partir da data-base de " + mesBR(r.baseYm) + (c.houveReajuste ? " (mês em que passou a valer o último reajuste concedido)." : " (data do orçamento estimado ou a indicada no contrato)."));
-      titulo("2. Fundamentação");
+      secao(1, "Objeto");
+      par("Cálculo do reajuste do valor " + (c.regime === "13019" ? "da parceria" : "contratual") + " pelo índice " + r.serie.nome + ", previsto no instrumento, a partir da data-base de " + mesBR(r.baseYm) + (c.houveReajuste ? " (mês em que passou a valer o último reajuste concedido)." : " (data do orçamento estimado ou a indicada no instrumento)."));
+      secao(2, "Fundamentação");
       par(FUND[c.regime]);
-      par("O reajuste por índice recompõe a variação ordinária dos custos, é devido a cada período de 12 meses contados da data-base e não caracteriza alteração contratual, podendo ser registrado por simples apostila.");
-      titulo("3. Metodologia");
+      par("O reajuste por índice recompõe a variação ordinária dos custos e é devido a cada período de 12 meses contados da data-base.");
+      secao(3, "Metodologia");
       par((c.indice === "ipca"
-        ? "Adota-se a metodologia da Calculadora do Cidadão do Banco Central do Brasil, que usa no cálculo os índices do mês inicial e do mês final. Em cada ciclo, o período vai do mês da data-base ao 11º mês seguinte, inclusive (por exemplo, data-base em fevereiro: IPCA de fevereiro a janeiro do ano seguinte, 12 meses)."
-        : "Em cada ciclo, o período do índice vai do mês da data-base ao mês do aniversário, inclusive (por exemplo, data-base em janeiro: índice de janeiro a janeiro do ano seguinte, 13 meses), conforme a prática adotada nos reajustes de obras e serviços de engenharia.")
-        + " O fator de correção é o produto de (1 + variação mensal) dos meses do período. Fonte dos índices: " + r.serie.fonte + ".");
-      titulo("4. Resultado");
-      tabela(["Ciclo", "Vale a partir de", "Período do índice", "Variação acumulada", "Valor mensal"],
-        r.ciclos.map((ci) => [ci.k + "º", mesBR(ci.aniversario), mesBR(ci.ini) + " a " + mesBR(ci.fim), pct(ci.fator) + (ci.falta ? " (parcial)" : ""), brlN(ci.valor)]));
-      par("Valor mensal antes do reajuste: " + brlN(r.valor) + ". Valor mensal reajustado: " + brlN(r.novo) + " (variação total de " + pct(r.fatorTot) + "). Diferença mensal: " + brlN(r.novo - r.valor) + ".");
-      if (r.retro > 0) par("Diferença acumulada estimada desde o primeiro aniversário até " + mesBR(r.ym(r.refN)) + ", considerando o valor pago sem reajuste: " + brlN(r.retro) + ". O valor a pagar depende das medições efetivamente realizadas no período.");
-      if (r.restante > 0) par("Impacto estimado até o fim da vigência (" + r.restante + " meses): " + brlN(r.impactoRestante) + ".");
-      if (r.pendente) par("Observação: parte do período ainda não tem índice divulgado (último disponível: " + mesBR(r.ultimoDisp) + "); o cálculo considera só os meses já publicados e deve ser refeito após a divulgação.");
-      titulo("5. Memória de cálculo");
+        ? "Metodologia da Calculadora do Cidadão do Banco Central do Brasil, que usa no cálculo os índices do mês inicial e do mês final: em cada ciclo, o período vai do mês da data-base ao 11º mês seguinte, inclusive (12 meses)."
+        : "Em cada ciclo, o período do índice vai do mês da data-base ao mês do aniversário, inclusive (13 meses), conforme a prática adotada nos reajustes de obras e serviços de engenharia.")
+        + " Fator de correção = produto de (1 + variação mensal) dos meses do período. Fonte dos índices: " + r.serie.fonte + ".");
+      secao(4, "Memória de cálculo");
       r.ciclos.forEach((ci) => {
-        par(ci.k + "º ciclo — " + mesBR(ci.ini) + " a " + mesBR(ci.fim), { negrito: true, depois: 0 });
+        par(ci.k + "º ciclo · índice de " + mesBR(ci.ini) + " a " + mesBR(ci.fim) + " · vale a partir de " + mesBR(ci.aniversario), { negrito: true, tam: 9.5, depois: 1 });
         tabela(["Mês", "Variação mensal", "Fator"], ci.lista.map((l) => [mesBR(l.mes), l.v === null ? "não divulgado" : String(l.v).replace(".", ",") + "%", l.v === null ? "—" : (1 + l.v / 100).toFixed(6).replace(".", ",")])
-          .concat([["Acumulado", pct(ci.fator), ci.fator.toFixed(6).replace(".", ",")]]));
+          .concat([[{ content: "Acumulado no ciclo", styles: { fontStyle: "bold" } }, { content: pct(ci.fator), styles: { fontStyle: "bold" } }, { content: ci.fator.toFixed(7).replace(".", ","), styles: { fontStyle: "bold" } }]]),
+          { columnStyles: { 1: { halign: "right" }, 2: { halign: "right" } } });
       });
-      if (r.ciclos.length > 1) { titulo("6. Observação"); par("Há mais de um ciclo anual acumulado. Confira se o contrato foi prorrogado sem que o reajuste tenha sido pedido ou ressalvado, pois há entendimento do TCU de que, nessa situação, o direito pode ter precluído."); }
-      const juris = DOCS.filter((d) => /reajust/i.test([d.titulo, d.ementa, (d.temas || []).join(" ")].join(" "))).slice(0, 3);
-      if (juris.length) { titulo("Jurisprudência relacionada (Biblioteca Licitacon)"); juris.forEach((d) => par("• " + d.titulo + (d.link ? " — " + d.link : ""), { tam: 11, depois: 1 })); }
-      titulo("Conclusão");
-      par("Pelo exposto, o valor mensal do contrato passa de " + brlN(r.valor) + " para " + brlN(r.novo) + ", com efeitos a partir de " + mesBR(ult.aniversario) + ", a ser formalizado por apostila, após a conferência da cláusula de reajuste do contrato e da disponibilidade orçamentária.");
-      y += 10; quebra(20); par("______________________________", { depois: 0 }); par("Responsável", { depois: 6 });
-      par("Cálculo gerado pela Calculadora de reajuste do Licitacon em " + new Date().toLocaleDateString("pt-BR") + ". Confira os dados de entrada, a cláusula contratual e os índices na fonte oficial antes de usar no processo.", { tam: 9 });
-      const n = doc.getNumberOfPages();
-      for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFont("times", "normal"); doc.setFontSize(9); doc.text(String(i), 210 - MR, 15, { align: "right" }); }
+      const obs = [];
+      if (r.pendente) obs.push("Parte do período ainda não tem índice divulgado (último disponível: " + mesBR(r.ultimoDisp) + "); o cálculo considera só os meses já publicados e deve ser refeito após a divulgação.");
+      if (r.ciclos.length > 1) obs.push("Há mais de um ciclo anual acumulado. Confira se o contrato foi prorrogado sem que o reajuste tenha sido pedido ou ressalvado, pois há entendimento do TCU de que, nessa situação, o direito pode ter precluído.");
+      if (r.retro > 0) obs.push("Diferença acumulada estimada até " + mesBR(r.ym(r.refN)) + ": " + brlN(r.retro) + ". O valor a pagar depende das medições efetivamente realizadas.");
+      if (r.restante > 0) obs.push("Impacto estimado até o fim da vigência (" + r.restante + " meses): " + brlN(r.impactoRestante) + ".");
+      let n = 5;
+      if (obs.length) { secao(n++, "Observações"); obs.forEach((t) => par("• " + t)); }
+      secao(n, "Conclusão");
+      par("O valor mensal passa de " + brlN(r.valor) + " para " + brlN(r.novo) + ", com efeitos a partir de " + mesBR(ult.aniversario) + (c.regime === "13019" ? ", observada a cláusula do termo de colaboração ou de fomento." : ", a ser formalizado por apostila, após a conferência da cláusula de reajuste do contrato e da disponibilidade orçamentária."));
+      quebra(22); y += 12;
+      doc.setDrawColor(120); doc.setLineWidth(0.3); doc.line(ML, y, ML + 75, y); doc.line(ML + W - 60, y, ML + W, y);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...CINZA);
+      doc.text("Responsável (nome, cargo e matrícula)", ML, y + 4.5); doc.text("Local e data", ML + W - 60, y + 4.5);
+      const total = doc.getNumberOfPages();
+      for (let i = 1; i <= total; i++) {
+        doc.setPage(i); doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(140);
+        doc.text("Gerado pela Calculadora de reajuste do Licitacon em " + hojeTxt + ". Confira os dados, a cláusula contratual e os índices na fonte oficial.", ML, 290);
+        doc.text(i + "/" + total, 210 - MR, 290, { align: "right" });
+      }
       doc.save("Nota-tecnica-reajuste" + (c.contrato ? "-" + c.contrato.replace(/[^\w-]+/g, "-") : "") + ".pdf");
     } catch (e) {
       console.error(e);
@@ -5446,6 +5510,11 @@ class Component extends DCLogic {
               ]
             };
           })(),
+          calcCnpj: c.cnpj,
+          calcOnCnpj: (e) => { const d = String(e.target.value).replace(/\D/g, "").slice(0, 14);
+            const m = d.replace(/^(\d{2})(\d)/, "$1.$2").replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3").replace(/\.(\d{3})(\d)/, ".$1/$2").replace(/(\d{4})(\d)/, "$1-$2");
+            this.setState((x) => ({ calc: { ...x.calc, cnpj: m } })); },
+          calcCnpjInvalido: String(c.cnpj || "").replace(/\D/g, "").length === 14 && !cnpjValido(c.cnpj),
           calcVerResultado: () => { const el = document.getElementById("lvc-resultado"); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); },
           calcMetodoTit: c.indice === "ipca" ? "IPCA: metodologia do Banco Central." : "Período do índice:",
           calcMetodoTxt: c.indice === "ipca"
