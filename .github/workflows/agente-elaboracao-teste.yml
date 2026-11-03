@@ -1,0 +1,33 @@
+name: Agente — testar elaboração (ETP, TR, Projeto Básico)
+
+# Teste interno, com caso fictício: gera o documento, mede o custo e guarda o Word como artefato.
+# Custa crédito da API (cerca de US$ 1 por documento): rodar só quando necessário.
+on:
+  workflow_dispatch:
+    inputs:
+      doc: { description: "etp, tr ou projeto_basico", required: true, default: "etp" }
+      caso: { description: "arquivo em agente/testes/elaboracao/", required: true, default: "etp-limpeza.json" }
+
+permissions: { contents: read }
+
+jobs:
+  testar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preparar ferramentas
+        run: |
+          sudo apt-get update -qq >/dev/null
+          sudo apt-get install -y -qq poppler-utils libreoffice-writer-nogui fonts-liberation >/dev/null
+          pip install -q python-docx matplotlib
+      - name: Elaborar
+        env: { DOC: "${{ inputs.doc }}", CASO: "${{ inputs.caso }}" }
+        run: |
+          python3 scripts/agente/elaborar.py --doc "$DOC" --respostas "agente/testes/elaboracao/$CASO" --pasta /tmp/saida
+          python3 -c "import json;e=json.load(open('/tmp/saida/execucao.json'));print('::notice title=Custo::US$',e['custo_usd'],'·',e['segundos'],'s · pendências',e['pendencias'],'· alta',e['alta'],'· média',e['media'])"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: elaboracao-teste, path: /tmp/saida, retention-days: 7 }
