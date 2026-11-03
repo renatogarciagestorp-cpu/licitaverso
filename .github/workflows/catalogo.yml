@@ -1,0 +1,20 @@
+name: Catálogo do Compras.gov.br (pesquisa de preços)
+on:
+  schedule:
+    - cron: "41 6 * * 1"   # toda segunda, 3h41 (Brasília)
+  workflow_dispatch:
+permissions: { contents: write }
+concurrency: { group: catalogo, cancel-in-progress: false }
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Baixar o catálogo
+        run: python3 scripts/atualizar-catalogo.py catalogo-compras.json
+      - name: Publicar se mudou
+        run: |
+          if git diff --quiet -- catalogo-compras.json && git ls-files --error-unmatch catalogo-compras.json >/dev/null 2>&1; then echo "nada a publicar"; exit 0; fi
+          git config user.name "Licitacon — catálogo" && git config user.email "actions@users.noreply.github.com"
+          git add catalogo-compras.json && git commit -q -m "Catálogo do Compras.gov.br atualizado"
+          for i in 1 2 3; do git pull -q --rebase && git push -q && break; sleep 10; done
