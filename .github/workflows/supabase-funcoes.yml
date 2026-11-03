@@ -70,7 +70,7 @@ jobs:
           [ -n "$BREVO_API_KEY" ] && args="$args BREVO_API_KEY=$BREVO_API_KEY"
           [ -n "$EMAIL_REMETENTE" ] && args="$args EMAIL_REMETENTE=$EMAIL_REMETENTE"
           [ -n "$AVISOS_SECRET" ] && args="$args AVISOS_SECRET=$AVISOS_SECRET"
-          supabase secrets set --project-ref "$PROJECT_REF" $args
+          supabase secrets set --yes --project-ref "$PROJECT_REF" $args
 
       - name: Atualizar o banco (ajustes idempotentes)
         if: steps.chaves.outputs.ok == 'true'
@@ -104,13 +104,13 @@ jobs:
       - name: Publicar funções (pagamentos e avisos)
         if: steps.chaves.outputs.ok == 'true'
         run: |
-          supabase functions deploy mp-checkout --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
-          supabase functions deploy mp-webhook --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
-          supabase functions deploy avisos --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
-          supabase functions deploy forum-aviso --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
-          supabase functions deploy consultoria-aviso --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
-          supabase functions deploy boas-vindas --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
-          supabase functions deploy analise-aviso --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+          supabase functions deploy mp-checkout --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+          supabase functions deploy mp-webhook --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+          supabase functions deploy avisos --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+          supabase functions deploy forum-aviso --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+          supabase functions deploy consultoria-aviso --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+          supabase functions deploy boas-vindas --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
+          supabase functions deploy analise-aviso --yes --project-ref "$PROJECT_REF" --no-verify-jwt --use-api
 
       - name: Conferir se a função responde
         if: steps.chaves.outputs.ok == 'true'
