@@ -1,0 +1,18 @@
+name: Diagnóstico (temporário)
+on: workflow_dispatch
+jobs:
+  d:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          curl -sS -m 40 "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=10&tipo=codigoPdm&codigo=8435&estado=RJ" | head -c 1500; echo
+          python3 - <<'PY'
+          import sys, json; sys.path.insert(0, "scripts/agente"); import pesquisa_mercado as pm
+          for o, n, uf, e in [("Aquisição de notebooks para as escolas", "Bem", "RJ", None), ("notebooks para escolas", "Bem", "RJ", "locacao"),
+                              ("Serviços contínuos de limpeza, asseio e conservação predial", "Serviço contínuo", "RJ", None),
+                              ("Aquisição de cadeiras giratórias", "Bem", "RJ", None)]:
+              r = pm.precos_praticados(o, n, uf, e)
+              print("==", o, e, len(r))
+              for x in r: print("  ", x["catalogo"][:60], x["unidade"], x["n"], x["abrangencia"], x["minimo"], x["mediana"], x["maximo"], "|", x["exemplos"][0]["orgao"][:30], x["exemplos"][0]["data"])
+          PY

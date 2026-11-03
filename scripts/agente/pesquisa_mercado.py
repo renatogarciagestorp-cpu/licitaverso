@@ -117,6 +117,109 @@ def _itens_parecidos(controle, raizes, max_itens=3):
     return saida
 
 
+# ---------------------------------------------------------------- preços praticados (Compras.gov.br)
+SINONIMOS = {"notebook": ["computador"], "notebooks": ["computador"], "laptop": ["notebook", "computador"], "desktop": ["microcomputador"],
+             "carro": ["veiculo"], "carros": ["veiculo"], "automovel": ["veiculo"], "veiculos": ["veiculo"], "onibus": ["veiculo"],
+             "predial": ["areas", "internas"], "faxina": ["limpeza"], "seguranca": ["vigilancia"], "vigia": ["vigilancia"],
+             "climatizacao": ["condicionado"], "impressao": ["impressora", "reprografia"], "copias": ["reprografia"]}
+_CATALOGO = None
+
+
+def catalogo():
+    global _CATALOGO
+    if _CATALOGO is None:
+        try:
+            import pathlib
+            _CATALOGO = json.loads((pathlib.Path(__file__).resolve().parents[2] / "catalogo-compras.json").read_text(encoding="utf-8"))
+        except Exception:
+            _CATALOGO = {"pdm": [], "servico": []}
+    return _CATALOGO
+
+
+def codigos_catalogo(objeto, tipo, extra=None, n=3):
+    """Casa o objeto com os nomes do catálogo (PDM de material ou serviço do CATSER). Devolve [(codigo, nome)]."""
+    chaves = palavras_chave(objeto, 5) + [t for t in re.findall(r"\b[a-z]\d{1,2}\b", sem_acento(objeto))][:1]
+    if extra:
+        chaves = [extra] + chaves
+    raiz = lambda w: w if len(w) <= 3 else w[:max(5, len(w) - 1)]  # tira só o plural/última letra: "condicionado" não casa com "condicionamento"
+    raizes = []
+    for c in chaves:
+        for x in [c] + SINONIMOS.get(c, []):
+            if raiz(x) not in raizes:
+                raizes.append(raiz(x))
+    if not raizes:
+        return []
+    obrig = raiz(extra or chaves[0])  # a palavra principal (ou um sinônimo) tem de aparecer
+    cand = []
+    for cod, nome, _ in catalogo().get("pdm" if tipo == "material" else "servico", []):
+        nm = sem_acento(re.sub(r"-\s*", "", nome or ""))
+        if "inativo" in nm:
+            continue
+        palavras = re.findall(r"[a-z0-9]+", nm)
+        casa = lambda w, r: w.startswith(r) if len(r) >= 6 else (w == r or w == r + "s" or w == r + "es")
+        if not any(casa(w, obrig) for w in palavras) and not any(casa(w, r) for r in [raiz(x) for x in SINONIMOS.get(chaves[0], [])] for w in palavras):
+            continue
+        casa = lambda w, r: w.startswith(r) if len(r) >= 6 else (w == r or w == r + "s" or w == r + "es")  # palavra curta: inteira
+        p = sum(1 for r in raizes if any(casa(w, r) for w in palavras))
+        inicio = 1 if palavras and any(casa(palavras[0], r) for r in raizes) else 0
+        cand.append((p, inicio, -len(palavras), cod, nome))
+    cand.sort(reverse=True)
+    if not cand or cand[0][0] < 1:
+        return []
+    melhor, ini = cand[0][0], cand[0][1]
+    empatados = [c for c in cand if c[0] == melhor and c[1] == ini]
+    if melhor == 1 and len(empatados) > 10:  # termo genérico demais (ex.: "papel"): só serve o item cujo nome é a própria palavra
+        exato = [c for c in empatados if c[2] == -1]
+        return [(c[3], c[4]) for c in exato[:1]]
+    return [(c[3], c[4]) for c in cand if c[0] == melhor and c[1] == ini][:n]  # só os de maior pontuação
+
+
+def precos_praticados(objeto, natureza="", uf="", extra=None, max_linhas=12):
+    """Preços unitários praticados em compras públicas (módulo de pesquisa de preços do Compras.gov.br), últimos 12 meses."""
+    import datetime
+    nat = sem_acento(natureza)
+    tipo = "material" if ("bem" in nat or "compra" in nat) and not extra else "servico"
+    inicio = (datetime.date.today() - datetime.timedelta(days=365)).isoformat()
+    saida = []
+    for cod, nome in codigos_catalogo(objeto, tipo, extra):
+        linhas = []
+        for est in ([uf] if uf else []) + [""]:
+            p = {"pagina": 1, "tamanhoPagina": 50, "dataCompraInicio": inicio}
+            if est:
+                p["estado"] = est
+            if tipo == "material":
+                p.update({"tipo": "codigoPdm", "codigo": cod}); caminho = "/modulo-pesquisa-preco/1_consultarMaterial"
+            else:
+                p.update({"codigoItemCatalogo": cod}); caminho = "/modulo-pesquisa-preco/3_consultarServico"
+            try:
+                res = (_get(caminho, p, base=COMPRAS, timeout=30) or {}).get("resultado") or []
+            except Exception:
+                res = []
+            linhas = [r for r in res if (_num(r.get("precoUnitario")) or 0) > 0.01]
+            if len(linhas) >= 3:
+                break
+        if not linhas:
+            continue
+        por_un = {}
+        for r in linhas:
+            un = r.get("siglaUnidadeMedida") or r.get("nomeUnidadeFornecimento") or r.get("nomeUnidadeMedida") or "—"
+            por_un.setdefault(un, []).append(r)
+        for un, rs in sorted(por_un.items(), key=lambda x: -len(x[1])):
+            vals = sorted(_num(r["precoUnitario"]) for r in rs)
+            med = vals[len(vals) // 2] if len(vals) % 2 else round((vals[len(vals) // 2 - 1] + vals[len(vals) // 2]) / 2, 2)
+            saida.append({"catalogo": f"{'PDM' if tipo == 'material' else 'CATSER'} {cod} — {nome}", "unidade": un, "n": len(vals),
+                          "minimo": vals[0], "mediana": med, "maximo": vals[-1],
+                          "abrangencia": "estado" if uf and all((r.get("estado") or "") == uf for r in rs) else "nacional",
+                          "exemplos": [{"orgao": r.get("nomeOrgao") or r.get("nomeUasg") or "", "municipio": r.get("municipio") or "",
+                                        "uf": r.get("estado") or "", "data": str(r.get("dataCompra") or r.get("dataResultado") or "")[:10],
+                                        "descricao": re.sub(r"\s+", " ", str(r.get("descricaoDetalhadaItem") or r.get("descricaoItem") or ""))[:160],
+                                        "quantidade": _num(r.get("quantidade")), "preco_unitario": _num(r.get("precoUnitario")),
+                                        "id_compra": r.get("idCompra")} for r in rs[:4]]})
+        if len(saida) >= max_linhas:
+            break
+    return saida
+
+
 def solucoes_para(natureza, objeto):
     """Soluções a pesquisar (o ETP compara todas; a escolha é analisada no documento, não aqui)."""
     nat = sem_acento(natureza)
@@ -189,6 +292,14 @@ def pesquisar(objeto, uf="", natureza="", max_ref=12, limite_s=150):
                 break
     except Exception as e:
         saida["erro"] = f"{type(e).__name__}: {e}"[:300]
+    saida["precos_praticados"] = []
+    try:
+        for rotulo, extra in sols:
+            for linha in precos_praticados(objeto, natureza, uf, extra or None):
+                linha["solucao"] = rotulo
+                saida["precos_praticados"].append(linha)
+    except Exception as e:
+        saida["erro"] = (saida["erro"] + " · " if saida["erro"] else "") + f"preços praticados: {type(e).__name__}"
     saida["segundos"] = round(time.time() - t0)
     return saida
 
@@ -197,7 +308,24 @@ def brl(v):
     return "—" if v is None else "R$ " + f"{v:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
+def bloco_precos(p):
+    pp = (p or {}).get("precos_praticados") or []
+    if not pp:
+        return ""
+    linhas = ["PREÇOS PRATICADOS (módulo de pesquisa de preços do Compras.gov.br, compras dos últimos 12 meses; preço unitário real):"]
+    for n, x in enumerate(pp, 1):
+        linhas.append(f"[C{n}] Solução: {x.get('solucao','')} · {x['catalogo']} · unidade {x['unidade']} · {x['n']} compras "
+                      f"({'mesmo estado' if x['abrangencia'] == 'estado' else 'país'}) · mínimo {brl(x['minimo'])} · mediana {brl(x['mediana'])} · máximo {brl(x['maximo'])}")
+        for e in x["exemplos"]:
+            linhas.append(f"     - {e['orgao']} ({e['municipio']}/{e['uf']}) em {e['data']}: {e['descricao']} · qtd {e['quantidade']} · {brl(e['preco_unitario'])} (compra {e['id_compra']})")
+    linhas.append("Atenção: confira se o item do catálogo corresponde de fato ao objeto e à especificação antes de usar o valor.")
+    return "\n".join(linhas)[:9000]
+
+
 def bloco_prompt(p):
+    extra = bloco_precos(p)
+    if p and not p.get("referencias") and extra:
+        return extra
     if not p or not p.get("referencias"):
         return ("PESQUISA DE MERCADO NO PNCP: nenhuma contratação semelhante encontrada automaticamente"
                 + (f" ({p.get('erro')})" if p and p.get("erro") else "") + ". Não estime valores: use [PREENCHER] e registre a pendência.")
@@ -212,7 +340,7 @@ def bloco_prompt(p):
         for it in r["itens"]:
             linhas.append(f"     - {it['descricao']} | unidade: {it['unidade'] or '—'} | qtd: {it['quantidade'] if it['quantidade'] is not None else '—'}"
                           f" | estimado: {brl(it['valor_unitario_estimado'])} | homologado: {brl(it['valor_unitario_homologado'])}")
-    return "\n".join(linhas)[:14000]
+    return ("\n".join(linhas)[:14000] + ("\n\n" + extra if extra else ""))
 
 
 if __name__ == "__main__":
@@ -223,4 +351,4 @@ if __name__ == "__main__":
     r = pesquisar(a.objeto, a.uf, a.natureza)
     if a.saida:
         open(a.saida, "w", encoding="utf-8").write(json.dumps(r, ensure_ascii=False, indent=1))
-    print(bloco_prompt(r)); print(f"\n{len(r['referencias'])} referências · {r.get('segundos')} s · erro: {r['erro'] or '-'}")
+    print(bloco_prompt(r)); print(f"\n{len(r['referencias'])} referências · {len(r.get('precos_praticados') or [])} linhas de preço praticado · {r.get('segundos')} s · erro: {r['erro'] or '-'}")
