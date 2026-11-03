@@ -435,7 +435,8 @@ def processar_geracao(a):
             campos = {"status": "concluida", "progresso": "pronto", "fase": None, "perguntas": None, "concluido_em": datetime.datetime.now(datetime.timezone.utc).isoformat(), "erro_msg": None,
                       "custo_usd": round(custo_ant + float(exe.get("custo_usd") or 0), 4), "parecer_docx": base + ".docx",
                       "resumo": {"situacao": "elaborado", "pendencias": exe.get("pendencias", 0), "alta": exe.get("alta", 0), "media": exe.get("media", 0),
-                                 "objeto": str(respostas.get("objeto", ""))[:200], "orgao": str(respostas.get("orgao", ""))[:200]}}
+                                 "objeto": str(respostas.get("objeto", ""))[:200], "orgao": str(respostas.get("orgao", ""))[:200],
+                                 **({"recomendacao": exe["recomendacao"]} if exe.get("recomendacao") else {})}}
             http("POST", f"{SUPA}/storage/v1/object/analises/{base}.docx", (saida / "documento.docx").read_bytes(),
                  cab({"Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "x-upsert": "true"}), timeout=300)
             if (saida / "documento.pdf").exists():

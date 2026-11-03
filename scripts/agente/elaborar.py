@@ -200,7 +200,8 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
         "critério de julgamento, regime de execução, solução indicada no TR ou no Projeto Básico, prazo) devem ser seguidas exatamente "
         "como informadas, apenas fundamentadas (exceção: se o parcelamento vier como \"Analisar no ETP e recomendar\", analise as "
         "opções à luz da pesquisa de mercado, recomende a mais adequada com justificativa e escreva [PREENCHER: confirmar a decisão "
-        "sobre o parcelamento], registrando a pendência); (8) o requisitante informa de propósito só o essencial (criação rápida): redija com texto técnico adequado ao "
+        "sobre o parcelamento], registrando a pendência; no ETP, se a modalidade ou o critério de julgamento vierem como \"Analisar no ETP e "
+        "recomendar\", recomende os adequados à solução escolhida, com fundamento legal, sem [PREENCHER]); (8) o requisitante informa de propósito só o essencial (criação rápida): redija com texto técnico adequado ao "
         "objeto apenas a parte descritiva que não depende de decisão nem de dado do órgão (requisitos usuais de qualidade, rotinas de "
         "fiscalização, sustentabilidade, riscos, providências), deixando [PREENCHER] para dados factuais (valores oficiais, datas, "
         "nomes, números de processo, dotação); (9) pesquisa de mercado: use apenas os dados do PNCP e do Compras.gov.br fornecidos e as "
@@ -295,6 +296,8 @@ NOMES_SECAO = {"informacoes": "Previsão no PCA e alinhamento", "necessidade": "
                "just_tecnica": "Justificativa técnica", "parcelamento_tecnico": "Parcelamento", "just_economica": "Justificativa econômica",
                "parcelamento_economico": "Parcelamento", "beneficios": "Resultados pretendidos", "providencias": "Providências prévias",
                "correlatas": "Contratações correlatas", "ambientais": "Impactos ambientais", "viabilidade_justificativa": "Posicionamento conclusivo",
+               "forma_contratacao": "Forma de contratação", "medicao": "Medição e pagamento", "particularidades": "Aspectos específicos",
+               "riscos_texto": "Análise de riscos", "riscos": "Matriz de riscos", "contratacao": "Forma de contratação",
                "solucoes": "Alternativas do mercado", "itens": "Estimativa de custo", "tco": "Custos das soluções", "resumo": "Síntese do estudo"}
 VALOR = re.compile(r"valor|pre[cç]o|custo|r\$|mediana|or[cç]amento estimado|cota[cç]", re.I)
 TEXTO_VALOR = "conforme a pesquisa de preços a ser juntada aos autos (art. 23 da Lei nº 14.133/2021)"
@@ -717,7 +720,9 @@ def main():
     if shutil.which("soffice"):
         subprocess.run(["soffice", "--headless", "--convert-to", "pdf", "--outdir", str(pasta), str(pasta / "documento.docx")],
                        capture_output=True, timeout=300)
+    ct = docj.get("contratacao") or {}
     resumo = {"custo_usd": round(custo_usd, 4), "segundos": round(time.time() - t0), "uso": uso,
+              "recomendacao": {k: ct.get(k) for k in ("modalidade", "criterio", "modo_disputa", "regime_execucao", "registro_precos") if ct.get(k) is not None} or None,
               "pendencias": len(docj.get("pendencias") or []),
               "alta": sum(1 for r in (conferencia or {}).get("resultados", []) if r.get("gravidade") == "alta" and r.get("resultado") in ("nao_conforme", "parcial")),
               "media": sum(1 for r in (conferencia or {}).get("resultados", []) if r.get("gravidade") == "media" and r.get("resultado") in ("nao_conforme", "parcial"))}

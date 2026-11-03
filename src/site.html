@@ -1937,6 +1937,7 @@
                 <sc-if value="{{ c.mostraOutro }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}: detalhe" value="{{ c.outroValor }}" sc-camel-on-input="{{ c.onOutro }}" placeholder="Qual?"></sc-if>
                 <sc-if value="{{ c.temExemplos }}" hint-placeholder-val="{{ false }}"><div class="lve-exemplos"><span>Exemplos:</span><sc-for list="{{ elExemplos }}" as="ex" hint-placeholder-count="4"><button type="button" class="lvc-chip" sc-camel-on-click="{{ ex.usar }}" aria-pressed="{{ ex.sel }}">{{ ex.rot }}</button></sc-for></div></sc-if>
                 <sc-if value="{{ c.dica }}" hint-placeholder-val="{{ false }}"><small>{{ c.dica }}</small></sc-if>
+                <sc-if value="{{ c.aviso }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso" role="note">{{ c.aviso }}</p></sc-if>
               </div>
             </sc-for>
 
@@ -1970,6 +1971,7 @@
                 <sc-if value="{{ c.mostraOutro }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}: detalhe" value="{{ c.outroValor }}" sc-camel-on-input="{{ c.onOutro }}" placeholder="Qual?"></sc-if>
                 <sc-if value="{{ c.temExemplos }}" hint-placeholder-val="{{ false }}"><div class="lve-exemplos"><span>Exemplos:</span><sc-for list="{{ elExemplos }}" as="ex" hint-placeholder-count="4"><button type="button" class="lvc-chip" sc-camel-on-click="{{ ex.usar }}" aria-pressed="{{ ex.sel }}">{{ ex.rot }}</button></sc-for></div></sc-if>
                 <sc-if value="{{ c.dica }}" hint-placeholder-val="{{ false }}"><small>{{ c.dica }}</small></sc-if>
+                <sc-if value="{{ c.aviso }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso" role="note">{{ c.aviso }}</p></sc-if>
               </div>
             </sc-for>
 
@@ -4161,6 +4163,12 @@ const ELAB_FINAIS = [
 // informações que entram no documento: se estiverem em branco, o assinante é perguntado antes de criar
 const ELAB_NECESSARIOS = { etp: ["processo", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade"],
   tr: ["processo", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade"], projeto_basico: ["processo", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade"] };
+const ELAB_MODALIDADES = ["Pregão", "Concorrência", "Concurso", "Diálogo competitivo", "Dispensa", "Inexigibilidade", "Adesão a ata"];
+const ELAB_CRITERIOS = ["Menor preço", "Maior desconto", "Melhor técnica ou conteúdo artístico", "Técnica e preço", "Maior retorno econômico"];
+const ELAB_REC = "Analisar no ETP e recomendar";
+const ELAB_AVISO_DISPENSA = (R) => R.selecao === "Dispensa"
+  ? "Na dispensa em razão do valor (art. 75, I e II) e na contratação emergencial ou em calamidade (art. 75, VII e VIII), o ETP é facultativo (IN SEGES/ME nº 58/2022, art. 14, I; confira o regulamento do seu órgão). Se for o seu caso, você pode seguir sem este documento e economizar."
+  : "";
 const ELAB_RAPIDO = {
   etp: [
     { k: "objeto", etapa: "contratacao", rot: "O que você precisa contratar?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
@@ -4174,6 +4182,10 @@ const ELAB_RAPIDO = {
     ELAB_PROCESSO,
     { k: "parcelamento", etapa: "mercado", depois: true, rot: "Parcelamento", tipo: "chips", obrig: true, op: ["Parcelar por itens", "Parcelar por lotes", "Não parcelar", "Analisar no ETP e recomendar"], dica: "Decisão sua (inciso VIII). Se preferir, o agente analisa à luz da pesquisa e recomenda; a confirmação fica marcada para você." },
     { k: "parc_motivo", etapa: "mercado", depois: true, rot: "Motivo da sua decisão", tipo: "chips", obrig: true, multi: true, outro: true, seParc: true, op: ["Ampliar a competição", "Itens de natureza diferente", "Ganho de escala", "Serviço indivisível ou gestão única", "Risco técnico em dividir", "Outro"] },
+    { k: "selecao", etapa: "mercado", depois: true, rot: "Modalidade ou forma de contratação", tipo: "chips", obrig: true, op: [...ELAB_MODALIDADES, ELAB_REC], aviso: ELAB_AVISO_DISPENSA,
+      dica: "Decisão sua (art. 18, VIII). Se preferir, o agente indica a modalidade adequada à solução escolhida, com o fundamento legal, e o TR aproveita depois." },
+    { k: "criterio", etapa: "mercado", depois: true, rot: "Critério de julgamento", tipo: "chips", obrig: true, op: [...ELAB_CRITERIOS, ELAB_REC],
+      dica: "Art. 33. O ETP também indica o modo de disputa e se cabe registro de preços." },
     ELAB_UNIDADE,
     { k: "gestor", etapa: "pessoas", rot: "Gestor do contrato", tipo: "linha", ph: "Nome, cargo e matrícula", dica: "Se ainda não foi designado, deixe em branco: o documento marca para preencher." },
     { k: "fiscais", etapa: "pessoas", rot: "Fiscais do contrato ou comissão de fiscalização", tipo: "texto", ph: "Um por linha: nome, cargo, matrícula e função (fiscal técnico, administrativo, suplente)" },
@@ -4190,8 +4202,8 @@ const ELAB_RAPIDO = {
     ELAB_PROCESSO,
     { k: "valor", etapa: "mercado", rot: "Valor estimado da sua pesquisa de preços", tipo: "linha", ph: "Ex.: R$ 850.000,00 por ano", dica: "Se ainda não tiver, deixe em branco: pesquisamos contratações e preços praticados como referência." },
     { k: "adjudicacao", etapa: "mercado", depois: true, rot: "Adjudicação", tipo: "chips", obrig: true, op: ["Por item", "Por lote", "Global (lote único)"] },
-    { k: "selecao", etapa: "mercado", depois: true, rot: "Forma de seleção do fornecedor", tipo: "chips", obrig: true, op: ["Pregão", "Concorrência", "Dispensa", "Inexigibilidade", "Adesão a ata"] },
-    { k: "criterio", etapa: "mercado", depois: true, rot: "Critério de julgamento", tipo: "chips", obrig: true, op: ["Menor preço", "Maior desconto", "Técnica e preço", "Melhor técnica"] },
+    { k: "selecao", etapa: "mercado", depois: true, rot: "Forma de seleção do fornecedor", tipo: "chips", obrig: true, op: ELAB_MODALIDADES, dica: "Se você fez o ETP aqui, a recomendação dele aparece para você aproveitar." },
+    { k: "criterio", etapa: "mercado", depois: true, rot: "Critério de julgamento", tipo: "chips", obrig: true, op: ELAB_CRITERIOS },
     ELAB_UNIDADE,
     { k: "gestor", etapa: "pessoas", rot: "Gestor do contrato", tipo: "linha", ph: "Nome, cargo e matrícula", dica: "Se ainda não foi designado, deixe em branco: o documento marca para preencher." },
     { k: "fiscais", etapa: "pessoas", rot: "Fiscais do contrato ou comissão de fiscalização", tipo: "texto", ph: "Um por linha: nome, cargo, matrícula e função (fiscal técnico, administrativo, suplente)" },
@@ -4242,6 +4254,8 @@ const ELAB_MONTAGEM = {
     ["Pesquisa de mercado", "Contratações semelhantes no PNCP e preços unitários praticados no Compras.gov.br, primeiro no seu estado, mais as referências que você enviar."],
     ["Todas as soluções", "Compra, locação, serviço, adesão a ata, execução direta: cada uma com vantagens, desvantagens e custo estimado."],
     ["A melhor solução", "O agente indica a mais vantajosa com base nos dados e justifica; a escolha final continua sua."],
+    ["Forma de contratação", "Modalidade, critério de julgamento, modo de disputa e registro de preços que decorrem da solução: os seus ou os recomendados."],
+    ["Riscos e execução", "Matriz de riscos da contratação, medição e pagamento nos serviços e os pontos próprios do objeto (vigência, transição, licenças)."],
     ["Os 13 itens da lei", "Cada inciso do art. 18, § 1º, da Lei 14.133/2021, com a jurisprudência do Tribunal de Contas do seu estado."],
     ["Conferência e Word", "O agente revisa o próprio texto, lista pendências e entrega em Word e PDF."] ],
   tr: [
@@ -4713,6 +4727,22 @@ class Component extends DCLogic {
             bruto: ok[k], outro: ok[k + "_outro"] || "", par: ELAB_PARES[k] ? [ELAB_PARES[k], ok[ELAB_PARES[k]] || ""] : null, marcado: false }));
         if (reap.length) reap.docAnterior = (ELAB[u.doc] || {}).sigla || "";
       } catch (e) { reap = []; }
+      // TR ou Projeto Básico: a forma de contratação recomendada no último ETP concluído entra como sugestão para marcar
+      if (doc !== "etp") {
+        const etp = (this.state.analises || []).find((a) => a.documento === "etp" && a.status === "concluida" && a.resumo && a.resumo.recomendacao);
+        const rec = etp ? etp.resumo.recomendacao : null;
+        if (rec) {
+          const ant = reap.docAnterior;
+          [["selecao", rec.modalidade], ["criterio", rec.criterio]].forEach(([k, v]) => {
+            const c = (ELAB_RAPIDO[doc] || []).find((x) => x.k === k);
+            if (!v || !c || !(c.op || []).includes(v)) return;
+            reap = reap.filter((x) => x.k !== k);
+            reap.unshift({ k, rot: ELAB_ROT[k] + " (recomendação do ETP)", valor: v + (etp.resumo.objeto ? " · ETP de " + String(etp.resumo.objeto).slice(0, 60) : ""),
+              bruto: v, outro: "", par: null, marcado: false });
+          });
+          reap.docAnterior = ant || "ETP";
+        }
+      }
     }
     const p = this.state.perfil || {};
     const base = temRasc ? rasc : {};
@@ -6486,6 +6516,7 @@ class Component extends DCLogic {
               ehTexto: c.tipo === "texto", ehLinha: c.tipo === "linha", ehChips: c.tipo === "chips", temExemplos: !!c.exemplos,
               valor: v, onInput: this.elResponder(c.k),
               op: (c.op || []).map((nome) => ({ nome, sel: sel.includes(nome), escolher: () => alterna(nome) })),
+              aviso: c.aviso ? c.aviso(R) : "",
               mostraOutro: !!c.outro && sel.includes("Outro"), outroValor: R[c.k + "_outro"] || "", onOutro: this.elResponder(c.k + "_outro") };
           };
             const et = (ELAB_ETAPAS[el.doc] || [])[el.passo || 0] || {};

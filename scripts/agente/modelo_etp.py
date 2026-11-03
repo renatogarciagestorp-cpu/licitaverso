@@ -16,7 +16,14 @@ MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "a
 LISTA = {"type": "array", "items": {"type": "string"}}
 CHAVES = ["informacoes", "necessidade", "motivacao", "area", "negocio", "tecnologicas", "requisitos", "demanda", "levantamento",
           "comparativa", "inviaveis", "custos", "solucao", "estimativa", "just_tecnica", "parcelamento_tecnico", "just_economica",
-          "parcelamento_economico", "beneficios", "providencias", "correlatas", "ambientais", "viabilidade_justificativa"]
+          "parcelamento_economico", "beneficios", "providencias", "correlatas", "ambientais", "viabilidade_justificativa",
+          "forma_contratacao", "medicao", "particularidades", "riscos_texto"]
+MODALIDADES = ["Pregão", "Concorrência", "Concurso", "Diálogo competitivo", "Dispensa", "Inexigibilidade", "Adesão a ata"]
+CRITERIOS = ["Menor preço", "Maior desconto", "Melhor técnica ou conteúdo artístico", "Técnica e preço", "Maior retorno econômico", "Não se aplica"]
+MODOS = ["Aberto", "Fechado", "Aberto e fechado", "Fechado e aberto", "Não se aplica"]
+REGIMES = ["Não se aplica (fornecimento de bens)", "Empreitada por preço unitário", "Empreitada por preço global", "Empreitada integral",
+           "Contratação por tarefa", "Contratação integrada", "Contratação semi-integrada", "Fornecimento e prestação de serviço associado",
+           "Serviço por preço unitário"]
 
 FERRAMENTA = {
     "name": "entregar_documento",
@@ -57,10 +64,27 @@ FERRAMENTA = {
             "item": {"type": "string"}, "descricao": {"type": "string"}, "unidade": {"type": "string"},
             "quantidade": {"type": ["number", "null"]}, "valor_unitario": {"type": ["number", "null"]}, "fonte": {"type": "string"}},
             "required": ["item", "descricao"]}},
+        "contratacao": {"type": "object", "description": "forma de contratação que decorre da solução escolhida (art. 18, VIII, da Lei 14.133/2021)", "properties": {
+            "modalidade": {"type": "string", "enum": MODALIDADES, "description": "modalidade de licitação ou forma de contratação direta"},
+            "fundamento_modalidade": {"type": "string", "description": "dispositivo legal e motivo, ex.: art. 6º, XLI, e art. 29: bem comum, padrões de desempenho definidos objetivamente"},
+            "criterio": {"type": "string", "enum": CRITERIOS},
+            "fundamento_criterio": {"type": "string", "description": "art. 33 e motivo"},
+            "modo_disputa": {"type": "string", "enum": MODOS, "description": "art. 56"},
+            "regime_execucao": {"type": "string", "enum": REGIMES, "description": "art. 46, para obras e serviços"},
+            "registro_precos": {"type": "boolean", "description": "true se recomenda o Sistema de Registro de Preços (art. 82)"},
+            "fundamento_srp": {"type": "string"},
+            "do_requisitante": {"type": "boolean", "description": "true se modalidade e critério foram decididos pelo requisitante"}},
+            "required": ["modalidade", "fundamento_modalidade", "criterio", "fundamento_criterio"]},
+        "riscos": {"type": "array", "description": "matriz de riscos ESPECÍFICOS desta contratação (não genéricos): 5 a 10 riscos", "items": {"type": "object", "properties": {
+            "risco": {"type": "string"}, "categoria": {"type": "string", "enum": ["Técnico", "Operacional", "Financeiro", "Jurídico"]},
+            "fase": {"type": "string", "enum": ["Planejamento", "Seleção do fornecedor", "Execução contratual"]},
+            "probabilidade": {"type": "string", "enum": ["Baixa", "Média", "Alta"]}, "impacto": {"type": "string", "enum": ["Baixo", "Médio", "Alto"]},
+            "mitigacao": {"type": "string", "description": "medida preventiva e de contingência"}, "responsavel": {"type": "string", "description": "cargo ou unidade, ex.: fiscal técnico"}},
+            "required": ["risco", "categoria", "probabilidade", "impacto", "mitigacao", "responsavel"]}},
         "viabilidade": {"type": "string", "enum": ["Viável", "Viável com restrições", "Inviável"]},
         "pendencias": LISTA,
         "jurisprudencia_ids": LISTA},
-        "required": ["eh_tic", "categoria", "secoes", "solucoes", "viabilidade", "pendencias"]},
+        "required": ["eh_tic", "categoria", "secoes", "solucoes", "contratacao", "riscos", "viabilidade", "pendencias"]},
 }
 
 INSTRUCOES = (
@@ -79,7 +103,19 @@ INSTRUCOES = (
     "just_economica: justificativas técnica e econômica da escolha; parcelamento_tecnico e parcelamento_economico: justificativa do parcelamento "
     "ou não (inciso VIII), seguindo a decisão do requisitante; beneficios: resultados pretendidos (inciso IX); providencias: providências prévias, "
     "inclusive capacitação de fiscais e gestores (inciso X); correlatas: contratações correlatas e interdependentes (inciso XI); ambientais: impactos "
-    "ambientais e medidas mitigadoras (inciso XII); viabilidade_justificativa: posicionamento conclusivo (inciso XIII). "
+    "ambientais e medidas mitigadoras (inciso XII); viabilidade_justificativa: posicionamento conclusivo (inciso XIII); "
+    "forma_contratacao: por que a modalidade, o critério de julgamento, o modo de disputa e, se for o caso, o registro de preços decorrem da "
+    "solução escolhida e do mercado (art. 18, VIII); medicao: só se o objeto for serviço (ou bem com serviço associado), como a execução será "
+    "medida (indicadores, instrumento de medição de resultado, nível mínimo de serviço) e a forma e o prazo de pagamento; senão, lista vazia; "
+    "particularidades: pontos próprios do tipo de objeto: serviço contínuo: vigência e prorrogação (arts. 106 e 107), transição entre contratos "
+    "e repactuação ou reajuste; registro de preços: quantidades mínimas e máximas, órgãos participantes, adesões e risco de desabastecimento; "
+    "obras e engenharia: licenças, projeto e prazos; TIC: compatibilidade, licenciamento e obsolescência; lista vazia se nada se aplicar; "
+    "riscos_texto: um ou dois parágrafos apresentando a matriz de riscos (gestão de riscos do art. 18, X, e art. 22). "
+    "contratacao: a modalidade e o critério recomendados para a solução escolhida, com fundamento legal (adesão a ata: art. 86; dispensa: inciso "
+    "do art. 75; inexigibilidade: inciso do art. 74; bem ou serviço comum: pregão, art. 29; obra e serviço especial de engenharia: concorrência). "
+    "Se o requisitante já decidiu a modalidade ou o critério, use exatamente a decisão dele (do_requisitante true) e só a fundamente; se pediu "
+    "\"Analisar no ETP e recomendar\", recomende. riscos: matriz com riscos específicos desta contratação (técnicos, operacionais, "
+    "financeiros e jurídicos), com probabilidade, impacto, medida de mitigação e responsável; nada genérico. "
     "Em solucoes, para CADA solução (inclusive adesão a ata e as inviáveis) escreva em 'mercado' o que a pesquisa encontrou para ela "
     "(contratações e atas semelhantes, preços unitários, faixa e mediana, fontes [P#]/[C#]), em 'custo_total' o custo para a administração no "
     "horizonte, e liste vantagens, desvantagens e riscos (ex.: adesão: vigência e saldo da ata, aceite do órgão gerenciador e do fornecedor, "
@@ -134,6 +170,13 @@ def texto_plano(docj):
         partes.append(f"Solução {x.get('id')}: {x.get('nome')} — {x.get('descricao')} ({'viável' if x.get('viavel') else 'inviável: ' + str(x.get('motivo_inviabilidade') or '')})")
     for it in docj.get("itens") or []:
         partes.append(f"Item {it.get('item')}: {it.get('descricao')} · {num(it.get('quantidade'))} {it.get('unidade') or ''} · {brl(it.get('valor_unitario'))}")
+    c = docj.get("contratacao") or {}
+    if c:
+        partes.append(f"Forma de contratação recomendada: {c.get('modalidade','')} ({c.get('fundamento_modalidade','')}); critério: {c.get('criterio','')} "
+                      f"({c.get('fundamento_criterio','')}); modo de disputa: {c.get('modo_disputa','')}; regime: {c.get('regime_execucao','')}; "
+                      f"registro de preços: {'sim' if c.get('registro_precos') else 'não'}")
+    for r_ in docj.get("riscos") or []:
+        partes.append(f"Risco: {r_.get('risco')} ({r_.get('categoria')}, P {r_.get('probabilidade')}, I {r_.get('impacto')}) — mitigação: {r_.get('mitigacao')} — {r_.get('responsavel')}")
     partes.append(f"Declaração de viabilidade: {docj.get('viabilidade','')}")
     return "\n".join(partes)
 
@@ -163,6 +206,16 @@ def simulado(respostas):
                 {"id": 2, "componentes": [{"componente": "Locação com manutenção", "unidade": "unidade/mês", "quantidade": 40, "valor_unitario": 120, "valores": [57600] * 5, "fonte": "[P5]"}]}]},
             "itens": [{"item": "1", "descricao": "Notebook conforme especificação", "unidade": "unidade", "quantidade": 40, "valor_unitario": 5122, "fonte": "[C1]"},
                       {"item": "2", "descricao": "Manutenção corretiva após a garantia (2 anos)", "unidade": "unidade/ano", "quantidade": 80, "valor_unitario": 390, "fonte": "[C3]"}],
+            "contratacao": {"modalidade": "Pregão", "fundamento_modalidade": "Notebooks são bens comuns, com padrões de desempenho e qualidade definidos objetivamente por especificações usuais de mercado (art. 6º, XIII, e art. 29 da Lei nº 14.133/2021).",
+                            "criterio": "Menor preço", "fundamento_criterio": "O critério de menor preço por item atende ao interesse público, pois a especificação mínima garante a qualidade (art. 33, I).",
+                            "modo_disputa": "Aberto", "regime_execucao": "Não se aplica (fornecimento de bens)", "registro_precos": False,
+                            "fundamento_srp": "A quantidade é certa e a entrega é única, sem necessidade de contratações frequentes (art. 82).", "do_requisitante": False},
+            "riscos": [{"risco": "Equipamento entregue abaixo da especificação mínima", "categoria": "Técnico", "fase": "Execução contratual", "probabilidade": "Média", "impacto": "Alto",
+                        "mitigacao": "Exigir ficha técnica na proposta e conferir cada unidade no recebimento provisório.", "responsavel": "Fiscal técnico"},
+                       {"risco": "Licitação deserta ou fracassada por preço estimado defasado", "categoria": "Financeiro", "fase": "Seleção do fornecedor", "probabilidade": "Baixa", "impacto": "Médio",
+                        "mitigacao": "Atualizar a pesquisa de preços antes da publicação do edital.", "responsavel": "Agente de contratação"},
+                       {"risco": "Atraso na assistência técnica durante a garantia", "categoria": "Operacional", "fase": "Execução contratual", "probabilidade": "Média", "impacto": "Médio",
+                        "mitigacao": "Prever prazo máximo de atendimento e multa por atraso no termo de referência.", "responsavel": "Gestor do contrato"}],
             "viabilidade": "Viável", "pendencias": [], "jurisprudencia_ids": []}
 
 
@@ -418,10 +471,11 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
 
     # 2. Necessidade
     secao(2, "Descrição da necessidade da contratação")
-    Num("2").varios(S.get("necessidade"))
-    if S.get("motivacao") or S.get("negocio"):
-        subsecao("2.1.", "Motivação e necessidades de negócio")
-        n21 = Num("2.1"); n21.varios(S.get("motivacao")); n21.varios(S.get("negocio"))
+    n2 = Num("2"); n2.varios(S.get("necessidade"))
+    if S.get("motivacao") or S.get("negocio"):  # a subseção continua a numeração dos parágrafos (2.1, 2.2 ... 2.n)
+        c2 = f"2.{n2.n + 1}"
+        subsecao(c2 + ".", "Motivação e necessidades de negócio")
+        n21 = Num(c2); n21.varios(S.get("motivacao")); n21.varios(S.get("negocio"))
 
     # 3. PCA e alinhamento
     secao(3, "Previsão no plano de contratações anual e alinhamento estratégico")
@@ -539,10 +593,31 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
         n81.p(f"**Solução {escolhida} – {nome_sol.get(escolhida)}.**")
     subsecao("8.2.", "Justificativa")
     n82 = Num("8.2"); n82.varios(S.get("just_tecnica")); n82.varios(S.get("just_economica"))
+    ct = docj.get("contratacao") or {}
+    if ct or S.get("forma_contratacao"):
+        subsecao("8.3.", "Forma de contratação recomendada")
+        n83 = Num("8.3")
+        if ct:
+            n83.p("Decorre da solução escolhida e do mercado pesquisado a seguinte forma de contratação (art. 18, VIII, da Lei nº 14.133/2021)"
+                  + (", conforme a decisão da área requisitante:" if ct.get("do_requisitante") else ", que recomendo à autoridade competente:"))
+            linhas = [["Modalidade / forma", [f"**{ct.get('modalidade', '')}**", ct.get("fundamento_modalidade", "")]],
+                      ["Critério de julgamento", [f"**{ct.get('criterio', '')}**", ct.get("fundamento_criterio", "")]]]
+            if ct.get("modo_disputa") and ct["modo_disputa"] != "Não se aplica":
+                linhas.append(["Modo de disputa", ct["modo_disputa"]])
+            if ct.get("regime_execucao") and not ct["regime_execucao"].startswith("Não se aplica"):
+                linhas.append(["Regime de execução", ct["regime_execucao"]])
+            if ct.get("registro_precos") is not None:
+                linhas.append(["Registro de preços", [f"**{'Sim' if ct.get('registro_precos') else 'Não'}**"] + ([ct["fundamento_srp"]] if ct.get("fundamento_srp") else [])])
+            tabela(None, linhas, [4.2, 12.3], chave_valor=True)
+        n83.varios(S.get("forma_contratacao"))
 
     # 9..16
     secao(9, "Descrição da solução como um todo")
-    Num("9").varios(S.get("solucao"))
+    n9 = Num("9"); n9.varios(S.get("solucao"))
+    k9 = n9.n
+    for chave, titulo in (("medicao", "Execução, medição e pagamento"), ("particularidades", "Aspectos específicos do objeto")):
+        if [t_ for t_ in (S.get(chave) or []) if str(t_).strip()]:
+            k9 += 1; subsecao(f"9.{k9}.", titulo); Num(f"9.{k9}").varios(S.get(chave))
     secao(10, "Justificativas para o parcelamento ou não da solução")
     n10 = Num("10"); n10.varios(S.get("parcelamento_tecnico")); n10.varios(S.get("parcelamento_economico"))
     parc = sem_acento(respostas.get("parcelamento", ""))
@@ -558,14 +633,28 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
     Num("13").varios(S.get("correlatas") or ["Não há contratações correlatas ou interdependentes."])
     secao(14, "Possíveis impactos ambientais e medidas mitigadoras")
     Num("14").varios(S.get("ambientais") or ["[PREENCHER: impactos ambientais e medidas mitigadoras.]"])
-    secao(15, "Posicionamento conclusivo sobre a adequação da contratação")
-    Num("15").varios(S.get("viabilidade_justificativa"))
-    secao(16, "Declaração de viabilidade da contratação")
+    secao(15, "Análise de riscos")
+    n15 = Num("15")
+    n15.varios(S.get("riscos_texto") or ["Identifiquei os riscos específicos desta contratação, com as medidas de prevenção e de contingência e os responsáveis por acompanhá-los (art. 18, X, e art. 22 da Lei nº 14.133/2021):"])
+    rk = docj.get("riscos") or []
+    if rk:
+        cores = {"Alta": "F4CCCC", "Alto": "F4CCCC", "Média": "FCE8B2", "Médio": "FCE8B2", "Baixa": "D9EAD3", "Baixo": "D9EAD3"}
+        t_r = tabela(["Nº", "Risco", "Categoria", "Prob.", "Impacto", "Medida de mitigação", "Responsável"],
+                     [[str(i_), r_.get("risco", "") + (f" ({r_['fase']})" if r_.get("fase") else ""), r_.get("categoria", ""), r_.get("probabilidade", ""),
+                       r_.get("impacto", ""), r_.get("mitigacao", ""), r_.get("responsavel", "")] for i_, r_ in enumerate(rk, 1)],
+                     [0.9, 3.5, 2.4, 1.5, 1.8, 4.0, 2.7], alinhar=["c", "e", "c", "c", "c", "e", "c"])
+        for row in t_r.rows[1:]:
+            for ci in (3, 4):
+                cor_ = cores.get(row.cells[ci].text.strip())
+                if cor_: sombrear(row.cells[ci]._tc.get_or_add_tcPr(), cor_)
+    secao(16, "Posicionamento conclusivo sobre a adequação da contratação")
+    Num("16").varios(S.get("viabilidade_justificativa"))
+    secao(17, "Declaração de viabilidade da contratação")
     v = docj.get("viabilidade") or "[PREENCHER]"
-    Num("16").p(f"Com base nos estudos e justificativas apresentados, declaro que a contratação é **{v.upper()}**"
+    Num("17").p(f"Com base nos estudos e justificativas apresentados, declaro que a contratação é **{v.upper()}**"
                 + (f", sendo indicada a Solução {escolhida} – {nome_sol.get(escolhida)}" if escolhida in nome_sol else "") + ".")
 
-    n_sec = 16
+    n_sec = 17
     if refs or refs_p or pp:
         n_sec += 1; secao(n_sec, "Referências")
         for j in refs or []:
