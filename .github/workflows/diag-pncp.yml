@@ -1,0 +1,10 @@
+name: Diagnóstico (temporário)
+on: workflow_dispatch
+jobs:
+  d:
+    runs-on: ubuntu-latest
+    steps:
+      - env: { S: "${{ secrets.AVISOS_SECRET }}" }
+        run: |
+          curl -sS -m 120 -X POST https://umnhhztdqersjfrzqcea.supabase.co/functions/v1/elab-triagem -H "x-avisos: $S" -H "Content-Type: application/json" \
+            -d '{"doc":"etp","respostas":{"orgao":"Prefeitura Municipal de Exemplo","uf":"RJ","objeto":"Aquisição de notebooks para as escolas municipais","necessidade":"Os computadores atuais estão obsoletos","quantidades":"40 notebooks","especificacoes":"Processador Intel i5, SSD 225, tela 19 polegadas, Windows 11, Microsoft Office","natureza":"Bem","prazo":"Entrega única","pca":"Sim"}}' | python3 -m json.tool | head -60

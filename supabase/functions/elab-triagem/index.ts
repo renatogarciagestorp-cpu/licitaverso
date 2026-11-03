@@ -45,7 +45,9 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return erro("Método não permitido", 405);
   const admin = clienteServico();
-  const usuario = await usuarioDaRequisicao(req, admin);
+  const segredo = Deno.env.get("AVISOS_SECRET") ?? "";
+  const interno = segredo.length >= 16 && req.headers.get("x-avisos") === segredo;  // teste interno (GitHub Actions)
+  const usuario = interno ? { id: "00000000-0000-0000-0000-000000000000" } : await usuarioDaRequisicao(req, admin);
   if (!usuario) return erro("Entre na sua conta para continuar.", 401);
   const chave = Deno.env.get("ANTHROPIC_API_KEY");
   if (!chave) return resposta({ perguntas: [], indisponivel: true });
