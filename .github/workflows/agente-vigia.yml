@@ -52,5 +52,5 @@ jobs:
             sleep 60
           done
       - name: Passar o plantão para um novo vigia
-        if: always()
+        if: success() || failure()   # cancelado à mão: não reacende (o agendamento de hora em hora reacende)
         run: gh workflow run agente-vigia.yml --ref "${GITHUB_REF_NAME}" -R "${GITHUB_REPOSITORY}"
