@@ -20,7 +20,8 @@ export function moldura(titulo: string, paragrafos: string[], botao?: { texto: s
 </div>`;
 }
 
-export async function enviarEmail(para: { email: string; nome?: string }, assunto: string, html: string) {
+export async function enviarEmail(para: { email: string; nome?: string }, assunto: string, html: string,
+  anexos?: { name: string; content: string }[]) {
   const chave = Deno.env.get("BREVO_API_KEY");
   const remetente = Deno.env.get("EMAIL_REMETENTE");
   if (!chave || !remetente) throw new Error("BREVO_API_KEY ou EMAIL_REMETENTE não configurados");
@@ -32,6 +33,7 @@ export async function enviarEmail(para: { email: string; nome?: string }, assunt
       to: [{ email: para.email, name: para.nome || undefined }],
       subject: assunto,
       htmlContent: html,
+      ...(anexos && anexos.length ? { attachment: anexos } : {}),
     }),
   });
   if (!r.ok) throw new Error(`Brevo respondeu ${r.status}: ${(await r.text()).slice(0, 300)}`);

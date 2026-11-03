@@ -7,7 +7,7 @@ O repositório é público: o log nunca mostra nome de arquivo, conteúdo ou dad
 
 Uso: python3 scripts/agente/fila.py [--verificar]   (--verificar só informa se há análise na fila)
 """
-import datetime, json, os, pathlib, re, shutil, subprocess, sys, tempfile, urllib.error, urllib.request
+import datetime, json, os, pathlib, re, shutil, subprocess, sys, tempfile, time, urllib.error, urllib.request
 
 RAIZ = pathlib.Path(__file__).resolve().parents[2]
 REF = os.environ.get("PROJECT_REF", "umnhhztdqersjfrzqcea")
@@ -340,6 +340,10 @@ def processar_geracao(a):
     """Elaboração de ETP, TR ou Projeto Básico a partir do questionário (scripts/agente/elaborar.py)."""
     aid = a["id"]
     print(f"elaboração {aid}: início (tentativa {a.get('tentativas')})")
+    try:
+        atualizar(aid, {"progresso": "iniciando"})
+    except Exception:
+        pass
     with tempfile.TemporaryDirectory() as tmp:
         pasta = pathlib.Path(tmp)
         try:
@@ -374,12 +378,25 @@ def processar_geracao(a):
                 arq = baixar((f or {}).get("arquivo"), f"preco{i + 1}.pdf")
                 if arq: extra += ["--preco-pdf", f"{str((f or {}).get('nome') or 'PDF')[:80].replace('=', '-')}={arq}"]
             etapa_paga = True  # a partir daqui há custo de API: falha não volta para a fila automaticamente
-            rodar([sys.executable, str(RAIZ / "scripts/agente/elaborar.py"), "--doc", a["documento"], "--respostas", str(pasta / "respostas.json"),
-                   "--pasta", str(pasta / "saida")] + extra, timeout=3300)
+            proc = subprocess.Popen([sys.executable, str(RAIZ / "scripts/agente/elaborar.py"), "--doc", a["documento"], "--respostas",
+                                     str(pasta / "respostas.json"), "--pasta", str(pasta / "saida")] + extra,
+                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            saida_txt, inicio_proc = [], time.time()
+            for linha in proc.stdout:
+                saida_txt.append(linha)
+                if linha.startswith("ETAPA:"):
+                    try:
+                        atualizar(aid, {"progresso": linha.split(":", 1)[1].strip()[:40]})
+                    except Exception:
+                        pass
+                if time.time() - inicio_proc > 3300:
+                    proc.kill(); break
+            if proc.wait() != 0:
+                raise RuntimeError("".join(saida_txt)[-800:])
             saida = pasta / "saida"
             exe = json.loads((saida / "execucao.json").read_text(encoding="utf-8"))
             base = f"{a['usuario_id']}/pareceres/{aid}"
-            campos = {"status": "concluida", "concluido_em": datetime.datetime.now(datetime.timezone.utc).isoformat(), "erro_msg": None,
+            campos = {"status": "concluida", "progresso": "pronto", "concluido_em": datetime.datetime.now(datetime.timezone.utc).isoformat(), "erro_msg": None,
                       "custo_usd": exe.get("custo_usd"), "parecer_docx": base + ".docx",
                       "resumo": {"situacao": "elaborado", "pendencias": exe.get("pendencias", 0), "alta": exe.get("alta", 0), "media": exe.get("media", 0),
                                  "objeto": str(respostas.get("objeto", ""))[:200], "orgao": str(respostas.get("orgao", ""))[:200]}}

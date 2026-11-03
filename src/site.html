@@ -750,12 +750,47 @@
   .lve-assin-t { font-size: 14px; color: #0F6B7E; }
   @media (max-width: 700px) { .lve-2arq, .lve-assin { grid-template-columns: minmax(0, 1fr); } }
   /* criador: passo a passo */
+  .lve-wiz button, .lve-wiz input, .lve-wiz textarea, .lve-wiz select, .lve-como, .lve-docs button, .lve-recentes button { font-family: Manrope, system-ui, sans-serif; }
+  .lve-wiz textarea { width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 12px; padding: 12px 14px; font-size: 15px; line-height: 1.55; color: #0B1F2A; background: #FBFCFC; resize: vertical; min-height: 72px; }
+  .lve-wiz textarea:focus { outline: 2px solid #0FA36B; outline-offset: 1px; background: #fff; }
+  .lve-valid { border-radius: 14px; padding: 14px 16px; font-size: 14px; line-height: 1.5; display: grid; gap: 8px; }
+  .lve-valid-erro { background: #FDECEC; color: #7A1F1F; border: 1px solid #F3C2C2; }
+  .lve-valid-erro ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; }
+  .lve-valid-erro li { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+  .lve-valid-erro .lve-trocar { margin: 0; color: #9B2C2C; }
+  .lve-valid-ok { background: #E3F6EC; color: #0A5C3D; border: 1px solid #BFE6D2; display: block; }
+  .lve-status { display: grid; gap: 16px; }
+  .lve-status-cab { display: flex; gap: 14px; align-items: flex-start; }
+  .lve-status-cab h3 { margin: 0 0 4px; font-size: 21px; color: #0B1F2A; }
+  .lve-status-cab p { margin: 0; color: #43535C; font-size: 14.5px; line-height: 1.5; }
+  .lve-status-ic { flex: none; width: 44px; height: 44px; border-radius: 50%; background: #E3F6EC; color: #0A7A50; display: grid; place-items: center; font-size: 20px; font-weight: 800; }
+  .lve-st-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+  .lve-st-lista li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; padding: 10px 0; position: relative; color: #7A8B91; }
+  .lve-st-lista li:not(:last-child)::after { content: ""; position: absolute; left: 14px; top: 38px; bottom: -6px; width: 2px; background: #E3E9E8; }
+  .lve-st-lista b { display: block; font-size: 14.5px; }
+  .lve-st-lista small { font-size: 12.5px; }
+  .lve-st-bola { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #D5DFDD; display: grid; place-items: center; font-size: 13px; font-weight: 800; background: #fff; }
+  .lve-st-lista li.feito { color: #0A5C3D; }
+  .lve-st-lista li.feito .lve-st-bola { background: #0FA36B; border-color: #0FA36B; color: #fff; }
+  .lve-st-lista li.feito::after { background: #0FA36B; }
+  .lve-st-lista li.atual { color: #0B1F2A; }
+  .lve-st-lista li.atual .lve-st-bola { border-color: #0FA36B; color: #0A7A50; animation: lvePulso 1.6s ease-in-out infinite; }
+  @keyframes lvePulso { 0%, 100% { box-shadow: 0 0 0 0 rgba(15,163,107,0.35); } 50% { box-shadow: 0 0 0 7px rgba(15,163,107,0); } }
+  @media (prefers-reduced-motion: reduce) { .lve-st-lista li.atual .lve-st-bola { animation: none; } }
+  .lve-st-baixar { display: flex; gap: 12px; flex-wrap: wrap; }
+  .lve-st-nota { margin: 0; font-size: 13px; color: #66757F; }
+  .lve-recentes { display: grid; gap: 10px; margin-bottom: 8px; }
+  .lve-rec { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 12px 16px; }
+  .lve-rec > div { flex: 1; min-width: 0; display: grid; }
+  .lve-rec b { font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lve-rec small { color: #66757F; font-size: 12.5px; }
+  .lve-rec .lve-voltar { padding: 9px 14px; font-size: 13.5px; }
   .lve-como { margin-top: -28px; position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
   .lve-como > div { background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 18px 20px; box-shadow: 0 12px 30px rgba(11,31,42,0.07); display: grid; gap: 4px; }
   .lve-como b { font-size: 15.5px; color: #0B1F2A; }
   .lve-como p { margin: 0; font-size: 13.5px; color: #55666E; line-height: 1.5; }
   .lve-como-n { width: 28px; height: 28px; border-radius: 50%; background: #E3F6EC; color: #0A7A50; font-weight: 800; display: grid; place-items: center; font-size: 14px; margin-bottom: 4px; }
-  .lve-h2 { font-size: 22px; margin: 34px 0 14px; color: #0B1F2A; }
+  .lve-h2 { font-size: 22px; margin: 34px 0 14px; color: #0B1F2A; font-family: Manrope, system-ui, sans-serif; font-weight: 800; }
   .lve-como + .lve-h2 + .lve-docs { margin-top: 0; }
   .lve-wiz { margin-top: -28px; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
   .lve-principal { background: #fff; border: 1px solid #E3E9E8; border-radius: 22px; padding: 24px 28px 28px; box-shadow: 0 16px 40px rgba(11,31,42,0.08); display: grid; gap: 18px; min-width: 0; }
@@ -776,7 +811,7 @@
   .lve-prog span { display: block; height: 100%; background: linear-gradient(90deg, #0FA36B, #2BC48A); border-radius: 99px; transition: width 0.3s ease; }
   .lve-etapa { display: grid; gap: 18px; }
   .lve-etapa-cab small { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #0FA36B; }
-  .lve-etapa-cab h3 { margin: 4px 0 4px; font-size: 22px; color: #0B1F2A; font-family: "Source Serif 4", Georgia, serif; }
+  .lve-etapa-cab h3 { margin: 4px 0 4px; font-size: 22px; font-weight: 800; color: #0B1F2A; font-family: Manrope, system-ui, sans-serif; }
   .lve-etapa-cab p { margin: 0; color: #55666E; font-size: 14.5px; line-height: 1.5; }
   .lve-bloco-pesq { border-top: 0; padding-top: 0; }
   .lve-nav { display: flex; gap: 12px; align-items: center; justify-content: space-between; border-top: 1px solid #EDF2F1; padding-top: 18px; }
@@ -1755,6 +1790,13 @@
             <div><span class="lve-como-n">2</span><b>Pesquisamos o mercado</b><p>Contratações de outros órgãos (PNCP) e preços praticados (Compras.gov.br), primeiro no seu estado.</p></div>
             <div><span class="lve-como-n">3</span><b>O agente monta o documento</b><p>Compara as soluções, indica a melhor, cumpre cada item da lei e entrega em Word.</p></div>
           </div>
+          <sc-if value="{{ elTemRecentes }}" hint-placeholder-val="{{ false }}">
+            <h2 class="lve-h2">Seus documentos recentes</h2>
+            <div class="lve-recentes"><sc-for list="{{ elRecentes }}" as="g" hint-placeholder-count="2">
+              <div class="lve-rec"><span class="lve-doc-sig">{{ g.sigla }}</span><div><b>{{ g.objeto }}</b><small>{{ g.situacao }}</small></div>
+                <button type="button" class="lve-voltar" sc-camel-on-click="{{ g.abrir }}">{{ g.acao }}</button></div>
+            </sc-for></div>
+          </sc-if>
           <h2 class="lve-h2">Qual documento você quer criar?</h2>
           <div class="lve-docs">
             <sc-for list="{{ elDocs }}" as="dc" hint-placeholder-count="3">
@@ -1783,6 +1825,17 @@
                   <button type="button" class="lve-trocar" sc-camel-on-click="{{ elReapNao }}">Começar em branco</button></div>
               </div>
             </sc-if>
+              <sc-if value="{{ elAcompanhando }}" hint-placeholder-val="{{ false }}">
+                <div class="lve-status">
+                  <div class="lve-status-cab"><span class="lve-status-ic">{{ elStIcone }}</span><div><h3>{{ elStTitulo }}</h3><p>{{ elStTexto }}</p></div></div>
+                  <ol class="lve-st-lista"><sc-for list="{{ elStEtapas }}" as="e" hint-placeholder-count="6"><li class="{{ e.cls }}"><span class="lve-st-bola">{{ e.marca }}</span><div><b>{{ e.t }}</b><small>{{ e.d }}</small></div></li></sc-for></ol>
+                  <sc-if value="{{ elStPronto }}" hint-placeholder-val="{{ false }}"><div class="lve-st-baixar">
+                    <button type="button" class="lvh-btn" sc-camel-on-click="{{ elStBaixarDocx }}">Baixar em Word</button>
+                    <button type="button" class="lve-voltar" sc-camel-on-click="{{ elStBaixarPdf }}">Baixar em PDF</button></div></sc-if>
+                  <p class="lve-st-nota">{{ elStNota }}</p>
+                  <button type="button" class="lve-trocar" sc-camel-on-click="{{ elStNovo }}">Criar outro documento</button>
+                </div>
+              </sc-if>
               <sc-if value="{{ elFormVisivel }}" hint-placeholder-val="{{ true }}">
               <ol class="lve-passos"><sc-for list="{{ elEtapas }}" as="e" hint-placeholder-count="4"><li class="{{ e.cls }}"><button type="button" sc-camel-on-click="{{ e.ir }}" aria-current="{{ e.atual }}"><span class="lve-passo-n">{{ e.n }}</span><span class="lve-passo-t">{{ e.t }}</span></button></li></sc-for></ol>
               <div class="lve-prog" aria-hidden="true"><span style="width: {{ elProgPct }}%"></span></div>
@@ -1806,7 +1859,7 @@
                 <sc-if value="{{ c.ehLinha }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}" value="{{ c.valor }}" sc-camel-on-input="{{ c.onInput }}" placeholder="{{ c.ph }}"></sc-if>
                 <sc-if value="{{ c.ehChips }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ c.op }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
                 <sc-if value="{{ c.mostraOutro }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}: detalhe" value="{{ c.outroValor }}" sc-camel-on-input="{{ c.onOutro }}" placeholder="Qual?"></sc-if>
-                <sc-if value="{{ c.temExemplos }}" hint-placeholder-val="{{ false }}"><div class="lve-exemplos"><span>Exemplos:</span><sc-for list="{{ elExemplos }}" as="ex" hint-placeholder-count="4"><button type="button" class="lvc-chip" sc-camel-on-click="{{ ex.usar }}">{{ ex.rot }}</button></sc-for></div></sc-if>
+                <sc-if value="{{ c.temExemplos }}" hint-placeholder-val="{{ false }}"><div class="lve-exemplos"><span>Exemplos:</span><sc-for list="{{ elExemplos }}" as="ex" hint-placeholder-count="4"><button type="button" class="lvc-chip" sc-camel-on-click="{{ ex.usar }}" aria-pressed="{{ ex.sel }}">{{ ex.rot }}</button></sc-for></div></sc-if>
                 <sc-if value="{{ c.dica }}" hint-placeholder-val="{{ false }}"><small>{{ c.dica }}</small></sc-if>
               </div>
             </sc-for>
@@ -1839,7 +1892,7 @@
                 <sc-if value="{{ c.ehLinha }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}" value="{{ c.valor }}" sc-camel-on-input="{{ c.onInput }}" placeholder="{{ c.ph }}"></sc-if>
                 <sc-if value="{{ c.ehChips }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ c.op }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
                 <sc-if value="{{ c.mostraOutro }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}: detalhe" value="{{ c.outroValor }}" sc-camel-on-input="{{ c.onOutro }}" placeholder="Qual?"></sc-if>
-                <sc-if value="{{ c.temExemplos }}" hint-placeholder-val="{{ false }}"><div class="lve-exemplos"><span>Exemplos:</span><sc-for list="{{ elExemplos }}" as="ex" hint-placeholder-count="4"><button type="button" class="lvc-chip" sc-camel-on-click="{{ ex.usar }}">{{ ex.rot }}</button></sc-for></div></sc-if>
+                <sc-if value="{{ c.temExemplos }}" hint-placeholder-val="{{ false }}"><div class="lve-exemplos"><span>Exemplos:</span><sc-for list="{{ elExemplos }}" as="ex" hint-placeholder-count="4"><button type="button" class="lvc-chip" sc-camel-on-click="{{ ex.usar }}" aria-pressed="{{ ex.sel }}">{{ ex.rot }}</button></sc-for></div></sc-if>
                 <sc-if value="{{ c.dica }}" hint-placeholder-val="{{ false }}"><small>{{ c.dica }}</small></sc-if>
               </div>
             </sc-for>
@@ -1884,12 +1937,20 @@
                   <div class="lve-resumo"><h4 class="lve-bloco-t">Confira antes de criar</h4>
                     <dl><sc-for list="{{ elResumo }}" as="r" hint-placeholder-count="5"><div><dt>{{ r.rot }}</dt><dd>{{ r.valor }}</dd></div></sc-for></dl>
                     <button type="button" class="lve-trocar" sc-camel-on-click="{{ elIrInicio }}">Corrigir alguma informação</button></div>
+                  <div class="lvc-campo"><span>Como quer receber o documento?<em class="lve-obrig">obrigatório</em></span>
+                    <div class="lvc-chips"><sc-for list="{{ elEntregaOp }}" as="o" hint-placeholder-count="2"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div>
+                    <small>Nas duas opções o Word e o PDF ficam disponíveis para baixar aqui e em Minha conta.</small></div>
                   <div class="lve-fim">
                     <p class="lve-cond">{{ elCondicao }}</p>
                     <label class="lvc-check"><input type="checkbox" checked="{{ elAceite }}" sc-camel-on-change="{{ elOnAceite }}"><span>Entendo que é uma minuta elaborada por inteligência artificial, que devo revisar e completar, e que a decisão e a responsabilidade pelo conteúdo final são minhas.</span></label>
                   </div>
                 </sc-if>
 
+                <sc-if value="{{ elTemProblemas }}" hint-placeholder-val="{{ false }}"><div class="lve-valid lve-valid-erro" role="alert">
+                  <b>Encontramos {{ elNProblemas }} para corrigir antes de criar o {{ elSigla }}:</b>
+                  <ul><sc-for list="{{ elProblemas }}" as="pr" hint-placeholder-count="2"><li><span><b>{{ pr.etapa }}:</b> {{ pr.itens }}</span><button type="button" class="lve-trocar" sc-camel-on-click="{{ pr.ir }}">Corrigir →</button></li></sc-for></ul>
+                  <small>Depois de corrigir, clique de novo em "{{ elBotaoCriar }}".</small></div></sc-if>
+                <sc-if value="{{ elValidOk }}" hint-placeholder-val="{{ false }}"><div class="lve-valid lve-valid-ok" role="status"><b>✓ Tudo certo com os dados.</b> {{ elValidOkTexto }}</div></sc-if>
                 <sc-if value="{{ elErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ elErro }}</p></sc-if>
                 <sc-if value="{{ elOk }}" hint-placeholder-val="{{ false }}"><p class="lve-ok" role="status">{{ elOk }}</p></sc-if>
                 <div class="lve-nav">
@@ -3954,7 +4015,7 @@ const ELAB_ROT = { orgao: "Órgão ou entidade", uf: "UF", objeto: "Objeto", nec
   regime_exec: "Regime de execução", local: "Local", valor: "Valor estimado", observacoes: "Observações", unidade: "Unidade requisitante",
   elab_nome: "Elaboração: nome", elab_cargo: "Elaboração: cargo", elab_matricula: "Elaboração: matrícula",
   resp_nome: "Responsável pelo setor: nome", resp_cargo: "Responsável pelo setor: cargo", resp_matricula: "Responsável pelo setor: matrícula",
-  rodape_incluir: "Informações no rodapé", rodape: "Texto do rodapé", modelo_arquivo: "Modelo em Word", logo_arquivo: "Logo",
+  entrega: "Forma de entrega", rodape_incluir: "Informações no rodapé", rodape: "Texto do rodapé", modelo_arquivo: "Modelo em Word", logo_arquivo: "Logo",
   especificacoes: "Especificações", processo: "Nº do processo", gestor: "Gestor do contrato", fiscais: "Fiscais", fonte: "Fonte orçamentária", correlatas: "Contratações ligadas" };
 // dados do órgão e de quem assina: podem ir para qualquer documento (se o assinante marcar)
 const ELAB_GERAIS = ["orgao", "uf", "observacoes", "unidade", "gestor", "fiscais", "fonte", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
@@ -4071,6 +4132,7 @@ function elFaltando(doc, R, etapa) {
   });
   if (nesta("pessoas")) ["elab_nome", "elab_cargo", "resp_nome", "resp_cargo"].forEach((k) => { if (vazio(k)) f.push(ELAB_ROT[k].toLowerCase()); });
   if (nesta("final")) {
+    if (vazio("entrega")) f.push("como quer receber o documento");
     if (vazio("rodape_incluir")) f.push("se quer informações no rodapé");
     else if (R.rodape_incluir === "Sim" && vazio("rodape")) f.push("texto do rodapé");
   }
@@ -4629,42 +4691,68 @@ class Component extends DCLogic {
     this.elIrEtapa((el.passo || 0) + 1);
   }
 
+  // confere todos os dados antes de criar: devolve a lista de problemas por etapa
+  elValidar() {
+    const el = this.state.el, R = el.respostas || {};
+    const probs = (ELAB_ETAPAS[el.doc] || []).map((e, i) => {
+      const f = elFaltando(el.doc, R, e.id);
+      if (e.id === "contratacao" && String(R.objeto || "").trim() && String(R.objeto).trim().length < 8) f.push("descreva o objeto com um pouco mais de detalhe");
+      if (e.id === "contratacao" && R.uf && !/^[A-Z]{2}$/.test(R.uf)) f.push("UF com 2 letras");
+      if (e.id === "final" && !el.aceite) f.push("aceite das condições (caixa de confirmação)");
+      return f.length ? { i, etapa: e.t, itens: f } : null;
+    }).filter(Boolean);
+    return probs;
+  }
+
   async elEnviar() {
     const el = this.state.el, d = ELAB[el.doc];
-    const falta = elFaltando(el.doc, el.respostas);
-    if (falta.length) {  // volta para a primeira etapa com pendência
-      const ets = ELAB_ETAPAS[el.doc] || [], i = ets.findIndex((e) => elFaltando(el.doc, el.respostas, e.id).length);
-      if (i >= 0 && i !== el.passo) this.elIrEtapa(i);
-      this.setState((x) => ({ el: { ...x.el, erro: "Falta informar: " + falta.join(", ") + "." } })); return;
+    const probs = this.elValidar();
+    if (probs.length) {
+      this.setState((x) => ({ el: { ...x.el, problemas: probs, validOk: false, erro: "" } }));
+      return;
     }
-    if (String(el.respostas.objeto || "").trim().length < 8) { this.setState({ el: { ...el, erro: "Descreva o objeto com um pouco mais de detalhe." } }); return; }
-    if (!el.aceite) { this.setState({ el: { ...el, erro: "Leia e aceite as condições para continuar." } }); return; }
-    if (!(await this.elChecarPesquisa())) return;
+    this.setState((x) => ({ el: { ...x.el, problemas: [], validOk: true, erro: "" } }));
+    if (!(await this.elChecarPesquisa())) { this.setState((x) => ({ el: { ...x.el, validOk: false } })); return; }
     if (!GERACAO_ATIVA) { this.setState({ el: { ...this.state.el, ok: "Tudo certo com as respostas, e elas ficam salvas neste aparelho. A elaboração automática está na fase final de testes e será liberada em breve.", erro: "" } }); return; }
-    if (!this.sb) { this.setState({ el: { ...this.state.el, erro: "A elaboração ainda não está ativa neste site (modo demonstração)." } }); return; }
+    if (!this.sb) { this.setState({ el: { ...this.state.el, validOk: false, erro: "A elaboração ainda não está ativa neste site (modo demonstração)." } }); return; }
     if (!this.u) { this.setState({ volta: "elaborar" }); this.irPara("login"); return; }
     this.setState({ el: { ...this.state.el, enviando: true, erro: "" } });
+    const falhou = async (e) => this.setState({ el: { ...this.state.el, enviando: false, validOk: false, erro: "Não foi possível enviar: " + (await erroDaFuncao(e)) + " Corrija e tente de novo." } });
+    const comecar = (id) => {
+      this.elGuardarUltimo(el.doc, el.respostas);
+      this.setState({ el: { ...this.state.el, enviando: false, acompanhar: id, validOk: false } });
+      this.carregarDados();
+      this.elAcompanhar();
+      try { document.getElementById("el-topo").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {}
+    };
     const pend = (this.state.analises || []).find((a) => a.tipo === "geracao" && a.documento === el.doc && a.status === "aguardando_documentos");
     if (pend) {  // já paga ou liberada: só envia as respostas
       const r0 = await this.sb.functions.invoke("mp-checkout", { body: { acao: "enviar_geracao", id: pend.id, respostas: el.respostas } });
-      if (r0.error) { this.setState({ el: { ...this.state.el, enviando: false, erro: await erroDaFuncao(r0.error) } }); return; }
-      this.elGuardarUltimo(el.doc, el.respostas);
-      this.setState({ el: { ...this.state.el, enviando: false, ok: "✓ Respostas enviadas. O " + d.sigla + " entra na fila e você recebe um e-mail quando ficar pronto." } });
-      this.carregarDados();
-      return;
+      if (r0.error) { await falhou(r0.error); return; }
+      comecar(pend.id); return;
     }
     const { data, error } = await this.sb.functions.invoke("mp-checkout", { body: { acao: "criar", tipo: "geracao", documento: el.doc, aceite: true, termo_versao: "elab-1", metodo: "pix", retorno: baseSite() + "index.html" } });
-    if (error) { this.setState({ el: { ...this.state.el, enviando: false, erro: await erroDaFuncao(error) } }); return; }
+    if (error) { await falhou(error); return; }
     if (data && data.gratuito) {
       const r2 = await this.sb.functions.invoke("mp-checkout", { body: { acao: "enviar_geracao", id: data.id, respostas: el.respostas } });
-      if (r2.error) { this.setState({ el: { ...this.state.el, enviando: false, erro: await erroDaFuncao(r2.error) } }); return; }
-      this.elGuardarUltimo(el.doc, el.respostas);
-      this.setState({ el: { ...this.state.el, enviando: false, ok: "✓ Pedido recebido. O " + d.sigla + " entra na fila e você recebe um e-mail quando ficar pronto." } });
-      this.carregarDados();
-      return;
+      if (r2.error) { await falhou(r2.error); return; }
+      comecar(data.id); return;
     }
     if (data && data.url) { window.location.href = data.url; return; }
-    this.setState({ el: { ...this.state.el, enviando: false, erro: "Não foi possível abrir o pagamento." } });
+    this.setState({ el: { ...this.state.el, enviando: false, validOk: false, erro: "Não foi possível abrir o pagamento. Tente de novo." } });
+  }
+
+  // atualiza o andamento a cada 15 s enquanto houver documento em elaboração e a página estiver aberta
+  elAcompanhar() {
+    if (this._elTimer) return;
+    this._elTimer = setInterval(async () => {
+      const id = this.state.el && this.state.el.acompanhar;
+      const a = id && (this.state.analises || []).find((x) => x.id === id);
+      if (!id || this.state.page !== "elaborar" || (a && (a.status === "concluida" || a.status === "erro"))) { clearInterval(this._elTimer); this._elTimer = null; return; }
+      if (document.hidden || !this.sb) return;
+      const { data } = await this.sb.from("analises").select("id, status, progresso, parecer_pdf, parecer_docx, erro_msg, liberar_em, resumo").eq("id", id).maybeSingle();
+      if (data) this.setState((s) => ({ analises: (s.analises || []).some((x) => x.id === id) ? s.analises.map((x) => x.id === id ? { ...x, ...data } : x) : [{ ...data, tipo: "geracao", documento: s.el.doc }].concat(s.analises || []) }));
+    }, 15000);
   }
 
   // ------------------------------------------------------------ calculadora de reajuste
@@ -4905,7 +4993,7 @@ class Component extends DCLogic {
       sb.from("forum_seguindo").select("topico_id, forum_topicos(nome)"),
       sb.from("biblioteca_pessoal").select("chave, dados, atualizado_em").like("chave", "nota-%").limit(1000),
       sb.rpc("meu_cupom_curso"),
-      sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg, documentos, liberar_em, tipo").order("criado_em", { ascending: false }).limit(30),
+      sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg, documentos, liberar_em, tipo, progresso").order("criado_em", { ascending: false }).limit(30),
       sb.rpc("minha_cota_analises"),
       sb.from("normas_usuario").select("id, nome, arquivo, tamanho, criado_em").order("criado_em", { ascending: false }).limit(30),
       sb.from("renovacoes").select("id, plano, ciclo, valor, status, proxima_cobranca, criado_em").order("criado_em", { ascending: false }).limit(10),
@@ -6158,7 +6246,7 @@ class Component extends DCLogic {
           elDocs: Object.entries(ELAB).map(([k, x]) => ({ sigla: x.sigla, nome: x.nome, desc: x.desc, base: x.base, escolher: () => this.elEscolher(k) })),
           elNome: d ? d.nome : "", elSigla: d ? d.sigla : "",
           elTrocar: () => this.setState({ el: { ...s.el, doc: "", passo: 0 } }),
-          elExemplos: (EX[el.doc] || []).map(([rot, txt]) => ({ rot, usar: () => set("objeto", txt) })),
+          elExemplos: (EX[el.doc] || []).map(([rot, txt]) => ({ rot, sel: R.objeto === txt, usar: () => set("objeto", R.objeto === txt ? "" : txt) })),
           elOrgao: R.orgao || "", elOnOrgao: this.elResponder("orgao"),
           elUf: R.uf || "", elOnUf: (e) => set("uf", String(e.target.value).toUpperCase().replace(/[^A-Z]/g, "").slice(0, 2)),
           ...(() => { const mapa = (c) => {
@@ -6257,7 +6345,54 @@ class Component extends DCLogic {
               elRespMat: R.resp_matricula || "", elOnRespMat: this.elResponder("resp_matricula")
             };
           })(),
-          elReapAberto: !!el.reapAberto, elFormVisivel: !el.reapAberto, elRascunho: !!el.rascunho, elEmBranco: () => this.elEmBranco(),
+          ...(() => {
+            const a = el.acompanhar ? (s.analises || []).find((x) => x.id === el.acompanhar) : null;
+            const st = a ? a.status : "na_fila", pg = a ? (a.progresso || "") : "";
+            const ordem = ["iniciando", "pesquisa", "redacao", "conferencia", "word", "pronto"];
+            const pos = st === "concluida" ? 6 : st === "processando" ? Math.max(1, ordem.indexOf(pg) + 1) : 0;
+            const sig = d ? d.sigla : "documento";
+            const etapas = [
+              ["Dados conferidos", "Todas as informações obrigatórias estão preenchidas."],
+              ["Na fila", a && a.liberar_em && new Date(a.liberar_em) > new Date() ? "Começa em " + new Date(a.liberar_em).toLocaleString("pt-BR") + "." : "Entra em processamento em até 5 minutos."],
+              ["Pesquisa de mercado", "Contratações no PNCP e preços praticados no Compras.gov.br."],
+              ["Redação do " + sig, "O agente compara as soluções e redige cada item da lei."],
+              ["Conferência automática", "O agente revisa o próprio texto e lista as pendências."],
+              ["Word e PDF", "Montagem no modelo e geração dos arquivos."]
+            ].map(([t, dd], i) => {
+              const feito = st === "concluida" || i === 0 || (st === "processando" && i < pos) || (i === 1 && st === "processando");
+              const atual = st !== "concluida" && st !== "erro" && ((st === "na_fila" && i === 1) || (st === "processando" && i === Math.max(2, pos)));
+              return { t, d: dd, cls: feito && !atual ? "feito" : atual ? "atual" : "", marca: feito && !atual ? "✓" : String(i + 1) };
+            });
+            const pronto = st === "concluida", erro = st === "erro";
+            const base = sig + "-" + String(el.acompanhar || "").slice(0, 8);
+            return {
+              elRecentes: (s.analises || []).filter((x) => x.tipo === "geracao" && x.status !== "aguardando_documentos" && x.status !== "cancelada").slice(0, 4).map((x) => {
+                const pr = x.status === "concluida", er = x.status === "erro";
+                return { sigla: (ELAB[x.documento] || {}).sigla || "DOC", objeto: (x.resumo && x.resumo.objeto) || x.nome_arquivo || "Documento",
+                  situacao: pr ? "Pronto · " + new Date(x.criado_em).toLocaleDateString("pt-BR") : er ? "Não concluído" : "Em elaboração",
+                  acao: pr ? "Baixar" : er ? "Ver motivo" : "Acompanhar",
+                  abrir: () => { this.setState({ el: { doc: x.documento, passo: 0, respostas: {}, aceite: false, acompanhar: x.id } }); this.elAcompanhar(); } };
+              }),
+              elTemRecentes: (s.analises || []).some((x) => x.tipo === "geracao" && x.status !== "aguardando_documentos" && x.status !== "cancelada"),
+              elAcompanhando: !!el.acompanhar, elFormVisivel: !el.reapAberto && !el.acompanhar,
+              elStIcone: pronto ? "✓" : erro ? "!" : "⏳",
+              elStTitulo: pronto ? "Seu " + sig + " está pronto" : erro ? "Não foi possível concluir" : "Seu " + sig + " está sendo elaborado",
+              elStTexto: pronto ? "Baixe abaixo em Word (editável) ou PDF. As lacunas para completar estão destacadas em amarelo."
+                : erro ? (a.erro_msg || "Falha no processamento.") + " Nossa equipe foi avisada. Se foi um problema nos dados, corrija e crie de novo."
+                : "Os dados foram conferidos e estão corretos. Você pode acompanhar aqui ou fechar a página: avisamos por e-mail quando terminar.",
+              elStEtapas: erro ? etapas.map((e, i) => i === 0 ? e : { ...e, cls: "", marca: String(i + 1) }) : etapas, elStPronto: pronto,
+              elStBaixarDocx: () => a && a.parecer_docx && this.baixarParecer(a.parecer_docx, "Minuta Licitacon - " + base + ".docx"),
+              elStBaixarPdf: () => a && (a.parecer_pdf ? this.baixarParecer(a.parecer_pdf, "Minuta Licitacon - " + base + ".pdf") : this.aviso("Este documento está disponível em Word.", "erro")),
+              elStNota: R.entrega === "email" ? (pronto ? "Também enviamos o Word e o PDF para o seu e-mail." : "Quando ficar pronto, enviamos o Word e o PDF para o seu e-mail.") : "O documento também fica em Minha conta.",
+              elStNovo: () => this.setState({ el: { doc: "", passo: 0, respostas: {}, aceite: false } }),
+              elTemProblemas: !!(el.problemas && el.problemas.length), elNProblemas: (el.problemas || []).length === 1 ? "1 etapa" : (el.problemas || []).length + " etapas",
+              elProblemas: (el.problemas || []).map((p) => ({ etapa: p.etapa, itens: p.itens.join("; ") + ".", ir: () => { this.setState((x) => ({ el: { ...x.el, problemas: [] } })); this.elIrEtapa(p.i); } })),
+              elValidOk: !!el.validOk, elValidOkTexto: el.enviando ? "Enviando para elaboração…" : (el.pesq && el.pesq.estado === "buscando") ? "Conferindo a pesquisa de mercado…" : "Preparando o envio…",
+              elBotaoCriar: "Criar o " + sig,
+              elEntregaOp: [["Baixar aqui no site", "site"], ["Receber por e-mail (Word e PDF anexados)", "email"]].map(([nome, v]) => ({ nome, sel: R.entrega === v, escolher: () => set("entrega", v) }))
+            };
+          })(),
+          elReapAberto: !!el.reapAberto, elRascunho: !!el.rascunho, elEmBranco: () => this.elEmBranco(),
           elReapDe: el.reapAnterior ? " (" + el.reapAnterior + ")" : "",
           elReapLista: (el.reap || []).map((x) => ({ rot: x.rot, valor: x.valor.length > 140 ? x.valor.slice(0, 140) + "…" : x.valor, marcado: !!x.marcado, marcar: () => this.elReapMarcar(x.k) })),
           elReapUsar: () => this.elReapAplicar(true), elReapNao: () => this.elReapAplicar(false),

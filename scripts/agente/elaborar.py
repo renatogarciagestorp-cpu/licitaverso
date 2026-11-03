@@ -398,6 +398,7 @@ def main():
     a = ap.parse_args()
     pasta = pathlib.Path(a.pasta); pasta.mkdir(parents=True, exist_ok=True)
     respostas = {k: str(v) for k, v in json.loads(pathlib.Path(a.respostas).read_text(encoding="utf-8")).items()}
+    print("ETAPA: pesquisa", flush=True)
     pesquisa = None
     if a.doc in ("etp", "tr") and not (a.doc == "tr" and respostas.get("valor", "").strip()):
         pesquisa = pm.pesquisar(respostas.get("objeto", ""),
@@ -412,6 +413,7 @@ def main():
     system, usuario, juris = montar_pedido(a.doc, respostas, pesquisa, precos, padrao)
     print(f"pedido: {len(system) + len(usuario)} caracteres (~{(len(system) + len(usuario)) // 4} tokens de entrada); jurisprudência: {len(juris)}")
     t0, custo_usd, uso = time.time(), 0.0, {}
+    print("ETAPA: redacao", flush=True)
     if a.simular:
         docj = me.simulado(respostas) if padrao else simulado(a.doc, respostas)
     else:
@@ -425,6 +427,7 @@ def main():
     (pasta / "documento.json").write_text(json.dumps(docj, ensure_ascii=False, indent=1), encoding="utf-8")
     conferencia = None
     if not a.simular and not a.sem_conferencia:
+        print("ETAPA: conferencia", flush=True)
         txt = pasta / "documento.txt"; txt.write_text(me.texto_plano(docj) if padrao else texto_plano(docj), encoding="utf-8")
         conf = pasta / "conferencia.json"
         args = [sys.executable, str(RAIZ / "scripts/agente/analisar.py"), "--doc", DOCS[a.doc]["roteiro"], "--texto", str(txt),
@@ -437,6 +440,7 @@ def main():
             custo_usd += float((conferencia.get("_execucao") or {}).get("custo_usd") or 0)
         else:
             print("conferência não concluída (o documento é entregue sem os pontos de atenção)")
+    print("ETAPA: word", flush=True)
     if padrao:
         try:
             me.gerar(docj, respostas, pasta / "documento.docx", a.logo, pesquisa, refs_usadas(docj, juris), conferencia)

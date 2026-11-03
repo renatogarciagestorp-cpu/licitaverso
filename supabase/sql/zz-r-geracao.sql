@@ -47,3 +47,7 @@ begin
 end $$;
 revoke execute on function public.geracao_proxima() from public, anon, authenticated;
 grant execute on function public.geracao_proxima() to service_role;
+
+
+-- Andamento da elaboração, para o site mostrar em que etapa o documento está (pesquisa, redação, conferência, Word)
+alter table public.analises add column if not exists progresso text;
