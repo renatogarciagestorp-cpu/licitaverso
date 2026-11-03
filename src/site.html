@@ -2503,7 +2503,7 @@
                 </sc-if>
                 <sc-if value="{{ ma.pronta }}" hint-placeholder-val="{{ false }}">
                   <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap">
-                    <button sc-camel-on-click="{{ ma.baixarPdf }}" style="background: #0A1F2A; color: #fff; border: 0; border-radius: 9px; padding: 9px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer">Baixar parecer (PDF)</button>
+                    <button sc-camel-on-click="{{ ma.baixarPdf }}" style="background: #0A1F2A; color: #fff; border: 0; border-radius: 9px; padding: 9px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer">{{ ma.rotPdf }}</button>
                     <button sc-camel-on-click="{{ ma.baixarDocx }}" style="background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 9px; padding: 9px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer">Baixar em Word</button>
                   </div>
                 </sc-if>
@@ -2753,6 +2753,56 @@
         </aside>
 
         <div style="display: grid; gap: 18px">
+
+          <!-- MEUS DOCUMENTOS -->
+          <sc-if value="{{ isMeusDocs }}" hint-placeholder-val="{{ false }}">
+            <section style="background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 26px 28px">
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+                <h2 style="margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.02em; flex: 1">Meus documentos</h2>
+                <button sc-camel-on-click="{{ atualizarAnalises }}" style="background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 9px; padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer">Atualizar</button>
+              </div>
+              <p style="margin: 6px 0 0; font-size: 14px; color: #6A7B82">ETP, TR e Projeto Básico criados pelo agente e os pareceres das análises de documentos, com download em Word e PDF.</p>
+              <div class="lvc-chips" style="margin-top: 14px"><sc-for list="{{ docsFiltros }}" as="fx" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ fx.escolher }}" aria-pressed="{{ fx.sel }}">{{ fx.rot }}</button></sc-for></div>
+              <sc-if value="{{ semMeusDocs }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top: 16px; background: #F7FAF9; border: 1px dashed #CFE0DC; border-radius: 12px; padding: 18px; display: grid; gap: 10px">
+                  <p style="margin: 0; font-size: 14.5px; color: #43535C">{{ semMeusDocsTexto }}</p>
+                  <div style="display: flex; gap: 8px; flex-wrap: wrap">
+                    <button sc-camel-on-click="{{ irCriarDoc }}" style="background: #0FA36B; color: #06251A; border: 0; border-radius: 9px; padding: 9px 14px; font-size: 13.5px; font-weight: 800; cursor: pointer">Criar ETP, TR ou Projeto Básico</button>
+                    <button sc-camel-on-click="{{ irAnalisarDoc }}" style="background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 9px; padding: 9px 14px; font-size: 13.5px; font-weight: 700; cursor: pointer">Analisar um documento</button>
+                  </div>
+                </div>
+              </sc-if>
+              <div style="display: grid; gap: 12px; margin-top: 16px">
+                <sc-for list="{{ meusDocs }}" as="ma" hint-placeholder-count="2">
+                  <div style="border: 1px solid #E6EBEA; border-left: 4px solid {{ ma.cor }}; border-radius: 12px; padding: 15px 18px">
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+                      <span style="font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; color: {{ ma.tipoCor }}; background: {{ ma.tipoFundo }}">{{ ma.tipoRot }}</span>
+                      <span style="font-size: 15px; font-weight: 800">{{ ma.doc }}</span>
+                      <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.04em; padding: 4px 9px; border-radius: 999px; color: {{ ma.cor }}; background: {{ ma.fundo }}">{{ ma.status }}</span>
+                      <span style="flex: 1"></span>
+                      <span style="font-size: 12.5px; color: #7A8B91">{{ ma.data }}</span>
+                    </div>
+                    <p style="margin: 6px 0 0; font-size: 13.5px; color: #55666D; overflow-wrap: anywhere">{{ ma.detalhe }}</p>
+                    <sc-if value="{{ ma.temResumo }}" hint-placeholder-val="{{ false }}">
+                      <p style="margin: 8px 0 0; font-size: 13.5px; line-height: 1.5; color: #23343B"><strong>{{ ma.situacao }}</strong> {{ ma.contagem }}</p>
+                    </sc-if>
+                    <sc-if value="{{ ma.pronta }}" hint-placeholder-val="{{ false }}">
+                      <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap">
+                        <button sc-camel-on-click="{{ ma.baixarDocx }}" style="background: #0A1F2A; color: #fff; border: 0; border-radius: 9px; padding: 9px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer">Baixar em Word</button>
+                        <button sc-camel-on-click="{{ ma.baixarPdf }}" style="background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 9px; padding: 9px 15px; font-size: 13.5px; font-weight: 700; cursor: pointer">{{ ma.rotPdf }}</button>
+                      </div>
+                    </sc-if>
+                    <sc-if value="{{ ma.aguardaDocs }}" hint-placeholder-val="{{ false }}">
+                      <button sc-camel-on-click="{{ ma.enviarDocs }}" style="margin-top: 12px; background: #0FA36B; color: #06251A; border: 0; border-radius: 9px; padding: 9px 14px; font-size: 13px; font-weight: 800; cursor: pointer">Continuar</button>
+                    </sc-if>
+                    <sc-if value="{{ ma.aguardaPagamento }}" hint-placeholder-val="{{ false }}">
+                      <button sc-camel-on-click="{{ ma.conferir }}" style="margin-top: 12px; background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 9px; padding: 9px 14px; font-size: 13px; font-weight: 700; cursor: pointer">Conferir pagamento</button>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </section>
+          </sc-if>
 
           <!-- PERFIL -->
           <sc-if value="{{ isPerfil }}" hint-placeholder-val="{{ false }}">
@@ -6130,7 +6180,7 @@ class Component extends DCLogic {
 
     const authCampo = (campo) => this.onAuth(campo);
 
-    return {
+    const P = {
       // navegação e contas
       navItems: navDefs.map(([label, key]) => ({ label, active: s.page === key, go: this.nav(key),
         goMenu: () => { this.setState({ menuAberto: false }); this.irPara(key); } })),
@@ -6979,6 +7029,7 @@ class Component extends DCLogic {
       atualizarAnalises: () => this.carregarDados(),
       semAnalises: !(s.analises || []).length,
       semAnalisesTexto: s.usuario ? "Nenhuma análise ainda." : "Entre na sua conta para ver suas análises.",
+      meusDocs: [],
       minhasAnalises: (s.analises || []).map((a) => {
         const st = STATUS_ANALISE[a.status] || [a.status, "#6A7B82", "#EEF1F2"];
         const r = a.resumo || {};
@@ -7002,6 +7053,8 @@ class Component extends DCLogic {
           pronta: a.status === "concluida" && !!(a.parecer_pdf || a.parecer_docx),
           baixarPdf: () => a.parecer_pdf ? this.baixarParecer(a.parecer_pdf, (ger ? "Minuta Licitacon - " : "Parecer Licitacon - ") + base + ".pdf") : this.aviso("Este documento está disponível em Word.", "erro"),
           baixarDocx: () => this.baixarParecer(a.parecer_docx, (ger ? "Minuta Licitacon - " : "Parecer Licitacon - ") + base + ".docx"),
+          id: a.id, tipoRot: ger ? "Criado" : "Analisado", tipoCor: ger ? "#0F6B7E" : "#6B4A0A", tipoFundo: ger ? "#E6F2F4" : "#FFF4DC",
+          rotPdf: ger ? "Baixar em PDF" : "Baixar parecer (PDF)",
           aguardaPagamento: a.status === "aguardando_pagamento",
           aguardaDocs: a.status === "aguardando_documentos",
           enviarDocs: () => ger ? (this.irPara("elaborar"), this.elEscolher(a.documento)) : this.irParaEnvio(),
@@ -7074,7 +7127,7 @@ class Component extends DCLogic {
       planoBadge: s.admin ? "Administrador" : (planoAtual.nome === "Sem plano" ? "Sem plano" : "Plano " + planoAtual.nome),
       temProxima: !!planoAtual.proxima,
       contaTabs: [
-        ["perfil", "Perfil", "◎"], ["assinatura", "Assinatura", "◫"], ["atividade", "Atividade", "★"],
+        ["perfil", "Perfil", "◎"], ["documentos", "Meus documentos", "▤"], ["assinatura", "Assinatura", "◫"], ["atividade", "Atividade", "★"],
         ["notificacoes", "Notificações", "🔔"], ["privacidade", "Privacidade", "⛨"]
       ].concat(s.organizacao ? [["equipe", "Equipe", "◉"]] : []).map(([key, label, icon]) => ({
         label, icon, ativo: s.contaTab === key, abrir: this.setContaTab(key),
@@ -7082,6 +7135,21 @@ class Component extends DCLogic {
         cor: s.contaTab === key ? "#FFFFFF" : "#3D5058"
       })),
       isPerfil: s.contaTab === "perfil",
+      isMeusDocs: s.contaTab === "documentos",
+      ...(() => {
+        const f = s.docsFiltro || "todos";
+        const todos = (s.analises || []).filter((a) => a.status !== "cancelada");
+        const lista = todos.filter((a) => f === "todos" || (f === "criados" ? a.tipo === "geracao" : a.tipo !== "geracao"));
+        const n = (t) => todos.filter((a) => t === "todos" || (t === "criados" ? a.tipo === "geracao" : a.tipo !== "geracao")).length;
+        return {
+          docsFiltros: [["todos", "Todos"], ["criados", "Criados pelo agente"], ["analisados", "Analisados pelo agente"]].map(([k, rot]) => ({
+            rot: rot + " (" + n(k) + ")", sel: f === k, escolher: () => this.setState({ docsFiltro: k }) })),
+          docsIds: lista.map((a) => a.id),
+          semMeusDocs: !lista.length,
+          semMeusDocsTexto: f === "criados" ? "Você ainda não criou documentos com o agente." : f === "analisados" ? "Você ainda não pediu análises ao agente." : "Você ainda não tem documentos criados ou analisados pelo agente.",
+          irCriarDoc: () => this.irPara("elaborar"), irAnalisarDoc: () => this.irPara("agente")
+        };
+      })(),
       isAssinatura: s.contaTab === "assinatura",
       isAtividade: s.contaTab === "atividade",
       isNotificacoes: s.contaTab === "notificacoes",
@@ -7365,6 +7433,8 @@ class Component extends DCLogic {
       aceitarCookies: () => this.definirCookies("todos"),
       recusarCookies: () => this.definirCookies("essenciais")
     };
+    P.meusDocs = (P.minhasAnalises || []).filter((m) => (P.docsIds || []).includes(m.id));
+    return P;
   }
 }
 
