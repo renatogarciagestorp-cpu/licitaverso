@@ -4,7 +4,7 @@
 
 import { clienteServico, CORS, resposta } from "../_shared/comum.ts";
 import { enviarEmail, moldura, SITE } from "../_shared/email.ts";
-import { DOC_ANALISE, type DocAnalise } from "../_shared/precos.ts";
+import { DOC_ANALISE, DOC_GERACAO, type DocAnalise } from "../_shared/precos.ts";
 
 const esc = (t: string) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 
@@ -20,14 +20,24 @@ Deno.serve(async (req) => {
   if (a.status !== "concluida" && a.status !== "erro") return resposta({ ok: true, enviado: false, motivo: "status sem aviso" });
 
   const { data: p } = await admin.from("perfis").select("nome, email").eq("id", a.usuario_id).maybeSingle();
-  const doc = DOC_ANALISE[a.documento as DocAnalise] ?? a.documento;
+  const geracao = a.tipo === "geracao";
+  const doc = geracao ? (DOC_GERACAO[a.documento] ?? a.documento) : (DOC_ANALISE[a.documento as DocAnalise] ?? a.documento);
   const primeiro = (p?.nome || "").trim().split(/\s+/)[0] || "Olá";
   const link = `${SITE}index.html?p=agente`;
   const enviados: string[] = [];
 
   try {
     if (p?.email) {
-      if (a.status === "concluida") {
+      if (a.status === "concluida" && geracao) {
+        const r = a.resumo || {};
+        const html = moldura(`Seu ${esc(doc)} está pronto`, [
+          `${esc(primeiro)}, a minuta do <strong>${esc(doc)}</strong> foi elaborada e conferida pelo Agente Licitacon.`,
+          r.objeto ? `<strong>Objeto:</strong> ${esc(String(r.objeto).slice(0, 300))}` : "",
+          `O documento está disponível em Word (editável) na sua área. No anexo final estão as <strong>${Number(r.pendencias || 0)} pendências</strong> para você completar e os pontos de atenção da conferência automática.`,
+          `Lembre-se: é uma minuta elaborada por inteligência artificial. Revise todo o texto e complete as lacunas destacadas antes de juntar ao processo.`,
+        ].filter(Boolean), { texto: "Abrir o documento", url: link }, undefined, "Andamento de consultoria");
+        await enviarEmail({ email: p.email, nome: p.nome }, `${doc} pronto para revisão`, html);
+      } else if (a.status === "concluida") {
         const r = a.resumo || {};
         const html = moldura(`Seu parecer técnico está pronto`, [
           `${esc(primeiro)}, a análise do documento <strong>${esc(doc)}</strong>${a.nome_arquivo ? ` (${esc(a.nome_arquivo)})` : ""} foi concluída.`,

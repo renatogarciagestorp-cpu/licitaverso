@@ -31,3 +31,19 @@ begin
 end $$;
 revoke execute on function public.analise_proxima() from public, anon, authenticated;
 grant execute on function public.analise_proxima() to service_role;
+
+-- Fila das elaborações (processadas pelo mesmo workflow do agente, depois das análises)
+create or replace function public.geracao_proxima()
+returns setof public.analises language plpgsql security definer set search_path = public as $$
+begin
+  update public.analises set status = case when tentativas >= 3 then 'erro' else 'na_fila' end,
+         erro_msg = case when tentativas >= 3 then 'Falha repetida no processamento.' else erro_msg end
+   where status = 'processando' and iniciado_em < now() - interval '40 minutes' and tipo = 'geracao';
+  return query
+  update public.analises set status = 'processando', iniciado_em = now(), tentativas = tentativas + 1
+   where id = (select id from public.analises where status = 'na_fila' and tipo = 'geracao'
+               order by coalesce(pago_em, criado_em) limit 1 for update skip locked)
+  returning *;
+end $$;
+revoke execute on function public.geracao_proxima() from public, anon, authenticated;
+grant execute on function public.geracao_proxima() to service_role;

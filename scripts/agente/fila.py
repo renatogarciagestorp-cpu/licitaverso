@@ -336,9 +336,50 @@ def processar(a):
     avisar(aid)
 
 
+def processar_geracao(a):
+    """Elaboração de ETP, TR ou Projeto Básico a partir do questionário (scripts/agente/elaborar.py)."""
+    aid = a["id"]
+    print(f"elaboração {aid}: início (tentativa {a.get('tentativas')})")
+    with tempfile.TemporaryDirectory() as tmp:
+        pasta = pathlib.Path(tmp)
+        try:
+            if a.get("documento") not in ("etp", "tr", "projeto_basico"):
+                raise ErroCliente("Tipo de documento inválido.")
+            respostas = a.get("respostas") or {}
+            if not str(respostas.get("objeto", "")).strip():
+                raise ErroCliente("O questionário chegou sem o objeto da contratação.")
+            (pasta / "respostas.json").write_text(json.dumps(respostas, ensure_ascii=False), encoding="utf-8")
+            etapa_paga = True  # a partir daqui há custo de API: falha não volta para a fila automaticamente
+            rodar([sys.executable, str(RAIZ / "scripts/agente/elaborar.py"), "--doc", a["documento"], "--respostas", str(pasta / "respostas.json"),
+                   "--pasta", str(pasta / "saida")], timeout=3300)
+            saida = pasta / "saida"
+            exe = json.loads((saida / "execucao.json").read_text(encoding="utf-8"))
+            base = f"{a['usuario_id']}/pareceres/{aid}"
+            campos = {"status": "concluida", "concluido_em": datetime.datetime.now(datetime.timezone.utc).isoformat(), "erro_msg": None,
+                      "custo_usd": exe.get("custo_usd"), "parecer_docx": base + ".docx",
+                      "resumo": {"situacao": "elaborado", "pendencias": exe.get("pendencias", 0), "alta": exe.get("alta", 0), "media": exe.get("media", 0),
+                                 "objeto": str(respostas.get("objeto", ""))[:200], "orgao": str(respostas.get("orgao", ""))[:200]}}
+            http("POST", f"{SUPA}/storage/v1/object/analises/{base}.docx", (saida / "documento.docx").read_bytes(),
+                 cab({"Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "x-upsert": "true"}), timeout=300)
+            if (saida / "documento.pdf").exists():
+                http("POST", f"{SUPA}/storage/v1/object/analises/{base}.pdf", (saida / "documento.pdf").read_bytes(),
+                     cab({"Content-Type": "application/pdf", "x-upsert": "true"}), timeout=300)
+                campos["parecer_pdf"] = base + ".pdf"
+            atualizar(aid, campos)
+            print(f"::notice title=Fila::elaboração {aid}: concluída · US$ {exe.get('custo_usd')}")
+        except ErroCliente as e:
+            atualizar(aid, {"status": "erro", "erro_msg": str(e)})
+        except Exception as e:
+            if not locals().get("etapa_paga") and int(a.get("tentativas") or 1) < 3:
+                atualizar(aid, {"status": "na_fila"}); return
+            atualizar(aid, {"status": "erro", "erro_msg": "Falha técnica no processamento automático."})
+            print(f"::notice title=Fila::elaboração {aid}: erro definitivo ({type(e).__name__})")
+    avisar(aid)
+
+
 def main():
     if "--verificar" in sys.argv:
-        r = urllib.request.urlopen(urllib.request.Request(f"{SUPA}/rest/v1/analises?status=eq.na_fila&tipo=eq.analise&or=(liberar_em.is.null,liberar_em.lte.{datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})&select=id&limit=1", headers=cab()), timeout=60)
+        r = urllib.request.urlopen(urllib.request.Request(f"{SUPA}/rest/v1/analises?status=eq.na_fila&or=(liberar_em.is.null,liberar_em.lte.{datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')})&select=id&limit=1", headers=cab()), timeout=60)
         tem = bool(json.loads(r.read()))
         stuck = json.loads(urllib.request.urlopen(urllib.request.Request(
             f"{SUPA}/rest/v1/analises?status=eq.processando&iniciado_em=lt."
@@ -360,6 +401,11 @@ def main():
         if not lista:
             break
         processar(lista[0])
+    for _ in range(MAX_POR_EXECUCAO):
+        lista = rest("POST", "rpc/geracao_proxima", {}) or []
+        if not lista:
+            break
+        processar_geracao(lista[0])
 
 
 if __name__ == "__main__":
