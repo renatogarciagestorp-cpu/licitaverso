@@ -41,10 +41,20 @@ function solucoes(natureza: string): [string, string][] {
   return [["contratação do serviço", ""]];
 }
 
-async function itens(controle: string, raizes: string[]) {
+let pncpItensOk = true;  // se a API de itens do PNCP não responder uma vez, não tenta de novo nesta pesquisa
+
+async function itens(controle: string, raizes: string[], url = "") {
   if (!controle) return [];
   const q = `tipo=numeroControlePNCPCompra&codigo=${encodeURIComponent(controle)}`;
-  const lista = ((await obter(`${COMPRAS}/modulo-contratacoes/2.1_consultarItensContratacoes_PNCP_14133_Id?${q}`, 10000)) ?? {}).resultado ?? [];
+  let lista = ((await obter(`${COMPRAS}/modulo-contratacoes/2.1_consultarItensContratacoes_PNCP_14133_Id?${q}`, 10000)) ?? {}).resultado ?? [];
+  const m = url.match(/\/(\d{14})\/(\d{4})\/(\d+)/);
+  if (!lista.length && m && pncpItensOk) {  // compras de estados e municípios: itens direto no PNCP
+    try {
+      const r = await fetch(`${PNCP}/api/pncp/v1/orgaos/${m[1]}/compras/${m[2]}/${m[3]}/itens?pagina=1&tamanhoPagina=100`,
+        { headers: { "User-Agent": UA, Accept: "application/json" }, signal: AbortSignal.timeout(6000) });
+      lista = r.ok ? ((await r.json()) ?? []) : [];
+    } catch { pncpItensOk = false; }
+  }
   const minimo = Math.min(2, raizes.length);
   return lista.map((it: any) => [pontos(it.descricaoResumida ?? it.descricao ?? "", raizes), it] as [number, any])
     .filter(([p]: [number, any]) => p >= minimo).sort((a: any, b: any) => b[0] - a[0]).slice(0, 3)
@@ -67,6 +77,7 @@ Deno.serve(async (req) => {
   const chaves = chavesDe(objeto), raizes = chaves.map((c) => c.slice(0, 5));
   if (!chaves.length) return resposta({ referencias: [], erro: "Descreva melhor o objeto para pesquisar." });
   const inicio = Date.now(), refs: any[] = [], vistos = new Set<string>();
+  pncpItensOk = true;
   let falha = "";
   const sols = solucoes(String(corpo.natureza ?? ""));
   const porSol = Math.max(3, Math.floor(10 / sols.length));
@@ -99,7 +110,7 @@ Deno.serve(async (req) => {
       const controle = String(h.numero_controle_pncp ?? "");
       let its: any[] = [];
       if (Date.now() - inicio < 40000) {
-        try { its = await itens(tipo === "ata" ? controle.replace(/-\d{6}$/, "") : controle, raizes); } catch { its = []; }
+        try { its = await itens(tipo === "ata" ? controle.replace(/-\d{6}$/, "") : controle, raizes, tipo === "ata" ? "" : String(h.item_url ?? "")); } catch { its = []; }
       }
       const url = String(h.item_url ?? "");
       refs.push({ solucao: rotulo, abrangencia: abr, tipo: tipo === "ata" ? "ata de registro de preços" : "contratação",
