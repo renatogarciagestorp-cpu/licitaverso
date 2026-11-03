@@ -6,10 +6,13 @@ jobs:
     steps:
       - run: |
           A="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130 Safari/537.36"
-          curl -sS -m 30 -A "$A" "https://pncp.gov.br/api/search/?q=notebook&tipos_documento=edital&ordenacao=-data&pagina=1&tam_pagina=1&status=todos&ufs=RJ" | python3 -c "import json,sys;h=json.load(sys.stdin)['items'][0];print({k:v for k,v in h.items() if v not in (None,'',[])})"
-          for f in "uf=RJ" "ufs=RJ" "uf_sigla=RJ"; do echo "== $f"; curl -sS -m 30 -A "$A" "https://pncp.gov.br/api/search/?q=notebook&tipos_documento=edital&ordenacao=-data&pagina=1&tam_pagina=5&status=todos&$f" | python3 -c "import json,sys;j=json.load(sys.stdin);print(j.get('total'),[h.get('uf') for h in j['items']])"; done
+          set +e
           for u in "https://pncp.gov.br/api/pncp/v1/orgaos/29138385000130/compras/2026/66/itens?pagina=1&tamanhoPagina=5" \
                    "https://pncp.gov.br/api/pncp/v1/orgaos/29138385000130/compras/2026/66" \
                    "https://pncp.gov.br/pncp-api/v1/orgaos/29138385000130/compras/2026/66/itens?pagina=1&tamanhoPagina=5" \
-                   "https://pncp.gov.br/api/pncp/v1/orgaos/00394502000144/compras/2026/14828/itens?pagina=1&tamanhoPagina=5"; do
-            echo "== $u"; curl -sS -m 60 -A "$A" -o /tmp/r -w "HTTP %{http_code} %{time_total}s\n" "$u"; head -c 900 /tmp/r; echo; done
+                   "https://pncp.gov.br/api/pncp/v1/orgaos/00394502000144/compras/2026/14828/itens?pagina=1&tamanhoPagina=5" \
+                   "https://pncp.gov.br/api/consulta/v1/orgaos/29138385000130/compras/2026/66" \
+                   "https://pncp.gov.br/api/search/?q=notebook&tipos_documento=ata&ordenacao=-data&pagina=1&tam_pagina=2&status=todos&ufs=RJ" \
+                   "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=10&codigoItemCatalogo=451899&estado=RJ" \
+                   "https://dadosabertos.compras.gov.br/modulo-material/4_consultarItemMaterial?pagina=1&tamanhoPagina=5&descricaoItem=notebook"; do
+            echo "== $u"; curl -sS -m 25 -A "$A" -o /tmp/r -w "HTTP %{http_code} %{time_total}s\n" "$u"; head -c 900 /tmp/r; echo; done
