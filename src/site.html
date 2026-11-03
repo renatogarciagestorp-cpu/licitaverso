@@ -740,6 +740,51 @@
   .lvw-pe { display: flex; justify-content: space-between; gap: 8px; padding: 10px 12px; border-top: 1px solid #E5E7EB; background: rgba(255,255,255,0.6); }
   .lvw-pe button { border: 1px solid #D0D4DA; background: #fff; border-radius: 6px; padding: 6px 14px; font: inherit; font-size: 13px; color: #1B1B1B; cursor: pointer; }
   .lvw-pe button:hover { background: #F3F4F6; }
+  .lvc-abas { margin-top: -26px; position: relative; display: flex; gap: 4px; background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 5px; box-shadow: 0 12px 28px rgba(11,31,42,0.07); width: max-content; max-width: 100%; overflow-x: auto; }
+  .lvc-aba { border: 0; background: none; border-radius: 10px; padding: 10px 16px; font: inherit; font-size: 14px; font-weight: 800; color: #55666D; white-space: nowrap; }
+  .lvc-aba.ativo { background: #0A1F2A; color: #fff; }
+  .lvc-aba:disabled { opacity: 0.55; }
+  .lvc-aba small { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+  .lvc-form { gap: 0 !important; padding: 0 !important; overflow: visible; }
+  .lvc-passo { padding: 22px 24px; display: grid; gap: 14px; border-top: 1px solid #EDF2F1; }
+  .lvc-passo:first-child { border-top: 0; }
+  .lvc-passo-cab { display: flex; gap: 12px; align-items: flex-start; }
+  .lvc-passo-cab h2 { margin: 0; font-size: 17px; font-weight: 800; color: #0B1F2A; }
+  .lvc-passo-cab p { margin: 3px 0 0; font-size: 13px; line-height: 1.45; color: #6A7B82; }
+  .lvc-n { flex: none; width: 30px; height: 30px; border-radius: 50%; background: #0FA36B; color: #06251A; font-weight: 800; font-size: 14px; display: grid; place-items: center; }
+  .lvc-idx { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .lvc-idx-c { font: inherit; text-align: left; display: grid; gap: 2px; background: #fff; border: 1px solid #DDE4E3; border-radius: 14px; padding: 12px; cursor: pointer; color: #0B1F2A; transition: border-color 0.12s ease, box-shadow 0.12s ease; }
+  .lvc-idx-c:hover { border-color: #0FA36B; }
+  .lvc-idx-c.sel { border: 2px solid #0FA36B; padding: 11px; background: #F1FBF6; box-shadow: 0 8px 18px rgba(15,163,107,0.14); }
+  .lvc-idx-c > b { font-size: 17px; }
+  .lvc-idx-fonte { font-size: 12px; color: #6A7B82; font-weight: 700; }
+  .lvc-idx-ult { margin-top: 6px; font-size: 12.5px; color: #0A7A50; font-weight: 800; }
+  .lvc-idx-regra { font-size: 11.5px; color: #7A8B91; line-height: 1.35; }
+  .lvc-datas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: start; }
+  .lvc-datas .lvc-campo > span, .lvc-datas .lvc-mp-btn { line-height: 1.3; }
+  .lvc-datas .lvc-mp-btn { height: 48px; min-height: 0; }
+  .lvc-linha { display: flex; flex-wrap: wrap; gap: 4px; }
+  .lvc-lm { font-size: 11.5px; font-weight: 800; border-radius: 7px; padding: 5px 7px; background: #EEF2F2; color: #4A5D64; }
+  .lvc-lm.ok { background: #E3F6EC; color: #0A7A50; }
+  .lvc-lm.falta { background: #FFF4DC; color: #8A5A00; }
+  .lvc-lm.vale { background: #0A1F2A; color: #7FE3B6; }
+  .lvc-linha-leg { margin: -4px 0 0; font-size: 12.5px; color: #55666D; }
+  .lvc-valor-in { display: flex; align-items: center; border: 1px solid #DDE4E3; border-radius: 12px; background: #FBFCFC; padding-left: 14px; }
+  .lvc-valor-in:focus-within { outline: 2px solid #0FA36B; outline-offset: 1px; background: #fff; }
+  .lvc-valor-in i { font-style: normal; font-weight: 800; color: #0F6B7E; }
+  .lvc-valor .lvc-valor-in input { border: 0 !important; outline: none !important; background: transparent !important; font-family: 'Source Serif 4', Georgia, serif; font-size: 24px !important; font-weight: 600; padding: 10px 12px !important; min-height: 52px; }
+  .lvc-calc-btn { display: none; width: 100%; }
+  .lvc-resumo { margin: 16px 0 0; display: grid; gap: 0; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; overflow: hidden; }
+  .lvc-resumo > div { display: flex; justify-content: space-between; gap: 12px; padding: 9px 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .lvc-resumo > div:first-child { border-top: 0; }
+  .lvc-resumo dt { font-size: 12.5px; color: #A9BEC6; }
+  .lvc-resumo dd { margin: 0; font-size: 13.5px; font-weight: 800; color: #fff; text-align: right; }
+  @media (max-width: 960px) {
+    .lvc-idx { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lvc-datas { grid-template-columns: minmax(0, 1fr); }
+    .lvc-passo { padding: 18px 16px; }
+    .lvc-calc-btn { display: block; }
+  }
   .lvc-metodo { margin: 0; font-size: 13px; line-height: 1.55; color: #3D5058; background: #F1F6F5; border: 1px solid #E0EAE8; border-radius: 12px; padding: 11px 13px; }
   .lvc-campo > small { font-size: 12.5px; color: #7A8B91; line-height: 1.4; }
   .lvc-check { display: flex; gap: 10px; align-items: center; font-size: 14.5px; font-weight: 700; color: #26393F; cursor: pointer; }
@@ -1555,36 +1600,59 @@
           </div>
         </sc-if>
         <sc-if value="{{ calcLiberada }}" hint-placeholder-val="{{ true }}">
-          <div class="lvc-tipos" role="group" aria-label="Tipo de pedido">
-            <button class="lvc-tipo ativo" aria-pressed="true"><b>Reajuste por índice</b><span>IPCA, INPC, IGP-M, INCC…</span></button>
-            <button class="lvc-tipo" disabled><b>Repactuação</b><span>Em breve · mão de obra e convenção coletiva</span></button>
-            <button class="lvc-tipo" disabled><b>Reequilíbrio</b><span>Em breve · fato imprevisível</span></button>
+          <div class="lvc-abas" role="tablist" aria-label="Tipo de pedido">
+            <button class="lvc-aba ativo" role="tab" aria-selected="true">Reajuste por índice</button>
+            <button class="lvc-aba" role="tab" aria-selected="false" disabled>Repactuação <small>em breve</small></button>
+            <button class="lvc-aba" role="tab" aria-selected="false" disabled>Reequilíbrio <small>em breve</small></button>
           </div>
           <div class="lvc-grid">
             <div class="lvc-form">
-              <h2 class="lva-h2" style="font-size: 22px">Dados do contrato</h2>
-              <div class="lvc-campo"><span>Regime do contrato</span>
-                <div class="lvc-chips" role="group"><sc-for list="{{ calcRegimes }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></div>
-              <div class="lvc-campo"><span>Índice previsto no contrato</span>
-                <div class="lvc-chips" role="group"><sc-for list="{{ calcIndices }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></div>
-              <label class="lvc-campo"><span>Valor mensal atual do contrato (R$)</span>
-                <input type="text" inputmode="decimal" value="{{ calcValor }}" sc-camel-on-input="{{ calcOnValor }}" placeholder="Ex.: 48.500,00"></label>
-              <div class="lvc-campo"><span>Data-base (mês do orçamento estimado)</span>
-                <div class="lvc-mp"><button type="button" class="{{ mpBase.btnClasse }}" sc-camel-on-click="{{ mpBase.alternar }}" aria-expanded="{{ mpBase.aberto }}"><span>{{ mpBase.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">▾</span></button><sc-if value="{{ mpBase.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpBase.topo }}</div><div class="lvw-cab"><span class="lvw-titulo">{{ mpBase.titulo }}</span><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpBase.ant }}" aria-label="Ano anterior">▲</button><button type="button" sc-camel-on-click="{{ mpBase.prox }}" aria-label="Próximo ano">▼</button></span></div><sc-if value="{{ mpBase.vistaMeses }}" hint-placeholder-val="{{ true }}"><div class="lvw-meses"><sc-for list="{{ mpBase.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpBase.hoje }}">Mês atual</button><sc-if value="{{ mpBase.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpBase.limpar }}">Limpar</button></sc-if></div></div></sc-if></div><small>Pela Lei 14.133, é a data do orçamento estimado, salvo se o contrato indicar outra.</small></div>
-              <label class="lvc-check"><input type="checkbox" checked="{{ calcHouve }}" sc-camel-on-change="{{ calcOnHouve }}"><span>Já houve reajuste neste contrato</span></label>
-              <sc-if value="{{ calcHouve }}" hint-placeholder-val="{{ false }}">
-                <div class="lvc-campo"><span>Mês em que o último reajuste passou a valer</span><div class="lvc-mp"><button type="button" class="{{ mpUltimo.btnClasse }}" sc-camel-on-click="{{ mpUltimo.alternar }}" aria-expanded="{{ mpUltimo.aberto }}"><span>{{ mpUltimo.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">▾</span></button><sc-if value="{{ mpUltimo.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpUltimo.topo }}</div><div class="lvw-cab"><span class="lvw-titulo">{{ mpUltimo.titulo }}</span><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpUltimo.ant }}" aria-label="Ano anterior">▲</button><button type="button" sc-camel-on-click="{{ mpUltimo.prox }}" aria-label="Próximo ano">▼</button></span></div><sc-if value="{{ mpUltimo.vistaMeses }}" hint-placeholder-val="{{ true }}"><div class="lvw-meses"><sc-for list="{{ mpUltimo.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpUltimo.hoje }}">Mês atual</button><sc-if value="{{ mpUltimo.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpUltimo.limpar }}">Limpar</button></sc-if></div></div></sc-if></div><small>O próximo ciclo conta 12 meses a partir daqui.</small></div>
-              </sc-if>
-              <div class="lvc-campo"><span>Data final (último mês do índice)</span><div class="lvc-mp"><button type="button" class="{{ mpRef.btnClasse }}" sc-camel-on-click="{{ mpRef.alternar }}" aria-expanded="{{ mpRef.aberto }}"><span>{{ mpRef.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">▾</span></button><sc-if value="{{ mpRef.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpRef.topo }}</div><div class="lvw-cab"><span class="lvw-titulo">{{ mpRef.titulo }}</span><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpRef.ant }}" aria-label="Ano anterior">▲</button><button type="button" sc-camel-on-click="{{ mpRef.prox }}" aria-label="Próximo ano">▼</button></span></div><sc-if value="{{ mpRef.vistaMeses }}" hint-placeholder-val="{{ true }}"><div class="lvw-meses"><sc-for list="{{ mpRef.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpRef.hoje }}">Mês atual</button><sc-if value="{{ mpRef.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpRef.limpar }}">Limpar</button></sc-if></div></div></sc-if></div><small>{{ calcDataFinalAjuda }}</small></div>
-              <div class="lvc-campo"><span>Fim da vigência (opcional)</span><div class="lvc-mp"><button type="button" class="{{ mpFim.btnClasse }}" sc-camel-on-click="{{ mpFim.alternar }}" aria-expanded="{{ mpFim.aberto }}"><span>{{ mpFim.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">▾</span></button><sc-if value="{{ mpFim.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpFim.topo }}</div><div class="lvw-cab"><span class="lvw-titulo">{{ mpFim.titulo }}</span><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpFim.ant }}" aria-label="Ano anterior">▲</button><button type="button" sc-camel-on-click="{{ mpFim.prox }}" aria-label="Próximo ano">▼</button></span></div><sc-if value="{{ mpFim.vistaMeses }}" hint-placeholder-val="{{ true }}"><div class="lvw-meses"><sc-for list="{{ mpFim.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpFim.hoje }}">Mês atual</button><sc-if value="{{ mpFim.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpFim.limpar }}">Limpar</button></sc-if></div></div></sc-if></div></div>
-              <p class="lvc-metodo"><b>{{ calcMetodoTit }}</b> {{ calcMetodoTxt }}</p>
-              <details class="lvc-det"><summary>Dados para a nota técnica (opcional)</summary>
-                <label class="lvc-campo"><span>Contrato / processo</span><input type="text" value="{{ calcContrato }}" sc-camel-on-input="{{ calcOnContrato }}"></label>
-                <label class="lvc-campo"><span>Contratada</span><input type="text" value="{{ calcContratada }}" sc-camel-on-input="{{ calcOnContratada }}"></label>
-                <label class="lvc-campo"><span>Objeto</span><input type="text" value="{{ calcObjeto }}" sc-camel-on-input="{{ calcOnObjeto }}"></label>
-              </details>
+              <section class="lvc-passo">
+                <div class="lvc-passo-cab"><span class="lvc-n">1</span><div><h2>Escolha o índice do contrato</h2><p>O mesmo que está na cláusula de reajuste.</p></div></div>
+                <div class="lvc-idx">
+                  <sc-for list="{{ calcIdxCards }}" as="ix" hint-placeholder-count="6">
+                    <button type="button" class="{{ ix.classe }}" sc-camel-on-click="{{ ix.escolher }}" aria-pressed="{{ ix.sel }}">
+                      <b>{{ ix.sigla }}</b><span class="lvc-idx-fonte">{{ ix.fonte }}</span><span class="lvc-idx-ult">{{ ix.ultimo }}</span><span class="lvc-idx-regra">{{ ix.regra }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </section>
+
+              <section class="lvc-passo">
+                <div class="lvc-passo-cab"><span class="lvc-n">2</span><div><h2>Informe o período</h2><p>Mês e ano. {{ calcDataFinalAjuda }}</p></div></div>
+                <div class="lvc-datas">
+                  <div class="lvc-campo"><span>Data-base *</span><div class="lvc-mp"><button type="button" class="{{ mpBase.btnClasse }}" sc-camel-on-click="{{ mpBase.alternar }}" aria-expanded="{{ mpBase.aberto }}"><span>{{ mpBase.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">▾</span></button><sc-if value="{{ mpBase.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpBase.topo }}</div><div class="lvw-cab"><span class="lvw-titulo">{{ mpBase.titulo }}</span><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpBase.ant }}" aria-label="Ano anterior">▲</button><button type="button" sc-camel-on-click="{{ mpBase.prox }}" aria-label="Próximo ano">▼</button></span></div><sc-if value="{{ mpBase.vistaMeses }}" hint-placeholder-val="{{ true }}"><div class="lvw-meses"><sc-for list="{{ mpBase.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpBase.hoje }}">Mês atual</button><sc-if value="{{ mpBase.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpBase.limpar }}">Limpar</button></sc-if></div></div></sc-if></div><small>Mês do orçamento estimado (Lei 14.133, art. 25, § 7º).</small></div>
+                  <div class="lvc-campo"><span>Data final</span><div class="lvc-mp"><button type="button" class="{{ mpRef.btnClasse }}" sc-camel-on-click="{{ mpRef.alternar }}" aria-expanded="{{ mpRef.aberto }}"><span>{{ mpRef.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">▾</span></button><sc-if value="{{ mpRef.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpRef.topo }}</div><div class="lvw-cab"><span class="lvw-titulo">{{ mpRef.titulo }}</span><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpRef.ant }}" aria-label="Ano anterior">▲</button><button type="button" sc-camel-on-click="{{ mpRef.prox }}" aria-label="Próximo ano">▼</button></span></div><sc-if value="{{ mpRef.vistaMeses }}" hint-placeholder-val="{{ true }}"><div class="lvw-meses"><sc-for list="{{ mpRef.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpRef.hoje }}">Mês atual</button><sc-if value="{{ mpRef.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpRef.limpar }}">Limpar</button></sc-if></div></div></sc-if></div><small>Último mês do índice no cálculo.</small></div>
+                </div>
+                <sc-if value="{{ calcTemLinha }}" hint-placeholder-val="{{ false }}">
+                  <div class="lvc-linha" aria-label="Meses do índice considerados">
+                    <sc-for list="{{ calcLinha }}" as="ln" hint-placeholder-count="12"><span class="{{ ln.classe }}" title="{{ ln.titulo }}">{{ ln.rot }}</span></sc-for>
+                  </div>
+                  <p class="lvc-linha-leg">{{ calcLinhaLeg }}</p>
+                </sc-if>
+                <label class="lvc-check"><input type="checkbox" checked="{{ calcHouve }}" sc-camel-on-change="{{ calcOnHouve }}"><span>Já houve reajuste neste contrato</span></label>
+                <sc-if value="{{ calcHouve }}" hint-placeholder-val="{{ false }}">
+                  <div class="lvc-campo"><span>Mês em que o último reajuste passou a valer</span><div class="lvc-mp"><button type="button" class="{{ mpUltimo.btnClasse }}" sc-camel-on-click="{{ mpUltimo.alternar }}" aria-expanded="{{ mpUltimo.aberto }}"><span>{{ mpUltimo.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">▾</span></button><sc-if value="{{ mpUltimo.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpUltimo.topo }}</div><div class="lvw-cab"><span class="lvw-titulo">{{ mpUltimo.titulo }}</span><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpUltimo.ant }}" aria-label="Ano anterior">▲</button><button type="button" sc-camel-on-click="{{ mpUltimo.prox }}" aria-label="Próximo ano">▼</button></span></div><sc-if value="{{ mpUltimo.vistaMeses }}" hint-placeholder-val="{{ true }}"><div class="lvw-meses"><sc-for list="{{ mpUltimo.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpUltimo.hoje }}">Mês atual</button><sc-if value="{{ mpUltimo.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpUltimo.limpar }}">Limpar</button></sc-if></div></div></sc-if></div><small>Vira a nova data-base: o próximo ciclo conta a partir daqui.</small></div>
+                </sc-if>
+              </section>
+
+              <section class="lvc-passo">
+                <div class="lvc-passo-cab"><span class="lvc-n">3</span><div><h2>Valor e contrato</h2><p>O resultado é calculado na hora.</p></div></div>
+                <label class="lvc-campo lvc-valor"><span>Valor mensal a reajustar *</span>
+                  <span class="lvc-valor-in"><i>R$</i><input type="text" inputmode="decimal" value="{{ calcValor }}" sc-camel-on-input="{{ calcOnValor }}" placeholder="0,00"></span></label>
+                <div class="lvc-campo"><span>Regime</span>
+                  <div class="lvc-chips" role="group"><sc-for list="{{ calcRegimes }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></div>
+                <details class="lvc-det"><summary>Mais opções: fim da vigência e dados para a nota técnica</summary>
+                  <div class="lvc-campo"><span>Fim da vigência</span><div class="lvc-mp"><button type="button" class="{{ mpFim.btnClasse }}" sc-camel-on-click="{{ mpFim.alternar }}" aria-expanded="{{ mpFim.aberto }}"><span>{{ mpFim.texto }}</span><span class="lvc-mp-ic" aria-hidden="true">▾</span></button><sc-if value="{{ mpFim.aberto }}" hint-placeholder-val="{{ false }}"><div class="lvw" role="dialog" aria-label="Calendário"><div class="lvw-topo">{{ mpFim.topo }}</div><div class="lvw-cab"><span class="lvw-titulo">{{ mpFim.titulo }}</span><span class="lvw-setas"><button type="button" sc-camel-on-click="{{ mpFim.ant }}" aria-label="Ano anterior">▲</button><button type="button" sc-camel-on-click="{{ mpFim.prox }}" aria-label="Próximo ano">▼</button></span></div><sc-if value="{{ mpFim.vistaMeses }}" hint-placeholder-val="{{ true }}"><div class="lvw-meses"><sc-for list="{{ mpFim.meses }}" as="mm" hint-placeholder-count="12"><button type="button" class="{{ mm.classe }}" sc-camel-on-click="{{ mm.escolher }}">{{ mm.nome }}</button></sc-for></div></sc-if><div class="lvw-pe"><button type="button" sc-camel-on-click="{{ mpFim.hoje }}">Mês atual</button><sc-if value="{{ mpFim.podeLimpar }}" hint-placeholder-val="{{ false }}"><button type="button" sc-camel-on-click="{{ mpFim.limpar }}">Limpar</button></sc-if></div></div></sc-if></div><small>Para calcular o impacto até o fim do contrato.</small></div>
+                  <label class="lvc-campo"><span>Contrato / processo</span><input type="text" value="{{ calcContrato }}" sc-camel-on-input="{{ calcOnContrato }}"></label>
+                  <label class="lvc-campo"><span>Contratada</span><input type="text" value="{{ calcContratada }}" sc-camel-on-input="{{ calcOnContratada }}"></label>
+                  <label class="lvc-campo"><span>Objeto</span><input type="text" value="{{ calcObjeto }}" sc-camel-on-input="{{ calcOnObjeto }}"></label>
+                </details>
+                <p class="lvc-metodo"><b>{{ calcMetodoTit }}</b> {{ calcMetodoTxt }}</p>
+                <button type="button" class="lvh-btn lvc-calc-btn" sc-camel-on-click="{{ calcVerResultado }}">Ver resultado</button>
+              </section>
             </div>
-            <div class="lvc-res" aria-live="polite">
+            <div id="lvc-resultado" class="lvc-res" aria-live="polite">
               <sc-if value="{{ calcSemIndices }}" hint-placeholder-val="{{ false }}"><p class="lvc-msg">{{ calcSemIndicesTxt }}</p></sc-if>
               <sc-if value="{{ calcAguardando }}" hint-placeholder-val="{{ true }}">
                 <div class="lvc-vazio"><b>Preencha o valor mensal e a data-base</b><span>O resultado aparece aqui, na hora.</span></div>
@@ -1593,6 +1661,9 @@
                 <span class="lvc-res-rot">{{ calcRotulo }}</span>
                 <div class="lvc-res-valor">{{ calcNovo }}</div>
                 <p class="lvc-res-sub">{{ calcSub }}</p>
+                <dl class="lvc-resumo">
+                  <sc-for list="{{ calcResumo }}" as="rs" hint-placeholder-count="5"><div><dt>{{ rs.r }}</dt><dd>{{ rs.v }}</dd></div></sc-for>
+                </dl>
                 <div class="lvc-kpis">
                   <sc-for list="{{ calcKpis }}" as="k" hint-placeholder-count="3"><div class="lvc-kpi"><b>{{ k.v }}</b><span>{{ k.r }}</span></div></sc-for>
                 </div>
@@ -5343,6 +5414,39 @@ class Component extends DCLogic {
           calcCiclos: r.pronto ? r.ciclos.map((ci) => ({ k: ci.k + "º", aniv: mesBR(ci.aniversario), periodo: mesBR(ci.ini) + " a " + mesBR(ci.fim), var: pct(ci.fator) + (ci.falta ? "*" : ""), valor: brlN(ci.valor) })) : [],
           calcBaixarNota: () => this.baixarNotaReajuste(),
           calcDataFinalAjuda: c.indice === "ipca" ? "Como na Calculadora do Cidadão: com data-base em fevereiro/2025, a data final é janeiro/2026. Em branco, usa o último mês divulgado." : "Com data-base em janeiro/2025, a data final é janeiro/2026. Em branco, usa o último mês divulgado.",
+          calcIdxCards: idxNomes.map(([id, nome]) => {
+            const se = s.indices && s.indices.series && s.indices.series[id];
+            const ks = se ? Object.keys(se.mensal).sort() : [], uk = ks[ks.length - 1];
+            const [sigla, fonte] = nome.replace(")", "").split(" (");
+            return { sigla, fonte, sel: c.indice === id, classe: "lvc-idx-c" + (c.indice === id ? " sel" : ""),
+              ultimo: uk ? mesBR(uk) + ": " + String(se.mensal[uk]).replace(".", ",") + "%" : "",
+              regra: id === "ipca" ? "Regra do Banco Central · 12 meses" : "Data-base ao aniversário · 13 meses",
+              escolher: () => this.setState((x) => ({ calc: { ...x.calc, indice: id } })) };
+          }),
+          ...(() => {
+            if (!r.pronto) return { calcTemLinha: false, calcLinha: [], calcLinhaLeg: "", calcResumo: [] };
+            const ci = r.ciclos.length ? r.ciclos[r.ciclos.length - 1] : null;
+            const ini = ci ? r.mesNum(ci.ini) : r.baseN, n = c.indice === "ipca" ? 12 : 13;
+            const linha = [];
+            for (let k = 0; k < n; k++) {
+              const ymk = r.ym(ini + k), v = r.serie.mensal[ymk];
+              linha.push({ rot: mesBR(ymk).replace("/20", "/"), titulo: mesBR(ymk) + (typeof v === "number" ? ": " + String(v).replace(".", ",") + "%" : ": não divulgado"),
+                classe: "lvc-lm" + (typeof v === "number" ? "" : " falta") + (ci ? " ok" : "") });
+            }
+            linha.push({ rot: "▶ " + mesBR(r.ym(ini + 12)).replace("/20", "/"), titulo: "Reajuste vale a partir daqui", classe: "lvc-lm vale" });
+            return {
+              calcTemLinha: true, calcLinha: linha,
+              calcLinhaLeg: (ci ? "Índice de " + mesBR(ci.ini) + " a " + mesBR(ci.fim) : "Período necessário: " + mesBR(r.ym(ini)) + " a " + mesBR(r.ym(ini + n - 1))) + " · o reajuste vale a partir de " + mesBR(r.ym(ini + 12)) + ".",
+              calcResumo: [
+                { r: "Índice", v: r.serie.nome },
+                { r: "Data-base", v: mesBR(r.baseYm) },
+                { r: "Data final", v: mesBR(r.ym(r.refN)) },
+                { r: "Índice de correção", v: r.fatorTot.toFixed(7).replace(".", ",") },
+                { r: "Valor percentual", v: ((r.fatorTot - 1) * 100).toFixed(4).replace(".", ",") + "%" }
+              ]
+            };
+          })(),
+          calcVerResultado: () => { const el = document.getElementById("lvc-resultado"); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); },
           calcMetodoTit: c.indice === "ipca" ? "IPCA: metodologia do Banco Central." : "Período do índice:",
           calcMetodoTxt: c.indice === "ipca"
             ? "Como na Calculadora do Cidadão, o índice de cada ciclo vai do mês da data-base até o 11º mês seguinte, contando os dois (12 meses). Exemplo: data-base em fevereiro/2025 → IPCA de fevereiro/2025 a janeiro/2026; o reajuste vale a partir de fevereiro/2026."
