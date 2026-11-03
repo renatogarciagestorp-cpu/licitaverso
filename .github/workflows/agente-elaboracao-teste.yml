@@ -8,7 +8,7 @@ on:
       doc: { description: "etp, tr ou projeto_basico", required: true, default: "etp" }
       caso: { description: "arquivo em agente/testes/elaboracao/", required: true, default: "etp-limpeza.json" }
 
-permissions: { contents: read }
+permissions: { contents: write }
 
 jobs:
   testar:
@@ -28,6 +28,18 @@ jobs:
         run: |
           python3 scripts/agente/elaborar.py --doc "$DOC" --respostas "agente/testes/elaboracao/$CASO" --pasta /tmp/saida
           python3 -c "import json;e=json.load(open('/tmp/saida/execucao.json'));print('::notice title=Custo::US$',e['custo_usd'],'·',e['segundos'],'s · pendências',e['pendencias'],'· alta',e['alta'],'· média',e['media'])"
+      - name: Guardar o resultado no ramo agente-testes (caso fictício)
+        if: always()
+        env: { DOC: "${{ inputs.doc }}" }
+        run: |
+          [ -f /tmp/saida/documento.json ] || exit 0
+          git fetch -q origin agente-testes && git worktree add -q /tmp/t origin/agente-testes && cd /tmp/t
+          mkdir -p "elaboracao/$DOC" && cp /tmp/saida/documento.json /tmp/saida/execucao.json "elaboracao/$DOC/"
+          [ -f /tmp/saida/conferencia.json ] && cp /tmp/saida/conferencia.json "elaboracao/$DOC/" || true
+          [ -f /tmp/saida/documento.pdf ] && cp /tmp/saida/documento.pdf "elaboracao/$DOC/" || true
+          git config user.name "Licitacon — agente" && git config user.email "actions@users.noreply.github.com"
+          git checkout -q -B agente-testes && git add elaboracao && git commit -q -m "Teste de elaboração: $DOC" || exit 0
+          for i in 1 2 3; do git push -q origin agente-testes && break; git pull -q --rebase origin agente-testes; done
       - uses: actions/upload-artifact@v4
         if: always()
         with: { name: elaboracao-teste, path: /tmp/saida, retention-days: 7 }
