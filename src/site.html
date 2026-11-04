@@ -988,6 +988,7 @@
   .lmo-falha { border: 1px solid #E3E9E8; border-left: 4px solid #C98A1B; border-radius: 10px; padding: 10px 12px; background: #fff; }
   .lmo-falha.g-alta { border-left-color: #B83232; } .lmo-falha.g-baixa { border-left-color: #0F6B7E; }
   .lmo-falha p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.5; color: #26393F; }
+  .lmo-imp { color: #8A1230 !important; }
   .lmo-falha-cab { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 14px; }
   .lmo-falha-cab span { font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: #66757F; }
   .lmo-btn2 { background: #0A1F2A; color: #fff; box-shadow: none; }
@@ -2270,6 +2271,7 @@
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Falhas e inconsistências da planilha da contratação</h2>
               <p class="lmo-nota">{{ moFalhasResumo }} Cada item traz o fundamento e o caminho correto. A planilha repactuada acima já considera as correções indicadas pelo agente; confira antes de concluir.</p>
+              <p class="lve-aviso" role="note"><b>Atenção:</b> manter qualquer uma dessas falhas na planilha impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores. Corrija cada item antes de concluir a repactuação.</p>
               <ol class="lmo-falhas">
                 <sc-for list="{{ moFalhas }}" as="f" hint-placeholder-count="2">
                   <li class="{{ f.cls }}">
@@ -2277,6 +2279,7 @@
                     <p><b>Falha:</b> {{ f.problema }}</p>
                     <p><b>Fundamento:</b> {{ f.fundamento }}</p>
                     <p><b>Caminho correto:</b> {{ f.correcao }}</p>
+                    <sc-if value="{{ f.temImpacto }}" hint-placeholder-val="{{ false }}"><p class="lmo-imp"><b>Impacto se mantida:</b> {{ f.impacto }}</p></sc-if>
                   </li>
                 </sc-for>
               </ol>
@@ -6202,7 +6205,8 @@ class Component extends DCLogic {
         if (falhas.length) {
           ws.addRow([]);
           const fr = add(["FALHAS E INCONSISTÊNCIAS DA PLANILHA DA CONTRATAÇÃO", "", "", ""]); ws.mergeCells(fr.number, 1, fr.number, 4); fr.font = { bold: true, color: { argb: "FFFFFFFF" } }; fr.getCell(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF8A1230" } };
-          falhas.forEach((f, i) => { const row = add([String(i + 1), f.rubrica + " (gravidade " + ({ alta: "alta", media: "média", baixa: "baixa" }[f.gravidade] || "média") + ")\nFalha: " + f.problema + "\nFundamento: " + f.fundamento + "\nCaminho correto: " + f.correcao, "", ""]); ws.mergeCells(row.number, 2, row.number, 4); row.getCell(2).font = { size: 10 }; });
+          const av = ws.addRow(["", "Atenção: manter qualquer uma dessas falhas na planilha impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores. Corrija cada item antes de concluir a repactuação."]); ws.mergeCells(av.number, 2, av.number, 4); av.getCell(2).font = { bold: true, size: 10, color: { argb: "FF8A1230" } }; av.getCell(2).alignment = { wrapText: true }; av.height = 42;
+          falhas.forEach((f, i) => { const row = add([String(i + 1), f.rubrica + " (gravidade " + ({ alta: "alta", media: "média", baixa: "baixa" }[f.gravidade] || "média") + ")\nFalha: " + f.problema + "\nFundamento: " + f.fundamento + "\nCaminho correto: " + f.correcao + (f.impacto ? "\nImpacto se mantida: " + f.impacto : ""), "", ""]); ws.mergeCells(row.number, 2, row.number, 4); row.getCell(2).font = { size: 10 }; });
         }
         if (notas.length) { ws.addRow([]); notas.forEach((n2) => { const row = ws.addRow(["", n2]); ws.mergeCells(row.number, 2, row.number, 4); row.getCell(2).alignment = { wrapText: true }; row.getCell(2).font = { size: 9, italic: true }; }); }
         const buf = await wb.xlsx.writeBuffer();
@@ -6224,7 +6228,7 @@ class Component extends DCLogic {
           theme: "grid", headStyles: { fillColor: [10, 31, 42] }, styles: { fontSize: 8.5, cellPadding: 1.6 }, columnStyles: { 0: { cellWidth: 10 }, 2: { cellWidth: 40 } }, margin: { left: 14, right: 14 } });
         if (falhas.length) {
           doc.autoTable({ startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "FALHAS E INCONSISTÊNCIAS DA PLANILHA DA CONTRATAÇÃO", colSpan: 2 }]],
-            body: falhas.map((f, i) => [String(i + 1), f.rubrica + " (gravidade " + ({ alta: "alta", media: "média", baixa: "baixa" }[f.gravidade] || "média") + ")\nFalha: " + f.problema + "\nFundamento: " + f.fundamento + "\nCaminho correto: " + f.correcao]),
+            body: [[{ content: "Atenção: manter qualquer uma dessas falhas na planilha impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores. Corrija cada item antes de concluir a repactuação.", colSpan: 2, styles: { fontStyle: "bold", textColor: [138, 18, 48] } }]].concat(falhas.map((f, i) => [String(i + 1), f.rubrica + " (gravidade " + ({ alta: "alta", media: "média", baixa: "baixa" }[f.gravidade] || "média") + ")\nFalha: " + f.problema + "\nFundamento: " + f.fundamento + "\nCaminho correto: " + f.correcao + (f.impacto ? "\nImpacto se mantida: " + f.impacto : "")])),
             theme: "grid", headStyles: { fillColor: [138, 18, 48] }, styles: { fontSize: 8, cellPadding: 1.8 }, columnStyles: { 0: { cellWidth: 8, fontStyle: "bold" } }, margin: { left: 14, right: 14 } });
         }
         let y = doc.lastAutoTable.finalY + 6; doc.setFontSize(7.5); doc.setTextColor(85, 102, 109);
@@ -6361,7 +6365,7 @@ class Component extends DCLogic {
         .concat(rep ? [campo("ano_exec", "Ano de execução do contrato após a repactuação", "Ex.: 2"), campo("vigente", "Preço vigente por empregado (antes da repactuação, R$)", "Ex.: 4.320,15")] : []),
       moCct: d.cct_nome || "", moSemCct: !d.cct_nome, moCctRot: rep ? "Nova convenção coletiva (obrigatória)" : "Convenção coletiva",
       moTemFalhas: rep && (d.falhas || []).length > 0, moSemFalhasOk: rep && Array.isArray(d.falhas) && d.falhas.length === 0 && !!d.fontes,
-      moFalhas: (d.falhas || []).map((f, i) => ({ n: i + 1, rubrica: f.rubrica, problema: f.problema, fundamento: f.fundamento, correcao: f.correcao,
+      moFalhas: (d.falhas || []).map((f, i) => ({ n: i + 1, rubrica: f.rubrica, problema: f.problema, fundamento: f.fundamento, correcao: f.correcao, impacto: f.impacto || "", temImpacto: !!f.impacto,
         grav: { alta: "Alta", media: "Média", baixa: "Baixa" }[f.gravidade] || "Média", cls: "lmo-falha g-" + (f.gravidade || "media") })),
       moFalhasResumo: (() => { const fs = d.falhas || []; const c = (g) => fs.filter((f) => f.gravidade === g).length; return fs.length + " falha(s) na planilha da contratação: " + c("alta") + " alta(s), " + c("media") + " média(s), " + c("baixa") + " baixa(s)."; })(),
       moPlanNome: d.plan_nome || "", moSemPlan: !d.plan_nome,
