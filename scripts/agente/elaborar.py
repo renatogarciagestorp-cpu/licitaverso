@@ -60,6 +60,7 @@ CAMPOS_ROTULO = {
     "sem_info": "Informações que o requisitante declarou não ter (somente aqui use [PREENCHER])",
     "especificacoes": "Especificações e requisitos", "gestor": "Gestor do contrato", "fiscais": "Fiscais do contrato / comissão de fiscalização",
     "fonte": "Fonte orçamentária e dotação",
+    "historico": "Situação atual e contratações anteriores (contrato vigente, problemas, valores gastos)", "designacao": "Ato de designação de quem elabora",
 }
 UFS = {"AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"}
 
@@ -320,7 +321,8 @@ NOMES_SECAO = {"informacoes": "Previsão no PCA e alinhamento", "necessidade": "
                "parcelamento_economico": "Parcelamento", "beneficios": "Resultados pretendidos", "providencias": "Providências prévias",
                "correlatas": "Contratações correlatas", "ambientais": "Impactos ambientais", "viabilidade_justificativa": "Posicionamento conclusivo",
                "forma_contratacao": "Forma de contratação", "medicao": "Medição e pagamento", "particularidades": "Aspectos específicos",
-               "riscos_texto": "Análise de riscos", "sustentabilidade": "Critérios de sustentabilidade", "riscos": "Matriz de riscos", "contratacao": "Forma de contratação",
+               "riscos_texto": "Análise de riscos", "sustentabilidade": "Critérios de sustentabilidade", "situacao_atual": "Situação atual", "competitividade": "Competitividade", "diretrizes_tr": "Diretrizes para o TR",
+               "natureza": "Natureza do objeto", "parcelamento_analise": "Análise do parcelamento", "plano_acao": "Plano de providências", "riscos": "Matriz de riscos", "contratacao": "Forma de contratação",
                "solucoes": "Alternativas do mercado", "itens": "Estimativa de custo", "tco": "Custos das soluções", "resumo": "Síntese do estudo"}
 VALOR = re.compile(r"valor|pre[cç]o|custo|r\$|mediana|or[cç]amento estimado|cota[cç]", re.I)
 TEXTO_VALOR = "conforme a pesquisa de preços a ser juntada aos autos (art. 23 da Lei nº 14.133/2021)"

@@ -14,7 +14,7 @@ const ROTULOS: Record<string, string> = {
   parcelamento: "Parcelamento", parc_motivo: "Motivo do parcelamento", valor: "Valor estimado", adjudicacao: "Adjudicação", selecao: "Forma de seleção",
   criterio: "Critério de julgamento", regime_exec: "Regime de execução", local: "Local da obra", unidade: "Unidade requisitante", gestor: "Gestor",
   fiscais: "Fiscais", fonte: "Fonte orçamentária", observacoes: "Observações", municipio: "Município", autoridade: "Autoridade que aprova",
-  precos_manual: "Valores informados", precos_links: "Links de preço",
+  precos_manual: "Valores informados", precos_links: "Links de preço", historico: "Situação atual e contratações anteriores",
 };
 
 const FERRAMENTA = {
