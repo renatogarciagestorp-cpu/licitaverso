@@ -949,6 +949,40 @@
   .lvc-abas { margin-top: -26px; position: relative; display: flex; gap: 4px; background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 5px; box-shadow: 0 12px 28px rgba(11,31,42,0.07); width: max-content; max-width: 100%; overflow-x: auto; }
   .lvc-aba { border: 0; background: none; border-radius: 10px; padding: 10px 16px; font: inherit; font-size: 14px; font-weight: 800; color: #55666D; white-space: nowrap; }
   .lvc-aba.ativo { background: #0A1F2A; color: #fff; }
+  .lvc-aba:not(:disabled) { cursor: pointer; }
+  /* Mão de Obra Exclusiva (planilha IN 05/2017) */
+  .lmo { margin-top: 22px; display: grid; gap: 16px; }
+  .lmo-modos { display: flex; gap: 8px; flex-wrap: wrap; }
+  .lmo-modos button { font: inherit; font-size: 14px; font-weight: 800; border-radius: 999px; padding: 10px 18px; cursor: pointer; }
+  .lmo-intro { margin: 0; font-size: 15px; line-height: 1.55; color: #3D5058; max-width: 80ch; }
+  .lmo-bloco { background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 18px 20px; box-shadow: 0 10px 26px rgba(11,31,42,0.05); }
+  .lmo-h2 { margin: 0 0 12px; font-size: 15px; font-weight: 800; letter-spacing: 0.02em; text-transform: uppercase; color: #0A1F2A; background: #EEF3F2; border-radius: 8px; padding: 8px 12px; }
+  .lmo-campos { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px 14px; }
+  .lmo-campo { display: grid; gap: 5px; font-size: 12.5px; font-weight: 700; color: #3D5058; }
+  .lmo-campo input, .lmo-tabela input { font: inherit; font-size: 14px; font-weight: 600; color: #0B1F2A; border: 1px solid #D6DEDD; border-radius: 9px; padding: 8px 10px; background: #FBFDF6; min-width: 0; }
+  .lmo-campo input:focus, .lmo-tabela input:focus { outline: 2px solid #0FA36B; border-color: #0FA36B; }
+  .lmo-cct { display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-top: 14px; padding-top: 14px; border-top: 1px solid #EDF2F1; }
+  .lmo-cct b { display: block; font-size: 14.5px; } .lmo-cct small { font-size: 12.5px; color: #66757F; }
+  .lmo-arq { position: relative; overflow: hidden; display: inline-block; border: 1px dashed #0FA36B; border-radius: 10px; padding: 9px 14px; font-size: 13.5px; font-weight: 700; color: #0A7A50; cursor: pointer; }
+  .lmo-arq input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .lmo-nota { margin: 8px 0 0; font-size: 12.5px; line-height: 1.5; color: #66757F; }
+  .lmo-tabela { display: grid; border: 1px solid #DDE5E4; border-radius: 10px; overflow: hidden; }
+  .lmo-lin { display: grid; grid-template-columns: 44px minmax(0, 1fr) 120px 150px; gap: 10px; align-items: center; padding: 7px 12px; border-top: 1px solid #EDF2F1; font-size: 14px; }
+  .lmo-lin3 { grid-template-columns: 44px minmax(0, 1fr) 150px; }
+  .lmo-lin:first-child { border-top: 0; }
+  .lmo-cab { background: #F4F7F6; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: #55666D; }
+  .lmo-cab span:nth-child(3), .lmo-cab span:nth-child(4), .lmo-pct, .lmo-val { text-align: right; }
+  .lmo-pct input, .lmo-val input { width: 100%; text-align: right; }
+  .lmo-cod { font-weight: 800; color: #0F6B7E; }
+  .lmo-rot small { display: block; font-size: 12px; line-height: 1.45; color: #66757F; margin-top: 2px; }
+  .lmo-lin[data-auto="true"] { background: #FFF8E8; }
+  .lmo-lin[data-forte="true"] { font-weight: 800; background: #F7FAF9; }
+  .lmo-tot { background: #0A1F2A; color: #fff; font-weight: 800; }
+  .lmo-kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin-top: 14px; align-items: end; }
+  .lmo-kpis > div { background: #F4F7F6; border-radius: 12px; padding: 10px 12px; }
+  .lmo-kpis small { display: block; font-size: 12px; font-weight: 700; color: #66757F; } .lmo-kpis b { font-size: 17px; }
+  .lmo-dif { margin: 12px 0 0; font-size: 14.5px; color: #0B1F2A; }
+  @media (max-width: 700px) { .lmo-lin { grid-template-columns: 30px minmax(0, 1fr) 82px 104px; gap: 6px; padding: 7px 8px; font-size: 13px; } .lmo-lin3 { grid-template-columns: 30px minmax(0, 1fr) 110px; } .lmo-bloco { padding: 14px 12px; } }
   .lvc-aba:disabled { opacity: 0.55; }
   .lvc-aba small { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
   .lvc-form { gap: 0 !important; padding: 0 !important; overflow: visible; }
@@ -2118,8 +2152,8 @@
       <section class="lva-hero" style="padding-bottom: 56px">
         <div class="lvc-hero-in">
           <span class="lvh-eyebrow">Calculadora · gestão de contratos</span>
-          <h1 class="lva-h1" style="max-width: 22ch">Reajuste de contrato calculado certo, com a nota técnica pronta.</h1>
-          <p class="lva-lead">Índices oficiais atualizados todos os dias, conferência dos 12 meses, ciclos acumulados e memória de cálculo mês a mês. No fim, você baixa a nota técnica em PDF para juntar ao processo.</p>
+          <h1 class="lva-h1" style="max-width: 24ch">{{ calcH1 }}</h1>
+          <p class="lva-lead">{{ calcLead }}</p>
         </div>
       </section>
       <section class="lvc-corpo">
@@ -2133,10 +2167,86 @@
         </sc-if>
         <sc-if value="{{ calcLiberada }}" hint-placeholder-val="{{ true }}">
           <div class="lvc-abas" role="tablist" aria-label="Tipo de pedido">
-            <button class="lvc-aba ativo" role="tab" aria-selected="true">Reajuste por índice</button>
-            <button class="lvc-aba" role="tab" aria-selected="false" disabled>Repactuação <small>em breve</small></button>
+            <button class="{{ calcAbaIdxCls }}" role="tab" aria-selected="{{ calcAbaIndice }}" sc-camel-on-click="{{ calcIrIndice }}">Reajuste por índice</button>
+            <button class="{{ calcAbaMoCls }}" role="tab" aria-selected="{{ calcAbaMo }}" sc-camel-on-click="{{ calcIrMo }}">Mão de Obra Exclusiva</button>
             <button class="lvc-aba" role="tab" aria-selected="false" disabled>Reequilíbrio <small>em breve</small></button>
           </div>
+          <sc-if value="{{ calcAbaMo }}" hint-placeholder-val="{{ false }}">
+          <div class="lmo">
+            <div class="lmo-modos" role="group" aria-label="Modelo de planilha">
+              <sc-for list="{{ moModos }}" as="m" hint-placeholder-count="2">
+                <button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}">{{ m.nome }}</button>
+              </sc-for>
+            </div>
+            <p class="lmo-intro">{{ moIntro }}</p>
+            <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}"><div><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCopiar }}">Trazer os dados da Planilha 1 (planejamento) para começar</button></div></sc-if>
+
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Dados para composição dos custos referentes à mão de obra</h2>
+              <div class="lmo-campos">
+                <sc-for list="{{ moCamposIni }}" as="c" hint-placeholder-count="8">
+                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
+                </sc-for>
+              </div>
+              <div class="lmo-cct">
+                <div><b>Convenção coletiva</b><small>Acordo, convenção ou dissídio coletivo da categoria, em PDF.</small></div>
+                <label class="lmo-arq"><input type="file" accept=".pdf,.doc,.docx" sc-camel-on-change="{{ moEscolherCct }}">{{ moCct }}<sc-if value="{{ moCct }}" hint-placeholder-val="{{ false }}"> · trocar</sc-if><sc-if value="{{ moSemCct }}" hint-placeholder-val="{{ true }}">Escolher arquivo</sc-if></label>
+              </div>
+              <p class="lmo-nota">{{ moAgenteTxt }}</p>
+            </section>
+
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Parâmetros dos benefícios (Submódulo 2.3)</h2>
+              <div class="lmo-campos">
+                <sc-for list="{{ moBenef }}" as="c" hint-placeholder-count="5">
+                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
+                </sc-for>
+              </div>
+            </section>
+
+            <sc-for list="{{ moModulos }}" as="md" hint-placeholder-count="3">
+              <section class="lmo-bloco lmo-tab">
+                <h2 class="lmo-h2">{{ md.titulo }}</h2>
+                <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
+                <div class="lmo-tabela" role="table">
+                  <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
+                  <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
+                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
+                      <span class="lmo-cod">{{ l.cod }}</span>
+                      <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
+                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                    </div>
+                  </sc-for>
+                  <div class="lmo-lin lmo-tot" role="row"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
+                </div>
+              </section>
+            </sc-for>
+
+            <section class="lmo-bloco lmo-tab">
+              <h2 class="lmo-h2">Quadro-resumo do custo por empregado</h2>
+              <p class="lmo-nota">{{ moTribTxt }}</p>
+              <div class="lmo-tabela" role="table">
+                <sc-for list="{{ moResumo }}" as="l" hint-placeholder-count="6">
+                  <div class="lmo-lin lmo-lin3" role="row" data-forte="{{ l.forte }}"><span class="lmo-cod">{{ l.cod }}</span><span>{{ l.rot }}</span><span class="lmo-val">{{ l.valTxt }}</span></div>
+                </sc-for>
+                <div class="lmo-lin lmo-lin3 lmo-tot" role="row"><span></span><span>Preço total por empregado</span><span class="lmo-val">{{ moTotal }}</span></div>
+              </div>
+              <div class="lmo-kpis">
+                <div><small>Fator K</small><b>{{ moFatorK }}</b></div>
+                <sc-for list="{{ moQuadro }}" as="c" hint-placeholder-count="2">
+                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
+                </sc-for>
+                <div><small>Valor por posto</small><b>{{ moPosto }}</b></div>
+                <div><small>Valor mensal dos serviços</small><b>{{ moMensal }}</b></div>
+                <div><small>Valor global (× meses)</small><b>{{ moGlobal }}</b></div>
+              </div>
+              <sc-if value="{{ moTemDif }}" hint-placeholder-val="{{ false }}"><p class="lmo-dif">Variação em relação ao preço vigente: <b>{{ moDif }}</b></p></sc-if>
+              <button type="button" class="lve-voltar" sc-camel-on-click="{{ moLimpar }}" style="margin-top: 14px">Limpar a planilha</button>
+            </section>
+          </div>
+          </sc-if>
+          <sc-if value="{{ calcAbaIndice }}" hint-placeholder-val="{{ true }}">
           <div class="lvc-grid">
             <div class="lvc-form">
               <section class="lvc-passo">
@@ -2225,6 +2335,7 @@
               </sc-if>
             </div>
           </div>
+          </sc-if>
         </sc-if>
       </section>
     </sc-if>
@@ -4381,6 +4492,74 @@ const AN_TERMO = [
   "Análise de preços: quando o documento traz o orçamento estimado, o sistema compara os valores com preços homologados em contratações equivalentes publicadas no PNCP (órgãos do mesmo estado, últimos 12 meses, Lei 14.133/2021). O resultado é indicativo e depende da equivalência das especificações; não substitui a pesquisa de preços do processo.",
   "Limitações: a inteligência artificial pode errar ou deixar de identificar pontos. Confira cada apontamento no documento e na fonte oficial antes de decidir."
 ];
+// ------------------------------------------------------------------ Mão de Obra Exclusiva (IN SEGES/MP nº 5/2017, Anexo VII-D)
+// Planilha de custos e formação de preços no formato da IN: módulos 1 a 6, percentuais editáveis e totais truncados.
+const MO_PADRAO = {
+  data_proposta: "", municipio: "", uf: "", ano_cct: "", meses: "12", tipo_servico: "", unidade: "Posto", quantidade: "",
+  cbo: "", categoria: "", salario: "", data_base: "", cct_nome: "",
+  peric: "0", insal: "0", noturno: "0", hnr: "0", he_feriado: "0", outros1: "0",
+  p13: "8,33", pfa: "2,78",
+  inss: "20", saled: "2,5", rat: "2", fap: "1", sesc: "1,5", senac: "1", sebrae: "0,6", incra: "0,2", fgts: "8",
+  vt_tarifa: "0", vt_viagens: "2", dias: "21", aux_dia: "0", aux_part: "20", assist: "0", seguro: "0", outros23: "0",
+  api: "0,42", apt: "1,94",
+  ferias: "8,33", aus: "0,82", pat: "0,02", acid: "0,03", mat: "0,61", outros41: "0", intra: "0",
+  unif: "0", materiais: "0", equip: "0", outros5: "0",
+  ci: "3", lucro: "6,79", pis: "1,65", cofins: "7,6", iss: "5",
+  emp_posto: "1", postos: "1",
+  ano_exec: "2", vigente: ""
+};
+const moNum = (v) => { const n = parseFloat(String(v == null ? "" : v).replace(/\./g, (m, i, t) => (/,/.test(t) ? "" : m)).replace(",", ".")); return isFinite(n) ? n : 0; };
+const moT2 = (x) => Math.trunc(x * 100 + 1e-7) / 100;
+const moT4 = (x) => Math.trunc(x * 10000 + 1e-7) / 10000;
+// APT nas repactuações e prorrogações: o aviso prévio trabalhado é custo não renovável (1,94% só no 1º ano);
+// a partir do 2º ano, no máximo 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário)
+const MO_APT_PRORROGACAO = 0.194;
+function moCalcular(d, modo) {
+  const n = (k) => moNum(d[k]), pc = (k) => moNum(d[k]) / 100;
+  const r = {}, S = n("salario");
+  r.salario = S; r.peric = S * pc("peric"); r.insal = S * pc("insal");
+  r.noturno = n("noturno"); r.hnr = n("hnr"); r.he_feriado = n("he_feriado"); r.outros1 = n("outros1");
+  r.M1 = moT2(S + r.peric + r.insal + r.noturno + r.hnr + r.he_feriado + r.outros1);
+  r.p13 = r.M1 * pc("p13"); r.pfa = r.M1 * pc("pfa"); r.M21p = moT4(pc("p13") + pc("pfa")); r.M21 = moT2(r.p13 + r.pfa);
+  // benefícios (submódulo 2.3)
+  r.vt = Math.max(0, n("vt_tarifa") * n("vt_viagens") * n("dias") - 0.06 * S);
+  r.aux = n("aux_dia") * n("dias") * (1 - pc("aux_part"));
+  r.assist = n("assist"); r.seguro = n("seguro"); r.outros23 = n("outros23");
+  r.M23 = moT2(r.vt + r.aux + r.assist + r.seguro + r.outros23);
+  // módulo 4 (entra na base do 2.2)
+  r.ferias = r.M1 * pc("ferias"); r.aus = r.M1 * pc("aus"); r.pat = r.M1 * pc("pat"); r.acid = r.M1 * pc("acid");
+  r.base_mat = r.p13 + r.pfa + r.assist + r.seguro; r.mat = r.base_mat * pc("mat"); r.outros41 = r.M1 * pc("outros41");
+  r.M41p = moT4(pc("ferias") + pc("aus") + pc("pat") + pc("acid") + pc("mat") + pc("outros41"));
+  r.M41 = moT2(r.ferias + r.aus + r.pat + r.acid + r.mat + r.outros41);
+  r.intra = r.M1 * pc("intra"); r.M42 = moT2(r.intra); r.M4 = moT2(r.M41 + r.M42);
+  // submódulo 2.2: base = módulo 1 + submódulo 2.1 + módulo 4
+  r.base22 = r.M1 + r.M21 + r.M4;
+  const p22 = { inss: pc("inss"), saled: pc("saled"), sat: pc("rat") * n("fap"), sesc: pc("sesc"), senac: pc("senac"), sebrae: pc("sebrae"), incra: pc("incra"), fgts: pc("fgts") };
+  r.p22 = p22; r.M22p = Object.values(p22).reduce((a, b) => a + b, 0);
+  Object.entries(p22).forEach(([k, v]) => { r["g_" + k] = v * r.base22; });
+  r.M22 = moT2(Object.keys(p22).reduce((a, k) => a + r["g_" + k], 0));
+  r.M2 = moT2(r.M21 + r.M22 + r.M23);
+  // módulo 3: provisão para rescisão
+  r.apt_p = modo === "repactuacao" ? MO_APT_PRORROGACAO / 100 : pc("apt");
+  r.m3p = { api: pc("api"), fgts_api: pc("fgts") * pc("api"), multa_api: 0.5 * pc("fgts") * pc("api"), apt: r.apt_p,
+            inc_apt: r.M22p * r.apt_p, multa_apt: 0.5 * pc("fgts") * r.apt_p };
+  Object.entries(r.m3p).forEach(([k, v]) => { r["r_" + k] = r.M1 * v; });
+  r.M3p = moT4(Object.values(r.m3p).reduce((a, b) => a + b, 0));
+  r.M3 = moT2(Object.keys(r.m3p).reduce((a, k) => a + r["r_" + k], 0));
+  r.unif = n("unif"); r.materiais = n("materiais"); r.equip = n("equip"); r.outros5 = n("outros5");
+  r.M5 = moT2(r.unif + r.materiais + r.equip + r.outros5);
+  r.sub = moT2(r.M1 + r.M2 + r.M3 + r.M4 + r.M5);
+  r.ci = moT2(pc("ci") * r.sub); r.lucro = moT2(pc("lucro") * (r.ci + r.sub));
+  r.To = moT4(pc("pis") + pc("cofins") + pc("iss")); r.Po = moT2(r.sub + r.ci + r.lucro);
+  r.P1 = r.To < 1 ? moT2(r.Po / (1 - r.To)) : 0; r.trib = moT2(r.P1 - r.Po);
+  r.pis = moT2(pc("pis") * r.P1); r.cofins = moT2(pc("cofins") * r.P1); r.iss = moT2(pc("iss") * r.P1);
+  r.M6p = pc("ci") + pc("lucro") + r.To; r.M6 = moT2(r.ci + r.lucro + r.pis + r.cofins + r.iss);
+  r.total = moT2(r.sub + r.M6); r.fatorK = S ? r.total / S : 0;
+  r.posto = moT2(r.total * n("emp_posto")); r.mensal = moT2(r.posto * n("postos")); r.global = moT2(r.mensal * n("meses"));
+  r.vigente = n("vigente"); r.dif = r.vigente ? r.total - r.vigente : 0; r.difp = r.vigente ? (r.total / r.vigente - 1) : 0;
+  return r;
+}
+
 const ELAB_TERMO_VERSAO = "elab-2";
 const ELAB_TERMO = [
   "Natureza: minuta de Estudo Técnico Preliminar, Termo de Referência ou Projeto Básico elaborada de forma automatizada por inteligência artificial, a partir das informações que você prestar e da pesquisa em bases oficiais. Não substitui a análise técnica e jurídica do órgão (Lei 14.133/2021, art. 53).",
@@ -4650,6 +4829,8 @@ class Component extends DCLogic {
     forumErro: "",
     nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
     el: { doc: "", passo: 0, respostas: {}, aceite: false, enviando: false, erro: "", ok: "", docEsc: "etp", metodo: "pix", contratando: false, contErro: "" },
+    calcAba: "indice",
+    mo: { modo: "planejamento", d: { ...MO_PADRAO } },
     indices: null, indicesErro: false, mpAberto: "", mpAno: 0, mpMes: 0, mpVista: "dias",
     calc: { regime: "14133", indice: "ipca", valor: "", dataBase: "", houveReajuste: false, ultimo: "", referencia: "", fim: "", metodo: "a", contagem: "base", contrato: "", contratada: "", cnpj: "", objeto: "" },
     threadAberta: null, forumFiltro: "todas", forumRank: { mes: [], geral: [], destaque: null }, forumVerRanking: false, rankPeriodo: "mes",
@@ -5809,6 +5990,130 @@ class Component extends DCLogic {
     if (s.plano === "pro" && c && Number(c.usadas) < Number(c.limite)) return 0;
     if (s.usuario && this.cortesiaAnalise()) return 0; // primeira análise grátis
     return Math.round(AN_PRECO * (1 - (AN_DESCONTO[s.plano] || 0)) * 100) / 100;
+  }
+
+  // ------------------------------------------------------------ Mão de Obra Exclusiva
+  moCarregar(modo) {
+    let d = {};
+    try { d = JSON.parse(localStorage.getItem("lv-mo-" + modo) || "{}") || {}; } catch (e) { d = {}; }
+    return { ...MO_PADRAO, ...d };
+  }
+  moModo(modo) { this.setState({ mo: { modo, d: this.moCarregar(modo) } }); }
+  moSet = (k) => (e) => {
+    const v = e && e.target ? e.target.value : e;
+    this.setState((s) => {
+      const d = { ...s.mo.d, [k]: v };
+      try { localStorage.setItem("lv-mo-" + s.mo.modo, JSON.stringify(d)); } catch (x) {}
+      return { mo: { ...s.mo, d } };
+    });
+  };
+  moLimpar() {
+    try { localStorage.removeItem("lv-mo-" + this.state.mo.modo); } catch (e) {}
+    this.setState((s) => ({ mo: { ...s.mo, d: { ...MO_PADRAO } } }));
+  }
+
+  moProps() {
+    const s = this.state, mo = s.mo, d = mo.d, rep = mo.modo === "repactuacao", r = moCalcular(d, mo.modo);
+    const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const pct = (v) => ((Number(v) || 0) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
+    // linha: percentual editável (k) ou calculado (p), valor calculado (v) ou editável (kv)
+    const L = (cod, rot, o) => ({ cod, rot, nota: o.nota || "", auto: !!o.auto,
+      pctEdit: !!o.k, pctK: o.k ? d[o.k] : "", onPct: o.k ? this.moSet(o.k) : null, pctTxt: o.k ? "" : (o.p == null ? "" : (o.p === "-" ? "—" : pct(o.p))),
+      valEdit: !!o.kv, valK: o.kv ? d[o.kv] : "", onVal: o.kv ? this.moSet(o.kv) : null, valTxt: o.kv ? "" : (o.v === null ? "—" : brl(o.v)) });
+    const T = (rot, p, v) => ({ rot, pctTxt: p == null ? "" : pct(p), valTxt: brl(v) });
+    const naoRen = rep ? "Custo não renovável: o aviso prévio trabalhado (1,94%) é devido só no 1º ano; nas prorrogações e repactuações, no máximo 0,194% por ano (TCU, Acórdão 1.186/2017-Plenário). Preenchido automaticamente." : "";
+    const modulos = [
+      { titulo: "Módulo 1 – Composição da remuneração", linhas: [
+        L("A", "Salário-base", { kv: "salario" }),
+        L("B", "Adicional de periculosidade", { k: "peric", v: r.peric }),
+        L("C", "Adicional de insalubridade", { k: "insal", v: r.insal, nota: "Calculado sobre o salário-base, como no modelo. Confira a base prevista na convenção (salário mínimo ou salário-base)." }),
+        L("D", "Adicional noturno", { kv: "noturno" }),
+        L("E", "Adicional de hora noturna reduzida", { kv: "hnr" }),
+        L("F", "Adicional de hora extra no feriado trabalhado", { kv: "he_feriado" }),
+        L("G", "Outros (especificar)", { kv: "outros1" })], total: T("Total do Módulo 1", null, r.M1) },
+      { titulo: "Submódulo 2.1 – 13º salário, férias e adicional de férias", linhas: [
+        L("A", "13º (décimo terceiro) salário", { k: "p13", v: r.p13 }),
+        L("B", "Férias e adicional de férias", { k: "pfa", v: r.pfa })], total: T("Total do Submódulo 2.1", r.M21p, r.M21) },
+      { titulo: "Submódulo 2.2 – GPS, FGTS e outras contribuições", sub: "Base de cálculo: Módulo 1 + Submódulo 2.1 + Módulo 4 = " + brl(r.base22), linhas: [
+        L("A", "INSS", { k: "inss", v: r.g_inss }),
+        L("B", "Salário-Educação", { k: "saled", v: r.g_saled }),
+        L("C", "SAT/RAT (alíquota RAT)", { k: "rat", v: r.g_sat, nota: "Multiplicado pelo FAP informado abaixo: " + String(d.fap || "1").replace(".", ",") + " → " + pct(r.p22.sat) }),
+        L("", "FAP (Fator Acidentário de Prevenção da empresa)", { k: "fap", v: null, nota: "Fator, não percentual (ex.: 0,8430). Valor já incluído no SAT." }),
+        L("D", "SESC ou SESI", { k: "sesc", v: r.g_sesc }),
+        L("E", "SENAI ou SENAC", { k: "senac", v: r.g_senac }),
+        L("F", "SEBRAE", { k: "sebrae", v: r.g_sebrae }),
+        L("G", "INCRA", { k: "incra", v: r.g_incra }),
+        L("H", "FGTS", { k: "fgts", v: r.g_fgts })], total: T("Total do Submódulo 2.2", r.M22p, r.M22) },
+      { titulo: "Submódulo 2.3 – Benefícios mensais e diários", linhas: [
+        L("A", "Transporte", { p: "-", v: r.vt, nota: "Tarifa × viagens por dia × dias trabalhados, menos 6% do salário-base (Lei 7.418/1985)." }),
+        L("B", "Auxílio-refeição/alimentação", { p: "-", v: r.aux, nota: "Valor por dia × dias trabalhados, menos a participação do empregado." }),
+        L("C", "Assistência médica e familiar", { kv: "assist" }),
+        L("D", "Seguro de vida", { kv: "seguro" }),
+        L("E", "Outros (especificar)", { kv: "outros23" })], total: T("Total do Submódulo 2.3", null, r.M23) },
+      { titulo: "Módulo 3 – Provisão para rescisão", linhas: [
+        L("A", "Aviso prévio indenizado", { k: "api", v: r.r_api }),
+        L("B", "Incidência do FGTS sobre o aviso prévio indenizado", { p: r.m3p.fgts_api, v: r.r_fgts_api }),
+        L("C", "Multa do FGTS e contribuição social sobre o aviso prévio indenizado", { p: r.m3p.multa_api, v: r.r_multa_api }),
+        rep ? L("D", "Aviso prévio trabalhado", { p: r.m3p.apt, v: r.r_apt, auto: true, nota: naoRen }) : L("D", "Aviso prévio trabalhado", { k: "apt", v: r.r_apt }),
+        L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { p: r.m3p.inc_apt, v: r.r_inc_apt, auto: rep }),
+        L("F", "Multa do FGTS e contribuição social sobre o aviso prévio trabalhado", { p: r.m3p.multa_apt, v: r.r_multa_apt, auto: rep })], total: T("Total do Módulo 3", r.M3p, r.M3) },
+      { titulo: "Submódulo 4.1 – Ausências legais", linhas: [
+        L("A", "Férias", { k: "ferias", v: r.ferias }),
+        L("B", "Ausências legais", { k: "aus", v: r.aus }),
+        L("C", "Licença-paternidade", { k: "pat", v: r.pat }),
+        L("D", "Ausência por acidente de trabalho", { k: "acid", v: r.acid }),
+        L("E", "Afastamento maternidade", { k: "mat", v: r.mat, nota: "Base: 13º + férias e adicional + assistência médica + seguro de vida = " + brl(r.base_mat) }),
+        L("F", "Outros (especificar)", { k: "outros41", v: r.outros41 })], total: T("Total do Submódulo 4.1", r.M41p, r.M41) },
+      { titulo: "Submódulo 4.2 – Intrajornada", linhas: [
+        L("A", "Intervalo para repouso ou alimentação", { k: "intra", v: r.intra })], total: T("Total do Submódulo 4.2", moNum(d.intra) / 100, r.M42) },
+      { titulo: "Módulo 5 – Insumos diversos", linhas: [
+        L("A", "Uniformes", { kv: "unif", nota: "Custo mensal por empregado (memória de cálculo: custo anual ÷ 12)." }),
+        L("B", "Materiais", { kv: "materiais" }),
+        L("C", "Equipamentos", { kv: "equip", nota: "Depreciação mensal por empregado." }),
+        L("D", "Outros (especificar)", { kv: "outros5" })], total: T("Total do Módulo 5", null, r.M5) },
+      { titulo: "Módulo 6 – Custos indiretos, tributos e lucro", linhas: [
+        L("A", "Custos indiretos", { k: "ci", v: r.ci, nota: "Sobre o subtotal dos Módulos 1 a 5." }),
+        L("B", "Lucro", { k: "lucro", v: r.lucro, nota: "Sobre o subtotal + custos indiretos." }),
+        L("C.1", "PIS", { k: "pis", v: r.pis }),
+        L("C.2", "COFINS", { k: "cofins", v: r.cofins }),
+        L("C.3", "ISS", { k: "iss", v: r.iss, nota: "Tributos calculados \"por dentro\": P1 = Po ÷ (1 − tributos)." })], total: T("Total do Módulo 6", r.M6p, r.M6) }
+    ];
+    const campo = (k, rot, ph, tipo) => ({ k, rot, ph: ph || "", valor: d[k] == null ? "" : d[k], on: this.moSet(k), tipo: tipo || "text" });
+    return {
+      calcAbaIndice: s.calcAba !== "mo", calcAbaMo: s.calcAba === "mo",
+      calcAbaIdxCls: "lvc-aba" + (s.calcAba !== "mo" ? " ativo" : ""), calcAbaMoCls: "lvc-aba" + (s.calcAba === "mo" ? " ativo" : ""),
+      calcIrIndice: () => this.setState({ calcAba: "indice" }), calcIrMo: () => this.setState({ calcAba: "mo" }),
+      calcH1: s.calcAba === "mo" ? "Custo do profissional com dedicação exclusiva, no formato da IN 05/2017." : "Reajuste de contrato calculado certo, com a nota técnica pronta.",
+      calcLead: s.calcAba === "mo" ? "Planilha de custos e formação de preços (Anexo VII-D da IN SEGES/MP nº 5/2017) para formar o custo na fase de planejamento ou demonstrar a repactuação, com os percentuais legais e os custos não renováveis."
+        : "Índices oficiais atualizados todos os dias, conferência dos 12 meses, ciclos acumulados e memória de cálculo mês a mês. No fim, você baixa a nota técnica em PDF para juntar ao processo.",
+      moPlan: !rep, moRep: rep,
+      moModos: [["planejamento", "Planilha 1 · Planejamento da contratação"], ["repactuacao", "Planilha 2 · Repactuação"]].map(([id, nome]) => ({ nome, ativo: mo.modo === id, escolher: () => this.moModo(id), ...corBotao(mo.modo === id) })),
+      moIntro: rep ? "Use na repactuação, quando o novo acordo, convenção ou dissídio coletivo der aumento à categoria. Você preenche os custos e percentuais da planilha repactuada; as adequações dos custos não renováveis são feitas automaticamente."
+        : "Use na fase de planejamento para formar o custo do profissional que será contratado. Informe os dados iniciais e confira os percentuais: os valores de partida seguem a legislação e o modelo da IN.",
+      moCamposIni: [campo("tipo_servico", "Tipo de serviço", "Ex.: Limpeza"), campo("categoria", "Categoria profissional", "Ex.: Servente"), campo("cbo", "CBO", "Ex.: 5143-20"),
+        campo("salario", rep ? "Novo salário-base (convenção vigente)" : "Salário-base da categoria (R$)", "Ex.: 1.850,00"), campo("data_base", "Data-base da categoria", "dd/mm/aaaa"),
+        campo("ano_cct", "Ano do acordo, convenção ou dissídio", "Ex.: 2026"), campo("municipio", "Município", "Ex.: Maricá"), campo("uf", "UF", "RJ"),
+        campo("data_proposta", "Data de apresentação da proposta", "dd/mm/aaaa"), campo("meses", "Nº de meses de execução contratual", "12")]
+        .concat(rep ? [campo("ano_exec", "Ano de execução do contrato após a repactuação", "Ex.: 2"), campo("vigente", "Preço vigente por empregado (antes da repactuação, R$)", "Ex.: 4.320,15")] : []),
+      moCct: d.cct_nome || "", moSemCct: !d.cct_nome,
+      moAgenteTxt: rep ? "Na próxima etapa, o agente vai conferir as adequações dos custos não renováveis com a convenção e o contrato. Hoje, o aviso prévio trabalhado já é ajustado automaticamente."
+        : "Na próxima etapa, o agente vai ler a convenção, a legislação trabalhista, os cadernos técnicos e a jurisprudência e preencher os demais custos. Por enquanto, a planilha parte dos percentuais legais e do modelo da IN, e você confere e ajusta.",
+      moEscolherCct: (e) => { const f = e.target && e.target.files && e.target.files[0]; if (f) this.moSet("cct_nome")(f.name); },
+      moBenef: [campo("vt_tarifa", "Tarifa do transporte (R$)", "Ex.: 4,70"), campo("vt_viagens", "Viagens por dia", "2"), campo("dias", "Dias trabalhados no mês", "21"),
+        campo("aux_dia", "Auxílio-alimentação por dia (R$)", "Ex.: 25,00"), campo("aux_part", "Participação do empregado no auxílio (%)", "20")],
+      moModulos: modulos,
+      moResumo: [["A", "Módulo 1 – Composição da remuneração", r.M1], ["B", "Módulo 2 – Encargos e benefícios anuais, mensais e diários", r.M2],
+        ["C", "Módulo 3 – Provisão para rescisão", r.M3], ["D", "Módulo 4 – Custo de reposição do profissional ausente", r.M4], ["E", "Módulo 5 – Insumos diversos", r.M5],
+        ["", "Subtotal (A + B + C + D + E)", r.sub], ["F", "Módulo 6 – Custos indiretos, tributos e lucro", r.M6]].map(([cod, rot, v]) => ({ cod, rot, valTxt: brl(v), forte: !cod })),
+      moTotal: brl(r.total), moFatorK: (r.fatorK || 0).toLocaleString("pt-BR", { minimumFractionDigits: 4, maximumFractionDigits: 4 }),
+      moTribTxt: "Po = " + brl(r.Po) + " · tributos " + pct(r.To) + " · P1 = Po ÷ (1 − tributos) = " + brl(r.P1),
+      moQuadro: [campo("emp_posto", "Empregados por posto", "1"), campo("postos", "Quantidade de postos", "1")],
+      moPosto: brl(r.posto), moMensal: brl(r.mensal), moGlobal: brl(r.global),
+      moTemDif: rep && !!r.vigente, moDif: (r.dif >= 0 ? "+" : "−") + brl(Math.abs(r.dif)).replace("R$ ", "R$ ") + " por empregado (" + (r.difp >= 0 ? "+" : "−") + pct(Math.abs(r.difp)) + ")",
+      moLimpar: () => this.moLimpar(),
+      moCopiar: () => { const base = this.moCarregar("planejamento"); const d2 = { ...base, ano_exec: d.ano_exec || "2", vigente: d.vigente || "" };
+        try { localStorage.setItem("lv-mo-repactuacao", JSON.stringify(d2)); } catch (e) {} this.setState((x) => ({ mo: { ...x.mo, d: d2 } })); }
+    };
   }
 
   // elaboração (ETP, TR ou Projeto Básico): mesmo preço da análise, sem a análise grátis de boas-vindas
@@ -7917,6 +8222,7 @@ class Component extends DCLogic {
       recusarCookies: () => this.definirCookies("essenciais")
     };
     P.meusDocs = (P.minhasAnalises || []).filter((m) => (P.docsIds || []).includes(m.id));
+    Object.assign(P, this.moProps());
     return P;
   }
 }
