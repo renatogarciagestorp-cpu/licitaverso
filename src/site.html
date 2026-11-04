@@ -988,6 +988,9 @@
   .lmo-falha { border: 1px solid #E3E9E8; border-left: 4px solid #C98A1B; border-radius: 10px; padding: 10px 12px; background: #fff; }
   .lmo-falha.g-alta { border-left-color: #B83232; } .lmo-falha.g-baixa { border-left-color: #0F6B7E; }
   .lmo-falha p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.5; color: #26393F; }
+  .lmo-dim { grid-template-columns: minmax(0, 1.6fr) 110px 110px 110px 100px 92px 110px; }
+  .lmo-dim input { width: 100%; text-align: right; }
+  @media (max-width: 900px) { .lmo-dim { grid-template-columns: minmax(0, 1fr) 80px 80px 70px 70px; font-size: 12.5px; } .lmo-dim > span:nth-child(2), .lmo-dim > span:nth-child(7) { display: none; } }
   .lmo-aceite { display: grid; gap: 10px; margin-top: 12px; padding: 14px 16px; border: 1px solid #F1D9A6; background: #FFF8E8; border-radius: 12px; }
   .lmo-aceite span { font-size: 14px; font-weight: 700; line-height: 1.5; color: #172B33; }
   .lmo-aceite .lmo-btn { justify-self: start; }
@@ -2225,6 +2228,42 @@
               <sc-if value="{{ moTemObs }}" hint-placeholder-val="{{ false }}"><ul class="lmo-obs"><sc-for list="{{ moObs }}" as="o" hint-placeholder-count="2"><li>{{ o }}</li></sc-for></ul></sc-if>
             </section>
 
+            <sc-if value="{{ moPlan }}" hint-placeholder-val="{{ true }}">
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Dimensionamento da equipe (cadernos técnicos)</h2>
+              <p class="lmo-nota" style="margin-top: 0">Nos serviços com caderno técnico de logística, informe a metragem ou os postos: a quantidade de profissionais é calculada pela fórmula do caderno e da IN 05/2017 (Anexos VI-A e VI-B).</p>
+              <div class="lmo-modos" style="margin-top: 10px"><sc-for list="{{ moDimTipos }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
+              <sc-if value="{{ moDimLimpeza }}" hint-placeholder-val="{{ false }}">
+                <sc-for list="{{ moDimGrupos }}" as="g" hint-placeholder-count="2">
+                  <div class="lmo-tabela" style="margin-top: 12px" role="table">
+                    <div class="lmo-lin lmo-dim lmo-cab" role="row"><span>{{ g.titulo }}</span><span>Faixa da IN</span><span>Área (m²)</span><span>Produtividade (m²)</span><span>Frequência (h/mês)</span><span>Profissionais</span><span>Preço por m²</span></div>
+                    <sc-for list="{{ g.linhas }}" as="l" hint-placeholder-count="3">
+                      <div class="lmo-lin lmo-dim" role="row" data-auto="{{ l.fora }}">
+                        <span>{{ l.rot }}</span><span class="lmo-pct">{{ l.faixa }}</span>
+                        <span><input type="text" inputmode="decimal" aria-label="{{ l.rot }}: área" value="{{ l.m2 }}" placeholder="0" sc-camel-on-input="{{ l.onM2 }}"></span>
+                        <span><input type="text" inputmode="decimal" aria-label="{{ l.rot }}: produtividade" value="{{ l.p }}" sc-camel-on-input="{{ l.onP }}"></span>
+                        <span><sc-if value="{{ l.temH }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }}: frequência" value="{{ l.h }}" sc-camel-on-input="{{ l.onH }}"></sc-if></span>
+                        <span class="lmo-pct">{{ l.q }}</span><span class="lmo-val">{{ l.precoM2 }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ moDimForaFaixa }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso" style="margin-top: 10px">Há produtividade fora da faixa da IN (linhas em amarelo): o órgão pode adotar índice diferente, desde que justificado nos estudos preliminares (Anexo VI-B, item 11).</p></sc-if>
+              </sc-if>
+              <sc-if value="{{ moDimVig }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-campos" style="margin-top: 12px">
+                  <label class="lmo-campo"><span>Escala do posto</span><select sc-camel-on-change="{{ onMoVgEscala }}"><sc-for list="{{ moVgEscalas }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                  <label class="lmo-campo"><span>Quantidade de postos</span><input type="text" inputmode="numeric" value="{{ moVgPostos }}" sc-camel-on-input="{{ onMoVgPostos }}" placeholder="Ex.: 4"></label>
+                </div>
+              </sc-if>
+              <sc-if value="{{ moDimAtivo }}" hint-placeholder-val="{{ false }}">
+                <p class="lmo-ok">{{ moDimResumo }}</p>
+                <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>{{ moDimLiderRot }}</span><input type="text" inputmode="decimal" value="{{ moDimLider }}" sc-camel-on-input="{{ onMoDimLider }}" placeholder="Ex.: 3.950,00"></label></div>
+                <p class="lmo-nota">Esta planilha calcula o custo do profissional da categoria informada acima. O preço do encarregado ou supervisor vem da planilha da respectiva categoria (faça uma Planilha 1 para ele e informe o preço total aqui).</p>
+              </sc-if>
+            </section>
+            </sc-if>
+
             <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Reajuste dos insumos por índice</h2>
@@ -2309,14 +2348,17 @@
               </div>
               <div class="lmo-kpis">
                 <div><small>Fator K</small><b>{{ moFatorK }}</b></div>
+                <sc-if value="{{ moQuadroManual }}" hint-placeholder-val="{{ true }}">
                 <sc-for list="{{ moQuadro }}" as="c" hint-placeholder-count="2">
                   <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
                 </sc-for>
+                </sc-if>
                 <div><small>Valor por posto</small><b>{{ moPosto }}</b></div>
                 <div><small>Valor mensal dos serviços</small><b>{{ moMensal }}</b></div>
                 <div><small>Valor global (× meses)</small><b>{{ moGlobal }}</b></div>
                 <sc-if value="{{ moTemUnidade }}" hint-placeholder-val="{{ false }}"><div><small>{{ moUnidadeRot }}</small><b>{{ moUnidade }}</b></div></sc-if>
               </div>
+              <sc-if value="{{ moLiderTxt }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ moLiderTxt }}</p></sc-if>
               <sc-if value="{{ moTemDif }}" hint-placeholder-val="{{ false }}"><p class="lmo-dif">Variação em relação ao preço vigente: <b>{{ moDif }}</b></p></sc-if>
               <div class="lmo-agente" style="margin-top: 16px">
                 <button type="button" class="lmo-btn" sc-camel-on-click="{{ moBaixarExcel }}">Baixar em Excel</button>
@@ -4590,6 +4632,46 @@ const MO_PADRAO = {
   ano_exec: "2", vigente: "",
   rj_ativo: "", rj_indice: "ipca", rj_orcamento: "", rj_ref: "", rj_unif: "sim", rj_materiais: "sim", rj_equip: "sim", rj_outros5: "sim"
 };
+// Dimensionamento da equipe pelos cadernos técnicos (IN SEGES/MP nº 5/2017)
+// Limpeza e conservação: Anexo VI-B, item 3 (produtividade por servente em jornada de 8 h; faixa mínima–máxima)
+const MO_LIMPEZA = [
+  ["i_carpete", "Áreas internas", "Pisos acarpetados", 800, 1200, "area"], ["i_frio", "Áreas internas", "Pisos frios", 800, 1200, "area"],
+  ["i_lab", "Áreas internas", "Laboratórios", 360, 450, "area"], ["i_almox", "Áreas internas", "Almoxarifados e galpões", 1500, 2500, "area"],
+  ["i_ofic", "Áreas internas", "Oficinas", 1200, 1800, "area"], ["i_livre", "Áreas internas", "Espaços livres (saguão, hall e salão)", 1000, 1500, "area"],
+  ["i_banh", "Áreas internas", "Banheiros", 200, 300, "area"],
+  ["e_pav", "Áreas externas", "Pisos pavimentados adjacentes às edificações", 1800, 2700, "area"], ["e_varr", "Áreas externas", "Varrição de passeios e arruamentos", 6000, 9000, "area"],
+  ["e_alta", "Áreas externas", "Pátios e áreas verdes – alta frequência", 1800, 2700, "area"], ["e_media", "Áreas externas", "Pátios e áreas verdes – média frequência", 1800, 2700, "area"],
+  ["e_baixa", "Áreas externas", "Pátios e áreas verdes – baixa frequência", 1800, 2700, "area"], ["e_detr", "Áreas externas", "Coleta de detritos em pátios e áreas verdes (diária)", 100000, 100000, "area"],
+  ["q_risco", "Esquadrias externas", "Face externa com exposição a risco", 130, 160, "esq"], ["q_semrisco", "Esquadrias externas", "Face externa sem exposição a risco", 300, 380, "esq"],
+  ["q_interna", "Esquadrias externas", "Face interna", 300, 380, "esq"],
+  ["f_vidro", "Fachadas envidraçadas", "Fachadas envidraçadas (acesso com equipamento especial)", 130, 160, "fach"],
+  ["h_hosp", "Áreas hospitalares", "Áreas hospitalares e assemelhadas", 360, 450, "area"]];
+const MO_JORNADA_MES = 188.76; // horas de trabalho no mês (IN 05/2017, Anexo VII-D, fórmula das esquadrias)
+// Vigilância: Anexo VI-A, item 2 (vigilantes por posto em cada escala) e item 6 (1 supervisor para cada 40 vigilantes)
+const MO_VIGILANCIA = [["44h", "44 horas semanais diurnas, de segunda a sexta", 1], ["12x36d", "12 h diurnas, de segunda a domingo (12x36)", 2],
+  ["12x36n", "12 h noturnas, de segunda a domingo (12x36)", 2], ["12x36du", "12 h diurnas, de segunda a sexta (12x36)", 2], ["12x36nu", "12 h noturnas, de segunda a sexta (12x36)", 2]];
+function moDimensionar(d) {
+  const n = (k) => moNum(d[k]);
+  if (d.dim === "limpeza") {
+    const linhas = MO_LIMPEZA.map(([id, grupo, rot, min, max, tipo]) => {
+      const m2 = n("lp_" + id), p = n("lp_" + id + "_p") || min, h = tipo === "area" ? 0 : (n("lp_" + id + "_h") || 16);
+      const q = m2 > 0 && p > 0 ? (tipo === "area" ? m2 / p : (m2 / p) * (h / MO_JORNADA_MES)) : 0;
+      return { id, grupo, rot, min, max, tipo, m2, p, h, q, foraFaixa: p > 0 && (p < min || p > max) };
+    });
+    const qNormal = linhas.filter((l) => l.tipo !== "fach").reduce((a, l) => a + l.q, 0), qFach = linhas.filter((l) => l.tipo === "fach").reduce((a, l) => a + l.q, 0);
+    const serventes = Math.ceil(qNormal - 1e-9) + Math.ceil(qFach - 1e-9);
+    const encarregados = (qNormal > 0 ? Math.ceil(Math.ceil(qNormal - 1e-9) / 30) : 0) + (qFach > 0 ? Math.ceil(Math.ceil(qFach - 1e-9) / 4) : 0);
+    const area = linhas.reduce((a, l) => a + l.m2, 0);
+    return { tipo: "limpeza", linhas, qExato: qNormal + qFach, serventes, encarregados, area };
+  }
+  if (d.dim === "vigilancia") {
+    const esc = MO_VIGILANCIA.find((e) => e[0] === d.vg_escala) || MO_VIGILANCIA[0];
+    const postos = Math.max(0, Math.round(n("vg_postos")));
+    const vig = postos * esc[2];
+    return { tipo: "vigilancia", escala: esc, postos, porPosto: esc[2], vigilantes: vig, supervisores: vig ? Math.ceil(vig / 40) : 0 };
+  }
+  return null;
+}
 const MO_INSUMOS = [["unif", "Uniformes e EPI"], ["materiais", "Materiais"], ["equip", "Equipamentos"], ["outros5", "Outros insumos"]];
 // reajuste dos insumos por índice: ciclos de 12 meses a partir do mês do orçamento estimado (mesma contagem da calculadora:
 // do mês do orçamento ao 11º mês seguinte, 12 variações mensais), acumulados até o mês de referência
@@ -6180,10 +6262,12 @@ class Component extends DCLogic {
       linhas.push({ tipo: "tot", rot: md.total.rot, pct: md.total.pctTxt, val: md.total.valTxt });
     });
     const resumo = P.moResumo.map((l) => [l.cod, l.rot, l.valTxt]).concat([["", "Preço total por empregado", P.moTotal]]);
-    const kpis = [["Fator K", P.moFatorK], ["Empregados por posto", d.emp_posto], ["Quantidade de postos", d.postos], ["Valor por posto", P.moPosto], ["Valor mensal dos serviços", P.moMensal], ["Valor global", P.moGlobal]]
+    const kpis = [["Fator K", P.moFatorK], ["Empregados por posto", P.moEmpN], ["Quantidade de postos", P.moPostosN], ["Valor por posto", P.moPosto], ["Valor mensal dos serviços", P.moMensal], ["Valor global", P.moGlobal]]
       .concat(P.moTemUnidade ? [[P.moUnidadeRot, P.moUnidade]] : []).concat(P.moTemDif ? [["Variação em relação ao preço vigente", P.moDif]] : []);
     const notas = [].concat(rep ? ["Custos não renováveis: aviso prévio trabalhado limitado a 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário; IN 05/2017, art. 57)."] : [])
-      .concat(rj && rj.pronto ? ["Insumos reajustados pelo índice do contrato (" + rj.msg + ")."] : []);
+      .concat(rj && rj.pronto ? ["Insumos reajustados pelo índice do contrato (" + rj.msg + ")."] : [])
+      .concat(P.moDimAtivo && P.moDimResumo ? ["Dimensionamento da equipe (IN 05/2017, " + (P.moDimLimpeza ? "Anexo VI-B" : "Anexo VI-A") + "): " + P.moDimResumo] : [])
+      .concat(P.moLiderTxt ? [P.moLiderTxt] : []);
     const falhas = rep ? (d.falhas || []) : [];
     if (falhas.length && !d.falhas_aceite) {
       this.setState((x) => ({ mo: { ...x.mo, erro: "Antes de baixar, leia as falhas apontadas na planilha da contratação e confirme se concorda com o prosseguimento da análise." } }));
@@ -6296,7 +6380,14 @@ class Component extends DCLogic {
   }
 
   moProps() {
-    const s = this.state, mo = s.mo, d = mo.d, rep = mo.modo === "repactuacao", rj = rep ? moReajuste(d, s.indices) : { ativo: false, fator: 1 }, r = moCalcular(d, mo.modo, rj);
+    const s = this.state, mo = s.mo, d0 = mo.d, rep = mo.modo === "repactuacao", rj = rep ? moReajuste(d0, s.indices) : { ativo: false, fator: 1 };
+    const dim = !rep ? moDimensionar(d0) : null;
+    const d = dim && dim.tipo === "limpeza" && dim.serventes ? { ...d0, emp_posto: "1", postos: String(dim.serventes), unidade: "m²", quantidade: String(dim.area) }
+      : dim && dim.tipo === "vigilancia" && dim.postos ? { ...d0, emp_posto: String(dim.porPosto), postos: String(dim.postos), unidade: "Posto", quantidade: String(dim.postos) } : d0;
+    const r = moCalcular(d, mo.modo, rj);
+    // encarregados (limpeza) ou supervisores (vigilância) entram no valor mensal pelo preço informado da respectiva planilha
+    const lider = dim ? (dim.tipo === "limpeza" ? dim.encarregados : dim.supervisores) : 0, precoLider = moNum(d0.preco_lider);
+    if (dim && lider && precoLider) { r.mensal = moT2(r.mensal + lider * precoLider); r.global = moT2(r.mensal * moNum(d.meses)); }
     this._moUltimo = { r, rj };
     const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const pct = (v) => ((Number(v) || 0) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
@@ -6416,9 +6507,37 @@ class Component extends DCLogic {
         ["", "Subtotal (A + B + C + D + E)", r.sub], ["F", "Módulo 6 – Custos indiretos, tributos e lucro", r.M6]].map(([cod, rot, v]) => ({ cod, rot, valTxt: brl(v), forte: !cod })),
       moTotal: brl(r.total), moFatorK: (r.fatorK || 0).toLocaleString("pt-BR", { minimumFractionDigits: 4, maximumFractionDigits: 4 }),
       moTribTxt: "Po = " + brl(r.Po) + " · tributos " + pct(r.To) + " · P1 = Po ÷ (1 − tributos) = " + brl(r.P1),
+      ...(() => {
+        const pct2 = (v) => v.toLocaleString("pt-BR", { maximumFractionDigits: 2 });
+        const grupos = [];
+        if (dim && dim.tipo === "limpeza") dim.linhas.forEach((l) => {
+          let g = grupos.find((x) => x.titulo === l.grupo); if (!g) { g = { titulo: l.grupo, esq: l.tipo !== "area", linhas: [] }; grupos.push(g); }
+          const precoM2 = l.p ? (l.tipo === "area" ? r.total / l.p + (precoLider ? precoLider / (30 * l.p) : 0)
+            : (r.total / l.p + (precoLider ? precoLider / ((l.tipo === "fach" ? 4 : 30) * l.p) : 0)) * (l.h / MO_JORNADA_MES)) : 0;
+          g.linhas.push({ rot: l.rot, faixa: l.min === l.max ? pct2(l.min) + " m²" : pct2(l.min) + " a " + pct2(l.max) + " m²", m2: d0["lp_" + l.id] || "", onM2: this.moSet("lp_" + l.id),
+            p: d0["lp_" + l.id + "_p"] || String(l.min), onP: this.moSet("lp_" + l.id + "_p"), temH: l.tipo !== "area", h: d0["lp_" + l.id + "_h"] || "16", onH: this.moSet("lp_" + l.id + "_h"),
+            q: l.q ? l.q.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—", fora: l.foraFaixa,
+            precoM2: l.m2 && r.total ? "R$ " + precoM2.toLocaleString("pt-BR", { minimumFractionDigits: 4, maximumFractionDigits: 4 }) : "—" });
+        });
+        return {
+          moDimTipos: [["", "Sem caderno técnico (informo os postos)"], ["limpeza", "Limpeza e conservação"], ["vigilancia", "Vigilância"]].map(([id, nome]) => ({ nome, ativo: (d0.dim || "") === id, escolher: () => this.moSet("dim")(id), ...corBotao((d0.dim || "") === id) })),
+          moDimLimpeza: !!dim && dim.tipo === "limpeza", moDimVig: !!dim && dim.tipo === "vigilancia", moDimAtivo: !!dim,
+          moDimGrupos: grupos,
+          moDimResumo: !dim ? "" : dim.tipo === "limpeza"
+            ? (dim.area ? "Área total: " + pct2(dim.area) + " m² · equipe calculada: " + pct2(dim.qExato) + " → " + dim.serventes + " servente(s) e " + dim.encarregados + " encarregado(s) (1 para cada 30 serventes, ou fração; fachadas envidraçadas: 1 para cada 4)." : "Informe a metragem de cada tipo de área.")
+            : (dim.postos ? dim.postos + " posto(s) de " + dim.escala[1] + " × " + dim.porPosto + " vigilante(s) = " + dim.vigilantes + " vigilante(s) e " + dim.supervisores + " supervisor(es) (1 para cada 40 vigilantes, ou fração)." : "Informe a quantidade de postos."),
+          moDimForaFaixa: !!dim && dim.tipo === "limpeza" && dim.linhas.some((l) => l.m2 && l.foraFaixa),
+          moDimLiderRot: dim && dim.tipo === "vigilancia" ? "Preço mensal do supervisor (R$, da planilha dele)" : "Preço mensal do encarregado (R$, da planilha dele)",
+          moDimLider: d0.preco_lider || "", onMoDimLider: this.moSet("preco_lider"),
+          moVgEscalas: MO_VIGILANCIA.map(([id, nome, nv]) => ({ id, nome: nome + " – " + nv + " vigilante(s) por posto", sel: (d0.vg_escala || "44h") === id })),
+          onMoVgEscala: this.moSet("vg_escala"), moVgPostos: d0.vg_postos || "", onMoVgPostos: this.moSet("vg_postos"),
+          moQuadroManual: !dim,
+          moLiderTxt: dim && lider ? (dim.tipo === "limpeza" ? lider + " encarregado(s)" : lider + " supervisor(es)") + (precoLider ? " × " + brl(precoLider) + " incluídos no valor mensal." : ": informe o preço mensal para incluir no valor mensal.") : ""
+        };
+      })(),
       moQuadro: [campo("emp_posto", "Empregados por posto", "1"), campo("postos", "Quantidade de postos", "1"),
         campo("unidade", "Unidade de medida do serviço", "Posto, m², hora…"), campo("quantidade", "Quantidade total a contratar (na unidade)", "Ex.: 10.850")],
-      moPosto: brl(r.posto), moMensal: brl(r.mensal), moGlobal: brl(r.global),
+      moPosto: brl(r.posto), moMensal: brl(r.mensal), moGlobal: brl(r.global), moEmpN: d.emp_posto, moPostosN: d.postos,
       moTemUnidade: !!moNum(d.quantidade) && !/posto/i.test(d.unidade || "Posto"),
       moUnidadeRot: "Valor por " + (d.unidade || "unidade") + " (mensal ÷ quantidade)",
       moUnidade: moNum(d.quantidade) ? "R$ " + (r.mensal / moNum(d.quantidade)).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) : "—",
