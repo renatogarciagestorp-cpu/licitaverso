@@ -3212,7 +3212,7 @@
         <div class="lvp-hero-in">
           <div class="lvp-hero-txt">
             <h1 class="lvp-h1">Planos para quem trabalha com licitação todo dia</h1>
-            <p class="lvp-lead">A Biblioteca Jurídica, com decisões de todo o país, é grátis para quem cria conta. Os planos liberam a participação no fórum, os descontos em cursos e consultoria e as análises do Parecerista.</p>
+            <p class="lvp-lead">A pesquisa na Biblioteca Jurídica, com decisões de todo o país, é aberta e gratuita. Os planos liberam o fórum, a Calculadora (reajuste e planilhas de mão de obra), os agentes de IA – O Parecerista, O Elaborador e o agente das planilhas – e os descontos em cursos e consultoria.</p>
             <ul class="lvp-provas">
               <sc-for list="{{ provasPlanos }}" as="pv" hint-placeholder-count="3"><li>{{ pv }}</li></sc-for>
             </ul>
@@ -5378,15 +5378,15 @@ const EQ_MIN = 3, EQ_MAX = 25;
 const eqDesconto = (n) => (n >= 11 ? 0.15 : n >= 6 ? 0.1 : n >= 3 ? 0.05 : 0);
 const eqPreco = (plano, n, anual) => { const pa = Math.round(EQ_MENSAL[plano] * (1 - eqDesconto(n)) * (anual ? 0.8 : 1) * 100) / 100; return { pa, total: Math.round(pa * n * (anual ? 12 : 1) * 100) / 100 }; };
 const EQ_INCLUI = {
-  basico: ["Fórum (leitura e participação) para cada acesso", "Descontos do Básico em cursos, consultoria e análises do Parecerista"],
-  premium: ["Tudo do Premium para cada acesso: fórum, cursos e consultoria com desconto", "O Parecerista com 15% de desconto por análise"],
-  pro: ["Tudo do Pro para cada acesso", "O Parecerista e O Elaborador: 6 por acesso por mês, somados para a equipe, entre analisar documentos e criar ETP, TR ou Projeto Básico", "1 consultoria por escrito por mês para a organização; as demais com 30% de desconto"]
+  basico: ["Fórum (leitura e participação) e Calculadora para cada acesso", "Descontos do Básico no Parecerista, no Elaborador, em cursos e consultoria"],
+  premium: ["Tudo do Premium para cada acesso: fórum, Calculadora, cursos e consultoria com desconto", "O Parecerista e O Elaborador com 15% de desconto"],
+  pro: ["Tudo do Pro para cada acesso", "O Parecerista e O Elaborador: 6 por acesso por mês, somados para a equipe, entre analisar documentos e criar ETP, TR ou Projeto Básico", "Agente das planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana para a equipe", "1 consultoria por escrito por mês para a organização; as demais com 30% de desconto"]
 };
 const PLANO_BENEFICIOS = {
-  teste: ["Leitura do fórum da comunidade", "Biblioteca Jurídica (pesquisa grátis; anotações na conta)", "Sem cobrança automática ao final"],
-  basico: ["Fórum: leitura e participação", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "O Parecerista: análise com 10% de desconto (R$ 261,00)"],
+  teste: ["Leitura do fórum da comunidade", "Calculadora e planilhas de mão de obra (sem o agente de IA)", "Biblioteca Jurídica (pesquisa grátis; anotações na conta)", "Sem cobrança automática ao final"],
+  basico: ["Fórum: leitura e participação", "Calculadora: reajuste por índice e planilhas de mão de obra (IN 05/2017)", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "O Parecerista: análise com 10% de desconto (R$ 261,00)"],
   premium: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "O Parecerista: análise com 15% de desconto (R$ 246,50)", "Prioridade na agenda do especialista"],
-  pro: ["Tudo do Premium", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "O Parecerista e O Elaborador: 2 por semana sem custo, entre analisar documentos e criar ETP, TR ou Projeto Básico; a partir do 3º, 30% de desconto (R$ 203,00)", "Selo de resposta oficial no fórum", "Suporte prioritário"]
+  pro: ["Tudo do Premium", "Agente de IA nas planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "O Parecerista e O Elaborador: 2 por semana sem custo, entre analisar documentos e criar ETP, TR ou Projeto Básico; a partir do 3º, 30% de desconto (R$ 203,00)", "Selo de resposta oficial no fórum", "Suporte prioritário"]
 };
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
@@ -9648,13 +9648,13 @@ class Component extends DCLogic {
           chave: k, itens: EQ_INCLUI[k].concat(["Gestor da equipe inclui e troca as pessoas", "Acesso pelo navegador, sem instalação"]) };
       })) : this.comPlanos([
         { nome: "Teste", base: 0, publico: "Conheça a plataforma antes de assinar.", preco: "7 dias", unidade: "sem cartão", nota: "", detalhePreco: "Sem cartão e sem cobrança automática ao final.", destaque: false, cta: s.plano ? "Plano já ativo" : "Começar teste", btnBg: "#F1F6F5", btnColor: "#0A1F2A",
-          itens: ["Leitura do fórum da comunidade", "Conheça a plataforma antes de assinar", "Sem cobrança automática ao final"] },
+          itens: ["Leitura do fórum da comunidade", "Calculadora: reajuste por índice com nota técnica e planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta), sem o agente de IA", "Conheça a plataforma antes de assinar", "Sem cobrança automática ao final"] },
         { nome: "Básico", base: 119.9, publico: "Profissionais individuais iniciantes.", preco: precoPlano(119.9), unidade: unidadePlano, nota: notaPlano(119.9), detalhePreco: detalhePlano(119.9), destaque: destaque === "Básico", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Fórum da comunidade: leitura e participação", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "Análise de documentos com IA com 10% de desconto"] },
+          itens: ["Fórum da comunidade: leitura e participação", "Calculadora: reajuste por índice com nota técnica e planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta)", "O Parecerista e O Elaborador com 10% de desconto", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto"] },
         { nome: "Premium", base: 199.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(199.9), unidade: unidadePlano, nota: notaPlano(199.9), detalhePreco: detalhePlano(199.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
-          itens: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Análise de documentos com IA com 15% de desconto", "Prioridade na agenda do especialista"] },
+          itens: ["Tudo do Básico", "O Parecerista e O Elaborador com 15% de desconto", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Prioridade na agenda do especialista"] },
         { nome: "Pro", base: 479.9, publico: "Profissionais avançados e empresas.", preco: precoPlano(479.9), unidade: unidadePlano, nota: notaPlano(479.9), detalhePreco: detalhePlano(479.9), destaque: destaque === "Pro", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Tudo do Premium", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "2 por semana entre análises com parecer técnico e criação de ETP, TR ou Projeto Básico; a partir do 3º, 30% de desconto", "Selo de resposta oficial no fórum para o especialista", "Suporte prioritário"] }
+          itens: ["Tudo do Premium", "O Parecerista e O Elaborador: 2 por semana incluídos, entre analisar documentos e criar ETP, TR ou Projeto Básico; a partir do 3º, 30% de desconto", "Agente de IA nas planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "Selo de resposta oficial no fórum para o especialista", "Suporte prioritário"] }
       ]),
 
       // área do assinante
@@ -9735,7 +9735,8 @@ class Component extends DCLogic {
       verEquipes: () => { this.setState((x) => ({ modoEquipe: true, comprador: x.comprador === "fisica" ? "privada" : x.comprador, equipeMsg: "", equipeErro: "" }));
         setTimeout(() => { const el = document.querySelector(".lvp-cfg"); if (el) el.scrollIntoView({ behavior: "smooth", block: "center" }); }, 60); },
       provasPlanos: ["Decisões do TCU, dos Tribunais de Contas, PGEs e TJs de todo o país, sempre com o link oficial",
-        "O Parecerista, que lê edital, ETP e TR e entrega um parecer técnico com os pontos de risco", "Teste de 7 dias grátis, sem cartão"]
+        "O Parecerista, que lê edital, ETP e TR e entrega um parecer técnico com os pontos de risco", "O Elaborador, que cria o ETP, o TR ou o Projeto Básico a partir de um questionário",
+        "Calculadora de reajuste e planilhas de mão de obra no formato da IN 05/2017, com documentos em Excel e PDF", "Teste de 7 dias grátis, sem cartão"]
         .concat(this.cortesiaAnalise() ? ["Sua primeira análise do Parecerista é grátis"] : []),
       temFundador: this.fundadorAtivo(),
       fundTitulo: s.oferta && s.oferta.sou_fundador ? "Você é fundador do Licitacon" : "Preço de fundador: 30% de desconto",
@@ -9746,16 +9747,19 @@ class Component extends DCLogic {
       compLinhas: (() => {
         const eq = !!s.modoEquipe;
         const L = [
-          ["Biblioteca Jurídica nacional", ["Grátis com cadastro", "Grátis com cadastro", "Grátis com cadastro"]],
+          ["Biblioteca Jurídica nacional", ["Pesquisa aberta; anotações na conta", "Pesquisa aberta; anotações na conta", "Pesquisa aberta; anotações na conta"]],
           ["Fórum da comunidade", ["Ler e participar", "Ler e participar", "Ler, participar e selo de resposta oficial"]],
+          ["Calculadora de reajuste por índice, com nota técnica", ["Sim", "Sim", "Sim"]],
+          ["Planilhas de mão de obra (IN 05/2017): planilha de custos, repactuação e análise de proposta, com Excel e PDF", ["Sim", "Sim", "Sim"]],
+          ["Agente de IA nas planilhas de mão de obra", ["—", "—", eq ? "1 elaboração, 1 repactuação e 1 análise de proposta por semana, para a equipe" : "1 elaboração, 1 repactuação e 1 análise de proposta por semana"]],
           ["Cursos", ["10% de desconto", "15% de desconto", "50% de desconto"]],
           ["Consultoria técnica", ["10% de desconto", "15% de desconto", eq ? "1 por escrito por mês para a equipe; demais com 30%" : "1 por escrito por mês incluída; demais com 30%"]],
-          ["O Parecerista e O Elaborador (ETP, TR e Projeto Básico)", ["10% de desconto", "15% de desconto", eq ? "6 por acesso por mês, somados para a equipe" : "2 por semana incluídos, entre analisar e criar; demais com 30%"]],
+          ["O Parecerista (parecer técnico) e O Elaborador (ETP, TR e Projeto Básico)", ["10% de desconto", "15% de desconto", eq ? "6 por acesso por mês, somados para a equipe" : "2 por semana incluídos, entre analisar e criar; demais com 30%"]],
           ["Prioridade na agenda do especialista", ["—", "Sim", "Sim"]],
           ["Suporte prioritário", ["—", "—", "Sim"]]
         ];
         if (eq) L.push(["Gestor que inclui e troca as pessoas", ["Sim", "Sim", "Sim"]]);
-        return L.map(([rot, vals]) => ({ rot, vals: vals.map((t, i) => ({ txt: t, cls: t === "—" ? "lvp-nao" : (i === 2 && !/^Completa|^Grátis|^Ler e participar|^Sim$/.test(t) ? "lvp-forte" : (t === "Sim" ? "lvp-sim" : "")) })) }));
+        return L.map(([rot, vals]) => ({ rot, vals: vals.map((t, i) => ({ txt: t, cls: t === "—" ? "lvp-nao" : (i === 2 && !/^Completa|^Grátis|^Pesquisa aberta|^Ler e participar|^Sim$/.test(t) ? "lvp-forte" : (t === "Sim" ? "lvp-sim" : "")) })) }));
       })(),
       garantiasPlanos: [
         { t: "Sem fidelidade", d: "Sem renovação automática, a não ser que você ative no cartão. Cancele quando quiser." },
@@ -9768,6 +9772,8 @@ class Component extends DCLogic {
         ["Órgão público pode contratar? Como funciona?", "Pode. Escolha “órgão público”, monte o plano e peça a proposta para empenho — ou baixe a proposta preliminar para instruir o processo. O enquadramento (por exemplo, dispensa por valor, art. 75, II, da Lei nº 14.133/2021) cabe ao órgão. Os acessos são liberados após a nota de empenho. Quem preferir também pode assinar como pessoa física."],
         ["Como funciona o plano para equipes?", "Você contrata a quantidade de acessos e quem contrata vira o gestor. Ele inclui as pessoas pelo e-mail e troca quando alguém sai da equipe. Cada acesso é de uma pessoa, e o desconto cresce com a quantidade: 5% de 3 a 5 acessos, 10% de 6 a 10 e 15% de 11 a 25, além dos 20% do anual."],
         ["O que faz O Parecerista e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. Com O Elaborador, você também cria a minuta do ETP, do Termo de Referência ou do Projeto Básico a partir de um questionário, já conferida. O Pro inclui 2 por semana, somando análises e documentos criados; equipes Pro têm 6 por acesso por mês, somados. Nos demais planos cada análise ou documento é pago com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
+        ["O que a Calculadora faz e quem pode usar?", "A Calculadora tem quatro ferramentas: reajuste por índice (IPCA, IGP-M, INCC e outros, com a nota técnica em PDF), planilha de custos da mão de obra exclusiva no formato da IN 05/2017, repactuação (com custos não renováveis, quadro comparativo, retroativo e nota técnica) e análise da planilha da proposta da licitante (exequibilidade, falhas e diligência). Todas estão em todos os planos, inclusive no teste de 7 dias. O agente de IA que lê a convenção coletiva e as planilhas é do plano Pro."],
+        ["Quantas análises de planilha pelo agente de IA eu tenho?", "No Pro, por semana: 1 elaboração de planilha de custos, 1 análise de repactuação e 1 análise de proposta, renovando na segunda-feira. A franquia é por assinatura: na equipe, é compartilhada entre os membros. Análise que falhar por problema técnico não consome a franquia, e a planilha pode sempre ser preenchida manualmente, sem limite."],
         ["O que é o preço de fundador?", "É o preço de lançamento para os primeiros " + ((s.oferta && s.oferta.limite) || 100) + " assinantes: 30% de desconto no Básico, no Premium ou no Pro, no mensal ou no anual (não se soma ao desconto de 20% do anual nem aos planos de equipe). O preço fica travado enquanto a sua assinatura continuar ativa; se ela ficar mais de 30 dias sem renovação, o preço de fundador deixa de valer."],
         ["A primeira análise do Parecerista é grátis mesmo?", "Sim. Cada CPF tem direito a uma análise grátis, com até 3 documentos, assinante ou não: basta informar o CPF no perfil e confirmar o e-mail. Se a análise não puder ser concluída por falha técnica, a cortesia continua disponível. Quando o limite diário de análises grátis é atingido, a sua entra na fila e é processada no dia seguinte, com prioridade."],
         ["Posso mudar de plano depois?", "Sim. Basta contratar o novo plano; se for o mesmo plano, o tempo que ainda falta é somado ao novo período."]
