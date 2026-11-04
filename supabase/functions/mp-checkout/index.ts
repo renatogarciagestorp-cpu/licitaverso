@@ -286,10 +286,8 @@ Deno.serve(async (req) => {
       if (ehAdmin) return erro("Você é administrador: já tem acesso total a todos os recursos, sem cobrança.");
       if (ciclo !== "mensal" && ciclo !== "anual") return erro("Ciclo inválido.");
       const contratante = ["fisica", "privada", "publica"].includes(corpo.contratante) ? corpo.contratante : "fisica";
-      // preço de fundador: quem já é fundador (com assinatura ativa) ou enquanto houver vagas
-      const { data: souFundador } = await admin.rpc("eh_fundador", { uid: usuario.id });
-      const { data: vagas } = await admin.rpc("vagas_fundador");
-      const fundador = !!souFundador || Number(vagas ?? 0) > 0;
+      // preço de fundador encerrado (nov/2026): todos pagam o preço de tabela, inclusive nas renovações
+      const fundador = false;
       valor = precoPlano(plano, ciclo, fundador);
       const cartao = metodo === "cartao" || metodo === "cpgf";
       parcelas = ciclo === "anual" && cartao ? Math.max(1, Math.min(12, Number(corpo.parcelas) || 1)) : 1;
