@@ -2,14 +2,16 @@
 // Chamada uma vez por dia pelo GitHub Actions (workflow avisos-diarios.yml).
 // Idempotente: cada assinatura recebe o aviso uma única vez (coluna aviso_fim_em).
 //  - planos pagos: aviso quando faltam 7 dias ou menos;
-//  - teste grátis: dica de uso no 3º dia e aviso na véspera do fim ("termina amanhã").
+//  - teste grátis: dica de uso no 3º dia e aviso na véspera do fim ("termina amanhã");
+//  - fim do preço de fundador: aviso com 30 dias de antecedência e, depois do prazo, novo valor na renovação automática.
 
-import { clienteServico, CORS, resposta, segredoConfere } from "../_shared/comum.ts";
+import { clienteServico, CORS, mp, resposta, segredoConfere } from "../_shared/comum.ts";
 import { enviarEmail, moldura, SITE } from "../_shared/email.ts";
-import { PLANOS } from "../_shared/precos.ts";
+import { PLANOS, precoPlano } from "../_shared/precos.ts";
 
 const DIA = 86400000;
 const nomePlano = (p: string) => (p === "teste" ? "Teste grátis" : PLANOS[p as keyof typeof PLANOS]?.nome ?? p);
+const brl = (v: number) => "R$ " + v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const dataBR = (iso: string) => new Date(iso).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
 
 Deno.serve(async (req) => {
@@ -55,7 +57,7 @@ Deno.serve(async (req) => {
       [
         `${primeiro}, ${teste ? "o seu teste grátis" : `o seu plano <strong>${nomePlano(a.plano)}</strong>`} no Licitacon vale até <strong>${dataBR(a.fim)}</strong>.`,
         teste
-          ? "Para continuar com o fórum, os descontos em cursos e consultoria e a Biblioteca completa, escolha um plano. Nada é cobrado automaticamente."
+          ? "Depois do teste você continua no plano Gratuito, com a Biblioteca Jurídica, a calculadora de reajuste e a leitura do fórum. Para continuar perguntando no fórum, usando as planilhas de mão de obra e com desconto em cursos e consultoria, escolha um plano. Nada é cobrado automaticamente."
           : "Não há renovação automática: para não perder o acesso ao fórum e aos descontos, renove quando quiser. O tempo que ainda resta é somado ao novo período.",
       ],
       { texto: teste ? "Escolher um plano" : "Renovar meu plano", url: `${SITE}index.html?p=planos` },
@@ -86,9 +88,9 @@ Deno.serve(async (req) => {
       "Aproveite seu teste: 3 dicas rápidas",
       [
         `${primeiro}, seu teste grátis vale até <strong>${dataBR(t.fim)}</strong>. Três jeitos de tirar proveito dele:`,
-        "<strong>1. Leia as perguntas frequentes do fórum</strong> — reajuste, repactuação, adesão a ata, aditivos e mais, com resposta fundamentada na lei e na jurisprudência.",
-        "<strong>2. Pesquise com filtros na Biblioteca</strong> — combine tema, órgão e artigo da lei e copie a citação pronta (ABNT, peça ou curta).",
-        "<strong>3. Veja o que um plano libera</strong> — perguntar e responder no fórum, desconto em cursos e consultoria; no Pro, 1 consultoria por escrito por mês.",
+        "<strong>1. Pergunte no fórum</strong> — reajuste, repactuação, adesão a ata, aditivos e mais, com resposta da comunidade e do especialista.",
+        "<strong>2. Monte uma planilha de mão de obra</strong> — planilha de custos da IN 05/2017, repactuação ou análise da proposta, com download em Excel e PDF.",
+        "<strong>3. Veja o que um plano libera</strong> — os agentes de IA com desconto, cursos e consultoria; no Pro, 1 consultoria por escrito por mês.",
       ],
       { texto: "Abrir o fórum", url: `${SITE}index.html?p=forum` },
       "Nada é cobrado quando o teste termina.",
@@ -97,6 +99,49 @@ Deno.serve(async (req) => {
     catch (e) { console.error("avisos: dica do teste", t.id, e); resultado.falhas++; }
   }
 
-  console.log("avisos", resultado);
-  return resposta({ ok: true, ...resultado });
+  // ---------------------------------------------------------------- fim do preço de fundador (renovações automáticas)
+  const { data: rens } = await admin.from("renovacoes")
+    .select("id, usuario_id, plano, ciclo, valor, status, mp_preapproval, aviso_preco_em, novo_valor")
+    .eq("fundador", true).in("status", ["ativa", "pausada", "pendente"]).not("mp_preapproval", "is", null).limit(500);
+  const precos = { avisados: 0, atualizados: 0, falhas: 0 };
+  for (const r of rens ?? []) {
+    const cheio = precoPlano(r.plano, r.ciclo, false);
+    if (Number(r.valor) + 0.01 >= cheio) { await admin.from("renovacoes").update({ fundador: false }).eq("id", r.id); continue; }
+    if (!r.aviso_preco_em) {
+      // aviso obrigatório (mudança de preço): sai mesmo para quem desligou os e-mails de cobrança
+      const { data: p } = await admin.from("perfis").select("nome, email").eq("id", r.usuario_id).maybeSingle();
+      if (!p?.email) { precos.falhas++; continue; }
+      const primeiro = (p.nome || "").trim().split(/\s+/)[0].replace(/[&<>"']/g, "") || "Olá";
+      const quando = new Date(agora + 30 * DIA).toISOString();
+      const periodo = r.ciclo === "anual" ? "por ano" : "por mês";
+      const html = moldura(
+        "Mudança no valor da sua renovação automática",
+        [
+          `${primeiro}, o preço de lançamento (preço de fundador) do Licitacon foi encerrado.`,
+          `A partir de <strong>${dataBR(quando)}</strong>, a renovação automática do seu plano <strong>${nomePlano(r.plano)}</strong> passa de <strong>${brl(Number(r.valor))}</strong> para <strong>${brl(cheio)}</strong> ${periodo}, o preço de tabela atual. Até essa data, nada muda.`,
+          "Se não quiser continuar com o novo valor, desligue a renovação automática em Minha conta → Assinatura antes dessa data. O acesso continua até o fim do período já pago e nada mais é cobrado.",
+        ],
+        { texto: "Ver minha assinatura", url: `${SITE}index.html?p=conta` },
+        "Aviso enviado com 30 dias de antecedência, conforme as regras de cobrança do Licitacon.",
+      );
+      try {
+        await enviarEmail({ email: p.email, nome: p.nome }, "Aviso: novo valor da sua renovação automática do Licitacon", html);
+        await admin.from("renovacoes").update({ aviso_preco_em: new Date().toISOString(), novo_valor: cheio }).eq("id", r.id);
+        precos.avisados++;
+      } catch (e) { console.error("avisos: aviso de preço", r.id, e); precos.falhas++; }
+      continue;
+    }
+    if (agora - new Date(r.aviso_preco_em).getTime() < 30 * DIA) continue;
+    const novo = Number(r.novo_valor) || cheio;
+    try {
+      // primeiro o Mercado Pago; só depois o banco (se o banco subir antes, a cobrança antiga seria recusada)
+      await mp(`/preapproval/${encodeURIComponent(r.mp_preapproval)}`, { method: "PUT",
+        body: JSON.stringify({ auto_recurring: { transaction_amount: novo, currency_id: "BRL" } }) });
+      await admin.from("renovacoes").update({ valor: novo, fundador: false, preco_atualizado_em: new Date().toISOString(), atualizado_em: new Date().toISOString() }).eq("id", r.id);
+      precos.atualizados++;
+    } catch (e) { console.error("avisos: novo valor no Mercado Pago", r.id, e); precos.falhas++; }
+  }
+
+  console.log("avisos", resultado, precos);
+  return resposta({ ok: true, ...resultado, precos });
 });

@@ -40,7 +40,7 @@ if 'rel="manifest"' not in html:
 
 # 3) assistente de dúvidas
 if "chatbot.js" not in html:
-    html = html.replace('<script src="licitaverso-auth.js?v=7"></script>', '<script src="licitaverso-auth.js?v=7"></script><script src="chatbot.js?v=8" defer></script>', 1)
+    html = html.replace('<script src="licitaverso-auth.js?v=7"></script>', '<script src="licitaverso-auth.js?v=7"></script><script src="chatbot.js?v=9" defer></script>', 1)
 
 # 4) busca e compartilhamento
 SITE = "https://renatogarciagestorp-cpu.github.io/licitaverso/"

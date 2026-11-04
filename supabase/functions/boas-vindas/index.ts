@@ -18,13 +18,13 @@ Deno.serve(async (req) => {
   const html = moldura(
     `Boas-vindas ao Licitacon, ${primeiro}!`,
     [
-      "Sua conta está pronta. Veja por onde começar:",
-      "<strong>1. Biblioteca Jurídica</strong> — gratuita para você: decisões do TCU, CGU, STF, STJ e de órgãos do Rio de Janeiro, com tema, tese e link para a fonte oficial. Salve anotações e marcadores na sua conta.",
-      "<strong>2. Teste grátis de 7 dias</strong> — sem cartão e sem cobrança no fim. Libera a leitura do fórum para você conhecer a comunidade.",
+      "Sua conta está pronta, no plano Gratuito. Veja por onde começar:",
+      "<strong>1. Grátis para sempre</strong> — a Biblioteca Jurídica (jurisprudência de todo o país, com anotações, marcadores e dossiês), a calculadora de reajuste com nota técnica e a leitura do fórum.",
+      "<strong>2. Teste grátis de 7 dias</strong> — sem cartão e sem cobrança no fim. Libera perguntar e responder no fórum e as planilhas de mão de obra da IN 05/2017.",
       "<strong>3. Ficou com dúvida?</strong> Clique em <strong>💬 Dúvidas?</strong> no canto do site: o assistente responde na hora.",
     ],
     { texto: "Abrir a Biblioteca Jurídica", url: `${SITE}biblioteca.html` },
-    `Quer conhecer o fórum? <a href="${SITE}index.html?p=planos" style="color:#0F6B7E">Comece o teste grátis</a>.`,
+    `Quer participar do fórum? <a href="${SITE}index.html?p=planos" style="color:#0F6B7E">Comece o teste grátis</a>.`,
   );
   try {
     await enviarEmail({ email: marcado.email, nome: marcado.nome }, "Boas-vindas ao Licitacon", html);

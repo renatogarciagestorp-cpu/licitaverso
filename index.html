@@ -1916,7 +1916,7 @@
               <button type="button" sc-camel-on-click="{{ goCursos }}"><b>Cursos →</b><span>Licitações e contratos na prática, com até 50% de desconto no Pro.</span></button>
             </div>
             <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goForum }}">Ver as discussões</button></div>
-            <p class="lvh-ban-micro">Leitura do fórum grátis com a sua conta · perguntar e responder nos planos pagos · consultoria e cursos com desconto de assinante.</p>
+            <p class="lvh-ban-micro">Leitura do fórum grátis com a sua conta · perguntar e responder nos planos e no teste de 7 dias · consultoria e cursos com desconto de assinante.</p>
           </div>
           <div class="lvh-art" aria-hidden="true">
             <div class="lvh-art-doc">
@@ -5782,7 +5782,7 @@ const PLANO_BENEFICIOS = {
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "8";
+const CHAT_VERSAO = "9";
 // versão da Biblioteca no endereço: força o navegador a buscar a página nova depois de cada mudança (o GitHub Pages guarda em cache por 10 minutos)
 const BIB_URL = "biblioteca.html?v=2";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
@@ -6908,7 +6908,7 @@ class Component extends DCLogic {
   }
 
   podeLerForum() { return !!this.state.admin || !!this.state.usuario; } // leitura do fórum: grátis com conta (plano Gratuito)
-  podeParticipar() { return this.state.admin || ["basico", "premium", "pro"].includes(this.state.plano); }
+  podeParticipar() { return this.state.admin || ["teste", "basico", "premium", "pro"].includes(this.state.plano); }
 
   abrirTopico = (nome) => () => {
     this.setState({ topico: nome, respondendo: null, threadAberta: null, forumFiltro: "todas", nova: { ...this.state.nova, aberta: false } });
@@ -6921,7 +6921,7 @@ class Component extends DCLogic {
 
   abrirNovaPergunta() {
     if (this.state.sb && !this.state.usuario) { this.setState({ volta: "forum" }); this.irPara("cadastro"); return; }
-    if (this.state.sb && !this.podeParticipar()) { this.aviso("Perguntar e responder no fórum é para assinantes Básico, Premium e Pro.", "erro"); return; }
+    if (this.state.sb && !this.podeParticipar()) { this.aviso("Perguntar e responder no fórum é para assinantes e para quem está no teste de 7 dias.", "erro"); return; }
     this.setState((s) => ({ nova: { ...s.nova, aberta: !s.nova.aberta, erro: "" } }));
   }
 
@@ -6940,7 +6940,7 @@ class Component extends DCLogic {
   }
 
   responder = (id) => () => {
-    if (this.state.sb && !this.podeParticipar()) { this.aviso("Responder no fórum é para assinantes Básico, Premium e Pro.", "erro"); return; }
+    if (this.state.sb && !this.podeParticipar()) { this.aviso("Responder no fórum é para assinantes e para quem está no teste de 7 dias.", "erro"); return; }
     this.setState((s) => ({ respondendo: s.respondendo === id ? null : id, resposta: "", citacao: "", respErro: "" }));
   };
 
@@ -8651,7 +8651,7 @@ class Component extends DCLogic {
       const { error } = await this.sb.rpc("iniciar_teste");
       if (error) { this.setState({ pagando: false, pagamentoErro: error.message || "Não foi possível iniciar o teste." }); return; }
       await this.carregarDados();
-      this.setState({ pagando: false, pagamentoFeito: true, pagamentoMsg: "✓ Teste de 7 dias ativado. Aproveite as planilhas de mão de obra da IN 05/2017." });
+      this.setState({ pagando: false, pagamentoFeito: true, pagamentoMsg: "✓ Teste de 7 dias ativado. Aproveite para perguntar e responder no fórum e usar as planilhas de mão de obra." });
       return;
     }
 
@@ -8987,14 +8987,14 @@ class Component extends DCLogic {
         ? {
             nome: PLANO_NOME[vig.plano],
             detalhe: vig.plano === "teste"
-              ? "Teste gratuito de 7 dias das planilhas de mão de obra da IN 05/2017. Depois do teste você continua no plano Gratuito (Biblioteca Jurídica, calculadora de reajuste e leitura do fórum). Nada é cobrado ao final."
+              ? "Teste gratuito de 7 dias: perguntar e responder no fórum e usar as planilhas de mão de obra da IN 05/2017. Depois do teste você continua no plano Gratuito (Biblioteca Jurídica, calculadora de reajuste e leitura do fórum). Nada é cobrado ao final."
               : "Ciclo de " + (vig.ciclo === "anual" ? "12 meses" : "1 mês") + " contratado em " + dataBR(vig.inicio) + (vig.metodo ? " · " + vig.metodo : "") + (vig.parcelas > 1 ? " em " + vig.parcelas + "x" : "") + ". Sem renovação automática: avisamos antes do fim do período.",
             preco: vig.plano === "teste" ? "Grátis" : brl(Number(vig.valor || 0)),
             rotulo: "acesso até", proxima: dataBR(vig.fim)
           }
         : s.organizacao
         ? { nome: PLANO_NOME[s.organizacao.plano] + " · Equipe", detalhe: "Acesso pelo plano de equipe de " + s.organizacao.nome + ". Detalhes na aba Equipe.", preco: "Pago pela organização", rotulo: "acesso até", proxima: dataBR(s.organizacao.fim) }
-        : { nome: "Gratuito", detalhe: "Sua conta grátis dá acesso à Biblioteca Jurídica (com anotações, marcadores e dossiês), à calculadora de reajuste com nota técnica e à leitura do fórum. Faça o teste de 7 dias das planilhas de mão de obra ou assine para também participar do fórum e ter desconto em cursos e consultoria.", preco: "R$ 0", rotulo: "", proxima: "" };
+        : { nome: "Gratuito", detalhe: "Sua conta grátis dá acesso à Biblioteca Jurídica (com anotações, marcadores e dossiês), à calculadora de reajuste com nota técnica e à leitura do fórum. Faça o teste de 7 dias para participar do fórum e usar as planilhas de mão de obra, ou assine para ter também desconto em cursos e consultoria.", preco: "R$ 0", rotulo: "", proxima: "" };
 
     const nomeConta = s.perfil.nome || (s.usuario && s.usuario.email) || "Assinante";
     const notifs = [
@@ -9597,7 +9597,7 @@ class Component extends DCLogic {
         this.cortesiaAnalise()
           ? { icon: "✦", selo: "1 por CPF", t: "Primeira análise grátis", d: "Envie até 3 documentos da contratação ao Parecerista e receba o parecer técnico em PDF e Word, sem pagar.", cta: "Fazer minha análise grátis", go: this.nav("agente") }
           : { icon: "%", selo: "Grátis com conta", t: "Calculadora de reajuste", d: "Reajuste por índice com conferência da anualidade, memória de cálculo mês a mês e nota técnica em PDF. Com a conta grátis você também lê o fórum.", cta: "Conhecer a Calculadora", go: this.nav("calculadora") },
-        { icon: "◍", selo: "Sem cartão", t: "Teste de 7 dias", d: "Use as planilhas de mão de obra da IN 05/2017 (custos, repactuação e análise de proposta) antes de escolher um plano.", cta: "Começar o teste", go: this.nav("planos") }
+        { icon: "◍", selo: "Sem cartão", t: "Teste de 7 dias", d: "Pergunte e responda no fórum e use as planilhas de mão de obra da IN 05/2017 antes de escolher um plano.", cta: "Começar o teste", go: this.nav("planos") }
       ],
       fundTextoCurto: s.oferta && s.oferta.sou_fundador ? "Seu desconto está garantido enquanto a assinatura continuar ativa." : "Para os primeiros " + ((s.oferta && s.oferta.limite) || 100) + " assinantes, travado enquanto a assinatura continuar ativa. Vale no Básico, no Premium e no Pro.",
       fundTicketTitulo: s.oferta && s.oferta.sou_fundador ? "Você é fundador do Licitacon" : "Assine agora e trave 30% de desconto",
@@ -9682,7 +9682,7 @@ class Component extends DCLogic {
       vitVazia: vitrineAtiva && !!s.forumVitrine && !(s.forumVitrine.perguntas || []).some((q) => q.topico === topicoAtual.nome),
       vitCarregando: vitrineAtiva && !s.forumVitrine,
       vitTitulo: logado ? "Entre para ler as respostas" : "Crie sua conta grátis para ler as respostas",
-      vitTexto: logado ? "A leitura das perguntas e respostas faz parte do teste e de todos os planos; perguntar e responder, dos planos Básico, Premium e Pro." : "Os títulos das discussões são públicos. Com a conta grátis você lê todas as respostas da comunidade e do especialista; nos planos Básico, Premium e Pro, também pergunta e responde.",
+      vitTexto: logado ? "A leitura das perguntas e respostas é grátis com a conta; perguntar e responder faz parte do teste de 7 dias e dos planos." : "Os títulos das discussões são públicos. Com a conta grátis você lê todas as respostas da comunidade e do especialista; nos planos e no teste de 7 dias, também pergunta e responde.",
       vitCta: logado ? "Começar o teste grátis" : "Criar conta grátis", vitAcao: logado ? () => this.irPara("planos") : () => { this.setState({ volta: "forum" }); this.irPara("cadastro"); },
       vitEntrar: () => { this.setState({ volta: "forum" }); this.irPara("login"); },
       forumLivre: !forumBloqueado,
@@ -10064,9 +10064,9 @@ class Component extends DCLogic {
           destaque: k === "pro", cta: s.equipeAcessos > EQ_MAX ? "Pedir proposta" : "Contratar " + n + " acessos", btnBg: k === "pro" ? "#0FA36B" : "#0A1F2A", btnColor: k === "pro" ? "#06251A" : "#fff",
           chave: k, itens: EQ_INCLUI[k].concat(["Gestor da equipe inclui e troca as pessoas", "Acesso pelo navegador, sem instalação"]) };
       })) : this.comPlanos([
-        { nome: "Gratuito", base: 0, publico: "Para pesquisar, calcular e acompanhar a comunidade sem pagar nada.", preco: "R$ 0", unidade: "para sempre", nota: "", detalhePreco: "Basta criar a conta, sem cartão. O teste de 7 dias das planilhas também não pede cartão e não cobra nada ao final.", destaque: false,
-          cta: !s.usuario ? "Criar conta grátis" : s.plano ? "Você já tem acesso" : "Testar as planilhas por 7 dias", btnBg: "#F1F6F5", btnColor: "#0A1F2A",
-          itens: ["Biblioteca Jurídica completa: jurisprudência de todo o país, com anotações, marcadores e dossiês salvos na sua conta", "Calculadora de reajuste por índice, com a nota técnica em PDF", "Leitura do fórum da comunidade", "Teste de 7 dias das planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta), sem cartão"] },
+        { nome: "Gratuito", base: 0, publico: "Para pesquisar, calcular e acompanhar a comunidade sem pagar nada.", preco: "R$ 0", unidade: "para sempre", nota: "", detalhePreco: "Basta criar a conta, sem cartão. O teste de 7 dias também não pede cartão e não cobra nada ao final.", destaque: false,
+          cta: !s.usuario ? "Criar conta grátis" : s.plano ? "Você já tem acesso" : "Começar o teste de 7 dias", btnBg: "#F1F6F5", btnColor: "#0A1F2A",
+          itens: ["Biblioteca Jurídica completa: jurisprudência de todo o país, com anotações, marcadores e dossiês salvos na sua conta", "Calculadora de reajuste por índice, com a nota técnica em PDF", "Leitura do fórum da comunidade", "Teste de 7 dias, sem cartão: perguntar e responder no fórum e usar as planilhas de mão de obra da IN 05/2017"] },
         { nome: "Básico", base: 119.9, publico: "Profissionais individuais iniciantes.", preco: precoPlano(119.9), unidade: unidadePlano, nota: notaPlano(119.9), detalhePreco: detalhePlano(119.9), destaque: destaque === "Básico", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
           itens: ["Fórum da comunidade: leitura e participação", "Calculadora: reajuste por índice com nota técnica e planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta)", "O Parecerista e O Elaborador com 10% de desconto", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto"] },
         { nome: "Premium", base: 199.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(199.9), unidade: unidadePlano, nota: notaPlano(199.9), detalhePreco: detalhePlano(199.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
@@ -10192,7 +10192,7 @@ class Component extends DCLogic {
         ["O que faz O Parecerista e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. Com O Elaborador, você também cria a minuta do ETP, do Termo de Referência ou do Projeto Básico a partir de um questionário, já conferida. O Pro inclui 2 por semana, somando análises e documentos criados; equipes Pro têm 6 por acesso por mês, somados. Nos demais planos cada análise ou documento é pago com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
         ["O que a Calculadora faz e quem pode usar?", "A Calculadora tem quatro ferramentas: reajuste por índice (IPCA, IGP-M, INCC e outros, com a nota técnica em PDF), planilha de custos da mão de obra exclusiva no formato da IN 05/2017, repactuação (com custos não renováveis, quadro comparativo, retroativo e nota técnica) e análise da planilha da proposta da licitante (exequibilidade, falhas e diligência). O reajuste por índice é grátis para quem tem conta; as três ferramentas de mão de obra estão em todos os planos pagos e no teste de 7 dias. O agente de IA que lê a convenção coletiva e as planilhas é do plano Pro."],
         ["Quantas análises de planilha pelo agente de IA eu tenho?", "No Pro, por semana: 1 elaboração de planilha de custos, 1 análise de repactuação e 1 análise de proposta, renovando na segunda-feira. A franquia é por assinatura: na equipe, é compartilhada entre os membros. Análise que falhar por problema técnico não consome a franquia, e a planilha pode sempre ser preenchida manualmente, sem limite."],
-        ["O que o plano Gratuito inclui?", "Com a conta grátis, sem cartão e sem prazo, você usa a Biblioteca Jurídica completa (com anotações, marcadores e dossiês), a calculadora de reajuste por índice com a nota técnica em PDF e lê todas as perguntas e respostas do fórum. As planilhas de mão de obra podem ser testadas por 7 dias; para participar do fórum e ter os demais recursos, assine um plano."],
+        ["O que o plano Gratuito inclui?", "Com a conta grátis, sem cartão e sem prazo, você usa a Biblioteca Jurídica completa (com anotações, marcadores e dossiês), a calculadora de reajuste por índice com a nota técnica em PDF e lê todas as perguntas e respostas do fórum. Para perguntar e responder no fórum e usar as planilhas de mão de obra, faça o teste de 7 dias ou assine um plano."],
         ["A primeira análise do Parecerista é grátis mesmo?", "Sim. Cada CPF tem direito a uma análise grátis, com até 3 documentos, assinante ou não: basta informar o CPF no perfil e confirmar o e-mail. Se a análise não puder ser concluída por falha técnica, a cortesia continua disponível. Quando o limite diário de análises grátis é atingido, a sua entra na fila e é processada no dia seguinte, com prioridade."],
         ["Posso mudar de plano depois?", "Sim. Basta contratar o novo plano; se for o mesmo plano, o tempo que ainda falta é somado ao novo período."]
       ].map(([q, a], i) => ({ q, a, aberta: s.faqAberta === i, sinal: s.faqAberta === i ? "−" : "+", alternar: () => this.setState((x) => ({ faqAberta: x.faqAberta === i ? -1 : i })) })),
@@ -10359,7 +10359,7 @@ class Component extends DCLogic {
       }),
       parcelasObs: "Parcelamento no cartão de crédito, em uma única autorização. O Mercado Pago mostra as condições finais antes de você confirmar.",
       checkout: s.checkoutPlano ? (() => { const auto = !!s.renovacaoAuto && metodoSel.id === "cartao" && s.checkoutPlano.base > 0; return {
-        titulo: s.checkoutPlano.base === 0 ? "Teste grátis de 7 dias das planilhas de mão de obra" : "Plano " + s.checkoutPlano.nome + " · " + (s.checkoutPlano.base === 0 ? "teste de 7 dias" : (auto ? (anual ? "anual com renovação automática" : "mensal com renovação automática") : (anual ? "12 meses" : "1 mês avulso"))),
+        titulo: s.checkoutPlano.base === 0 ? "Teste grátis de 7 dias" : "Plano " + s.checkoutPlano.nome + " · " + (s.checkoutPlano.base === 0 ? "teste de 7 dias" : (auto ? (anual ? "anual com renovação automática" : "mensal com renovação automática") : (anual ? "12 meses" : "1 mês avulso"))),
         total: s.checkoutPlano.base === 0 ? "R$ 0,00" : brl(anual ? anualTotal(s.checkoutPlano.base) : avulso(s.checkoutPlano.base)),
         botao: s.pagando ? "Aguarde…" : (s.checkoutPlano.base === 0 ? "Ativar teste grátis" : (metodoSel.checkout ? "Pagar com Mercado Pago" : "Solicitar cobrança")),
         obs: s.checkoutPlano.base === 0
