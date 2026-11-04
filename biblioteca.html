@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR"><head><meta charset="utf-8"><meta name="referrer" content="strict-origin-when-cross-origin"><script>/* impede que o site seja aberto dentro de outro site (clickjacking) */if(window.top!==window.self){try{window.top.location=window.self.location}catch(e){document.documentElement.style.display="none"}}</script><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0A1F2A"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><link rel="icon" type="image/png" href="icones/icone-192.png"><script src="licitaverso-auth.js?v=5"></script><script src="chatbot.js?v=4" defer></script>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="referrer" content="strict-origin-when-cross-origin"><script>/* impede que o site seja aberto dentro de outro site (clickjacking) */if(window.top!==window.self){try{window.top.location=window.self.location}catch(e){document.documentElement.style.display="none"}}</script><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0A1F2A"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><link rel="icon" type="image/png" href="icones/icone-192.png"><script src="licitaverso-auth.js?v=6"></script><script src="chatbot.js?v=6" defer></script>
 <script>
 /* Faz a página do Acervo Licitacon funcionar no site público, sem o Claude:
    - "decisoes" e "meta" vêm de acervo-completo.json (atualizado nos dias úteis);
@@ -122,15 +122,16 @@
 })();
 
 </script></head><body>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap">
 <script type="speculationrules">{"prerender":[{"where":{"href_matches":"*index.html*"},"eagerness":"moderate"}],"prefetch":[{"where":{"href_matches":"*index.html*"},"eagerness":"conservative"}]}</script>
 
 <style>
 /* mesma barra do site (index.html): mesmos itens, tamanhos, cores e destaque da página atual */
 @view-transition{navigation:auto}
 ::view-transition-old(root),::view-transition-new(root){animation-duration:.16s}
-:root:root{--f-display:"Source Serif 4",Georgia,"Times New Roman",serif;--f-body:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;--f-mono:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif}
+:root:root{--f-display:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;--f-body:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;--f-mono:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif}
 body{margin:0}
+button,input,select,textarea{font-family:inherit}
 .lvbar{margin-left:calc(-1*max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1*max(16px,env(safe-area-inset-right,0px)));position:sticky;top:0;z-index:40;background:#0A1F2A;border-bottom:1px solid rgba(255,255,255,.09);font-family:Manrope,-apple-system,"Segoe UI",sans-serif}
 .lvbar .in{max-width:1240px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;gap:28px}
 .lvbar .marca{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-weight:800;font-size:18px;letter-spacing:-.02em}
@@ -181,9 +182,9 @@ body{margin:0}
   --accent:#0B5D6B; --accent-soft:#E2EFF1; --warn:#8A5A00; --warn-soft:#FBF0DA;
   --tcu:#1D3F78; --tcerj:#7A2338; --cgu:#2F6B3A; --stf:#3B3B8F; --stj:#6A3E86; --tcmrj:#8A4B1A; --pgerj:#225E78; --tjrj:#4D5B1F;
   --tcu-soft:#E5EBF5; --tcerj-soft:#F4E6EA; --cgu-soft:#E6F0E7; --stf-soft:#E8E8F6; --stj-soft:#EFE7F4; --tcmrj-soft:#F6EBE1; --pgerj-soft:#E2EEF3; --tjrj-soft:#EDF0DF;
-  --f-display:"Literata", Georgia, "Times New Roman", serif;
-  --f-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --f-display:Manrope, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-body:Manrope, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:Manrope, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#11171D; --surface:#18212A; --ink:#E6ECF1; --muted:#9AA8B5; --rule:#2B3743;

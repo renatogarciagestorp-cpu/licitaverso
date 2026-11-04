@@ -68,7 +68,7 @@
   var mfaAberto = false;
   function el(tag, css, html) { var e = document.createElement(tag); if (css) e.style.cssText = css; if (html != null) e.innerHTML = html; return e; }
   function modal(titulo, fechavel) {
-    var fundo = el("div", "position:fixed;inset:0;background:rgba(6,20,27,.72);z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:16px;font-family:'IBM Plex Sans',-apple-system,Segoe UI,sans-serif");
+    var fundo = el("div", "position:fixed;inset:0;background:rgba(6,20,27,.72);z-index:2147483000;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Manrope,-apple-system,Segoe UI,sans-serif");
     var cx = el("div", "background:#fff;color:#0A1F2A;border-radius:14px;max-width:420px;width:100%;padding:24px 22px;box-shadow:0 20px 60px rgba(0,0,0,.35);max-height:92vh;overflow:auto");
     cx.appendChild(el("h2", "margin:0 0 6px;font-size:20px;line-height:1.25", titulo));
     var corpo = el("div", "font-size:14px;line-height:1.55;color:#3D5058");
@@ -82,7 +82,7 @@
       (principal ? "background:#0FA36B;color:#06251A;border:1px solid #0FA36B" : "background:#fff;color:#3D5058;border:1px solid #DDE4E3"), txt);
   }
   function campoCodigo() {
-    var i = el("input", "width:100%;box-sizing:border-box;font:600 22px/1.2 'IBM Plex Mono',monospace;letter-spacing:.3em;text-align:center;padding:10px;border:1px solid #C9D3D2;border-radius:9px;margin-top:12px");
+    var i = el("input", "width:100%;box-sizing:border-box;font:700 22px/1.2 Manrope,system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:.3em;text-align:center;padding:10px;border:1px solid #C9D3D2;border-radius:9px;margin-top:12px");
     i.inputMode = "numeric"; i.autocomplete = "one-time-code"; i.maxLength = 6; i.placeholder = "000000";
     i.addEventListener("input", function () { i.value = i.value.replace(/\D/g, "").slice(0, 6); });
     return i;

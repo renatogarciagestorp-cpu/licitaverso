@@ -5,7 +5,7 @@
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   async function abrir(aoMudar) {
     var sb = await window.LV.pronto; if (!sb) return;
-    var fundo = el("div", "position:fixed;inset:0;background:rgba(6,20,27,.72);z-index:2147482000;display:flex;align-items:center;justify-content:center;padding:16px;font-family:'IBM Plex Sans',-apple-system,Segoe UI,sans-serif");
+    var fundo = el("div", "position:fixed;inset:0;background:rgba(6,20,27,.72);z-index:2147482000;display:flex;align-items:center;justify-content:center;padding:16px;font-family:Manrope,-apple-system,Segoe UI,sans-serif");
     var cx = el("div", "background:#fff;color:#0A1F2A;border-radius:14px;max-width:560px;width:100%;padding:24px 22px;box-shadow:0 20px 60px rgba(0,0,0,.35);max-height:92vh;overflow:auto");
     fundo.appendChild(cx); document.body.appendChild(fundo);
     fundo.addEventListener("click", function (e) { if (e.target === fundo) fechar(); });

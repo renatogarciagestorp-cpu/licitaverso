@@ -105,10 +105,10 @@
 
   // ------------------------------------------------------------ interface
   var css = "" +
-    ".lvc-btn{position:fixed;right:18px;bottom:18px;z-index:2147483000;display:flex;align-items:center;gap:8px;background:#0FA36B;color:#06251A;border:0;border-radius:999px;padding:13px 18px 13px 15px;font:700 15px/1 'IBM Plex Sans',-apple-system,Segoe UI,Roboto,sans-serif;box-shadow:0 12px 30px rgba(8,24,33,.28);cursor:pointer;transition:bottom .2s}" +
+    ".lvc-btn{position:fixed;right:18px;bottom:18px;z-index:2147483000;display:flex;align-items:center;gap:8px;background:#0FA36B;color:#06251A;border:0;border-radius:999px;padding:13px 18px 13px 15px;font:700 15px/1 Manrope,-apple-system,Segoe UI,Roboto,sans-serif;box-shadow:0 12px 30px rgba(8,24,33,.28);cursor:pointer;transition:bottom .2s}" +
     ".lvc-btn:hover{background:#14B978}.lvc-btn span{font-size:19px;line-height:1}" +
     ".lvc-btn:focus-visible,.lvc-p button:focus-visible,.lvc-p input:focus-visible,.lvc-p textarea:focus-visible,.lvc-p select:focus-visible{outline:3px solid #7FE3B6;outline-offset:2px}" +
-    ".lvc-p{position:fixed;right:18px;bottom:18px;z-index:2147483001;width:390px;max-width:calc(100vw - 24px);height:min(640px,calc(100vh - 36px));background:#fff;border-radius:18px;box-shadow:0 30px 80px rgba(6,18,25,.38);display:flex;flex-direction:column;overflow:hidden;font:400 14.5px/1.55 'IBM Plex Sans',-apple-system,Segoe UI,Roboto,sans-serif;color:#0B1F2A;text-align:left}" +
+    ".lvc-p{position:fixed;right:18px;bottom:18px;z-index:2147483001;width:390px;max-width:calc(100vw - 24px);height:min(640px,calc(100vh - 36px));background:#fff;border-radius:18px;box-shadow:0 30px 80px rgba(6,18,25,.38);display:flex;flex-direction:column;overflow:hidden;font:400 14.5px/1.55 Manrope,-apple-system,Segoe UI,Roboto,sans-serif;color:#0B1F2A;text-align:left}" +
     ".lvc-p *{box-sizing:border-box}" +
     ".lvc-h{background:#0A1F2A;color:#fff;padding:14px 16px;display:flex;align-items:center;gap:10px;flex:none}" +
     ".lvc-h b{display:block;font-size:15.5px}.lvc-h small{display:block;color:#A9BEC6;font-size:12px}" +
