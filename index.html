@@ -1537,7 +1537,7 @@
       <section class="lvh-sec">
         <div class="lvh-bibsec">
           <div>
-            <span class="lvh-bib-tag">Biblioteca Jurídica · grátis com cadastro</span>
+            <span class="lvh-bib-tag">Biblioteca Jurídica · pesquisa aberta e gratuita</span>
             <h2 class="lvh-h2" style="margin-top: 14px">Jurisprudência de todo o país, sem pagar nada.</h2>
             <p class="lvh-bib-lead">Crie sua conta e pesquise decisões do TCU, dos Tribunais de Contas, das Procuradorias-Gerais e dos Tribunais de Justiça, com filtros por órgão, estado, tema e ano, o link oficial em cada decisão e espaço para suas anotações.</p>
             <button class="lvh-btn" style="margin-top: 22px" sc-camel-on-click="{{ goBiblioteca }}">Pesquisar na Biblioteca</button>
@@ -5404,7 +5404,7 @@ const EQ_INCLUI = {
   pro: ["Tudo do Pro para cada acesso", "O Parecerista e O Elaborador: 6 por acesso por mês, somados para a equipe, entre analisar documentos e criar ETP, TR ou Projeto Básico", "1 consultoria por escrito por mês para a organização; as demais com 30% de desconto"]
 };
 const PLANO_BENEFICIOS = {
-  teste: ["Leitura do fórum da comunidade", "Biblioteca Jurídica (grátis com cadastro)", "Sem cobrança automática ao final"],
+  teste: ["Leitura do fórum da comunidade", "Biblioteca Jurídica (pesquisa grátis; anotações na conta)", "Sem cobrança automática ao final"],
   basico: ["Fórum: leitura e participação", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "O Parecerista: análise com 10% de desconto (R$ 261,00)"],
   premium: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "O Parecerista: análise com 15% de desconto (R$ 246,50)", "Prioridade na agenda do especialista"],
   pro: ["Tudo do Premium", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "O Parecerista e O Elaborador: 2 por semana sem custo, entre analisar documentos e criar ETP, TR ou Projeto Básico; a partir do 3º, 30% de desconto (R$ 203,00)", "Selo de resposta oficial no fórum", "Suporte prioritário"]
@@ -5412,7 +5412,7 @@ const PLANO_BENEFICIOS = {
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "6";
+const CHAT_VERSAO = "7";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
 // Pro: 1 consultoria por escrito por mês incluída (mês do calendário, horário de Brasília)
 const inicioMesBR = () => { const d = new Date(Date.now() - 3 * 3600000); return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1, 3)); };
@@ -8694,7 +8694,7 @@ class Component extends DCLogic {
       rotuloSenha: p("nova-senha") ? "Nova senha" : "Senha",
       autoSenha: p("login") ? "current-password" : "new-password",
       dicaSenha: p("cadastro") || p("nova-senha") ? "Mínimo de 8 caracteres, com letras e números" : "",
-      voltaTexto: s.volta === "biblioteca" ? "A Biblioteca Jurídica é gratuita para quem tem cadastro. Entre ou crie sua conta para continuar."
+      voltaTexto: s.volta === "biblioteca" ? "Com a conta grátis, suas anotações, marcadores e dossiês da Biblioteca Jurídica ficam salvos e disponíveis em qualquer aparelho."
         : (s.volta && EXIGE_LOGIN.includes(s.volta) ? "Entre ou crie sua conta gratuita para acessar esta área." : ""),
 
       // carrossel da home

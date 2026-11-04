@@ -1,6 +1,6 @@
 /* Faz a página do Acervo Licitacon funcionar no site público, sem o Claude:
    - "decisoes" e "meta" vêm de acervo-completo.json (atualizado nos dias úteis);
-   - com as contas ativas (config.js preenchido), a Biblioteca exige login e as anotações,
+   - com as contas ativas (config.js preenchido), a pesquisa é aberta a visitantes e as anotações,
      marcadores, dossiês e preferências ficam salvos na conta da pessoa (Supabase),
      disponíveis em qualquer aparelho; sem contas, ficam no navegador (localStorage);
    - recursos que dependem do Claude (perguntar ao acervo, síntese, minuta, conferência de divergência) ficam ocultos. */
@@ -18,9 +18,22 @@
   const LV = window.LV;
   const contas = LV ? LV.pronto : Promise.resolve(null);
   const sessao = contas.then(sb => sb ? sb.auth.getSession().then(r => (r && r.data && r.data.session) || null) : null).catch(() => null);
-  // Com contas ativas, a Biblioteca é exclusiva para quem tem cadastro
+  // Visitantes sem cadastro pesquisam e leem o acervo à vontade (como nas demais plataformas de jurisprudência);
+  // anotações, marcadores e dossiês ficam só neste navegador até a pessoa criar a conta (e vão para ela no 1º acesso)
   Promise.all([contas, sessao]).then(([sb, s]) => {
-    if (sb && !s) location.replace("index.html?p=login&volta=biblioteca");
+    if (!sb || s) return;
+    const mostrar = () => {
+      if (document.getElementById("lvVisitante")) return;
+      const d = document.createElement("div");
+      d.id = "lvVisitante"; d.setAttribute("role", "note");
+      d.style.cssText = "position:relative;margin-left:calc(-1*max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1*max(16px,env(safe-area-inset-right,0px)));display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;padding:9px 16px;background:#E7F7EF;border-bottom:1px solid #BFE6D2;font:600 13.5px/1.4 Manrope,system-ui,sans-serif;color:#0B3B2A;text-align:center";
+      d.innerHTML = '<span>Você está pesquisando como visitante. Crie sua conta grátis para guardar anotações, marcadores e dossiês e abri-los em qualquer aparelho.</span>'
+        + '<a href="index.html?p=cadastro&amp;volta=biblioteca" style="background:#0FA36B;color:#06251A;border-radius:9px;padding:6px 12px;text-decoration:none;font-weight:800">Criar conta grátis</a>'
+        + '<a href="index.html?p=login&amp;volta=biblioteca" style="color:#0F6B7E;font-weight:800">Já tenho conta</a>';
+      const barra = document.querySelector(".lvbar");
+      if (barra && barra.parentNode) barra.parentNode.insertBefore(d, barra.nextSibling); else document.body.prepend(d);
+    };
+    document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", mostrar) : mostrar();
   });
 
   // Coleção pessoal guardada no Supabase (tabela biblioteca_pessoal), com cache local

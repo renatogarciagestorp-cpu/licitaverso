@@ -142,7 +142,7 @@ window.LV_CHAT_BASE = {
       a: [{ t: "Abrir a Biblioteca", ir: "biblioteca" }], rel: ["biblioteca-busca", "biblioteca-atualizacao", "biblioteca-acesso"] },
     { id: "biblioteca-acesso", p: "Preciso pagar para usar a Biblioteca?",
       k: ["biblioteca e paga", "paga", "pago", "biblioteca e gratis", "biblioteca gratuita", "pagar biblioteca", "acesso a biblioteca", "biblioteca pede login", "biblioteca pede cadastro"],
-      r: "Não. A Biblioteca Jurídica é **gratuita para quem tem cadastro**. Basta entrar na sua conta. Anotações, marcadores e dossiês ficam salvos nela.",
+      r: "Não. A pesquisa na Biblioteca Jurídica é **aberta e gratuita**, sem cadastro. Com a conta grátis, suas anotações, marcadores e dossiês ficam salvos e disponíveis em qualquer aparelho.",
       a: [{ t: "Abrir a Biblioteca", ir: "biblioteca" }, { t: "Criar conta", ir: "cadastro" }], rel: ["biblioteca-anotacoes"] },
     { id: "biblioteca-busca", p: "Como pesquisar na Biblioteca?",
       k: ["como pesquisar", "pesquisar", "buscar", "busca", "filtro", "filtros", "encontrar decisao", "procurar", "por artigo", "por tema", "por orgao"],
