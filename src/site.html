@@ -1023,10 +1023,10 @@
   .lmo-val[data-alerta="true"] { background: #FFF1CC; color: #7A4B00; font-weight: 800; border-radius: 6px; padding: 2px 4px; }
   .lmo-chip-acao { display: inline-flex; gap: 4px; }
   @media (max-width: 900px) { .lmo-cons { grid-template-columns: 1fr 110px 110px; } .lmo-cons > span:nth-child(3), .lmo-cons > span:nth-child(4), .lmo-cons > span:nth-child(5), .lmo-cons > span:nth-child(7) { display: none; } }
-  .lmo-comp { grid-template-columns: minmax(0, 1fr) 130px 130px 120px 100px; font-size: 13.5px; }
+  .lmo-comp { grid-template-columns: minmax(0, 1fr) 125px 125px 115px 95px 100px; font-size: 13.5px; }
   .lmo-comp > span:first-child small { display: block; font-size: 11.5px; color: #66757F; line-height: 1.4; margin-top: 2px; font-weight: 500; }
   .lmo-comp.lmo-cab span { text-align: right; } .lmo-comp.lmo-cab span:first-child { text-align: left; }
-  @media (max-width: 900px) { .lmo-comp { grid-template-columns: 1fr 100px 100px; } .lmo-comp > span:nth-child(2), .lmo-comp > span:nth-child(5) { display: none; } }
+  @media (max-width: 900px) { .lmo-comp { grid-template-columns: 1fr 100px 100px; } .lmo-comp > span:nth-child(2), .lmo-comp > span:nth-child(5), .lmo-comp > span:nth-child(6) { display: none; } }
   .lmo-retro.lmo-cab span:nth-child(5), .lmo-lin4.lmo-cab span { text-align: right; } .lmo-lin4.lmo-cab span:first-child { text-align: left; }
   .lmo-minuta { white-space: pre-wrap; font: inherit; font-size: 13.5px; line-height: 1.6; background: #FBFDF6; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px; margin: 8px 0 0; color: #172B33; }
   @media (max-width: 900px) { .lmo-retro { grid-template-columns: 80px 1fr 110px; } .lmo-retro > span:nth-child(2), .lmo-retro > span:nth-child(4) { display: none; } .lmo-lin4 { grid-template-columns: 1fr 110px; } .lmo-lin4 > span:nth-child(2) { display: none; } }
@@ -2512,11 +2512,12 @@
                 <div class="lmo-agente"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompRegistrar }}">Registrar os valores atuais como planilha da contratação</button></div>
               </sc-if>
               <sc-if value="{{ moTemComp }}" hint-placeholder-val="{{ false }}">
-                <p class="lmo-nota" style="margin-top: 0">{{ moCompInfo }}</p>
+                <div class="lmo-kpis" style="margin-top: 0"><sc-for list="{{ moCompKpis }}" as="k" hint-placeholder-count="4"><div><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
+                <p class="lmo-nota">{{ moCompInfo }}</p>
                 <div class="lmo-tabela" role="table" aria-label="Quadro comparativo">
-                  <div class="lmo-lin lmo-comp lmo-cab" role="row"><span>Rubrica</span><span>Contratação</span><span>Repactuada</span><span>Variação</span><span>%</span></div>
+                  <div class="lmo-lin lmo-comp lmo-cab" role="row"><span>Rubrica</span><span>Contratação</span><span>Repactuada</span><span>Variação</span><span>%</span><span>Participação</span></div>
                   <sc-for list="{{ moComp }}" as="l" hint-placeholder-count="6">
-                    <div class="{{ l.cls }}" role="row" data-forte="{{ l.forte }}" data-auto="{{ l.mudou }}"><span>{{ l.rot }}<sc-if value="{{ l.temMotivo }}" hint-placeholder-val="{{ false }}"><small>{{ l.motivo }}</small></sc-if></span><span class="lmo-val">{{ l.a }}</span><span class="lmo-val">{{ l.n }}</span><span class="lmo-val">{{ l.dv }}</span><span class="lmo-val">{{ l.p }}</span></div>
+                    <div class="{{ l.cls }}" role="row" data-forte="{{ l.forte }}" data-auto="{{ l.mudou }}"><span>{{ l.rot }}<sc-if value="{{ l.temMotivo }}" hint-placeholder-val="{{ false }}"><small>{{ l.motivo }}</small></sc-if></span><span class="lmo-val">{{ l.a }}</span><span class="lmo-val">{{ l.n }}</span><span class="lmo-val">{{ l.dv }}</span><span class="lmo-val">{{ l.p }}</span><span class="lmo-val">{{ l.part }}</span></div>
                   </sc-for>
                 </div>
                 <div class="lmo-agente" style="margin-top: 8px"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompRegistrar }}">Registrar de novo a partir dos valores atuais</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompLimpar }}">Apagar o quadro</button></div>
@@ -5005,6 +5006,9 @@ function moMemoria(d, empregados) {
   });
   return out;
 }
+// a fonte padrão do PDF (WinAnsi) não tem alguns símbolos: troca por equivalentes legíveis, para não quebrar a medida das linhas
+const moPdfTxt = (t) => String(t == null ? "" : t).replace(/\u2212/g, "-").replace(/²/g, "2").replace(/³/g, "3").replace(/→/g, "»").replace(/≥/g, ">=").replace(/≤/g, "<=").replace(/≈/g, "~")
+  .replace(/⚠/g, "(!)").replace(/✓/g, "").replace(/[\u2009\u202F\u00A0]/g, " ").replace(/\u2011/g, "-");
 // datas da planilha: aceita dd/mm/aaaa, aaaa-mm-dd ou aaaa-mm
 function moData(v) {
   const t = String(v || "").trim(); let m;
@@ -5040,6 +5044,34 @@ function moDerivado(dX) {
 function moAtencao(dX) {
   const d = moDerivado(dX), meio = (k) => String(moNum(d[k]) / 2);
   return { ...d, aus: meio("aus"), pat: meio("pat"), acid: meio("acid"), mat: meio("mat"), vt_tarifa: meio("vt_tarifa"), unif: meio("unif"), materiais: meio("materiais"), he_feriado: meio("he_feriado") };
+}
+// Planilha 1: conferência automática da planilha (sem inteligência artificial), com o fundamento e o caminho correto
+function moConferir(d, r) {
+  const n = (k) => moNum(d[k]), out = [], simples = d.regime === "simples";
+  if (!(n("salario") > 0)) return out;
+  const F = (rubrica, problema, fundamento, correcao, gravidade, impacto) => out.push({ rubrica, problema, fundamento, correcao, gravidade, impacto: impacto || "" });
+  const pctB = (v) => String(v).replace(".", ",") + "%";
+  if (n("inss") !== 20) F("Submódulo 2.2, A – INSS", "INSS de " + pctB(n("inss")) + ".", "Lei 8.212/1991, art. 22, I.", "Contribuição patronal de 20% sobre a remuneração (também no Simples, Anexo IV).", "alta");
+  if (n("fgts") !== 8) F("Submódulo 2.2, H – FGTS", "FGTS de " + pctB(n("fgts")) + ".", "Lei 8.036/1990, art. 15.", "Depósito de 8% sobre a remuneração.", "alta");
+  if (![1, 2, 3].includes(n("rat"))) F("Submódulo 2.2, C – SAT/RAT", "RAT de " + pctB(n("rat")) + ".", "Lei 8.212/1991, art. 22, II.", "Alíquota de 1%, 2% ou 3%, conforme o grau de risco do CNAE preponderante da empresa, multiplicada pelo FAP.", "alta");
+  if (n("fap") < 0.5 || n("fap") > 2) F("Submódulo 2.2, C – FAP", "FAP de " + String(d.fap).replace(".", ",") + ".", "Decreto 3.048/1999, art. 202-A.", "Fator entre 0,5000 e 2,0000, conforme o FAP da empresa divulgado pela Previdência (na estimativa, 1,0000).", "media");
+  if (Math.abs(n("p13") - 8.33) > 0.005) F("Submódulo 2.1, A – 13º salário", "13º de " + pctB(n("p13")) + ".", "Lei 4.090/1962 (1/12 da remuneração por mês).", "8,33% do Módulo 1.", "media");
+  if (Math.abs(n("pfa") - 2.78) > 0.005) F("Submódulo 2.1, B – Férias e adicional de férias", "Percentual de " + pctB(n("pfa")) + ".", "CF, art. 7º, XVII; IN 05/2017, Anexo VII-D (o custo das férias fica no Submódulo 4.1, A).", "2,78% (1/3 constitucional ÷ 12), com as férias de 8,33% no Submódulo 4.1, A.", "media");
+  if (simples) { if (["saled", "sesc", "senac", "sebrae", "incra"].some((k) => n(k) > 0)) F("Submódulo 2.2, B e D a G – Contribuições a terceiros", "Optante do Simples com contribuições a terceiros na planilha.", "LC 123/2006, art. 13, § 3º.", "Zerar Salário-Educação, SESC/SESI, SENAC/SENAI, SEBRAE e INCRA.", "alta");
+    if (!/limp|vigil|conserva/i.test((d.tipo_servico || "") + " " + (d.categoria || ""))) F("Regime de tributação", "Simples Nacional em serviço de cessão de mão de obra que não é vigilância, limpeza ou conservação.", "LC 123/2006, art. 17, XII, e art. 18, § 5º-H.", "Tributar pelo Lucro Real ou Presumido.", "alta"); }
+  else [["saled", "Salário-Educação", 2.5, "Lei 9.424/1996, art. 15"], ["sesc", "SESC ou SESI", 1.5, "Decreto-Lei 9.853/1946 e 9.403/1946"], ["senac", "SENAC ou SENAI", 1, "Decreto-Lei 8.621/1946 e 4.048/1942"], ["sebrae", "SEBRAE", 0.6, "Lei 8.029/1990, art. 8º, § 3º"], ["incra", "INCRA", 0.2, "Decreto-Lei 1.146/1970"]]
+    .forEach(([k, rot, v, fund]) => { if (Math.abs(n(k) - v) > 0.005) F("Submódulo 2.2 – " + rot, rot + " de " + pctB(n(k)) + ".", fund + ".", String(v).replace(".", ",") + "% sobre a base do Submódulo 2.2.", "media"); });
+  if (!(n("iss") >= 2 && n("iss") <= 5) && !(r && r.simp && !r.simp.issFora)) F("Módulo 6, C.3 – ISS", "ISS de " + pctB(n("iss")) + ".", "LC 116/2003, arts. 8º e 8º-A.", "Alíquota do município da prestação, entre 2% e 5%.", "alta");
+  if (n("apt") > 1.94) F("Módulo 3, D – Aviso prévio trabalhado", "Aviso prévio trabalhado de " + pctB(n("apt")) + ".", "TCU, Acórdão 1.186/2017-Plenário.", "No máximo 1,94% no 1º ano (custo não renovável).", "alta");
+  if (![0, 10, 20, 40].includes(n("insal"))) F("Módulo 1, C – Insalubridade", "Adicional de " + pctB(n("insal")) + ".", "CLT, art. 192; NR-15.", "10%, 20% ou 40%, conforme o grau, salvo regra mais favorável da convenção.", "media");
+  if (![0, 30].includes(n("peric"))) F("Módulo 1, B – Periculosidade", "Adicional de " + pctB(n("peric")) + ".", "CLT, art. 193, § 1º.", "30% sobre o salário-base, salvo regra mais favorável da convenção.", "media");
+  if (n("insal") > 0 && n("peric") > 0) F("Módulo 1, B e C – Adicionais", "Periculosidade e insalubridade somadas.", "CLT, art. 193, § 2º.", "O empregado opta por um dos adicionais; mantenha só o mais vantajoso, salvo previsão da convenção.", "media");
+  if (n("aux_part") > 20) F("Submódulo 2.3, B – Auxílio-alimentação", "Participação do empregado de " + pctB(n("aux_part")) + ".", "Programa de Alimentação do Trabalhador (Decreto 10.854/2021) e convenção coletiva.", "Participação de até 20% do custo, ou o percentual da convenção.", "baixa");
+  if (!(n("vt_tarifa") > 0)) F("Submódulo 2.3, A – Transporte", "Tarifa do transporte não informada.", "Lei 7.418/1985.", "Informar a tarifa do transporte público do município; o empregador custeia o que passar de 6% do salário-base.", "baixa");
+  if (!(n("ci") > 0) || !(n("lucro") > 0)) F("Módulo 6, A e B – Custos indiretos e lucro", "Custos indiretos ou lucro zerados.", "IN 05/2017, Anexo VII-D.", "Informar os percentuais adotados na estimativa, com base na pesquisa de preços ou em contratações similares.", "baixa");
+  if (d.dim === "vigilancia" && /n$/.test(d.vg_escala || "") && d.vg_calc !== "sim" && !(n("noturno") > 0)) F("Módulo 1, D – Adicional noturno", "Escala noturna sem adicional noturno.", "CLT, art. 73.", "Calcular o adicional noturno e a hora noturna reduzida (marque o cálculo pelo caderno de vigilância).", "alta");
+  if (/limp|vigil/i.test(d.tipo_servico || "") && !(n("unif") > 0) && !(Array.isArray(d.mem_unif) && d.mem_unif.length)) F("Módulo 5, A – Uniformes e EPI", "Uniformes e EPI não informados.", "Cadernos técnicos de limpeza e vigilância; NR-6.", "Incluir o custo mensal dos uniformes e EPI (use a memória de cálculo).", "baixa");
+  return out;
 }
 const MO_MODS = [["M1", "Módulo 1 – Remuneração"], ["M2", "Módulo 2 – Encargos e benefícios"], ["M3", "Módulo 3 – Rescisão"], ["M4", "Módulo 4 – Reposição do ausente"], ["M5", "Módulo 5 – Insumos"], ["M6", "Módulo 6 – CI, tributos e lucro"], ["total", "Preço por empregado"]];
 const MO_INSUMOS = [["unif", "Uniformes e EPI"], ["materiais", "Materiais"], ["equip", "Equipamentos"], ["outros5", "Outros insumos"]];
@@ -6802,7 +6834,7 @@ class Component extends DCLogic {
   async moBaixar(formato, docTipo = "planilha") {
     const s = this.state, mo = s.mo, d = mo.d, fontesD = d.fontes || {}, rep = mo.modo === "repactuacao", prop = mo.modo === "proposta";
     const P = this.moProps(), { r, rj } = this._moUltimo || {};
-    const falhas = rep || prop ? (d.falhas || []) : [];
+    const falhas = rep || prop ? (d.falhas || []) : ((this._moUltimo && this._moUltimo.falhasAuto) || []);
     const dilig = (prop && this._moUltimo && this._moUltimo.dilig) || [], exeqItens = (prop && this._moUltimo && this._moUltimo.exeqItens) || [];
     if (rep && falhas.length && !d.falhas_aceite) {
       this.setState((x) => ({ mo: { ...x.mo, erro: "Antes de baixar, leia as falhas apontadas na planilha da contratação e confirme se concorda com o prosseguimento da análise." } }));
@@ -6895,7 +6927,7 @@ class Component extends DCLogic {
       blocos.push(T("QUADRO-RESUMO   Custo por empregado e valores do contrato", ["", "Módulo", "Valor"],
         resumo.map((l) => ({ c: [l.cod, l.rot, l.txt], forte: l.forte, cod: true })).concat([{ c: ["", "PREÇO TOTAL POR EMPREGADO", P.moTotal], total: true }])
           .concat(kpis.map(([k, v]) => ({ c: ["", k, String(v)], fraco: true }))), { alin: "llr", larg: [7, 71, 18] }));
-      if (dims.length) blocos.push(T("DIMENSIONAMENTO DA EQUIPE – IN 05/2017, ANEXO VI-B", ["Tipo de área", "Área (m²)", "Produtividade", "Frequência (h/mês)", "Profissionais", "Preço por m²"],
+      if (false) blocos.push(T("DIMENSIONAMENTO DA EQUIPE – IN 05/2017, ANEXO VI-B", ["Tipo de área", "Área (m²)", "Produtividade", "Frequência (h/mês)", "Profissionais", "Preço por m²"],
         dims.map((v) => ({ c: [v[1], v[2], v[3], v[4], v[5], v[6]] })).concat([{ c: [P.moDimResumo], span: true, forte: true }]), { alin: "lrrrrr", larg: [40, 12, 14, 14, 12, 14] }));
       if (transicao.length) blocos.push(T("PERÍODO DE TRANSIÇÃO DA REFORMA TRIBUTÁRIA – PREÇO POR EMPREGADO ANO A ANO", ["Ano", "PIS e COFINS", "CBS", "IBS", "ISS", "Tributos", "Preço/empregado", "Valor mensal"],
         transicao.map((t) => ({ c: [t.ano, t.pisCof, t.cbs, t.ibs, t.iss, t.trib, t.total, t.mensal], total: t.atual })), { alin: "lrrrrrrr", larg: [8, 13, 17, 17, 9, 10, 16, 16] }));
@@ -6911,7 +6943,7 @@ class Component extends DCLogic {
       n.push("Tributos: " + regNome + "; " + tribNome + ".");
       if (d.regime === "real" && !(r && r.tr && !r.tr.antigos)) n.push("Lucro Real (não cumulativo): PIS e COFINS pela alíquota efetiva recolhida, descontados os créditos, comprovada pela EFD-Contribuições (TCU, Acórdão 2.647/2009-Plenário).");
       if (r && r.simp) n.push(P.moSimplesTxt + " (LC 123/2006, arts. 13, § 3º, e 18, §§ 5º-C e 5º-H).");
-      if (!(r && r.tr && !r.tr.antigos)) n.push("PIS, COFINS e ISS calculados \u201cpor dentro\u201d: P1 = Po ÷ (1 − tributos), em que Po é o subtotal dos Módulos 1 a 5 com custos indiretos e lucro." + (r && r.tr && r.tr.teste ? " Em 2026, a CBS (0,9%) e o IBS (0,1%) destacados na nota são compensados com PIS/COFINS, sem custo adicional (LC 214/2025, arts. 343, 346 e 348)." : ""));
+      n.push("Bases de cálculo dos encargos, dos benefícios e dos tributos e o dimensionamento da equipe estão no documento Memória de cálculo.");
       if (d.reforma === "depois") n.push("Reforma tributária (EC 132/2023; LC 214/2025): 2026, teste com CBS 0,9% e IBS 0,1% compensáveis; 2027 e 2028, CBS pela referência reduzida em 0,1 p.p. (art. 347) e IBS de 0,1% (art. 344), sem PIS/COFINS (ADCT, art. 126, II); 2029 a 2032, ISS a 90%, 80%, 70% e 60% da alíquota, com o IBS crescendo na mesma proporção (ADCT, arts. 128 e 130); 2033, IBS integral, sem ISS (ADCT, art. 129). CBS e IBS por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º). Referências usadas: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa). A mudança de tributos em contrato vigente pede reequilíbrio (LC 214/2025, arts. 374 a 378).");
       n.push("ISS: alíquota do município onde o serviço é prestado, entre 2% e 5% (LC 116/2003, arts. 3º, 8º e 8º-A)" + (fontesD.iss ? "; " + fontesD.iss : "") + ".");
       if (falhas.length) n.push(falhas.length + " falha(s) apontada(s) na planilha " + (prop ? "da proposta" : "da contratação") + ": ver o documento Falhas e inconsistências.");
@@ -6931,16 +6963,30 @@ class Component extends DCLogic {
       if (rep && d.falhas_aceite) n.push("O assinante declarou estar ciente das falhas e inconsistências apontadas e concordou com o prosseguimento da análise com base na planilha juntada, sabendo que a manutenção das falhas impacta os valores da repactuação (" + new Date(d.falhas_aceite).toLocaleString("pt-BR") + ").");
       if (rep) n.push("As correções indicadas foram aplicadas na planilha repactuada (fonte \u201cCorreção:\u201d). Manter qualquer falha impacta os valores da repactuação e pode levar a pagamento indevido ou glosa.");
       if (prop) n.push("Erros de preenchimento não desclassificam a proposta quando a planilha puder ser ajustada sem majorar o preço ofertado; itens isolados abaixo do estimado não bastam, se não contrariarem exigência legal (IN 05/2017, Anexo VII-A, itens 7.9 e 9.3). Havendo dúvida, a diligência é obrigatória antes da decisão (Lei 14.133/2021, art. 59, § 2º; IN 73/2022, art. 34).");
-      n.push("Falhas apontadas por inteligência artificial a partir da planilha, da convenção e das normas: confira cada uma na fonte indicada.");
+      if (!rep && !prop) n.push("Conferência automática feita pelo sistema com a legislação e o modelo da IN 05/2017 (sem inteligência artificial). A estimativa com falhas distorce o valor estimado da contratação (Lei 14.133/2021, art. 23).");
+      else n.push("Falhas apontadas por inteligência artificial a partir da planilha, da convenção e das normas: confira cada uma na fonte indicada.");
       docs.falhas = { titulo: prop ? "Falhas, exequibilidade e diligência" : "Falhas e inconsistências", arquivo: base0 + "-falhas", blocos, notas: n, paisagem: true };
     }
     // 3) quadro comparativo (repactuação) ou comparativo das propostas
     if (compTab.length || (prop && P.moTemLista)) {
       const blocos = [], n = [];
       if (compTab.length) {
-        blocos.push(T("QUADRO COMPARATIVO – CONTRATAÇÃO × REPACTUADA (POR EMPREGADO)", ["Rubrica", "Contratação", "Repactuada", "Variação", "%"],
-          compTab.map((v) => ({ c: v.slice(0, 5), nota: v[5], forte: v[6] === 1, total: v[6] === 2 })), { alin: "lrrrr", larg: [46, 16, 16, 16, 11] }));
+        const ls = compU.linhas, rA = compU.rA, dTot = r.total - rA.total, empC = Math.max(1, moNum((U.dUsado || d).emp_posto) * moNum((U.dUsado || d).postos));
+        const pc2 = (x) => (x > 0 ? "+" : x < 0 ? "-" : "") + Math.abs(x * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
+        const rs = (x) => (x > 0 ? "+" : x < 0 ? "-" : "") + brlTxt0(Math.abs(x));
+        const part = (x) => dTot ? (x / dTot * 100).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + "%" : "—";
+        blocos.push({ t: "destaques", itens: [["Preço na contratação", brlTxt0(rA.total)], ["Preço repactuado", brlTxt0(r.total)], ["Variação por empregado", rs(dTot) + " (" + pc2(rA.total ? dTot / rA.total : 0) + ")"], ["Impacto mensal no contrato", rs(dTot * empC)]] });
+        blocos.push(T("VARIAÇÃO POR MÓDULO", ["Módulo", "Contratação", "Repactuada", "Variação (R$)", "Variação (%)", "Participação na variação"],
+          ls.filter((l) => l.tot).map((l) => ({ c: [l.rot, brlTxt0(l.a), brlTxt0(l.n), rs(l.dv), l.a ? pc2(l.p) : "—", l.tot === 2 ? "100,0%" : part(l.dv)], total: l.tot === 2, forte: l.tot === 1 && Math.abs(l.dv) >= 0.005 })),
+          { alin: "lrrrrr", larg: [40, 15, 15, 15, 13, 16] }));
+        const causas = ls.filter((l) => !l.tot && Math.abs(l.dv) >= 0.005).sort((a, b) => Math.abs(b.dv) - Math.abs(a.dv));
+        if (causas.length) blocos.push(T("PRINCIPAIS CAUSAS DA VARIAÇÃO", ["Rubrica", "Variação (R$)", "Participação", "Motivo"],
+          causas.map((l) => ({ c: [l.rot, rs(l.dv), part(l.dv), l.motivo || "—"] })), { alin: "lrrl", larg: [30, 15, 13, 56] }));
+        blocos.push(T("QUADRO COMPARATIVO RUBRICA A RUBRICA (POR EMPREGADO)", ["Rubrica", "Contratação", "Repactuada", "Variação (R$)", "Variação (%)"],
+          ls.map((l) => ({ c: [(l.tot ? "" : "    ") + l.rot, brlTxt0(l.a), brlTxt0(l.n), Math.abs(l.dv) >= 0.005 ? rs(l.dv) : "—", l.a && Math.abs(l.dv) >= 0.005 ? pc2(l.p) : "—"], forte: l.tot === 1, total: l.tot === 2, cinza: l.tot === 1 })),
+          { alin: "lrrrr", larg: [46, 16, 16, 16, 12] }));
         n.push(P.moCompInfo);
+        n.push("Participação na variação: quanto cada módulo ou rubrica representa da variação total do preço por empregado. Impacto mensal: variação por empregado × " + empC + " empregado(s).");
         n.push("Os efeitos financeiros da repactuação alcançam só os itens que a motivaram e apenas a diferença existente (IN 05/2017, art. 58, parágrafo único); é vedada a inclusão de benefícios não previstos na proposta inicial, salvo se obrigatórios por lei ou instrumento coletivo (art. 57, § 1º).");
       } else {
         blocos.push(T("COMPARATIVO DAS PROPOSTAS (POR EMPREGADO)", listaCab, P.moCmpLinhas.map((l) => ({ c: [l.rot].concat(l.cels.map((c) => c.v)), alerta: l.cels.map((c, i) => c.alerta ? i + 1 : -1).filter((i) => i > 0), forte: l.forte })),
@@ -6950,9 +6996,33 @@ class Component extends DCLogic {
       }
       docs.comparativo = { titulo: compTab.length ? "Quadro comparativo da repactuação" : "Comparativo das propostas", arquivo: base0 + "-comparativo", blocos, notas: n, paisagem: !compTab.length && listaCab.length > 5 };
     }
-    // 4) memória de cálculo: insumos, reajuste, adicionais da vigilância e garantia trabalhista
+    // 4) memória de cálculo: bases dos encargos e benefícios, tributos, dimensionamento, insumos, reajuste, adicionais e garantia
     {
-      const blocos = [], n = [];
+      const blocos = [], n = [], du = U.dUsado || d, nu = (k) => moNum(du[k]);
+      const f2b = (x) => (Number(x) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      blocos.push(T("ENCARGOS E BENEFÍCIOS – BASES DE CÁLCULO (POR EMPREGADO)", ["Item", "Cálculo", "Valor"], [
+        { c: ["Base do Submódulo 2.2", "Módulo 1 (" + brlTxt(r.M1) + ") + Submódulo 2.1 (" + brlTxt(r.M21) + ") + Módulo 4 (" + brlTxt(r.M4) + ")", brlTxt(r.base22)] },
+        { c: ["Encargos do Submódulo 2.2", "Base × " + (r.M22p * 100).toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + "%", brlTxt(r.M22)] },
+        { c: ["Transporte", "R$ " + f2b(nu("vt_tarifa")) + " × " + f2b(nu("vt_viagens")) + " viagens × " + f2b(nu("dias")) + " dias − 6% de " + brlTxt(nu("salario")) + " (Lei 7.418/1985)", brlTxt(r.vt)] },
+        { c: ["Auxílio-refeição/alimentação", "R$ " + f2b(nu("aux_dia")) + " × " + f2b(nu("dias")) + " dias × (1 − " + f2b(nu("aux_part")) + "% de participação)", brlTxt(r.aux)] },
+        { c: ["Afastamento maternidade (4.1, E)", "(13º + férias e adicional + assistência + seguro = " + brlTxt(r.base_mat) + ") × " + f2b(nu("mat")) + "%", brlTxt(r.mat)] }], { alin: "llr", larg: [28, 54, 16] }));
+      const trib = r.porFora
+        ? [{ c: ["Po (Módulos 1 a 5 + custos indiretos + lucro)", brlTxt(r.sub) + " + " + brlTxt(r.ci) + " + " + brlTxt(r.lucro), brlTxt(r.Po)] },
+           { c: ["ISS (por dentro, " + (r.aIssT * 100).toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + "%)", "Po ÷ (1 - ISS) - Po", brlTxt(r.iss)] },
+           { c: ["CBS (" + (r.aCbs * 100).toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + "%)", "Po × CBS (por fora, sem tributos na base)", brlTxt(r.cbs)] },
+           { c: ["IBS (" + (r.aIbs * 100).toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + "%)", "Po × IBS (por fora, sem tributos na base)", brlTxt(r.ibs)] },
+           { c: ["Preço por empregado", "Po + ISS + CBS + IBS", brlTxt(r.total)], total: true }]
+        : [{ c: ["Po (Módulos 1 a 5 + custos indiretos + lucro)", brlTxt(r.sub) + " + " + brlTxt(r.ci) + " + " + brlTxt(r.lucro), brlTxt(r.Po)] },
+           { c: ["Tributos sobre o preço", (r.simp || r.cbs ? "CBS, IBS e ISS do Simples" : "PIS + COFINS + ISS") + " = " + (r.To * 100).toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + "%", ""] },
+           { c: ["P1 – preço com tributos", "Po ÷ (1 - tributos) = " + brlTxt(r.Po) + " ÷ " + (1 - r.To).toLocaleString("pt-BR", { maximumFractionDigits: 4 }), brlTxt(r.P1)] },
+           { c: ["Tributos", "P1 - Po", brlTxt(r.trib)] }, { c: ["Preço por empregado", "Po + custos indiretos e lucro já incluídos + tributos", brlTxt(r.total)], total: true }];
+      blocos.push(T("TRIBUTOS – MÓDULO 6", ["Item", "Cálculo", "Valor"], trib, { alin: "llr", larg: [34, 48, 16] }));
+      n.push(r.porFora ? "Depois da reforma: ISS (enquanto existir) por dentro; CBS e IBS por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º)." : "Tributos por dentro: P1 = Po ÷ (1 - tributos), em que Po é o subtotal dos Módulos 1 a 5 com custos indiretos e lucro (IN 05/2017, Anexo VII-D)." + (r.tr && r.tr.teste ? " Em 2026, a CBS (0,9%) e o IBS (0,1%) destacados na nota são compensados com PIS/COFINS, sem custo adicional (LC 214/2025, arts. 343, 346 e 348)." : ""));
+      n.push("Transporte: o empregador custeia o que passar de 6% do salário-base (Lei 7.418/1985, art. 4º, parágrafo único). Encargos do Submódulo 2.2 sobre o Módulo 1 + Submódulo 2.1 + Módulo 4 (IN 05/2017, Anexo VII-D).");
+      if (dims.length) { blocos.push(T("DIMENSIONAMENTO DA EQUIPE – IN 05/2017, ANEXO VI-B", ["Tipo de área", "Área (m²)", "Produtividade", "Frequência (h/mês)", "Profissionais", "Preço por m²"],
+        dims.map((v) => ({ c: [v[1], v[2], v[3], v[4], v[5], v[6]] })).concat([{ c: [P.moDimResumo], span: true, forte: true }]), { alin: "lrrrrr", larg: [40, 12, 14, 14, 12, 14] }));
+        n.push("Dimensionamento: área ÷ produtividade por servente (IN 05/2017, Anexo VI-B, item 3); esquadrias e fachadas pela frequência mensal ÷ 188,76 h; 1 encarregado para cada 30 serventes (fachadas: 1 para cada 4)."); }
+      else if (P.moDimAtivo && P.moDimResumo) { blocos.push({ t: "texto", titulo: "DIMENSIONAMENTO DA EQUIPE – IN 05/2017, ANEXO VI-A", paragrafos: [P.moDimResumo] }); }
       memTab.forEach((g) => blocos.push(T("MEMÓRIA DE CÁLCULO – " + g.rot.toUpperCase(), g.col.concat(["Fonte do preço"]), g.linhas.map((v) => ({ c: v })).concat([{ c: ["Total mensal por empregado: " + g.total], span: true, total: true }]),
         { alin: "l" + "r".repeat(g.col.length - 1) + "l", larg: [30].concat(g.col.slice(1).map(() => 14)).concat([34]), sub: g.nota })));
       if (memTab.length) n.push("Memória dos insumos pela metodologia dos cadernos técnicos: uniformes e EPI pelo custo anual de cada item (preço × quantidade × 12 ÷ vida útil em meses) ÷ 12; materiais pelo consumo mensal ÷ empregados; equipamentos pela depreciação mensal ÷ empregados. Preços da pesquisa do assinante ou da mediana das compras públicas dos últimos 12 meses no Compras.gov.br (Lei 14.133/2021, art. 23).");
@@ -6970,7 +7040,7 @@ class Component extends DCLogic {
         n.push(P.moCvResumo); n.push("Conta-depósito vinculada: IN 05/2017, art. 18, I, e Anexo XII; Lei 14.133/2021, art. 121, § 3º, III. O Anexo XII traz 5% para a multa do FGTS, que inclui a contribuição social extinta pela Lei 13.932/2019."); }
       if (gtU && d.gt_tipo === "fg") { blocos.push(T("PAGAMENTO PELO FATO GERADOR", ["Parcela paga só quando ocorrer o fato gerador", "Provisão mensal", "Com CI, tributos e lucro"], gtU.fg.map(([k, v]) => ({ c: [k, brlTxt(v), brlTxt(v * gtU.fatorM6)] })), { alin: "lrr", larg: [56, 18, 22] }));
         n.push(P.moFgResumo); n.push("Pagamento pelo fato gerador: IN 05/2017, art. 18, II; Lei 14.133/2021, art. 121, § 3º, V."); }
-      if (blocos.length) docs.memoria = { titulo: "Memória de cálculo", arquivo: base0 + "-memoria-de-calculo", blocos, notas: n };
+      docs.memoria = { titulo: "Memória de cálculo", arquivo: base0 + "-memoria-de-calculo", blocos, notas: n };
     }
     // 5) diferença retroativa (repactuação)
     if (retro && retro.linhas.length) {
@@ -6991,11 +7061,11 @@ class Component extends DCLogic {
   // documentos disponíveis para download nesta planilha (nome, descrição)
   moDocsDisponiveis() {
     const mo = this.state.mo, d = mo.d, U = this._moUltimo || {}, rep = mo.modo === "repactuacao", prop = mo.modo === "proposta";
-    const temMem = Object.keys(MO_MEM).some((k) => U.mem && U.mem[k] && U.mem[k].ativo) || (U.rj && U.rj.pronto && rep) || !!U.vg || !!d.gt_tipo;
+    const plan = mo.modo === "planejamento";
     return [["planilha", "Planilha de custos (IN 05/2017)", "Módulos 1 a 6, quadro-resumo e valores do contrato"]]
-      .concat((rep || prop) && ((d.falhas || []).length || (prop && (d.exeq || (d.diligencias || []).length))) ? [["falhas", prop ? "Falhas, exequibilidade e diligência" : "Falhas e inconsistências", "Cada falha com fundamento e caminho correto"]] : [])
+      .concat(((rep || prop) && ((d.falhas || []).length || (prop && (d.exeq || (d.diligencias || []).length)))) || (plan && (U.falhasAuto || []).length) ? [["falhas", prop ? "Falhas, exequibilidade e diligência" : "Falhas e inconsistências", plan ? "Conferência automática, com fundamento e caminho correto" : "Cada falha com fundamento e caminho correto"]] : [])
       .concat((rep && U.comp) || (prop && this.moListaLer("proposta").length) ? [["comparativo", prop ? "Comparativo das propostas" : "Quadro comparativo", prop ? "Licitantes lado a lado, módulo a módulo" : "Contratação × repactuada, rubrica a rubrica"]] : [])
-      .concat(temMem ? [["memoria", "Memória de cálculo", "Insumos, reajuste, adicionais e garantia trabalhista"]] : [])
+      .concat([["memoria", "Memória de cálculo", "Bases dos encargos e benefícios, tributos, dimensionamento, insumos" + (rep ? ", reajuste" : "") + " e garantia trabalhista"]])
       .concat(rep && U.retro && U.retro.linhas.length ? [["retroativo", "Diferença retroativa", "Mês a mês, com a tempestividade"]] : []);
   }
 
@@ -7053,7 +7123,7 @@ class Component extends DCLogic {
           c.font = { name: "Calibri", size: 10, bold: !!(l.total || l.forte), color: { argb: l.fraco ? X.fraco : X.texto } };
           c.alignment = { wrapText: true, vertical: "top", horizontal: !l.span && alin[i - 1] === "r" ? "right" : "left" };
           c.border = l.nota ? {} : { bottom: fino };
-          if (l.auto) c.fill = fill(X.ambar); if (l.total) { c.fill = fill(X.tot); c.border = { top: { style: "medium", color: { argb: X.navy } } }; }
+          if (l.auto) c.fill = fill(X.ambar); if (l.cinza) c.fill = fill(X.cinza2); if (l.total) { c.fill = fill(X.tot); c.border = { top: { style: "medium", color: { argb: X.navy } } }; }
           if (l.alerta && l.alerta.includes(i - 1)) c.fill = fill(X.alerta);
           if (l.cod && i === 1) c.font = { bold: true, size: 10, color: { argb: X.teal } };
           if (l.grav && i === 2) { c.fill = fill(l.grav[2]); c.font = { bold: true, size: 9.5, color: { argb: X.branco } }; }
@@ -7084,9 +7154,9 @@ class Component extends DCLogic {
     const d = this.state.mo.d;
     const cab = () => { doc.setFillColor(...C.navy); doc.rect(0, 0, W, 22, "F");
       doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text(doc0.titulo, ML, 10);
-      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(185, 203, 210); doc.text(titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + "/" + (d.uf || "") : ""), ML, 16);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(185, 203, 210); doc.text(moPdfTxt(titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + "/" + (d.uf || "") : "")), ML, 16);
       doc.setTextColor(127, 227, 182); doc.setFontSize(7.5); doc.text("IN SEGES/MP nº 5/2017 · Anexo VII-D", W - MR, 10, { align: "right" }); doc.text("Gerado em " + hoje, W - MR, 16, { align: "right" }); doc.setTextColor(...C.texto); };
-    const limpo = (t) => String(t).replace(/²/g, "2").replace(/→/g, "»").replace(/≥/g, ">=").replace(/≤/g, "<=").replace(/⚠/g, "(!)");
+    const limpo = moPdfTxt;
     const base = { margin: { left: ML, right: MR, top: 28, bottom: 14 }, didDrawPage: () => { cab(); }, styles: { font: "helvetica", textColor: C.texto, lineColor: C.linha, overflow: "linebreak" },
       didParseCell: (dt) => { dt.cell.text = (dt.cell.text || []).map(limpo); } };
     cab(); let y = 30;
@@ -7094,21 +7164,21 @@ class Component extends DCLogic {
     doc0.blocos.forEach((b) => {
       if (b.t === "destaques") { const n = b.itens.length, cw = (LARG - (n - 1) * 4) / n;
         b.itens.forEach(([k, v], i) => { const x = ML + i * (cw + 4); doc.setFillColor(...(i ? C.cinza2 : C.tot)); doc.roundedRect(x, y, cw, 20, 2.5, 2.5, "F"); if (!i) { doc.setFillColor(...C.verde); doc.rect(x, y + 3, 1.2, 14, "F"); }
-          doc.setFontSize(7); doc.setTextColor(...C.fraco); doc.setFont("helvetica", "bold"); doc.text(String(k).toUpperCase(), x + 4, y + 6.5, { maxWidth: cw - 6 });
-          doc.setFontSize(i ? 11 : 13); doc.setTextColor(...(i ? C.texto : C.teal)); doc.text(String(v), x + 4, y + 15, { maxWidth: cw - 6 }); });
+          doc.setFontSize(7); doc.setTextColor(...C.fraco); doc.setFont("helvetica", "bold"); doc.text(moPdfTxt(String(k).toUpperCase()), x + 4, y + 6.5, { maxWidth: cw - 6 });
+          doc.setFontSize(i ? 11 : 13); doc.setTextColor(...(i ? C.texto : C.teal)); doc.text(moPdfTxt(v), x + 4, y + 15, { maxWidth: cw - 6 }); });
         doc.setFont("helvetica", "normal"); doc.setTextColor(...C.texto); y += 27; return; }
       if (b.t === "barra") { if (!b.tot) return; doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(...C.fraco); doc.text("COMPOSIÇÃO DO PREÇO POR EMPREGADO", ML, y); y += 3;
         let x = ML; b.comp.forEach(([, v, c]) => { const w = (v / b.tot) * LARG; if (w > 0) { doc.setFillColor(...c); doc.rect(x, y, w, 5, "F"); x += w; } });
         y += 9; doc.setFont("helvetica", "normal"); doc.setFontSize(7.3);
         b.comp.forEach(([k, v, c], i) => { const col = i % 3, lin = Math.floor(i / 3), x2 = ML + col * (LARG / 3), y2 = y + lin * 5; doc.setFillColor(...c); doc.rect(x2, y2 - 2.4, 2.6, 2.6, "F"); doc.setTextColor(...C.texto);
-          doc.text(k + "  " + (v / b.tot * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%", x2 + 4, y2); });
+          doc.text(moPdfTxt(k) + "  " + (v / b.tot * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%", x2 + 4, y2); });
         y += 12; return; }
       if (b.t === "pares") { const pares = []; for (let i = 0; i < b.pares.length; i += 2) pares.push([b.pares[i][0], String(b.pares[i][1]), b.pares[i + 1] ? b.pares[i + 1][0] : "", b.pares[i + 1] ? String(b.pares[i + 1][1]) : ""]);
         doc.autoTable({ ...base, startY: y, head: [[{ content: b.titulo.toUpperCase(), colSpan: 4, styles: { fillColor: C.teal, textColor: 255, fontSize: 8, fontStyle: "bold" } }]], body: pares, theme: "plain",
           styles: { ...base.styles, fontSize: 8, cellPadding: { top: 1.4, bottom: 1.4, left: 2, right: 2 }, lineWidth: { bottom: 0.1 } },
           columnStyles: { 0: { textColor: C.fraco, fontStyle: "bold", cellWidth: LARG * 0.22 }, 1: { cellWidth: LARG * 0.28 }, 2: { textColor: C.fraco, fontStyle: "bold", cellWidth: LARG * 0.22 } } });
         y = fimY() + 5; return; }
-      if (b.t === "legenda") { doc.setFillColor(...C.ambar); doc.rect(ML, y - 2.6, 3.4, 3.4, "F"); doc.setFontSize(7.3); doc.setTextColor(...C.fraco); doc.text(b.texto, ML + 5, y, { maxWidth: LARG - 5 }); doc.setTextColor(...C.texto); y += 5; return; }
+      if (b.t === "legenda") { doc.setFillColor(...C.ambar); doc.rect(ML, y - 2.6, 3.4, 3.4, "F"); doc.setFontSize(7.3); doc.setTextColor(...C.fraco); doc.text(moPdfTxt(b.texto), ML + 5, y, { maxWidth: LARG - 5 }); doc.setTextColor(...C.texto); y += 5; return; }
       if (b.t === "texto") { doc.autoTable({ ...base, startY: y, head: [[{ content: b.titulo, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }]], body: b.paragrafos.map((t) => [t]), theme: "plain",
           rowPageBreak: "avoid", styles: { ...base.styles, fontSize: 8.4, cellPadding: { top: 1.6, bottom: 1.6, left: 2, right: 2 } } }); y = fimY() + 5; return; }
       // tabela
@@ -7119,7 +7189,7 @@ class Component extends DCLogic {
       b.linhas.forEach((l) => {
         if (l.span) { body.push([{ content: l.c[0], colSpan: nc, styles: { fontStyle: "bold", textColor: C.teal, fillColor: l.total ? C.tot : null } }]); return; }
         const borda = l.nota ? { bottom: 0 } : { bottom: 0.1 };
-        body.push(l.c.map((v, i) => ({ content: String(v == null ? "" : v), styles: { fillColor: l.alerta && l.alerta.includes(i) ? C.alerta : l.total ? C.tot : l.auto ? C.ambar : l.grav && i === 1 ? l.grav[1] : null,
+        body.push(l.c.map((v, i) => ({ content: String(v == null ? "" : v), styles: { fillColor: l.alerta && l.alerta.includes(i) ? C.alerta : l.total ? C.tot : l.auto ? C.ambar : l.grav && i === 1 ? l.grav[1] : l.cinza ? C.cinza2 : null,
           textColor: l.grav && i === 1 ? 255 : l.cod && i === 0 ? C.teal : l.fraco ? C.fraco : C.texto, fontStyle: l.total || l.forte || (l.cod && i === 0) || (l.grav && i === 1) ? "bold" : "normal", lineWidth: borda } })));
         if (l.nota) body.push([{ content: "", styles: { fillColor: l.auto ? C.ambar : null, lineWidth: { bottom: 0.1 } } }, { content: l.nota, colSpan: nc - 1, styles: { fontSize: 6.6, textColor: C.fraco, fontStyle: "italic", fillColor: l.auto ? C.ambar : null, cellPadding: { top: 0, bottom: 1.6, left: 2, right: 2 }, lineWidth: { bottom: 0.1 }, halign: "left" } }]);
       });
@@ -7179,7 +7249,7 @@ class Component extends DCLogic {
       if (!window.jspdf) await carregarScript(baseSite() + "vendor/jspdf-2.5.1.umd.min.js");
       if (!(window.jspdf && window.jspdf.jsPDF && window.jspdf.jsPDF.API.autoTable)) await carregarScript(baseSite() + "vendor/jspdf-autotable-3.8.2.min.js");
       const { jsPDF } = window.jspdf; const doc = new jsPDF({ unit: "mm", format: "a4" });
-      const ML = 20, MR = 20, W = 210, limpo = (t) => String(t).replace(/²/g, "2").replace(/→/g, "»");
+      const ML = 20, MR = 20, W = 210, limpo = moPdfTxt;
       const base = { margin: { left: ML, right: MR, top: 20, bottom: 18 }, theme: "plain", styles: { font: "helvetica", fontSize: 10, textColor: [11, 31, 42], cellPadding: { top: 1.4, bottom: 1.4, left: 0, right: 0 }, overflow: "linebreak" },
         didParseCell: (dt) => { dt.cell.text = (dt.cell.text || []).map(limpo); } };
       let y = 22;
@@ -7443,7 +7513,7 @@ class Component extends DCLogic {
         if (Math.abs(dv) >= 0.005) {
           if (k === "M3") motivo = "Custo não renovável: aviso prévio trabalhado reduzido a 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário).";
           else if (["unif", "materiais", "equip", "outros5"].includes(k) && r["rj_" + k]) motivo = "Reajuste dos insumos pelo índice do contrato (fator " + (rj.fator || 1).toLocaleString("pt-BR", { maximumFractionDigits: 6 }) + ").";
-          else if (campoK && String(d0.ant[campoK] ?? MO_PADRAO[campoK] ?? "") === String(d0[campoK] ?? MO_PADRAO[campoK] ?? "")) motivo = k === "vt" ? "Reflexo do novo salário-base no desconto de 6% do empregado (Lei 7.418/1985)." : "Reflexo das rubricas acima.";
+          else if (campoK && String(d0.ant[campoK] ?? MO_PADRAO[campoK] ?? "") === String(d0[campoK] ?? MO_PADRAO[campoK] ?? "")) motivo = k === "vt" ? "Reflexo do novo salário-base no desconto de 6% do empregado (Lei 7.418/1985)." : "Reflexo da variação das demais rubricas.";
           else if (campoK && fontes[campoK]) motivo = fontes[campoK];
           else if (tot) motivo = "";
           else if (campoK) motivo = "Alterado na planilha repactuada.";
@@ -7454,6 +7524,9 @@ class Component extends DCLogic {
     }
     const reaisExtenso = (v) => brl(v);
     this._moUltimo.comp = comp;
+    const falhasAuto = mo.modo === "planejamento" ? moConferir(d, r) : [];
+    this._moUltimo.falhasAuto = falhasAuto;
+    const fsV = mo.modo === "planejamento" ? falhasAuto : (d.falhas || []);
     // quadro consolidado / comparativo de propostas
     const lista = mo.listaModo === mo.modo && mo.lista ? mo.lista : this.moListaLer(mo.modo);
     const ref = prop ? d0.pr_ref || null : null;
@@ -7543,7 +7616,10 @@ class Component extends DCLogic {
       moRefTem: !!ref, moRefTxt: ref ? "Estimativa da Planilha 1" + (ref.categoria ? " (" + ref.categoria + ")" : "") + ": " + brl(ref.max) + " por empregado (cenário máximo) · valor de atenção " + brl(ref.atencao) + ", com os parâmetros variáveis a 50%, como nos cadernos técnicos de limpeza e vigilância." : "",
       moRefUsar: () => this.moRefPlan1(),
       moTemComp: !!comp, moSemComp: rep && !comp,
-      moComp: comp ? comp.linhas.map((l) => ({ rot: l.rot, a: brl(l.a), n: brl(l.n), dv: (l.dv > 0 ? "+" : "") + brl(l.dv), p: l.a ? (l.p > 0 ? "+" : "") + pct(l.p) : "—", motivo: l.motivo, temMotivo: !!l.motivo,
+      moCompKpis: comp ? (() => { const dT = r.total - comp.rA.total, e = Math.max(1, moNum(d.emp_posto) * moNum(d.postos)), sg = (x) => (x >= 0 ? "+" : "−") + brl(Math.abs(x));
+        return [["Preço na contratação", brl(comp.rA.total)], ["Preço repactuado", brl(r.total)], ["Variação por empregado", sg(dT) + " (" + (dT >= 0 ? "+" : "−") + pct(Math.abs(comp.rA.total ? dT / comp.rA.total : 0)) + ")"], ["Impacto mensal no contrato", sg(dT * e)]].map(([k, v]) => ({ k, v })); })() : [],
+      moComp: comp ? comp.linhas.map((l) => ({ rot: l.rot, a: brl(l.a), n: brl(l.n), dv: Math.abs(l.dv) < 0.005 ? "—" : (l.dv > 0 ? "+" : "−") + brl(Math.abs(l.dv)), p: l.a && Math.abs(l.dv) >= 0.005 ? (l.p > 0 ? "+" : "−") + pct(Math.abs(l.p)) : "—",
+        part: Math.abs(l.dv) < 0.005 || !(r.total - comp.rA.total) ? "—" : (l.dv / (r.total - comp.rA.total) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + "%", motivo: l.motivo, temMotivo: !!l.motivo,
         cls: "lmo-lin lmo-comp" + (l.tot === 2 ? " lmo-tot" : ""), forte: l.tot === 1, mudou: Math.abs(l.dv) >= 0.005 && !l.tot })) : [],
       moCompInfo: comp ? "Planilha da contratação " + comp.origem + (comp.em ? " em " + new Date(comp.em).toLocaleString("pt-BR") : "") + ", recalculada com as regras da IN: " + brl(comp.rA.total) + " por empregado."
         + (r.vigente && Math.abs(comp.rA.total - r.vigente) > 0.05 ? " O preço vigente informado é " + brl(r.vigente) + ": diferença de " + brl(Math.abs(comp.rA.total - r.vigente)) + ", que pode indicar falha de cálculo na planilha da contratação ou repactuação anterior não registrada." : "") : "",
@@ -7608,19 +7684,19 @@ class Component extends DCLogic {
           return { mo: { ...x.mo, d: d2, issPedir: null, erro: "" } };
         });
       },
-      moTemFalhas: (rep || prop) && (d.falhas || []).length > 0,
-      moFalhasTitulo: prop ? "Falhas e inconsistências da planilha da proposta" : "Falhas e inconsistências da planilha da contratação",
-      moFalhasNota: prop ? "Cada item traz o fundamento, o caminho correto e se a correção cabe no preço ofertado. A planilha acima reproduz a proposta sem correções." : "Cada item traz o fundamento e o caminho correto. A planilha repactuada acima já considera as correções indicadas pelo agente; confira antes de concluir.",
-      moFalhasAviso: prop ? "falha que exija majorar o preço ofertado ou que contrarie exigência legal (salário abaixo do piso, encargo legal a menor, benefício obrigatório da convenção) pode levar à desclassificação; as demais devem ser corrigidas pela licitante sem aumento do preço (IN 05/2017, Anexo VII-A, itens 7.9, 9.1 e 9.3)." : "manter qualquer uma dessas falhas na planilha impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores. Corrija cada item antes de concluir a repactuação.",
+      moTemFalhas: fsV.length > 0,
+      moFalhasTitulo: mo.modo === "planejamento" ? "Falhas e inconsistências da planilha" : prop ? "Falhas e inconsistências da planilha da proposta" : "Falhas e inconsistências da planilha da contratação",
+      moFalhasNota: mo.modo === "planejamento" ? "Conferência automática da planilha com a legislação e o modelo da IN, feita pelo sistema a cada alteração. Cada item traz o fundamento e o caminho correto." : prop ? "Cada item traz o fundamento, o caminho correto e se a correção cabe no preço ofertado. A planilha acima reproduz a proposta sem correções." : "Cada item traz o fundamento e o caminho correto. A planilha repactuada acima já considera as correções indicadas pelo agente; confira antes de concluir.",
+      moFalhasAviso: mo.modo === "planejamento" ? "a estimativa com falhas distorce o valor estimado da contratação e pode levar a propostas inexequíveis ou a sobrepreço. Corrija cada item ou justifique no processo (Lei 14.133/2021, art. 23)." : prop ? "falha que exija majorar o preço ofertado ou que contrarie exigência legal (salário abaixo do piso, encargo legal a menor, benefício obrigatório da convenção) pode levar à desclassificação; as demais devem ser corrigidas pela licitante sem aumento do preço (IN 05/2017, Anexo VII-A, itens 7.9, 9.1 e 9.3)." : "manter qualquer uma dessas falhas na planilha impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores. Corrija cada item antes de concluir a repactuação.",
       moSemFalhasTxt: prop ? "O agente não encontrou falhas de preenchimento na planilha da proposta." : "O agente não encontrou falhas de preenchimento na planilha da contratação.",
       moFalhasPendente: rep && (d.falhas || []).length > 0 && !d.falhas_aceite,
       moFalhasAceito: rep && (d.falhas || []).length > 0 && !!d.falhas_aceite,
       moFalhasAceiteTxt: d.falhas_aceite ? "Você concordou com o prosseguimento da análise em " + new Date(d.falhas_aceite).toLocaleString("pt-BR") + ", ciente das inconsistências." : "",
       moFalhasMarcado: !!mo.falhasMarcado, onMoFalhasMarcar: (e) => { const v = e.target.checked; this.setState((x) => ({ mo: { ...x.mo, falhasMarcado: v } })); },
       moFalhasConcordar: () => { if (!mo.falhasMarcado) { this.setState((x) => ({ mo: { ...x.mo, erro: "Marque a declaração para prosseguir." } })); return; } this.moSet("falhas_aceite")(new Date().toISOString()); this.setState((x) => ({ mo: { ...x.mo, erro: "" } })); }, moSemFalhasOk: (rep || prop) && Array.isArray(d.falhas) && d.falhas.length === 0 && !!d.fontes,
-      moFalhas: (d.falhas || []).map((f, i) => ({ n: i + 1, rubrica: f.rubrica, problema: f.problema, fundamento: f.fundamento, correcao: f.correcao, impacto: f.impacto || "", temImpacto: !!f.impacto, impRot: prop ? "Efeito no preço:" : "Impacto se mantida:",
+      moFalhas: fsV.map((f, i) => ({ n: i + 1, rubrica: f.rubrica, problema: f.problema, fundamento: f.fundamento, correcao: f.correcao, impacto: f.impacto || "", temImpacto: !!f.impacto, impRot: prop ? "Efeito no preço:" : "Impacto se mantida:",
         grav: { alta: "Alta", media: "Média", baixa: "Baixa" }[f.gravidade] || "Média", cls: "lmo-falha g-" + (f.gravidade || "media") })),
-      moFalhasResumo: (() => { const fs = d.falhas || []; const c = (g) => fs.filter((f) => f.gravidade === g).length; return fs.length + " falha(s) na planilha " + (prop ? "da proposta" : "da contratação") + ": " + c("alta") + " alta(s), " + c("media") + " média(s), " + c("baixa") + " baixa(s)."; })(),
+      moFalhasResumo: (() => { const fs = fsV; const c = (g) => fs.filter((f) => f.gravidade === g).length; return fs.length + " falha(s) na planilha" + (prop ? " da proposta" : rep ? " da contratação" : "") + ": " + c("alta") + " alta(s), " + c("media") + " média(s), " + c("baixa") + " baixa(s)."; })(),
       moPlanNome: d.plan_nome || "", moSemPlan: !d.plan_nome,
       moEscolherPlan: (e) => { const f = e.target && e.target.files && e.target.files[0]; if (e.target) e.target.value = ""; if (f) this.moEnviarPlanilha(f); },
       moRjAtivo: d.rj_ativo === "sim", onMoRj: (e) => { this.moSet("rj_ativo")(e.target.checked ? "sim" : ""); if (e.target.checked) this.carregarIndices(); },
