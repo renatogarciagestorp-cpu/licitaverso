@@ -3,7 +3,7 @@
 // item a item (especificação estranha, dado que só o órgão tem, contradição, marca sem justificativa etc.).
 // Só para quem está logado, com limite diário (custo de API). POST { doc, respostas } -> { perguntas: [...] }
 
-import { clienteServico, CORS, erro, resposta, usuarioDaRequisicao } from "../_shared/comum.ts";
+import { clienteServico, CORS, erro, resposta, usuarioDaRequisicao, segredoConfere } from "../_shared/comum.ts";
 
 const MODELO = Deno.env.get("AGENTE_MODELO") || "claude-sonnet-5-5";
 const LIMITE_DIA = 40;
@@ -45,12 +45,11 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return erro("Método não permitido", 405);
   const admin = clienteServico();
-  const segredo = Deno.env.get("AVISOS_SECRET") ?? "";
-  const interno = segredo.length >= 16 && req.headers.get("x-avisos") === segredo;  // teste interno (GitHub Actions)
+  const interno = segredoConfere(req);  // teste interno (GitHub Actions)
   const usuario = interno ? { id: "00000000-0000-0000-0000-000000000000" } : await usuarioDaRequisicao(req, admin);
   if (!usuario) return erro("Entre na sua conta para continuar.", 401);
   const chave = Deno.env.get("ANTHROPIC_API_KEY");
-  if (!chave) return resposta({ perguntas: [], indisponivel: true, detalhe: "sem chave" });
+  if (!chave) return resposta({ perguntas: [], indisponivel: true });
 
   const desde = new Date(Date.now() - 864e5).toISOString();
   const { count } = await admin.from("elab_triagens").select("id", { count: "exact", head: true }).eq("usuario_id", usuario.id).gte("criado_em", desde);
@@ -91,7 +90,7 @@ Seja específico e objetivo; no máximo 8 perguntas, das mais importantes para a
   if (!resp || !resp.ok) {
     const det = resp ? `${resp.status} ${(await resp.text().catch(() => "")).slice(0, 200)}` : "sem resposta";
     console.log("triagem indisponível:", det);
-    return resposta({ perguntas: [], indisponivel: true, detalhe: det.replace(/sk-[A-Za-z0-9_-]+/g, "***") });
+    return resposta({ perguntas: [], indisponivel: true });  // o motivo fica só no registro interno
   }
   const j = await resp.json().catch(() => ({}));
   const bloco = (j.content ?? []).find((c: any) => c.type === "tool_use");

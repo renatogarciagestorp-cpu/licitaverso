@@ -4,11 +4,28 @@ import { avisarEquipeNovaConsultoria } from "./consultoria.ts";
 // MP_API_URL só existe para testes locais; em produção fica a API oficial.
 export const MP_API = Deno.env.get("MP_API_URL") || "https://api.mercadopago.com";
 
+// CORS: só o endereço do site pode chamar as funções pelo navegador (SITE_URL; o primeiro endereço define a origem)
+const ORIGEM_SITE = (() => {
+  try { return new URL((Deno.env.get("SITE_URL") || "https://renatogarciagestorp-cpu.github.io/licitaverso/").split(",")[0].trim()).origin; }
+  catch { return "https://renatogarciagestorp-cpu.github.io"; }
+})();
+
 export const CORS = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": ORIGEM_SITE,
+  "Vary": "Origin",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
+
+/** Confere o segredo interno (chamadas do GitHub Actions) em tempo constante; sem segredo configurado, nega. */
+export function segredoConfere(req: Request): boolean {
+  const segredo = Deno.env.get("AVISOS_SECRET") ?? "";
+  const veio = req.headers.get("x-avisos") ?? "";
+  if (segredo.length < 16 || veio.length !== segredo.length) return false;
+  let d = 0;
+  for (let i = 0; i < segredo.length; i++) d |= segredo.charCodeAt(i) ^ veio.charCodeAt(i);
+  return d === 0;
+}
 
 export function resposta(corpo: unknown, status = 200): Response {
   return new Response(JSON.stringify(corpo), {

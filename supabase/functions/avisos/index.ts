@@ -4,7 +4,7 @@
 //  - planos pagos: aviso quando faltam 7 dias ou menos;
 //  - teste grátis: dica de uso no 3º dia e aviso na véspera do fim ("termina amanhã").
 
-import { clienteServico, CORS, resposta } from "../_shared/comum.ts";
+import { clienteServico, CORS, resposta, segredoConfere } from "../_shared/comum.ts";
 import { enviarEmail, moldura, SITE } from "../_shared/email.ts";
 import { PLANOS } from "../_shared/precos.ts";
 
@@ -14,8 +14,7 @@ const dataBR = (iso: string) => new Date(iso).toLocaleDateString("pt-BR", { time
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
-  const segredo = Deno.env.get("AVISOS_SECRET");
-  if (segredo && req.headers.get("x-avisos") !== segredo) return resposta({ erro: "não autorizado" }, 401);
+  if (!segredoConfere(req)) return resposta({ erro: "não autorizado" }, 401);
 
   const admin = clienteServico();
   const agora = Date.now();
@@ -25,7 +24,7 @@ Deno.serve(async (req) => {
     .gt("fim", new Date(agora).toISOString())
     .lte("fim", new Date(agora + 7 * DIA).toISOString())
     .limit(500);
-  if (error) return resposta({ erro: error.message }, 500);
+  if (error) { console.error("avisos", error); return resposta({ erro: "falha ao consultar" }, 500); }
 
   const resultado = { enviados: 0, pulados: 0, falhas: 0 };
   const marcar = (id: string) => admin.from("assinaturas").update({ aviso_fim_em: new Date().toISOString() }).eq("id", id);

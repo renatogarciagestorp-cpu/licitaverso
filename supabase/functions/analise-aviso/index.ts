@@ -2,7 +2,7 @@
 // e aviso à equipe em caso de erro em análise paga (para estorno ou reprocessamento).
 // Chamada pela fila do GitHub Actions: POST { id } com o cabeçalho x-avisos = AVISOS_SECRET.
 
-import { clienteServico, CORS, resposta } from "../_shared/comum.ts";
+import { clienteServico, CORS, resposta, segredoConfere } from "../_shared/comum.ts";
 import { enviarEmail, moldura, SITE } from "../_shared/email.ts";
 import { DOC_ANALISE, DOC_GERACAO, type DocAnalise } from "../_shared/precos.ts";
 
@@ -10,8 +10,7 @@ const esc = (t: string) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
-  const segredo = Deno.env.get("AVISOS_SECRET");
-  if (!segredo || req.headers.get("x-avisos") !== segredo) return resposta({ erro: "não autorizado" }, 401);
+  if (!segredoConfere(req)) return resposta({ erro: "não autorizado" }, 401);
   const { id } = await req.json().catch(() => ({}));
   const admin = clienteServico();
   const { data: a } = await admin.from("analises").select("*").eq("id", String(id ?? "")).maybeSingle();

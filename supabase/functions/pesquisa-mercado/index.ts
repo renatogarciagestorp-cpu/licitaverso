@@ -4,7 +4,7 @@
 // Só para quem está logado. Sem custo: usa APIs públicas.
 // POST { objeto, uf, natureza } -> { referencias: [...], erro }
 
-import { clienteServico, CORS, erro, resposta, usuarioDaRequisicao } from "../_shared/comum.ts";
+import { clienteServico, CORS, erro, resposta, usuarioDaRequisicao, segredoConfere } from "../_shared/comum.ts";
 
 const PNCP = "https://pncp.gov.br";
 const COMPRAS = "https://dadosabertos.compras.gov.br";
@@ -150,8 +150,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return erro("Método não permitido", 405);
   const admin = clienteServico();
-  const segredo = Deno.env.get("AVISOS_SECRET") ?? "";
-  const interno = segredo.length >= 16 && req.headers.get("x-avisos") === segredo;  // teste interno (GitHub Actions)
+  const interno = segredoConfere(req);  // teste interno (GitHub Actions)
   if (!interno && !(await usuarioDaRequisicao(req, admin))) return erro("Entre na sua conta para fazer a pesquisa.", 401);
   const corpo = await req.json().catch(() => ({}));
   const objeto = String(corpo.objeto ?? "").slice(0, 500);

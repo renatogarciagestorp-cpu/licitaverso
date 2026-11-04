@@ -3,7 +3,7 @@
 // a autenticidade vem da assinatura x-signature (MP_WEBHOOK_SECRET) e, sobretudo,
 // de a função sempre buscar o pagamento direto na API do Mercado Pago antes de agir.
 
-import { aplicarPagamento, clienteServico, conferirRenovacao, CORS, mp, resposta } from "../_shared/comum.ts";
+import { aplicarPagamento, clienteServico, conferirRenovacao, CORS, mp, resposta, segredoConfere } from "../_shared/comum.ts";
 
 async function hmacHex(segredo: string, mensagem: string): Promise<string> {
   const chave = await crypto.subtle.importKey(
@@ -46,8 +46,7 @@ Deno.serve(async (req) => {
   const corpo = await req.json().catch(() => ({} as any));
 
   // Conferência periódica das renovações automáticas (chamada pelo agendamento do GitHub, com o segredo interno)
-  const interno = Deno.env.get("AVISOS_SECRET") ?? "";
-  if (corpo?.acao === "conferir_renovacoes" && interno && req.headers.get("x-avisos") === interno) {
+  if (corpo?.acao === "conferir_renovacoes" && segredoConfere(req)) {
     const admin = clienteServico();
     const { data: lista } = await admin.from("renovacoes").select("id, status, mp_preapproval").in("status", ["pendente", "ativa", "pausada"]).limit(500);
     let n = 0;
