@@ -1,12 +1,17 @@
 // Calculadora → Mão de Obra Exclusiva: o agente lê a convenção coletiva enviada e preenche a planilha da IN 05/2017.
-// Exclusivo do plano Pro (e administradores). Limite diário por pessoa (custo de API).
+// Exclusivo do plano Pro (e administradores). Franquia semanal por assinatura: 1 por modelo (custo de API).
 // POST { modo: "planejamento" | "repactuacao" | "proposta", arquivo: "<uid>/mo/<nome>.pdf", dados: { ...campos da planilha } }
 //   -> { campos: [{ campo, valor, fonte }], observacoes: [], falhas: [{ rubrica, problema, fundamento, correcao, gravidade }] }
 
 import { clienteServico, CORS, erro, resposta, usuarioDaRequisicao } from "../_shared/comum.ts";
 
 const MODELO = Deno.env.get("AGENTE_MODELO") || "claude-sonnet-5-5";
-const LIMITE_DIA = 10;
+// franquia semanal por assinatura (individual ou de equipe): 1 de cada modelo por semana
+const LIMITE_SEMANA = 1;
+const NOME_MODO: Record<string, string> = { planejamento: "elaboração de planilha (Planilha 1)", repactuacao: "análise de repactuação (Planilha 2)", proposta: "análise de proposta (Planilha 3)" };
+// segunda-feira 00:00 no horário de Brasília (UTC−3)
+const inicioSemanaBR = () => { const br = new Date(Date.now() - 3 * 3600e3); const dia = (br.getUTCDay() + 6) % 7;
+  return new Date(Date.UTC(br.getUTCFullYear(), br.getUTCMonth(), br.getUTCDate() - dia, 3, 0, 0)); };
 
 // campos que o agente pode preencher (as chaves da planilha do site)
 const CAMPOS_PLANEJAMENTO: Record<string, string> = {
@@ -131,9 +136,13 @@ Deno.serve(async (req) => {
   if (arquivo && !okPdf(arquivo)) return erro("Arquivo da convenção inválido.");
   if (planArq && !okPdf(planArq)) return erro("Arquivo da planilha inválido.");
 
-  const desde = new Date(Date.now() - 864e5).toISOString();
-  const { count } = await admin.from("mo_preenchimentos").select("id", { count: "exact", head: true }).eq("usuario_id", usuario.id).gte("criado_em", desde);
-  if ((count ?? 0) >= LIMITE_DIA) return erro("Limite diário de preenchimentos pelo agente atingido. Tente de novo amanhã.", 429);
+  const { data: orgId } = await admin.rpc("org_do_usuario", { uid: usuario.id });
+  if (!perfil?.admin) {
+    let q = admin.from("mo_preenchimentos").select("id", { count: "exact", head: true }).eq("modo", modo).gte("criado_em", inicioSemanaBR().toISOString());
+    q = orgId ? q.eq("org_id", orgId) : q.eq("usuario_id", usuario.id);
+    const { count } = await q;
+    if ((count ?? 0) >= LIMITE_SEMANA) return erro("A " + NOME_MODO[modo] + " pelo agente já foi usada nesta semana" + (orgId ? " pela sua equipe" : "") + ". A franquia é de 1 por semana em cada modelo e renova na segunda-feira.", 429);
+  }
 
   const lerPdf = async (caminho: string, nome: string): Promise<string | Response> => {
     const { data: blob, error: eDown } = await admin.storage.from("analises").download(caminho);
@@ -147,7 +156,6 @@ Deno.serve(async (req) => {
   if (planArq) { const x = await lerPdf(planArq, "planilha"); if (x instanceof Response) return x; docs.push({ titulo: modo === "proposta" ? "PLANILHA DE CUSTOS DA PROPOSTA DA LICITANTE" : "PLANILHA DA CONTRATAÇÃO", pdf: x }); }
   if (arquivo) { const x = await lerPdf(arquivo, "convenção"); if (x instanceof Response) return x; docs.push({ titulo: modo === "repactuacao" ? "NOVA CONVENÇÃO COLETIVA" : "CONVENÇÃO COLETIVA", pdf: x }); }
 
-  await admin.from("mo_preenchimentos").insert({ usuario_id: usuario.id, modo });
 
   const campos = modo === "planejamento" ? CAMPOS_PLANEJAMENTO : modo === "proposta" ? CAMPOS_PROPOSTA : CAMPOS_REPACTUACAO;
   const dados = corpo.dados && typeof corpo.dados === "object" ? corpo.dados as Record<string, unknown> : {};
@@ -213,5 +221,7 @@ Use apenas o que está na convenção enviada e nas normas citadas; nunca invent
   const eA = bloco?.input?.exequibilidade ?? null;
   const exequibilidade = modo === "proposta" && eA ? { conclusao: ["exequivel", "indicios", "inexequivel"].includes(eA.conclusao) ? eA.conclusao : "indicios", fundamento: String(eA.fundamento ?? "").slice(0, 1200) } : null;
   const diligencias = modo === "proposta" ? ((bloco?.input?.diligencias ?? []) as unknown[]).slice(0, 12).map((x) => String(x).slice(0, 400)).filter(Boolean) : [];
+  // só a análise concluída consome a franquia da semana
+  await admin.from("mo_preenchimentos").insert({ usuario_id: usuario.id, modo, org_id: orgId || null });
   return resposta({ campos: saida.filter((c) => c.campo !== "iss"), observacoes, falhas, iss, exequibilidade, diligencias });
 });

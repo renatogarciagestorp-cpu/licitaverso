@@ -2475,6 +2475,7 @@
             <section class="lmo-bloco" id="lmo-agente">
               <h2 class="lmo-h2">{{ moAgenteTitulo }}</h2>
               <p class="lmo-nota">{{ moAgenteTxt }}</p>
+              <sc-if value="{{ moCotaTxt }}" hint-placeholder-val="{{ false }}"><p class="{{ moCotaCls }}">{{ moCotaTxt }}</p></sc-if>
               <div class="lmo-agente">
                 <sc-if value="{{ moPro }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moAgente }}">{{ moBotaoAgente }}</button></sc-if>
                 <sc-if value="{{ moSemPro }}" hint-placeholder-val="{{ false }}"><span class="lmo-pro">Exclusivo do plano Pro</span><button type="button" class="lve-voltar" sc-camel-on-click="{{ moIrPlanos }}">Conhecer o Pro</button></sc-if>
@@ -5278,21 +5279,21 @@ const CALC_FERRAMENTAS = [
       "Adicionais da escala de vigilância calculados: noturno, hora noturna reduzida, feriados e intervalo", "Memória de cálculo de uniformes, EPI, materiais e equipamentos, com o preço praticado no Compras.gov.br",
       "Lucro Real, Presumido ou Simples Nacional e tributos antes ou depois da reforma tributária, com a transição de 2026 a 2033 ano a ano", "Conferência automática de falhas e inconsistências, quadro com várias categorias e conta vinculada ou fato gerador",
       "Downloads separados em Excel e PDF: planilha, falhas e memória de cálculo", "No Pro, o agente de IA lê a convenção coletiva e preenche a planilha indicando a fonte de cada valor"],
-    plano: "Planilha incluída em todos os planos; preenchimento pelo agente de IA no plano Pro." },
+    plano: "Planilha incluída em todos os planos; preenchimento pelo agente de IA no plano Pro (1 por semana por assinatura)." },
   { id: "repactuacao", nome: "Repactuação", curto: "Repactuação com a nova convenção, custos não renováveis, retroativo e nota técnica.",
     h1: "Repactuação de mão de obra exclusiva demonstrada rubrica por rubrica.",
     lead: "Atualize a planilha com a nova convenção coletiva, exclua os custos não renováveis, reajuste os insumos pelo índice do contrato, calcule o retroativo e gere a nota técnica.",
     beneficios: ["Custos não renováveis tratados automaticamente, como o aviso prévio trabalhado a 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017)", "Reajuste dos insumos pelo índice do contrato, com a memória do índice mês a mês",
       "Quadro comparativo contratação × repactuada com a variação por módulo, a participação de cada rubrica e o motivo", "Diferença retroativa mês a mês, separando mão de obra e insumos, com a conferência da anualidade e da preclusão",
       "Nota técnica da repactuação em PDF, com relatório, análise e conclusão", "No Pro, o agente lê a planilha da contratação e a nova convenção, reproduz a planilha, aplica as mudanças e aponta as falhas com o fundamento"],
-    plano: "Planilha incluída em todos os planos; análise pelo agente de IA no plano Pro." },
+    plano: "Planilha incluída em todos os planos; análise pelo agente de IA no plano Pro (1 por semana por assinatura)." },
   { id: "proposta", nome: "Análise de proposta", curto: "Exequibilidade da planilha da licitante, falhas, diligência e comparativo das propostas.",
     h1: "Análise da planilha da licitante, com a exequibilidade e a diligência prontas.",
     lead: "Confira a planilha de custos da proposta item por item, veja as falhas com o fundamento, compare as licitantes lado a lado e envie a diligência pronta.",
     beneficios: ["O agente reproduz a planilha da proposta e confere cada rubrica com a convenção, a lei, os cadernos técnicos e o TCU", "Falhas apontadas com o fundamento e se a correção cabe no preço ofertado (IN 05/2017, Anexo VII-A, item 7.9)",
       "Conferência do preço ofertado com o valor estimado (IN 73/2022, art. 34) e com o valor de atenção da estimativa do órgão", "Minuta de diligência à licitante com as perguntas para comprovar os custos (Lei 14.133/2021, art. 59, § 2º)",
       "Comparativo das propostas lado a lado, com os módulos fora da curva destacados", "Downloads separados em Excel e PDF"],
-    plano: "Comparativo e conferência em todos os planos; análise pelo agente de IA no plano Pro." }
+    plano: "Comparativo e conferência em todos os planos; análise pelo agente de IA no plano Pro (1 por semana por assinatura)." }
 ];
 const ELAB_TERMO_VERSAO = "elab-2";
 const ELAB_TERMO = [
@@ -5716,6 +5717,7 @@ class Component extends DCLogic {
     this.carregarOferta();
     if (u) await this.carregarDados();
     if (this.state.page === "forum" && (!u || !this.podeLerForum())) this.carregarVitrine();
+    if (this.state.page === "calculadora" && u) this.moCotaCarregar();
     this.tratarRetornoPagamento();
     this.carregarCursos();
   }
@@ -6390,7 +6392,7 @@ class Component extends DCLogic {
     if (destino === "forum" && this.u) this.carregarForum({ leve: true });
     if (destino === "forum" && (!this.u || !this.podeLerForum())) this.carregarVitrine();
     if (destino === "agente" && this.u) this.carregarDados({ leve: true });
-    if (destino === "calculadora") this.carregarIndices();
+    if (destino === "calculadora") { this.carregarIndices(); this.moCotaCarregar(); }
   }
 
   nav = (page) => () => this.irPara(page);
@@ -6879,10 +6881,17 @@ class Component extends DCLogic {
   }
   // troca de ferramenta da calculadora (subpágina com endereço próprio: ?p=calculadora&f=…)
   calcFerramenta(id) {
+    if (!this.state.moCota) this.moCotaCarregar();
     if (id === "reajuste") this.setState({ calcAba: "indice" });
     else { if (this.state.mo.modo !== id) this.moModo(id); this.setState({ calcAba: "mo" }); }
     this.carregarIndices();
     try { history.replaceState({ p: "calculadora" }, "", location.pathname + "?p=calculadora&f=" + id); } catch (e) {}
+  }
+  // franquia semanal do agente (1 por modelo por semana, por assinatura individual ou de equipe)
+  async moCotaCarregar() {
+    if (!this.sb || !this.u) return;
+    const { data, error } = await this.sb.rpc("mo_cota");
+    if (!error && data) this.setState({ moCota: data });
   }
   moPodeAgente() { const s = this.state; return !!(s.admin || s.plano === "pro"); }
 
@@ -7398,6 +7407,7 @@ class Component extends DCLogic {
     if (!this.sb) { erro("O agente ainda não está ativo neste site (modo demonstração)."); return; }
     if (!this.u) { this.setState({ volta: "calculadora" }); this.irPara("login"); return; }
     if (!this.moPodeAgente()) { erro("O preenchimento pelo agente é exclusivo do plano Pro."); return; }
+    { const ct = this.state.moCota; if (ct && !ct.admin && ((ct.usadas || {})[mo.modo] || 0) >= 1) { erro("A franquia desta semana para este modelo já foi usada" + (ct.equipe ? " pela sua equipe" : "") + ". Renova na segunda-feira, " + new Date(ct.renova_em).toLocaleDateString("pt-BR") + "."); return; } }
     const rep = mo.modo === "repactuacao", prop = mo.modo === "proposta";
     if (!String(d.municipio || "").trim() || !/^[A-Za-z]{2}$/.test(String(d.uf || "").trim())) {
       erro("Antes da análise, informe o município e a UF onde o serviço será prestado: o agente busca a alíquota do ISS desse município.");
@@ -7416,6 +7426,7 @@ class Component extends DCLogic {
     const { data, error } = await this.sb.functions.invoke("mo-agente", { body: { modo: mo.modo, arquivo: d.cct_arquivo || "", planilha_arquivo: rep || prop ? (d.plan_arquivo || "") : "",
       planilha_texto: rep || prop ? (this._moPlanTexto || "") : "", dados: d } });
     if (error) { erro(await erroDaFuncao(error)); return; }
+    this.moCotaCarregar();
     const campos = (data && data.campos) || [];
     this.setState((x) => {
       const comPlan = x.mo.modo !== "planejamento";
@@ -7833,6 +7844,13 @@ class Component extends DCLogic {
         : "No plano Pro, o agente lê a convenção, a legislação trabalhista, os cadernos técnicos e a jurisprudência do TCU e preenche salário, adicionais, benefícios e percentuais, indicando a fonte de cada valor. Sem o agente, a planilha parte dos percentuais legais e você confere e ajusta.",
       moEscolherCct: (e) => { const f = e.target && e.target.files && e.target.files[0]; if (e.target) e.target.value = ""; if (f) this.moEnviarCct(f); },
       moPro: this.moPodeAgente(), moSemPro: !this.moPodeAgente(),
+      moCotaTxt: (() => { const ct = s.moCota; if (!this.moPodeAgente()) return ""; if (!ct) return "Franquia do Pro: 1 elaboração, 1 análise de repactuação e 1 análise de proposta pelo agente por semana, por assinatura (na equipe, somando todos os membros).";
+        if (ct.admin) return "Administrador: sem limite semanal.";
+        const usada = ((ct.usadas || {})[mo.modo] || 0) >= 1, nome = { planejamento: "elaboração", repactuacao: "análise de repactuação", proposta: "análise de proposta" }[mo.modo];
+        return (usada ? "A " + nome + " pelo agente desta semana já foi usada" + (ct.equipe ? " pela sua equipe" : "") + "; renova na segunda-feira, " + new Date(ct.renova_em).toLocaleDateString("pt-BR") + ". Você pode continuar preenchendo a planilha manualmente."
+          : "Disponível nesta semana: 1 " + nome + " pelo agente" + (ct.equipe ? " para a sua equipe (franquia compartilhada)" : "") + ". Renova na segunda-feira, " + new Date(ct.renova_em).toLocaleDateString("pt-BR") + ". Falha técnica não consome a franquia.") })(),
+      moCotaCls: s.moCota && !s.moCota.admin && ((s.moCota.usadas || {})[mo.modo] || 0) >= 1 ? "lve-aviso" : "lmo-nota",
+      moCotaUsada: !!(s.moCota && !s.moCota.admin && ((s.moCota.usadas || {})[mo.modo] || 0) >= 1),
       moBotaoAgente: mo.agente ? (prop ? "O agente está analisando a proposta…" : rep ? "O agente está analisando a repactuação…" : "O agente está lendo a convenção…") : mo.enviando ? "Enviando o arquivo…" : (prop ? "Analisar a proposta com o agente" : rep ? "Analisar a repactuação com o agente" : "Preencher a planilha com o agente"),
       moAgente: () => { if (!mo.agente && !mo.enviando) this.moAgente(); },
       moIrPlanos: () => this.irPara("planos"),
