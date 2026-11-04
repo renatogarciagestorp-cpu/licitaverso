@@ -1521,6 +1521,10 @@
   .lva-passos > li, .lve-como > *, .lve-docs > * { box-shadow: none !important; }
   .lva-passos, .lve-docs, .lve-grid, .lve-rapido, .lve-como, .lve-wiz, .lvc-tipos, .lvc-abas { margin-top: 24px; box-shadow: none; }
   @media (max-width: 760px) { .lvx-ph { padding: 30px 16px 30px; } .lvx-ph .lva-h1 { font-size: 29px; } .lvx-ph .lvf-h1 { font-size: 27px; } }
+  .lvh-btn-sec.lvh-btn-sec-claro { border-color: #D5DFDD; background: #fff; color: #0B1F2A; }
+  .lvh-btn-sec.lvh-btn-sec-claro:hover { background: #F1F5F4; }
+  .lvh-art .lvh-doc { transform: none; box-shadow: 0 1px 2px rgba(10,31,42,0.06); border: 1px solid #E3E9E8; background: #fff; }
+  .lvh-bd-dif .lvh-pa-h { margin-top: -8px; }
   /* ===== etapa 4 do "clean": faixa final da página inicial ===== */
   .lvh-final { background: #fff; color: #0B1F2A; border-top: 1px solid #E3E9E8; margin-top: 56px; }
   .lvh-final-sub { color: #4A5D65; }
@@ -1704,19 +1708,21 @@
           </div>
         </div>
       </section>
-      <section class="lvh-hero lvh-hero-ap" id="h-parecerista">
-        <div class="lvh-hero-in">
-          <div>
-            <span class="lvh-eyebrow">O Parecerista · agente de IA</span>
-            <h2 class="lvh-h1">Ache o problema do edital <em>antes</em> do Tribunal de Contas.</h2>
-            <p class="lvh-lead">O agente de IA do Licitacon lê o seu edital, ETP ou termo de referência, confere item a item com a lei e com decisões de 90 fontes oficiais e devolve um parecer técnico com o risco, a providência e a redação sugerida.</p>
-            <div class="lvh-ctas">
-              <button class="{{ ctaClasse }}" sc-camel-on-click="{{ goAgente }}">{{ heroCta }}</button>
-              <button class="lvh-btn-sec" sc-camel-on-click="{{ goBiblioteca }}">Pesquisar jurisprudência</button>
+      <section class="lvh-ban" id="h-parecerista">
+        <div class="lvh-ban-in lvh-ban-claro lvh-bd">
+          <div class="lvh-bd-top">
+            <div>
+              <span class="lvh-ban-eye">✦ O Parecerista · agente de IA</span>
+              <h2 class="lvh-ban-h">Ache o problema do edital <em>antes</em> do Tribunal de Contas.</h2>
+              <p class="lvh-ban-lead">O agente lê o seu edital, ETP ou termo de referência, confere item a item com a lei e com decisões de 90 fontes oficiais e devolve um parecer técnico com o risco, a providência e a redação sugerida.</p>
+              <div class="lvh-ctas">
+                <button class="{{ ctaClasse }}" sc-camel-on-click="{{ goAgente }}">{{ heroCta }}</button>
+                <button class="lvh-btn-sec lvh-btn-sec-claro" sc-camel-on-click="{{ goBiblioteca }}">Pesquisar jurisprudência</button>
+              </div>
+              <p class="lvh-ban-micro">{{ heroMicro }}</p>
             </div>
-            <p class="lvh-micro">{{ heroMicro }}</p>
-          </div>
-          <div class="lvh-demo" aria-label="Exemplo de parecer gerado pelo agente">
+            <div class="lvh-art">
+              <div class="lvh-demo" aria-label="Exemplo de parecer gerado pelo agente">
             <div class="lvh-doc">
               <div class="lvh-doc-top"><span class="lvh-dot"></span><span><b class="lvh-ag">O Parecerista</b> Exemplo de parecer · edital de pregão eletrônico</span></div>
               <div class="lvh-linhas" aria-hidden="true">
@@ -1732,17 +1738,16 @@
               <div class="lvh-doc-pe"><span>3 apontamentos · com a lei e a jurisprudência</span><span class="lvh-pdf">PDF · Word</span></div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section class="lvh-ban lvh-ban-cola">
-        <div class="lvh-ban-in lvh-ban-claro lvh-bd">
-          <p class="lvh-bd-sub">Por que isso importa</p>
+            </div>
+          </div>
+          <div class="lvh-bd-dif">
+  <p class="lvh-bd-sub">Por que isso importa</p>
           <h3 class="lvh-pa-h">Em licitação, é o <em>detalhe pequeno</em> que custa caro.</h3>
           <div class="lvh-pa-3">
             <sc-for list="{{ homeDores }}" as="d" hint-placeholder-count="3">
               <div><small>{{ d.quem }}</small><b>{{ d.t }}</b><p>{{ d.d }}</p></div>
             </sc-for>
+          </div>
           </div>
           <div class="lvh-bd-dif">
             <p class="lvh-bd-sub">Como funciona O Parecerista</p>
@@ -1751,10 +1756,6 @@
                 <li><span>{{ ps.n }}</span><div><b>{{ ps.t }}</b><p>{{ ps.d }}</p></div></li>
               </sc-for>
             </ol>
-            <div class="lvh-pa-fim">
-              <button class="{{ ctaClasse }}" sc-camel-on-click="{{ goAgente }}">{{ heroCta }}</button>
-              <span>O erro é apontado e corrigido <b>antes</b> da publicação, não depois da impugnação.</span>
-            </div>
           </div>
         </div>
       </section>
