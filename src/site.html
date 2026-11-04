@@ -593,6 +593,16 @@
 .lvh-pa-fim > span b { color: #0A7A50; }
 @media (max-width: 980px) { .lvh-pa-3, .lvh-pa-passos { grid-template-columns: 1fr; gap: 20px; } }
 @media (max-width: 560px) { .lvh-pa-h { font-size: 23px; } }
+.lvh-calc4 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.lvh-calc4 > button { display: grid; gap: 3px; align-content: start; text-align: left; font: inherit; cursor: pointer; background: rgba(255,255,255,0.8); border: 1px solid #CBEBDB; border-radius: 14px; padding: 13px 14px; transition: border-color .15s, background .15s; }
+.lvh-calc4 > button:hover, .lvh-calc4 > button:focus-visible { border-color: #0FA36B; background: #fff; outline: none; }
+.lvh-calc4 b { font-size: 15px; color: #0B1F2A; }
+.lvh-calc4 b::after { content: " →"; color: #0FA36B; }
+.lvh-calc4 span { font-size: 13.5px; line-height: 1.45; color: #4A5D65; }
+.lvh-art-abas { display: flex; gap: 4px; background: #F0F4F3; border-radius: 10px; padding: 4px; margin-bottom: 12px; }
+.lvh-art-abas span { flex: 1; text-align: center; font-size: 11.5px; font-weight: 700; color: #6A7B82; padding: 6px 4px; border-radius: 7px; }
+.lvh-art-abas span.on { background: #fff; color: #0A7A50; box-shadow: 0 1px 3px rgba(10,31,42,0.12); }
+@media (max-width: 560px) { .lvh-calc4 { grid-template-columns: 1fr; } }
 .lvh-top-in { max-width: 1240px; margin: 0 auto; }
 .lvh-top-h1 { font-size: 44px; line-height: 1.06; letter-spacing: -0.03em; font-weight: 800; margin: 12px 0 0; max-width: 24ch; }
 .lvh-top-h1 em { font-style: normal; color: #3FD49A; }
@@ -1699,51 +1709,21 @@
       <section class="lvh-ban" id="h-calculadora">
         <div class="lvh-ban-in lvh-ban-menta">
           <div class="lvh-ban-txt">
-            <span class="lvh-ban-eye">% Calculadora · reajuste</span>
-            <h2 class="lvh-ban-h">Reajuste calculado certo, com a <em>nota técnica</em> pronta.</h2>
-            <p class="lvh-ban-lead">Escolha o índice e as datas: a Calculadora confere a anualidade, acumula os ciclos e mostra a memória mês a mês. No fim, você baixa a nota técnica em PDF para juntar ao processo.</p>
-            <ul class="lvh-ban-lista">
-              <li>IPCA, IGP-M, INCC, IPCA-E e outros</li><li>Índices atualizados todo dia</li><li>Anualidade e ciclos acumulados</li><li>Memória de cálculo mês a mês</li>
-            </ul>
-            <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goCalcReajuste }}">Calcular um reajuste</button></div>
-            <p class="lvh-ban-micro">Em todos os planos, inclusive no teste grátis de 7 dias.</p>
+            <span class="lvh-ban-eye">% Calculadora</span>
+            <h2 class="lvh-ban-h">Reajuste e planilhas de mão de obra, com os <em>documentos prontos</em>.</h2>
+            <p class="lvh-ban-lead">Quatro ferramentas para o contrato inteiro, com índices oficiais atualizados, o regime tributário e a transição da reforma tributária já considerados. Tudo sai em Excel e PDF para juntar ao processo.</p>
+            <div class="lvh-calc4">
+              <button type="button" sc-camel-on-click="{{ goCalcReajuste }}"><b>Reajuste por índice</b><span>IPCA, IGP-M, INCC e outros, anualidade conferida e nota técnica.</span></button>
+              <button type="button" sc-camel-on-click="{{ goCalcPlanilha }}"><b>Planilha de custos</b><span>Módulos 1 a 6 da IN 05/2017, memória dos insumos e conferência.</span></button>
+              <button type="button" sc-camel-on-click="{{ goCalcRepac }}"><b>Repactuação</b><span>Nova convenção, quadro comparativo e diferença retroativa.</span></button>
+              <button type="button" sc-camel-on-click="{{ goCalcProposta }}"><b>Análise da proposta</b><span>Exequibilidade, falhas da licitante e roteiro de diligência.</span></button>
+            </div>
+            <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goCalcReajuste }}">Abrir a Calculadora</button></div>
+            <p class="lvh-ban-micro">Em todos os planos, inclusive no teste grátis de 7 dias · no Pro, o agente de IA lê a convenção coletiva e preenche as planilhas.</p>
           </div>
           <div class="lvh-art" aria-hidden="true">
             <div class="lvh-art-doc">
-              <div class="lvh-art-top"><span class="lvh-dot"></span><b>Reajuste · IPCA</b><span class="lvh-art-sel">12 meses</span></div>
-              <div class="lvh-art-barras">
-                <i style="height: 38%"></i><i style="height: 52%"></i><i style="height: 30%"></i><i style="height: 44%"></i><i style="height: 61%"></i><i style="height: 35%"></i>
-                <i style="height: 48%"></i><i style="height: 27%"></i><i style="height: 41%"></i><i style="height: 56%"></i><i style="height: 33%"></i><i style="height: 46%"></i>
-              </div>
-              <div class="lvh-art-meses"><span>jun</span><span>set</span><span>dez</span><span>mar</span><span>mai</span></div>
-              <div class="lvh-art-res">
-                <div><small>Valor anterior</small><b>R$ 120.000,00</b></div>
-                <div class="lvh-art-seta">→</div>
-                <div><small>Valor reajustado</small><b class="verde">R$ 125.844,00</b></div>
-              </div>
-              <div class="lvh-art-chip">Variação acumulada <b>+4,87%</b> · anualidade conferida ✓</div>
-              <div class="lvh-doc-pe"><span>Exemplo ilustrativo</span><span class="lvh-pdf">Nota técnica · PDF</span></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="lvh-ban" id="h-planilhas">
-        <div class="lvh-ban-in lvh-ban-claro lvh-ban-inv">
-          <div class="lvh-ban-txt">
-            <span class="lvh-ban-eye">▦ Calculadora · mão de obra exclusiva</span>
-            <h2 class="lvh-ban-h">Planilhas da <em>IN 05/2017</em>, da montagem à repactuação.</h2>
-            <p class="lvh-ban-lead">Três ferramentas no mesmo lugar, com o regime tributário e a transição da reforma tributária já considerados:</p>
-            <div class="lvh-ban-3">
-              <div><b>Planilha de custos</b><span>Módulos 1 a 6, memória dos insumos e conferência automática.</span></div>
-              <div><b>Repactuação</b><span>Nova convenção, quadro comparativo e diferença retroativa.</span></div>
-              <div><b>Análise da proposta</b><span>Exequibilidade, falhas e roteiro de diligência.</span></div>
-            </div>
-            <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goCalcPlanilha }}">Montar uma planilha</button></div>
-            <p class="lvh-ban-micro">Planilhas em todos os planos · no Pro, o agente de IA lê a convenção coletiva e preenche.</p>
-          </div>
-          <div class="lvh-art" aria-hidden="true">
-            <div class="lvh-art-doc">
+              <div class="lvh-art-abas"><span>Reajuste</span><span class="on">Planilha</span><span>Repactuação</span><span>Proposta</span></div>
               <div class="lvh-art-top"><span class="lvh-dot"></span><b>Vigilante 12x36 diurno</b><span class="lvh-art-sel">Por posto</span></div>
               <div class="lvh-art-tab">
                 <div><span>Módulo 1 · Remuneração</span><b>R$ 2.512,40</b></div>
@@ -1754,7 +1734,7 @@
                 <div><span>Módulo 6 · Custos indiretos, tributos e lucro</span><b>R$ 1.244,61</b></div>
                 <div class="total"><span>Valor mensal do posto</span><b>R$ 6.952,66</b></div>
               </div>
-              <div class="lvh-art-tags"><span>Lucro Presumido</span><span>Reforma: 2027</span><span class="alerta">1 falha encontrada</span></div>
+              <div class="lvh-art-tags"><span>Lucro Presumido</span><span>Reforma: 2027</span><span>Reajuste IPCA +4,87%</span><span class="alerta">1 falha encontrada</span></div>
               <div class="lvh-doc-pe"><span>Exemplo ilustrativo</span><span class="lvh-pdf">Excel · PDF</span></div>
             </div>
           </div>
@@ -9431,7 +9411,7 @@ class Component extends DCLogic {
         ["✦", "Agente de IA", "O Parecerista", "Parecer técnico sobre edital, ETP, TR e planilhas, com a lei e a jurisprudência.", "h-parecerista"],
         ["✎", "Agente de IA", "O Elaborador", "ETP, TR e Projeto Básico em Word e PDF, com pesquisa de preços no PNCP.", "h-elaborador"],
         ["%", "Calculadora", "Reajuste por índice", "IPCA, IGP-M, INCC e outros, com memória mês a mês e nota técnica.", "h-calculadora"],
-        ["▦", "Calculadora", "Planilhas IN 05/2017", "Custos de mão de obra, repactuação e análise da proposta da licitante.", "h-planilhas"],
+        ["▦", "Calculadora", "Planilhas IN 05/2017", "Custos de mão de obra, repactuação e análise da proposta da licitante.", "h-calculadora"],
         ["⌕", "Grátis", "Biblioteca Jurídica", "TCU, Tribunais de Contas, PGEs e TJs de todo o país, com link oficial.", "h-biblioteca"],
         ["◍", "Comunidade", "Fórum por tema", "Dúvidas respondidas pelo especialista, setor público e privado.", "h-comunidade"],
         ["◈", "Especialista", "Consultoria", "Por escrito, em vídeo ou ao vivo, com desconto de assinante.", "h-comunidade"],
@@ -9440,6 +9420,8 @@ class Component extends DCLogic {
         ir: () => { try { const el = document.getElementById(alvo); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} } })),
       goCalcReajuste: () => { this.irPara("calculadora"); this.calcFerramenta("reajuste"); },
       goCalcPlanilha: () => { this.irPara("calculadora"); this.calcFerramenta("planejamento"); },
+      goCalcRepac: () => { this.irPara("calculadora"); this.calcFerramenta("repactuacao"); },
+      goCalcProposta: () => { this.irPara("calculadora"); this.calcFerramenta("proposta"); },
       ferramentas: [
         { icon: "◍", tag: "Comunidade", titulo: "Fórum por tema", desc: "Perguntas organizadas por tema, com resposta oficial do especialista. Setor público e privado no mesmo lugar.", cta: "Ver as discussões", go: this.nav("forum") },
         { icon: "◈", tag: "Especialista", titulo: "Consultoria técnica", desc: "Por escrito, em vídeo ou ao vivo, com desconto de assinante. O Pro inclui 1 consultoria por escrito por mês.", cta: "Ver consultoria", go: this.nav("consultoria") },
