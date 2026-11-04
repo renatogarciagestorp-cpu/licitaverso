@@ -6324,6 +6324,8 @@ class Component extends DCLogic {
           if (o.fundo) c.fill = fill(o.fundo); if (o.borda) c.border = { bottom: fino }; if (o.topo) c.border = { ...(c.border || {}), top: { style: "medium", color: { argb: X.navy } } }; });
           if (o.alt) row.height = o.alt; return row; };
         const juntar = (row, a, b) => ws.mergeCells(row.number, a, row.number, b);
+        // células mescladas não ajustam a altura sozinhas: calcula pelas linhas de texto que cabem na largura
+        const altura = (txt, porLinha, ptLinha) => Math.max(15, Math.ceil(String(txt || "").split("\n").reduce((a, t) => a + Math.max(1, Math.ceil(t.length / porLinha)), 0) * ptLinha + 4));
         // cabeçalho
         let row = linha(["Planilha de custos e formação de preços", "", "", ""], { size: 16, bold: true, cor: X.branco, fundo: X.navy, alt: 30 }); juntar(row, 1, 4);
         row = linha([titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + "/" + (d.uf || "") : ""), "", "", ""], { size: 11, cor: "FFB9CBD2", fundo: X.navy, alt: 20 }); juntar(row, 1, 4);
@@ -6344,21 +6346,22 @@ class Component extends DCLogic {
         }
         // identificação
         row = linha(["Identificação", "", "", ""], { bold: true, cor: X.branco, fundo: X.teal, alt: 20 }); juntar(row, 1, 4);
-        ident.forEach(([k, v]) => { const rr = linha(["", k, String(v), ""], { borda: true }); rr.getCell(2).font = { bold: true, size: 10, color: { argb: X.fraco } }; rr.getCell(3).alignment = { horizontal: "left", vertical: "middle", wrapText: true }; juntar(rr, 3, 4); });
+        ident.forEach(([k, v]) => { const rr = linha(["", k, String(v), ""], { borda: true }); rr.height = altura(v, 30, 14); rr.getCell(2).font = { bold: true, size: 10, color: { argb: X.fraco } }; rr.getCell(3).alignment = { horizontal: "left", vertical: "middle", wrapText: true }; juntar(rr, 3, 4); });
         ws.addRow([]);
-        if (temAuto) { row = linha(["", "Linhas em âmbar: valores preenchidos pelo agente ou ajustados automaticamente. A fonte aparece logo abaixo da rubrica.", "", ""], { size: 9, italic: true, cor: X.fraco }); row.getCell(1).fill = fill(X.ambar); juntar(row, 2, 4); ws.addRow([]); }
+        if (temAuto) { row = linha(["", "Linhas em âmbar: valores preenchidos pelo agente ou ajustados automaticamente. A fonte aparece logo abaixo da rubrica.", "", ""], { size: 9, italic: true, cor: X.fraco }); row.getCell(1).fill = fill(X.ambar); juntar(row, 2, 4); row.height = 28; ws.addRow([]); }
         // módulos
         modulos.forEach((m) => {
           row = linha([m.cab.toUpperCase() + "   " + m.nome, "", "", ""], { bold: true, size: 11, cor: X.branco, fundo: X.navy, alt: 21 }); juntar(row, 1, 4);
-          if (m.sub) { row = linha(["", m.sub, "", ""], { size: 9, italic: true, cor: X.fraco }); juntar(row, 2, 4); }
+          if (m.sub) { row = linha(["", m.sub, "", ""], { size: 9, italic: true, cor: X.fraco }); juntar(row, 2, 4); row.height = altura(m.sub, 100, 12); }
           linha(["", "Rubrica", "%", "Valor (R$)"], { bold: true, size: 9, cor: X.fraco, fundo: X.cinza, borda: true });
           m.linhas.forEach((l) => {
             const pv = l.ehFap ? l.fapNum : (l.pctNum == null ? null : l.pctNum / 100);
             const rr = linha([l.cod, l.rot, pv == null ? (l.pctTxt === "—" ? "—" : "") : pv, l.valNum == null ? l.valTxt : l.valNum], { borda: !l.nota, fundo: l.auto ? X.ambar : null });
+            rr.height = altura(l.rot, 62, 14);
             rr.getCell(1).font = { bold: true, size: 10, color: { argb: X.teal } };
             if (pv != null && !l.ehFap) rr.getCell(3).numFmt = "0.00##%"; if (l.ehFap) rr.getCell(3).numFmt = "0.0000";
             if (l.valNum != null) rr.getCell(4).numFmt = '"R$" #,##0.00';
-            if (l.nota) { const nr = linha(["", l.nota, "", ""], { size: 8.5, italic: true, cor: X.fraco, borda: true, fundo: l.auto ? X.ambar : null }); juntar(nr, 2, 4); }
+            if (l.nota) { const nr = linha(["", l.nota, "", ""], { size: 8.5, italic: true, cor: X.fraco, borda: true, fundo: l.auto ? X.ambar : null }); juntar(nr, 2, 4); nr.height = altura(l.nota, 105, 11.5); }
           });
           const tr = linha(["", m.total.rot, m.total.pctNum == null ? "" : m.total.pctNum / 100, m.total.valNum], { bold: true, fundo: X.tot, topo: true });
           tr.getCell(3).numFmt = "0.00##%"; tr.getCell(4).numFmt = '"R$" #,##0.00';
@@ -6372,7 +6375,7 @@ class Component extends DCLogic {
         kpis.forEach(([k, v]) => { const rr = linha(["", k, "", String(v)], { borda: true }); rr.getCell(2).font = { bold: true, size: 10, color: { argb: X.fraco } }; });
         ws.addRow([]);
         row = linha(["Notas e fundamentação", "", "", ""], { bold: true, cor: X.branco, fundo: X.teal }); juntar(row, 1, 4);
-        notas.forEach((n2, i) => { const rr = linha([String(i + 1), n2, "", ""], { size: 9, cor: X.fraco }); juntar(rr, 2, 4); rr.height = Math.max(15, Math.ceil(n2.length / 95) * 13); });
+        notas.forEach((n2, i) => { const rr = linha([String(i + 1), n2, "", ""], { size: 9, cor: X.fraco }); juntar(rr, 2, 4); rr.height = altura(n2, 100, 12.5); });
         // aba de falhas (repactuação)
         if (falhas.length) {
           const wf = wb.addWorksheet("Falhas da planilha", { views: [{ showGridLines: false, state: "frozen", ySplit: 4 }], pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
@@ -6389,7 +6392,7 @@ class Component extends DCLogic {
             rr.eachCell({ includeEmpty: true }, (c) => { c.alignment = { vertical: "top", wrapText: true }; c.font = { size: 9.5 }; c.border = { bottom: fino }; });
             rr.getCell(3).font = { bold: true, size: 9.5, color: { argb: X.branco } }; rr.getCell(3).fill = fill(g[2]); rr.getCell(3).alignment = { vertical: "top", horizontal: "center" };
             rr.getCell(7).font = { size: 9.5, color: { argb: "FF8A1230" } };
-            rr.height = Math.max(30, Math.ceil(Math.max(f.problema.length, f.correcao.length) / 48) * 13);
+            rr.height = Math.max(30, Math.max(altura(f.problema, 46, 13), altura(f.correcao, 46, 13), altura(f.fundamento, 37, 13), altura(f.rubrica, 28, 13), altura(f.impacto, 32, 13)));
           });
           wf.autoFilter = { from: { row: hr.number, column: 1 }, to: { row: hr.number, column: 7 } };
         }
@@ -6640,7 +6643,7 @@ class Component extends DCLogic {
         L("B", "Lucro", { k: "lucro", v: r.lucro, nota: "Sobre o subtotal + custos indiretos." }),
         L("C.1", "PIS", { k: "pis", v: r.pis }),
         L("C.2", "COFINS", { k: "cofins", v: r.cofins }),
-        L("C.3", "ISS", { k: "iss", v: r.iss, nota: "Alíquota do município onde o serviço será prestado (LC 116/2003: entre 2% e 5%). Tributos calculados \"por dentro\": P1 = Po ÷ (1 − tributos)." })], total: T("Total do Módulo 6", r.M6p, r.M6) }
+        L("C.3", "ISS", { k: "iss", v: r.iss, nota: "Alíquota do município da prestação do serviço (entre 2% e 5%, LC 116/2003). Tributos \"por dentro\": P1 = Po ÷ (1 − tributos)." })], total: T("Total do Módulo 6", r.M6p, r.M6) }
     ];
     const campo = (k, rot, ph, tipo) => ({ k, rot, ph: ph || "", valor: d[k] == null ? "" : d[k], on: this.moSet(k), tipo: tipo || "text" });
     return {
