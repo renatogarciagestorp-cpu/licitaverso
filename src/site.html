@@ -692,6 +692,7 @@
   .lve-docs { margin-top: -28px; position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
   .lve-doc { font: inherit; text-align: left; display: flex; flex-direction: column; gap: 8px; background: #fff; border: 1px solid #E3E9E8; border-radius: 20px; padding: 24px; cursor: pointer; color: #0B1F2A; box-shadow: 0 14px 34px rgba(11,31,42,0.08); transition: border-color 0.14s ease, transform 0.14s ease; }
   .lve-doc:hover { border-color: #0FA36B; transform: translateY(-3px); }
+  .lve-doc[aria-pressed="true"] { border-color: #0FA36B; box-shadow: 0 0 0 2px #0FA36B, 0 14px 34px rgba(11,31,42,0.08); }
   .lve-doc-sig { align-self: flex-start; background: #0A1F2A; color: #7FE3B6; font-weight: 800; font-size: 13px; border-radius: 8px; padding: 5px 10px; }
   .lve-doc > b { font-size: 20px; }
   .lve-doc > span { font-size: 14.5px; line-height: 1.55; color: #55666D; }
@@ -1802,11 +1803,15 @@
       </section>
       <section class="lvc-corpo" id="el-topo">
         <sc-if value="{{ elSemDoc }}" hint-placeholder-val="{{ true }}">
-          <div class="lve-como">
-            <div><span class="lve-como-n">1</span><b>Você informa</b><p>O que precisa, por quê, quantidades, especificações e quem vai gerir, fiscalizar e assinar.</p></div>
-            <div><span class="lve-como-n">2</span><b>Pesquisamos o mercado</b><p>Contratações de outros órgãos (PNCP) e preços praticados (Compras.gov.br), primeiro no seu estado.</p></div>
-            <div><span class="lve-como-n">3</span><b>O agente monta o documento</b><p>Compara as soluções, indica a melhor, cumpre cada item da lei e entrega em Word.</p></div>
-          </div>
+          <ol class="lva-passos" style="margin-top: 0">
+            <sc-for list="{{ elComoFunciona }}" as="c" hint-placeholder-count="4">
+              <li><span class="lva-passo-n">{{ c.n }}</span><b>{{ c.t }}</b><span class="lva-passo-d">{{ c.d }}</span></li>
+            </sc-for>
+          </ol>
+          <sc-if value="{{ elTemLiberado }}" hint-placeholder-val="{{ false }}">
+            <div class="lve-valid lve-valid-ok" role="status" style="margin-top: 22px"><b>✓ {{ elLiberadoTexto }}</b>
+              <button type="button" class="lve-voltar" sc-camel-on-click="{{ elIrLiberado }}" style="margin-left: 10px">Preencher agora →</button></div>
+          </sc-if>
           <sc-if value="{{ elTemRecentes }}" hint-placeholder-val="{{ false }}">
             <h2 class="lve-h2">Seus documentos recentes</h2>
             <div class="lve-recentes"><sc-for list="{{ elRecentes }}" as="g" hint-placeholder-count="2">
@@ -1817,10 +1822,68 @@
           <h2 class="lve-h2">Qual documento você quer criar?</h2>
           <div class="lve-docs">
             <sc-for list="{{ elDocs }}" as="dc" hint-placeholder-count="3">
-              <button type="button" class="lve-doc" sc-camel-on-click="{{ dc.escolher }}">
-                <span class="lve-doc-sig">{{ dc.sigla }}</span><b>{{ dc.nome }}</b><span>{{ dc.desc }}</span><small>{{ dc.base }}</small><span class="lve-doc-cta">Começar →</span>
+              <button type="button" class="lve-doc" sc-camel-on-click="{{ dc.escolher }}" aria-pressed="{{ dc.sel }}">
+                <span class="lve-doc-sig">{{ dc.sigla }}</span><b>{{ dc.nome }}</b><span>{{ dc.desc }}</span><small>{{ dc.base }}</small><span class="lve-doc-cta">{{ dc.cta }}</span>
               </button>
             </sc-for>
+          </div>
+
+          <div class="lva-duas" style="margin-top: 28px">
+            <div class="lva-card">
+              <h2 class="lva-h2">O que o documento traz</h2>
+              <ul class="lva-lista"><sc-for list="{{ elOQueFaz }}" as="x" hint-placeholder-count="4"><li>{{ x }}</li></sc-for></ul>
+            </div>
+            <div class="lva-card">
+              <h2 class="lva-h2">O que você vai informar</h2>
+              <ul class="lva-lista"><sc-for list="{{ elPrecisa }}" as="x" hint-placeholder-count="4"><li>{{ x }}</li></sc-for></ul>
+            </div>
+          </div>
+
+          <div id="el-contratar" class="lva-iniciar">
+            <div>
+              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Seu plano</span>
+              <p style="margin: 0; font-size: 19px; font-weight: 800; color: #0B1F2A">{{ anPlanoTitulo }}</p>
+              <p style="margin: 6px 0 0; font-size: 14.5px; line-height: 1.55; color: #3D5058">{{ elPlanoTexto }}</p>
+            </div>
+            <div style="display: grid; gap: 6px">
+              <sc-for list="{{ elTabelaPrecos }}" as="t" hint-placeholder-count="4">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: baseline; border-radius: 10px; padding: 9px 12px; background: {{ t.fundo }}">
+                  <strong style="min-width: 92px; font-size: 14px; color: #0B1F2A">{{ t.p }}</strong><span style="font-size: 13.5px; color: #3D5058">{{ t.v }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div>
+              <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Documento</span>
+              <div role="group" aria-label="Documento a criar" style="display: flex; gap: 8px; flex-wrap: wrap">
+                <sc-for list="{{ elDocsEsc }}" as="m" hint-placeholder-count="3">
+                  <button sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border-radius: 999px; padding: 9px 16px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}">{{ m.nome }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <div style="background: #F6F8F7; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px">
+              <details>
+                <summary style="cursor: pointer; font-size: 14px; font-weight: 700; color: #0F6B7E">Condições da elaboração (leia antes de aceitar)</summary>
+                <ol style="margin: 10px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 13px; line-height: 1.5; color: #3D5058">
+                  <sc-for list="{{ elTermo }}" as="t" hint-placeholder-count="3"><li>{{ t }}</li></sc-for>
+                </ol>
+              </details>
+              <label style="display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; cursor: pointer">
+                <input type="checkbox" checked="{{ elAceite }}" sc-camel-on-change="{{ onElAceite }}" style="width: 18px; height: 18px; margin-top: 1px; accent-color: #0FA36B; flex: none">
+                <span style="font-size: 14px; font-weight: 700; color: #172B33">Li e concordo com as condições. Entendo que o documento é uma minuta que eu devo revisar e que a responsabilidade pela versão final é minha.</span>
+              </label>
+            </div>
+            <sc-if value="{{ elPaga }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <span style="display: block; font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 10px">Forma de pagamento</span>
+                <div role="group" aria-label="Forma de pagamento" style="display: flex; gap: 8px; flex-wrap: wrap">
+                  <sc-for list="{{ elMetodos }}" as="m" hint-placeholder-count="3">
+                    <button sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border-radius: 999px; padding: 9px 16px; font-size: 13.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}">{{ m.nome }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+            <button sc-camel-on-click="{{ elContratar }}" style="justify-self: start; background: #0FA36B; color: #06251A; border: 0; border-radius: 12px; padding: 14px 22px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 10px 24px rgba(15,163,107,0.25)">{{ elBotaoContratar }}</button>
+            <sc-if value="{{ elContErro }}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 0; font-size: 13.5px; font-weight: 700; color: #8A1230">{{ elContErro }}</p></sc-if>
           </div>
         </sc-if>
         <sc-if value="{{ elComDoc }}" hint-placeholder-val="{{ false }}">
@@ -4322,6 +4385,17 @@ const AN_TERMO = [
   "Análise de preços: quando o documento traz o orçamento estimado, o sistema compara os valores com preços homologados em contratações equivalentes publicadas no PNCP (órgãos do mesmo estado, últimos 12 meses, Lei 14.133/2021). O resultado é indicativo e depende da equivalência das especificações; não substitui a pesquisa de preços do processo.",
   "Limitações: a inteligência artificial pode errar ou deixar de identificar pontos. Confira cada apontamento no documento e na fonte oficial antes de decidir."
 ];
+const ELAB_TERMO_VERSAO = "elab-2";
+const ELAB_TERMO = [
+  "Natureza: minuta de Estudo Técnico Preliminar, Termo de Referência ou Projeto Básico elaborada de forma automatizada por inteligência artificial, a partir das informações que você prestar e da pesquisa em bases oficiais. Não substitui a análise técnica e jurídica do órgão (Lei 14.133/2021, art. 53).",
+  "Revisão obrigatória: o documento é entregue para revisão. Conferir os dados, as escolhas e os fundamentos, ajustar o que for preciso e assinar é responsabilidade de quem assina o documento.",
+  "Pagamento antes da elaboração: a elaboração é contratada por documento (ETP, TR ou Projeto Básico). Depois do pagamento (ou do uso da franquia do Pro), você preenche as informações e envia; o documento contratado fica liberado até ser enviado.",
+  "Valores e franquia: R$ 290,00 por documento para quem não é assinante; assinantes do Básico têm 10% de desconto e do Premium, 15%. O Pro inclui 2 por semana, somando análises e documentos criados (equipes: 6 por acesso por mês); a partir do 3º, 30% de desconto. Elaboração que não puder ser concluída por falha técnica não consome a franquia; a paga é refeita ou estornada.",
+  "Perguntas durante a elaboração: se faltar alguma informação que só o órgão tem, o agente pergunta nesta página e completa o documento sem novo custo.",
+  "Pesquisa de mercado: contratações do PNCP e preços praticados do Compras.gov.br, primeiro do seu estado. Os valores do ETP são estimativa preliminar e não substituem a pesquisa de preços do art. 23 da Lei 14.133/2021.",
+  "Dados: as informações e os arquivos enviados (modelo, logo, documentos de preço) são processados por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos, e ficam em armazenamento privado, acessível só a você e à equipe do Licitacon (Lei 13.709/2018).",
+  "Limitações: a inteligência artificial pode errar ou deixar de considerar pontos. Confira o documento e as fontes antes de usá-lo."
+];
 const STATUS_ANALISE = {
   aguardando_pagamento: ["aguardando pagamento", "#8A4A12", "#FDF1E3"], aguardando_documentos: ["aguardando documentos", "#8A4A12", "#FDF1E3"],
   na_fila: ["na fila", "#0F6B7E", "#E3F1F5"],
@@ -4579,7 +4653,7 @@ class Component extends DCLogic {
     forumCarregando: false,
     forumErro: "",
     nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
-    el: { doc: "", passo: 0, respostas: {}, aceite: false, enviando: false, erro: "", ok: "" },
+    el: { doc: "", passo: 0, respostas: {}, aceite: false, enviando: false, erro: "", ok: "", docEsc: "etp", metodo: "pix", contratando: false, contErro: "" },
     indices: null, indicesErro: false, mpAberto: "", mpAno: 0, mpMes: 0, mpVista: "dias",
     calc: { regime: "14133", indice: "ipca", valor: "", dataBase: "", houveReajuste: false, ultimo: "", referencia: "", fim: "", metodo: "a", contagem: "base", contrato: "", contratada: "", cnpj: "", objeto: "" },
     threadAberta: null, forumFiltro: "todas", forumRank: { mes: [], geral: [], destaque: null }, forumVerRanking: false, rankPeriodo: "mes",
@@ -4994,15 +5068,11 @@ class Component extends DCLogic {
       if (r0.error) { await falhou(r0.error); return; }
       comecar(pend.id); return;
     }
-    const { data, error } = await this.sb.functions.invoke("mp-checkout", { body: { acao: "criar", tipo: "geracao", documento: el.doc, aceite: true, termo_versao: "elab-1", metodo: "pix", retorno: baseSite() + "index.html" } });
-    if (error) { await falhou(error); return; }
-    if (data && data.gratuito) {
-      const r2 = await this.sb.functions.invoke("mp-checkout", { body: { acao: "enviar_geracao", id: data.id, respostas: el.respostas } });
-      if (r2.error) { await falhou(r2.error); return; }
-      comecar(data.id); return;
-    }
-    if (data && data.url) { window.location.href = data.url; return; }
-    this.setState({ el: { ...this.state.el, enviando: false, validOk: false, erro: "Não foi possível abrir o pagamento. Tente de novo." } });
+    // sem elaboração contratada: as respostas ficam salvas e a pessoa volta para contratar (o pagamento vem antes)
+    try { localStorage.setItem("lv-elab-" + el.doc, JSON.stringify(el.respostas)); } catch (e) {}
+    this.setState({ el: { ...this.state.el, doc: "", passo: 0, enviando: false, validOk: false, docEsc: el.doc,
+      contErro: "Para criar o " + (d ? d.sigla : "documento") + ", contrate a elaboração abaixo. Suas respostas ficaram salvas e voltam quando você continuar." } });
+    setTimeout(() => { try { document.getElementById("el-contratar").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }, 80);
   }
 
   // respostas às perguntas que o agente fez durante a elaboração (preencher lacunas não tem novo custo)
@@ -5336,7 +5406,11 @@ class Component extends DCLogic {
     const ref = qs.get("ref") || qs.get("external_reference");
     if (!retorno || !ref) return;
     history.replaceState(null, "", location.pathname + "?p=conta");
-    if (ref.startsWith("analise:")) { history.replaceState(null, "", location.pathname + "?p=agente"); this.setState({ page: "agente" }); }
+    let pagElab = null;
+    try { const x = JSON.parse(localStorage.getItem("lv-elab-pagamento") || "null"); if (x && x.ref === ref) pagElab = x; } catch (e) {}
+    this._pagElab = pagElab;
+    if (pagElab) { history.replaceState(null, "", location.pathname + "?p=elaborar"); this.setState({ page: "elaborar" }); }
+    else if (ref.startsWith("analise:")) { history.replaceState(null, "", location.pathname + "?p=agente"); this.setState({ page: "agente" }); }
     else this.setState({ page: "conta", contaTab: ref.startsWith("consultoria:") ? "atividade" : "assinatura" });
     if (retorno === "falhou") {
       this.aviso("O pagamento não foi concluído. Você pode tentar de novo quando quiser.", "erro");
@@ -5357,6 +5431,13 @@ class Component extends DCLogic {
       const st = data && data.status;
       if (["ativa", "recebida", "em_andamento", "entregue", "na_fila", "processando", "concluida", "aguardando_documentos"].includes(st)) {
         await this.carregarDados();
+        const pe = this._pagElab;
+        if (st === "aguardando_documentos" && pe) {
+          try { localStorage.removeItem("lv-elab-pagamento"); } catch (e) {}
+          this.elEscolher(pe.doc);
+          this.aviso("✓ Pagamento confirmado. Agora preencha as informações do " + ((ELAB[pe.doc] || {}).sigla || "documento") + ".");
+          return;
+        }
         if (st === "aguardando_documentos") this.irParaEnvio();
         this.aviso(ref.startsWith("assinatura:") ? "✓ Pagamento confirmado. Seu plano já está ativo."
           : ref.startsWith("renovacao:") ? "✓ Renovação automática ativada. O plano é liberado assim que o Mercado Pago confirmar a primeira cobrança."
@@ -5732,6 +5813,44 @@ class Component extends DCLogic {
     if (s.plano === "pro" && c && Number(c.usadas) < Number(c.limite)) return 0;
     if (s.usuario && this.cortesiaAnalise()) return 0; // primeira análise grátis
     return Math.round(AN_PRECO * (1 - (AN_DESCONTO[s.plano] || 0)) * 100) / 100;
+  }
+
+  // elaboração (ETP, TR ou Projeto Básico): mesmo preço da análise, sem a análise grátis de boas-vindas
+  precoGeracao() {
+    const s = this.state, c = s.cotaAnalise;
+    if (s.admin) return 0;
+    if (s.plano === "pro" && c && Number(c.usadas) < Number(c.limite)) return 0;
+    return Math.round(AN_PRECO * (1 - (AN_DESCONTO[s.plano] || 0)) * 100) / 100;
+  }
+
+  // elaboração já paga (ou da franquia) que ainda espera as informações; sem doc, a primeira de qualquer documento
+  creditoGeracao(doc) {
+    return (this.state.analises || []).find((a) => a.tipo === "geracao" && a.status === "aguardando_documentos" && (!doc || a.documento === doc)) || null;
+  }
+
+  // O Elaborador, etapa 1: escolha do documento, aceite e pagamento (ou franquia). Só depois o questionário é aberto.
+  async elContratar() {
+    const el = this.state.el, doc = el.docEsc;
+    const erro = (m) => this.setState((x) => ({ el: { ...x.el, contratando: false, contErro: m } }));
+    if (!ELAB[doc]) { erro("Escolha o documento que você quer criar."); return; }
+    if (this.creditoGeracao(doc)) { this.elEscolher(doc); return; }
+    if (!this.sb) { erro("A elaboração ainda não está ativa neste site (modo demonstração)."); return; }
+    if (!this.u) { this.setState({ volta: "elaborar" }); this.irPara("login"); return; }
+    if (!el.aceite) { erro("Leia e aceite as condições da elaboração para continuar."); return; }
+    this.setState((x) => ({ el: { ...x.el, contratando: true, contErro: "" } }));
+    const { data, error } = await this.sb.functions.invoke("mp-checkout", { body: { acao: "criar", tipo: "geracao", documento: doc, aceite: true,
+      termo_versao: ELAB_TERMO_VERSAO, metodo: el.metodo || "pix", retorno: baseSite() + "index.html" } });
+    if (error) { erro(await erroDaFuncao(error)); return; }
+    if (data && data.gratuito) {
+      await this.carregarDados();
+      this.elEscolher(doc);
+      return;
+    }
+    if (data && data.url) {
+      try { localStorage.setItem("lv-elab-pagamento", JSON.stringify({ ref: data.referencia, doc })); } catch (e) {}
+      window.location.href = data.url; return;
+    }
+    erro("Não foi possível abrir o pagamento. Tente de novo.");
   }
 
   // análise paga ou da cota do Pro que ainda espera os documentos (etapa 2)
@@ -6551,9 +6670,61 @@ class Component extends DCLogic {
           projeto_basico: [["Reforma de escola", "Reforma e adequação de acessibilidade de escola municipal"], ["Pavimentação", "Pavimentação asfáltica de vias urbanas"], ["Praça", "Construção de praça com playground e academia ao ar livre"], ["Telhado", "Substituição da cobertura do prédio da prefeitura"]] };
         return {
           elSemDoc: !d, elComDoc: !!d,
-          elDocs: Object.entries(ELAB).map(([k, x]) => ({ sigla: x.sigla, nome: x.nome, desc: x.desc, base: x.base, escolher: () => this.elEscolher(k) })),
+          elDocs: Object.entries(ELAB).map(([k, x]) => {
+            const lib = !!this.creditoGeracao(k);
+            return { sigla: x.sigla, nome: x.nome, desc: x.desc, base: x.base, sel: !lib && el.docEsc === k,
+              cta: lib ? "Liberado: preencher →" : (el.docEsc === k ? "Escolhido ✓" : "Escolher →"),
+              escolher: () => {
+                if (lib) { this.elEscolher(k); return; }
+                this.setState((x2) => ({ el: { ...x2.el, docEsc: k, contErro: "" } }));
+                setTimeout(() => { try { document.getElementById("el-contratar").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {} }, 60);
+              } };
+          }),
+          ...(() => {
+            const lib = this.creditoGeracao(), preco = this.precoGeracao(), dEsc = ELAB[el.docEsc] || ELAB.etp, c = s.cotaAnalise;
+            const resta = c ? Math.max(0, Number(c.limite) - Number(c.usadas)) : 0;
+            return {
+              elComoFunciona: [
+                { n: "1", t: "Escolha e contrate", d: "ETP, TR ou Projeto Básico. Pague com o desconto do seu plano ou use a franquia do Pro." },
+                { n: "2", t: "Informe a contratação", d: "Objeto, necessidade, quantidades, especificações e quem vai gerir, fiscalizar e assinar." },
+                { n: "3", t: "Pesquisamos o mercado", d: "Contratações de outros órgãos (PNCP) e preços praticados (Compras.gov.br), primeiro no seu estado." },
+                { n: "4", t: "Receba o documento", d: "Soluções comparadas, a melhor indicada e cada item da lei cumprido, em Word e PDF, para revisar." }],
+              elTemLiberado: !!lib,
+              elLiberadoTexto: lib ? "Você tem a elaboração de " + ((ELAB[lib.documento] || {}).sigla || "documento") + " liberada, aguardando as informações." : "",
+              elIrLiberado: () => { if (lib) this.elEscolher(lib.documento); },
+              elOQueFaz: ["Pesquisa de mercado com contratações semelhantes e preços praticados, citando as fontes",
+                "Todas as soluções possíveis (compra, locação, serviço, adesão a ata) comparadas pelo custo total no tempo",
+                "A solução mais vantajosa indicada e justificada, com modalidade, critério de julgamento e tratamento de ME/EPP",
+                "Cada elemento exigido pela Lei 14.133/2021, matriz de riscos e redação técnica pronta para assinar",
+                "Seu modelo do órgão, logo e rodapé, se você enviar; entrega em Word (editável) e PDF"],
+              elPrecisa: ["O que precisa contratar, por quê e em que quantidade", "Especificações e requisitos essenciais",
+                "Gestor, fiscais, fonte orçamentária e quem assina", "Opcional: modelo em Word, logo, contrato anterior e referências de preço"],
+              elPlanoTexto: !s.usuario ? "Valor por documento: R$ 290,00. Assinantes Básico e Premium têm desconto; o Pro inclui 2 por semana, somando análises e documentos."
+                : lib ? "Você já tem uma elaboração liberada aguardando as informações. Siga para o preenchimento."
+                : s.admin ? "Conta de administrador: elaboração sem cobrança."
+                : (s.plano === "pro" && c) ? (resta > 0 ? "Você tem " + resta + " de " + c.limite + (c.equipe ? " neste mês (equipe " + c.organizacao + ")" : " nesta semana") + ", somando análises e documentos, sem custo adicional."
+                    : "A franquia já foi usada. Este documento sai com 30% de desconto: " + brlSimples(preco) + ".")
+                : (s.plano === "basico" || s.plano === "premium") ? "Valor por documento com o desconto do seu plano: " + brlSimples(preco) + ", pago antes do preenchimento."
+                : "Valor por documento: R$ 290,00, pago antes do preenchimento.",
+              elTabelaPrecos: [["Sem plano", "R$ 290,00 por documento"], ["Básico", brlSimples(AN_PRECO * 0.9) + " por documento (10% de desconto)"],
+                ["Premium", brlSimples(AN_PRECO * 0.85) + " por documento (15% de desconto)"], ["Pro", "2 por semana sem custo (análises e documentos, somados); a partir do 3º, " + brlSimples(AN_PRECO * 0.7) + " (30% de desconto)"]]
+                .map(([p2, v]) => { const atual = (p2 === "Sem plano" && s.usuario && !s.plano) || (p2 === "Básico" && s.plano === "basico") || (p2 === "Premium" && s.plano === "premium") || (p2 === "Pro" && s.plano === "pro"); return { p: p2, v, fundo: atual ? "#E3F2EA" : "#F6F8F7" }; }),
+              elDocsEsc: Object.entries(ELAB).map(([k, x]) => ({ nome: x.sigla === "PB" ? "Projeto Básico" : x.sigla, ativo: el.docEsc === k,
+                escolher: () => this.setState((x2) => ({ el: { ...x2.el, docEsc: k, contErro: "" } })), ...corBotao(el.docEsc === k) })),
+              elTermo: ELAB_TERMO,
+              elAceite: !!el.aceite, onElAceite: (e) => { const v = e.target.checked; this.setState((x2) => ({ el: { ...x2.el, aceite: v, contErro: "" } })); },
+              elPaga: preco > 0 && !this.creditoGeracao(el.docEsc),
+              elMetodos: [["pix", "Pix"], ["cartao", "Cartão"], ["boleto", "Boleto"]].map(([id, nome]) => ({ nome, ativo: (el.metodo || "pix") === id,
+                escolher: () => this.setState((x2) => ({ el: { ...x2.el, metodo: id } })), ...corBotao((el.metodo || "pix") === id) })),
+              elContratar: () => { if (!el.contratando) this.elContratar(); },
+              elBotaoContratar: el.contratando ? "Aguarde…" : (!s.usuario && s.sb ? "Entrar para continuar"
+                : this.creditoGeracao(el.docEsc) ? "Preencher o " + dEsc.sigla + " →"
+                : preco > 0 ? "Pagar " + brlSimples(preco) + " e preencher o " + dEsc.sigla : "Continuar para o preenchimento do " + dEsc.sigla + " (sem custo)"),
+              elContErro: el.contErro || ""
+            };
+          })(),
           elNome: d ? d.nome : "", elSigla: d ? d.sigla : "",
-          elTrocar: () => this.setState({ el: { ...s.el, doc: "", passo: 0 } }),
+          elTrocar: () => this.setState({ el: { ...s.el, doc: "", passo: 0, docEsc: s.el.doc || s.el.docEsc } }),
           elExemplos: (EX[el.doc] || []).map(([rot, txt]) => ({ rot, sel: R.objeto === txt, usar: () => set("objeto", R.objeto === txt ? "" : txt) })),
           elOrgao: R.orgao || "", elOnOrgao: this.elResponder("orgao"),
           elUf: R.uf || "", elOnUf: (e) => set("uf", String(e.target.value).toUpperCase().replace(/[^A-Z]/g, "").slice(0, 2)),
