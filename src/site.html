@@ -1005,6 +1005,12 @@
   @media (max-width: 900px) { .lmo-mem, .lmo-mem-equip { grid-template-columns: 1fr 1fr; } .lmo-mem.lmo-cab { display: none; } .lmo-mem > span:first-child { grid-column: 1 / -1; } }
   .lmo-retro { grid-template-columns: 110px minmax(0, 1fr) 150px 150px 150px; }
   .lmo-lin4 { grid-template-columns: minmax(0, 1fr) 150px 190px; }
+  .lmo-cons { grid-template-columns: minmax(0, 1.6fr) 130px 90px 70px 90px 130px 140px 110px; font-size: 13.5px; }
+  .lmo-cons.lmo-cab span { text-align: right; } .lmo-cons.lmo-cab span:first-child { text-align: left; }
+  .lmo-cmp-wrap { overflow-x: auto; }
+  .lmo-val[data-alerta="true"] { background: #FFF1CC; color: #7A4B00; font-weight: 800; border-radius: 6px; padding: 2px 4px; }
+  .lmo-chip-acao { display: inline-flex; gap: 4px; }
+  @media (max-width: 900px) { .lmo-cons { grid-template-columns: 1fr 110px 110px; } .lmo-cons > span:nth-child(3), .lmo-cons > span:nth-child(4), .lmo-cons > span:nth-child(5), .lmo-cons > span:nth-child(7) { display: none; } }
   .lmo-comp { grid-template-columns: minmax(0, 1fr) 130px 130px 120px 100px; font-size: 13.5px; }
   .lmo-comp > span:first-child small { display: block; font-size: 11.5px; color: #66757F; line-height: 1.4; margin-top: 2px; font-weight: 500; }
   .lmo-comp.lmo-cab span { text-align: right; } .lmo-comp.lmo-cab span:first-child { text-align: left; }
@@ -2333,6 +2339,8 @@
               <sc-if value="{{ moDimAtivo }}" hint-placeholder-val="{{ false }}">
                 <p class="lmo-ok">{{ moDimResumo }}</p>
                 <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>{{ moDimLiderRot }}</span><input type="text" inputmode="decimal" value="{{ moDimLider }}" sc-camel-on-input="{{ onMoDimLider }}" placeholder="Ex.: 3.950,00"></label></div>
+                <div class="lmo-agente" style="margin-top: 6px"><sc-for list="{{ moLiderOpc }}" as="o" hint-placeholder-count="1"><button type="button" class="lmo-ano" sc-camel-on-click="{{ o.usar }}">{{ o.txt }}</button></sc-for></div>
+                <sc-if value="{{ moLiderDuplo }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso">{{ moLiderDuplo }}</p></sc-if>
                 <p class="lmo-nota">Esta planilha calcula o custo do profissional da categoria informada acima. O preço do encarregado ou supervisor vem da planilha da respectiva categoria (faça uma Planilha 1 para ele e informe o preço total aqui).</p>
               </sc-if>
             </section>
@@ -2443,6 +2451,8 @@
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Exequibilidade da proposta e diligência</h2>
               <p class="lmo-nota" style="margin-top: 0">A planilha acima reproduz a proposta como apresentada. Erros de preenchimento não desclassificam se a planilha puder ser ajustada sem majorar o preço, e itens isolados abaixo do estimado não bastam, se não contrariarem exigência legal (IN 05/2017, Anexo VII-A, itens 7.9 e 9.3). Havendo dúvida, a diligência é o caminho (Lei 14.133/2021, art. 59, § 2º).</p>
+              <div class="lmo-agente"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moRefUsar }}">Usar a Planilha 1 (estimativa do órgão) como referência</button></div>
+              <sc-if value="{{ moRefTem }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ moRefTxt }}</p></sc-if>
               <sc-for list="{{ moExeqItens }}" as="a" hint-placeholder-count="2"><p class="{{ a.cls }}" style="margin-top: 8px">{{ a.t }}</p></sc-for>
               <sc-if value="{{ moTemDilig }}" hint-placeholder-val="{{ false }}">
                 <p class="lmo-nota"><b>Minuta de diligência à licitante</b> · confira, ajuste e envie pelo sistema da licitação.</p>
@@ -2553,6 +2563,36 @@
                 <button type="button" class="lve-voltar" sc-camel-on-click="{{ moLimpar }}">Limpar a planilha</button>
               </div>
               <sc-if value="{{ moErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moErro }}</p></sc-if>
+            </section>
+
+            <section class="lmo-bloco" id="lmo-lista">
+              <h2 class="lmo-h2">{{ moListaTitulo }}</h2>
+              <p class="lmo-nota" style="margin-top: 0">{{ moListaNota }}</p>
+              <div class="lmo-agente"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moListaAdd }}">{{ moListaBotao }}</button></div>
+              <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
+              <sc-if value="{{ moTemLista }}" hint-placeholder-val="{{ false }}">
+                <sc-if value="{{ moListaCons }}" hint-placeholder-val="{{ true }}">
+                <div class="lmo-tabela" style="margin-top: 12px" role="table">
+                  <div class="lmo-lin lmo-cons lmo-cab" role="row"><span>Categoria</span><span>Preço por empregado</span><span>Empregados por posto</span><span>Postos</span><span>Empregados</span><span>Valor mensal</span><span>Valor global</span><span></span></div>
+                  <sc-for list="{{ moLista }}" as="l" hint-placeholder-count="2">
+                    <div class="lmo-lin lmo-cons" role="row"><span><b>{{ l.nome }}</b></span><span class="lmo-val">{{ l.preco }}</span><span class="lmo-val">{{ l.empPosto }}</span><span class="lmo-val">{{ l.postos }}</span><span class="lmo-val">{{ l.emp }}</span><span class="lmo-val">{{ l.mensal }}</span><span class="lmo-val">{{ l.global }}</span>
+                      <span class="lmo-mem-acoes"><button type="button" class="lmo-ano" sc-camel-on-click="{{ l.abrir }}">Abrir</button><button type="button" class="lmo-x" aria-label="Remover do quadro" sc-camel-on-click="{{ l.remover }}">×</button></span></div>
+                  </sc-for>
+                  <div class="lmo-lin lmo-cons lmo-tot" role="row"><span>Total da contratação ({{ moListaTot.cats }} categoria(s))</span><span></span><span></span><span></span><span class="lmo-val">{{ moListaTot.emp }}</span><span class="lmo-val">{{ moListaTot.mensal }}</span><span class="lmo-val">{{ moListaTot.global }}</span><span></span></div>
+                </div>
+                </sc-if>
+                <sc-if value="{{ moListaProp }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-cmp-wrap">
+                <div class="lmo-tabela" style="margin-top: 12px; min-width: 560px" role="table">
+                  <div class="lmo-lin lmo-cab" role="row" style="{{ moCmpGrid }}"><span>Por empregado</span><sc-for list="{{ moCmpCols }}" as="c" hint-placeholder-count="2"><span style="text-align: right">{{ c.nome }}</span></sc-for></div>
+                  <sc-for list="{{ moCmpLinhas }}" as="l" hint-placeholder-count="6">
+                    <div class="lmo-lin" role="row" style="{{ moCmpGrid }}" data-forte="{{ l.forte }}"><span>{{ l.rot }}</span><sc-for list="{{ l.cels }}" as="c" hint-placeholder-count="2"><span class="lmo-val" data-alerta="{{ c.alerta }}" title="{{ c.tit }}">{{ c.v }}</span></sc-for></div>
+                  </sc-for>
+                </div>
+                </div>
+                <div class="lmo-agente" style="margin-top: 8px"><sc-for list="{{ moCmpAbrir }}" as="a" hint-placeholder-count="2"><span class="lmo-chip-acao"><button type="button" class="lmo-ano" sc-camel-on-click="{{ a.abrir }}">Abrir {{ a.nome }}</button><button type="button" class="lmo-x" aria-label="Remover" sc-camel-on-click="{{ a.remover }}">×</button></span></sc-for></div>
+                </sc-if>
+              </sc-if>
             </section>
           </div>
           </sc-if>
@@ -4943,10 +4983,20 @@ const MO_SNAP_FORA = ["ant", "fontes", "falhas", "falhas_aceite", "exeq", "dilig
 const moSnap = (d) => { const o = {}; Object.keys(d || {}).forEach((k) => { if (!MO_SNAP_FORA.includes(k)) o[k] = d[k]; }); return JSON.parse(JSON.stringify(o)); };
 // aplica a memória de cálculo dos insumos a uma planilha guardada (planilha anterior, categorias do quadro, propostas)
 function moDerivado(dX) {
-  const d = { ...MO_PADRAO, ...dX }, emp = Math.max(1, moNum(d.emp_posto) * moNum(d.postos)), mem = moMemoria(d, emp);
+  let d = { ...MO_PADRAO, ...dX };
+  if (d.dim === "vigilancia" && d.vg_calc === "sim") { const vg = moVigAdicionais(d); d = { ...d, noturno: vg.noturno.toFixed(4), hnr: vg.hnr.toFixed(4), he_feriado: vg.he.toFixed(4), intra: vg.intraPct.toFixed(12), dias: vg.v12 ? "15,22" : d.dias }; }
+  const emp = Math.max(1, moNum(d.emp_posto) * moNum(d.postos)), mem = moMemoria(d, emp);
   Object.keys(MO_MEM).forEach((k) => { if (mem[k].ativo) d[k] = mem[k].total.toFixed(4); });
   return d;
 }
+// valor de atenção (metodologia dos cadernos técnicos de limpeza e vigilância): a mesma planilha com os parâmetros variáveis
+// a 50% do cenário máximo – ausências legais, licenças, acidente e maternidade, passagem predominante (transporte),
+// uniformes e materiais e feriados trabalhados
+function moAtencao(dX) {
+  const d = moDerivado(dX), meio = (k) => String(moNum(d[k]) / 2);
+  return { ...d, aus: meio("aus"), pat: meio("pat"), acid: meio("acid"), mat: meio("mat"), vt_tarifa: meio("vt_tarifa"), unif: meio("unif"), materiais: meio("materiais"), he_feriado: meio("he_feriado") };
+}
+const MO_MODS = [["M1", "Módulo 1 – Remuneração"], ["M2", "Módulo 2 – Encargos e benefícios"], ["M3", "Módulo 3 – Rescisão"], ["M4", "Módulo 4 – Reposição do ausente"], ["M5", "Módulo 5 – Insumos"], ["M6", "Módulo 6 – CI, tributos e lucro"], ["total", "Preço por empregado"]];
 const MO_INSUMOS = [["unif", "Uniformes e EPI"], ["materiais", "Materiais"], ["equip", "Equipamentos"], ["outros5", "Outros insumos"]];
 // reajuste dos insumos por índice: ciclos de 12 meses a partir do mês do orçamento estimado (mesma contagem da calculadora:
 // do mês do orçamento ao 11º mês seguinte, 12 variações mensais), acumulados até o mês de referência
@@ -6513,6 +6563,43 @@ class Component extends DCLogic {
   }
   moModo(modo) { this.setState({ mo: { modo, d: this.moCarregar(modo), enviando: false, agente: false, erro: "", ok: "", obs: [] } }); }
 
+  // quadro consolidado (Planilhas 1 e 2: várias categorias na mesma contratação) e comparativo de propostas (Planilha 3)
+  moListaLer(modo) { try { const l = JSON.parse(localStorage.getItem("lv-mo-lista-" + modo) || "[]"); return Array.isArray(l) ? l : []; } catch (e) { return []; } }
+  moListaGravar(modo, lista) { try { localStorage.setItem("lv-mo-lista-" + modo, JSON.stringify(lista)); } catch (e) {} this.setState((x) => ({ mo: { ...x.mo, lista, listaModo: modo } })); }
+  moListaAdd() {
+    const mo = this.state.mo, d = mo.d, U = this._moUltimo || {}, r = U.r;
+    if (!r || !r.total) { this.setState((x) => ({ mo: { ...x.mo, erro: "Preencha a planilha antes de incluí-la no quadro." } })); return; }
+    const prop = mo.modo === "proposta";
+    const nome = prop ? (String(d.pr_licitante || "").trim() || "Licitante sem nome") : ((d.categoria || "Categoria sem nome") + (d.dim === "vigilancia" && d.vg_escala ? " – " + ((MO_VIGILANCIA.find((e) => e[0] === d.vg_escala) || [])[1] || "") : ""));
+    const fs = d.falhas || [], c = (g) => fs.filter((f) => f.gravidade === g).length;
+    const item = { nome, em: new Date().toISOString(), d: moSnap(d), res: { total: r.total, emp: Math.max(0, moNum(U.dUsado ? U.dUsado.emp_posto : d.emp_posto) * moNum(U.dUsado ? U.dUsado.postos : d.postos)), empPosto: U.dUsado ? U.dUsado.emp_posto : d.emp_posto, postos: U.dUsado ? U.dUsado.postos : d.postos,
+      mensal: r.mensal, global: r.global, meses: d.meses || "12", mods: Object.fromEntries(MO_MODS.map(([k]) => [k, r[k]])), ofertado: r.vigente || 0, estimado: moNum(d.pr_estimado), falhas: [c("alta"), c("media"), c("baixa")],
+      exeq: d.exeq ? d.exeq.conclusao : "", regime: d.regime || "", reforma: d.reforma || "" } };
+    const lista = this.moListaLer(mo.modo), i = lista.findIndex((x) => x.nome === nome);
+    if (i >= 0) lista[i] = item; else lista.push(item);
+    this.moListaGravar(mo.modo, lista);
+    this.setState((x) => ({ mo: { ...x.mo, erro: "", ok: "✓ " + nome + (i >= 0 ? " atualizada no " : " incluída no ") + (prop ? "comparativo das propostas." : "quadro consolidado.") } }));
+  }
+  moListaAbrir(i) {
+    const modo = this.state.mo.modo, it = this.moListaLer(modo)[i]; if (!it) return;
+    const d = { ...MO_PADRAO, ...it.d };
+    try { localStorage.setItem("lv-mo-" + modo, JSON.stringify(d)); } catch (e) {}
+    this.setState((x) => ({ mo: { ...x.mo, d, erro: "", ok: "✓ " + it.nome + " aberta para edição. Depois de alterar, inclua de novo no quadro para atualizar." } }));
+    try { window.scrollTo({ top: document.querySelector(".lmo").offsetTop - 80, behavior: "smooth" }); } catch (e) {}
+  }
+  moListaDel(i) { const modo = this.state.mo.modo, l = this.moListaLer(modo); l.splice(i, 1); this.moListaGravar(modo, l); }
+  // Planilha 3: a estimativa do órgão (Planilha 1) como referência – valor estimado (cenário máximo) e valor de atenção
+  moRefPlan1() {
+    const plan = this.moCarregar("planejamento");
+    const rMax = moCalcular(moDerivado(plan), "planejamento", null), rAt = moCalcular(moAtencao(plan), "planejamento", null);
+    if (!rMax.total) { this.setState((x) => ({ mo: { ...x.mo, erro: "A Planilha 1 (planejamento) está vazia. Monte a estimativa do órgão nela primeiro." } })); return; }
+    const ref = { categoria: plan.categoria || "", max: rMax.total, atencao: rAt.total, mods: Object.fromEntries(MO_MODS.map(([k]) => [k, rMax[k]])), modsAt: Object.fromEntries(MO_MODS.map(([k]) => [k, rAt[k]])), em: new Date().toISOString() };
+    this.setState((x) => {
+      const d = { ...x.mo.d, pr_ref: ref, pr_estimado: String(rMax.total).replace(".", ",") };
+      try { localStorage.setItem("lv-mo-" + x.mo.modo, JSON.stringify(d)); } catch (e) {}
+      return { mo: { ...x.mo, d, erro: "", ok: "✓ Estimativa da Planilha 1 usada como referência." } };
+    });
+  }
   // memória de cálculo dos insumos (Módulo 5)
   moMemMudar(k, fn) {
     this.setState((x) => {
@@ -6642,6 +6729,9 @@ class Component extends DCLogic {
     const brlX = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const rjIns = rep && rj && rj.pronto && r ? MO_INSUMOS.filter(([k]) => r["orig_" + k] > 0).map(([k, nome]) => [nome, brlX(r["orig_" + k]), d["rj_" + k] === "sim" ? f6(rj.fator) : "não reajustado", brlX(r[k])]) : [];
     const rjCab = rep && rj && rj.pronto ? "Reajuste dos insumos pelo " + rj.serieNome + (rj.fonte ? " (" + rj.fonte + ")" : "") + ": ciclos de 12 meses contados do orçamento estimado (" + (d.rj_orcamento || "").split("-").reverse().join("/") + "), fator acumulado " + f6(rj.fator) + " (Lei 14.133/2021, art. 25, § 7º; IN 05/2017, art. 54, § 2º)." + (rj.falta ? " Há mês sem índice divulgado no período." : "") : "";
+    const listaCab = P.moTemLista ? (prop ? ["Por empregado"].concat(P.moCmpCols.map((c) => c.nome)) : ["Categoria", "Preço por empregado", "Empregados por posto", "Postos", "Empregados", "Valor mensal", "Valor global"]) : [];
+    const listaTab = !P.moTemLista ? [] : prop ? P.moCmpLinhas.map((l) => [l.rot].concat(l.cels.map((c) => c.v + (c.alerta ? " ⚠" : ""))))
+      : P.moLista.map((l) => [l.nome, l.preco, l.empPosto, l.postos, l.emp, l.mensal, l.global]).concat([["Total da contratação (" + P.moListaTot.cats + " categoria(s))", "", "", "", P.moListaTot.emp, P.moListaTot.mensal, P.moListaTot.global]]);
     const compU = rep && this._moUltimo ? this._moUltimo.comp : null;
     const compTab = compU ? compU.linhas.map((l) => [l.rot, brlTxt0(l.a), brlTxt0(l.n), (l.dv > 0 ? "+" : "") + brlTxt0(l.dv), l.a ? ((l.p > 0 ? "+" : "") + (l.p * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%") : "—", l.motivo, l.tot]) : [];
     const retro = (this._moUltimo && this._moUltimo.retro) || null, minuta = (this._moUltimo && this._moUltimo.minuta) || [];
@@ -6781,6 +6871,15 @@ class Component extends DCLogic {
           const wmn = wb.addWorksheet("Minuta de apostilamento", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
           wmn.columns = [{ width: 100 }];
           minuta.forEach((t, i) => { const x = wmn.addRow([t]); x.getCell(1).alignment = { wrapText: true, vertical: "top" }; x.getCell(1).font = { size: 11, bold: i === 0 }; x.height = altura(t, 95, 15); });
+        }
+        if (listaTab.length) {
+          const wl = wb.addWorksheet(prop ? "Comparativo das propostas" : "Quadro consolidado", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
+          wl.columns = listaCab.map((c, i) => ({ width: i ? 18 : 40 }));
+          let lr = wl.addRow([P.moListaTitulo]); wl.mergeCells(lr.number, 1, lr.number, listaCab.length); lr.getCell(1).font = { bold: true, size: 13, color: { argb: X.branco } }; lr.getCell(1).fill = fill(X.navy); lr.height = 24;
+          lr = wl.addRow([P.moListaNota]); wl.mergeCells(lr.number, 1, lr.number, listaCab.length); lr.getCell(1).font = { italic: true, size: 9, color: { argb: X.fraco } }; lr.getCell(1).alignment = { wrapText: true }; lr.height = altura(P.moListaNota, 30 + listaCab.length * 16, 12);
+          const hl = wl.addRow(listaCab); hl.eachCell((c) => { c.font = { bold: true, color: { argb: X.branco } }; c.fill = fill(X.teal); c.alignment = { wrapText: true, vertical: "middle" }; });
+          listaTab.forEach((v, i) => { const x = wl.addRow(v); const tot = !prop && i === listaTab.length - 1; x.eachCell({ includeEmpty: true }, (c, j) => { c.border = { bottom: fino }; c.alignment = { horizontal: j > 1 ? "right" : "left", wrapText: true }; if (tot) { c.font = { bold: true }; c.fill = fill(X.tot); }
+            if (String(c.value || "").indexOf("⚠") > 0) c.fill = fill(X.ambar); }); });
         }
         if (compTab.length) {
           const wc = wb.addWorksheet("Quadro comparativo", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
@@ -6962,6 +7061,12 @@ class Component extends DCLogic {
             body: dims.map((v) => [v[1], v[2], v[3], v[4], v[5], v[6]]).concat([[{ content: P.moDimResumo, colSpan: 6, styles: { fontStyle: "bold", textColor: C.teal } }]]),
             theme: "plain", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8 }, styles: { ...base.styles, fontSize: 7.6, cellPadding: 1.6, lineWidth: { bottom: 0.1 } },
             columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" }, 4: { halign: "right" }, 5: { halign: "right" } } });
+        }
+        // quadro consolidado / comparativo das propostas
+        if (listaTab.length) {
+          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: P.moListaTitulo.toUpperCase(), colSpan: listaCab.length, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }], listaCab],
+            body: listaTab.map((v, i) => v.map((c, j) => ({ content: String(c).replace(" ⚠", " (!)"), styles: { halign: j ? "right" : "left", fontStyle: !prop && i === listaTab.length - 1 ? "bold" : "normal", fillColor: String(c).indexOf("⚠") > 0 ? C.ambar : (!prop && i === listaTab.length - 1 ? C.tot : null) } }))),
+            theme: "plain", rowPageBreak: "avoid", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.6 }, styles: { ...base.styles, fontSize: 7, cellPadding: 1.3, lineWidth: { bottom: 0.1 } } });
         }
         // quadro comparativo da repactuação
         if (compTab.length) {
@@ -7263,7 +7368,7 @@ class Component extends DCLogic {
         pisCof: t2.antigos ? pctC(r2.aPis + r2.aCof) : "—", cbs: t2.antigos ? (t2.teste ? "0,9% (compensável)" : "—") : pctC(r2.aCbs), ibs: t2.antigos ? (t2.teste ? "0,1% (compensável)" : "—") : pctC(r2.aIbs),
         iss: pctC(t2.antigos ? r2.aIss : r2.aIssT), trib: pct(r2.To), total: brl(r2.total), mensal: brl(mensal), r: r2 };
     }) : [];
-    this._moUltimo.transicao = transicao; this._moUltimo.mem = mem; this._moUltimo.empTot = empTot;
+    this._moUltimo.transicao = transicao; this._moUltimo.dUsado = d; this._moUltimo.mem = mem; this._moUltimo.empTot = empTot;
     const vedado = d.regime === "simples" && !/limp|vigil|conserva/i.test((d.tipo_servico || "") + " " + (d.categoria || ""));
     const f2 = (v) => (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const memGrupos = Object.keys(MO_MEM).map((k) => {
@@ -7356,6 +7461,19 @@ class Component extends DCLogic {
       "______________________________________\nAutoridade competente"
     ] : [];
     this._moUltimo.comp = comp;
+    // quadro consolidado / comparativo de propostas
+    const lista = mo.listaModo === mo.modo && mo.lista ? mo.lista : this.moListaLer(mo.modo);
+    const ref = prop ? d0.pr_ref || null : null;
+    const mediana = (xs) => { const v = xs.filter((x) => x > 0).sort((a, b) => a - b); if (!v.length) return 0; const m = Math.floor(v.length / 2); return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };
+    const medMods = Object.fromEntries(MO_MODS.map(([k]) => [k, mediana(lista.map((it) => it.res.mods[k]))]));
+    const cmpCols = (ref ? [{ nome: "Estimativa do órgão", ref: true }] : []).concat(lista.map((it) => ({ nome: it.nome, it })));
+    const cmpLinhas = prop ? MO_MODS.map(([k, rot]) => ({ rot, forte: k === "total", cels: cmpCols.map((c) => {
+        const v = c.ref ? ref.mods[k] : c.it.res.mods[k], baixo = !c.ref && lista.length >= 2 && medMods[k] > 0 && v < 0.85 * medMods[k], abaixoRef = !c.ref && ref && ref.mods[k] > 0 && v < 0.85 * ref.mods[k];
+        return { v: brl(v), alerta: baixo || abaixoRef, tit: baixo ? "Mais de 15% abaixo da mediana das propostas" : abaixoRef ? "Mais de 15% abaixo da estimativa do órgão" : "" }; }) }))
+      .concat([{ rot: "Preço ofertado", forte: true, cels: cmpCols.map((c) => ({ v: c.ref ? brl(ref.max) : brl(c.it.res.ofertado), alerta: !c.ref && ref && c.it.res.ofertado && c.it.res.ofertado < ref.atencao, tit: "Abaixo do valor de atenção" })) },
+        { rot: "Falhas (alta / média / baixa)", cels: cmpCols.map((c) => ({ v: c.ref ? "—" : c.it.res.falhas.join(" / "), alerta: !c.ref && c.it.res.falhas[0] > 0, tit: "" })) },
+        { rot: "Conclusão do agente", cels: cmpCols.map((c) => ({ v: c.ref ? "—" : ({ exequivel: "exequível", indicios: "indícios: diligência", inexequivel: "inexequível" }[c.it.res.exeq] || "—"), alerta: !c.ref && c.it.res.exeq && c.it.res.exeq !== "exequivel", tit: "" })) }]) : [];
+    const liderOpc = mo.modo === "planejamento" ? lista.filter((it) => /encarreg|supervis/i.test(it.nome)) : [];
     this._moUltimo.gt = { tipo: d.gt_tipo, cvP, cvTot, cvEmp, empN, fg, fgComM6, fixa, fatorM6 }; this._moUltimo.retro = retro; this._moUltimo.minuta = minuta;
     return {
       moGtOpcoes: [["cv", "Conta-depósito vinculada"], ["fg", "Pagamento pelo fato gerador"]].map(([id, nome]) => ({ nome, ativo: d.gt_tipo === id, escolher: () => this.moSet("gt_tipo")(d.gt_tipo === id ? "" : id), ...corBotao(d.gt_tipo === id) })),
@@ -7381,6 +7499,8 @@ class Component extends DCLogic {
         if (of && est) { const razao = of / est;
           itens.push(razao < 0.5 ? { ok: false, t: "Preço ofertado de " + brl(of) + " = " + pct(razao) + " do estimado (" + brl(est) + "): abaixo de 50%, há indício de inexequibilidade, e a diligência é obrigatória antes de qualquer decisão (IN SEGES/ME nº 73/2022, art. 34)." }
             : { ok: true, t: "Preço ofertado de " + brl(of) + " = " + pct(razao) + " do estimado (" + brl(est) + "): não há o indício de inexequibilidade do art. 34 da IN SEGES/ME nº 73/2022; confira as falhas item a item." }); }
+        if (of && ref && ref.atencao) itens.push(of < ref.atencao ? { ok: false, t: "Preço ofertado abaixo do valor de atenção da estimativa do órgão (" + brl(ref.atencao) + "): os cadernos técnicos de limpeza e vigilância orientam a promover diligência para confirmar a exequibilidade antes de aceitar a proposta." }
+          : { ok: true, t: "Preço ofertado acima do valor de atenção da estimativa do órgão (" + brl(ref.atencao) + ")." });
         if (of && r.total && Math.abs(r.total - of) > 0.05) itens.push({ ok: false, t: "Recalculada com os percentuais e valores da própria proposta, a planilha dá " + brl(r.total) + " por empregado, " + (r.total > of ? "acima" : "abaixo") + " do preço ofertado (" + brl(of) + "): diferença de " + brl(Math.abs(r.total - of)) + ". Confira as contas da licitante." + (r.total > of ? " Se a correção exigir majorar o preço, ela não é admitida (IN 05/2017, Anexo VII-A, item 7.9)." : "") });
         const ex = d.exeq || null, rot = { exequivel: "Proposta exequível", indicios: "Indícios de inexequibilidade: diligência necessária", inexequivel: "Proposta inexequível" };
         if (ex) itens.push({ ok: ex.conclusao === "exequivel", t: "Agente – " + rot[ex.conclusao] + ": " + ex.fundamento });
@@ -7395,6 +7515,22 @@ class Component extends DCLogic {
           moCopiarDilig: () => { try { navigator.clipboard.writeText(texto.join("\n\n")); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Diligência copiada." } })); } catch (e) {} } };
       })(),
       moBaixarNota: () => this.moNotaTecnica(),
+      moTemLista: lista.length > 0, moListaTitulo: prop ? "Comparativo das propostas" : "Quadro consolidado da contratação (várias categorias)",
+      moListaNota: prop ? "Inclua cada proposta analisada para vê-las lado a lado. Em amarelo, módulos mais de 15% abaixo da mediana das propostas ou da estimativa do órgão e preços abaixo do valor de atenção: pontos para a diligência, não motivo automático de desclassificação (IN 05/2017, Anexo VII-A, item 9.3)."
+        : "Monte uma planilha por categoria (servente, encarregado, vigilante, supervisor…) e inclua cada uma aqui: o quadro soma empregados, valor mensal e global da contratação. A categoria com o mesmo nome é atualizada.",
+      moListaBotao: prop ? "Incluir esta proposta no comparativo" : "Incluir esta categoria no quadro",
+      moListaAdd: () => this.moListaAdd(),
+      moLista: lista.map((it, i) => ({ nome: it.nome, preco: brl(it.res.total), empPosto: String(it.res.empPosto || ""), postos: String(it.res.postos || ""), emp: String(it.res.emp), mensal: brl(it.res.mensal), global: brl(it.res.global),
+        abrir: () => this.moListaAbrir(i), remover: () => this.moListaDel(i), atual: (it.nome === (prop ? (String(d0.pr_licitante || "").trim() || "Licitante sem nome") : null)) })),
+      moListaTot: (() => { const m = lista.reduce((a, it) => a + (Number(it.res.mensal) || 0), 0), g = lista.reduce((a, it) => a + (Number(it.res.global) || 0), 0), e = lista.reduce((a, it) => a + (Number(it.res.emp) || 0), 0);
+        return { emp: String(e), mensal: brl(m), global: brl(g), cats: String(lista.length) }; })(),
+      moListaProp: prop, moListaCons: !prop,
+      moCmpCols: cmpCols.map((c) => ({ nome: c.nome })), moCmpLinhas: cmpLinhas, moCmpGrid: "grid-template-columns: minmax(170px, 1.3fr) repeat(" + Math.max(1, cmpCols.length) + ", minmax(120px, 1fr))",
+      moCmpAbrir: lista.map((it, i) => ({ nome: it.nome, abrir: () => this.moListaAbrir(i), remover: () => this.moListaDel(i) })),
+      moLiderOpc: liderOpc.map((it) => ({ txt: "Usar " + brl(it.res.total) + " (" + it.nome + ", do quadro)", usar: () => this.moSet("preco_lider")(String(it.res.total).replace(".", ",")) })),
+      moLiderDuplo: liderOpc.length > 0 && moNum(d0.preco_lider) > 0 ? "Se o encarregado ou supervisor também entra no quadro consolidado como categoria própria, deixe este preço em branco para não contá-lo duas vezes no valor da contratação." : "",
+      moRefTem: !!ref, moRefTxt: ref ? "Estimativa da Planilha 1" + (ref.categoria ? " (" + ref.categoria + ")" : "") + ": " + brl(ref.max) + " por empregado (cenário máximo) · valor de atenção " + brl(ref.atencao) + ", com os parâmetros variáveis a 50%, como nos cadernos técnicos de limpeza e vigilância." : "",
+      moRefUsar: () => this.moRefPlan1(),
       moTemComp: !!comp, moSemComp: rep && !comp,
       moComp: comp ? comp.linhas.map((l) => ({ rot: l.rot, a: brl(l.a), n: brl(l.n), dv: (l.dv > 0 ? "+" : "") + brl(l.dv), p: l.a ? (l.p > 0 ? "+" : "") + pct(l.p) : "—", motivo: l.motivo, temMotivo: !!l.motivo,
         cls: "lmo-lin lmo-comp" + (l.tot === 2 ? " lmo-tot" : ""), forte: l.tot === 1, mudou: Math.abs(l.dv) >= 0.005 && !l.tot })) : [],
