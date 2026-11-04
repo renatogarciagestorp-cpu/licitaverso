@@ -1498,6 +1498,39 @@
   .lvp-garantia span { color: #55666D; }
   @media (max-width: 760px) { .lvp-garantia { border-bottom-color: #E3E9E8; } }
 
+  /* ===== Planos, etapa 2 do "clean" ===== */
+  .lvp-hero { background: #F6F8F7; color: #0B1F2A; padding: 52px 24px 40px; }
+  .lvp-h1 { font-size: 44px; max-width: 18ch; }
+  .lvp-lead { color: #4A5D65; font-size: 16.5px; }
+  .lvp-fund { background: #FFF8E8; border: 1px solid #F1D9A6; }
+  .lvp-fund b { color: #8A5A00; }
+  .lvp-fund span { color: #5E4A21; }
+  .lvp-cfg { background: #fff; border: 1px solid #E3E9E8; box-shadow: none; }
+  .lvp-cfg-frase { color: #0B1F2A; font-size: 19px; }
+  .lvp-chip { border-color: #D5DFDD; color: #3D5058; background: #fff; }
+  .lvp-chip:hover { border-color: #0FA36B; }
+  .lvp-chip[aria-pressed="true"] { background: #0A1F2A; border-color: #0A1F2A; color: #fff; }
+  .lvp-stepper { border-color: #D5DFDD; }
+  .lvp-stepper button { background: #F1F5F4; color: #0B1F2A; }
+  .lvp-cfg-nota { color: #0A7A50; }
+  .lvp-cfg-rodape { color: #6A7B82; border-top-color: #E3E9E8; }
+  .lvp-card, .lvp-card.lvp-leve { box-shadow: none; border-color: #E3E9E8; background: #fff; }
+  .lvp-card.lvp-dest { background: #fff; color: #0B1F2A; border: 2px solid #0FA36B; box-shadow: none; transform: none; }
+  .lvp-dest .lvp-publico, .lvp-dest .lvp-unid { color: #6A7B82; }
+  .lvp-dest .lvp-nota { color: #0F6B7E; }
+  .lvp-dest .lvp-economia { background: #FFF4DC; color: #6B4A00; }
+  .lvp-dest .lvp-itens { border-top-color: #EDF2F1; }
+  .lvp-dest .lvp-itens li { color: #3D5058; }
+  .lvp-dest .lvp-itens li::before { color: #0FA36B; }
+  .lvp-dest .lvp-detalhe, .lvp-dest .lvp-de { color: #8A9AA0; }
+  .lvp-dest .lvp-garantia-cta { color: #0A7A50; }
+  .lvp-selo { background: #0FA36B; color: #fff; }
+  .lvp-itens { gap: 8px; }
+  .lvp-itens li { font-size: 13.5px; }
+  .lvp-tr.lvp-thead > span:last-child { background: #E3F5EC; color: #0A7A50; }
+  .lvp-tr > .lvp-forte { background: #F6FBF8; }
+  .lvp-faq-sinal { background: transparent; }
+  @media (max-width: 960px) { .lvp-hero { padding: 32px 16px 28px; } .lvp-h1 { font-size: 32px; } }
 </style>
 </helmet>
 
@@ -3519,10 +3552,7 @@
         <div class="lvp-hero-in">
           <div class="lvp-hero-txt">
             <h1 class="lvp-h1">Planos para quem trabalha com licitação todo dia</h1>
-            <p class="lvp-lead">A pesquisa na Biblioteca Jurídica, com decisões de todo o país, é aberta e gratuita. Os planos liberam o fórum, a Calculadora (reajuste e planilhas de mão de obra), os agentes de IA – O Parecerista, O Elaborador e o agente das planilhas – e os descontos em cursos e consultoria.</p>
-            <ul class="lvp-provas">
-              <sc-for list="{{ provasPlanos }}" as="pv" hint-placeholder-count="3"><li>{{ pv }}</li></sc-for>
-            </ul>
+            <p class="lvp-lead">A Biblioteca Jurídica é aberta e gratuita. Os planos liberam o fórum, a Calculadora, os agentes de IA e os descontos em cursos e consultoria. Teste 7 dias grátis, sem cartão.</p>
             <sc-if value="{{ temFundador }}" hint-placeholder-val="{{ true }}">
               <div class="lvp-fund"><b>{{ fundTitulo }}</b><span>{{ fundTexto }}</span></div>
             </sc-if>
@@ -3562,7 +3592,7 @@
           </div>
         </div>
       </section>
-      <section style="max-width: 1240px; margin: -64px auto 0; padding: 0 24px 80px; position: relative">
+      <section class="lvp-corpo" style="max-width: 1240px; margin: 0 auto; padding: 8px 24px 80px; position: relative">
         <div class="lvp-cards">
           <sc-for list="{{ planos }}" as="p" hint-placeholder-count="4">
             <article class="{{ p.classe }}">
