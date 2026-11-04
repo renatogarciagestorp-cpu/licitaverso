@@ -1521,6 +1521,21 @@
   .lva-passos > li, .lve-como > *, .lve-docs > * { box-shadow: none !important; }
   .lva-passos, .lve-docs, .lve-grid, .lve-rapido, .lve-como, .lve-wiz, .lvc-tipos, .lvc-abas { margin-top: 24px; box-shadow: none; }
   @media (max-width: 760px) { .lvx-ph { padding: 30px 16px 30px; } .lvx-ph .lva-h1 { font-size: 29px; } .lvx-ph .lvf-h1 { font-size: 27px; } }
+  /* ===== etapa 4 do "clean": faixa final da página inicial ===== */
+  .lvh-final { background: #fff; color: #0B1F2A; border-top: 1px solid #E3E9E8; margin-top: 56px; }
+  .lvh-final-sub { color: #4A5D65; }
+  .lvh-free-card { color: #0B1F2A; background: #F8FAF9; border-color: #E3E9E8; }
+  .lvh-free-card:hover { transform: none; background: #fff; border-color: #0FA36B; }
+  .lvh-free-ic { background: #E3F5EC; color: #0A7A50; }
+  .lvh-free-selo { background: #E3F5EC; color: #0A7A50; }
+  .lvh-free-d { color: #55666D; }
+  .lvh-free-cta { color: #0A7A50; }
+  .lvh-ticket { background: #FFF8E8; border: 1px solid #F1D9A6; }
+  .lvh-ticket-off { border-right: 1px solid #F1D9A6; }
+  .lvh-ticket-off > span { color: #8A5A00; }
+  .lvh-ticket-off > b { color: #B07400; }
+  .lvh-ticket-txt > b, .lvh-ticket-vagas > b { color: #0B1F2A; }
+  .lvh-ticket-txt > span, .lvh-ticket-vagas > span { color: #5E4A21; }
 </style>
 </helmet>
 
@@ -1875,8 +1890,8 @@
 
       <section class="lvh-final">
         <div class="lvh-final-in">
-          <p class="lvh-kicker" style="color: #7FE3B6">Sem cartão de crédito</p>
-          <h2 class="lvh-h2" style="color: #fff; margin: 10px 0 0">Comece pelo que é grátis.</h2>
+          <p class="lvh-kicker">Sem cartão de crédito</p>
+          <h2 class="lvh-h2" style="margin: 10px 0 0">Comece pelo que é grátis.</h2>
           <p class="lvh-final-sub">Três formas de conhecer o Licitacon antes de assinar. Você só paga se quiser mais.</p>
           <div class="lvh-free">
             <sc-for list="{{ homeGratis }}" as="g" hint-placeholder-count="3">
@@ -3740,14 +3755,14 @@
 
     <!-- ===================== ÁREA DO ASSINANTE ===================== -->
     <sc-if value="{{ isConta }}" hint-placeholder-val="{{ false }}">
-      <section style="background: #0A1F2A; color: #fff; padding: 44px 24px 30px">
+      <section class="lvx-ph lvx-conta" style="padding: 36px 24px 28px">
         <div style="max-width: 1240px; margin: 0 auto; display: flex; align-items: center; gap: 18px; flex-wrap: wrap">
-          <span style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(150deg, #0FA36B, #0F6B7E); display: grid; place-items: center; font-weight: 800; font-size: 21px; color: #fff; flex: none">{{ contaIniciais }}</span>
+          <span style="width: 60px; height: 60px; border-radius: 50%; background: #0A1F2A; display: grid; place-items: center; font-weight: 800; font-size: 21px; color: #3FD49A; flex: none">{{ contaIniciais }}</span>
           <div style="flex: 1; min-width: 240px">
             <h1 style="font-size: 32px; letter-spacing: -0.03em; font-weight: 800; margin: 0">Área do assinante</h1>
-            <p style="font-size: 15px; color: #A9BEC6; margin: 6px 0 0">{{ contaResumo }}</p>
+            <p class="lvx-ph-lead" style="font-size: 15px; margin: 6px 0 0">{{ contaResumo }}</p>
           </div>
-          <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; background: #0FA36B; color: #06251A; padding: 7px 13px; border-radius: 999px">{{ planoBadge }}</span>
+          <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; background: #E3F5EC; color: #0A7A50; padding: 7px 13px; border-radius: 999px">{{ planoBadge }}</span>
         </div>
       </section>
 

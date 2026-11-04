@@ -45,7 +45,7 @@ button,input,select,textarea{font-family:inherit}
 .lvbar nav.prin a[aria-current]{color:#fff}
 .lvbar nav.prin a[aria-current]::after{content:"";position:absolute;left:11px;right:11px;bottom:1px;height:2px;background:#0FA36B;border-radius:2px}
 .lvbar .dir{margin-left:auto;display:flex;align-items:center;gap:10px}
-.lvbar .cta{background:#0FA36B;color:#06251A;text-decoration:none;font-weight:700;font-size:14px;padding:10px 16px;border-radius:10px;box-shadow:0 6px 18px rgba(15,163,107,.28)}
+.lvbar .cta{background:#0FA36B;color:#06251A;text-decoration:none;font-weight:700;font-size:14px;padding:10px 16px;border-radius:10px;box-shadow:none}
 .lvbar .cta:hover{background:#14B978}
 .lvbar .conta{color:#C9D6DB;text-decoration:none;font-size:14px;font-weight:600;padding:8px 4px}
 .lvbar .conta:hover{color:#fff}
