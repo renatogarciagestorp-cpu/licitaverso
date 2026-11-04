@@ -4922,9 +4922,9 @@ function moReajuste(d, indices) {
   if (base === null) return { ativo: true, pronto: false, fator: 1, msg: "Informe o mês do orçamento estimado que deu origem à contratação." };
   const ciclos = []; let fator = 1, falta = false;
   for (let k = 1; base + 12 * (k - 1) + 11 <= ref && k <= 10; k++) {
-    const ini = base + 12 * (k - 1); let f = 1;
-    for (let m = ini; m < ini + 12; m++) { const v = serie.mensal[ym(m)]; if (typeof v !== "number") { falta = true; continue; } f *= 1 + v / 100; }
-    fator *= f; ciclos.push({ ini: mesBR(ym(ini)), fim: mesBR(ym(ini + 11)), pct: (f - 1) * 100 });
+    const ini = base + 12 * (k - 1); let f = 1; const meses = [];
+    for (let m = ini; m < ini + 12; m++) { const v = serie.mensal[ym(m)]; if (typeof v !== "number") { falta = true; meses.push({ mes: mesBR(ym(m)), v: null, acum: f }); continue; } f *= 1 + v / 100; meses.push({ mes: mesBR(ym(m)), v, acum: f }); }
+    fator *= f; ciclos.push({ ini: mesBR(ym(ini)), fim: mesBR(ym(ini + 11)), pct: (f - 1) * 100, fator: f, meses });
   }
   if (!ciclos.length) return { ativo: true, pronto: false, fator: 1, msg: "Ainda não se completaram 12 meses do orçamento estimado até " + mesBR(ym(ref)) + ": não há reajuste dos insumos." };
   return { ativo: true, pronto: true, fator, falta, ciclos, serieNome: serie.nome, fonte: serie.fonte, ult: mesBR(ult),
@@ -6594,6 +6594,13 @@ class Component extends DCLogic {
     }
     const transicao = (this._moUltimo && this._moUltimo.transicao) || [];
     const memU = (this._moUltimo && this._moUltimo.mem) || {};
+    const f6 = (x) => (Number(x) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 6, maximumFractionDigits: 6 });
+    const pctI = (x) => x == null ? "não divulgado" : (x >= 0 ? "" : "") + x.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
+    const rjMeses = rep && rj && rj.pronto ? rj.ciclos.flatMap((c, i) => c.meses.map((m) => [String(i + 1) + "º ciclo", m.mes, pctI(m.v), f6(m.acum)])
+      .concat([[String(i + 1) + "º ciclo", "Fator do ciclo (" + c.ini + " a " + c.fim + ")", c.pct.toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + "%", f6(c.fator)]])) : [];
+    const brlX = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const rjIns = rep && rj && rj.pronto && r ? MO_INSUMOS.filter(([k]) => r["orig_" + k] > 0).map(([k, nome]) => [nome, brlX(r["orig_" + k]), d["rj_" + k] === "sim" ? f6(rj.fator) : "não reajustado", brlX(r[k])]) : [];
+    const rjCab = rep && rj && rj.pronto ? "Reajuste dos insumos pelo " + rj.serieNome + (rj.fonte ? " (" + rj.fonte + ")" : "") + ": ciclos de 12 meses contados do orçamento estimado (" + (d.rj_orcamento || "").split("-").reverse().join("/") + "), fator acumulado " + f6(rj.fator) + " (Lei 14.133/2021, art. 25, § 7º; IN 05/2017, art. 54, § 2º)." + (rj.falta ? " Há mês sem índice divulgado no período." : "") : "";
     const retro = (this._moUltimo && this._moUltimo.retro) || null, minuta = (this._moUltimo && this._moUltimo.minuta) || [];
     const gtTxt = d.gt_tipo === "cv" ? "Conta-depósito vinculada (IN 05/2017, art. 18, I, e Anexo XII; Lei 14.133/2021, art. 121, § 3º, III): " + P.moCvTot + " sobre o Módulo 1. " + P.moCvResumo
       : d.gt_tipo === "fg" ? "Pagamento pelo fato gerador (IN 05/2017, art. 18, II; Lei 14.133/2021, art. 121, § 3º, V): " + P.moFgResumo : "";
@@ -6731,6 +6738,18 @@ class Component extends DCLogic {
           const wmn = wb.addWorksheet("Minuta de apostilamento", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
           wmn.columns = [{ width: 100 }];
           minuta.forEach((t, i) => { const x = wmn.addRow([t]); x.getCell(1).alignment = { wrapText: true, vertical: "top" }; x.getCell(1).font = { size: 11, bold: i === 0 }; x.height = altura(t, 95, 15); });
+        }
+        if (rjMeses.length) {
+          const wj = wb.addWorksheet("Reajuste dos insumos", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
+          wj.columns = [{ width: 16 }, { width: 40 }, { width: 20 }, { width: 22 }];
+          let jr = wj.addRow(["Memória de cálculo do reajuste dos insumos"]); wj.mergeCells(jr.number, 1, jr.number, 4); jr.getCell(1).font = { bold: true, size: 13, color: { argb: X.branco } }; jr.getCell(1).fill = fill(X.navy); jr.height = 24;
+          jr = wj.addRow([rjCab]); wj.mergeCells(jr.number, 1, jr.number, 4); jr.getCell(1).font = { italic: true, size: 9, color: { argb: X.fraco } }; jr.getCell(1).alignment = { wrapText: true }; jr.height = altura(rjCab, 95, 12);
+          wj.addRow([]);
+          const hj = wj.addRow(["Insumo", "Valor da contratação", "Fator aplicado", "Valor reajustado"]); hj.eachCell((c) => { c.font = { bold: true, color: { argb: X.branco } }; c.fill = fill(X.teal); });
+          rjIns.forEach((v) => { const x = wj.addRow(v); x.eachCell((c) => { c.border = { bottom: fino }; }); });
+          wj.addRow([]);
+          const hm = wj.addRow(["Ciclo", "Mês", "Variação mensal", "Fator acumulado no ciclo"]); hm.eachCell((c) => { c.font = { bold: true, color: { argb: X.branco } }; c.fill = fill(X.teal); });
+          rjMeses.forEach((v) => { const x = wj.addRow(v); const tot = String(v[1]).indexOf("Fator do ciclo") === 0; x.eachCell((c) => { c.border = { bottom: fino }; if (tot) { c.font = { bold: true }; c.fill = fill(X.tot); } }); });
         }
         if (memTab.length) {
           const wm = wb.addWorksheet("Memória dos insumos", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
@@ -6891,6 +6910,15 @@ class Component extends DCLogic {
             body: dims.map((v) => [v[1], v[2], v[3], v[4], v[5], v[6]]).concat([[{ content: P.moDimResumo, colSpan: 6, styles: { fontStyle: "bold", textColor: C.teal } }]]),
             theme: "plain", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8 }, styles: { ...base.styles, fontSize: 7.6, cellPadding: 1.6, lineWidth: { bottom: 0.1 } },
             columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" }, 4: { halign: "right" }, 5: { halign: "right" } } });
+        }
+        // memória do reajuste dos insumos
+        if (rjMeses.length) {
+          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "MEMÓRIA DE CÁLCULO DO REAJUSTE DOS INSUMOS", colSpan: 4, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }], ["Insumo", "Valor da contratação", "Fator aplicado", "Valor reajustado"]],
+            body: rjIns.concat([[{ content: rjCab, colSpan: 4, styles: { fontSize: 6.8, textColor: C.fraco, fontStyle: "italic" } }]]), theme: "plain", rowPageBreak: "avoid",
+            headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8 }, styles: { ...base.styles, fontSize: 7.4, cellPadding: 1.4, lineWidth: { bottom: 0.1 } }, columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" } } });
+          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 3, head: [["Ciclo", "Mês", "Variação mensal", "Fator acumulado no ciclo"]],
+            body: rjMeses.map((v) => { const tot = String(v[1]).indexOf("Fator do ciclo") === 0; return v.map((c) => ({ content: c, styles: tot ? { fontStyle: "bold", fillColor: C.tot } : {} })); }),
+            theme: "plain", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8 }, styles: { ...base.styles, fontSize: 7, cellPadding: 1.2, lineWidth: { bottom: 0.1 } }, columnStyles: { 2: { halign: "right" }, 3: { halign: "right" } } });
         }
         // memória dos insumos
         memTab.forEach((g) => {
