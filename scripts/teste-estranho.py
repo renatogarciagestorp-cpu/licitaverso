@@ -33,7 +33,7 @@ PUBLICAS = {"cursos"}
 TABELAS = ["perfis", "assinaturas", "pagamentos", "analises", "contatos", "lista_espera", "chatbot_registros", "forum_topicos",
            "forum_perguntas", "forum_respostas", "forum_seguindo", "consultorias", "curso_acessos", "organizacoes",
            "organizacao_membros", "renovacoes", "normas_usuario", "elab_triagens", "registro_admin", "cupons_cursos",
-           "biblioteca_pessoal", "solicitacoes_lgpd", "mo_preenchimentos", "cursos"]
+           "biblioteca_pessoal", "solicitacoes_lgpd", "mo_preenchimentos", "mo_planilhas", "cursos"]
 for t in TABELAS:
     st, txt = req("GET", f"/rest/v1/{t}?select=*&limit=5")
     try:
@@ -45,7 +45,7 @@ for t in TABELAS:
 # escrever em tabelas protegidas
 for t, corpo in [("perfis", {"id": str(uuid.uuid4()), "admin": True}), ("assinaturas", {"plano": "pro"}),
                  ("analises", {"documento": "edital"}), ("pagamentos", {"valor": 1}), ("forum_perguntas", {"titulo": "x"}),
-                 ("registro_admin", {"acao": "x"})]:
+                 ("registro_admin", {"acao": "x"}), ("mo_planilhas", {"modo": "planejamento", "nome": "x", "dados": {}})]:
     st, _ = req("POST", f"/rest/v1/{t}", corpo, {"Prefer": "return=minimal"})
     checar(f"inserir em {t}", st >= 400, f"HTTP {st}")
 st, _ = req("PATCH", "/rest/v1/perfis?id=not.is.null", {"admin": True}, {"Prefer": "return=minimal"})

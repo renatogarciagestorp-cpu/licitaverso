@@ -1005,6 +1005,14 @@
   @media (max-width: 900px) { .lmo-mem, .lmo-mem-equip { grid-template-columns: 1fr 1fr; } .lmo-mem.lmo-cab { display: none; } .lmo-mem > span:first-child { grid-column: 1 / -1; } }
   .lmo-retro { grid-template-columns: 110px minmax(0, 1fr) 150px 150px 150px; }
   .lmo-lin4 { grid-template-columns: minmax(0, 1fr) 150px 190px; }
+  .lmo-salvas { display: grid; gap: 8px; margin: 4px 0 10px; padding: 12px 14px; border: 1px dashed #C9D9D6; border-radius: 12px; background: #FBFDFC; }
+  .lmo-salvas-barra { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .lmo-salvas-barra input { flex: 1 1 260px; font: inherit; font-size: 14px; border: 1px solid #D6DEDD; border-radius: 9px; padding: 9px 10px; min-width: 0; }
+  .lmo-salvas-lista { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 8px; }
+  .lmo-salvas-lista li { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: center; border: 1px solid #E3E9E8; border-radius: 10px; padding: 10px 12px; background: #fff; }
+  .lmo-salvas-lista small { display: block; font-size: 12px; color: #66757F; }
+  .lmo-salvas-acoes { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .lmo-salvas-acoes select { font: inherit; font-size: 13px; border: 1px solid #D6DEDD; border-radius: 8px; padding: 4px 6px; }
   .lmo-cons { grid-template-columns: minmax(0, 1.6fr) 130px 90px 70px 90px 130px 140px 110px; font-size: 13.5px; }
   .lmo-cons.lmo-cab span { text-align: right; } .lmo-cons.lmo-cab span:first-child { text-align: left; }
   .lmo-cmp-wrap { overflow-x: auto; }
@@ -2226,6 +2234,36 @@
               </sc-for>
             </div>
             <p class="lmo-intro">{{ moIntro }}</p>
+            <div class="lmo-salvas">
+              <sc-if value="{{ moSalvasAtivo }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-salvas-barra">
+                  <input type="text" aria-label="Nome da planilha" value="{{ moSalvarNome }}" placeholder="{{ moSalvarPh }}" sc-camel-on-input="{{ onMoSalvarNome }}">
+                  <button type="button" class="lmo-btn" sc-camel-on-click="{{ moSalvar }}">{{ moSalvarTxt }}</button>
+                  <button type="button" class="lve-voltar" sc-camel-on-click="{{ moSalvasAlternar }}">{{ moSalvasRot }}</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ moSalvasDemo }}" hint-placeholder-val="{{ true }}"><p class="lmo-nota" style="margin: 0">{{ moSalvasDemoTxt }}</p></sc-if>
+              <sc-if value="{{ moSalvasOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moSalvasOk }}</p></sc-if>
+              <sc-if value="{{ moSalvasErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moSalvasErro }}</p></sc-if>
+              <sc-if value="{{ moSalvasAbertas }}" hint-placeholder-val="{{ false }}">
+                <sc-if value="{{ moTemSalvas }}" hint-placeholder-val="{{ false }}">
+                  <ul class="lmo-salvas-lista">
+                    <sc-for list="{{ moSalvas }}" as="g" hint-placeholder-count="2">
+                      <li>
+                        <div><b>{{ g.nome }}</b><small>{{ g.info }}</small></div>
+                        <div class="lmo-salvas-acoes">
+                          <button type="button" class="lmo-ano" sc-camel-on-click="{{ g.abrir }}">Abrir a última</button>
+                          <select aria-label="Abrir outra versão" sc-camel-on-change="{{ g.abrirVersao }}"><option value="">Outra versão…</option><sc-for list="{{ g.versoes }}" as="v" hint-placeholder-count="2"><option value="{{ v.id }}">{{ v.nome }}</option></sc-for></select>
+                          <sc-if value="{{ g.podeCompartilhar }}" hint-placeholder-val="{{ false }}"><label class="lvc-check" style="margin: 0"><input type="checkbox" checked="{{ g.compartilhada }}" sc-camel-on-change="{{ g.compartilhar }}"> Compartilhar com a equipe</label></sc-if>
+                          <sc-if value="{{ g.minha }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-x" style="width: auto; padding: 0 10px" sc-camel-on-click="{{ g.excluir }}">{{ g.excluirTxt }}</button></sc-if>
+                        </div>
+                      </li>
+                    </sc-for>
+                  </ul>
+                </sc-if>
+                <sc-if value="{{ moTemSalvas }}" hint-placeholder-val="{{ true }}"><p class="lmo-nota">Nenhuma planilha salva neste modelo ainda. Cada vez que você salva com o mesmo nome, é criada uma nova versão (ficam as 10 últimas).</p></sc-if>
+              </sc-if>
+            </div>
             <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}"><div><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCopiar }}">Trazer os dados da Planilha 1 (planejamento) para começar</button></div></sc-if>
 
             <section class="lmo-bloco">
@@ -6561,8 +6599,58 @@ class Component extends DCLogic {
     try { d = JSON.parse(localStorage.getItem("lv-mo-" + modo) || "{}") || {}; } catch (e) { d = {}; }
     return { ...MO_PADRAO, ...d };
   }
-  moModo(modo) { this.setState({ mo: { modo, d: this.moCarregar(modo), enviando: false, agente: false, erro: "", ok: "", obs: [] } }); }
+  moModo(modo) { const ab = this.state.mo && this.state.mo.salvasAbertas; this.setState({ mo: { modo, d: this.moCarregar(modo), enviando: false, agente: false, erro: "", ok: "", obs: [], salvasAbertas: ab } }, () => { if (ab) this.moSalvasCarregar(); }); }
 
+  // planilhas salvas na conta (com versões e compartilhamento com a equipe)
+  async moSalvasCarregar() {
+    if (!this.sb || !this.u) return;
+    const modo = this.state.mo.modo;
+    const { data, error } = await this.sb.from("mo_planilhas").select("id, usuario_id, org_id, modo, nome, versao, compartilhada, autor_nome, criado_em").eq("modo", modo).order("criado_em", { ascending: false }).limit(300);
+    this.setState((x) => ({ mo: { ...x.mo, salvas: error ? [] : (data || []), salvasModo: modo, salvasErro: error ? "Não foi possível carregar as planilhas salvas." : "" } }));
+  }
+  async moSalvar() {
+    const mo = this.state.mo, d = mo.d;
+    const erro = (m) => this.setState((x) => ({ mo: { ...x.mo, salvasErro: m, salvasOk: "" } }));
+    if (!this.sb) { erro("Salvar na conta não está ativo neste site (modo demonstração)."); return; }
+    if (!this.u) { this.setState({ volta: "calculadora" }); this.irPara("login"); return; }
+    const nome = String(mo.salvarNome || "").trim() || this.moNomePadrao();
+    const dados = { ...d }; delete dados.cct_arquivo; delete dados.plan_arquivo;
+    dados._lista = this.moListaLer(mo.modo);
+    const org = this.state.organizacao;
+    this.setState((x) => ({ mo: { ...x.mo, salvando: true, salvasErro: "", salvasOk: "" } }));
+    const { data, error } = await this.sb.from("mo_planilhas").insert({ modo: mo.modo, nome: nome.slice(0, 120), dados, org_id: org && org.id ? org.id : null }).select("versao").single();
+    this.setState((x) => ({ mo: { ...x.mo, salvando: false } }));
+    if (error) { erro(/Limite/.test(error.message || "") ? error.message : "Não foi possível salvar agora. Tente de novo."); return; }
+    this.setState((x) => ({ mo: { ...x.mo, salvasOk: "✓ \u201c" + nome + "\u201d salva na sua conta (versão " + data.versao + ")." } }));
+    this.moSalvasCarregar();
+  }
+  moNomePadrao() {
+    const d = this.state.mo.d, m = this.state.mo.modo;
+    return (m === "proposta" ? "Proposta " + (d.pr_licitante || "") : m === "repactuacao" ? "Repactuação " + (d.rp_contrato ? "contrato " + d.rp_contrato + " " : "") + (d.categoria || "") : "Planejamento " + (d.categoria || "")).replace(/\s+/g, " ").trim();
+  }
+  async moSalvaAbrir(id) {
+    if (!this.sb) return;
+    const { data, error } = await this.sb.from("mo_planilhas").select("modo, nome, versao, dados").eq("id", id).single();
+    if (error || !data) { this.setState((x) => ({ mo: { ...x.mo, salvasErro: "Não foi possível abrir a planilha." } })); return; }
+    const dados = { ...(data.dados || {}) }, lista = Array.isArray(dados._lista) ? dados._lista : null; delete dados._lista;
+    const d = { ...MO_PADRAO, ...dados };
+    try { localStorage.setItem("lv-mo-" + data.modo, JSON.stringify(d)); if (lista) localStorage.setItem("lv-mo-lista-" + data.modo, JSON.stringify(lista)); } catch (e) {}
+    this._moPlanTexto = "";
+    this.setState((x) => ({ mo: { ...x.mo, d, lista: lista || x.mo.lista, listaModo: lista ? data.modo : x.mo.listaModo, salvarNome: data.nome, salvasOk: "✓ \u201c" + data.nome + "\u201d (versão " + data.versao + ") aberta. Os arquivos enviados (convenção e planilha) precisam ser escolhidos de novo para usar o agente.", salvasErro: "" } }));
+  }
+  async moSalvaCompartilhar(nome, sim) {
+    const org = this.state.organizacao; if (!this.sb || !this.u || !org) return;
+    const { error } = await this.sb.from("mo_planilhas").update({ compartilhada: sim, org_id: org.id }).eq("usuario_id", this.u.id).eq("modo", this.state.mo.modo).eq("nome", nome);
+    if (error) { this.setState((x) => ({ mo: { ...x.mo, salvasErro: "Não foi possível alterar o compartilhamento." } })); return; }
+    this.moSalvasCarregar();
+  }
+  async moSalvaExcluir(nome) {
+    if (!this.sb || !this.u) return;
+    if (this.state.mo.excluirNome !== nome) { this.setState((x) => ({ mo: { ...x.mo, excluirNome: nome } })); return; }
+    const { error } = await this.sb.from("mo_planilhas").delete().eq("usuario_id", this.u.id).eq("modo", this.state.mo.modo).eq("nome", nome);
+    this.setState((x) => ({ mo: { ...x.mo, excluirNome: "", salvasErro: error ? "Não foi possível excluir." : "", salvasOk: error ? "" : "✓ \u201c" + nome + "\u201d excluída, com todas as versões." } }));
+    this.moSalvasCarregar();
+  }
   // quadro consolidado (Planilhas 1 e 2: várias categorias na mesma contratação) e comparativo de propostas (Planilha 3)
   moListaLer(modo) { try { const l = JSON.parse(localStorage.getItem("lv-mo-lista-" + modo) || "[]"); return Array.isArray(l) ? l : []; } catch (e) { return []; } }
   moListaGravar(modo, lista) { try { localStorage.setItem("lv-mo-lista-" + modo, JSON.stringify(lista)); } catch (e) {} this.setState((x) => ({ mo: { ...x.mo, lista, listaModo: modo } })); }
@@ -7515,6 +7603,25 @@ class Component extends DCLogic {
           moCopiarDilig: () => { try { navigator.clipboard.writeText(texto.join("\n\n")); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Diligência copiada." } })); } catch (e) {} } };
       })(),
       moBaixarNota: () => this.moNotaTecnica(),
+      ...(() => {
+        const uid = this.u ? this.u.id : "", org = s.organizacao, todas = mo.salvasModo === mo.modo ? (mo.salvas || []) : [];
+        const grupos = []; todas.forEach((x) => { const chave = x.usuario_id + "|" + x.nome; let g = grupos.find((y) => y.chave === chave); if (!g) { g = { chave, nome: x.nome, minha: x.usuario_id === uid, autor: x.autor_nome || "", compartilhada: x.compartilhada, versoes: [] }; grupos.push(g); } g.versoes.push(x); });
+        const dataBR = (t) => new Date(t).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+        return {
+          moSalvasAtivo: !!(this.sb && this.u), moSalvasDemo: !(this.sb && this.u), moSalvasDemoTxt: !this.sb ? "Salvar na conta fica disponível com as contas ativas no site." : "Entre na sua conta para salvar as planilhas e abri-las em qualquer computador.",
+          moSalvarNome: mo.salvarNome == null ? "" : mo.salvarNome, moSalvarPh: this.moNomePadrao() || "Nome da planilha", onMoSalvarNome: (e) => { const v = e.target.value; this.setState((x) => ({ mo: { ...x.mo, salvarNome: v } })); },
+          moSalvar: () => { if (!mo.salvando) this.moSalvar(); }, moSalvarTxt: mo.salvando ? "Salvando…" : "Salvar na conta",
+          moSalvasOk: mo.salvasOk || "", moSalvasErro: mo.salvasErro || "", moTemSalvas: grupos.length > 0, moSalvasAbertas: !!mo.salvasAbertas,
+          moSalvasAlternar: () => { const ab = !mo.salvasAbertas; this.setState((x) => ({ mo: { ...x.mo, salvasAbertas: ab } })); if (ab) this.moSalvasCarregar(); },
+          moSalvasRot: (mo.salvasAbertas ? "Fechar" : "Minhas planilhas salvas") + (grupos.length ? " (" + grupos.length + ")" : ""),
+          moTemOrg: !!(org && org.id),
+          moSalvas: grupos.map((g) => ({ nome: g.nome, info: (g.minha ? "" : "Da equipe, por " + (g.autor || "outro membro") + " · ") + g.versoes.length + " versão(ões) · última em " + dataBR(g.versoes[0].criado_em) + (g.minha && g.compartilhada ? " · compartilhada com a equipe" : ""),
+            minha: g.minha, versoes: g.versoes.map((v) => ({ id: v.id, nome: "v" + v.versao + " – " + dataBR(v.criado_em) })), abrir: () => this.moSalvaAbrir(g.versoes[0].id),
+            abrirVersao: (e) => { const id = e.target.value; if (id) this.moSalvaAbrir(id); },
+            podeCompartilhar: g.minha && !!(org && org.id), compartilhada: g.compartilhada, compartilhar: (e) => this.moSalvaCompartilhar(g.nome, e.target.checked),
+            excluir: () => this.moSalvaExcluir(g.nome), excluirTxt: mo.excluirNome === g.nome ? "Confirmar exclusão" : "Excluir" }))
+        };
+      })(),
       moTemLista: lista.length > 0, moListaTitulo: prop ? "Comparativo das propostas" : "Quadro consolidado da contratação (várias categorias)",
       moListaNota: prop ? "Inclua cada proposta analisada para vê-las lado a lado. Em amarelo, módulos mais de 15% abaixo da mediana das propostas ou da estimativa do órgão e preços abaixo do valor de atenção: pontos para a diligência, não motivo automático de desclassificação (IN 05/2017, Anexo VII-A, item 9.3)."
         : "Monte uma planilha por categoria (servente, encarregado, vigilante, supervisor…) e inclua cada uma aqui: o quadro soma empregados, valor mensal e global da contratação. A categoria com o mesmo nome é atualizada.",
