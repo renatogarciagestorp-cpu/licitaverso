@@ -982,6 +982,11 @@
   .lmo-kpis > div { background: #F4F7F6; border-radius: 12px; padding: 10px 12px; }
   .lmo-kpis small { display: block; font-size: 12px; font-weight: 700; color: #66757F; } .lmo-kpis b { font-size: 17px; }
   .lmo-dif { margin: 12px 0 0; font-size: 14.5px; color: #0B1F2A; }
+  .lmo-agente { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+  .lmo-btn { font: inherit; font-size: 14.5px; font-weight: 800; background: #0FA36B; color: #06251A; border: 0; border-radius: 12px; padding: 12px 18px; cursor: pointer; box-shadow: 0 8px 20px rgba(15,163,107,0.22); }
+  .lmo-pro { font-size: 12px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: #8A5A00; background: #FBF0DA; border-radius: 999px; padding: 6px 12px; }
+  .lmo-ok { margin: 10px 0 0; font-size: 14px; font-weight: 700; color: #0A7A50; }
+  .lmo-obs { margin: 8px 0 0; padding-left: 20px; font-size: 13px; line-height: 1.5; color: #3D5058; }
   @media (max-width: 700px) { .lmo-lin { grid-template-columns: 30px minmax(0, 1fr) 82px 104px; gap: 6px; padding: 7px 8px; font-size: 13px; } .lmo-lin3 { grid-template-columns: 30px minmax(0, 1fr) 110px; } .lmo-bloco { padding: 14px 12px; } }
   .lvc-aba:disabled { opacity: 0.55; }
   .lvc-aba small { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
@@ -2193,6 +2198,13 @@
                 <label class="lmo-arq"><input type="file" accept=".pdf,.doc,.docx" sc-camel-on-change="{{ moEscolherCct }}">{{ moCct }}<sc-if value="{{ moCct }}" hint-placeholder-val="{{ false }}"> · trocar</sc-if><sc-if value="{{ moSemCct }}" hint-placeholder-val="{{ true }}">Escolher arquivo</sc-if></label>
               </div>
               <p class="lmo-nota">{{ moAgenteTxt }}</p>
+              <div class="lmo-agente">
+                <sc-if value="{{ moPro }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moAgente }}">{{ moBotaoAgente }}</button></sc-if>
+                <sc-if value="{{ moSemPro }}" hint-placeholder-val="{{ false }}"><span class="lmo-pro">Exclusivo do plano Pro</span><button type="button" class="lve-voltar" sc-camel-on-click="{{ moIrPlanos }}">Conhecer o Pro</button></sc-if>
+              </div>
+              <sc-if value="{{ moErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moErro }}</p></sc-if>
+              <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
+              <sc-if value="{{ moTemObs }}" hint-placeholder-val="{{ false }}"><ul class="lmo-obs"><sc-for list="{{ moObs }}" as="o" hint-placeholder-count="2"><li>{{ o }}</li></sc-for></ul></sc-if>
             </section>
 
             <section class="lmo-bloco">
@@ -2240,6 +2252,7 @@
                 <div><small>Valor por posto</small><b>{{ moPosto }}</b></div>
                 <div><small>Valor mensal dos serviços</small><b>{{ moMensal }}</b></div>
                 <div><small>Valor global (× meses)</small><b>{{ moGlobal }}</b></div>
+                <sc-if value="{{ moTemUnidade }}" hint-placeholder-val="{{ false }}"><div><small>{{ moUnidadeRot }}</small><b>{{ moUnidade }}</b></div></sc-if>
               </div>
               <sc-if value="{{ moTemDif }}" hint-placeholder-val="{{ false }}"><p class="lmo-dif">Variação em relação ao preço vigente: <b>{{ moDif }}</b></p></sc-if>
               <button type="button" class="lve-voltar" sc-camel-on-click="{{ moLimpar }}" style="margin-top: 14px">Limpar a planilha</button>
@@ -4830,7 +4843,7 @@ class Component extends DCLogic {
     nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
     el: { doc: "", passo: 0, respostas: {}, aceite: false, enviando: false, erro: "", ok: "", docEsc: "etp", metodo: "pix", contratando: false, contErro: "" },
     calcAba: "indice",
-    mo: { modo: "planejamento", d: { ...MO_PADRAO } },
+    mo: { modo: "planejamento", d: { ...MO_PADRAO }, enviando: false, agente: false, erro: "", ok: "", obs: [] },
     indices: null, indicesErro: false, mpAberto: "", mpAno: 0, mpMes: 0, mpVista: "dias",
     calc: { regime: "14133", indice: "ipca", valor: "", dataBase: "", houveReajuste: false, ultimo: "", referencia: "", fim: "", metodo: "a", contagem: "base", contrato: "", contratada: "", cnpj: "", objeto: "" },
     threadAberta: null, forumFiltro: "todas", forumRank: { mes: [], geral: [], destaque: null }, forumVerRanking: false, rankPeriodo: "mes",
@@ -5998,7 +6011,46 @@ class Component extends DCLogic {
     try { d = JSON.parse(localStorage.getItem("lv-mo-" + modo) || "{}") || {}; } catch (e) { d = {}; }
     return { ...MO_PADRAO, ...d };
   }
-  moModo(modo) { this.setState({ mo: { modo, d: this.moCarregar(modo) } }); }
+  moModo(modo) { this.setState({ mo: { modo, d: this.moCarregar(modo), enviando: false, agente: false, erro: "", ok: "", obs: [] } }); }
+
+  moPodeAgente() { const s = this.state; return !!(s.admin || s.plano === "pro"); }
+
+  // guarda a convenção na pasta privada da pessoa (para o agente ler); sem conta, só registra o nome
+  async moEnviarCct(f) {
+    if (!f) return;
+    this.moSet("cct_nome")(f.name);
+    if (!/\.pdf$/i.test(f.name)) { this.setState((x) => ({ mo: { ...x.mo, erro: "Para o agente ler, envie a convenção em PDF." } })); return; }
+    if (f.size > 20 * 1024 * 1024) { this.setState((x) => ({ mo: { ...x.mo, erro: "O arquivo passa de 20 MB." } })); return; }
+    if (!this.sb || !this.u || !this.moPodeAgente()) return;
+    this.setState((x) => ({ mo: { ...x.mo, enviando: true, erro: "", ok: "" } }));
+    const caminho = this.u.id + "/mo/" + Date.now() + ".pdf";
+    const up = await this.sb.storage.from("analises").upload(caminho, f, { upsert: false, contentType: "application/pdf" });
+    this.setState((x) => ({ mo: { ...x.mo, enviando: false, erro: up.error ? "Não foi possível enviar o arquivo. Tente de novo." : "" } }));
+    if (!up.error) this.moSet("cct_arquivo")(caminho);
+  }
+
+  async moAgente() {
+    const mo = this.state.mo, d = mo.d;
+    const erro = (m) => this.setState((x) => ({ mo: { ...x.mo, agente: false, erro: m } }));
+    if (!this.sb) { erro("O agente ainda não está ativo neste site (modo demonstração)."); return; }
+    if (!this.u) { this.setState({ volta: "calculadora" }); this.irPara("login"); return; }
+    if (!this.moPodeAgente()) { erro("O preenchimento pelo agente é exclusivo do plano Pro."); return; }
+    if (!d.cct_arquivo) { erro("Envie primeiro a convenção coletiva em PDF."); return; }
+    this.setState((x) => ({ mo: { ...x.mo, agente: true, erro: "", ok: "", obs: [] } }));
+    const { data, error } = await this.sb.functions.invoke("mo-agente", { body: { modo: mo.modo, arquivo: d.cct_arquivo, dados: d } });
+    if (error) { erro(await erroDaFuncao(error)); return; }
+    const campos = (data && data.campos) || [];
+    this.setState((x) => {
+      const d2 = { ...x.mo.d, fontes: { ...(x.mo.d.fontes || {}) } };
+      campos.forEach((c) => {
+        const num = /^-?\d+(\.\d+)?$/.test(String(c.valor).trim());
+        d2[c.campo] = num ? String(c.valor).trim().replace(".", ",") : c.valor;
+        d2.fontes[c.campo] = c.fonte;
+      });
+      try { localStorage.setItem("lv-mo-" + x.mo.modo, JSON.stringify(d2)); } catch (e) {}
+      return { mo: { ...x.mo, d: d2, agente: false, ok: campos.length ? "✓ O agente preencheu " + campos.length + " campo(s). Confira cada valor e a fonte indicada na linha." : "O agente não encontrou valores para preencher.", obs: (data && data.observacoes) || [] } };
+    });
+  }
   moSet = (k) => (e) => {
     const v = e && e.target ? e.target.value : e;
     this.setState((s) => {
@@ -6017,7 +6069,9 @@ class Component extends DCLogic {
     const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const pct = (v) => ((Number(v) || 0) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
     // linha: percentual editável (k) ou calculado (p), valor calculado (v) ou editável (kv)
-    const L = (cod, rot, o) => ({ cod, rot, nota: o.nota || "", auto: !!o.auto,
+    const fontes = d.fontes || {};
+    const L = (cod, rot, o) => ({ cod, rot, auto: !!o.auto || !!fontes[o.k || o.kv],
+      nota: [o.nota || "", fontes[o.k || o.kv] ? "Agente: " + fontes[o.k || o.kv] : ""].filter(Boolean).join(" · "),
       pctEdit: !!o.k, pctK: o.k ? d[o.k] : "", onPct: o.k ? this.moSet(o.k) : null, pctTxt: o.k ? "" : (o.p == null ? "" : (o.p === "-" ? "—" : pct(o.p))),
       valEdit: !!o.kv, valK: o.kv ? d[o.kv] : "", onVal: o.kv ? this.moSet(o.kv) : null, valTxt: o.kv ? "" : (o.v === null ? "—" : brl(o.v)) });
     const T = (rot, p, v) => ({ rot, pctTxt: p == null ? "" : pct(p), valTxt: brl(v) });
@@ -6096,9 +6150,14 @@ class Component extends DCLogic {
         campo("data_proposta", "Data de apresentação da proposta", "dd/mm/aaaa"), campo("meses", "Nº de meses de execução contratual", "12")]
         .concat(rep ? [campo("ano_exec", "Ano de execução do contrato após a repactuação", "Ex.: 2"), campo("vigente", "Preço vigente por empregado (antes da repactuação, R$)", "Ex.: 4.320,15")] : []),
       moCct: d.cct_nome || "", moSemCct: !d.cct_nome,
-      moAgenteTxt: rep ? "Na próxima etapa, o agente vai conferir as adequações dos custos não renováveis com a convenção e o contrato. Hoje, o aviso prévio trabalhado já é ajustado automaticamente."
-        : "Na próxima etapa, o agente vai ler a convenção, a legislação trabalhista, os cadernos técnicos e a jurisprudência e preencher os demais custos. Por enquanto, a planilha parte dos percentuais legais e do modelo da IN, e você confere e ajusta.",
-      moEscolherCct: (e) => { const f = e.target && e.target.files && e.target.files[0]; if (f) this.moSet("cct_nome")(f.name); },
+      moAgenteTxt: rep ? "No plano Pro, o agente lê a convenção e indica as adequações dos custos não renováveis (aviso prévio trabalhado, insumos já amortizados), com o fundamento. Os demais custos você preenche."
+        : "No plano Pro, o agente lê a convenção, a legislação trabalhista, os cadernos técnicos e a jurisprudência do TCU e preenche salário, adicionais, benefícios e percentuais, indicando a fonte de cada valor. Sem o agente, a planilha parte dos percentuais legais e você confere e ajusta.",
+      moEscolherCct: (e) => { const f = e.target && e.target.files && e.target.files[0]; if (e.target) e.target.value = ""; if (f) this.moEnviarCct(f); },
+      moPro: this.moPodeAgente(), moSemPro: !this.moPodeAgente(),
+      moBotaoAgente: mo.agente ? "O agente está lendo a convenção…" : mo.enviando ? "Enviando o arquivo…" : (rep ? "Ajustar os custos não renováveis com o agente" : "Preencher a planilha com o agente"),
+      moAgente: () => { if (!mo.agente && !mo.enviando) this.moAgente(); },
+      moIrPlanos: () => this.irPara("planos"),
+      moErro: mo.erro || "", moOk: mo.ok || "", moObs: mo.obs || [], moTemObs: (mo.obs || []).length > 0,
       moBenef: [campo("vt_tarifa", "Tarifa do transporte (R$)", "Ex.: 4,70"), campo("vt_viagens", "Viagens por dia", "2"), campo("dias", "Dias trabalhados no mês", "21"),
         campo("aux_dia", "Auxílio-alimentação por dia (R$)", "Ex.: 25,00"), campo("aux_part", "Participação do empregado no auxílio (%)", "20")],
       moModulos: modulos,
@@ -6107,8 +6166,12 @@ class Component extends DCLogic {
         ["", "Subtotal (A + B + C + D + E)", r.sub], ["F", "Módulo 6 – Custos indiretos, tributos e lucro", r.M6]].map(([cod, rot, v]) => ({ cod, rot, valTxt: brl(v), forte: !cod })),
       moTotal: brl(r.total), moFatorK: (r.fatorK || 0).toLocaleString("pt-BR", { minimumFractionDigits: 4, maximumFractionDigits: 4 }),
       moTribTxt: "Po = " + brl(r.Po) + " · tributos " + pct(r.To) + " · P1 = Po ÷ (1 − tributos) = " + brl(r.P1),
-      moQuadro: [campo("emp_posto", "Empregados por posto", "1"), campo("postos", "Quantidade de postos", "1")],
+      moQuadro: [campo("emp_posto", "Empregados por posto", "1"), campo("postos", "Quantidade de postos", "1"),
+        campo("unidade", "Unidade de medida do serviço", "Posto, m², hora…"), campo("quantidade", "Quantidade total a contratar (na unidade)", "Ex.: 10.850")],
       moPosto: brl(r.posto), moMensal: brl(r.mensal), moGlobal: brl(r.global),
+      moTemUnidade: !!moNum(d.quantidade) && !/posto/i.test(d.unidade || "Posto"),
+      moUnidadeRot: "Valor por " + (d.unidade || "unidade") + " (mensal ÷ quantidade)",
+      moUnidade: moNum(d.quantidade) ? "R$ " + (r.mensal / moNum(d.quantidade)).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) : "—",
       moTemDif: rep && !!r.vigente, moDif: (r.dif >= 0 ? "+" : "−") + brl(Math.abs(r.dif)).replace("R$ ", "R$ ") + " por empregado (" + (r.difp >= 0 ? "+" : "−") + pct(Math.abs(r.difp)) + ")",
       moLimpar: () => this.moLimpar(),
       moCopiar: () => { const base = this.moCarregar("planejamento"); const d2 = { ...base, ano_exec: d.ano_exec || "2", vigente: d.vigente || "" };

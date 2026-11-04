@@ -33,7 +33,7 @@ PUBLICAS = {"cursos"}
 TABELAS = ["perfis", "assinaturas", "pagamentos", "analises", "contatos", "lista_espera", "chatbot_registros", "forum_topicos",
            "forum_perguntas", "forum_respostas", "forum_seguindo", "consultorias", "curso_acessos", "organizacoes",
            "organizacao_membros", "renovacoes", "normas_usuario", "elab_triagens", "registro_admin", "cupons_cursos",
-           "biblioteca_pessoal", "solicitacoes_lgpd", "cursos"]
+           "biblioteca_pessoal", "solicitacoes_lgpd", "mo_preenchimentos", "cursos"]
 for t in TABELAS:
     st, txt = req("GET", f"/rest/v1/{t}?select=*&limit=5")
     try:
@@ -77,7 +77,7 @@ for b in ["analises", "consultorias"]:
     checar(f"enviar arquivo ao bucket {b}", st >= 400, f"HTTP {st}")
 
 # funções do servidor sem login / sem segredo
-for fn in ["mp-checkout", "elab-triagem", "pesquisa-mercado", "boas-vindas", "forum-aviso", "consultoria-aviso"]:
+for fn in ["mp-checkout", "elab-triagem", "pesquisa-mercado", "boas-vindas", "forum-aviso", "consultoria-aviso", "mo-agente"]:
     st, _ = req("POST", f"/functions/v1/{fn}", {"acao": "teste"}, {"Authorization": f"Bearer {KEY}"})
     checar(f"função {fn} sem login", st in (401, 403), f"HTTP {st}")
 for fn in ["avisos", "analise-aviso"]:
