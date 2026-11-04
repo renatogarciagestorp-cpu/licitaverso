@@ -6257,97 +6257,263 @@ class Component extends DCLogic {
     this.setState((x) => ({ mo: { ...x.mo, enviando: false } }));
   }
 
-  // download da planilha preenchida (Planilha 1 ou 2), em Excel ou PDF, com os valores da tela
+  // download da planilha preenchida (Planilha 1 ou 2), em Excel ou PDF, com os valores da tela.
+  // Layout pensado para leitura rápida: resumo com os números principais primeiro, composição do preço em barra,
+  // módulos em blocos com cabeçalho de cor, notas e fontes em letra menor sob cada rubrica, totais destacados
+  // e linhas preenchidas pelo agente marcadas em âmbar (com legenda).
   async moBaixar(formato) {
     const s = this.state, mo = s.mo, d = mo.d, rep = mo.modo === "repactuacao";
     const P = this.moProps(), { r, rj } = this._moUltimo || {};
-    const titulo = rep ? "Planilha de custos e formação de preços – Repactuação" : "Planilha de custos e formação de preços – Planejamento da contratação";
-    const ident = [["Tipo de serviço", d.tipo_servico], ["Categoria profissional", d.categoria], ["CBO", d.cbo], ["Salário-base", d.salario], ["Data-base da categoria", d.data_base],
-      ["Acordo, convenção ou dissídio (ano)", d.ano_cct], ["Município/UF", [d.municipio, d.uf].filter(Boolean).join("/")], ["Data da proposta", d.data_proposta], ["Meses de execução", d.meses]]
-      .concat(rep ? [["Ano de execução após a repactuação", d.ano_exec], ["Planilha da contratação", d.plan_nome || "—"]] : []).filter((x) => String(x[1] || "").trim());
-    const linhas = [];
-    P.moModulos.forEach((md) => {
-      linhas.push({ tipo: "mod", t: md.titulo });
-      md.linhas.forEach((l) => linhas.push({ tipo: "lin", cod: l.cod, rot: l.rot, pct: l.pctEdit ? String(l.pctK || "") + (l.rot.indexOf("FAP") === 0 ? "" : "%") : l.pctTxt, val: l.valEdit ? (l.valTxt.indexOf("→") === 0 ? l.valTxt.slice(2) : "R$ " + moNum(l.valK).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })) : l.valTxt, nota: l.nota }));
-      linhas.push({ tipo: "tot", rot: md.total.rot, pct: md.total.pctTxt, val: md.total.valTxt });
-    });
-    const resumo = P.moResumo.map((l) => [l.cod, l.rot, l.valTxt]).concat([["", "Preço total por empregado", P.moTotal]]);
-    const kpis = [["Fator K", P.moFatorK], ["Empregados por posto", P.moEmpN], ["Quantidade de postos", P.moPostosN], ["Valor por posto", P.moPosto], ["Valor mensal dos serviços", P.moMensal], ["Valor global", P.moGlobal]]
-      .concat(P.moTemUnidade ? [[P.moUnidadeRot, P.moUnidade]] : []).concat(P.moTemDif ? [["Variação em relação ao preço vigente", P.moDif]] : []);
-    const notas = [].concat(rep ? ["Custos não renováveis: aviso prévio trabalhado limitado a 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário; IN 05/2017, art. 57)."] : [])
-      .concat(rj && rj.pronto ? ["Insumos reajustados pelo índice do contrato (" + rj.msg + ")."] : [])
-      .concat(P.moDimAtivo && P.moDimResumo ? ["Dimensionamento da equipe (IN 05/2017, " + (P.moDimLimpeza ? "Anexo VI-B" : "Anexo VI-A") + "): " + P.moDimResumo] : [])
-      .concat(P.moLiderTxt ? [P.moLiderTxt] : []);
     const falhas = rep ? (d.falhas || []) : [];
     if (falhas.length && !d.falhas_aceite) {
       this.setState((x) => ({ mo: { ...x.mo, erro: "Antes de baixar, leia as falhas apontadas na planilha da contratação e confirme se concorda com o prosseguimento da análise." } }));
       try { document.querySelector(".lmo-aceite").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {}
       return;
     }
-    if (falhas.length) notas.push("O assinante declarou estar ciente das falhas e inconsistências apontadas na planilha da contratação e concordou com o prosseguimento da análise com base nela, sabendo que a manutenção das falhas impacta os valores da repactuação (" + new Date(d.falhas_aceite).toLocaleString("pt-BR") + ").");
+    const num = (txt) => { const m = String(txt == null ? "" : txt).replace("→", "").replace("R$", "").replace("%", "").trim().replace(/\./g, "").replace(",", "."); const n = Number(m); return m !== "" && /\d/.test(m) && isFinite(n) ? n : null; };
+    const brlTxt = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const titulo = rep ? "Repactuação" : "Planejamento da contratação";
+    const hoje = new Date().toLocaleDateString("pt-BR");
+    const ident = [["Categoria profissional", d.categoria], ["CBO", d.cbo], ["Tipo de serviço", d.tipo_servico], ["Município/UF da prestação", [d.municipio, d.uf].filter(Boolean).join("/")],
+      ["Salário-base", d.salario ? brlTxt(moNum(d.salario)) : ""], ["Data-base da categoria", d.data_base], ["Instrumento coletivo (ano)", d.ano_cct], ["Convenção coletiva", d.cct_nome],
+      ["Data da proposta", d.data_proposta], ["Meses de execução", d.meses]]
+      .concat(rep ? [["Ano de execução após a repactuação", d.ano_exec], ["Planilha da contratação", d.plan_nome]] : []).filter((x) => String(x[1] || "").trim());
+    // módulos estruturados
+    const modulos = P.moModulos.map((md) => {
+      const [cab, ...resto] = md.titulo.split(" – ");
+      return { cab, nome: resto.join(" – "), sub: md.sub || "", linhas: md.linhas.map((l) => {
+        const valTxt = l.valEdit ? (l.valTxt.indexOf("→") === 0 ? l.valTxt.slice(2) : brlTxt(moNum(l.valK))) : l.valTxt;
+        const ehFap = l.rot.indexOf("FAP") === 0;
+        const pctTxt = l.pctEdit ? (ehFap ? String(l.pctK || "") : (String(l.pctK || "0") + "%")) : l.pctTxt;
+        return { cod: l.cod, rot: l.rot, nota: l.nota || "", auto: !!l.auto, pctTxt, pctNum: ehFap ? null : num(pctTxt), ehFap, fapNum: ehFap ? num(l.pctK) : null, valTxt, valNum: num(valTxt) };
+      }), total: { rot: md.total.rot, pctTxt: md.total.pctTxt, pctNum: num(md.total.pctTxt), valTxt: md.total.valTxt, valNum: num(md.total.valTxt) } };
+    });
+    const temAuto = modulos.some((m) => m.linhas.some((l) => l.auto));
+    const comp = r ? [["Módulo 1 – Remuneração", r.M1, [15, 107, 126]], ["Módulo 2 – Encargos e benefícios", r.M2, [15, 163, 107]], ["Módulo 3 – Rescisão", r.M3, [201, 138, 27]],
+      ["Módulo 4 – Reposição do ausente", r.M4, [125, 92, 191]], ["Módulo 5 – Insumos", r.M5, [94, 116, 124]], ["Módulo 6 – Custos indiretos, tributos e lucro", r.M6, [184, 50, 50]]] : [];
+    const tot = r ? r.total : 0;
+    const destaques = [["Preço por empregado", P.moTotal], ["Valor mensal dos serviços", P.moMensal], ["Valor global (" + (d.meses || "12") + " meses)", P.moGlobal],
+      rep && P.moTemDif ? ["Variação na repactuação", P.moDif.split(" por ")[0]] : ["Fator K", P.moFatorK]];
+    const resumo = P.moResumo.map((l) => ({ cod: l.cod, rot: l.rot, val: num(l.valTxt), txt: l.valTxt, forte: l.forte }));
+    const kpis = [["Fator K", P.moFatorK], ["Empregados por posto", String(P.moEmpN || "")], ["Quantidade de postos", String(P.moPostosN || "")], ["Valor por posto", P.moPosto],
+      ["Valor mensal dos serviços", P.moMensal], ["Valor global", P.moGlobal]].concat(P.moTemUnidade ? [[P.moUnidadeRot, P.moUnidade]] : []).concat(P.moTemDif ? [["Variação em relação ao preço vigente", P.moDif]] : []);
+    const notas = [].concat(rep ? ["Custos não renováveis: aviso prévio trabalhado limitado a 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário; IN 05/2017, art. 57)."] : [])
+      .concat(rj && rj.pronto ? ["Insumos reajustados pelo índice do contrato: " + rj.msg + "."] : [])
+      .concat(P.moDimAtivo && P.moDimResumo ? ["Dimensionamento da equipe (IN 05/2017, " + (P.moDimLimpeza ? "Anexo VI-B" : "Anexo VI-A") + "): " + P.moDimResumo] : [])
+      .concat(P.moLiderTxt ? [P.moLiderTxt] : [])
+      .concat(falhas.length ? ["O assinante declarou estar ciente das falhas e inconsistências apontadas na planilha da contratação e concordou com o prosseguimento da análise com base nela, sabendo que a manutenção das falhas impacta os valores da repactuação (" + new Date(d.falhas_aceite).toLocaleString("pt-BR") + ")."] : [])
+      .concat(["Planilha de custos e formação de preços no formato do Anexo VII-D da IN SEGES/MP nº 5/2017. Valores mensais por empregado; totais truncados em duas casas, como no modelo da IN. Confira cada valor e fonte antes de juntar ao processo."]);
+    const dims = P.moDimLimpeza ? (P.moDimGrupos || []).flatMap((g) => g.linhas.filter((l) => num(l.m2)).map((l) => [g.titulo, l.rot, l.m2, l.p, l.temH ? l.h : "—", l.q, l.precoM2])) : [];
+    const grav = { alta: ["Alta", [184, 50, 50], "FFB83232"], media: ["Média", [201, 138, 27], "FFC98A1B"], baixa: ["Baixa", [15, 107, 126], "FF0F6B7E"] };
     const nome = (rep ? "planilha-repactuacao" : "planilha-planejamento") + "-" + (d.categoria || "mao-de-obra").toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
     this.setState((x) => ({ mo: { ...x.mo, baixando: true, erro: "" } }));
     try {
       if (formato === "xlsx") {
         if (!window.ExcelJS) await carregarScript(baseSite() + "vendor/exceljs-4.4.0.min.js");
-        const wb = new window.ExcelJS.Workbook(); wb.creator = "Licitacon";
-        const ws = wb.addWorksheet(rep ? "Repactuação" : "Planejamento", { pageSetup: { paperSize: 9, orientation: "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
-        ws.columns = [{ width: 7 }, { width: 62 }, { width: 14 }, { width: 18 }];
-        const borda = { top: { style: "thin", color: { argb: "FFD6DEDD" } }, bottom: { style: "thin", color: { argb: "FFD6DEDD" } }, left: { style: "thin", color: { argb: "FFD6DEDD" } }, right: { style: "thin", color: { argb: "FFD6DEDD" } } };
-        const add = (vals, est) => { const row = ws.addRow(vals); row.eachCell({ includeEmpty: true }, (c) => { c.border = borda; c.alignment = { vertical: "middle", wrapText: true }; Object.assign(c, est || {}); }); return row; };
-        const t = ws.addRow([titulo]); ws.mergeCells(t.number, 1, t.number, 4); t.font = { bold: true, size: 13 };
-        const sub = ws.addRow(["IN SEGES/MP nº 5/2017, Anexo VII-D · gerada no Licitacon em " + new Date().toLocaleDateString("pt-BR")]); ws.mergeCells(sub.number, 1, sub.number, 4); sub.font = { size: 9, color: { argb: "FF66757F" } };
+        const X = { navy: "FF0A1F2A", verde: "FF0FA36B", teal: "FF0F6B7E", cinza: "FFEEF3F2", cinza2: "FFF6F8F7", ambar: "FFFFF4DC", tot: "FFE3F2EA", texto: "FF0B1F2A", fraco: "FF66757F", linha: "FFDDE5E4", branco: "FFFFFFFF" };
+        const fill = (c) => ({ type: "pattern", pattern: "solid", fgColor: { argb: c } });
+        const fino = { style: "thin", color: { argb: X.linha } };
+        const wb = new window.ExcelJS.Workbook(); wb.creator = "Licitacon"; wb.created = new Date();
+        const ws = wb.addWorksheet("Planilha", { views: [{ showGridLines: false }],
+          pageSetup: { paperSize: 9, orientation: "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0, margins: { left: 0.5, right: 0.5, top: 0.6, bottom: 0.6, header: 0.3, footer: 0.3 } },
+          headerFooter: { oddFooter: "&L&8Licitacon · Planilha de custos (IN 05/2017)&R&8Página &P de &N" } });
+        ws.columns = [{ width: 7 }, { width: 58 }, { width: 13 }, { width: 18 }];
+        const linha = (vals, o) => { const row = ws.addRow(vals); o = o || {}; row.eachCell({ includeEmpty: true }, (c, i) => {
+          c.font = { name: "Calibri", size: o.size || 10.5, bold: !!o.bold, italic: !!o.italic, color: { argb: o.cor || X.texto } };
+          c.alignment = { vertical: "middle", wrapText: true, horizontal: i >= 3 ? "right" : "left", indent: o.indent && i === 2 ? o.indent : 0 };
+          if (o.fundo) c.fill = fill(o.fundo); if (o.borda) c.border = { bottom: fino }; if (o.topo) c.border = { ...(c.border || {}), top: { style: "medium", color: { argb: X.navy } } }; });
+          if (o.alt) row.height = o.alt; return row; };
+        const juntar = (row, a, b) => ws.mergeCells(row.number, a, row.number, b);
+        // cabeçalho
+        let row = linha(["Planilha de custos e formação de preços", "", "", ""], { size: 16, bold: true, cor: X.branco, fundo: X.navy, alt: 30 }); juntar(row, 1, 4);
+        row = linha([titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + "/" + (d.uf || "") : ""), "", "", ""], { size: 11, cor: "FFB9CBD2", fundo: X.navy, alt: 20 }); juntar(row, 1, 4);
+        row = linha(["IN SEGES/MP nº 5/2017, Anexo VII-D · gerada no Licitacon em " + hoje, "", "", ""], { size: 9, cor: "FF7FE3B6", fundo: X.navy, alt: 16 }); juntar(row, 1, 4);
         ws.addRow([]);
-        ident.forEach(([k, v]) => { const row = add(["", k, String(v), ""]); ws.mergeCells(row.number, 3, row.number, 4); row.getCell(2).font = { bold: true }; });
-        ws.addRow([]);
-        const num = (txt) => { const m = String(txt || "").replace("R$", "").replace("%", "").replace(/\./g, "").replace(",", ".").replace("→", "").trim(); const n = Number(m); return txt && /\d/.test(m) && isFinite(n) ? n : txt; };
-        linhas.forEach((l) => {
-          if (l.tipo === "mod") { const row = add([l.t.toUpperCase(), "", "", ""]); ws.mergeCells(row.number, 1, row.number, 4); row.font = { bold: true, color: { argb: "FFFFFFFF" } }; row.getCell(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF0A1F2A" } }; add(["", "Rubrica", "%", "Valor (R$)"]).font = { bold: true }; return; }
-          if (l.tipo === "tot") { const row = add(["", l.rot, l.pct ? num(l.pct) / 100 : "", num(l.val)]); row.font = { bold: true }; row.eachCell((c) => { c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFEEF3F2" } }; }); row.getCell(3).numFmt = "0.00%"; row.getCell(4).numFmt = '"R$" #,##0.00'; ws.addRow([]); return; }
-          const pv = l.pct && l.pct !== "—" && /%$/.test(l.pct) ? num(l.pct) / 100 : (l.pct === "—" ? "" : num(l.pct));
-          const row = add([l.cod, l.rot + (l.nota ? "\n" + l.nota : ""), pv, num(l.val)]);
-          if (typeof pv === "number" && /%$/.test(l.pct)) row.getCell(3).numFmt = "0.00##%";
-          row.getCell(4).numFmt = '"R$" #,##0.00';
-          if (l.nota) row.getCell(2).font = { size: 10 };
+        // resumo: os números que a pessoa procura primeiro
+        destaques.forEach(([k, v], i) => {
+          const rr = linha(["", k, "", v], { size: i === 0 ? 14 : 11.5, bold: true, fundo: i === 0 ? X.tot : X.cinza2, alt: i === 0 ? 26 : 20 });
+          rr.getCell(2).font = { size: 10.5, bold: true, color: { argb: X.fraco } }; juntar(rr, 2, 3);
+          if (i === 0) rr.getCell(4).font = { size: 15, bold: true, color: { argb: X.teal } };
         });
-        const tr = add(["QUADRO-RESUMO DO CUSTO POR EMPREGADO", "", "", ""]); ws.mergeCells(tr.number, 1, tr.number, 4); tr.font = { bold: true, color: { argb: "FFFFFFFF" } }; tr.getCell(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF0A1F2A" } };
-        resumo.forEach(([c, rot, v], i) => { const row = add([c, rot, "", num(v)]); row.getCell(4).numFmt = '"R$" #,##0.00'; if (!c) row.font = { bold: true }; });
         ws.addRow([]);
-        kpis.forEach(([k, v]) => { const row = add(["", k, "", String(v)]); row.getCell(2).font = { bold: true }; });
-        if (falhas.length) {
+        // composição do preço
+        if (comp.length && tot) {
+          row = linha(["", "Composição do preço por empregado", "% do preço", "Valor"], { bold: true, cor: X.fraco, size: 9.5, borda: true });
+          comp.forEach(([k, v, c]) => { const rr = linha(["", k, tot ? v / tot : 0, v], { borda: true }); rr.getCell(1).fill = fill("FF" + c.map((n) => n.toString(16).padStart(2, "0")).join("").toUpperCase()); rr.getCell(3).numFmt = "0.0%"; rr.getCell(4).numFmt = '"R$" #,##0.00'; });
           ws.addRow([]);
-          const fr = add(["FALHAS E INCONSISTÊNCIAS DA PLANILHA DA CONTRATAÇÃO", "", "", ""]); ws.mergeCells(fr.number, 1, fr.number, 4); fr.font = { bold: true, color: { argb: "FFFFFFFF" } }; fr.getCell(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF8A1230" } };
-          const av = ws.addRow(["", "Atenção: manter qualquer uma dessas falhas na planilha impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores. Corrija cada item antes de concluir a repactuação."]); ws.mergeCells(av.number, 2, av.number, 4); av.getCell(2).font = { bold: true, size: 10, color: { argb: "FF8A1230" } }; av.getCell(2).alignment = { wrapText: true }; av.height = 42;
-          falhas.forEach((f, i) => { const row = add([String(i + 1), f.rubrica + " (gravidade " + ({ alta: "alta", media: "média", baixa: "baixa" }[f.gravidade] || "média") + ")\nFalha: " + f.problema + "\nFundamento: " + f.fundamento + "\nCaminho correto: " + f.correcao + (f.impacto ? "\nImpacto se mantida: " + f.impacto : ""), "", ""]); ws.mergeCells(row.number, 2, row.number, 4); row.getCell(2).font = { size: 10 }; });
         }
-        if (notas.length) { ws.addRow([]); notas.forEach((n2) => { const row = ws.addRow(["", n2]); ws.mergeCells(row.number, 2, row.number, 4); row.getCell(2).alignment = { wrapText: true }; row.getCell(2).font = { size: 9, italic: true }; }); }
+        // identificação
+        row = linha(["Identificação", "", "", ""], { bold: true, cor: X.branco, fundo: X.teal, alt: 20 }); juntar(row, 1, 4);
+        ident.forEach(([k, v]) => { const rr = linha(["", k, String(v), ""], { borda: true }); rr.getCell(2).font = { bold: true, size: 10, color: { argb: X.fraco } }; rr.getCell(3).alignment = { horizontal: "left", vertical: "middle", wrapText: true }; juntar(rr, 3, 4); });
+        ws.addRow([]);
+        if (temAuto) { row = linha(["", "Linhas em âmbar: valores preenchidos pelo agente ou ajustados automaticamente. A fonte aparece logo abaixo da rubrica.", "", ""], { size: 9, italic: true, cor: X.fraco }); row.getCell(1).fill = fill(X.ambar); juntar(row, 2, 4); ws.addRow([]); }
+        // módulos
+        modulos.forEach((m) => {
+          row = linha([m.cab.toUpperCase() + "   " + m.nome, "", "", ""], { bold: true, size: 11, cor: X.branco, fundo: X.navy, alt: 21 }); juntar(row, 1, 4);
+          if (m.sub) { row = linha(["", m.sub, "", ""], { size: 9, italic: true, cor: X.fraco }); juntar(row, 2, 4); }
+          linha(["", "Rubrica", "%", "Valor (R$)"], { bold: true, size: 9, cor: X.fraco, fundo: X.cinza, borda: true });
+          m.linhas.forEach((l) => {
+            const pv = l.ehFap ? l.fapNum : (l.pctNum == null ? null : l.pctNum / 100);
+            const rr = linha([l.cod, l.rot, pv == null ? (l.pctTxt === "—" ? "—" : "") : pv, l.valNum == null ? l.valTxt : l.valNum], { borda: !l.nota, fundo: l.auto ? X.ambar : null });
+            rr.getCell(1).font = { bold: true, size: 10, color: { argb: X.teal } };
+            if (pv != null && !l.ehFap) rr.getCell(3).numFmt = "0.00##%"; if (l.ehFap) rr.getCell(3).numFmt = "0.0000";
+            if (l.valNum != null) rr.getCell(4).numFmt = '"R$" #,##0.00';
+            if (l.nota) { const nr = linha(["", l.nota, "", ""], { size: 8.5, italic: true, cor: X.fraco, borda: true, fundo: l.auto ? X.ambar : null }); juntar(nr, 2, 4); }
+          });
+          const tr = linha(["", m.total.rot, m.total.pctNum == null ? "" : m.total.pctNum / 100, m.total.valNum], { bold: true, fundo: X.tot, topo: true });
+          tr.getCell(3).numFmt = "0.00##%"; tr.getCell(4).numFmt = '"R$" #,##0.00';
+          ws.addRow([]);
+        });
+        // quadro-resumo
+        row = linha(["QUADRO-RESUMO   Custo por empregado e valores do contrato", "", "", ""], { bold: true, size: 11, cor: X.branco, fundo: X.navy, alt: 21 }); juntar(row, 1, 4);
+        resumo.forEach((l) => { const rr = linha([l.cod, l.rot, "", l.val], { bold: l.forte, borda: true, fundo: l.forte ? X.cinza2 : null }); rr.getCell(4).numFmt = '"R$" #,##0.00'; rr.getCell(1).font = { bold: true, color: { argb: X.teal } }; });
+        const pr = linha(["", "PREÇO TOTAL POR EMPREGADO", "", tot], { bold: true, size: 12, fundo: X.tot, topo: true, alt: 22 }); pr.getCell(4).numFmt = '"R$" #,##0.00'; pr.getCell(4).font = { bold: true, size: 13, color: { argb: X.teal } };
+        ws.addRow([]);
+        kpis.forEach(([k, v]) => { const rr = linha(["", k, "", String(v)], { borda: true }); rr.getCell(2).font = { bold: true, size: 10, color: { argb: X.fraco } }; });
+        ws.addRow([]);
+        row = linha(["Notas e fundamentação", "", "", ""], { bold: true, cor: X.branco, fundo: X.teal }); juntar(row, 1, 4);
+        notas.forEach((n2, i) => { const rr = linha([String(i + 1), n2, "", ""], { size: 9, cor: X.fraco }); juntar(rr, 2, 4); rr.height = Math.max(15, Math.ceil(n2.length / 95) * 13); });
+        // aba de falhas (repactuação)
+        if (falhas.length) {
+          const wf = wb.addWorksheet("Falhas da planilha", { views: [{ showGridLines: false, state: "frozen", ySplit: 4 }], pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
+          wf.columns = [{ width: 5 }, { width: 26 }, { width: 10 }, { width: 42 }, { width: 34 }, { width: 42 }, { width: 30 }];
+          let fr = wf.addRow(["Falhas e inconsistências da planilha da contratação"]); wf.mergeCells(fr.number, 1, fr.number, 7); fr.getCell(1).font = { bold: true, size: 14, color: { argb: X.branco } }; fr.getCell(1).fill = fill("FF8A1230"); fr.height = 26;
+          fr = wf.addRow(["Atenção: manter qualquer uma destas falhas impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores."]); wf.mergeCells(fr.number, 1, fr.number, 7);
+          fr.getCell(1).font = { bold: true, size: 10, color: { argb: "FF8A1230" } }; fr.getCell(1).alignment = { wrapText: true }; fr.height = 30;
+          wf.addRow([]);
+          const hr = wf.addRow(["Nº", "Rubrica", "Gravidade", "Falha", "Fundamento", "Caminho correto", "Impacto se mantida"]);
+          hr.eachCell((c) => { c.font = { bold: true, size: 9.5, color: { argb: X.branco } }; c.fill = fill(X.navy); c.alignment = { vertical: "middle", wrapText: true }; });
+          falhas.forEach((f, i) => {
+            const g = grav[f.gravidade] || grav.media;
+            const rr = wf.addRow([i + 1, f.rubrica, g[0], f.problema, f.fundamento, f.correcao, f.impacto || ""]);
+            rr.eachCell({ includeEmpty: true }, (c) => { c.alignment = { vertical: "top", wrapText: true }; c.font = { size: 9.5 }; c.border = { bottom: fino }; });
+            rr.getCell(3).font = { bold: true, size: 9.5, color: { argb: X.branco } }; rr.getCell(3).fill = fill(g[2]); rr.getCell(3).alignment = { vertical: "top", horizontal: "center" };
+            rr.getCell(7).font = { size: 9.5, color: { argb: "FF8A1230" } };
+            rr.height = Math.max(30, Math.ceil(Math.max(f.problema.length, f.correcao.length) / 48) * 13);
+          });
+          wf.autoFilter = { from: { row: hr.number, column: 1 }, to: { row: hr.number, column: 7 } };
+        }
+        // aba do dimensionamento (limpeza)
+        if (dims.length) {
+          const wd = wb.addWorksheet("Dimensionamento", { views: [{ showGridLines: false }] });
+          wd.columns = [{ width: 22 }, { width: 46 }, { width: 12 }, { width: 16 }, { width: 14 }, { width: 14 }, { width: 16 }];
+          let dr = wd.addRow(["Dimensionamento da equipe – IN 05/2017, Anexo VI-B"]); wd.mergeCells(dr.number, 1, dr.number, 7); dr.getCell(1).font = { bold: true, size: 13, color: { argb: X.branco } }; dr.getCell(1).fill = fill(X.navy); dr.height = 24;
+          const hd = wd.addRow(["Grupo", "Tipo de área", "Área (m²)", "Produtividade (m²)", "Frequência (h/mês)", "Profissionais", "Preço por m²"]);
+          hd.eachCell((c) => { c.font = { bold: true, size: 9.5, color: { argb: X.fraco } }; c.fill = fill(X.cinza); });
+          dims.forEach((v) => { const rr = wd.addRow([v[0], v[1], num(v[2]), num(v[3]), v[4] === "—" ? "—" : num(v[4]), num(v[5]), v[6]]); rr.eachCell((c) => { c.border = { bottom: fino }; c.font = { size: 10 }; }); rr.getCell(3).numFmt = "#,##0.00"; rr.getCell(6).numFmt = "0.00"; });
+          dr = wd.addRow([P.moDimResumo]); wd.mergeCells(dr.number, 1, dr.number, 7); dr.getCell(1).font = { bold: true, color: { argb: X.teal } }; dr.getCell(1).alignment = { wrapText: true }; dr.height = 30;
+        }
         const buf = await wb.xlsx.writeBuffer();
         baixarArquivo(nome + ".xlsx", buf, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
       } else {
         if (!window.jspdf) await carregarScript(baseSite() + "vendor/jspdf-2.5.1.umd.min.js");
         if (!(window.jspdf && window.jspdf.jsPDF && window.jspdf.jsPDF.API.autoTable)) await carregarScript(baseSite() + "vendor/jspdf-autotable-3.8.2.min.js");
         const { jsPDF } = window.jspdf; const doc = new jsPDF({ unit: "mm", format: "a4" });
-        doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text(titulo, 14, 16);
-        doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor(102, 117, 127);
-        doc.text("IN SEGES/MP nº 5/2017, Anexo VII-D · gerada no Licitacon em " + new Date().toLocaleDateString("pt-BR"), 14, 21); doc.setTextColor(0, 0, 0);
-        doc.autoTable({ startY: 25, body: ident, theme: "grid", styles: { fontSize: 8.5, cellPadding: 1.6 }, columnStyles: { 0: { fontStyle: "bold", cellWidth: 70 } }, margin: { left: 14, right: 14 } });
-        const body = linhas.map((l) => l.tipo === "mod" ? [{ content: l.t.toUpperCase(), colSpan: 4, styles: { fillColor: [10, 31, 42], textColor: 255, fontStyle: "bold" } }]
-          : l.tipo === "tot" ? [{ content: "", styles: { fillColor: [238, 243, 242] } }, { content: l.rot, styles: { fontStyle: "bold", fillColor: [238, 243, 242] } }, { content: l.pct || "", styles: { halign: "right", fontStyle: "bold", fillColor: [238, 243, 242] } }, { content: l.val, styles: { halign: "right", fontStyle: "bold", fillColor: [238, 243, 242] } }]
-          : [l.cod, l.rot + (l.nota ? "\n" + l.nota : ""), { content: l.pct || "", styles: { halign: "right" } }, { content: l.val, styles: { halign: "right" } }]);
-        doc.autoTable({ startY: doc.lastAutoTable.finalY + 4, head: [["", "Rubrica", "%", "Valor (R$)"]], body, theme: "grid", headStyles: { fillColor: [244, 247, 246], textColor: [85, 102, 109] },
-          styles: { fontSize: 8, cellPadding: 1.4, valign: "middle" }, columnStyles: { 0: { cellWidth: 10, fontStyle: "bold" }, 2: { cellWidth: 24 }, 3: { cellWidth: 30 } }, margin: { left: 14, right: 14 } });
-        doc.autoTable({ startY: doc.lastAutoTable.finalY + 4, head: [[{ content: "QUADRO-RESUMO DO CUSTO POR EMPREGADO", colSpan: 3 }]], body: resumo.map(([c, rot, v]) => [c, { content: rot, styles: { fontStyle: c ? "normal" : "bold" } }, { content: v, styles: { halign: "right", fontStyle: c ? "normal" : "bold" } }]).concat(kpis.map(([k, v]) => ["", k, { content: String(v), styles: { halign: "right" } }])),
-          theme: "grid", headStyles: { fillColor: [10, 31, 42] }, styles: { fontSize: 8.5, cellPadding: 1.6 }, columnStyles: { 0: { cellWidth: 10 }, 2: { cellWidth: 40 } }, margin: { left: 14, right: 14 } });
-        if (falhas.length) {
-          doc.autoTable({ startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "FALHAS E INCONSISTÊNCIAS DA PLANILHA DA CONTRATAÇÃO", colSpan: 2 }]],
-            body: [[{ content: "Atenção: manter qualquer uma dessas falhas na planilha impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores. Corrija cada item antes de concluir a repactuação.", colSpan: 2, styles: { fontStyle: "bold", textColor: [138, 18, 48] } }]].concat(falhas.map((f, i) => [String(i + 1), f.rubrica + " (gravidade " + ({ alta: "alta", media: "média", baixa: "baixa" }[f.gravidade] || "média") + ")\nFalha: " + f.problema + "\nFundamento: " + f.fundamento + "\nCaminho correto: " + f.correcao + (f.impacto ? "\nImpacto se mantida: " + f.impacto : "")])),
-            theme: "grid", headStyles: { fillColor: [138, 18, 48] }, styles: { fontSize: 8, cellPadding: 1.8 }, columnStyles: { 0: { cellWidth: 8, fontStyle: "bold" } }, margin: { left: 14, right: 14 } });
+        const W = 210, ML = 14, MR = 14, LARG = W - ML - MR;
+        const C = { navy: [10, 31, 42], teal: [15, 107, 126], verde: [15, 163, 107], fraco: [102, 117, 127], texto: [11, 31, 42], cinza: [238, 243, 242], cinza2: [246, 248, 247], ambar: [255, 244, 220], tot: [227, 242, 234], linha: [221, 229, 228] };
+        const cab = () => {
+          doc.setFillColor(...C.navy); doc.rect(0, 0, W, 22, "F");
+          doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text("Planilha de custos e formação de preços", ML, 10);
+          doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(185, 203, 210);
+          doc.text(titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + "/" + (d.uf || "") : ""), ML, 16);
+          doc.setTextColor(127, 227, 182); doc.setFontSize(7.5); doc.text("IN SEGES/MP nº 5/2017 · Anexo VII-D", W - MR, 10, { align: "right" }); doc.text("Gerada em " + hoje, W - MR, 16, { align: "right" });
+          doc.setTextColor(...C.texto);
+        };
+        const rod = (n) => { doc.setFontSize(7.5); doc.setTextColor(...C.fraco); doc.setDrawColor(...C.linha); doc.line(ML, 287, W - MR, 287);
+          doc.text("Licitacon · confira cada valor e fonte antes de juntar ao processo", ML, 291.5); doc.text("Página " + n + " de {total}", W - MR, 291.5, { align: "right" }); doc.setTextColor(...C.texto); };
+        cab();
+        let y = 30;
+        // cartões de destaque
+        const cw = (LARG - 3 * 4) / 4;
+        destaques.forEach(([k, v], i) => {
+          const x = ML + i * (cw + 4);
+          doc.setFillColor(...(i === 0 ? C.tot : C.cinza2)); doc.roundedRect(x, y, cw, 20, 2.5, 2.5, "F");
+          if (i === 0) { doc.setFillColor(...C.verde); doc.rect(x, y + 3, 1.2, 14, "F"); }
+          doc.setFontSize(7); doc.setTextColor(...C.fraco); doc.setFont("helvetica", "bold"); doc.text(k.toUpperCase(), x + 4, y + 6.5, { maxWidth: cw - 6 });
+          doc.setFontSize(i === 0 ? 13 : 11); doc.setTextColor(...(i === 0 ? C.teal : C.texto)); doc.text(String(v), x + 4, y + 15, { maxWidth: cw - 6 });
+        });
+        doc.setFont("helvetica", "normal"); doc.setTextColor(...C.texto);
+        y += 27;
+        // barra da composição do preço
+        if (comp.length && tot) {
+          doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(...C.fraco); doc.text("COMPOSIÇÃO DO PREÇO POR EMPREGADO", ML, y); y += 3;
+          let x = ML; comp.forEach(([, v, c]) => { const w = tot ? (v / tot) * LARG : 0; if (w > 0) { doc.setFillColor(...c); doc.rect(x, y, w, 5, "F"); x += w; } });
+          y += 9; doc.setFont("helvetica", "normal"); doc.setFontSize(7.3);
+          comp.forEach(([k, v, c], i) => { const col = i % 3, lin = Math.floor(i / 3), x2 = ML + col * (LARG / 3), y2 = y + lin * 5;
+            doc.setFillColor(...c); doc.rect(x2, y2 - 2.4, 2.6, 2.6, "F"); doc.setTextColor(...C.texto);
+            doc.text(k + "  " + (tot ? (v / tot * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) : "0") + "%", x2 + 4, y2); });
+          y += 12;
         }
-        let y = doc.lastAutoTable.finalY + 6; doc.setFontSize(7.5); doc.setTextColor(85, 102, 109);
-        notas.forEach((n2) => { const ls = doc.splitTextToSize(n2, 182); if (y + ls.length * 3.5 > 285) { doc.addPage(); y = 16; } doc.text(ls, 14, y); y += ls.length * 3.5 + 1.5; });
+        // identificação em duas colunas
+        const idPares = []; for (let i = 0; i < ident.length; i += 2) idPares.push([ident[i][0], String(ident[i][1]), ident[i + 1] ? ident[i + 1][0] : "", ident[i + 1] ? String(ident[i + 1][1]) : ""]);
+        // a fonte padrão do PDF não tem alguns símbolos: troca por equivalentes legíveis
+        const limpo = (t) => String(t).replace(/²/g, "2").replace(/→/g, "»").replace(/≥/g, ">=").replace(/≤/g, "<=");
+        const base = { margin: { left: ML, right: MR, top: 28, bottom: 14 }, didDrawPage: () => { cab(); }, styles: { font: "helvetica", textColor: C.texto, lineColor: C.linha },
+          didParseCell: (dt) => { dt.cell.text = (dt.cell.text || []).map(limpo); } };
+        doc.autoTable({ ...base, startY: y, head: [[{ content: "IDENTIFICAÇÃO", colSpan: 4, styles: { fillColor: C.teal, textColor: 255, fontSize: 8, fontStyle: "bold" } }]], body: idPares, theme: "plain",
+          styles: { ...base.styles, fontSize: 8, cellPadding: { top: 1.4, bottom: 1.4, left: 2, right: 2 }, lineWidth: { bottom: 0.1 } },
+          columnStyles: { 0: { textColor: C.fraco, fontStyle: "bold", cellWidth: 40 }, 1: { cellWidth: 51 }, 2: { textColor: C.fraco, fontStyle: "bold", cellWidth: 40 } } });
+        y = doc.lastAutoTable.finalY + 5;
+        if (temAuto) { doc.setFillColor(...C.ambar); doc.rect(ML, y - 2.6, 3.4, 3.4, "F"); doc.setFontSize(7.3); doc.setTextColor(...C.fraco);
+          doc.text("Linhas em âmbar: valores preenchidos pelo agente ou ajustados automaticamente; a fonte aparece sob a rubrica.", ML + 5, y); doc.setTextColor(...C.texto); y += 4; }
+        // módulos
+        modulos.forEach((m) => {
+          const body = [];
+          m.linhas.forEach((l) => {
+            const f = l.auto ? C.ambar : null;
+            const borda = l.nota ? { bottom: 0 } : { bottom: 0.1 };
+            body.push([{ content: l.cod, styles: { fontStyle: "bold", textColor: C.teal, fillColor: f, lineWidth: borda } }, { content: l.rot, styles: { fillColor: f, lineWidth: borda } },
+              { content: l.pctTxt || "", styles: { halign: "right", fillColor: f, lineWidth: borda } }, { content: l.valTxt, styles: { halign: "right", fillColor: f, lineWidth: borda } }]);
+            if (l.nota) body.push([{ content: "", styles: { fillColor: f, lineWidth: { bottom: 0.1 } } }, { content: l.nota, colSpan: 3, styles: { fontSize: 6.6, textColor: C.fraco, fontStyle: "italic", fillColor: f, cellPadding: { top: 0, bottom: 1.6, left: 2, right: 2 }, lineWidth: { bottom: 0.1 } } }]);
+          });
+          body.push([{ content: "", styles: { fillColor: C.tot } }, { content: m.total.rot, styles: { fontStyle: "bold", fillColor: C.tot } },
+            { content: m.total.pctTxt || "", styles: { halign: "right", fontStyle: "bold", fillColor: C.tot } }, { content: m.total.valTxt, styles: { halign: "right", fontStyle: "bold", fillColor: C.tot, textColor: C.teal } }]);
+          // mantém o módulo inteiro na mesma página quando ele cabe numa página
+          const est = 16 + m.linhas.length * 6.2 + m.linhas.filter((l) => l.nota).length * 4;
+          if (y + est > 282 && est < 240) { doc.addPage(); cab(); y = 28; }
+          const head = [[{ content: m.cab.toUpperCase() + "   " + m.nome, colSpan: 4, styles: { fillColor: C.navy, textColor: 255, fontSize: 8.5, fontStyle: "bold" } }],
+            [{ content: "" }, { content: m.sub ? "Rubrica · " + m.sub : "Rubrica" }, { content: "%", styles: { halign: "right" } }, { content: "Valor", styles: { halign: "right" } }]];
+          doc.autoTable({ ...base, startY: y, head, body, theme: "plain", rowPageBreak: "avoid",
+            headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8, fontStyle: "bold", cellPadding: 1.6 },
+            styles: { ...base.styles, fontSize: 7.8, cellPadding: { top: 1.5, bottom: 1.5, left: 2, right: 2 }, valign: "middle" },
+            columnStyles: { 0: { cellWidth: 11 }, 2: { cellWidth: 25 }, 3: { cellWidth: 30 } } });
+          y = doc.lastAutoTable.finalY + 4;
+        });
+        // quadro-resumo
+        const corpoRes = resumo.map((l) => [{ content: l.cod, styles: { fontStyle: "bold", textColor: C.teal } }, { content: l.rot, styles: { fontStyle: l.forte ? "bold" : "normal", fillColor: l.forte ? C.cinza2 : null } },
+          { content: l.txt, styles: { halign: "right", fontStyle: l.forte ? "bold" : "normal", fillColor: l.forte ? C.cinza2 : null } }])
+          .concat([[{ content: "", styles: { fillColor: C.tot } }, { content: "PREÇO TOTAL POR EMPREGADO", styles: { fontStyle: "bold", fillColor: C.tot, fontSize: 9 } }, { content: P.moTotal, styles: { halign: "right", fontStyle: "bold", fillColor: C.tot, textColor: C.teal, fontSize: 10 } }]])
+          .concat(kpis.map(([k, v]) => [{ content: "" }, { content: k, styles: { textColor: C.fraco } }, { content: String(v), styles: { halign: "right" } }]));
+        if (y + 16 + corpoRes.length * 6.4 > 282) { doc.addPage(); cab(); y = 28; }
+        doc.autoTable({ ...base, startY: y, head: [[{ content: "QUADRO-RESUMO   Custo por empregado e valores do contrato", colSpan: 3, styles: { fillColor: C.navy, textColor: 255, fontSize: 8.5, fontStyle: "bold" } }]],
+          body: corpoRes, theme: "plain", rowPageBreak: "avoid", styles: { ...base.styles, fontSize: 8, cellPadding: { top: 1.6, bottom: 1.6, left: 2, right: 2 }, lineWidth: { bottom: 0.1 } }, columnStyles: { 0: { cellWidth: 11 }, 2: { cellWidth: 45 } } });
+        // falhas
+        if (falhas.length) {
+          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6,
+            head: [[{ content: "FALHAS E INCONSISTÊNCIAS DA PLANILHA DA CONTRATAÇÃO", colSpan: 3, styles: { fillColor: [138, 18, 48], textColor: 255, fontSize: 8.5, fontStyle: "bold" } }]],
+            body: [[{ content: "Atenção: manter qualquer uma destas falhas impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores.", colSpan: 3, styles: { fontStyle: "bold", textColor: [138, 18, 48], fillColor: [253, 236, 239] } }]]
+              .concat(falhas.map((f, i) => { const g = grav[f.gravidade] || grav.media; return [
+                { content: String(i + 1), styles: { fontStyle: "bold", halign: "center" } },
+                { content: g[0].toUpperCase(), styles: { fillColor: g[1], textColor: 255, fontStyle: "bold", halign: "center", fontSize: 6.5 } },
+                { content: f.rubrica + "\nFalha: " + f.problema + "\nFundamento: " + f.fundamento + "\nCaminho correto: " + f.correcao + (f.impacto ? "\nImpacto se mantida: " + f.impacto : "") }]; })),
+            theme: "plain", rowPageBreak: "avoid", styles: { ...base.styles, fontSize: 7.6, cellPadding: 2, lineWidth: { bottom: 0.1 }, valign: "top" }, columnStyles: { 0: { cellWidth: 8 }, 1: { cellWidth: 16 } } });
+        }
+        // dimensionamento
+        if (dims.length) {
+          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "DIMENSIONAMENTO DA EQUIPE – IN 05/2017, ANEXO VI-B", colSpan: 6, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }],
+            ["Tipo de área", "Área (m²)", "Produtividade", "Frequência (h/mês)", "Profissionais", "Preço por m²"]],
+            body: dims.map((v) => [v[1], v[2], v[3], v[4], v[5], v[6]]).concat([[{ content: P.moDimResumo, colSpan: 6, styles: { fontStyle: "bold", textColor: C.teal } }]]),
+            theme: "plain", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8 }, styles: { ...base.styles, fontSize: 7.6, cellPadding: 1.6, lineWidth: { bottom: 0.1 } },
+            columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" }, 4: { halign: "right" }, 5: { halign: "right" } } });
+        }
+        // notas
+        doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "NOTAS E FUNDAMENTAÇÃO", colSpan: 2, styles: { fillColor: C.teal, textColor: 255, fontSize: 8, fontStyle: "bold" } }]],
+          body: notas.map((n2, i) => [String(i + 1), n2]), theme: "plain", rowPageBreak: "avoid", styles: { ...base.styles, fontSize: 7.2, textColor: C.fraco, cellPadding: 1.6 }, columnStyles: { 0: { cellWidth: 7, fontStyle: "bold" } } });
+        const n = doc.getNumberOfPages(); for (let i = 1; i <= n; i++) { doc.setPage(i); rod(i); }
+        if (typeof doc.putTotalPages === "function") doc.putTotalPages("{total}");
         doc.save(nome + ".pdf");
       }
-    } catch (e) { this.setState((x) => ({ mo: { ...x.mo, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
+    } catch (e) { console.error(e); this.setState((x) => ({ mo: { ...x.mo, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
     this.setState((x) => ({ mo: { ...x.mo, baixando: false } }));
   }
 
