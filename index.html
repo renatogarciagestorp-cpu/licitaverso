@@ -560,6 +560,27 @@
 .lvh-art .lvh-doc-pe { margin-top: 12px; }
 @media (max-width: 980px) { .lvh-ban-in { grid-template-columns: 1fr; gap: 30px; padding: 36px 28px; } .lvh-ban-inv .lvh-ban-txt { order: 1; } .lvh-ban-inv .lvh-art { order: 2; } .lvh-sec .lvh-dif { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .lvh-ban { padding: 18px 12px 4px; } .lvh-ban-in { padding: 28px 18px; border-radius: 20px; } .lvh-ban-h { font-size: 28px; } .lvh-ban-lista { grid-template-columns: 1fr; } .lvh-art { padding: 10px; } .lvh-art-doc { transform: none !important; padding: 14px; } .lvh-art-tab > div { font-size: 12px; } }
+.lvh-ban-3 > button { display: grid; gap: 2px; text-align: left; font: inherit; cursor: pointer; border: 0; border-left: 3px solid #0FA36B; background: #F6F8F7; border-radius: 0 12px 12px 0; padding: 10px 14px; transition: background .15s; }
+.lvh-ban-3 > button:hover, .lvh-ban-3 > button:focus-visible { background: #E3F5EC; outline: none; }
+.lvh-ban-menta .lvh-ban-3 > div { background: rgba(255,255,255,0.75); }
+.lvh-ban-3 .lvh-ban-quem { font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: #0A7A50; }
+.lvh-art-perg { display: flex; gap: 10px; margin-top: 12px; }
+.lvh-art-av { width: 34px; height: 34px; border-radius: 50%; background: #0A1F2A; color: #3FD49A; font-size: 12px; font-weight: 800; display: grid; place-items: center; flex: none; }
+.lvh-art-perg small { display: block; font-size: 11px; color: #6A7B82; font-weight: 600; }
+.lvh-art-perg b { font-size: 14px; color: #0B1F2A; line-height: 1.4; }
+.lvh-art-resp { margin-top: 12px; margin-left: 44px; padding: 12px; border-radius: 12px; background: #E3F5EC; border: 1px solid #9ED9BE; }
+.lvh-art-oficial { display: inline-block; font-size: 11px; font-weight: 800; color: #fff; background: #0FA36B; border-radius: 999px; padding: 3px 9px; }
+.lvh-art-resp p { margin: 8px 0 6px; font-size: 13px; line-height: 1.5; color: #22343B; }
+.lvh-art-resp small { font-size: 11.5px; color: #0A7A50; font-weight: 700; }
+.lvh-dot.lvh-dot-verm { background: #D94A3D; box-shadow: 0 0 0 4px rgba(217,74,61,0.15); }
+.lvh-art-sel.lvh-sel-verm { color: #B23A2E; background: #FCE9E7; }
+.lvh-art-linha { list-style: none; margin: 14px 0 0; padding: 0 0 0 22px; display: grid; gap: 12px; position: relative; }
+.lvh-art-linha::before { content: ""; position: absolute; left: 6px; top: 6px; bottom: 6px; width: 2px; background: linear-gradient(#F0B44C, #D94A3D); }
+.lvh-art-linha li { position: relative; display: grid; gap: 1px; }
+.lvh-art-linha li::before { content: ""; position: absolute; left: -22px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 3px solid #D94A3D; box-sizing: border-box; }
+.lvh-art-linha li:first-child::before { border-color: #F0B44C; }
+.lvh-art-linha b { font-size: 13.5px; color: #0B1F2A; }
+.lvh-art-linha span { font-size: 12.5px; color: #6A7B82; }
 .lvh-top-in { max-width: 1240px; margin: 0 auto; }
 .lvh-top-h1 { font-size: 44px; line-height: 1.06; letter-spacing: -0.03em; font-weight: 800; margin: 12px 0 0; max-width: 24ch; }
 .lvh-top-h1 em { font-style: normal; color: #3FD49A; }
@@ -1734,32 +1755,6 @@
         </div>
       </section>
 
-      <section class="lvh-sec" id="h-comunidade">
-        <p class="lvh-kicker">Comunidade e capacitação</p>
-        <h2 class="lvh-h2">Pergunte, aprenda e conte com o especialista.</h2>
-        <div class="lvh-bento">
-          <sc-for list="{{ ferramentas }}" as="f" hint-placeholder-count="5">
-            <button class="{{ f.classe }}" sc-camel-on-click="{{ f.go }}">
-              <span class="lvh-f-ic" aria-hidden="true">{{ f.icon }}</span>
-              <span class="lvh-f-tag">{{ f.tag }}</span>
-              <span class="lvh-f-t">{{ f.titulo }}</span>
-              <span class="lvh-f-d">{{ f.desc }}</span>
-              <span class="lvh-f-cta">{{ f.cta }} →</span>
-            </button>
-          </sc-for>
-        </div>
-      </section>
-
-      <section class="lvh-sec">
-        <p class="lvh-kicker">Por que isso importa</p>
-        <h2 class="lvh-h2">Em licitação, é o detalhe pequeno que custa caro.</h2>
-        <div class="lvh-dores">
-          <sc-for list="{{ homeDores }}" as="d" hint-placeholder-count="3">
-            <article class="lvh-dor"><span class="lvh-dor-quem">{{ d.quem }}</span><h3>{{ d.t }}</h3><p>{{ d.d }}</p></article>
-          </sc-for>
-        </div>
-      </section>
-
       <section class="lvh-sec">
         <div class="lvh-dif">
           <div class="lvh-dif-cab">
@@ -1770,6 +1765,68 @@
           <sc-for list="{{ diferenciais }}" as="d" hint-placeholder-count="7">
             <div class="lvh-dif-item"><span class="lvh-dif-ic" aria-hidden="true">{{ d.icon }}</span><b>{{ d.titulo }}</b><span>{{ d.desc }}</span></div>
           </sc-for>
+        </div>
+      </section>
+
+      <section class="lvh-ban" id="h-comunidade">
+        <div class="lvh-ban-in lvh-ban-claro lvh-ban-inv">
+          <div class="lvh-ban-txt">
+            <span class="lvh-ban-eye">◍ Comunidade e capacitação</span>
+            <h2 class="lvh-ban-h">Pergunte, aprenda e conte com o <em>especialista</em>.</h2>
+            <p class="lvh-ban-lead">Quem conduz e quem disputa licitações no mesmo lugar, com resposta oficial do especialista, consultoria quando o caso pede e cursos práticos para a equipe.</p>
+            <div class="lvh-ban-3">
+              <button type="button" sc-camel-on-click="{{ goForum }}"><b>Fórum por tema →</b><span>Perguntas organizadas por assunto, com resposta oficial. Setor público e privado.</span></button>
+              <button type="button" sc-camel-on-click="{{ goConsultoria }}"><b>Consultoria técnica →</b><span>Por escrito, em vídeo ou ao vivo. O Pro inclui 1 consultoria por escrito por mês.</span></button>
+              <button type="button" sc-camel-on-click="{{ goCursos }}"><b>Cursos →</b><span>Licitações e contratos na prática, com até 50% de desconto no Pro.</span></button>
+            </div>
+            <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goForum }}">Ver as discussões</button></div>
+            <p class="lvh-ban-micro">Fórum para assinantes e no teste grátis · consultoria e cursos com desconto de assinante.</p>
+          </div>
+          <div class="lvh-art" aria-hidden="true">
+            <div class="lvh-art-doc">
+              <div class="lvh-art-top"><span class="lvh-dot"></span><b>Fórum · Reajuste e repactuação</b><span class="lvh-art-sel">12 respostas</span></div>
+              <div class="lvh-art-perg">
+                <div class="lvh-art-av">AC</div>
+                <div><small>Agente de contratação · Prefeitura</small><b>A repactuação pode retroagir à data da nova convenção mesmo pedida depois?</b></div>
+              </div>
+              <div class="lvh-art-resp">
+                <span class="lvh-art-oficial">✓ Resposta oficial</span>
+                <p>Sim, desde que o pedido venha antes da prorrogação ou do fim do contrato. Os efeitos financeiros contam da data-base da convenção…</p>
+                <small>Especialista Licitacon · com 3 decisões citadas</small>
+              </div>
+              <div class="lvh-art-tags"><span>Consultoria em vídeo</span><span>Curso: Repactuação na prática</span></div>
+              <div class="lvh-doc-pe"><span>Exemplo ilustrativo</span><span class="lvh-pdf">Público e privado</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lvh-ban" id="h-importa">
+        <div class="lvh-ban-in lvh-ban-menta">
+          <div class="lvh-ban-txt">
+            <span class="lvh-ban-eye">! Por que isso importa</span>
+            <h2 class="lvh-ban-h">Em licitação, é o <em>detalhe pequeno</em> que custa caro.</h2>
+            <p class="lvh-ban-lead">Do lado do órgão ou da empresa, o erro que passa na revisão aparece depois – na impugnação, no Tribunal de Contas ou na proposta desclassificada.</p>
+            <div class="lvh-ban-3">
+              <sc-for list="{{ homeDores }}" as="d" hint-placeholder-count="3">
+                <div><small class="lvh-ban-quem">{{ d.quem }}</small><b>{{ d.t }}</b><span>{{ d.d }}</span></div>
+              </sc-for>
+            </div>
+            <div class="lvh-ctas"><button class="{{ ctaClasse }}" sc-camel-on-click="{{ goAgente }}">{{ heroCta }}</button></div>
+          </div>
+          <div class="lvh-art" aria-hidden="true">
+            <div class="lvh-art-doc">
+              <div class="lvh-art-top"><span class="lvh-dot lvh-dot-verm"></span><b>Sem revisão técnica</b><span class="lvh-art-sel lvh-sel-verm">Risco</span></div>
+              <ol class="lvh-art-linha">
+                <li><b>Edital publicado</b><span>Exigência sem justificativa no TR</span></li>
+                <li><b>Impugnação</b><span>Licitante aponta restrição à competição</span></li>
+                <li><b>Tribunal de Contas</b><span>Medida cautelar suspende o certame</span></li>
+                <li><b>Retrabalho</b><span>Novo edital, novo prazo, responsabilização</span></li>
+              </ol>
+              <div class="lvh-art-chip">Com O Parecerista: o ponto é <b>apontado e corrigido antes</b> da publicação ✓</div>
+              <div class="lvh-doc-pe"><span>Exemplo ilustrativo</span><span class="lvh-pdf">Parecer · PDF</span></div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -8870,7 +8927,7 @@ class Component extends DCLogic {
         : "Instale como aplicativo: abre direto da tela inicial, sem precisar do navegador.",
       instalarApp: () => this.instalarApp(),
       fecharInstalar: () => { lsGravar("instalar-dispensado", "1"); this.setState({ instalar: null }); },
-      goHome: this.nav("home"), goBiblioteca: this.nav("biblioteca"), goForum: this.nav("forum"), goPlanos: this.nav("planos"),
+      goHome: this.nav("home"), goBiblioteca: this.nav("biblioteca"), goForum: this.nav("forum"), goPlanos: this.nav("planos"), goConsultoria: this.nav("consultoria"), goCursos: this.nav("cursos"),
       goLogin: this.nav("login"), goCadastro: this.nav("cadastro"), goRecuperar: this.nav("recuperar"),
       isHome: p("home"), isBiblioteca: p("biblioteca"), isForum: p("forum"), isCursos: p("cursos"),
       isConsultoria: p("consultoria"), isAgente: p("agente"), isElaborar: p("elaborar"), isCalculadora: p("calculadora"), isPlanos: p("planos"),
