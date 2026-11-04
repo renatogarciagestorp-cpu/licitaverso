@@ -500,6 +500,7 @@
   }
   /* ---------- página inicial ---------- */
   .lvh-top { background: radial-gradient(1100px 520px at 85% -10%, rgba(15,163,107,0.22), transparent 60%), #0A1F2A; color: #fff; padding: 40px 24px 56px; }
+.lvh-btn.lvh-btn-espera { color: transparent !important; pointer-events: none; }
 .lvh-top-in { max-width: 1240px; margin: 0 auto; }
 .lvh-top-h1 { font-size: 44px; line-height: 1.06; letter-spacing: -0.03em; font-weight: 800; margin: 12px 0 0; max-width: 24ch; }
 .lvh-top-h1 em { font-style: normal; color: #3FD49A; }
@@ -1498,7 +1499,7 @@
           <h1 class="lvh-top-h1">Tudo sobre licitações e contratos. <em>Em um só lugar.</em></h1>
           <p class="lvh-top-lead">Agentes de IA que analisam e elaboram documentos, calculadora de reajuste e planilhas de mão de obra, jurisprudência de todo o país, fórum, consultoria e cursos – para quem conduz, disputa, assessora ou controla contratações.</p>
           <div class="lvh-ctas">
-            <button class="lvh-btn" sc-camel-on-click="{{ topCta }}">{{ topCtaTxt }}</button>
+            <button class="{{ ctaClasse }}" sc-camel-on-click="{{ topCta }}">{{ topCtaTxt }}</button>
             <button class="lvh-btn-sec" sc-camel-on-click="{{ goPlanos }}">Ver planos e preços</button>
           </div>
           <div class="lvh-top-grid" role="list" aria-label="O que o Licitacon oferece">
@@ -1520,7 +1521,7 @@
             <h2 class="lvh-h1">Ache o problema do edital <em>antes</em> do Tribunal de Contas.</h2>
             <p class="lvh-lead">O agente de IA do Licitacon lê o seu edital, ETP ou termo de referência, confere item a item com a lei e com decisões de 90 fontes oficiais e devolve um parecer técnico com o risco, a providência e a redação sugerida.</p>
             <div class="lvh-ctas">
-              <button class="lvh-btn" sc-camel-on-click="{{ goAgente }}">{{ heroCta }}</button>
+              <button class="{{ ctaClasse }}" sc-camel-on-click="{{ goAgente }}">{{ heroCta }}</button>
               <button class="lvh-btn-sec" sc-camel-on-click="{{ goBiblioteca }}">Pesquisar jurisprudência</button>
             </div>
             <p class="lvh-micro">{{ heroMicro }}</p>
@@ -1552,7 +1553,7 @@
             <li class="lvh-passo"><span class="lvh-passo-n">{{ ps.n }}</span><h3>{{ ps.t }}</h3><p>{{ ps.d }}</p></li>
           </sc-for>
         </ol>
-        <button class="lvh-btn" style="margin-top: 30px" sc-camel-on-click="{{ goAgente }}">{{ heroCta }}</button>
+        <button class="{{ ctaClasse }}" style="margin-top: 30px" sc-camel-on-click="{{ goAgente }}">{{ heroCta }}</button>
       </section>
       <sc-for list="{{ homeApres }}" as="a" hint-placeholder-count="3">
         <section class="lvh-sec" id="{{ a.id }}">
@@ -6304,7 +6305,7 @@ class Component extends DCLogic {
   limparDados() {
     setTimeout(() => this.carregarOferta(), 0);
     this.setState({
-      admin: false, plano: null, organizacao: null, assinaturas: [], pagamentos: [], consultorias: [], acessosCurso: [], seguindo: [], favBib: [], analises: [], cotaAnalise: null,
+      admin: false, plano: null, dadosProntos: false, organizacao: null, assinaturas: [], pagamentos: [], consultorias: [], acessosCurso: [], seguindo: [], favBib: [], analises: [], cotaAnalise: null,
       perfil: { nome: "", celular: "", email: "", doc: "", orgao: "", cargo: "" }, notif: NOTIF_PADRAO, forumPerguntas: [], forumTopicos: null
     });
   }
@@ -6315,7 +6316,7 @@ class Component extends DCLogic {
     const leve = !!(opcoes && opcoes.leve);
     if (this._dadosPromessa) return this._dadosPromessa;
     if (leve && this._dadosEm && Date.now() - this._dadosEm < 60000) return Promise.resolve();
-    this._dadosPromessa = this._carregarDados().finally(() => { this._dadosPromessa = null; this._dadosEm = Date.now(); });
+    this._dadosPromessa = this._carregarDados().finally(() => { this._dadosPromessa = null; this._dadosEm = Date.now(); if (!this.state.dadosProntos && this.u) this.setState({ dadosProntos: true }); });
     return this._dadosPromessa;
   }
 
@@ -6346,6 +6347,7 @@ class Component extends DCLogic {
     this.setStateSuave({
       admin: !!p.admin,
       plano: planoVig,
+      dadosProntos: true,
       planoVisao: visao,
       cupomCurso: (cupom && !cupom.error && cupom.data) || "",
       perfil: { nome: p.nome || "", celular: p.celular || "", email: p.email || u.email || "", doc: p.documento || "", orgao: p.orgao || "", cargo: p.cargo || "" },
@@ -9225,7 +9227,8 @@ class Component extends DCLogic {
         };
       })(),
       // home
-      topCtaTxt: !s.usuario ? "Criar conta grátis" : (!s.plano && !s.admin ? "Começar o teste grátis" : "Conhecer cada ferramenta"),
+      ctaClasse: "lvh-btn" + (s.sessaoPronta && (!s.usuario || s.dadosProntos) ? "" : " lvh-btn-espera"),
+      topCtaTxt: !(s.sessaoPronta && (!s.usuario || s.dadosProntos)) ? "Conhecer cada ferramenta" : !s.usuario ? "Criar conta grátis" : (!s.plano && !s.admin ? "Começar o teste grátis" : "Conhecer cada ferramenta"),
       topCta: !s.usuario ? this.nav("cadastro") : (!s.plano && !s.admin ? this.nav("planos") : () => { try { document.getElementById("h-parecerista").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }),
       homeTopo: [
         ["✦", "Agente de IA", "O Parecerista", "Parecer técnico sobre edital, ETP, TR e planilhas, com a lei e a jurisprudência.", "h-parecerista"],
