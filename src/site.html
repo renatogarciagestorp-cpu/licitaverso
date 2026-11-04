@@ -7524,7 +7524,7 @@ class Component extends DCLogic {
         if (Math.abs(dv) >= 0.005) {
           if (k === "M3") motivo = "Custo não renovável: aviso prévio trabalhado reduzido a 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário).";
           else if (["unif", "materiais", "equip", "outros5"].includes(k) && r["rj_" + k]) motivo = "Reajuste dos insumos pelo índice do contrato (fator " + (rj.fator || 1).toLocaleString("pt-BR", { maximumFractionDigits: 6 }) + ").";
-          else if (campoK && String(d0.ant[campoK] ?? "") === String(d0[campoK] ?? "")) motivo = k === "vt" ? "Reflexo do novo salário-base no desconto de 6% do empregado (Lei 7.418/1985)." : "Reflexo das rubricas acima.";
+          else if (campoK && String(d0.ant[campoK] ?? MO_PADRAO[campoK] ?? "") === String(d0[campoK] ?? MO_PADRAO[campoK] ?? "")) motivo = k === "vt" ? "Reflexo do novo salário-base no desconto de 6% do empregado (Lei 7.418/1985)." : "Reflexo das rubricas acima.";
           else if (campoK && fontes[campoK]) motivo = fontes[campoK];
           else if (tot) motivo = "Reflexo das rubricas acima.";
           else if (campoK) motivo = "Alterado na planilha repactuada.";
