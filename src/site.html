@@ -1003,6 +1003,11 @@
   .lmo-x { font: inherit; font-weight: 800; color: #8A1230; background: #fff; border: 1px solid #E8C9CF; border-radius: 8px; width: 28px; cursor: pointer; }
   .lmo-mem-fonte { grid-column: 1 / -1; font-size: 11.5px; color: #66757F; line-height: 1.4; }
   @media (max-width: 900px) { .lmo-mem, .lmo-mem-equip { grid-template-columns: 1fr 1fr; } .lmo-mem.lmo-cab { display: none; } .lmo-mem > span:first-child { grid-column: 1 / -1; } }
+  .lmo-retro { grid-template-columns: 110px minmax(0, 1fr) 150px 150px 150px; }
+  .lmo-lin4 { grid-template-columns: minmax(0, 1fr) 150px 190px; }
+  .lmo-retro.lmo-cab span:nth-child(5), .lmo-lin4.lmo-cab span { text-align: right; } .lmo-lin4.lmo-cab span:first-child { text-align: left; }
+  .lmo-minuta { white-space: pre-wrap; font: inherit; font-size: 13.5px; line-height: 1.6; background: #FBFDF6; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px; margin: 8px 0 0; color: #172B33; }
+  @media (max-width: 900px) { .lmo-retro { grid-template-columns: 80px 1fr 110px; } .lmo-retro > span:nth-child(2), .lmo-retro > span:nth-child(4) { display: none; } .lmo-lin4 { grid-template-columns: 1fr 110px; } .lmo-lin4 > span:nth-child(2) { display: none; } }
   .lmo-aceite { display: grid; gap: 10px; margin-top: 12px; padding: 14px 16px; border: 1px solid #F1D9A6; background: #FFF8E8; border-radius: 12px; }
   .lmo-aceite span { font-size: 14px; font-weight: 700; line-height: 1.5; color: #172B33; }
   .lmo-aceite .lmo-btn { justify-self: start; }
@@ -2423,6 +2428,58 @@
             </section>
             </sc-if>
             <sc-if value="{{ moSemFalhasOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok">✓ O agente não encontrou falhas de preenchimento na planilha da contratação.</p></sc-if>
+
+            <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Efeitos financeiros, prazos e apostilamento</h2>
+              <p class="lmo-nota" style="margin-top: 0">Diferença retroativa mês a mês desde a data-base, conferência da anualidade e da preclusão e minuta do apostilamento (Lei 14.133/2021, arts. 135 e 136, I).</p>
+              <div class="lmo-campos">
+                <sc-for list="{{ moRetroCampos }}" as="c" hint-placeholder-count="6"><label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label></sc-for>
+                <label class="lmo-campo"><span>Primeiro mês pago com o novo preço</span><input type="month" value="{{ moRpInicio }}" sc-camel-on-input="{{ onMoRpInicio }}"></label>
+              </div>
+              <sc-if value="{{ moRetro }}" hint-placeholder-val="{{ false }}">
+                <sc-for list="{{ moRetroAlertas }}" as="a" hint-placeholder-count="2"><p class="{{ a.cls }}" style="margin-top: 8px">{{ a.t }}</p></sc-for>
+                <p class="lmo-nota">{{ moRetroInfo }}</p>
+                <sc-if value="{{ moRetroTemLinhas }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-tabela" role="table" aria-label="Diferença retroativa">
+                  <div class="lmo-lin lmo-retro lmo-cab" role="row"><span>Mês</span><span>Período</span><span>Mão de obra</span><span>Insumos</span><span>Diferença</span></div>
+                  <sc-for list="{{ moRetroLinhas }}" as="l" hint-placeholder-count="3"><div class="lmo-lin lmo-retro" role="row"><span>{{ l.mes }}</span><span>{{ l.frac }}</span><span class="lmo-val">{{ l.lab }}</span><span class="lmo-val">{{ l.ins }}</span><span class="lmo-val">{{ l.dif }}</span></div></sc-for>
+                  <div class="lmo-lin lmo-retro lmo-tot" role="row"><span>Total</span><span></span><span></span><span></span><span class="lmo-val">{{ moRetroTotal }}</span></div>
+                </div>
+                </sc-if>
+              </sc-if>
+              <sc-if value="{{ moTemMinuta }}" hint-placeholder-val="{{ false }}">
+                <p class="lmo-nota"><b>Minuta do apostilamento</b> · confira e complete os campos em branco; ela também vai nos downloads.</p>
+                <pre class="lmo-minuta">{{ moMinuta }}</pre>
+                <div class="lmo-agente" style="margin-top: 8px"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCopiarMinuta }}">Copiar a minuta</button></div>
+              </sc-if>
+              <sc-if value="{{ moSemVigente }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">Informe o preço vigente por empregado nos dados iniciais para calcular o retroativo e montar a minuta.</p></sc-if>
+            </section>
+            </sc-if>
+
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Garantia das obrigações trabalhistas</h2>
+              <p class="lmo-nota" style="margin-top: 0">Nos serviços com dedicação exclusiva de mão de obra, o contrato deve prever a conta-depósito vinculada ou o pagamento pelo fato gerador (IN SEGES/MP nº 5/2017, art. 18; Lei 14.133/2021, art. 121, § 3º).</p>
+              <div class="lmo-modos" role="group" aria-label="Garantia trabalhista"><sc-for list="{{ moGtOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
+              <sc-if value="{{ moGtCv }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-tabela" style="margin-top: 10px" role="table">
+                  <div class="lmo-lin lmo-lin3 lmo-cab" role="row"><span>%</span><span>Provisão (Anexo XII, item 14) sobre o Módulo 1</span><span>Valor por empregado</span></div>
+                  <sc-for list="{{ moCvLinhas }}" as="l" hint-placeholder-count="4"><div class="lmo-lin lmo-lin3" role="row"><span class="lmo-cod">{{ l.pct }}</span><span>{{ l.rot }}</span><span class="lmo-val">{{ l.val }}</span></div></sc-for>
+                  <div class="lmo-lin lmo-lin3 lmo-tot" role="row"><span>{{ moCvTot }}</span><span>Retenção mensal por empregado</span><span class="lmo-val">{{ moCvEmp }}</span></div>
+                </div>
+                <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>Multa do FGTS e contribuição social (%)</span><input type="text" inputmode="decimal" value="{{ moGtMulta }}" sc-camel-on-input="{{ onMoGtMulta }}"></label></div>
+                <p class="lmo-nota">O Anexo XII traz 5%, que inclui a contribuição social de 10% sobre o FGTS extinta pela Lei 13.932/2019; há órgãos que adotam 4%. A incidência do Submódulo 2.2 segue o RAT informado no Submódulo 2.2.</p>
+                <p class="lmo-ok">{{ moCvResumo }}</p>
+              </sc-if>
+              <sc-if value="{{ moGtFg }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-tabela" style="margin-top: 10px" role="table">
+                  <div class="lmo-lin lmo-lin4 lmo-cab" role="row"><span>Parcela paga só quando ocorrer o fato gerador</span><span>Provisão mensal</span><span>Com custos indiretos, tributos e lucro</span></div>
+                  <sc-for list="{{ moFgLinhas }}" as="l" hint-placeholder-count="5"><div class="lmo-lin lmo-lin4" role="row"><span>{{ l.rot }}</span><span class="lmo-val">{{ l.val }}</span><span class="lmo-val">{{ l.comM6 }}</span></div></sc-for>
+                </div>
+                <p class="lmo-ok">{{ moFgResumo }}</p>
+              </sc-if>
+              <sc-if value="{{ moGtNenhum }}" hint-placeholder-val="{{ true }}"><p class="lmo-nota">Escolha uma das opções para ver a retenção mensal ou as parcelas pagas pelo fato gerador.</p></sc-if>
+            </section>
 
             <section class="lmo-bloco lmo-tab">
               <h2 class="lmo-h2">Quadro-resumo do custo por empregado</h2>
@@ -4718,6 +4775,7 @@ const MO_PADRAO = {
   emp_posto: "1", postos: "1",
   ano_exec: "2", vigente: "",
   vg_calc: "", vg_an: "20", vg_hnot: "9", vg_div: "220", vg_ffix: "9", vg_fmov: "1", vg_fer: "100", vg_intra: "", vg_ih: "1", vg_ia: "50", mem_cf: "",
+  gt_tipo: "", gt_multa: "5", rp_db_ant: "", rp_pedido: "", rp_prorrog: "", rp_fim: "", rp_inicio: "", rp_contrato: "", rp_orgao: "", rp_empresa: "",
   regime: "real", rbt12: "", reforma: "", rf_ano: "", rf_cbs: "11,3", rf_ibs: "18,7",
   rj_ativo: "", rj_indice: "ipca", rj_orcamento: "", rj_ref: "", rj_unif: "sim", rj_materiais: "sim", rj_equip: "sim", rj_outros5: "sim"
 };
@@ -4819,6 +4877,17 @@ function moMemoria(d, empregados) {
   });
   return out;
 }
+// datas da planilha: aceita dd/mm/aaaa, aaaa-mm-dd ou aaaa-mm
+function moData(v) {
+  const t = String(v || "").trim(); let m;
+  if ((m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(t))) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+  if ((m = /^(\d{4})-(\d{2})(?:-(\d{2}))?$/.exec(t))) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3] || 1));
+  return null;
+}
+const MO_MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+// Conta-depósito vinculada (IN 05/2017, Anexo XII, item 14): percentuais sobre a remuneração (Módulo 1);
+// a incidência do Submódulo 2.2 sobre férias, 1/3 e 13º varia com o RAT (1%, 2% ou 3%)
+const MO_CV_INCID = { 1: 7.39, 2: 7.60, 3: 7.82 };
 const MO_INSUMOS = [["unif", "Uniformes e EPI"], ["materiais", "Materiais"], ["equip", "Equipamentos"], ["outros5", "Outros insumos"]];
 // reajuste dos insumos por índice: ciclos de 12 meses a partir do mês do orçamento estimado (mesma contagem da calculadora:
 // do mês do orçamento ao 11º mês seguinte, 12 variações mensais), acumulados até o mês de referência
@@ -6505,6 +6574,9 @@ class Component extends DCLogic {
     }
     const transicao = (this._moUltimo && this._moUltimo.transicao) || [];
     const memU = (this._moUltimo && this._moUltimo.mem) || {};
+    const retro = (this._moUltimo && this._moUltimo.retro) || null, minuta = (this._moUltimo && this._moUltimo.minuta) || [];
+    const gtTxt = d.gt_tipo === "cv" ? "Conta-depósito vinculada (IN 05/2017, art. 18, I, e Anexo XII; Lei 14.133/2021, art. 121, § 3º, III): " + P.moCvTot + " sobre o Módulo 1. " + P.moCvResumo
+      : d.gt_tipo === "fg" ? "Pagamento pelo fato gerador (IN 05/2017, art. 18, II; Lei 14.133/2021, art. 121, § 3º, V): " + P.moFgResumo : "";
     const fmt = (v, c) => (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: c == null ? 2 : c, maximumFractionDigits: c == null ? 2 : c });
     const memTab = Object.keys(MO_MEM).filter((k) => memU[k] && memU[k].ativo).map((k) => ({ rot: MO_MEM[k].rot, nota: MO_MEM[k].nota, col: MO_MEM[k].col.concat(["Custo mensal por empregado"]),
       linhas: memU[k].linhas.filter((l) => l.mensal > 0).map((l) => MO_MEM[k].campos.map((c) => String(l[c] == null ? "" : l[c])).concat(["R$ " + fmt(l.mensal, 4)]).concat([l.fonte || ""])),
@@ -6544,6 +6616,8 @@ class Component extends DCLogic {
       .concat(P.moLiderTxt ? [P.moLiderTxt] : [])
       .concat(r && r.simp ? [P.moSimplesTxt + " (LC 123/2006, arts. 13, § 3º, e 18, §§ 5º-C e 5º-H)."] : [])
       .concat(d.reforma === "depois" ? ["Reforma tributária (EC 132/2023; LC 214/2025): 2026, teste com CBS 0,9% e IBS 0,1% compensáveis com PIS/COFINS; 2027 e 2028, CBS pela referência reduzida em 0,1 p.p. e IBS de 0,1%, sem PIS/COFINS; 2029 a 2032, ISS a 90%, 80%, 70% e 60% da alíquota, com o IBS crescendo na mesma proporção; 2033, IBS integral, sem ISS. CBS e IBS calculados por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º). Referências usadas: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa); confira as alíquotas publicadas. A mudança de tributos em contrato vigente pede reequilíbrio (LC 214/2025, arts. 374 a 378)."] : [])
+      .concat(gtTxt ? [gtTxt] : [])
+      .concat(retro ? retro.alertas.map((a) => (a.ok ? "" : "Atenção: ") + a.t) : [])
       .concat(falhas.length ? ["O assinante declarou estar ciente das falhas e inconsistências apontadas na planilha da contratação e concordou com o prosseguimento da análise com base nela, sabendo que a manutenção das falhas impacta os valores da repactuação (" + new Date(d.falhas_aceite).toLocaleString("pt-BR") + ")."] : [])
       .concat(["Planilha de custos e formação de preços no formato do Anexo VII-D da IN SEGES/MP nº 5/2017. Valores mensais por empregado; totais truncados em duas casas, como no modelo da IN. Confira cada valor e fonte antes de juntar ao processo."]);
     const dims = P.moDimLimpeza ? (P.moDimGrupos || []).flatMap((g) => g.linhas.filter((l) => num(l.m2)).map((l) => [g.titulo, l.rot, l.m2, l.p, l.temH ? l.h : "—", l.q, l.precoM2])) : [];
@@ -6617,6 +6691,20 @@ class Component extends DCLogic {
         ws.addRow([]);
         kpis.forEach(([k, v]) => { const rr = linha(["", k, "", String(v)], { borda: true }); rr.getCell(2).font = { bold: true, size: 10, color: { argb: X.fraco } }; });
         ws.addRow([]);
+        if (retro && retro.linhas.length) {
+          const wr = wb.addWorksheet("Retroativo", { views: [{ showGridLines: false }] });
+          wr.columns = [{ width: 14 }, { width: 18 }, { width: 20 }, { width: 20 }, { width: 20 }];
+          let rr0 = wr.addRow(["Diferença retroativa da repactuação – mês a mês"]); wr.mergeCells(rr0.number, 1, rr0.number, 5); rr0.getCell(1).font = { bold: true, size: 13, color: { argb: X.branco } }; rr0.getCell(1).fill = fill(X.navy); rr0.height = 24;
+          rr0 = wr.addRow([P.moRetroInfo]); wr.mergeCells(rr0.number, 1, rr0.number, 5); rr0.getCell(1).font = { italic: true, size: 9, color: { argb: X.fraco } }; rr0.getCell(1).alignment = { wrapText: true }; rr0.height = 30;
+          const hr2 = wr.addRow(["Mês", "Período", "Mão de obra", "Insumos", "Diferença"]); hr2.eachCell((c) => { c.font = { bold: true, color: { argb: X.branco } }; c.fill = fill(X.teal); });
+          retro.linhas.forEach((l) => { const x = wr.addRow([l.mes, l.frac, num(l.lab), l.ins === "—" ? "—" : num(l.ins), num(l.dif)]); x.eachCell((c) => { c.border = { bottom: fino }; }); [3, 4, 5].forEach((i) => { x.getCell(i).numFmt = '"R$" #,##0.00'; }); });
+          rr0 = wr.addRow(["Total", "", "", "", retro.total]); rr0.eachCell((c) => { c.font = { bold: true }; c.fill = fill(X.tot); }); rr0.getCell(5).numFmt = '"R$" #,##0.00';
+        }
+        if (minuta.length) {
+          const wmn = wb.addWorksheet("Minuta de apostilamento", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
+          wmn.columns = [{ width: 100 }];
+          minuta.forEach((t, i) => { const x = wmn.addRow([t]); x.getCell(1).alignment = { wrapText: true, vertical: "top" }; x.getCell(1).font = { size: 11, bold: i === 0 }; x.height = altura(t, 95, 15); });
+        }
         if (memTab.length) {
           const wm = wb.addWorksheet("Memória dos insumos", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
           wm.columns = [{ width: 38 }, { width: 16 }, { width: 16 }, { width: 16 }, { width: 16 }, { width: 20 }, { width: 50 }];
@@ -6792,9 +6880,22 @@ class Component extends DCLogic {
             theme: "plain", rowPageBreak: "avoid", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.6 }, styles: { ...base.styles, fontSize: 7, cellPadding: 1.4, lineWidth: { bottom: 0.1 }, halign: "right" },
             columnStyles: { 0: { halign: "left", cellWidth: 12 } } });
         }
+        // retroativo da repactuação
+        if (retro && retro.linhas.length) {
+          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "DIFERENÇA RETROATIVA DA REPACTUAÇÃO – MÊS A MÊS", colSpan: 5, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }], ["Mês", "Período", "Mão de obra", "Insumos", "Diferença"]],
+            body: retro.linhas.map((l) => [l.mes, l.frac, l.lab, l.ins, l.dif]).concat([[{ content: "Total", colSpan: 4, styles: { fontStyle: "bold", fillColor: C.tot } }, { content: P.moRetroTotal, styles: { fontStyle: "bold", fillColor: C.tot, halign: "right", textColor: C.teal } }]]),
+            theme: "plain", rowPageBreak: "avoid", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8 }, styles: { ...base.styles, fontSize: 7.4, cellPadding: 1.4, lineWidth: { bottom: 0.1 } },
+            columnStyles: { 2: { halign: "right" }, 3: { halign: "right" }, 4: { halign: "right" } } });
+        }
         // notas
         doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "NOTAS E FUNDAMENTAÇÃO", colSpan: 2, styles: { fillColor: C.teal, textColor: 255, fontSize: 8, fontStyle: "bold" } }]],
           body: notas.map((n2, i) => [String(i + 1), n2]), theme: "plain", rowPageBreak: "avoid", styles: { ...base.styles, fontSize: 7.2, textColor: C.fraco, cellPadding: 1.6 }, columnStyles: { 0: { cellWidth: 7, fontStyle: "bold" } } });
+        if (minuta.length) {
+          doc.addPage(); cab();
+          doc.autoTable({ ...base, startY: 30, head: [[{ content: "MINUTA DE APOSTILAMENTO", styles: { fillColor: C.teal, textColor: 255, fontSize: 9, fontStyle: "bold" } }]],
+            body: minuta.map((t, i) => [{ content: t, styles: { fontStyle: i === 0 ? "bold" : "normal", fontSize: i === 0 ? 10 : 9, cellPadding: { top: 2.2, bottom: 2.2, left: 2, right: 2 } } }]),
+            theme: "plain", styles: { ...base.styles, lineWidth: 0 } });
+        }
         const n = doc.getNumberOfPages(); for (let i = 1; i <= n; i++) { doc.setPage(i); rod(i); }
         if (typeof doc.putTotalPages === "function") doc.putTotalPages("{total}");
         doc.save(nome + ".pdf");
@@ -6980,7 +7081,82 @@ class Component extends DCLogic {
           remover: () => this.moMemMudar(k, (lista) => lista.filter((_, j) => j !== i)),
           pesquisar: () => this.moMemPesquisar(k, i), busTxt: mo.memBusca === k + ":" + i ? "Pesquisando…" : "Pesquisar preço" })) };
     });
+    // garantia das obrigações trabalhistas (IN 05/2017, art. 18): conta-depósito vinculada ou pagamento pelo fato gerador
+    const empN = Math.max(0, moNum(d.emp_posto) * moNum(d.postos));
+    const ratN = Math.min(3, Math.max(1, Math.round(moNum(d.rat) || 2)));
+    const cvP = [["13º (décimo terceiro) salário", 8.33], ["Férias e 1/3 constitucional", 12.10], ["Multa do FGTS e contribuição social sobre o aviso prévio indenizado e trabalhado", moNum(d.gt_multa)],
+      ["Incidência do Submódulo 2.2 sobre férias, 1/3 e 13º (RAT " + ratN + "%)", MO_CV_INCID[ratN]]];
+    const cvTot = cvP.reduce((a, x) => a + x[1], 0), cvEmp = moT2(r.M1 * cvTot / 100);
+    const fatorM6 = r.sub ? r.total / r.sub : 1;
+    const fg = [["Submódulo 2.1 – 13º, férias e adicional de férias", r.M21], ["Incidência do Submódulo 2.2 sobre o 2.1", r.M22p * r.M21], ["Módulo 3 – Provisão para rescisão", r.M3],
+      ["Submódulo 4.1 – Ausências legais", r.M41], ["Incidência do Submódulo 2.2 sobre o 4.1", r.M22p * r.M41]];
+    const fgSoma = fg.reduce((a, x) => a + x[1], 0), fgComM6 = moT2(fgSoma * fatorM6), fixa = moT2(r.total - fgComM6);
+    // efeitos financeiros da repactuação: diferença mês a mês desde a data-base, separando mão de obra e insumos (art. 54, § 2º)
+    let retro = null;
+    if (rep && r.vigente) {
+      const db = moData(d.data_base), iniPag = moData(d.rp_inicio) || new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+      const rLab = rj && rj.pronto ? moCalcular(d, mo.modo, { fator: 1 }) : r, difLab = rLab.total - r.vigente, difIns = r.total - rLab.total;
+      let insDesde = null;
+      if (rj && rj.pronto && rj.ciclos) { const ob = moData(d.rj_orcamento); if (ob) insDesde = new Date(ob.getFullYear(), ob.getMonth() + 12 * rj.ciclos.length, 1); }
+      const linhas = []; let total = 0;
+      if (db && db < iniPag) {
+        for (let m = new Date(db.getFullYear(), db.getMonth(), 1), k = 0; m < iniPag && k < 60; m = new Date(m.getFullYear(), m.getMonth() + 1, 1), k++) {
+          const diasMes = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate();
+          const frac = k === 0 && db.getDate() > 1 ? (diasMes - db.getDate() + 1) / diasMes : 1;
+          const dIns = insDesde && m >= insDesde ? difIns : 0;
+          const dif = moT2((difLab + dIns) * empN * frac);
+          total += dif;
+          linhas.push({ mes: MO_MESES[m.getMonth()] + "/" + m.getFullYear(), frac: frac < 1 ? (frac * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "% do mês" : "mês inteiro",
+            lab: brl(difLab * empN * frac), ins: dIns ? brl(dIns * empN * frac) : "—", dif: brl(dif) });
+        }
+      }
+      // tempestividade: anualidade (art. 135, § 3º, da Lei 14.133/2021; IN 05/2017, art. 55, II) e preclusão (IN 05/2017, art. 57, § 7º)
+      const ant = moData(d.rp_db_ant), ped = moData(d.rp_pedido), pro = moData(d.rp_prorrog), fim = moData(d.rp_fim);
+      const alertas = [];
+      if (db && ant) { const meses = (db.getFullYear() - ant.getFullYear()) * 12 + db.getMonth() - ant.getMonth() - (db.getDate() < ant.getDate() ? 1 : 0);
+        alertas.push(meses >= 12 ? { ok: true, t: "Anualidade cumprida: " + meses + " meses entre a data-base anterior e a nova (Lei 14.133/2021, art. 135, § 3º; IN 05/2017, arts. 55, II, e 56)." }
+          : { ok: false, t: "Anualidade não cumprida: só " + meses + " meses entre a data-base anterior e a nova. A repactuação exige o interregno mínimo de 1 ano (Lei 14.133/2021, art. 135, § 3º)." }); }
+      if (pro && db && pro >= db && (!ped || ped > pro)) alertas.push({ ok: false, t: "Preclusão: a prorrogação foi assinada em " + pro.toLocaleDateString("pt-BR") + " sem pedido de repactuação anterior. O direito fica precluso (IN 05/2017, art. 57, § 7º; TCU, Acórdão 1.827/2008-Plenário). Se a prorrogação ressalvou o direito, registre a ressalva no processo." });
+      else if (fim && ped && ped > fim) alertas.push({ ok: false, t: "Preclusão: o pedido foi feito depois do encerramento do contrato (" + fim.toLocaleDateString("pt-BR") + "), o que extingue o direito à repactuação (IN 05/2017, art. 57, § 7º)." });
+      else if (ped) alertas.push({ ok: true, t: "Pedido de " + ped.toLocaleDateString("pt-BR") + " feito durante a vigência e antes de prorrogação: não há preclusão. A decisão deve sair em até 60 dias da entrega dos comprovantes (IN 05/2017, art. 57, § 3º), preferencialmente em 1 mês (Lei 14.133/2021, art. 92, § 6º)." });
+      else alertas.push({ ok: false, t: "Informe a data do pedido de repactuação: o direito preclui se não for pedido antes da prorrogação ou do fim do contrato (IN 05/2017, art. 57, § 7º)." });
+      if (!fim && !pro) alertas.push({ ok: true, t: "Se houver, informe a data de assinatura da prorrogação e o fim da vigência para conferir a preclusão." });
+      retro = { linhas, total: moT2(total), alertas, iniPag, db, difLab, difIns, insDesde, empN };
+    }
+    const reaisExtenso = (v) => brl(v);
+    const minuta = retro ? [
+      "APOSTILAMENTO Nº ___/____ AO CONTRATO Nº " + (d.rp_contrato || "___/____"),
+      "CONTRATANTE: " + (d.rp_orgao || "______________________") + ".  CONTRATADA: " + (d.rp_empresa || "______________________") + ".",
+      "OBJETO: registro da repactuação dos preços do contrato em razão " + (d.cct_nome ? "do instrumento coletivo \u201c" + d.cct_nome + "\u201d" : "do novo acordo, convenção ou dissídio coletivo de trabalho") + (d.ano_cct ? " (" + d.ano_cct + ")" : "") + " da categoria " + (d.categoria || "______") + ", com data-base em " + (d.data_base || "__/__/____") + ".",
+      "FUNDAMENTO: arts. 135 e 136, I, da Lei nº 14.133/2021; arts. 54 a 58 da IN SEGES/MP nº 5/2017; cláusula ___ do contrato (repactuação); pedido da contratada de " + (d.rp_pedido || "__/__/____") + ", instruído com a planilha de custos e formação de preços e o instrumento coletivo.",
+      "1. Registra-se a repactuação do preço mensal por empregado de " + brl(r.vigente) + " para " + brl(r.total) + ", variação de " + (r.difp >= 0 ? "+" : "−") + pct(Math.abs(r.difp)) + ", conforme a planilha de custos e formação de preços anexa, que integra este apostilamento.",
+      "2. O valor mensal do contrato passa de " + brl(moT2(r.vigente * empN)) + " para " + brl(moT2(r.total * empN)) + ", considerados " + empN + " empregado(s).",
+      "3. Os efeitos financeiros vigoram a partir de " + (d.data_base || "__/__/____") + ", data-base da categoria (IN SEGES/MP nº 5/2017, art. 58, I e III), " + (retro.linhas.length ? (retro.total >= 0 ? "sendo devida à contratada a diferença retroativa de " + reaisExtenso(retro.total) : "apurando-se diferença a menor de " + reaisExtenso(Math.abs(retro.total)) + ", a ser compensada nas faturas seguintes") + ", referente ao período de " + retro.linhas[0].mes + " a " + retro.linhas[retro.linhas.length - 1].mes + ", conforme a memória de cálculo anexa" : "sem diferença retroativa a pagar") + "." + (retro.difIns ? " A parcela dos insumos é devida a partir do aniversário do orçamento estimado, na forma do art. 54, § 2º, da IN." : ""),
+      "4. Foram excluídos ou reduzidos os custos não renováveis já pagos ou amortizados no primeiro ano de execução, em especial o aviso prévio trabalhado, limitado a 0,194% por ano de prorrogação (IN SEGES/MP nº 5/2017, art. 57; TCU, Acórdão 1.186/2017-Plenário).",
+      "5. A despesa decorrente correrá à conta da dotação orçamentária __________, nota de empenho nº ________.",
+      "6. Permanecem inalteradas as demais cláusulas e condições do contrato.",
+      (d.municipio || "________") + ", ___ de ____________ de ______.",
+      "______________________________________\nAutoridade competente"
+    ] : [];
+    this._moUltimo.gt = { tipo: d.gt_tipo, cvP, cvTot, cvEmp, empN, fg, fgComM6, fixa, fatorM6 }; this._moUltimo.retro = retro; this._moUltimo.minuta = minuta;
     return {
+      moGtOpcoes: [["cv", "Conta-depósito vinculada"], ["fg", "Pagamento pelo fato gerador"]].map(([id, nome]) => ({ nome, ativo: d.gt_tipo === id, escolher: () => this.moSet("gt_tipo")(d.gt_tipo === id ? "" : id), ...corBotao(d.gt_tipo === id) })),
+      moGtCv: d.gt_tipo === "cv", moGtFg: d.gt_tipo === "fg", moGtNenhum: !d.gt_tipo,
+      moGtMulta: d.gt_multa || "", onMoGtMulta: this.moSet("gt_multa"),
+      moCvLinhas: cvP.map(([rot, p]) => ({ rot, pct: p.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%", val: brl(r.M1 * p / 100) })),
+      moCvTot: cvTot.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%", moCvEmp: brl(cvEmp),
+      moCvResumo: "Retenção mensal: " + brl(cvEmp) + " por empregado × " + empN + " = " + brl(moT2(cvEmp * empN)) + " por mês (" + brl(moT2(cvEmp * empN * moNum(d.meses || 12))) + " em " + (d.meses || "12") + " meses). Esses valores são depositados na conta vinculada e deixam de ser pagos diretamente à contratada, que recebe " + brl(moT2((r.total - cvEmp) * empN)) + " por mês (IN 05/2017, Anexo XII, itens 2, 7 e 14).",
+      moFgLinhas: fg.map(([rot, v]) => ({ rot, val: brl(v), comM6: brl(v * fatorM6) })),
+      moFgResumo: "Parcela fixa paga todo mês: " + brl(fixa) + " por empregado. As parcelas acima (" + brl(fgComM6) + " por empregado, já com custos indiretos, tributos e lucro) só são pagas quando ocorrer o fato gerador – férias, 13º, ausências e rescisões –, mediante comprovação (IN 05/2017, art. 18, II; caderno de pagamento pelo fato gerador).",
+      moRetro: !!retro, moRetroLinhas: retro ? retro.linhas : [], moRetroTemLinhas: !!(retro && retro.linhas.length),
+      moRetroTotal: retro ? brl(retro.total) : "", moRetroAlertas: retro ? retro.alertas.map((a) => ({ t: a.t, cls: a.ok ? "lmo-ok" : "lve-aviso" })) : [],
+      moRetroInfo: retro ? (retro.db ? "Diferença por empregado: mão de obra " + brl(retro.difLab) + (retro.difIns ? ", insumos " + brl(retro.difIns) + " a partir de " + MO_MESES[retro.insDesde.getMonth()] + "/" + retro.insDesde.getFullYear() : "") + " × " + retro.empN + " empregado(s), da data-base até o mês anterior ao primeiro pagamento com o novo preço." : "Informe a data-base da categoria (dd/mm/aaaa) nos dados iniciais.") : "",
+      moRetroCampos: [campo("rp_db_ant", "Data-base anterior (vigente na proposta ou na última repactuação)", "dd/mm/aaaa"), campo("rp_pedido", "Data do pedido de repactuação", "dd/mm/aaaa"),
+        campo("rp_prorrog", "Data de assinatura da prorrogação, se houve depois da data-base", "dd/mm/aaaa"), campo("rp_fim", "Fim da vigência do contrato", "dd/mm/aaaa"),
+        campo("rp_contrato", "Número do contrato", "Ex.: 12/2025"), campo("rp_orgao", "Contratante", "Órgão ou entidade"), campo("rp_empresa", "Contratada", "Razão social")],
+      moRpInicio: d.rp_inicio || "", onMoRpInicio: this.moSet("rp_inicio"),
+      moMinuta: minuta.join("\n\n"), moTemMinuta: minuta.length > 0,
+      moCopiarMinuta: () => { try { navigator.clipboard.writeText(minuta.join("\n\n")); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Minuta do apostilamento copiada." } })); } catch (e) {} },
       moMem: memGrupos, moMemEmp: "Empregados considerados no rateio de materiais e equipamentos: " + empTot + " (empregados por posto × postos).",
       moMemCf: d0.mem_cf || "", onMoMemCf: this.moSet("mem_cf"),
       moVgCalc: d0.vg_calc === "sim", onMoVgCalc: (e) => this.moSet("vg_calc")(e.target.checked ? "sim" : ""),
