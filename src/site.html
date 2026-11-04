@@ -1005,6 +1005,10 @@
   @media (max-width: 900px) { .lmo-mem, .lmo-mem-equip { grid-template-columns: 1fr 1fr; } .lmo-mem.lmo-cab { display: none; } .lmo-mem > span:first-child { grid-column: 1 / -1; } }
   .lmo-retro { grid-template-columns: 110px minmax(0, 1fr) 150px 150px 150px; }
   .lmo-lin4 { grid-template-columns: minmax(0, 1fr) 150px 190px; }
+  .lmo-docs { display: grid; gap: 8px; margin-top: 14px; padding: 12px 14px; border: 1px solid #E3E9E8; border-radius: 12px; background: #FBFDFC; }
+  .lmo-doc { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 0; border-top: 1px solid #EDF2F1; }
+  .lmo-doc small { display: block; font-size: 12px; color: #66757F; }
+  .lmo-doc-btns { display: flex; gap: 8px; } .lmo-doc-btns .lmo-btn { padding: 8px 16px; font-size: 13.5px; box-shadow: none; }
   .lmo-salvas { display: grid; gap: 8px; margin: 4px 0 10px; padding: 12px 14px; border: 1px dashed #C9D9D6; border-radius: 12px; background: #FBFDFC; }
   .lmo-salvas-barra { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   .lmo-salvas-barra input { flex: 1 1 260px; font: inherit; font-size: 14px; border: 1px solid #D6DEDD; border-radius: 9px; padding: 9px 10px; min-width: 0; }
@@ -2523,7 +2527,7 @@
             <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Efeitos financeiros, prazos e apostilamento</h2>
-              <p class="lmo-nota" style="margin-top: 0">Diferença retroativa mês a mês desde a data-base, conferência da anualidade e da preclusão e minuta do apostilamento (Lei 14.133/2021, arts. 135 e 136, I).</p>
+              <p class="lmo-nota" style="margin-top: 0">Diferença retroativa mês a mês desde a data-base, conferência da anualidade e da preclusão e nota técnica da repactuação (Lei 14.133/2021, art. 135).</p>
               <div class="lmo-campos">
                 <sc-for list="{{ moRetroCampos }}" as="c" hint-placeholder-count="6"><label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label></sc-for>
                 <label class="lmo-campo"><span>Primeiro mês pago com o novo preço</span><input type="month" value="{{ moRpInicio }}" sc-camel-on-input="{{ onMoRpInicio }}"></label>
@@ -2539,12 +2543,10 @@
                 </div>
                 </sc-if>
               </sc-if>
-              <sc-if value="{{ moTemMinuta }}" hint-placeholder-val="{{ false }}">
-                <p class="lmo-nota"><b>Minuta do apostilamento</b> · confira e complete os campos em branco; ela também vai nos downloads.</p>
-                <pre class="lmo-minuta">{{ moMinuta }}</pre>
-                <div class="lmo-agente" style="margin-top: 8px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moBaixarNota }}">Baixar a nota técnica (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCopiarMinuta }}">Copiar a minuta</button></div>
+              <sc-if value="{{ moTemNota }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-agente" style="margin-top: 8px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moBaixarNota }}">Baixar a nota técnica (PDF)</button></div>
               </sc-if>
-              <sc-if value="{{ moSemVigente }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">Informe o preço vigente por empregado nos dados iniciais para calcular o retroativo e montar a minuta.</p></sc-if>
+              <sc-if value="{{ moSemVigente }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">Informe o preço vigente por empregado nos dados iniciais para calcular o retroativo e gerar a nota técnica.</p></sc-if>
             </section>
             </sc-if>
 
@@ -2596,9 +2598,14 @@
               <sc-if value="{{ moLiderTxt }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ moLiderTxt }}</p></sc-if>
               <sc-if value="{{ moTemDif }}" hint-placeholder-val="{{ false }}"><p class="lmo-dif">{{ moDifRot }} <b>{{ moDif }}</b></p></sc-if>
               <div class="lmo-agente" style="margin-top: 16px">
-                <button type="button" class="lmo-btn" sc-camel-on-click="{{ moBaixarExcel }}">Baixar em Excel</button>
-                <button type="button" class="lmo-btn lmo-btn2" sc-camel-on-click="{{ moBaixarPdf }}">Baixar em PDF</button>
                 <button type="button" class="lve-voltar" sc-camel-on-click="{{ moLimpar }}">Limpar a planilha</button>
+              </div>
+              <div class="lmo-docs" role="list" aria-label="Documentos para download">
+                <p class="lmo-nota" style="margin: 0"><b>Documentos para download</b> · cada um em Excel ou PDF, com as notas e a fundamentação no final.</p>
+                <sc-for list="{{ moDocs }}" as="dc" hint-placeholder-count="3">
+                  <div class="lmo-doc" role="listitem"><div><b>{{ dc.nome }}</b><small>{{ dc.desc }}</small></div>
+                    <div class="lmo-doc-btns"><button type="button" class="lmo-btn" aria-label="{{ dc.nome }} em Excel" sc-camel-on-click="{{ dc.xlsx }}">Excel</button><button type="button" class="lmo-btn lmo-btn2" aria-label="{{ dc.nome }} em PDF" sc-camel-on-click="{{ dc.pdf }}">PDF</button></div></div>
+                </sc-for>
               </div>
               <sc-if value="{{ moErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moErro }}</p></sc-if>
             </section>
@@ -6792,8 +6799,8 @@ class Component extends DCLogic {
   // Layout pensado para leitura rápida: resumo com os números principais primeiro, composição do preço em barra,
   // módulos em blocos com cabeçalho de cor, notas e fontes em letra menor sob cada rubrica, totais destacados
   // e linhas preenchidas pelo agente marcadas em âmbar (com legenda).
-  async moBaixar(formato) {
-    const s = this.state, mo = s.mo, d = mo.d, rep = mo.modo === "repactuacao", prop = mo.modo === "proposta";
+  async moBaixar(formato, docTipo = "planilha") {
+    const s = this.state, mo = s.mo, d = mo.d, fontesD = d.fontes || {}, rep = mo.modo === "repactuacao", prop = mo.modo === "proposta";
     const P = this.moProps(), { r, rj } = this._moUltimo || {};
     const falhas = rep || prop ? (d.falhas || []) : [];
     const dilig = (prop && this._moUltimo && this._moUltimo.dilig) || [], exeqItens = (prop && this._moUltimo && this._moUltimo.exeqItens) || [];
@@ -6822,7 +6829,7 @@ class Component extends DCLogic {
       : P.moLista.map((l) => [l.nome, l.preco, l.empPosto, l.postos, l.emp, l.mensal, l.global]).concat([["Total da contratação (" + P.moListaTot.cats + " categoria(s))", "", "", "", P.moListaTot.emp, P.moListaTot.mensal, P.moListaTot.global]]);
     const compU = rep && this._moUltimo ? this._moUltimo.comp : null;
     const compTab = compU ? compU.linhas.map((l) => [l.rot, brlTxt0(l.a), brlTxt0(l.n), (l.dv > 0 ? "+" : "") + brlTxt0(l.dv), l.a ? ((l.p > 0 ? "+" : "") + (l.p * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%") : "—", l.motivo, l.tot]) : [];
-    const retro = (this._moUltimo && this._moUltimo.retro) || null, minuta = (this._moUltimo && this._moUltimo.minuta) || [];
+    const retro = (this._moUltimo && this._moUltimo.retro) || null;
     const gtTxt = d.gt_tipo === "cv" ? "Conta-depósito vinculada (IN 05/2017, art. 18, I, e Anexo XII; Lei 14.133/2021, art. 121, § 3º, III): " + P.moCvTot + " sobre o Módulo 1. " + P.moCvResumo
       : d.gt_tipo === "fg" ? "Pagamento pelo fato gerador (IN 05/2017, art. 18, II; Lei 14.133/2021, art. 121, § 3º, V): " + P.moFgResumo : "";
     const fmt = (v, c) => (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: c == null ? 2 : c, maximumFractionDigits: c == null ? 2 : c });
@@ -6872,359 +6879,275 @@ class Component extends DCLogic {
       .concat(["Planilha de custos e formação de preços no formato do Anexo VII-D da IN SEGES/MP nº 5/2017. Valores mensais por empregado; totais truncados em duas casas, como no modelo da IN. Confira cada valor e fonte antes de juntar ao processo."]);
     const dims = P.moDimLimpeza ? (P.moDimGrupos || []).flatMap((g) => g.linhas.filter((l) => num(l.m2)).map((l) => [g.titulo, l.rot, l.m2, l.p, l.temH ? l.h : "—", l.q, l.precoM2])) : [];
     const grav = { alta: ["Alta", [184, 50, 50], "FFB83232"], media: ["Média", [201, 138, 27], "FFC98A1B"], baixa: ["Baixa", [15, 107, 126], "FF0F6B7E"] };
-    const nome = (prop ? "analise-proposta" : rep ? "planilha-repactuacao" : "planilha-planejamento") + "-" + (d.categoria || "mao-de-obra").toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+    // ---------------------------------------------------------------- documentos separados
+    const U = this._moUltimo || {}, vgU = U.vg || null, gtU = U.gt || null;
+    const sl = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+    const base0 = (prop ? "analise-proposta" : rep ? "repactuacao" : "planejamento") + "-" + (sl(prop ? d.pr_licitante || d.categoria : d.categoria) || "mao-de-obra");
+    const T = (titulo, cab, linhas, o) => ({ t: "tabela", titulo, cab, linhas, ...(o || {}) });
+    const docs = {};
+    // 1) planilha da IN
+    {
+      const blocos = [{ t: "destaques", itens: destaques }, { t: "barra", comp, tot }, { t: "pares", titulo: "Identificação", pares: ident }];
+      if (temAuto) blocos.push({ t: "legenda", texto: "Linhas em âmbar: valores preenchidos pelo agente ou calculados automaticamente (memória de cálculo, reajuste, custos não renováveis)." });
+      modulos.forEach((m) => blocos.push(T(m.cab.toUpperCase() + "   " + m.nome, ["", m.sub ? "Rubrica · " + m.sub : "Rubrica", "%", "Valor (R$)"],
+        m.linhas.map((l) => ({ c: [l.cod, l.rot, l.pctTxt || "", l.valTxt], nota: l.nota, auto: l.auto, cod: true }))
+          .concat([{ c: ["", m.total.rot, m.total.pctTxt || "", m.total.valTxt], total: true }]), { alin: "llrr", larg: [7, 58, 13, 18], juntar: true })));
+      blocos.push(T("QUADRO-RESUMO   Custo por empregado e valores do contrato", ["", "Módulo", "Valor"],
+        resumo.map((l) => ({ c: [l.cod, l.rot, l.txt], forte: l.forte, cod: true })).concat([{ c: ["", "PREÇO TOTAL POR EMPREGADO", P.moTotal], total: true }])
+          .concat(kpis.map(([k, v]) => ({ c: ["", k, String(v)], fraco: true }))), { alin: "llr", larg: [7, 71, 18] }));
+      if (dims.length) blocos.push(T("DIMENSIONAMENTO DA EQUIPE – IN 05/2017, ANEXO VI-B", ["Tipo de área", "Área (m²)", "Produtividade", "Frequência (h/mês)", "Profissionais", "Preço por m²"],
+        dims.map((v) => ({ c: [v[1], v[2], v[3], v[4], v[5], v[6]] })).concat([{ c: [P.moDimResumo], span: true, forte: true }]), { alin: "lrrrrr", larg: [40, 12, 14, 14, 12, 14] }));
+      if (transicao.length) blocos.push(T("PERÍODO DE TRANSIÇÃO DA REFORMA TRIBUTÁRIA – PREÇO POR EMPREGADO ANO A ANO", ["Ano", "PIS e COFINS", "CBS", "IBS", "ISS", "Tributos", "Preço/empregado", "Valor mensal"],
+        transicao.map((t) => ({ c: [t.ano, t.pisCof, t.cbs, t.ibs, t.iss, t.trib, t.total, t.mensal], total: t.atual })), { alin: "lrrrrrrr", larg: [8, 13, 17, 17, 9, 10, 16, 16] }));
+      if (!prop && P.moTemLista) blocos.push(T("QUADRO CONSOLIDADO DA CONTRATAÇÃO (VÁRIAS CATEGORIAS)", listaCab, listaTab.map((v, i) => ({ c: v, total: i === listaTab.length - 1 })), { alin: "lrrrrrr", larg: [34, 16, 12, 9, 11, 16, 17] }));
+      const n = [];
+      n.push("Planilha de custos e formação de preços no formato do Anexo VII-D da IN SEGES/MP nº 5/2017. Valores mensais por empregado; totais truncados em duas casas, como no modelo da IN.");
+      if (rep) n.push("Custos não renováveis: aviso prévio trabalhado limitado a 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário; IN 05/2017, art. 57).");
+      if (rj && rj.pronto) n.push("Insumos reajustados pelo índice do contrato (fator " + f6(rj.fator) + "); a memória do reajuste está no documento Memória de cálculo.");
+      if (Object.keys(MO_MEM).some((k) => memU[k] && memU[k].ativo)) n.push("Insumos do Módulo 5 calculados pela memória de cálculo (quantidade, vida útil e preço de cada item), detalhada no documento Memória de cálculo.");
+      if (vgU) n.push("Adicionais da escala de vigilância calculados pelo caderno técnico de vigilância (Módulo 1, D a F, e Submódulo 4.2); a memória está no documento Memória de cálculo.");
+      if (P.moDimAtivo && P.moDimResumo) n.push("Dimensionamento da equipe (IN 05/2017, " + (P.moDimLimpeza ? "Anexo VI-B" : "Anexo VI-A") + "): " + P.moDimResumo);
+      if (P.moLiderTxt) n.push(P.moLiderTxt);
+      n.push("Tributos: " + regNome + "; " + tribNome + ".");
+      if (d.regime === "real" && !(r && r.tr && !r.tr.antigos)) n.push("Lucro Real (não cumulativo): PIS e COFINS pela alíquota efetiva recolhida, descontados os créditos, comprovada pela EFD-Contribuições (TCU, Acórdão 2.647/2009-Plenário).");
+      if (r && r.simp) n.push(P.moSimplesTxt + " (LC 123/2006, arts. 13, § 3º, e 18, §§ 5º-C e 5º-H).");
+      if (!(r && r.tr && !r.tr.antigos)) n.push("PIS, COFINS e ISS calculados \u201cpor dentro\u201d: P1 = Po ÷ (1 − tributos), em que Po é o subtotal dos Módulos 1 a 5 com custos indiretos e lucro." + (r && r.tr && r.tr.teste ? " Em 2026, a CBS (0,9%) e o IBS (0,1%) destacados na nota são compensados com PIS/COFINS, sem custo adicional (LC 214/2025, arts. 343, 346 e 348)." : ""));
+      if (d.reforma === "depois") n.push("Reforma tributária (EC 132/2023; LC 214/2025): 2026, teste com CBS 0,9% e IBS 0,1% compensáveis; 2027 e 2028, CBS pela referência reduzida em 0,1 p.p. (art. 347) e IBS de 0,1% (art. 344), sem PIS/COFINS (ADCT, art. 126, II); 2029 a 2032, ISS a 90%, 80%, 70% e 60% da alíquota, com o IBS crescendo na mesma proporção (ADCT, arts. 128 e 130); 2033, IBS integral, sem ISS (ADCT, art. 129). CBS e IBS por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º). Referências usadas: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa). A mudança de tributos em contrato vigente pede reequilíbrio (LC 214/2025, arts. 374 a 378).");
+      n.push("ISS: alíquota do município onde o serviço é prestado, entre 2% e 5% (LC 116/2003, arts. 3º, 8º e 8º-A)" + (fontesD.iss ? "; " + fontesD.iss : "") + ".");
+      if (falhas.length) n.push(falhas.length + " falha(s) apontada(s) na planilha " + (prop ? "da proposta" : "da contratação") + ": ver o documento Falhas e inconsistências.");
+      if (gtTxt) n.push(gtTxt);
+      n.push("Confira cada valor e fonte antes de juntar ao processo.");
+      docs.planilha = { titulo: "Planilha de custos e formação de preços", arquivo: base0 + "-planilha", blocos, notas: n };
+    }
+    // 2) falhas e inconsistências (e, na Planilha 3, a exequibilidade e a diligência)
+    if (falhas.length || (prop && (exeqItens.length || dilig.length))) {
+      const blocos = [];
+      if (falhas.length) blocos.push(T(P.moFalhasTitulo.toUpperCase(), ["Nº", "Gravidade", "Rubrica", "Falha", "Fundamento", "Caminho correto", prop ? "Efeito no preço" : "Impacto se mantida"],
+        falhas.map((f, i) => { const g = grav[f.gravidade] || grav.media; return { c: [String(i + 1), g[0], f.rubrica, f.problema, f.fundamento, f.correcao, f.impacto || ""], grav: g }; }),
+        { alin: "lllllll", larg: [5, 10, 22, 40, 32, 40, 30], topo: "Atenção: " + P.moFalhasAviso }));
+      if (prop && exeqItens.length) blocos.push({ t: "texto", titulo: "EXEQUIBILIDADE DA PROPOSTA", paragrafos: exeqItens.map((a) => a.t) });
+      if (prop && dilig.length) blocos.push({ t: "texto", titulo: "DILIGÊNCIA À LICITANTE", paragrafos: dilig });
+      const n = [];
+      if (rep && d.falhas_aceite) n.push("O assinante declarou estar ciente das falhas e inconsistências apontadas e concordou com o prosseguimento da análise com base na planilha juntada, sabendo que a manutenção das falhas impacta os valores da repactuação (" + new Date(d.falhas_aceite).toLocaleString("pt-BR") + ").");
+      if (rep) n.push("As correções indicadas foram aplicadas na planilha repactuada (fonte \u201cCorreção:\u201d). Manter qualquer falha impacta os valores da repactuação e pode levar a pagamento indevido ou glosa.");
+      if (prop) n.push("Erros de preenchimento não desclassificam a proposta quando a planilha puder ser ajustada sem majorar o preço ofertado; itens isolados abaixo do estimado não bastam, se não contrariarem exigência legal (IN 05/2017, Anexo VII-A, itens 7.9 e 9.3). Havendo dúvida, a diligência é obrigatória antes da decisão (Lei 14.133/2021, art. 59, § 2º; IN 73/2022, art. 34).");
+      n.push("Falhas apontadas por inteligência artificial a partir da planilha, da convenção e das normas: confira cada uma na fonte indicada.");
+      docs.falhas = { titulo: prop ? "Falhas, exequibilidade e diligência" : "Falhas e inconsistências", arquivo: base0 + "-falhas", blocos, notas: n, paisagem: true };
+    }
+    // 3) quadro comparativo (repactuação) ou comparativo das propostas
+    if (compTab.length || (prop && P.moTemLista)) {
+      const blocos = [], n = [];
+      if (compTab.length) {
+        blocos.push(T("QUADRO COMPARATIVO – CONTRATAÇÃO × REPACTUADA (POR EMPREGADO)", ["Rubrica", "Contratação", "Repactuada", "Variação", "%"],
+          compTab.map((v) => ({ c: v.slice(0, 5), nota: v[5], forte: v[6] === 1, total: v[6] === 2 })), { alin: "lrrrr", larg: [46, 16, 16, 16, 11] }));
+        n.push(P.moCompInfo);
+        n.push("Os efeitos financeiros da repactuação alcançam só os itens que a motivaram e apenas a diferença existente (IN 05/2017, art. 58, parágrafo único); é vedada a inclusão de benefícios não previstos na proposta inicial, salvo se obrigatórios por lei ou instrumento coletivo (art. 57, § 1º).");
+      } else {
+        blocos.push(T("COMPARATIVO DAS PROPOSTAS (POR EMPREGADO)", listaCab, P.moCmpLinhas.map((l) => ({ c: [l.rot].concat(l.cels.map((c) => c.v)), alerta: l.cels.map((c, i) => c.alerta ? i + 1 : -1).filter((i) => i > 0), forte: l.forte })),
+          { alin: "l" + "r".repeat(listaCab.length - 1), larg: [30].concat(listaCab.slice(1).map(() => 18)) }));
+        n.push("Destacados: módulos mais de 15% abaixo da mediana das propostas ou da estimativa do órgão e preços abaixo do valor de atenção. São pontos para a diligência, não motivo automático de desclassificação (IN 05/2017, Anexo VII-A, itens 9.3 e 9.4).");
+        if (d.pr_ref) n.push(P.moRefTxt);
+      }
+      docs.comparativo = { titulo: compTab.length ? "Quadro comparativo da repactuação" : "Comparativo das propostas", arquivo: base0 + "-comparativo", blocos, notas: n, paisagem: !compTab.length && listaCab.length > 5 };
+    }
+    // 4) memória de cálculo: insumos, reajuste, adicionais da vigilância e garantia trabalhista
+    {
+      const blocos = [], n = [];
+      memTab.forEach((g) => blocos.push(T("MEMÓRIA DE CÁLCULO – " + g.rot.toUpperCase(), g.col.concat(["Fonte do preço"]), g.linhas.map((v) => ({ c: v })).concat([{ c: ["Total mensal por empregado: " + g.total], span: true, total: true }]),
+        { alin: "l" + "r".repeat(g.col.length - 1) + "l", larg: [30].concat(g.col.slice(1).map(() => 14)).concat([34]), sub: g.nota })));
+      if (memTab.length) n.push("Memória dos insumos pela metodologia dos cadernos técnicos: uniformes e EPI pelo custo anual de cada item (preço × quantidade × 12 ÷ vida útil em meses) ÷ 12; materiais pelo consumo mensal ÷ empregados; equipamentos pela depreciação mensal ÷ empregados. Preços da pesquisa do assinante ou da mediana das compras públicas dos últimos 12 meses no Compras.gov.br (Lei 14.133/2021, art. 23).");
+      if (rjIns.length) {
+        blocos.push(T("REAJUSTE DOS INSUMOS – VALORES", ["Insumo", "Valor da contratação", "Fator aplicado", "Valor reajustado"], rjIns.map((v) => ({ c: v })), { alin: "lrrr", larg: [40, 20, 18, 20] }));
+        blocos.push(T("REAJUSTE DOS INSUMOS – ÍNDICE MÊS A MÊS", ["Ciclo", "Mês", "Variação mensal", "Fator acumulado no ciclo"], rjMeses.map((v) => ({ c: v, total: String(v[1]).indexOf("Fator do ciclo") === 0 })), { alin: "llrr", larg: [14, 42, 18, 24] }));
+        n.push(rjCab);
+      }
+      if (vgU) {
+        blocos.push(T("ADICIONAIS DA ESCALA DE VIGILÂNCIA (CADERNO TÉCNICO)", ["Rubrica", "Valor mensal"], [["Adicional noturno (Módulo 1, D)", vgU.noturno, vgU.notas.noturno], ["Hora noturna reduzida (Módulo 1, E)", vgU.hnr, vgU.notas.hnr], ["Feriados trabalhados (Módulo 1, F)", vgU.he, vgU.notas.he]]
+          .concat(vgU.intraVal ? [["Intervalo não concedido (Submódulo 4.2)", vgU.intraVal, vgU.notas.intra]] : []).map(([k, v, nt]) => ({ c: [k, brlTxt(v)], nota: nt })), { alin: "lr", larg: [70, 26] }));
+        n.push("Caderno técnico de vigilância: 30,4375 dias por mês (ano de 365,25 dias); 12x36 com 15,22 dias de trabalho; adicional noturno com as horas prorrogadas após as 5 h (Súmula 60, II, do TST); hora noturna de 52'30\" (CLT, art. 73, § 1º); feriados em dobro na 12x36 (Súmula 444 do TST); intervalo não concedido com 50% (CLT, art. 71, § 4º). A convenção prevalece quando dispuser de outro modo (CLT, art. 611-A).");
+      }
+      if (gtU && d.gt_tipo === "cv") { blocos.push(T("CONTA-DEPÓSITO VINCULADA – RETENÇÃO MENSAL", ["Provisão (sobre o Módulo 1)", "%", "Valor por empregado"], gtU.cvP.map(([k, p]) => ({ c: [k, p.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%", brlTxt(r.M1 * p / 100)] })).concat([{ c: ["Retenção mensal por empregado", P.moCvTot, P.moCvEmp], total: true }]), { alin: "lrr", larg: [60, 12, 24] }));
+        n.push(P.moCvResumo); n.push("Conta-depósito vinculada: IN 05/2017, art. 18, I, e Anexo XII; Lei 14.133/2021, art. 121, § 3º, III. O Anexo XII traz 5% para a multa do FGTS, que inclui a contribuição social extinta pela Lei 13.932/2019."); }
+      if (gtU && d.gt_tipo === "fg") { blocos.push(T("PAGAMENTO PELO FATO GERADOR", ["Parcela paga só quando ocorrer o fato gerador", "Provisão mensal", "Com CI, tributos e lucro"], gtU.fg.map(([k, v]) => ({ c: [k, brlTxt(v), brlTxt(v * gtU.fatorM6)] })), { alin: "lrr", larg: [56, 18, 22] }));
+        n.push(P.moFgResumo); n.push("Pagamento pelo fato gerador: IN 05/2017, art. 18, II; Lei 14.133/2021, art. 121, § 3º, V."); }
+      if (blocos.length) docs.memoria = { titulo: "Memória de cálculo", arquivo: base0 + "-memoria-de-calculo", blocos, notas: n };
+    }
+    // 5) diferença retroativa (repactuação)
+    if (retro && retro.linhas.length) {
+      docs.retroativo = { titulo: "Diferença retroativa da repactuação", arquivo: base0 + "-retroativo", blocos: [
+        { t: "texto", titulo: "TEMPESTIVIDADE", paragrafos: retro.alertas.map((a) => (a.ok ? "" : "Atenção: ") + a.t) },
+        T("DIFERENÇA RETROATIVA – MÊS A MÊS", ["Mês", "Período", "Mão de obra", "Insumos", "Diferença"], retro.linhas.map((l) => ({ c: [l.mes, l.frac, l.lab, l.ins, l.dif] })).concat([{ c: ["Total", "", "", "", P.moRetroTotal], total: true }]), { alin: "llrrr", larg: [14, 20, 20, 20, 22] })],
+        notas: [P.moRetroInfo, "Os novos valores vigoram a partir do fato gerador (data-base da categoria), ou em data anterior se o instrumento coletivo tiver vigência retroativa (IN 05/2017, art. 58, I e III); a parcela dos insumos é devida a partir do aniversário do orçamento estimado (art. 54, § 2º). Diferença negativa deve ser compensada nas faturas seguintes."] };
+    }
+    const doc0 = docs[docTipo]; if (doc0) doc0.id = docTipo;
+    if (!doc0) { this.setState((x) => ({ mo: { ...x.mo, erro: "Este documento não tem conteúdo nesta planilha." } })); return; }
     this.setState((x) => ({ mo: { ...x.mo, baixando: true, erro: "" } }));
     try {
-      if (formato === "xlsx") {
-        if (!window.ExcelJS) await carregarScript(baseSite() + "vendor/exceljs-4.4.0.min.js");
-        const X = { navy: "FF0A1F2A", verde: "FF0FA36B", teal: "FF0F6B7E", cinza: "FFEEF3F2", cinza2: "FFF6F8F7", ambar: "FFFFF4DC", tot: "FFE3F2EA", texto: "FF0B1F2A", fraco: "FF66757F", linha: "FFDDE5E4", branco: "FFFFFFFF" };
-        const fill = (c) => ({ type: "pattern", pattern: "solid", fgColor: { argb: c } });
-        const fino = { style: "thin", color: { argb: X.linha } };
-        const wb = new window.ExcelJS.Workbook(); wb.creator = "Licitacon"; wb.created = new Date();
-        const ws = wb.addWorksheet("Planilha", { views: [{ showGridLines: false }],
-          pageSetup: { paperSize: 9, orientation: "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0, margins: { left: 0.5, right: 0.5, top: 0.6, bottom: 0.6, header: 0.3, footer: 0.3 } },
-          headerFooter: { oddFooter: "&L&8Licitacon · Planilha de custos (IN 05/2017)&R&8Página &P de &N" } });
-        ws.columns = [{ width: 7 }, { width: 58 }, { width: 13 }, { width: 18 }];
-        const linha = (vals, o) => { const row = ws.addRow(vals); o = o || {}; row.eachCell({ includeEmpty: true }, (c, i) => {
-          c.font = { name: "Calibri", size: o.size || 10.5, bold: !!o.bold, italic: !!o.italic, color: { argb: o.cor || X.texto } };
-          c.alignment = { vertical: "middle", wrapText: true, horizontal: i >= 3 ? "right" : "left", indent: o.indent && i === 2 ? o.indent : 0 };
-          if (o.fundo) c.fill = fill(o.fundo); if (o.borda) c.border = { bottom: fino }; if (o.topo) c.border = { ...(c.border || {}), top: { style: "medium", color: { argb: X.navy } } }; });
-          if (o.alt) row.height = o.alt; return row; };
-        const juntar = (row, a, b) => ws.mergeCells(row.number, a, row.number, b);
-        // células mescladas não ajustam a altura sozinhas: calcula pelas linhas de texto que cabem na largura
-        const altura = (txt, porLinha, ptLinha) => Math.max(15, Math.ceil(String(txt || "").split("\n").reduce((a, t) => a + Math.max(1, Math.ceil(t.length / porLinha)), 0) * ptLinha + 4));
-        // cabeçalho
-        let row = linha(["Planilha de custos e formação de preços", "", "", ""], { size: 16, bold: true, cor: X.branco, fundo: X.navy, alt: 30 }); juntar(row, 1, 4);
-        row = linha([titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + "/" + (d.uf || "") : ""), "", "", ""], { size: 11, cor: "FFB9CBD2", fundo: X.navy, alt: 20 }); juntar(row, 1, 4);
-        row = linha(["IN SEGES/MP nº 5/2017, Anexo VII-D · gerada no Licitacon em " + hoje, "", "", ""], { size: 9, cor: "FF7FE3B6", fundo: X.navy, alt: 16 }); juntar(row, 1, 4);
-        ws.addRow([]);
-        // resumo: os números que a pessoa procura primeiro
-        destaques.forEach(([k, v], i) => {
-          const rr = linha(["", k, "", v], { size: i === 0 ? 14 : 11.5, bold: true, fundo: i === 0 ? X.tot : X.cinza2, alt: i === 0 ? 26 : 20 });
-          rr.getCell(2).font = { size: 10.5, bold: true, color: { argb: X.fraco } }; juntar(rr, 2, 3);
-          if (i === 0) rr.getCell(4).font = { size: 15, bold: true, color: { argb: X.teal } };
-        });
-        ws.addRow([]);
-        // composição do preço
-        if (comp.length && tot) {
-          row = linha(["", "Composição do preço por empregado", "% do preço", "Valor"], { bold: true, cor: X.fraco, size: 9.5, borda: true });
-          comp.forEach(([k, v, c]) => { const rr = linha(["", k, tot ? v / tot : 0, v], { borda: true }); rr.getCell(1).fill = fill("FF" + c.map((n) => n.toString(16).padStart(2, "0")).join("").toUpperCase()); rr.getCell(3).numFmt = "0.0%"; rr.getCell(4).numFmt = '"R$" #,##0.00'; });
-          ws.addRow([]);
-        }
-        // identificação
-        row = linha(["Identificação", "", "", ""], { bold: true, cor: X.branco, fundo: X.teal, alt: 20 }); juntar(row, 1, 4);
-        ident.forEach(([k, v]) => { const rr = linha(["", k, String(v), ""], { borda: true }); rr.height = altura(v, 30, 14); rr.getCell(2).font = { bold: true, size: 10, color: { argb: X.fraco } }; rr.getCell(3).alignment = { horizontal: "left", vertical: "middle", wrapText: true }; juntar(rr, 3, 4); });
-        ws.addRow([]);
-        if (temAuto) { row = linha(["", "Linhas em âmbar: valores preenchidos pelo agente ou ajustados automaticamente. A fonte aparece logo abaixo da rubrica.", "", ""], { size: 9, italic: true, cor: X.fraco }); row.getCell(1).fill = fill(X.ambar); juntar(row, 2, 4); row.height = 28; ws.addRow([]); }
-        // módulos
-        modulos.forEach((m) => {
-          row = linha([m.cab.toUpperCase() + "   " + m.nome, "", "", ""], { bold: true, size: 11, cor: X.branco, fundo: X.navy, alt: 21 }); juntar(row, 1, 4);
-          if (m.sub) { row = linha(["", m.sub, "", ""], { size: 9, italic: true, cor: X.fraco }); juntar(row, 2, 4); row.height = altura(m.sub, 100, 12); }
-          linha(["", "Rubrica", "%", "Valor (R$)"], { bold: true, size: 9, cor: X.fraco, fundo: X.cinza, borda: true });
-          m.linhas.forEach((l) => {
-            const pv = l.ehFap ? l.fapNum : (l.pctNum == null ? null : l.pctNum / 100);
-            const rr = linha([l.cod, l.rot, pv == null ? (l.pctTxt === "—" ? "—" : "") : pv, l.valNum == null ? l.valTxt : l.valNum], { borda: !l.nota, fundo: l.auto ? X.ambar : null });
-            rr.height = altura(l.rot, 62, 14);
-            rr.getCell(1).font = { bold: true, size: 10, color: { argb: X.teal } };
-            if (pv != null && !l.ehFap) rr.getCell(3).numFmt = "0.00##%"; if (l.ehFap) rr.getCell(3).numFmt = "0.0000";
-            if (l.valNum != null) rr.getCell(4).numFmt = '"R$" #,##0.00';
-            if (l.nota) { const nr = linha(["", l.nota, "", ""], { size: 8.5, italic: true, cor: X.fraco, borda: true, fundo: l.auto ? X.ambar : null }); juntar(nr, 2, 4); nr.height = altura(l.nota, 105, 11.5); }
-          });
-          const tr = linha(["", m.total.rot, m.total.pctNum == null ? "" : m.total.pctNum / 100, m.total.valNum], { bold: true, fundo: X.tot, topo: true });
-          tr.getCell(3).numFmt = "0.00##%"; tr.getCell(4).numFmt = '"R$" #,##0.00';
-          ws.addRow([]);
-        });
-        // quadro-resumo
-        row = linha(["QUADRO-RESUMO   Custo por empregado e valores do contrato", "", "", ""], { bold: true, size: 11, cor: X.branco, fundo: X.navy, alt: 21 }); juntar(row, 1, 4);
-        resumo.forEach((l) => { const rr = linha([l.cod, l.rot, "", l.val], { bold: l.forte, borda: true, fundo: l.forte ? X.cinza2 : null }); rr.getCell(4).numFmt = '"R$" #,##0.00'; rr.getCell(1).font = { bold: true, color: { argb: X.teal } }; });
-        const pr = linha(["", "PREÇO TOTAL POR EMPREGADO", "", tot], { bold: true, size: 12, fundo: X.tot, topo: true, alt: 22 }); pr.getCell(4).numFmt = '"R$" #,##0.00'; pr.getCell(4).font = { bold: true, size: 13, color: { argb: X.teal } };
-        ws.addRow([]);
-        kpis.forEach(([k, v]) => { const rr = linha(["", k, "", String(v)], { borda: true }); rr.getCell(2).font = { bold: true, size: 10, color: { argb: X.fraco } }; });
-        ws.addRow([]);
-        if (retro && retro.linhas.length) {
-          const wr = wb.addWorksheet("Retroativo", { views: [{ showGridLines: false }] });
-          wr.columns = [{ width: 14 }, { width: 18 }, { width: 20 }, { width: 20 }, { width: 20 }];
-          let rr0 = wr.addRow(["Diferença retroativa da repactuação – mês a mês"]); wr.mergeCells(rr0.number, 1, rr0.number, 5); rr0.getCell(1).font = { bold: true, size: 13, color: { argb: X.branco } }; rr0.getCell(1).fill = fill(X.navy); rr0.height = 24;
-          rr0 = wr.addRow([P.moRetroInfo]); wr.mergeCells(rr0.number, 1, rr0.number, 5); rr0.getCell(1).font = { italic: true, size: 9, color: { argb: X.fraco } }; rr0.getCell(1).alignment = { wrapText: true }; rr0.height = 30;
-          const hr2 = wr.addRow(["Mês", "Período", "Mão de obra", "Insumos", "Diferença"]); hr2.eachCell((c) => { c.font = { bold: true, color: { argb: X.branco } }; c.fill = fill(X.teal); });
-          retro.linhas.forEach((l) => { const x = wr.addRow([l.mes, l.frac, num(l.lab), l.ins === "—" ? "—" : num(l.ins), num(l.dif)]); x.eachCell((c) => { c.border = { bottom: fino }; }); [3, 4, 5].forEach((i) => { x.getCell(i).numFmt = '"R$" #,##0.00'; }); });
-          rr0 = wr.addRow(["Total", "", "", "", retro.total]); rr0.eachCell((c) => { c.font = { bold: true }; c.fill = fill(X.tot); }); rr0.getCell(5).numFmt = '"R$" #,##0.00';
-        }
-        if (dilig.length) {
-          const wdg = wb.addWorksheet("Diligência", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
-          wdg.columns = [{ width: 100 }];
-          dilig.forEach((t, i) => { const x = wdg.addRow([t]); x.getCell(1).alignment = { wrapText: true, vertical: "top" }; x.getCell(1).font = { size: 11, bold: i === 0 }; x.height = altura(t, 95, 15); });
-        }
-        if (minuta.length) {
-          const wmn = wb.addWorksheet("Minuta de apostilamento", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
-          wmn.columns = [{ width: 100 }];
-          minuta.forEach((t, i) => { const x = wmn.addRow([t]); x.getCell(1).alignment = { wrapText: true, vertical: "top" }; x.getCell(1).font = { size: 11, bold: i === 0 }; x.height = altura(t, 95, 15); });
-        }
-        if (listaTab.length) {
-          const wl = wb.addWorksheet(prop ? "Comparativo das propostas" : "Quadro consolidado", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
-          wl.columns = listaCab.map((c, i) => ({ width: i ? 18 : 40 }));
-          let lr = wl.addRow([P.moListaTitulo]); wl.mergeCells(lr.number, 1, lr.number, listaCab.length); lr.getCell(1).font = { bold: true, size: 13, color: { argb: X.branco } }; lr.getCell(1).fill = fill(X.navy); lr.height = 24;
-          lr = wl.addRow([P.moListaNota]); wl.mergeCells(lr.number, 1, lr.number, listaCab.length); lr.getCell(1).font = { italic: true, size: 9, color: { argb: X.fraco } }; lr.getCell(1).alignment = { wrapText: true }; lr.height = altura(P.moListaNota, 30 + listaCab.length * 16, 12);
-          const hl = wl.addRow(listaCab); hl.eachCell((c) => { c.font = { bold: true, color: { argb: X.branco } }; c.fill = fill(X.teal); c.alignment = { wrapText: true, vertical: "middle" }; });
-          listaTab.forEach((v, i) => { const x = wl.addRow(v); const tot = !prop && i === listaTab.length - 1; x.eachCell({ includeEmpty: true }, (c, j) => { c.border = { bottom: fino }; c.alignment = { horizontal: j > 1 ? "right" : "left", wrapText: true }; if (tot) { c.font = { bold: true }; c.fill = fill(X.tot); }
-            if (String(c.value || "").indexOf("⚠") > 0) c.fill = fill(X.ambar); }); });
-        }
-        if (compTab.length) {
-          const wc = wb.addWorksheet("Quadro comparativo", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
-          wc.columns = [{ width: 44 }, { width: 16 }, { width: 16 }, { width: 16 }, { width: 11 }, { width: 70 }];
-          let cr = wc.addRow(["Quadro comparativo – planilha da contratação × planilha repactuada (por empregado)"]); wc.mergeCells(cr.number, 1, cr.number, 6); cr.getCell(1).font = { bold: true, size: 13, color: { argb: X.branco } }; cr.getCell(1).fill = fill(X.navy); cr.height = 24;
-          cr = wc.addRow([P.moCompInfo]); wc.mergeCells(cr.number, 1, cr.number, 6); cr.getCell(1).font = { italic: true, size: 9, color: { argb: X.fraco } }; cr.getCell(1).alignment = { wrapText: true }; cr.height = altura(P.moCompInfo, 150, 12);
-          const hc = wc.addRow(["Rubrica", "Contratação", "Repactuada", "Variação", "%", "Motivo"]); hc.eachCell((c) => { c.font = { bold: true, color: { argb: X.branco } }; c.fill = fill(X.teal); });
-          compTab.forEach((v) => { const x = wc.addRow(v.slice(0, 6)); x.eachCell({ includeEmpty: true }, (c, i) => { c.border = { bottom: fino }; c.alignment = { wrapText: true, vertical: "top", horizontal: i >= 2 && i <= 5 ? "right" : "left" }; c.font = { size: 10, bold: v[6] > 0 }; if (v[6] === 2) c.fill = fill(X.tot); });
-            x.getCell(6).font = { size: 8.5, italic: true, color: { argb: X.fraco } }; x.height = Math.max(15, altura(v[5], 75, 11.5)); });
-        }
-        if (rjMeses.length) {
-          const wj = wb.addWorksheet("Reajuste dos insumos", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
-          wj.columns = [{ width: 16 }, { width: 40 }, { width: 20 }, { width: 22 }];
-          let jr = wj.addRow(["Memória de cálculo do reajuste dos insumos"]); wj.mergeCells(jr.number, 1, jr.number, 4); jr.getCell(1).font = { bold: true, size: 13, color: { argb: X.branco } }; jr.getCell(1).fill = fill(X.navy); jr.height = 24;
-          jr = wj.addRow([rjCab]); wj.mergeCells(jr.number, 1, jr.number, 4); jr.getCell(1).font = { italic: true, size: 9, color: { argb: X.fraco } }; jr.getCell(1).alignment = { wrapText: true }; jr.height = altura(rjCab, 95, 12);
-          wj.addRow([]);
-          const hj = wj.addRow(["Insumo", "Valor da contratação", "Fator aplicado", "Valor reajustado"]); hj.eachCell((c) => { c.font = { bold: true, color: { argb: X.branco } }; c.fill = fill(X.teal); });
-          rjIns.forEach((v) => { const x = wj.addRow(v); x.eachCell((c) => { c.border = { bottom: fino }; }); });
-          wj.addRow([]);
-          const hm = wj.addRow(["Ciclo", "Mês", "Variação mensal", "Fator acumulado no ciclo"]); hm.eachCell((c) => { c.font = { bold: true, color: { argb: X.branco } }; c.fill = fill(X.teal); });
-          rjMeses.forEach((v) => { const x = wj.addRow(v); const tot = String(v[1]).indexOf("Fator do ciclo") === 0; x.eachCell((c) => { c.border = { bottom: fino }; if (tot) { c.font = { bold: true }; c.fill = fill(X.tot); } }); });
-        }
-        if (memTab.length) {
-          const wm = wb.addWorksheet("Memória dos insumos", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
-          wm.columns = [{ width: 38 }, { width: 16 }, { width: 16 }, { width: 16 }, { width: 16 }, { width: 20 }, { width: 50 }];
-          let mr = wm.addRow(["Memória de cálculo dos insumos – Módulo 5 (custo mensal por empregado)"]); wm.mergeCells(mr.number, 1, mr.number, 7); mr.getCell(1).font = { bold: true, size: 13, color: { argb: X.branco } }; mr.getCell(1).fill = fill(X.navy); mr.height = 24;
-          memTab.forEach((g) => {
-            wm.addRow([]);
-            mr = wm.addRow([g.rot + " · " + g.nota]); wm.mergeCells(mr.number, 1, mr.number, 7); mr.getCell(1).font = { bold: true, color: { argb: X.teal } };
-            const hm = wm.addRow(g.col.concat(["Fonte"])); hm.eachCell((c) => { c.font = { bold: true, size: 9.5, color: { argb: X.fraco } }; c.fill = fill(X.cinza); c.alignment = { wrapText: true, vertical: "middle" }; });
-            g.linhas.forEach((v) => { const rr = wm.addRow(v);
-              rr.eachCell({ includeEmpty: true }, (c) => { c.border = { bottom: fino }; c.font = { size: 10 }; c.alignment = { wrapText: true, vertical: "top" }; }); rr.getCell(v.length).font = { size: 8.5, italic: true, color: { argb: X.fraco } }; });
-            mr = wm.addRow(new Array(g.col.length - 1).fill("").map((x, i) => (i === 0 ? "Total" : "")).concat([g.total])); mr.eachCell((c) => { c.font = { bold: true }; c.fill = fill(X.tot); });
-          });
-        }
-        if (transicao.length) {
-          const wt = wb.addWorksheet("Transição tributária", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
-          wt.columns = [{ width: 9 }, { width: 18 }, { width: 18 }, { width: 18 }, { width: 13 }, { width: 16 }, { width: 20 }, { width: 20 }];
-          let tr0 = wt.addRow(["Período de transição da reforma tributária – preço por empregado ano a ano"]); wt.mergeCells(tr0.number, 1, tr0.number, 8); tr0.getCell(1).font = { bold: true, size: 13, color: { argb: X.branco } }; tr0.getCell(1).fill = fill(X.navy); tr0.height = 24;
-          tr0 = wt.addRow(["Módulos 1 a 5, custos indiretos e lucro iguais em todos os anos; muda só o Módulo 6. CBS e IBS por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º)."]); wt.mergeCells(tr0.number, 1, tr0.number, 8); tr0.getCell(1).font = { italic: true, size: 9, color: { argb: X.fraco } }; tr0.getCell(1).alignment = { wrapText: true }; tr0.height = 26;
-          const ht = wt.addRow(["Ano", "PIS e COFINS", "CBS", "IBS", "ISS", "Tributos no preço", "Preço por empregado", "Valor mensal"]);
-          ht.eachCell((c) => { c.font = { bold: true, size: 9.5, color: { argb: X.branco } }; c.fill = fill(X.teal); c.alignment = { horizontal: "center", vertical: "middle", wrapText: true }; });
-          transicao.forEach((t) => { const rr = wt.addRow([Number(t.ano), t.pisCof, t.cbs, t.ibs, t.iss, t.trib, num(t.total), num(t.mensal)]);
-            rr.eachCell((c, i) => { c.border = { bottom: fino }; c.font = { size: 10, bold: t.atual }; c.alignment = { horizontal: i === 1 ? "center" : "right" }; if (t.atual) c.fill = fill(X.tot); });
-            rr.getCell(7).numFmt = '"R$" #,##0.00'; rr.getCell(8).numFmt = '"R$" #,##0.00'; });
-          tr0 = wt.addRow(["Em destaque, o ano calculado na aba Planilha."]); wt.mergeCells(tr0.number, 1, tr0.number, 8); tr0.getCell(1).font = { size: 9, color: { argb: X.fraco } };
-        }
-        row = linha(["Notas e fundamentação", "", "", ""], { bold: true, cor: X.branco, fundo: X.teal }); juntar(row, 1, 4);
-        notas.forEach((n2, i) => { const rr = linha([String(i + 1), n2, "", ""], { size: 9, cor: X.fraco }); juntar(rr, 2, 4); rr.height = altura(n2, 100, 12.5); });
-        // aba de falhas (repactuação)
-        if (falhas.length) {
-          const wf = wb.addWorksheet("Falhas da planilha", { views: [{ showGridLines: false, state: "frozen", ySplit: 4 }], pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
-          wf.columns = [{ width: 5 }, { width: 26 }, { width: 10 }, { width: 42 }, { width: 34 }, { width: 42 }, { width: 30 }];
-          let fr = wf.addRow([P.moFalhasTitulo]); wf.mergeCells(fr.number, 1, fr.number, 7); fr.getCell(1).font = { bold: true, size: 14, color: { argb: X.branco } }; fr.getCell(1).fill = fill("FF8A1230"); fr.height = 26;
-          fr = wf.addRow(["Atenção: " + P.moFalhasAviso]); wf.mergeCells(fr.number, 1, fr.number, 7);
-          fr.getCell(1).font = { bold: true, size: 10, color: { argb: "FF8A1230" } }; fr.getCell(1).alignment = { wrapText: true }; fr.height = 30;
-          wf.addRow([]);
-          const hr = wf.addRow(["Nº", "Rubrica", "Gravidade", "Falha", "Fundamento", "Caminho correto", prop ? "Efeito no preço e na exequibilidade" : "Impacto se mantida"]);
-          hr.eachCell((c) => { c.font = { bold: true, size: 9.5, color: { argb: X.branco } }; c.fill = fill(X.navy); c.alignment = { vertical: "middle", wrapText: true }; });
-          falhas.forEach((f, i) => {
-            const g = grav[f.gravidade] || grav.media;
-            const rr = wf.addRow([i + 1, f.rubrica, g[0], f.problema, f.fundamento, f.correcao, f.impacto || ""]);
-            rr.eachCell({ includeEmpty: true }, (c) => { c.alignment = { vertical: "top", wrapText: true }; c.font = { size: 9.5 }; c.border = { bottom: fino }; });
-            rr.getCell(3).font = { bold: true, size: 9.5, color: { argb: X.branco } }; rr.getCell(3).fill = fill(g[2]); rr.getCell(3).alignment = { vertical: "top", horizontal: "center" };
-            rr.getCell(7).font = { size: 9.5, color: { argb: "FF8A1230" } };
-            rr.height = Math.max(30, Math.max(altura(f.problema, 46, 13), altura(f.correcao, 46, 13), altura(f.fundamento, 37, 13), altura(f.rubrica, 28, 13), altura(f.impacto, 32, 13)));
-          });
-          wf.autoFilter = { from: { row: hr.number, column: 1 }, to: { row: hr.number, column: 7 } };
-        }
-        // aba do dimensionamento (limpeza)
-        if (dims.length) {
-          const wd = wb.addWorksheet("Dimensionamento", { views: [{ showGridLines: false }] });
-          wd.columns = [{ width: 22 }, { width: 46 }, { width: 12 }, { width: 16 }, { width: 14 }, { width: 14 }, { width: 16 }];
-          let dr = wd.addRow(["Dimensionamento da equipe – IN 05/2017, Anexo VI-B"]); wd.mergeCells(dr.number, 1, dr.number, 7); dr.getCell(1).font = { bold: true, size: 13, color: { argb: X.branco } }; dr.getCell(1).fill = fill(X.navy); dr.height = 24;
-          const hd = wd.addRow(["Grupo", "Tipo de área", "Área (m²)", "Produtividade (m²)", "Frequência (h/mês)", "Profissionais", "Preço por m²"]);
-          hd.eachCell((c) => { c.font = { bold: true, size: 9.5, color: { argb: X.fraco } }; c.fill = fill(X.cinza); });
-          dims.forEach((v) => { const rr = wd.addRow([v[0], v[1], num(v[2]), num(v[3]), v[4] === "—" ? "—" : num(v[4]), num(v[5]), v[6]]); rr.eachCell((c) => { c.border = { bottom: fino }; c.font = { size: 10 }; }); rr.getCell(3).numFmt = "#,##0.00"; rr.getCell(6).numFmt = "0.00"; });
-          dr = wd.addRow([P.moDimResumo]); wd.mergeCells(dr.number, 1, dr.number, 7); dr.getCell(1).font = { bold: true, color: { argb: X.teal } }; dr.getCell(1).alignment = { wrapText: true }; dr.height = 30;
-        }
-        const buf = await wb.xlsx.writeBuffer();
-        baixarArquivo(nome + ".xlsx", buf, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-      } else {
-        if (!window.jspdf) await carregarScript(baseSite() + "vendor/jspdf-2.5.1.umd.min.js");
-        if (!(window.jspdf && window.jspdf.jsPDF && window.jspdf.jsPDF.API.autoTable)) await carregarScript(baseSite() + "vendor/jspdf-autotable-3.8.2.min.js");
-        const { jsPDF } = window.jspdf; const doc = new jsPDF({ unit: "mm", format: "a4" });
-        const W = 210, ML = 14, MR = 14, LARG = W - ML - MR;
-        const C = { navy: [10, 31, 42], teal: [15, 107, 126], verde: [15, 163, 107], fraco: [102, 117, 127], texto: [11, 31, 42], cinza: [238, 243, 242], cinza2: [246, 248, 247], ambar: [255, 244, 220], tot: [227, 242, 234], linha: [221, 229, 228] };
-        const cab = () => {
-          doc.setFillColor(...C.navy); doc.rect(0, 0, W, 22, "F");
-          doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text("Planilha de custos e formação de preços", ML, 10);
-          doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(185, 203, 210);
-          doc.text(titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + "/" + (d.uf || "") : ""), ML, 16);
-          doc.setTextColor(127, 227, 182); doc.setFontSize(7.5); doc.text("IN SEGES/MP nº 5/2017 · Anexo VII-D", W - MR, 10, { align: "right" }); doc.text("Gerada em " + hoje, W - MR, 16, { align: "right" });
-          doc.setTextColor(...C.texto);
-        };
-        const rod = (n) => { doc.setFontSize(7.5); doc.setTextColor(...C.fraco); doc.setDrawColor(...C.linha); doc.line(ML, 287, W - MR, 287);
-          doc.text("Licitacon · confira cada valor e fonte antes de juntar ao processo", ML, 291.5); doc.text("Página " + n + " de {total}", W - MR, 291.5, { align: "right" }); doc.setTextColor(...C.texto); };
-        cab();
-        let y = 30;
-        // cartões de destaque
-        const cw = (LARG - 3 * 4) / 4;
-        destaques.forEach(([k, v], i) => {
-          const x = ML + i * (cw + 4);
-          doc.setFillColor(...(i === 0 ? C.tot : C.cinza2)); doc.roundedRect(x, y, cw, 20, 2.5, 2.5, "F");
-          if (i === 0) { doc.setFillColor(...C.verde); doc.rect(x, y + 3, 1.2, 14, "F"); }
-          doc.setFontSize(7); doc.setTextColor(...C.fraco); doc.setFont("helvetica", "bold"); doc.text(k.toUpperCase(), x + 4, y + 6.5, { maxWidth: cw - 6 });
-          doc.setFontSize(i === 0 ? 13 : 11); doc.setTextColor(...(i === 0 ? C.teal : C.texto)); doc.text(String(v), x + 4, y + 15, { maxWidth: cw - 6 });
-        });
-        doc.setFont("helvetica", "normal"); doc.setTextColor(...C.texto);
-        y += 27;
-        // barra da composição do preço
-        if (comp.length && tot) {
-          doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(...C.fraco); doc.text("COMPOSIÇÃO DO PREÇO POR EMPREGADO", ML, y); y += 3;
-          let x = ML; comp.forEach(([, v, c]) => { const w = tot ? (v / tot) * LARG : 0; if (w > 0) { doc.setFillColor(...c); doc.rect(x, y, w, 5, "F"); x += w; } });
-          y += 9; doc.setFont("helvetica", "normal"); doc.setFontSize(7.3);
-          comp.forEach(([k, v, c], i) => { const col = i % 3, lin = Math.floor(i / 3), x2 = ML + col * (LARG / 3), y2 = y + lin * 5;
-            doc.setFillColor(...c); doc.rect(x2, y2 - 2.4, 2.6, 2.6, "F"); doc.setTextColor(...C.texto);
-            doc.text(k + "  " + (tot ? (v / tot * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) : "0") + "%", x2 + 4, y2); });
-          y += 12;
-        }
-        // identificação em duas colunas
-        const idPares = []; for (let i = 0; i < ident.length; i += 2) idPares.push([ident[i][0], String(ident[i][1]), ident[i + 1] ? ident[i + 1][0] : "", ident[i + 1] ? String(ident[i + 1][1]) : ""]);
-        // a fonte padrão do PDF não tem alguns símbolos: troca por equivalentes legíveis
-        const limpo = (t) => String(t).replace(/²/g, "2").replace(/→/g, "»").replace(/≥/g, ">=").replace(/≤/g, "<=");
-        const base = { margin: { left: ML, right: MR, top: 28, bottom: 14 }, didDrawPage: () => { cab(); }, styles: { font: "helvetica", textColor: C.texto, lineColor: C.linha },
-          didParseCell: (dt) => { dt.cell.text = (dt.cell.text || []).map(limpo); } };
-        doc.autoTable({ ...base, startY: y, head: [[{ content: "IDENTIFICAÇÃO", colSpan: 4, styles: { fillColor: C.teal, textColor: 255, fontSize: 8, fontStyle: "bold" } }]], body: idPares, theme: "plain",
-          styles: { ...base.styles, fontSize: 8, cellPadding: { top: 1.4, bottom: 1.4, left: 2, right: 2 }, lineWidth: { bottom: 0.1 } },
-          columnStyles: { 0: { textColor: C.fraco, fontStyle: "bold", cellWidth: 40 }, 1: { cellWidth: 51 }, 2: { textColor: C.fraco, fontStyle: "bold", cellWidth: 40 } } });
-        y = doc.lastAutoTable.finalY + 5;
-        if (temAuto) { doc.setFillColor(...C.ambar); doc.rect(ML, y - 2.6, 3.4, 3.4, "F"); doc.setFontSize(7.3); doc.setTextColor(...C.fraco);
-          doc.text("Linhas em âmbar: valores preenchidos pelo agente ou ajustados automaticamente; a fonte aparece sob a rubrica.", ML + 5, y); doc.setTextColor(...C.texto); y += 4; }
-        // módulos
-        modulos.forEach((m) => {
-          const body = [];
-          m.linhas.forEach((l) => {
-            const f = l.auto ? C.ambar : null;
-            const borda = l.nota ? { bottom: 0 } : { bottom: 0.1 };
-            body.push([{ content: l.cod, styles: { fontStyle: "bold", textColor: C.teal, fillColor: f, lineWidth: borda } }, { content: l.rot, styles: { fillColor: f, lineWidth: borda } },
-              { content: l.pctTxt || "", styles: { halign: "right", fillColor: f, lineWidth: borda } }, { content: l.valTxt, styles: { halign: "right", fillColor: f, lineWidth: borda } }]);
-            if (l.nota) body.push([{ content: "", styles: { fillColor: f, lineWidth: { bottom: 0.1 } } }, { content: l.nota, colSpan: 3, styles: { fontSize: 6.6, textColor: C.fraco, fontStyle: "italic", fillColor: f, cellPadding: { top: 0, bottom: 1.6, left: 2, right: 2 }, lineWidth: { bottom: 0.1 } } }]);
-          });
-          body.push([{ content: "", styles: { fillColor: C.tot } }, { content: m.total.rot, styles: { fontStyle: "bold", fillColor: C.tot } },
-            { content: m.total.pctTxt || "", styles: { halign: "right", fontStyle: "bold", fillColor: C.tot } }, { content: m.total.valTxt, styles: { halign: "right", fontStyle: "bold", fillColor: C.tot, textColor: C.teal } }]);
-          // mantém o módulo inteiro na mesma página quando ele cabe numa página
-          const est = 16 + m.linhas.length * 6.2 + m.linhas.filter((l) => l.nota).length * 4;
-          if (y + est > 282 && est < 240) { doc.addPage(); cab(); y = 28; }
-          const head = [[{ content: m.cab.toUpperCase() + "   " + m.nome, colSpan: 4, styles: { fillColor: C.navy, textColor: 255, fontSize: 8.5, fontStyle: "bold" } }],
-            [{ content: "" }, { content: m.sub ? "Rubrica · " + m.sub : "Rubrica" }, { content: "%", styles: { halign: "right" } }, { content: "Valor", styles: { halign: "right" } }]];
-          doc.autoTable({ ...base, startY: y, head, body, theme: "plain", rowPageBreak: "avoid",
-            headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8, fontStyle: "bold", cellPadding: 1.6 },
-            styles: { ...base.styles, fontSize: 7.8, cellPadding: { top: 1.5, bottom: 1.5, left: 2, right: 2 }, valign: "middle" },
-            columnStyles: { 0: { cellWidth: 11 }, 2: { cellWidth: 25 }, 3: { cellWidth: 30 } } });
-          y = doc.lastAutoTable.finalY + 4;
-        });
-        // quadro-resumo
-        const corpoRes = resumo.map((l) => [{ content: l.cod, styles: { fontStyle: "bold", textColor: C.teal } }, { content: l.rot, styles: { fontStyle: l.forte ? "bold" : "normal", fillColor: l.forte ? C.cinza2 : null } },
-          { content: l.txt, styles: { halign: "right", fontStyle: l.forte ? "bold" : "normal", fillColor: l.forte ? C.cinza2 : null } }])
-          .concat([[{ content: "", styles: { fillColor: C.tot } }, { content: "PREÇO TOTAL POR EMPREGADO", styles: { fontStyle: "bold", fillColor: C.tot, fontSize: 9 } }, { content: P.moTotal, styles: { halign: "right", fontStyle: "bold", fillColor: C.tot, textColor: C.teal, fontSize: 10 } }]])
-          .concat(kpis.map(([k, v]) => [{ content: "" }, { content: k, styles: { textColor: C.fraco } }, { content: String(v), styles: { halign: "right" } }]));
-        if (y + 16 + corpoRes.length * 6.4 > 282) { doc.addPage(); cab(); y = 28; }
-        doc.autoTable({ ...base, startY: y, head: [[{ content: "QUADRO-RESUMO   Custo por empregado e valores do contrato", colSpan: 3, styles: { fillColor: C.navy, textColor: 255, fontSize: 8.5, fontStyle: "bold" } }]],
-          body: corpoRes, theme: "plain", rowPageBreak: "avoid", styles: { ...base.styles, fontSize: 8, cellPadding: { top: 1.6, bottom: 1.6, left: 2, right: 2 }, lineWidth: { bottom: 0.1 } }, columnStyles: { 0: { cellWidth: 11 }, 2: { cellWidth: 45 } } });
-        // falhas
-        if (falhas.length) {
-          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6,
-            head: [[{ content: P.moFalhasTitulo.toUpperCase(), colSpan: 3, styles: { fillColor: [138, 18, 48], textColor: 255, fontSize: 8.5, fontStyle: "bold" } }]],
-            body: [[{ content: "Atenção: " + P.moFalhasAviso, colSpan: 3, styles: { fontStyle: "bold", textColor: [138, 18, 48], fillColor: [253, 236, 239] } }]]
-              .concat(falhas.map((f, i) => { const g = grav[f.gravidade] || grav.media; return [
-                { content: String(i + 1), styles: { fontStyle: "bold", halign: "center" } },
-                { content: g[0].toUpperCase(), styles: { fillColor: g[1], textColor: 255, fontStyle: "bold", halign: "center", fontSize: 6.5 } },
-                { content: f.rubrica + "\nFalha: " + f.problema + "\nFundamento: " + f.fundamento + "\nCaminho correto: " + f.correcao + (f.impacto ? (prop ? "\nEfeito no preço: " : "\nImpacto se mantida: ") + f.impacto : "") }]; })),
-            theme: "plain", rowPageBreak: "avoid", styles: { ...base.styles, fontSize: 7.6, cellPadding: 2, lineWidth: { bottom: 0.1 }, valign: "top" }, columnStyles: { 0: { cellWidth: 8 }, 1: { cellWidth: 16 } } });
-        }
-        // dimensionamento
-        if (dims.length) {
-          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "DIMENSIONAMENTO DA EQUIPE – IN 05/2017, ANEXO VI-B", colSpan: 6, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }],
-            ["Tipo de área", "Área (m²)", "Produtividade", "Frequência (h/mês)", "Profissionais", "Preço por m²"]],
-            body: dims.map((v) => [v[1], v[2], v[3], v[4], v[5], v[6]]).concat([[{ content: P.moDimResumo, colSpan: 6, styles: { fontStyle: "bold", textColor: C.teal } }]]),
-            theme: "plain", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8 }, styles: { ...base.styles, fontSize: 7.6, cellPadding: 1.6, lineWidth: { bottom: 0.1 } },
-            columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" }, 4: { halign: "right" }, 5: { halign: "right" } } });
-        }
-        // quadro consolidado / comparativo das propostas
-        if (listaTab.length) {
-          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: P.moListaTitulo.toUpperCase(), colSpan: listaCab.length, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }], listaCab],
-            body: listaTab.map((v, i) => v.map((c, j) => ({ content: String(c).replace(" ⚠", " (!)"), styles: { halign: j ? "right" : "left", fontStyle: !prop && i === listaTab.length - 1 ? "bold" : "normal", fillColor: String(c).indexOf("⚠") > 0 ? C.ambar : (!prop && i === listaTab.length - 1 ? C.tot : null) } }))),
-            theme: "plain", rowPageBreak: "avoid", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.6 }, styles: { ...base.styles, fontSize: 7, cellPadding: 1.3, lineWidth: { bottom: 0.1 } } });
-        }
-        // quadro comparativo da repactuação
-        if (compTab.length) {
-          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "QUADRO COMPARATIVO – CONTRATAÇÃO × REPACTUADA (POR EMPREGADO)", colSpan: 5, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }], ["Rubrica", "Contratação", "Repactuada", "Variação", "%"]],
-            body: compTab.flatMap((v) => { const st = v[6] === 2 ? { fontStyle: "bold", fillColor: C.tot } : v[6] ? { fontStyle: "bold" } : {};
-              const linha = v.slice(0, 5).map((c, i) => ({ content: c, styles: { ...st, halign: i ? "right" : "left" } }));
-              return v[5] ? [linha, [{ content: v[5], colSpan: 5, styles: { fontSize: 6.4, textColor: C.fraco, fontStyle: "italic", cellPadding: { top: 0, bottom: 1.2, left: 4, right: 2 } } }]] : [linha]; }),
-            theme: "plain", rowPageBreak: "avoid", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8 }, styles: { ...base.styles, fontSize: 7.2, cellPadding: 1.3, lineWidth: { bottom: 0.1 } } });
-        }
-        // memória do reajuste dos insumos
-        if (rjMeses.length) {
-          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "MEMÓRIA DE CÁLCULO DO REAJUSTE DOS INSUMOS", colSpan: 4, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }], ["Insumo", "Valor da contratação", "Fator aplicado", "Valor reajustado"]],
-            body: rjIns.concat([[{ content: rjCab, colSpan: 4, styles: { fontSize: 6.8, textColor: C.fraco, fontStyle: "italic" } }]]), theme: "plain", rowPageBreak: "avoid",
-            headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8 }, styles: { ...base.styles, fontSize: 7.4, cellPadding: 1.4, lineWidth: { bottom: 0.1 } }, columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" } } });
-          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 3, head: [["Ciclo", "Mês", "Variação mensal", "Fator acumulado no ciclo"]],
-            body: rjMeses.map((v) => { const tot = String(v[1]).indexOf("Fator do ciclo") === 0; return v.map((c) => ({ content: c, styles: tot ? { fontStyle: "bold", fillColor: C.tot } : {} })); }),
-            theme: "plain", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8 }, styles: { ...base.styles, fontSize: 7, cellPadding: 1.2, lineWidth: { bottom: 0.1 } }, columnStyles: { 2: { halign: "right" }, 3: { halign: "right" } } });
-        }
-        // memória dos insumos
-        memTab.forEach((g) => {
-          const nc = g.col.length;
-          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "MEMÓRIA DE CÁLCULO – " + g.rot.toUpperCase(), colSpan: nc, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }], g.col],
-            body: g.linhas.map((v) => v.slice(0, nc)).concat([[{ content: g.nota + " Total: " + g.total, colSpan: nc, styles: { fontStyle: "bold", textColor: C.teal } }]]),
-            theme: "plain", rowPageBreak: "avoid", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.6 }, styles: { ...base.styles, fontSize: 7.2, cellPadding: 1.4, lineWidth: { bottom: 0.1 } } });
-        });
-        // transição da reforma tributária
-        if (transicao.length) {
-          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "PERÍODO DE TRANSIÇÃO DA REFORMA TRIBUTÁRIA – PREÇO POR EMPREGADO ANO A ANO", colSpan: 8, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }],
-            ["Ano", "PIS e COFINS", "CBS", "IBS", "ISS", "Tributos", "Preço/empregado", "Valor mensal"]],
-            body: transicao.map((t) => [t.ano, t.pisCof, t.cbs, t.ibs, t.iss, t.trib, t.total, t.mensal].map((v) => ({ content: v, styles: t.atual ? { fillColor: C.tot, fontStyle: "bold" } : {} }))),
-            theme: "plain", rowPageBreak: "avoid", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.6 }, styles: { ...base.styles, fontSize: 7, cellPadding: 1.4, lineWidth: { bottom: 0.1 }, halign: "right" },
-            columnStyles: { 0: { halign: "left", cellWidth: 12 } } });
-        }
-        // retroativo da repactuação
-        if (retro && retro.linhas.length) {
-          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "DIFERENÇA RETROATIVA DA REPACTUAÇÃO – MÊS A MÊS", colSpan: 5, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }], ["Mês", "Período", "Mão de obra", "Insumos", "Diferença"]],
-            body: retro.linhas.map((l) => [l.mes, l.frac, l.lab, l.ins, l.dif]).concat([[{ content: "Total", colSpan: 4, styles: { fontStyle: "bold", fillColor: C.tot } }, { content: P.moRetroTotal, styles: { fontStyle: "bold", fillColor: C.tot, halign: "right", textColor: C.teal } }]]),
-            theme: "plain", rowPageBreak: "avoid", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8 }, styles: { ...base.styles, fontSize: 7.4, cellPadding: 1.4, lineWidth: { bottom: 0.1 } },
-            columnStyles: { 2: { halign: "right" }, 3: { halign: "right" }, 4: { halign: "right" } } });
-        }
-        // notas
-        doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "NOTAS E FUNDAMENTAÇÃO", colSpan: 2, styles: { fillColor: C.teal, textColor: 255, fontSize: 8, fontStyle: "bold" } }]],
-          body: notas.map((n2, i) => [String(i + 1), n2]), theme: "plain", rowPageBreak: "avoid", styles: { ...base.styles, fontSize: 7.2, textColor: C.fraco, cellPadding: 1.6 }, columnStyles: { 0: { cellWidth: 7, fontStyle: "bold" } } });
-        if (dilig.length) {
-          doc.addPage(); cab();
-          doc.autoTable({ ...base, startY: 30, head: [[{ content: "MINUTA DE DILIGÊNCIA À LICITANTE", styles: { fillColor: C.teal, textColor: 255, fontSize: 9, fontStyle: "bold" } }]],
-            body: dilig.map((t, i) => [{ content: t, styles: { fontStyle: i === 0 ? "bold" : "normal", fontSize: i === 0 ? 10 : 9, cellPadding: { top: 2.2, bottom: 2.2, left: 2, right: 2 } } }]),
-            theme: "plain", styles: { ...base.styles, lineWidth: 0 } });
-        }
-        if (minuta.length) {
-          doc.addPage(); cab();
-          doc.autoTable({ ...base, startY: 30, head: [[{ content: "MINUTA DE APOSTILAMENTO", styles: { fillColor: C.teal, textColor: 255, fontSize: 9, fontStyle: "bold" } }]],
-            body: minuta.map((t, i) => [{ content: t, styles: { fontStyle: i === 0 ? "bold" : "normal", fontSize: i === 0 ? 10 : 9, cellPadding: { top: 2.2, bottom: 2.2, left: 2, right: 2 } } }]),
-            theme: "plain", styles: { ...base.styles, lineWidth: 0 } });
-        }
-        const n = doc.getNumberOfPages(); for (let i = 1; i <= n; i++) { doc.setPage(i); rod(i); }
-        if (typeof doc.putTotalPages === "function") doc.putTotalPages("{total}");
-        doc.save(nome + ".pdf");
-      }
+      if (formato === "xlsx") await this.moDocExcel(doc0, titulo, hoje); else await this.moDocPdf(doc0, titulo, hoje);
     } catch (e) { console.error(e); this.setState((x) => ({ mo: { ...x.mo, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
     this.setState((x) => ({ mo: { ...x.mo, baixando: false } }));
   }
 
+  // documentos disponíveis para download nesta planilha (nome, descrição)
+  moDocsDisponiveis() {
+    const mo = this.state.mo, d = mo.d, U = this._moUltimo || {}, rep = mo.modo === "repactuacao", prop = mo.modo === "proposta";
+    const temMem = Object.keys(MO_MEM).some((k) => U.mem && U.mem[k] && U.mem[k].ativo) || (U.rj && U.rj.pronto && rep) || !!U.vg || !!d.gt_tipo;
+    return [["planilha", "Planilha de custos (IN 05/2017)", "Módulos 1 a 6, quadro-resumo e valores do contrato"]]
+      .concat((rep || prop) && ((d.falhas || []).length || (prop && (d.exeq || (d.diligencias || []).length))) ? [["falhas", prop ? "Falhas, exequibilidade e diligência" : "Falhas e inconsistências", "Cada falha com fundamento e caminho correto"]] : [])
+      .concat((rep && U.comp) || (prop && this.moListaLer("proposta").length) ? [["comparativo", prop ? "Comparativo das propostas" : "Quadro comparativo", prop ? "Licitantes lado a lado, módulo a módulo" : "Contratação × repactuada, rubrica a rubrica"]] : [])
+      .concat(temMem ? [["memoria", "Memória de cálculo", "Insumos, reajuste, adicionais e garantia trabalhista"]] : [])
+      .concat(rep && U.retro && U.retro.linhas.length ? [["retroativo", "Diferença retroativa", "Mês a mês, com a tempestividade"]] : []);
+  }
+
+  // renderização genérica dos documentos em Excel e PDF
+  async moDocExcel(doc0, titulo, hoje) {
+    if (!window.ExcelJS) await carregarScript(baseSite() + "vendor/exceljs-4.4.0.min.js");
+    const X = { navy: "FF0A1F2A", teal: "FF0F6B7E", cinza: "FFEEF3F2", cinza2: "FFF6F8F7", ambar: "FFFFF4DC", tot: "FFE3F2EA", texto: "FF0B1F2A", fraco: "FF66757F", linha: "FFDDE5E4", branco: "FFFFFFFF", alerta: "FFFFF1CC" };
+    const fill = (c) => ({ type: "pattern", pattern: "solid", fgColor: { argb: c } }), fino = { style: "thin", color: { argb: X.linha } };
+    const tabs = doc0.blocos.filter((b) => b.t === "tabela");
+    const larg = []; tabs.forEach((b) => (b.larg || []).forEach((w, i) => { larg[i] = Math.max(larg[i] || 0, w); }));
+    const NC = Math.max(4, larg.length); while (larg.length < NC) larg.push(16);
+    const totalLarg = larg.reduce((a, b) => a + b, 0);
+    const wb = new window.ExcelJS.Workbook(); wb.creator = "Licitacon"; wb.created = new Date();
+    const ws = wb.addWorksheet({ planilha: "Planilha", falhas: "Falhas", comparativo: "Comparativo", memoria: "Memória de cálculo", retroativo: "Retroativo" }[doc0.id] || doc0.titulo.slice(0, 31), { views: [{ showGridLines: false }],
+      pageSetup: { paperSize: 9, orientation: doc0.paisagem ? "landscape" : "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0, margins: { left: 0.5, right: 0.5, top: 0.6, bottom: 0.6, header: 0.3, footer: 0.3 } },
+      headerFooter: { oddFooter: "&L&8Licitacon · " + doc0.titulo + "&R&8Página &P de &N" } });
+    ws.columns = larg.map((w) => ({ width: w }));
+    const altura = (txt, chars, pt) => Math.max(15, Math.ceil(String(txt || "").split("\n").reduce((a, t) => a + Math.max(1, Math.ceil(t.length / Math.max(8, chars))), 0) * pt + 4));
+    const faixa = (txt, o) => { const row = ws.addRow([txt]); ws.mergeCells(row.number, 1, row.number, NC); const c = row.getCell(1);
+      c.font = { name: "Calibri", size: o.size || 10, bold: !!o.bold, italic: !!o.italic, color: { argb: o.cor || X.texto } }; c.alignment = { wrapText: true, vertical: "middle" }; if (o.fundo) c.fill = fill(o.fundo);
+      row.height = o.alt || altura(txt, totalLarg * (o.size && o.size > 11 ? 0.8 : 1.05), (o.size || 10) * 1.35); return row; };
+    faixa(doc0.titulo, { size: 16, bold: true, cor: X.branco, fundo: X.navy, alt: 30 });
+    faixa(titulo + "  ·  " + (this.state.mo.d.categoria || "Profissional") + (this.state.mo.d.municipio ? "  ·  " + this.state.mo.d.municipio + "/" + (this.state.mo.d.uf || "") : ""), { size: 11, cor: "FFB9CBD2", fundo: X.navy, alt: 20 });
+    faixa("IN SEGES/MP nº 5/2017, Anexo VII-D · gerado no Licitacon em " + hoje, { size: 9, cor: "FF7FE3B6", fundo: X.navy, alt: 16 });
+    ws.addRow([]);
+    const num = (t) => { const m = String(t == null ? "" : t).replace("R$", "").replace("%", "").replace("+", "").trim().replace(/\./g, "").replace(",", "."); const n = Number(m); return m !== "" && /^-?[\d.]+$/.test(m) && isFinite(n) ? n : null; };
+    doc0.blocos.forEach((b) => {
+      if (b.t === "destaques") { b.itens.forEach(([k, v], i) => { const row = ws.addRow([k]); ws.mergeCells(row.number, 1, row.number, NC - 1); row.getCell(NC).value = v;
+        row.getCell(1).font = { bold: true, size: 10.5, color: { argb: X.fraco } }; row.getCell(NC).font = { bold: true, size: i ? 12 : 15, color: { argb: i ? X.texto : X.teal } }; row.getCell(NC).alignment = { horizontal: "right" };
+        [1, NC].forEach((j) => { row.getCell(j).fill = fill(i ? X.cinza2 : X.tot); }); row.height = i ? 20 : 26; }); ws.addRow([]); return; }
+      if (b.t === "barra") { if (!b.tot) return; const h = ws.addRow(["Composição do preço por empregado"]); ws.mergeCells(h.number, 1, h.number, NC); h.getCell(1).font = { bold: true, size: 9.5, color: { argb: X.fraco } };
+        b.comp.forEach(([k, v, c]) => { const row = ws.addRow([""]); row.getCell(1).fill = fill("FF" + c.map((n) => n.toString(16).padStart(2, "0")).join("").toUpperCase()); row.getCell(2).value = k; if (NC > 3) ws.mergeCells(row.number, 2, row.number, NC - 2);
+          row.getCell(NC - 1).value = b.tot ? v / b.tot : 0; row.getCell(NC - 1).numFmt = "0.0%"; row.getCell(NC).value = v; row.getCell(NC).numFmt = '"R$" #,##0.00'; row.eachCell((cc) => { cc.border = { bottom: fino }; }); });
+        ws.addRow([]); return; }
+      if (b.t === "pares") { faixa(b.titulo, { bold: true, cor: X.branco, fundo: X.teal, alt: 20 });
+        b.pares.forEach(([k, v]) => { const row = ws.addRow([k]); const meio = Math.max(1, Math.floor(NC / 2)); ws.mergeCells(row.number, 1, row.number, meio); row.getCell(meio + 1).value = String(v); ws.mergeCells(row.number, meio + 1, row.number, NC);
+          row.getCell(1).font = { bold: true, size: 10, color: { argb: X.fraco } }; row.getCell(meio + 1).alignment = { wrapText: true, vertical: "middle" }; row.getCell(1).border = { bottom: fino }; row.getCell(meio + 1).border = { bottom: fino };
+          row.height = altura(v, totalLarg / 2, 14); }); ws.addRow([]); return; }
+      if (b.t === "legenda") { const row = faixa(b.texto, { size: 9, italic: true, cor: X.fraco }); row.getCell(1).fill = fill(X.ambar); ws.addRow([]); return; }
+      if (b.t === "texto") { faixa(b.titulo, { bold: true, cor: X.branco, fundo: X.navy, alt: 21 }); b.paragrafos.forEach((t) => faixa(t, { size: 10.5 })); ws.addRow([]); return; }
+      // tabela
+      const nc = b.cab.length, alin = b.alin || "";
+      faixa(b.titulo, { bold: true, size: 11, cor: X.branco, fundo: X.navy, alt: 21 });
+      if (b.sub) faixa(b.sub, { size: 9, italic: true, cor: X.fraco });
+      if (b.topo) faixa(b.topo, { size: 9.5, bold: true, cor: "FF8A1230", fundo: "FFFDECEF" });
+      const hr = ws.addRow(b.cab); hr.eachCell({ includeEmpty: true }, (c, i) => { if (i > nc) return; c.font = { bold: true, size: 9, color: { argb: X.fraco } }; c.fill = fill(X.cinza); c.alignment = { wrapText: true, vertical: "middle", horizontal: alin[i - 1] === "r" ? "right" : "left" }; });
+      if (nc < NC && b.juntar) ws.mergeCells(hr.number, nc, hr.number, NC);
+      b.linhas.forEach((l) => {
+        const vals = l.c.map((v) => { const n2 = alin[l.c.indexOf(v)] === "r" ? num(v) : null; return v; });
+        const row = ws.addRow(l.span ? [l.c[0]] : l.c);
+        if (l.span) ws.mergeCells(row.number, 1, row.number, NC);
+        let alt = 15;
+        row.eachCell({ includeEmpty: true }, (c, i) => {
+          if (i > (l.span ? 1 : nc)) return;
+          c.font = { name: "Calibri", size: 10, bold: !!(l.total || l.forte), color: { argb: l.fraco ? X.fraco : X.texto } };
+          c.alignment = { wrapText: true, vertical: "top", horizontal: !l.span && alin[i - 1] === "r" ? "right" : "left" };
+          c.border = l.nota ? {} : { bottom: fino };
+          if (l.auto) c.fill = fill(X.ambar); if (l.total) { c.fill = fill(X.tot); c.border = { top: { style: "medium", color: { argb: X.navy } } }; }
+          if (l.alerta && l.alerta.includes(i - 1)) c.fill = fill(X.alerta);
+          if (l.cod && i === 1) c.font = { bold: true, size: 10, color: { argb: X.teal } };
+          if (l.grav && i === 2) { c.fill = fill(l.grav[2]); c.font = { bold: true, size: 9.5, color: { argb: X.branco } }; }
+          const nn = !l.span && alin[i - 1] === "r" ? num(c.value) : null;
+          if (nn != null && String(c.value).indexOf("R$") >= 0) { c.value = nn; c.numFmt = '"R$" #,##0.00'; }
+          alt = Math.max(alt, altura(c.value, l.span ? totalLarg : (larg[i - 1] || 16) * 1.05, 13));
+        });
+        if (nc < NC && b.juntar && !l.span) ws.mergeCells(row.number, nc, row.number, NC);
+        row.height = alt;
+        if (l.nota) { const nr = ws.addRow(["", l.nota]); ws.mergeCells(nr.number, 2, nr.number, NC); [1, 2].forEach((j) => { const c = nr.getCell(j); c.font = { size: 8.5, italic: true, color: { argb: X.fraco } }; c.alignment = { wrapText: true, vertical: "top" }; c.border = { bottom: fino }; if (l.auto) c.fill = fill(X.ambar); });
+          nr.height = altura(l.nota, (totalLarg - larg[0]) * 1.15, 11.5); }
+      });
+      ws.addRow([]);
+    });
+    faixa("NOTAS E FUNDAMENTAÇÃO", { bold: true, cor: X.branco, fundo: X.teal, alt: 20 });
+    doc0.notas.filter(Boolean).forEach((t, i) => faixa((i + 1) + ". " + t, { size: 9, cor: X.fraco }));
+    const buf = await wb.xlsx.writeBuffer();
+    baixarArquivo(doc0.arquivo + ".xlsx", buf, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  }
+
+  async moDocPdf(doc0, titulo, hoje) {
+    if (!window.jspdf) await carregarScript(baseSite() + "vendor/jspdf-2.5.1.umd.min.js");
+    if (!(window.jspdf && window.jspdf.jsPDF && window.jspdf.jsPDF.API.autoTable)) await carregarScript(baseSite() + "vendor/jspdf-autotable-3.8.2.min.js");
+    const { jsPDF } = window.jspdf, pais = !!doc0.paisagem;
+    const doc = new jsPDF({ unit: "mm", format: "a4", orientation: pais ? "landscape" : "portrait" });
+    const W = pais ? 297 : 210, H = pais ? 210 : 297, ML = 14, MR = 14, LARG = W - ML - MR;
+    const C = { navy: [10, 31, 42], teal: [15, 107, 126], verde: [15, 163, 107], fraco: [102, 117, 127], texto: [11, 31, 42], cinza: [238, 243, 242], cinza2: [246, 248, 247], ambar: [255, 244, 220], tot: [227, 242, 234], linha: [221, 229, 228], alerta: [255, 241, 204] };
+    const d = this.state.mo.d;
+    const cab = () => { doc.setFillColor(...C.navy); doc.rect(0, 0, W, 22, "F");
+      doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text(doc0.titulo, ML, 10);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(185, 203, 210); doc.text(titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + "/" + (d.uf || "") : ""), ML, 16);
+      doc.setTextColor(127, 227, 182); doc.setFontSize(7.5); doc.text("IN SEGES/MP nº 5/2017 · Anexo VII-D", W - MR, 10, { align: "right" }); doc.text("Gerado em " + hoje, W - MR, 16, { align: "right" }); doc.setTextColor(...C.texto); };
+    const limpo = (t) => String(t).replace(/²/g, "2").replace(/→/g, "»").replace(/≥/g, ">=").replace(/≤/g, "<=").replace(/⚠/g, "(!)");
+    const base = { margin: { left: ML, right: MR, top: 28, bottom: 14 }, didDrawPage: () => { cab(); }, styles: { font: "helvetica", textColor: C.texto, lineColor: C.linha, overflow: "linebreak" },
+      didParseCell: (dt) => { dt.cell.text = (dt.cell.text || []).map(limpo); } };
+    cab(); let y = 30;
+    const fimY = () => (doc.lastAutoTable ? doc.lastAutoTable.finalY : y);
+    doc0.blocos.forEach((b) => {
+      if (b.t === "destaques") { const n = b.itens.length, cw = (LARG - (n - 1) * 4) / n;
+        b.itens.forEach(([k, v], i) => { const x = ML + i * (cw + 4); doc.setFillColor(...(i ? C.cinza2 : C.tot)); doc.roundedRect(x, y, cw, 20, 2.5, 2.5, "F"); if (!i) { doc.setFillColor(...C.verde); doc.rect(x, y + 3, 1.2, 14, "F"); }
+          doc.setFontSize(7); doc.setTextColor(...C.fraco); doc.setFont("helvetica", "bold"); doc.text(String(k).toUpperCase(), x + 4, y + 6.5, { maxWidth: cw - 6 });
+          doc.setFontSize(i ? 11 : 13); doc.setTextColor(...(i ? C.texto : C.teal)); doc.text(String(v), x + 4, y + 15, { maxWidth: cw - 6 }); });
+        doc.setFont("helvetica", "normal"); doc.setTextColor(...C.texto); y += 27; return; }
+      if (b.t === "barra") { if (!b.tot) return; doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(...C.fraco); doc.text("COMPOSIÇÃO DO PREÇO POR EMPREGADO", ML, y); y += 3;
+        let x = ML; b.comp.forEach(([, v, c]) => { const w = (v / b.tot) * LARG; if (w > 0) { doc.setFillColor(...c); doc.rect(x, y, w, 5, "F"); x += w; } });
+        y += 9; doc.setFont("helvetica", "normal"); doc.setFontSize(7.3);
+        b.comp.forEach(([k, v, c], i) => { const col = i % 3, lin = Math.floor(i / 3), x2 = ML + col * (LARG / 3), y2 = y + lin * 5; doc.setFillColor(...c); doc.rect(x2, y2 - 2.4, 2.6, 2.6, "F"); doc.setTextColor(...C.texto);
+          doc.text(k + "  " + (v / b.tot * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%", x2 + 4, y2); });
+        y += 12; return; }
+      if (b.t === "pares") { const pares = []; for (let i = 0; i < b.pares.length; i += 2) pares.push([b.pares[i][0], String(b.pares[i][1]), b.pares[i + 1] ? b.pares[i + 1][0] : "", b.pares[i + 1] ? String(b.pares[i + 1][1]) : ""]);
+        doc.autoTable({ ...base, startY: y, head: [[{ content: b.titulo.toUpperCase(), colSpan: 4, styles: { fillColor: C.teal, textColor: 255, fontSize: 8, fontStyle: "bold" } }]], body: pares, theme: "plain",
+          styles: { ...base.styles, fontSize: 8, cellPadding: { top: 1.4, bottom: 1.4, left: 2, right: 2 }, lineWidth: { bottom: 0.1 } },
+          columnStyles: { 0: { textColor: C.fraco, fontStyle: "bold", cellWidth: LARG * 0.22 }, 1: { cellWidth: LARG * 0.28 }, 2: { textColor: C.fraco, fontStyle: "bold", cellWidth: LARG * 0.22 } } });
+        y = fimY() + 5; return; }
+      if (b.t === "legenda") { doc.setFillColor(...C.ambar); doc.rect(ML, y - 2.6, 3.4, 3.4, "F"); doc.setFontSize(7.3); doc.setTextColor(...C.fraco); doc.text(b.texto, ML + 5, y, { maxWidth: LARG - 5 }); doc.setTextColor(...C.texto); y += 5; return; }
+      if (b.t === "texto") { doc.autoTable({ ...base, startY: y, head: [[{ content: b.titulo, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }]], body: b.paragrafos.map((t) => [t]), theme: "plain",
+          rowPageBreak: "avoid", styles: { ...base.styles, fontSize: 8.4, cellPadding: { top: 1.6, bottom: 1.6, left: 2, right: 2 } } }); y = fimY() + 5; return; }
+      // tabela
+      const nc = b.cab.length, alin = b.alin || "", somaL = (b.larg || []).reduce((a, w) => a + w, 0) || nc;
+      const colStyles = {}; (b.larg || []).forEach((w, i) => { colStyles[i] = { cellWidth: LARG * w / somaL, halign: alin[i] === "r" ? "right" : "left" }; });
+      const body = [];
+      if (b.topo) body.push([{ content: b.topo, colSpan: nc, styles: { fontStyle: "bold", textColor: [138, 18, 48], fillColor: [253, 236, 239], fontSize: 7.6 } }]);
+      b.linhas.forEach((l) => {
+        if (l.span) { body.push([{ content: l.c[0], colSpan: nc, styles: { fontStyle: "bold", textColor: C.teal, fillColor: l.total ? C.tot : null } }]); return; }
+        const borda = l.nota ? { bottom: 0 } : { bottom: 0.1 };
+        body.push(l.c.map((v, i) => ({ content: String(v == null ? "" : v), styles: { fillColor: l.alerta && l.alerta.includes(i) ? C.alerta : l.total ? C.tot : l.auto ? C.ambar : l.grav && i === 1 ? l.grav[1] : null,
+          textColor: l.grav && i === 1 ? 255 : l.cod && i === 0 ? C.teal : l.fraco ? C.fraco : C.texto, fontStyle: l.total || l.forte || (l.cod && i === 0) || (l.grav && i === 1) ? "bold" : "normal", lineWidth: borda } })));
+        if (l.nota) body.push([{ content: "", styles: { fillColor: l.auto ? C.ambar : null, lineWidth: { bottom: 0.1 } } }, { content: l.nota, colSpan: nc - 1, styles: { fontSize: 6.6, textColor: C.fraco, fontStyle: "italic", fillColor: l.auto ? C.ambar : null, cellPadding: { top: 0, bottom: 1.6, left: 2, right: 2 }, lineWidth: { bottom: 0.1 }, halign: "left" } }]);
+      });
+      const est = 16 + b.linhas.length * 6 + b.linhas.filter((l) => l.nota).length * 4;
+      if (y + est > H - 15 && est < H - 60) { doc.addPage(); cab(); y = 28; }
+      doc.autoTable({ ...base, startY: y, theme: "plain", rowPageBreak: "avoid",
+        head: [[{ content: b.titulo + (b.sub ? "  ·  " + b.sub : ""), colSpan: nc, styles: { fillColor: C.navy, textColor: 255, fontSize: 8.2, fontStyle: "bold" } }], b.cab.map((c, i) => ({ content: c, styles: { halign: alin[i] === "r" ? "right" : "left" } }))],
+        headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8, fontStyle: "bold", cellPadding: 1.6 },
+        body, styles: { ...base.styles, fontSize: nc > 6 ? 7 : 7.8, cellPadding: { top: 1.5, bottom: 1.5, left: 2, right: 2 }, valign: "top" }, columnStyles: colStyles });
+      y = fimY() + 5;
+    });
+    // notas e fundamentação ao final do documento
+    const notas = doc0.notas.filter(Boolean);
+    if (notas.length) doc.autoTable({ ...base, startY: y + 1, head: [[{ content: "NOTAS E FUNDAMENTAÇÃO", colSpan: 2, styles: { fillColor: C.teal, textColor: 255, fontSize: 8, fontStyle: "bold" } }]],
+      body: notas.map((t, i) => [String(i + 1), t]), theme: "plain", rowPageBreak: "avoid", styles: { ...base.styles, fontSize: 7.2, textColor: C.fraco, cellPadding: 1.6 }, columnStyles: { 0: { cellWidth: 7, fontStyle: "bold" } } });
+    const n = doc.getNumberOfPages();
+    for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFontSize(7.5); doc.setTextColor(...C.fraco); doc.setDrawColor(...C.linha); doc.line(ML, H - 10, W - MR, H - 10);
+      doc.text("Licitacon · " + doc0.titulo + " · confira cada valor e fonte antes de juntar ao processo", ML, H - 5.5); doc.text("Página " + i + " de " + n, W - MR, H - 5.5, { align: "right" }); }
+    doc.save(doc0.arquivo + ".pdf");
+  }
+
   // nota técnica da repactuação (PDF): relatório, análise (prazos, variação de custos, não renováveis, insumos, falhas,
-  // tributação, efeitos financeiros) e conclusão, em redação impessoal, com a minuta do apostilamento anexa
+  // tributação, efeitos financeiros) e conclusão, em redação impessoal
   async moNotaTecnica() {
     const s = this.state, d = s.mo.d;
     if (!d.reforma || !d.regime) { this.setState((x) => ({ mo: { ...x.mo, erro: "Antes da nota técnica, escolha no bloco Tributação o momento da reforma e o regime de tributação." } })); return; }
     if (!moNum(d.vigente)) { this.setState((x) => ({ mo: { ...x.mo, erro: "Informe o preço vigente por empregado para gerar a nota técnica." } })); return; }
-    const P = this.moProps(), U = this._moUltimo || {}, r = U.r, rj = U.rj, comp = U.comp, retro = U.retro, minuta = U.minuta || [];
+    const P = this.moProps(), U = this._moUltimo || {}, r = U.r, rj = U.rj, comp = U.comp, retro = U.retro;
     const falhas = d.falhas || [];
     const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const pctx = (v) => ((Number(v) || 0) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
@@ -7250,7 +7173,7 @@ class Component extends DCLogic {
     const concl = bloqueios.length
       ? ["Diante do exposto, opina-se pelo indeferimento do pedido de repactuação, em razão do seguinte: " + bloqueios.map((b) => b.t).join(" ")]
       : ["Diante do exposto, opina-se pelo deferimento da repactuação, com o preço mensal por empregado de " + brl(r.total) + " e o valor mensal do contrato de " + brl(r.total * emp) + ", com efeitos a partir de " + (d.data_base || "__/__/____") + (retro && retro.linhas.length ? " e diferença retroativa de " + brl(retro.total) : "") + ".",
-         "Recomenda-se a formalização por apostilamento (Lei nº 14.133/2021, art. 136, I; IN SEGES/MP nº 5/2017, art. 57, § 4º), salvo se coincidir com prorrogação, caso em que se fará por termo aditivo, precedida da verificação da disponibilidade orçamentária. Segue anexa a minuta do apostilamento."];
+         "Recomenda-se a formalização por apostilamento (Lei nº 14.133/2021, art. 136, I; IN SEGES/MP nº 5/2017, art. 57, § 4º), salvo se coincidir com prorrogação, caso em que se fará por termo aditivo, precedida da verificação da disponibilidade orçamentária."];
     secoes.push(["3. CONCLUSÃO", concl.concat(["É a nota técnica, que se submete à consideração superior."])]);
     try {
       if (!window.jspdf) await carregarScript(baseSite() + "vendor/jspdf-2.5.1.umd.min.js");
@@ -7279,7 +7202,6 @@ class Component extends DCLogic {
       });
       par((d.municipio || "________") + ", ___ de ____________ de ______.", { gap: 8 });
       par("______________________________________\nResponsável pela análise", { gap: 12, st: { halign: "center" } });
-      if (minuta.length) { doc.addPage(); doc.autoTable({ ...base, startY: 22, body: [[{ content: "ANEXO – MINUTA DE APOSTILAMENTO", styles: { fontStyle: "bold", fontSize: 11, halign: "center" } }]].concat(minuta.map((t, i) => [{ content: t, styles: { halign: i ? "left" : "center", fontStyle: i ? "normal" : "bold" } }])) }); }
       const n = doc.getNumberOfPages(); for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFontSize(8); doc.setTextColor(102, 117, 127); doc.text("Página " + i + " de " + n, W - MR, 290, { align: "right" }); doc.text("Gerada no Licitacon · confira antes de assinar", ML, 290); }
       doc.save("nota-tecnica-repactuacao" + (d.rp_contrato ? "-contrato-" + String(d.rp_contrato).replace(/[^0-9a-z]+/gi, "-") : "") + ".pdf");
     } catch (e) { console.error(e); this.setState((x) => ({ mo: { ...x.mo, erro: "Não foi possível gerar a nota técnica. Tente de novo." } })); }
@@ -7369,26 +7291,23 @@ class Component extends DCLogic {
     // linha: percentual editável (k) ou calculado (p), valor calculado (v) ou editável (kv)
     const fontes = d.fontes || {};
     const L = (cod, rot, o) => ({ cod, rot, auto: !!o.auto || !!fontes[o.k || o.kv],
-      nota: [o.nota || "", fontes[o.k || o.kv] ? "Agente: " + fontes[o.k || o.kv] : ""].filter(Boolean).join(" · "),
+      nota: [o.nota || "", fontes[o.k || o.kv] && (o.k || o.kv) !== "iss" ? "Agente: " + fontes[o.k || o.kv] : ""].filter(Boolean).join(" · "),
       pctEdit: !!o.k, pctK: o.k ? d[o.k] : "", onPct: o.k ? this.moSet(o.k) : null, pctTxt: o.k ? "" : (o.p == null ? "" : (o.p === "-" ? "—" : pct(o.p))),
       valEdit: !!o.kv, valK: o.kv ? d[o.kv] : "", onVal: o.kv ? this.moSet(o.kv) : null, valTxt: o.kv ? "" : (o.v === null ? "—" : brl(o.v)) });
     const T = (rot, p, v) => ({ rot, pctTxt: p == null ? "" : pct(p), valTxt: brl(v) });
     const naoRen = rep ? "Custo não renovável: o aviso prévio trabalhado (1,94%) é devido só no 1º ano; nas prorrogações e repactuações, no máximo 0,194% por ano (TCU, Acórdão 1.186/2017-Plenário). Preenchido automaticamente." : "";
     const simp = r.simp, tr = r.tr, depois = d.reforma === "depois";
-    const issMun = "Alíquota do município da prestação do serviço (entre 2% e 5%, LC 116/2003).";
-    const notaSimp = simp ? "Simples Nacional, Anexo IV, " + simp.faixa + "ª faixa: alíquota efetiva " + pct(simp.ef) + " × repartição do tributo (LC 123/2006, art. 18)." : "";
+    const issMun = "Alíquota do município (LC 116/2003).";
+    const notaSimp = simp ? "Simples Nacional, Anexo IV." : "";
     const trib6 = (!tr || tr.antigos) ? [
-      simp ? L("C.1", "PIS", { p: r.aPis, v: r.pis, auto: true, nota: notaSimp }) : L("C.1", "PIS", { k: "pis", v: r.pis, nota: d.regime === "real" ? "Lucro Real (não cumulativo): use a alíquota efetiva recolhida, descontados os créditos (EFD-Contribuições dos últimos 12 meses), não a nominal (TCU, Acórdão 2.647/2009-Plenário)." : "" }),
+      simp ? L("C.1", "PIS", { p: r.aPis, v: r.pis, auto: true, nota: notaSimp }) : L("C.1", "PIS", { k: "pis", v: r.pis, nota: d.regime === "real" ? "Alíquota efetiva (Lucro Real)." : "" }),
       simp ? L("C.2", "COFINS", { p: r.aCof, v: r.cofins, auto: true, nota: notaSimp }) : L("C.2", "COFINS", { k: "cofins", v: r.cofins }),
-      simp && !simp.issFora ? L("C.3", "ISS", { p: r.aIss, v: r.iss, auto: true, nota: notaSimp + " Tributos \"por dentro\": P1 = Po ÷ (1 − tributos)." })
-        : L("C.3", "ISS", { k: "iss", v: r.iss, nota: issMun + " Tributos \"por dentro\": P1 = Po ÷ (1 − tributos)." + (tr && tr.teste ? " Em 2026, a CBS (0,9%) e o IBS (0,1%) destacados na nota são compensados com PIS/COFINS: sem custo adicional (LC 214/2025, arts. 343, 346 e 348)." : "") })
+      simp && !simp.issFora ? L("C.3", "ISS", { p: r.aIss, v: r.iss, auto: true, nota: notaSimp }) : L("C.3", "ISS", { k: "iss", v: r.iss, nota: issMun })
     ] : [
-      L("C.1", "PIS e COFINS", { p: "-", v: 0, nota: "Extintos a partir de 2027, substituídos pela CBS (ADCT, art. 126, II, incluído pela EC 132/2023)." }),
-      L("C.2", "CBS – Contribuição sobre Bens e Serviços", { p: r.aCbs, v: r.cbs, auto: true, nota: simp ? "Dentro do DAS: a parcela de PIS e COFINS do Simples passa à CBS. " + notaSimp
-        : (tr.ano <= 2028 ? "Alíquota de referência (" + String(d.rf_cbs || "").replace(".", ",") + "%) reduzida em 0,1 p.p. em " + tr.ano + " (LC 214/2025, art. 347). " : "Alíquota de referência. ") + "Calculada \"por fora\", sobre o valor sem CBS, IBS e ISS (LC 214/2025, art. 12, § 2º)." }),
-      L("C.3", "IBS – Imposto sobre Bens e Serviços", { p: r.aIbs, v: r.ibs, auto: true, nota: simp ? "Dentro do DAS: a parcela do ISS migra ao IBS na transição (" + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + ")."
-        : (tr.ano <= 2028 ? "0,1% em 2027 e 2028 (0,05% estadual e 0,05% municipal; LC 214/2025, art. 344)." : "Referência estimada do IBS (" + String(d.rf_ibs || "").replace(".", ",") + "%) × " + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + " (ADCT, art. 130). Confira a alíquota fixada pelo Senado e pelo Comitê Gestor.") }),
-      L("C.4", "ISS" + (tr.issF < 1 ? " (" + Math.round(tr.issF * 100) + "% da alíquota em " + tr.ano + ")" : ""), simp ? { p: r.aIssT, v: r.iss, auto: true, nota: notaSimp } : { k: "iss", v: r.iss, nota: issMun + (tr.issF === 0 ? " Extinto em 2033 (ADCT, art. 129)." : tr.issF < 1 ? " Na transição, a alíquota é reduzida a " + Math.round(tr.issF * 100) + "% em " + tr.ano + " (ADCT, art. 128)." : "") + " ISS \"por dentro\"." })
+      L("C.1", "PIS e COFINS", { p: "-", v: 0, nota: "Extintos a partir de 2027." }),
+      L("C.2", "CBS – Contribuição sobre Bens e Serviços", { p: r.aCbs, v: r.cbs, auto: true, nota: simp ? "Dentro do DAS (Simples Nacional)." : "Por fora, sobre o valor sem tributos." }),
+      L("C.3", "IBS – Imposto sobre Bens e Serviços", { p: r.aIbs, v: r.ibs, auto: true, nota: simp ? "Dentro do DAS (Simples Nacional)." : tr.ano <= 2028 ? "0,1% em 2027 e 2028." : "Referência × " + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + "." }),
+      L("C.4", "ISS" + (tr.issF < 1 ? " (" + Math.round(tr.issF * 100) + "% da alíquota em " + tr.ano + ")" : ""), simp ? { p: r.aIssT, v: r.iss, auto: true, nota: notaSimp } : { k: "iss", v: r.iss, nota: tr.issF === 0 ? "Extinto em 2033." : issMun })
     ];
     const modulos = [
       { titulo: "Módulo 1 – Composição da remuneração", linhas: [
@@ -7437,9 +7356,9 @@ class Component extends DCLogic {
       { titulo: "Módulo 5 – Insumos diversos", linhas: [
         ...[["A", "unif", "Uniformes e EPI", "Custo mensal por empregado (custo anual ÷ 12)."], ["B", "materiais", "Materiais", ""], ["C", "equip", "Equipamentos", "Depreciação mensal por empregado."], ["D", "outros5", "Outros (especificar)", ""]]
           .map(([cod, k, rot, nota]) => mem[k] && mem[k].ativo
-            ? { ...L(cod, rot, { p: "-", v: r[k], auto: true, nota: "Memória de cálculo: " + mem[k].linhas.filter((l) => l.mensal > 0).length + " item(ns)" + (mem[k].financeiro ? ", com custo financeiro de " + brl(mem[k].financeiro) : "") + (r["rj_" + k] ? " · reajustado pelo índice do contrato (valor da contratação: " + brl(r["orig_" + k]) + ")" : "") + ". " + MO_MEM[k].nota }) }
+            ? { ...L(cod, rot, { p: "-", v: r[k], auto: true, nota: "Memória de cálculo (" + mem[k].linhas.filter((l) => l.mensal > 0).length + " item(ns))." + (r["rj_" + k] ? " Reajustado pelo índice do contrato." : "") }) }
             : r["rj_" + k]
-            ? { ...L(cod, rot, { kv: k, nota: "Valor da contratação: " + brl(r["orig_" + k]) + " · reajustado pelo índice do contrato: " + brl(r[k]) }), auto: true, valTxt: "→ " + brl(r[k]) }
+            ? { ...L(cod, rot, { kv: k, nota: "Reajustado pelo índice do contrato (contratação: " + brl(r["orig_" + k]) + ")." }), auto: true, valTxt: "→ " + brl(r[k]) }
             : L(cod, rot, { kv: k, nota }))], total: T("Total do Módulo 5", null, r.M5) },
       { titulo: "Módulo 6 – Custos indiretos, tributos e lucro", linhas: [
         L("A", "Custos indiretos", { k: "ci", v: r.ci, nota: "Sobre o subtotal dos Módulos 1 a 5." }),
@@ -7456,7 +7375,7 @@ class Component extends DCLogic {
         pisCof: t2.antigos ? pctC(r2.aPis + r2.aCof) : "—", cbs: t2.antigos ? (t2.teste ? "0,9% (compensável)" : "—") : pctC(r2.aCbs), ibs: t2.antigos ? (t2.teste ? "0,1% (compensável)" : "—") : pctC(r2.aIbs),
         iss: pctC(t2.antigos ? r2.aIss : r2.aIssT), trib: pct(r2.To), total: brl(r2.total), mensal: brl(mensal), r: r2 };
     }) : [];
-    this._moUltimo.transicao = transicao; this._moUltimo.dUsado = d; this._moUltimo.mem = mem; this._moUltimo.empTot = empTot;
+    this._moUltimo.transicao = transicao; this._moUltimo.dUsado = d; this._moUltimo.vg = vg; this._moUltimo.mem = mem; this._moUltimo.empTot = empTot;
     const vedado = d.regime === "simples" && !/limp|vigil|conserva/i.test((d.tipo_servico || "") + " " + (d.categoria || ""));
     const f2 = (v) => (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const memGrupos = Object.keys(MO_MEM).map((k) => {
@@ -7526,7 +7445,7 @@ class Component extends DCLogic {
           else if (["unif", "materiais", "equip", "outros5"].includes(k) && r["rj_" + k]) motivo = "Reajuste dos insumos pelo índice do contrato (fator " + (rj.fator || 1).toLocaleString("pt-BR", { maximumFractionDigits: 6 }) + ").";
           else if (campoK && String(d0.ant[campoK] ?? MO_PADRAO[campoK] ?? "") === String(d0[campoK] ?? MO_PADRAO[campoK] ?? "")) motivo = k === "vt" ? "Reflexo do novo salário-base no desconto de 6% do empregado (Lei 7.418/1985)." : "Reflexo das rubricas acima.";
           else if (campoK && fontes[campoK]) motivo = fontes[campoK];
-          else if (tot) motivo = "Reflexo das rubricas acima.";
+          else if (tot) motivo = "";
           else if (campoK) motivo = "Alterado na planilha repactuada.";
         }
         return { rot, a, n, dv, p: a ? dv / a : 0, motivo, tot: tot || 0 };
@@ -7534,20 +7453,6 @@ class Component extends DCLogic {
       comp = { linhas, rA, origem: d0.ant._origem === "agente" ? "reproduzida pelo agente a partir da planilha da contratação" : "registrada pelo assinante", em: d0.ant._em };
     }
     const reaisExtenso = (v) => brl(v);
-    const minuta = retro ? [
-      "APOSTILAMENTO Nº ___/____ AO CONTRATO Nº " + (d.rp_contrato || "___/____"),
-      "CONTRATANTE: " + (d.rp_orgao || "______________________") + ".  CONTRATADA: " + (d.rp_empresa || "______________________") + ".",
-      "OBJETO: registro da repactuação dos preços do contrato em razão " + (d.cct_nome ? "do instrumento coletivo \u201c" + d.cct_nome + "\u201d" : "do novo acordo, convenção ou dissídio coletivo de trabalho") + (d.ano_cct ? " (" + d.ano_cct + ")" : "") + " da categoria " + (d.categoria || "______") + ", com data-base em " + (d.data_base || "__/__/____") + ".",
-      "FUNDAMENTO: arts. 135 e 136, I, da Lei nº 14.133/2021; arts. 54 a 58 da IN SEGES/MP nº 5/2017; cláusula ___ do contrato (repactuação); pedido da contratada de " + (d.rp_pedido || "__/__/____") + ", instruído com a planilha de custos e formação de preços e o instrumento coletivo.",
-      "1. Registra-se a repactuação do preço mensal por empregado de " + brl(r.vigente) + " para " + brl(r.total) + ", variação de " + (r.difp >= 0 ? "+" : "−") + pct(Math.abs(r.difp)) + ", conforme a planilha de custos e formação de preços anexa, que integra este apostilamento.",
-      "2. O valor mensal do contrato passa de " + brl(moT2(r.vigente * empN)) + " para " + brl(moT2(r.total * empN)) + ", considerados " + empN + " empregado(s).",
-      "3. Os efeitos financeiros vigoram a partir de " + (d.data_base || "__/__/____") + ", data-base da categoria (IN SEGES/MP nº 5/2017, art. 58, I e III), " + (retro.linhas.length ? (retro.total >= 0 ? "sendo devida à contratada a diferença retroativa de " + reaisExtenso(retro.total) : "apurando-se diferença a menor de " + reaisExtenso(Math.abs(retro.total)) + ", a ser compensada nas faturas seguintes") + ", referente ao período de " + retro.linhas[0].mes + " a " + retro.linhas[retro.linhas.length - 1].mes + ", conforme a memória de cálculo anexa" : "sem diferença retroativa a pagar") + "." + (retro.difIns ? " A parcela dos insumos é devida a partir do aniversário do orçamento estimado, na forma do art. 54, § 2º, da IN." : ""),
-      "4. Foram excluídos ou reduzidos os custos não renováveis já pagos ou amortizados no primeiro ano de execução, em especial o aviso prévio trabalhado, limitado a 0,194% por ano de prorrogação (IN SEGES/MP nº 5/2017, art. 57; TCU, Acórdão 1.186/2017-Plenário).",
-      "5. A despesa decorrente correrá à conta da dotação orçamentária __________, nota de empenho nº ________.",
-      "6. Permanecem inalteradas as demais cláusulas e condições do contrato.",
-      (d.municipio || "________") + ", ___ de ____________ de ______.",
-      "______________________________________\nAutoridade competente"
-    ] : [];
     this._moUltimo.comp = comp;
     // quadro consolidado / comparativo de propostas
     const lista = mo.listaModo === mo.modo && mo.lista ? mo.lista : this.moListaLer(mo.modo);
@@ -7562,7 +7467,7 @@ class Component extends DCLogic {
         { rot: "Falhas (alta / média / baixa)", cels: cmpCols.map((c) => ({ v: c.ref ? "—" : c.it.res.falhas.join(" / "), alerta: !c.ref && c.it.res.falhas[0] > 0, tit: "" })) },
         { rot: "Conclusão do agente", cels: cmpCols.map((c) => ({ v: c.ref ? "—" : ({ exequivel: "exequível", indicios: "indícios: diligência", inexequivel: "inexequível" }[c.it.res.exeq] || "—"), alerta: !c.ref && c.it.res.exeq && c.it.res.exeq !== "exequivel", tit: "" })) }]) : [];
     const liderOpc = mo.modo === "planejamento" ? lista.filter((it) => /encarreg|supervis/i.test(it.nome)) : [];
-    this._moUltimo.gt = { tipo: d.gt_tipo, cvP, cvTot, cvEmp, empN, fg, fgComM6, fixa, fatorM6 }; this._moUltimo.retro = retro; this._moUltimo.minuta = minuta;
+    this._moUltimo.gt = { tipo: d.gt_tipo, cvP, cvTot, cvEmp, empN, fg, fgComM6, fixa, fatorM6 }; this._moUltimo.retro = retro;
     return {
       moGtOpcoes: [["cv", "Conta-depósito vinculada"], ["fg", "Pagamento pelo fato gerador"]].map(([id, nome]) => ({ nome, ativo: d.gt_tipo === id, escolher: () => this.moSet("gt_tipo")(d.gt_tipo === id ? "" : id), ...corBotao(d.gt_tipo === id) })),
       moGtCv: d.gt_tipo === "cv", moGtFg: d.gt_tipo === "fg", moGtNenhum: !d.gt_tipo,
@@ -7579,8 +7484,7 @@ class Component extends DCLogic {
         campo("rp_prorrog", "Data de assinatura da prorrogação, se houve depois da data-base", "dd/mm/aaaa"), campo("rp_fim", "Fim da vigência do contrato", "dd/mm/aaaa"),
         campo("rp_contrato", "Número do contrato", "Ex.: 12/2025"), campo("rp_orgao", "Contratante", "Órgão ou entidade"), campo("rp_empresa", "Contratada", "Razão social")],
       moRpInicio: d.rp_inicio || "", onMoRpInicio: this.moSet("rp_inicio"),
-      moMinuta: minuta.join("\n\n"), moTemMinuta: minuta.length > 0,
-      moCopiarMinuta: () => { try { navigator.clipboard.writeText(minuta.join("\n\n")); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Minuta do apostilamento copiada." } })); } catch (e) {} },
+      moTemNota: !!(retro && r.vigente), moSemVigente: rep && !r.vigente,
       ...(() => {
         if (!prop) return { moExeqItens: [], moTemDilig: false, moDiligTexto: "", moCopiarDilig: null };
         const itens = [], est = moNum(d.pr_estimado), of = r.vigente;
@@ -7725,7 +7629,8 @@ class Component extends DCLogic {
       onMoRjIndice: this.moSet("rj_indice"), moRjOrc: d.rj_orcamento || "", onMoRjOrc: this.moSet("rj_orcamento"), moRjRef: d.rj_ref || "", onMoRjRef: this.moSet("rj_ref"),
       moRjItens: MO_INSUMOS.map(([k, nome]) => ({ nome, sel: d["rj_" + k] === "sim", alternar: () => this.moSet("rj_" + k)(d["rj_" + k] === "sim" ? "" : "sim") })),
       moRjMsg: rj.msg || "", moRjOk: !!rj.pronto, moRjCls: rj.pronto ? "lmo-ok" : "lmo-nota", moRjIndiceSel: d.rj_indice || "ipca",
-      moBaixarExcel: () => this.moBaixar("xlsx"), moBaixarPdf: () => this.moBaixar("pdf"), moBaixando: !!mo.baixando,
+      moBaixarExcel: () => this.moBaixar("xlsx"), moBaixarPdf: () => this.moBaixar("pdf"),
+      moDocs: this.moDocsDisponiveis().map(([id, nome, desc]) => ({ nome, desc, xlsx: () => this.moBaixar("xlsx", id), pdf: () => this.moBaixar("pdf", id) })), moBaixando: !!mo.baixando,
       moAgenteTxt: prop ? "No plano Pro, envie a planilha de custos da proposta (PDF ou Excel) e a convenção coletiva: o agente reproduz a proposta, confere cada rubrica, aponta as falhas com o fundamento, conclui sobre a exequibilidade e monta a diligência. A decisão é do agente de contratação ou do pregoeiro."
         : rep ? "No plano Pro, envie a planilha utilizada na contratação (PDF ou Excel) e, se quiser, a nova convenção: o agente reproduz a planilha, atualiza o que decorre da convenção e suprime ou reduz os custos não renováveis, indicando o fundamento. Você confere e ajusta qualquer valor."
         : "No plano Pro, o agente lê a convenção, a legislação trabalhista, os cadernos técnicos e a jurisprudência do TCU e preenche salário, adicionais, benefícios e percentuais, indicando a fonte de cada valor. Sem o agente, a planilha parte dos percentuais legais e você confere e ajusta.",
