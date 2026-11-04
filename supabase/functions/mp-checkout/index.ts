@@ -428,7 +428,10 @@ Deno.serve(async (req) => {
             termo_aceito_em: new Date().toISOString(), termo_versao: String(corpo.termo_versao ?? "").slice(0, 20), status: "aguardando_documentos",
           }).select("id").single();
           if (error) throw error;
-          return resposta({ gratuito: true, referencia: `analise:${nova.id}`, id: nova.id });
+          // confere de novo depois de gravar: pedidos simultâneos não passam da franquia da equipe
+          const { data: depoisOrg } = await admin.rpc("analises_usadas_org", { org: org!.id });
+          if (Number(depoisOrg ?? 0) <= FRANQUIA_EQUIPE_MES * Number(org!.acessos)) return resposta({ gratuito: true, referencia: `analise:${nova.id}`, id: nova.id });
+          await admin.from("analises").update({ status: "cancelada" }).eq("id", nova.id);
         }
       }
       let franquia = false;
@@ -461,7 +464,15 @@ Deno.serve(async (req) => {
         status: franquia ? "aguardando_documentos" : "aguardando_pagamento",
       }).select("id").single();
       if (error) throw error;
-      if (franquia) return resposta({ gratuito: true, referencia: `analise:${nova.id}`, id: nova.id });
+      if (franquia) {
+        // confere de novo depois de gravar: pedidos simultâneos não passam da franquia semanal do Pro
+        const { data: depois } = await admin.rpc("analises_usadas_semana", { uid: usuario.id });
+        if (Number(depois ?? 0) <= FRANQUIA_PRO_SEMANA) return resposta({ gratuito: true, referencia: `analise:${nova.id}`, id: nova.id });
+        franquia = false;
+        valor = precoAnalise(vigente ?? null);
+        const { error: eAj } = await admin.from("analises").update({ cobranca: "avulsa", valor, status: "aguardando_pagamento" }).eq("id", nova.id);
+        if (eAj) throw eAj;
+      }
       referencia = `analise:${nova.id}`;
     } else {
       return erro("Tipo de compra inválido.");

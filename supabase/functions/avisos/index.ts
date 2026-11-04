@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
     }
 
     const dias = Math.max(1, Math.ceil(restante / DIA));
-    const primeiro = (p.nome || "").trim().split(/\s+/)[0] || "Olá";
+    const primeiro = (p.nome || "").trim().split(/\s+/)[0].replace(/[&<>"']/g, "") || "Olá";
     const teste = a.plano === "teste";
     const assunto = teste
       ? "Seu teste grátis do Licitacon termina amanhã"
@@ -81,7 +81,7 @@ Deno.serve(async (req) => {
     await admin.from("assinaturas").update({ dica_teste_em: new Date().toISOString() }).eq("id", t.id);
     const { data: p } = await admin.from("perfis").select("nome, email, notificacoes").eq("id", t.usuario_id).maybeSingle();
     if (!p?.email || p?.notificacoes?.cobranca?.email === false) { resultado.pulados++; continue; }
-    const primeiro = (p.nome || "").trim().split(/\s+/)[0] || "Olá";
+    const primeiro = (p.nome || "").trim().split(/\s+/)[0].replace(/[&<>"']/g, "") || "Olá";
     const html = moldura(
       "Aproveite seu teste: 3 dicas rápidas",
       [

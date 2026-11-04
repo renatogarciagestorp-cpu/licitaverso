@@ -2,7 +2,7 @@
 // POST { tipo: "andamento", consultoria_id }  → só administrador; avisa o cliente sobre o status atual.
 // POST { tipo: "proposta" }                   → quem fez o pedido; avisa a equipe sobre proposta de órgão público.
 
-import { clienteServico, CORS, resposta, usuarioDaRequisicao } from "../_shared/comum.ts";
+import { clienteServico, CORS, nivelDoToken, resposta, usuarioDaRequisicao } from "../_shared/comum.ts";
 import { enviarEmail } from "../_shared/email.ts";
 import { avisarEquipeProposta, emailAndamento } from "../_shared/consultoria.ts";
 
@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
 
   if (corpo.tipo === "andamento") {
     const { data: eu } = await admin.from("perfis").select("admin").eq("id", usuario.id).maybeSingle();
-    if (!eu?.admin) return resposta({ erro: "não autorizado" }, 403);
+    if (!eu?.admin || nivelDoToken(req) !== "aal2") return resposta({ erro: "não autorizado" }, 403);
     const { data: c } = await admin.from("consultorias").select("*").eq("id", String(corpo.consultoria_id ?? "")).maybeSingle();
     if (!c) return resposta({ erro: "consultoria não encontrada" }, 404);
     const { data: p } = await admin.from("perfis").select("nome, email, notificacoes").eq("id", c.usuario_id).maybeSingle();

@@ -32,7 +32,8 @@
     var c = window.LICITAVERSO_CONFIG || {};
     if (!c.supabaseUrl || !c.supabaseAnonKey) return null;
     if (!(window.supabase && window.supabase.createClient)) {
-      var fontes = c.supabaseJs ? [c.supabaseJs].concat(CDNS) : CDNS;
+      // primeiro a cópia local (mesma origem, sem depender de CDN de terceiros); os CDNs ficam só de reserva
+      var fontes = [base() + "vendor/supabase-js-" + VERSAO + ".js"].concat(c.supabaseJs ? [c.supabaseJs] : [], CDNS);
       for (var i = 0; i < fontes.length; i++) {
         try { await carregar(fontes[i]); break; } catch (e) { if (i === fontes.length - 1) throw e; }
       }

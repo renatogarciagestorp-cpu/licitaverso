@@ -5911,7 +5911,7 @@ class Component extends DCLogic {
     nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
     el: { doc: "", passo: 0, respostas: {}, aceite: false, enviando: false, erro: "", ok: "", docEsc: "etp", metodo: "pix", contratando: false, contErro: "" },
     calcAba: "indice",
-    mo: { modo: "planejamento", d: { ...MO_PADRAO }, enviando: false, agente: false, erro: "", ok: "", obs: [] },
+    mo: { modo: "planejamento", d: (() => { try { return { ...MO_PADRAO, ...(JSON.parse(localStorage.getItem("lv-mo-planejamento") || "{}") || {}) }; } catch (e) { return { ...MO_PADRAO }; } })(), enviando: false, agente: false, erro: "", ok: "", obs: [] },
     indices: null, indicesErro: false, mpAberto: "", mpAno: 0, mpMes: 0, mpVista: "dias",
     calc: { regime: "14133", indice: "ipca", valor: "", dataBase: "", houveReajuste: false, ultimo: "", referencia: "", fim: "", metodo: "a", contagem: "base", contrato: "", contratada: "", cnpj: "", objeto: "" },
     threadAberta: null, forumFiltro: "todas", forumRank: { mes: [], geral: [], destaque: null }, forumVerRanking: false, rankPeriodo: "mes",
@@ -6027,7 +6027,7 @@ class Component extends DCLogic {
   async iniciarContas() {
     let sb = null;
     try {
-      if (!window.LV) await carregarScript(baseSite() + "licitaverso-auth.js?v=6");
+      if (!window.LV) await carregarScript(baseSite() + "licitaverso-auth.js?v=7");
       sb = await window.LV.pronto;
     } catch (e) { sb = null; }
     if (!window.LV_CHAT) carregarScript(baseSite() + "chatbot.js?v=" + CHAT_VERSAO).catch(() => {});
@@ -6979,6 +6979,7 @@ class Component extends DCLogic {
 
   // ------------------------------------------------------------ cursos e consultoria
   acessarCurso = (c) => async () => {
+    if (c.link && !/^https:\/\//i.test(c.link)) { this.aviso("Link do curso inválido. Avise o suporte pelo Fale Conosco.", "erro"); return; }
     if (!c.link) { this.aviso("As matrículas deste curso abrem em breve, na plataforma Hotmart. Avisaremos os assinantes por e-mail assim que abrirem.", "ok"); return; }
     const cupom = this.state.cupomCurso;
     const destino = cupom && /hotmart\.com/i.test(c.link) ? c.link + (c.link.includes("?") ? "&" : "?") + "offDiscount=" + encodeURIComponent(cupom) : c.link;

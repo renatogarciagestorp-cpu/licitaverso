@@ -59,7 +59,7 @@ def avisar(aid):
         http("POST", f"{SUPA}/functions/v1/analise-aviso", {"id": aid},
              {"Content-Type": "application/json", "x-avisos": os.environ.get("AVISOS_SECRET", ""), "apikey": chave_servico()})
     except Exception as e:
-        print(f"::warning title=Fila::aviso por e-mail falhou ({aid}): {type(e).__name__} {str(e)[:120]}")
+        print(f"::warning title=Fila::aviso por e-mail falhou ({aid}): {type(e).__name__}")
         return
     print(f"::notice title=Fila::análise {aid}: e-mail de aviso enviado")
 
@@ -329,7 +329,7 @@ def processar(a):
             # antes da chamada paga: volta para a fila (até 3 tentativas). Depois dela: erro, sem repetir (evita pagar de novo); a equipe é avisada.
             if not locals().get("etapa_paga") and int(a.get("tentativas") or 1) < 3:
                 atualizar(aid, {"status": "na_fila"})
-                print(f"::notice title=Fila::análise {aid}: falhou, volta à fila ({type(e).__name__}: {str(e)[:200]})")
+                print(f"::notice title=Fila::análise {aid}: falhou, volta à fila ({type(e).__name__})")
                 return
             try:
                 atualizar(aid, {"status": "erro", "erro_msg": "Falha técnica no processamento automático.", "erro_tecnico": f"{type(e).__name__}: {e}"[-1500:]})

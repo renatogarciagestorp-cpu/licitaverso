@@ -3,7 +3,7 @@
 // POST { modo: "planejamento" | "repactuacao" | "proposta", arquivo: "<uid>/mo/<nome>.pdf", dados: { ...campos da planilha } }
 //   -> { campos: [{ campo, valor, fonte }], observacoes: [], falhas: [{ rubrica, problema, fundamento, correcao, gravidade }] }
 
-import { clienteServico, CORS, erro, resposta, usuarioDaRequisicao } from "../_shared/comum.ts";
+import { clienteServico, CORS, erro, nivelDoToken, resposta, usuarioDaRequisicao } from "../_shared/comum.ts";
 
 const MODELO = Deno.env.get("AGENTE_MODELO") || "claude-sonnet-5-5";
 // franquia semanal por assinatura (individual ou de equipe): 1 de cada modelo por semana
@@ -109,8 +109,10 @@ Deno.serve(async (req) => {
   if (!usuario) return erro("Entre na sua conta para continuar.", 401);
 
   const { data: perfil } = await admin.from("perfis").select("admin").eq("id", usuario.id).maybeSingle();
+  // administrador só tem acesso livre com a verificação em duas etapas ativa na sessão (aal2)
+  const ehAdmin = !!perfil?.admin && nivelDoToken(req) === "aal2";
   const { data: vigente } = await admin.rpc("plano_vigente", { uid: usuario.id });
-  if (!perfil?.admin && vigente !== "pro") return erro("O preenchimento pelo agente é exclusivo do plano Pro.", 403);
+  if (!ehAdmin && vigente !== "pro") return erro("O preenchimento pelo agente é exclusivo do plano Pro.", 403);
 
   const chave = Deno.env.get("ANTHROPIC_API_KEY");
   if (!chave) return erro("O agente está indisponível no momento. Tente mais tarde.", 503);
@@ -137,11 +139,14 @@ Deno.serve(async (req) => {
   if (planArq && !okPdf(planArq)) return erro("Arquivo da planilha inválido.");
 
   const { data: orgId } = await admin.rpc("org_do_usuario", { uid: usuario.id });
-  if (!perfil?.admin) {
-    let q = admin.from("mo_preenchimentos").select("id", { count: "exact", head: true }).eq("modo", modo).gte("criado_em", inicioSemanaBR().toISOString());
-    q = orgId ? q.eq("org_id", orgId) : q.eq("usuario_id", usuario.id);
-    const { count } = await q;
-    if ((count ?? 0) >= LIMITE_SEMANA) return erro("A " + NOME_MODO[modo] + " pelo agente já foi usada nesta semana" + (orgId ? " pela sua equipe" : "") + ". A franquia é de 1 por semana em cada modelo e renova na segunda-feira.", 429);
+  const msgLimite = "A " + NOME_MODO[modo] + " pelo agente já foi usada nesta semana" + (orgId ? " pela sua equipe" : "") + ". A franquia é de 1 por semana em cada modelo e renova na segunda-feira.";
+  const usosDaSemana = () => {
+    let q = admin.from("mo_preenchimentos").select("id").eq("modo", modo).gte("criado_em", inicioSemanaBR().toISOString()).order("criado_em").order("id").limit(LIMITE_SEMANA + 5);
+    return orgId ? q.eq("org_id", orgId) : q.eq("usuario_id", usuario.id);
+  };
+  if (!ehAdmin) {
+    const { data: usos } = await usosDaSemana();
+    if ((usos ?? []).length >= LIMITE_SEMANA) return erro(msgLimite, 429);
   }
 
   const lerPdf = async (caminho: string, nome: string): Promise<string | Response> => {
@@ -193,6 +198,17 @@ Use apenas o que está na convenção enviada e nas normas citadas; nunca invent
     }),
     signal: AbortSignal.timeout(140000),
   }).catch(() => null);
+  // reserva a franquia ANTES da chamada paga: grava o uso e confere se ele está entre os primeiros da semana
+  // (pedidos simultâneos não passam do limite); se a análise falhar, a reserva é desfeita
+  let reserva: number | null = null;
+  const liberar = async () => { if (reserva != null) await admin.from("mo_preenchimentos").delete().eq("id", reserva); };
+  if (!ehAdmin) {
+    const { data: res, error: eRes } = await admin.from("mo_preenchimentos").insert({ usuario_id: usuario.id, modo, org_id: orgId || null }).select("id").single();
+    if (eRes || !res) return erro("Não foi possível iniciar a análise agora. Tente de novo em alguns minutos.", 500);
+    reserva = res.id as number;
+    const { data: usos } = await usosDaSemana();
+    if (!(usos ?? []).slice(0, LIMITE_SEMANA).some((x: any) => x.id === reserva)) { await liberar(); return erro(msgLimite, 429); }
+  }
   let resp = await chamar(true);
   if (resp && resp.status === 400) {  // busca na internet indisponível na conta da API: segue sem ela (ISS fica para o assinante)
     console.log("mo-agente: busca indisponível, seguindo sem ela:", (await resp.text().catch(() => "")).slice(0, 200));
@@ -200,11 +216,12 @@ Use apenas o que está na convenção enviada e nas normas citadas; nunca invent
   }
   if (!resp || !resp.ok) {
     console.log("mo-agente indisponível:", resp ? resp.status + " " + (await resp.text().catch(() => "")).slice(0, 300) : "sem resposta");
+    await liberar();
     return erro("O agente não conseguiu analisar a convenção agora. Tente de novo em alguns minutos.", 502);
   }
   const j = await resp.json().catch(() => ({}));
   const bloco = (j.content ?? []).find((c: any) => c.type === "tool_use" && c.name === "preencher_planilha");
-  if (!bloco) { console.log("mo-agente: resposta sem preenchimento", j.stop_reason); return erro("O agente não concluiu a análise. Tente de novo em alguns minutos.", 502); }
+  if (!bloco) { console.log("mo-agente: resposta sem preenchimento", j.stop_reason); await liberar(); return erro("O agente não concluiu a análise. Tente de novo em alguns minutos.", 502); }
   const saida = ((bloco?.input?.campos ?? []) as any[]).filter((c) => campos[c?.campo]).slice(0, 90).map((c) => ({
     campo: String(c.campo), valor: String(c.valor ?? "").slice(0, 120), fonte: String(c.fonte ?? "").slice(0, 300),
     ...(modo === "repactuacao" && c.anterior != null && String(c.anterior).trim() ? { anterior: String(c.anterior).slice(0, 120) } : {}),
@@ -221,7 +238,6 @@ Use apenas o que está na convenção enviada e nas normas citadas; nunca invent
   const eA = bloco?.input?.exequibilidade ?? null;
   const exequibilidade = modo === "proposta" && eA ? { conclusao: ["exequivel", "indicios", "inexequivel"].includes(eA.conclusao) ? eA.conclusao : "indicios", fundamento: String(eA.fundamento ?? "").slice(0, 1200) } : null;
   const diligencias = modo === "proposta" ? ((bloco?.input?.diligencias ?? []) as unknown[]).slice(0, 12).map((x) => String(x).slice(0, 400)).filter(Boolean) : [];
-  // só a análise concluída consome a franquia da semana
-  await admin.from("mo_preenchimentos").insert({ usuario_id: usuario.id, modo, org_id: orgId || null });
+  // a reserva feita antes da chamada fica gravada: só a análise concluída consome a franquia da semana
   return resposta({ campos: saida.filter((c) => c.campo !== "iss"), observacoes, falhas, iss, exequibilidade, diligencias });
 });

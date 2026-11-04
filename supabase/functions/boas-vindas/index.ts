@@ -14,7 +14,7 @@ Deno.serve(async (req) => {
   if (!marcado) return resposta({ ok: true, enviado: false });
   if (!marcado.email || marcado.notificacoes?.cobranca?.email === false) return resposta({ ok: true, enviado: false });
 
-  const primeiro = (marcado.nome || "").trim().split(/\s+/)[0] || "Olá";
+  const primeiro = (marcado.nome || "").trim().split(/\s+/)[0].replace(/[&<>"']/g, "") || "Olá";
   const html = moldura(
     `Boas-vindas ao Licitacon, ${primeiro}!`,
     [

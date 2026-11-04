@@ -51,10 +51,17 @@ Deno.serve(async (req) => {
   const chave = Deno.env.get("ANTHROPIC_API_KEY");
   if (!chave) return resposta({ perguntas: [], indisponivel: true });
 
+  // só quem já tem uma elaboração paga (ou da franquia) aguardando as respostas pode usar a conferência (custo de API)
+  if (!interno) {
+    const { data: ger } = await admin.from("analises").select("id").eq("usuario_id", usuario.id).eq("tipo", "geracao")
+      .in("status", ["aguardando_documentos", "aguardando_informacoes"]).limit(1).maybeSingle();
+    if (!ger) return erro("A conferência fica disponível depois de contratar a elaboração do documento.", 403);
+  }
+  // registra antes e conta depois: pedidos simultâneos não passam do limite diário
   const desde = new Date(Date.now() - 864e5).toISOString();
-  const { count } = await admin.from("elab_triagens").select("id", { count: "exact", head: true }).eq("usuario_id", usuario.id).gte("criado_em", desde);
-  if ((count ?? 0) >= LIMITE_DIA) return erro("Limite diário de conferências atingido. Tente de novo amanhã.", 429);
   await admin.from("elab_triagens").insert({ usuario_id: usuario.id });
+  const { count } = await admin.from("elab_triagens").select("id", { count: "exact", head: true }).eq("usuario_id", usuario.id).gte("criado_em", desde);
+  if ((count ?? 0) > LIMITE_DIA) return erro("Limite diário de conferências atingido. Tente de novo amanhã.", 429);
 
   const corpo = await req.json().catch(() => ({}));
   const doc = String(corpo.doc ?? "");
