@@ -501,6 +501,65 @@
   /* ---------- página inicial ---------- */
   .lvh-top { background: radial-gradient(1100px 520px at 85% -10%, rgba(15,163,107,0.22), transparent 60%), #0A1F2A; color: #fff; padding: 40px 24px 56px; }
 .lvh-btn.lvh-btn-espera { color: transparent !important; pointer-events: none; }
+.lvh-ban { background: #F6F8F7; padding: 28px 24px 8px; }
+.lvh-ban-in { max-width: 1240px; margin: 0 auto; border-radius: 28px; padding: 52px 56px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr); gap: 56px; align-items: center; }
+.lvh-ban-claro { background: #fff; border: 1px solid #DDE4E3; box-shadow: 0 24px 50px -36px rgba(10,31,42,0.35); }
+.lvh-ban-menta { background: linear-gradient(135deg, #E6F6EE 0%, #F3FBF7 60%, #fff 100%); border: 1px solid #CBEBDB; box-shadow: 0 24px 50px -36px rgba(10,122,80,0.35); }
+.lvh-ban-inv .lvh-ban-txt { order: 2; }
+.lvh-ban-inv .lvh-art { order: 1; }
+.lvh-ban-eye { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #0A7A50; background: #E3F5EC; border-radius: 999px; padding: 6px 12px; }
+.lvh-ban-h { font-size: 38px; line-height: 1.1; letter-spacing: -0.025em; font-weight: 800; color: #0B1F2A; margin: 16px 0 0; }
+.lvh-ban-h em { font-style: normal; color: #0A7A50; }
+.lvh-ban-lead { font-size: 16.5px; line-height: 1.6; color: #3D5058; margin: 14px 0 0; }
+.lvh-ban-lista { list-style: none; padding: 0; margin: 18px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 18px; }
+.lvh-ban-lista li { position: relative; padding-left: 26px; font-size: 14.5px; font-weight: 600; color: #22343B; line-height: 1.4; }
+.lvh-ban-lista li::before { content: "✓"; position: absolute; left: 0; top: 0; width: 18px; height: 18px; border-radius: 50%; background: #0FA36B; color: #fff; font-size: 11px; font-weight: 800; display: grid; place-items: center; }
+.lvh-ban-3 { display: grid; gap: 10px; margin-top: 16px; }
+.lvh-ban-3 > div { display: grid; gap: 2px; border-left: 3px solid #0FA36B; background: #F6F8F7; border-radius: 0 12px 12px 0; padding: 10px 14px; }
+.lvh-ban-3 b { font-size: 15px; color: #0B1F2A; }
+.lvh-ban-3 span { font-size: 14px; color: #4A5D65; line-height: 1.45; }
+.lvh-ban .lvh-ctas { margin-top: 24px; }
+.lvh-ban-micro { font-size: 13px; color: #6A7B82; margin: 12px 0 0; }
+.lvh-art { position: relative; padding: 18px; border-radius: 22px; background: radial-gradient(400px 260px at 80% 0%, rgba(15,163,107,0.30), transparent 60%), #0A1F2A; }
+.lvh-ban-menta .lvh-art { background: radial-gradient(400px 260px at 20% 0%, rgba(63,212,154,0.35), transparent 60%), #0D2A36; }
+.lvh-art-doc { background: #fff; border-radius: 16px; padding: 18px; box-shadow: 0 20px 40px -20px rgba(0,0,0,0.5); transform: rotate(-1deg); }
+.lvh-ban-menta .lvh-art-doc { transform: rotate(1deg); }
+.lvh-art-top { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: #0B1F2A; padding-bottom: 12px; border-bottom: 1px solid #EEF2F1; }
+.lvh-art-top b { flex: 1; }
+.lvh-art-sel { font-size: 11px; font-weight: 800; color: #0A7A50; background: #E3F5EC; border-radius: 999px; padding: 4px 9px; }
+.lvh-art-secoes { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 7px; }
+.lvh-art-secoes li { position: relative; display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: #8A9AA0; padding: 8px 10px; border-radius: 10px; background: #F6F8F7; overflow: hidden; }
+.lvh-art-secoes li span { width: 22px; height: 22px; border-radius: 50%; background: #DDE4E3; color: #fff; font-size: 11px; font-weight: 800; display: grid; place-items: center; flex: none; }
+.lvh-art-secoes li.ok { color: #22343B; }
+.lvh-art-secoes li.ok span { background: #0FA36B; }
+.lvh-art-secoes li.ativo { color: #0B1F2A; font-weight: 700; background: #E3F5EC; outline: 1px solid #9ED9BE; }
+.lvh-art-secoes li.ativo span { background: #0A1F2A; }
+.lvh-art-esc { position: absolute; left: 0; bottom: 0; height: 2px; width: 40%; background: #0FA36B; animation: lvhEsc 2.4s ease-in-out infinite; }
+@keyframes lvhEsc { 0% { transform: translateX(-100%); } 100% { transform: translateX(260%); } }
+.lvh-art-preco { display: flex; justify-content: space-between; gap: 10px; margin-top: 12px; padding: 12px; border-radius: 12px; border: 1px dashed #9ED9BE; }
+.lvh-art-preco small, .lvh-art-res small { display: block; font-size: 11px; color: #6A7B82; font-weight: 600; }
+.lvh-art-preco b, .lvh-art-res b { font-size: 14.5px; color: #0B1F2A; }
+.lvh-art-preco-v { text-align: right; }
+.lvh-art-preco-v b { color: #0A7A50; }
+.lvh-art-barras { display: flex; align-items: flex-end; gap: 6px; height: 110px; margin-top: 16px; padding: 0 2px; }
+.lvh-art-barras i { flex: 1; border-radius: 5px 5px 2px 2px; background: linear-gradient(180deg, #3FD49A, #0FA36B); opacity: .85; }
+.lvh-art-meses { display: flex; justify-content: space-between; font-size: 11px; color: #8A9AA0; margin-top: 6px; }
+.lvh-art-res { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; padding: 12px; background: #F6F8F7; border-radius: 12px; }
+.lvh-art-res b.verde { color: #0A7A50; font-size: 16px; }
+.lvh-art-seta { color: #0FA36B; font-weight: 800; font-size: 18px; }
+.lvh-art-chip { margin-top: 10px; font-size: 12.5px; color: #3D5058; background: #E3F5EC; border-radius: 10px; padding: 8px 10px; }
+.lvh-art-chip b { color: #0A7A50; }
+.lvh-art-tab { margin-top: 10px; display: grid; }
+.lvh-art-tab > div { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: #3D5058; padding: 8px 4px; border-bottom: 1px solid #EEF2F1; }
+.lvh-art-tab > div b { color: #0B1F2A; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lvh-art-tab > div.total { border-bottom: 0; background: #0A1F2A; color: #fff; border-radius: 10px; padding: 10px 12px; margin-top: 8px; font-weight: 700; }
+.lvh-art-tab > div.total b { color: #3FD49A; }
+.lvh-art-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.lvh-art-tags span { font-size: 11.5px; font-weight: 700; color: #3D5058; background: #F0F4F3; border-radius: 999px; padding: 5px 10px; }
+.lvh-art-tags span.alerta { color: #9A5B00; background: #FFF3DC; }
+.lvh-art .lvh-doc-pe { margin-top: 12px; }
+@media (max-width: 980px) { .lvh-ban-in { grid-template-columns: 1fr; gap: 30px; padding: 36px 28px; } .lvh-ban-inv .lvh-ban-txt { order: 1; } .lvh-ban-inv .lvh-art { order: 2; } .lvh-sec .lvh-dif { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .lvh-ban { padding: 18px 12px 4px; } .lvh-ban-in { padding: 28px 18px; border-radius: 20px; } .lvh-ban-h { font-size: 28px; } .lvh-ban-lista { grid-template-columns: 1fr; } .lvh-art { padding: 10px; } .lvh-art-doc { transform: none !important; padding: 14px; } .lvh-art-tab > div { font-size: 12px; } }
 .lvh-top-in { max-width: 1240px; margin: 0 auto; }
 .lvh-top-h1 { font-size: 44px; line-height: 1.06; letter-spacing: -0.03em; font-weight: 800; margin: 12px 0 0; max-width: 24ch; }
 .lvh-top-h1 em { font-style: normal; color: #3FD49A; }
@@ -591,10 +650,14 @@
   .lvh-f-big .lvh-f-d { color: #B8CBD2; font-size: 16px; }
   .lvh-f-cta { margin-top: auto; font-size: 14px; font-weight: 800; color: #0FA36B; }
   .lvh-f-big .lvh-f-cta { color: #7FE3B6; }
-  .lvh-dif { background: #0A1F2A; border-radius: 24px; padding: 46px; color: #fff; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 48px; }
+  .lvh-dif { background: radial-gradient(700px 400px at 100% 0%, rgba(15,163,107,0.18), transparent 60%), #0A1F2A; border-radius: 28px; padding: 46px; color: #fff; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .lvh-dif-cab { padding: 4px 12px 4px 0; align-self: center; }
+  .lvh-dif-cab .lvh-h2 { font-size: 27px; line-height: 1.15; }
+  .lvh-dif-cab .lvh-dif-lead { font-size: 14.5px; margin-top: 12px; }
+  .lvh-dif-ic { width: 34px; height: 34px; border-radius: 10px; background: rgba(15,163,107,0.18); color: #3FD49A; display: grid; place-items: center; font-size: 16px; font-weight: 800; margin-bottom: 8px; }
   .lvh-dif-lead { margin: 16px 0 0; font-size: 16.5px; line-height: 1.6; color: #B3C6CD; }
   .lvh-dif-lista { display: grid; gap: 14px; }
-  .lvh-dif-item { display: grid; gap: 3px; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 14px; }
+  .lvh-dif-item { display: flex; flex-direction: column; gap: 5px; background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.10); border-radius: 16px; padding: 20px; }
   .lvh-dif-item b { font-size: 16px; }
   .lvh-dif-item > span { font-size: 14.5px; line-height: 1.55; color: #9FB4BC; }
   .lvh-final { margin-top: 84px; background: radial-gradient(700px 300px at 50% 0%, rgba(15,163,107,0.22), transparent 70%), #0A1F2A; color: #fff; padding: 72px 24px; text-align: center; }
@@ -634,7 +697,7 @@
     .lvh-h2 { font-size: 29px; }
     .lvh-dores, .lvh-passos, .lvh-bento { grid-template-columns: minmax(0, 1fr); }
     .lvh-f.lvh-f-big { grid-row: auto; }
-    .lvh-dif { grid-template-columns: minmax(0, 1fr); padding: 28px 20px; gap: 24px; }
+    .lvh-dif { grid-template-columns: minmax(0, 1fr); padding: 28px 18px; gap: 12px; } .lvh-dif-cab { padding: 0 0 8px; }
     .lvh-final { margin-top: 60px; padding: 52px 16px; }
     .lvh-final .lvh-h2 { font-size: 32px; }
     .lvh-free { grid-template-columns: minmax(0, 1fr); }
@@ -1500,7 +1563,7 @@
           <p class="lvh-top-lead">Agentes de IA que analisam e elaboram documentos, calculadora de reajuste e planilhas de mão de obra, jurisprudência de todo o país, fórum, consultoria e cursos – para quem conduz, disputa, assessora ou controla contratações.</p>
           <div class="lvh-ctas">
             <button class="{{ ctaClasse }}" sc-camel-on-click="{{ topCta }}">{{ topCtaTxt }}</button>
-            <button class="lvh-btn-sec" sc-camel-on-click="{{ goPlanos }}">Ver planos e preços</button>
+            <button class="lvh-btn-sec" sc-camel-on-click="{{ topSec }}">{{ topSecTxt }}</button>
           </div>
           <div class="lvh-top-grid" role="list" aria-label="O que o Licitacon oferece">
             <sc-for list="{{ homeTopo }}" as="t" hint-placeholder-count="8">
@@ -1555,20 +1618,102 @@
         </ol>
         <button class="{{ ctaClasse }}" style="margin-top: 30px" sc-camel-on-click="{{ goAgente }}">{{ heroCta }}</button>
       </section>
-      <sc-for list="{{ homeApres }}" as="a" hint-placeholder-count="3">
-        <section class="lvh-sec" id="{{ a.id }}">
-          <div class="lvh-ap">
-            <div>
-              <p class="lvh-kicker">{{ a.kicker }}</p>
-              <h2 class="lvh-h2">{{ a.titulo }}</h2>
-              <p class="lvh-bib-lead">{{ a.lead }}</p>
-              <button class="lvh-btn" style="margin-top: 22px" sc-camel-on-click="{{ a.ir }}">{{ a.cta }}</button>
-              <p class="lvh-micro" style="color: #6A7B82">{{ a.plano }}</p>
-            </div>
-            <ul class="lvh-ap-lista"><sc-for list="{{ a.itens }}" as="it" hint-placeholder-count="5"><li>{{ it.t }}</li></sc-for></ul>
+      <section class="lvh-ban" id="h-elaborador">
+        <div class="lvh-ban-in lvh-ban-claro lvh-ban-inv">
+          <div class="lvh-ban-txt">
+            <span class="lvh-ban-eye">✎ O Elaborador · agente de IA</span>
+            <h2 class="lvh-ban-h">Do questionário à minuta do <em>ETP</em>, do <em>TR</em> ou do <em>Projeto Básico</em>.</h2>
+            <p class="lvh-ban-lead">Você responde às perguntas sobre a contratação; o agente redige o documento seção por seção, pesquisa preços no PNCP e no Compras.gov.br e confere tudo com a Lei 14.133 antes de entregar.</p>
+            <ul class="lvh-ban-lista">
+              <li>Bens, serviços e obras</li><li>Pesquisa de preços oficial</li><li>Conferência antes da entrega</li><li>Word e PDF para editar</li>
+            </ul>
+            <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goElaborar }}">Criar um documento</button></div>
+            <p class="lvh-ban-micro">Pago por documento, com desconto de assinante · no Pro, 2 por semana incluídos (somados ao Parecerista).</p>
           </div>
-        </section>
-      </sc-for>
+          <div class="lvh-art" aria-hidden="true">
+            <div class="lvh-art-doc">
+              <div class="lvh-art-top"><span class="lvh-dot"></span><b>Estudo Técnico Preliminar</b><span class="lvh-art-sel">Minuta</span></div>
+              <ol class="lvh-art-secoes">
+                <li class="ok"><span>1</span>Descrição da necessidade</li>
+                <li class="ok"><span>2</span>Requisitos da contratação</li>
+                <li class="ok"><span>3</span>Estimativa das quantidades</li>
+                <li class="ativo"><span>4</span>Estimativa do valor<i class="lvh-art-esc"></i></li>
+                <li><span>5</span>Justificativa do parcelamento</li>
+              </ol>
+              <div class="lvh-art-preco">
+                <div><small>Pesquisa no PNCP</small><b>12 preços encontrados</b></div>
+                <div class="lvh-art-preco-v"><small>Mediana</small><b>R$ 1.284,00</b></div>
+              </div>
+              <div class="lvh-doc-pe"><span>Exemplo ilustrativo · art. 18 da Lei 14.133</span><span class="lvh-pdf">Word · PDF</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lvh-ban" id="h-calculadora">
+        <div class="lvh-ban-in lvh-ban-menta">
+          <div class="lvh-ban-txt">
+            <span class="lvh-ban-eye">% Calculadora · reajuste</span>
+            <h2 class="lvh-ban-h">Reajuste calculado certo, com a <em>nota técnica</em> pronta.</h2>
+            <p class="lvh-ban-lead">Escolha o índice e as datas: a Calculadora confere a anualidade, acumula os ciclos e mostra a memória mês a mês. No fim, você baixa a nota técnica em PDF para juntar ao processo.</p>
+            <ul class="lvh-ban-lista">
+              <li>IPCA, IGP-M, INCC, IPCA-E e outros</li><li>Índices atualizados todo dia</li><li>Anualidade e ciclos acumulados</li><li>Memória de cálculo mês a mês</li>
+            </ul>
+            <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goCalcReajuste }}">Calcular um reajuste</button></div>
+            <p class="lvh-ban-micro">Em todos os planos, inclusive no teste grátis de 7 dias.</p>
+          </div>
+          <div class="lvh-art" aria-hidden="true">
+            <div class="lvh-art-doc">
+              <div class="lvh-art-top"><span class="lvh-dot"></span><b>Reajuste · IPCA</b><span class="lvh-art-sel">12 meses</span></div>
+              <div class="lvh-art-barras">
+                <i style="height: 38%"></i><i style="height: 52%"></i><i style="height: 30%"></i><i style="height: 44%"></i><i style="height: 61%"></i><i style="height: 35%"></i>
+                <i style="height: 48%"></i><i style="height: 27%"></i><i style="height: 41%"></i><i style="height: 56%"></i><i style="height: 33%"></i><i style="height: 46%"></i>
+              </div>
+              <div class="lvh-art-meses"><span>jun</span><span>set</span><span>dez</span><span>mar</span><span>mai</span></div>
+              <div class="lvh-art-res">
+                <div><small>Valor anterior</small><b>R$ 120.000,00</b></div>
+                <div class="lvh-art-seta">→</div>
+                <div><small>Valor reajustado</small><b class="verde">R$ 125.844,00</b></div>
+              </div>
+              <div class="lvh-art-chip">Variação acumulada <b>+4,87%</b> · anualidade conferida ✓</div>
+              <div class="lvh-doc-pe"><span>Exemplo ilustrativo</span><span class="lvh-pdf">Nota técnica · PDF</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lvh-ban" id="h-planilhas">
+        <div class="lvh-ban-in lvh-ban-claro lvh-ban-inv">
+          <div class="lvh-ban-txt">
+            <span class="lvh-ban-eye">▦ Calculadora · mão de obra exclusiva</span>
+            <h2 class="lvh-ban-h">Planilhas da <em>IN 05/2017</em>, da montagem à repactuação.</h2>
+            <p class="lvh-ban-lead">Três ferramentas no mesmo lugar, com o regime tributário e a transição da reforma tributária já considerados:</p>
+            <div class="lvh-ban-3">
+              <div><b>Planilha de custos</b><span>Módulos 1 a 6, memória dos insumos e conferência automática.</span></div>
+              <div><b>Repactuação</b><span>Nova convenção, quadro comparativo e diferença retroativa.</span></div>
+              <div><b>Análise da proposta</b><span>Exequibilidade, falhas e roteiro de diligência.</span></div>
+            </div>
+            <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goCalcPlanilha }}">Montar uma planilha</button></div>
+            <p class="lvh-ban-micro">Planilhas em todos os planos · no Pro, o agente de IA lê a convenção coletiva e preenche.</p>
+          </div>
+          <div class="lvh-art" aria-hidden="true">
+            <div class="lvh-art-doc">
+              <div class="lvh-art-top"><span class="lvh-dot"></span><b>Vigilante 12x36 diurno</b><span class="lvh-art-sel">Por posto</span></div>
+              <div class="lvh-art-tab">
+                <div><span>Módulo 1 · Remuneração</span><b>R$ 2.512,40</b></div>
+                <div><span>Módulo 2 · Encargos e benefícios</span><b>R$ 2.268,13</b></div>
+                <div><span>Módulo 3 · Provisão para rescisão</span><b>R$ 196,07</b></div>
+                <div><span>Módulo 4 · Reposição do ausente</span><b>R$ 412,55</b></div>
+                <div><span>Módulo 5 · Insumos</span><b>R$ 318,90</b></div>
+                <div><span>Módulo 6 · Custos indiretos, tributos e lucro</span><b>R$ 1.244,61</b></div>
+                <div class="total"><span>Valor mensal do posto</span><b>R$ 6.952,66</b></div>
+              </div>
+              <div class="lvh-art-tags"><span>Lucro Presumido</span><span>Reforma: 2027</span><span class="alerta">1 falha encontrada</span></div>
+              <div class="lvh-doc-pe"><span>Exemplo ilustrativo</span><span class="lvh-pdf">Excel · PDF</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section class="lvh-sec" id="h-biblioteca">
         <div class="lvh-bibsec">
@@ -1617,15 +1762,14 @@
 
       <section class="lvh-sec">
         <div class="lvh-dif">
-          <div>
+          <div class="lvh-dif-cab">
+            <p class="lvh-kicker" style="color: #3FD49A">Diferenciais</p>
             <h2 class="lvh-h2" style="color: #fff; margin: 0">Por que não é mais uma base jurídica genérica</h2>
             <p class="lvh-dif-lead">Tudo aqui foi feito só para licitações e contratos administrativos, da classificação por tema até o roteiro que o agente segue.</p>
           </div>
-          <div class="lvh-dif-lista">
-            <sc-for list="{{ diferenciais }}" as="d" hint-placeholder-count="5">
-              <div class="lvh-dif-item"><b>{{ d.titulo }}</b><span>{{ d.desc }}</span></div>
-            </sc-for>
-          </div>
+          <sc-for list="{{ diferenciais }}" as="d" hint-placeholder-count="7">
+            <div class="lvh-dif-item"><span class="lvh-dif-ic" aria-hidden="true">{{ d.icon }}</span><b>{{ d.titulo }}</b><span>{{ d.desc }}</span></div>
+          </sc-for>
         </div>
       </section>
 
@@ -9228,8 +9372,10 @@ class Component extends DCLogic {
       })(),
       // home
       ctaClasse: "lvh-btn" + (s.sessaoPronta && (!s.usuario || s.dadosProntos) ? "" : " lvh-btn-espera"),
-      topCtaTxt: !(s.sessaoPronta && (!s.usuario || s.dadosProntos)) ? "Conhecer cada ferramenta" : !s.usuario ? "Criar conta grátis" : (!s.plano && !s.admin ? "Começar o teste grátis" : "Conhecer cada ferramenta"),
-      topCta: !s.usuario ? this.nav("cadastro") : (!s.plano && !s.admin ? this.nav("planos") : () => { try { document.getElementById("h-parecerista").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }),
+      topCtaTxt: !(s.sessaoPronta && (!s.usuario || s.dadosProntos)) ? "Conhecer cada ferramenta" : !s.usuario ? "Criar conta grátis" : (!s.plano && !s.admin ? "Começar o teste grátis" : "Abrir a Calculadora"),
+      topCta: !s.usuario ? this.nav("cadastro") : (!s.plano && !s.admin ? this.nav("planos") : this.nav("calculadora")),
+      topSecTxt: s.usuario && (s.plano || s.admin) ? "Pesquisar na Biblioteca" : "Ver planos e preços",
+      topSec: s.usuario && (s.plano || s.admin) ? this.nav("biblioteca") : this.nav("planos"),
       homeTopo: [
         ["✦", "Agente de IA", "O Parecerista", "Parecer técnico sobre edital, ETP, TR e planilhas, com a lei e a jurisprudência.", "h-parecerista"],
         ["✎", "Agente de IA", "O Elaborador", "ETP, TR e Projeto Básico em Word e PDF, com pesquisa de preços no PNCP.", "h-elaborador"],
@@ -9241,33 +9387,21 @@ class Component extends DCLogic {
         ["▤", "Capacitação", "Cursos", "Cursos práticos de licitações e contratos, até 50% off no Pro.", "h-comunidade"]
       ].map(([icon, tag, titulo, desc, alvo]) => ({ icon, tag, titulo, desc,
         ir: () => { try { const el = document.getElementById(alvo); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} } })),
-      homeApres: [
-        { id: "h-elaborador", kicker: "O Elaborador · agente de IA", titulo: "ETP, Termo de Referência e Projeto Básico prontos para revisar.",
-          lead: "Responda a um questionário guiado e receba a minuta completa, já conferida pelo agente com a Lei 14.133 e a jurisprudência.",
-          itens: ["Questionário por tipo de objeto: bens, serviços e obras", "Pesquisa de preços no PNCP e no Compras.gov.br", "Minuta em Word e PDF, pronta para editar", "Conferência automática antes da entrega"],
-          cta: "Criar um documento", ir: this.nav("elaborar"), plano: "Pago por documento, com desconto de assinante · no Pro, 2 por semana incluídos (somados ao Parecerista)." },
-        { id: "h-calculadora", kicker: "Calculadora · reajuste", titulo: "Reajuste calculado certo, com a nota técnica pronta.",
-          lead: "Índices oficiais atualizados todos os dias, anualidade conferida e ciclos acumulados, com a memória de cálculo mês a mês.",
-          itens: ["IPCA, IGP-M, INCC, IPCA-E e outros índices oficiais", "Conferência dos 12 meses e ciclos acumulados", "Memória de cálculo mês a mês", "Nota técnica em PDF para juntar ao processo"],
-          cta: "Calcular um reajuste", ir: () => { this.irPara("calculadora"); this.calcFerramenta("reajuste"); }, plano: "Em todos os planos, inclusive no teste grátis." },
-        { id: "h-planilhas", kicker: "Calculadora · mão de obra exclusiva", titulo: "Planilhas da IN 05/2017, da montagem à repactuação.",
-          lead: "Monte a planilha de custos, repactue com a nova convenção ou confira a proposta da licitante – com o regime tributário e a reforma tributária já considerados.",
-          itens: ["Planilha de custos com memória dos insumos", "Repactuação com quadro comparativo e retroativo", "Análise da proposta: exequibilidade, falhas e diligência", "Downloads separados em Excel e PDF", "No Pro, o agente lê a convenção coletiva e preenche"],
-          cta: "Montar uma planilha", ir: () => { this.irPara("calculadora"); this.calcFerramenta("planejamento"); }, plano: "Planilhas em todos os planos · agente de IA no Pro." }
-      ].map((a) => ({ ...a, itens: a.itens.map((t) => ({ t })) })),
+      goCalcReajuste: () => { this.irPara("calculadora"); this.calcFerramenta("reajuste"); },
+      goCalcPlanilha: () => { this.irPara("calculadora"); this.calcFerramenta("planejamento"); },
       ferramentas: [
         { icon: "◍", tag: "Comunidade", titulo: "Fórum por tema", desc: "Perguntas organizadas por tema, com resposta oficial do especialista. Setor público e privado no mesmo lugar.", cta: "Ver as discussões", go: this.nav("forum") },
         { icon: "◈", tag: "Especialista", titulo: "Consultoria técnica", desc: "Por escrito, em vídeo ou ao vivo, com desconto de assinante. O Pro inclui 1 consultoria por escrito por mês.", cta: "Ver consultoria", go: this.nav("consultoria") },
         { icon: "▤", tag: "Capacitação", titulo: "Cursos", desc: "Cursos práticos de licitações e contratos, com até 50% de desconto no plano Pro.", cta: "Explorar cursos", go: this.nav("cursos") }
       ].map((f) => ({ ...f, classe: "lvh-f" + (f.big ? " lvh-f-big" : "") })),
       diferenciais: [
-        { titulo: "Base que se atualiza sozinha", desc: "Coleta automática nos dias úteis em 90 fontes oficiais, com a data e a origem de cada documento registradas." },
-        { titulo: "Classificação por tema, não por data", desc: "Reajuste vai para reajuste, adesão a ata vai para adesão a ata: jurisprudência e fórum organizados pelo vocabulário de licitações." },
-        { titulo: "Fonte oficial em cada item", desc: "Toda decisão traz o link para o inteiro teor no portal de origem, para você conferir antes de citar." },
-        { titulo: "IA que cita a lei e a decisão", desc: "O agente confere o texto legal e usa a jurisprudência da Biblioteca em cada apontamento. O parecer é opinativo: a decisão é sempre sua." },
-        { titulo: "Do planejamento à execução", desc: "Parecer sobre o edital, minuta do ETP e do TR, planilha de custos, análise da proposta, reajuste e repactuação: o ciclo inteiro do contrato no mesmo lugar." },
-        { titulo: "Documentos prontos para o processo", desc: "Pareceres, minutas, notas técnicas, memórias de cálculo e planilhas em Word, Excel e PDF, com a fundamentação em cada item." },
-        { titulo: "Os dois lados do balcão", desc: "Agentes de contratação, pregoeiros e controle interno ao lado de fornecedores e consultores." }
+        { icon: "↻", titulo: "Base que se atualiza sozinha", desc: "Coleta automática nos dias úteis em 90 fontes oficiais, com a data e a origem de cada documento registradas." },
+        { icon: "#", titulo: "Classificação por tema, não por data", desc: "Reajuste vai para reajuste, adesão a ata vai para adesão a ata: jurisprudência e fórum organizados pelo vocabulário de licitações." },
+        { icon: "⎘", titulo: "Fonte oficial em cada item", desc: "Toda decisão traz o link para o inteiro teor no portal de origem, para você conferir antes de citar." },
+        { icon: "✦", titulo: "IA que cita a lei e a decisão", desc: "O agente confere o texto legal e usa a jurisprudência da Biblioteca em cada apontamento. O parecer é opinativo: a decisão é sempre sua." },
+        { icon: "→", titulo: "Do planejamento à execução", desc: "Parecer sobre o edital, minuta do ETP e do TR, planilha de custos, análise da proposta, reajuste e repactuação: o ciclo inteiro do contrato no mesmo lugar." },
+        { icon: "▤", titulo: "Documentos prontos para o processo", desc: "Pareceres, minutas, notas técnicas, memórias de cálculo e planilhas em Word, Excel e PDF, com a fundamentação em cada item." },
+        { icon: "⇄", titulo: "Os dois lados do balcão", desc: "Agentes de contratação, pregoeiros e controle interno ao lado de fornecedores e consultores." }
       ],
       goAgente: this.nav("agente"), goElaborar: this.nav("elaborar"),
       heroCta: this.cortesiaAnalise() ? "Fazer minha primeira análise grátis" : "Analisar um documento",
