@@ -5011,7 +5011,7 @@ class Component extends DCLogic {
     if (this.state.indices || this._indicesCarregando) return;
     this._indicesCarregando = true;
     fetch("indices.json?v=" + Date.now(), { cache: "no-store" }).then((r) => r.ok ? r.json() : Promise.reject(r.status))
-      .then((j) => this.setState({ indices: j, indicesErro: false }))
+      .then((j) => this.setStateSuave({ indices: j, indicesErro: false }))
       .catch(() => this.setState({ indicesErro: true }))
       .finally(() => { this._indicesCarregando = false; });
   }
@@ -5204,11 +5204,17 @@ class Component extends DCLogic {
   }
 
   // ofertas de lançamento: vagas de fundador, se a pessoa é fundadora e se ainda tem a primeira análise grátis
+  // dados que chegam da rede entram como atualização "não urgente": um clique no menu tem prioridade e não espera a renderização
+  setStateSuave(x, depois) {
+    const R = window.React;
+    if (R && R.startTransition) R.startTransition(() => this.setState(x, depois)); else this.setState(x, depois);
+  }
+
   async carregarOferta() {
     if (!this.sb) return;
     try {
       const { data, error } = await this.sb.rpc("oferta_lancamento");
-      if (!error && data) this.setState({ oferta: data });
+      if (!error && data) this.setStateSuave({ oferta: data });
     } catch (e) {}
   }
 
@@ -5230,7 +5236,17 @@ class Component extends DCLogic {
     });
   }
 
-  async carregarDados() {
+  // navegar entre páginas não recarrega tudo: chamadas ao mesmo tempo são unificadas e, ao só navegar (leve), os dados
+  // carregados há menos de 60 s são reaproveitados. Ações (pagamento, envio, exclusão) chamam sem "leve" e sempre atualizam.
+  carregarDados(opcoes) {
+    const leve = !!(opcoes && opcoes.leve);
+    if (this._dadosPromessa) return this._dadosPromessa;
+    if (leve && this._dadosEm && Date.now() - this._dadosEm < 60000) return Promise.resolve();
+    this._dadosPromessa = this._carregarDados().finally(() => { this._dadosPromessa = null; this._dadosEm = Date.now(); });
+    return this._dadosPromessa;
+  }
+
+  async _carregarDados() {
     this.carregarOferta();
     const sb = this.sb, u = this.state.usuario;
     if (!sb || !u) return;
@@ -5254,7 +5270,7 @@ class Component extends DCLogic {
     const planoVig = plano.data || null;
     if (perfil.data && !p.boas_vindas_em) sb.functions.invoke("boas-vindas", { body: {} }).catch(() => {});
     const visao = { basico: "basico", premium: "premium", pro: "pro" }[planoVig] || "sem";
-    this.setState({
+    this.setStateSuave({
       admin: !!p.admin,
       plano: planoVig,
       planoVisao: visao,
@@ -5281,7 +5297,7 @@ class Component extends DCLogic {
   async carregarCursos() {
     if (!this.sb) return;
     const { data, error } = await this.sb.from("cursos").select("*").eq("ativo", true).order("ordem");
-    if (!error && data && data.length) this.setState({ cursosDb: data });
+    if (!error && data && data.length) this.setStateSuave({ cursosDb: data });
   }
 
   aviso(texto, tipo) {
@@ -5342,15 +5358,16 @@ class Component extends DCLogic {
     if ((destino === "login" || destino === "cadastro") && this.u) destino = s.volta || "conta";
     if (destino === "biblioteca") { window.location.href = "biblioteca.html"; return; }
     if (destino === "painel") { window.location.href = "painel.html"; return; }
-    this.setState({ page: destino, menuAberto: false, auth: { ...AUTH_VAZIO, email: s.auth.email } });
+    // troca de página como transição: cliques rápidos seguidos interrompem a renderização anterior em vez de enfileirar
+    if (this.state.menuAberto) this.setState({ menuAberto: false });
+    this.setStateSuave({ page: destino, auth: { ...AUTH_VAZIO, email: s.auth.email } }, () => window.scrollTo(0, 0));
     if (registrar !== false) {
       const url = destino === "home" ? location.pathname : location.pathname + "?p=" + destino;
       try { history.pushState({ p: destino }, "", url); } catch (e) { /* sem histórico */ }
     }
-    if (destino === "forum" && this.u) this.carregarForum();
-    if (destino === "agente" && this.u) this.carregarDados();
+    if (destino === "forum" && this.u) this.carregarForum({ leve: true });
+    if (destino === "agente" && this.u) this.carregarDados({ leve: true });
     if (destino === "calculadora") this.carregarIndices();
-    window.scrollTo(0, 0);
   }
 
   nav = (page) => () => this.irPara(page);
@@ -5444,13 +5461,20 @@ class Component extends DCLogic {
   }
 
   // ------------------------------------------------------------ fórum
-  async carregarForum() {
+  async carregarForum(opcoes) {
     if (!this.sb || !this.u) return;
-    this.setState({ forumCarregando: true, forumErro: "" });
+    if (this._forumCarregando) return;
+    if (opcoes && opcoes.leve && this._forumEm && Date.now() - this._forumEm < 60000 && (this.state.forumTopicos || []).length) return;
+    this._forumCarregando = true;
+    try { await this._carregarForum(); } finally { this._forumCarregando = false; this._forumEm = Date.now(); }
+  }
+
+  async _carregarForum() {
+    if (!(this.state.forumTopicos || []).length) this.setState({ forumCarregando: true, forumErro: "" });
     const { data: topicos, error } = await this.sb.rpc("forum_resumo");
     if (error) { this.setState({ forumCarregando: false, forumErro: "Não foi possível carregar o fórum agora." }); return; }
     const atual = (topicos || []).find((t) => t.nome === this.state.topico) || (topicos || [])[0];
-    this.setState({ forumTopicos: topicos || [], topico: atual ? atual.nome : this.state.topico });
+    this.setStateSuave({ forumTopicos: topicos || [], topico: atual ? atual.nome : this.state.topico });
     this.carregarRanking();
     await this.carregarPerguntas(atual);
   }
@@ -5463,7 +5487,7 @@ class Component extends DCLogic {
       this.sb.rpc("forum_ranking", { p_periodo: "geral", p_limite: 1000 }),
       this.sb.rpc("forum_ranking", { p_periodo: "mes_anterior", p_limite: 1 })
     ]);
-    this.setState({ forumRank: { mes: (m && m.data) || [], geral: (g && g.data) || [], destaque: (a && a.data && a.data[0]) || null } });
+    this.setStateSuave({ forumRank: { mes: (m && m.data) || [], geral: (g && g.data) || [], destaque: (a && a.data && a.data[0]) || null } });
   }
 
   avaliarResposta = (id, estrelas) => async () => {
