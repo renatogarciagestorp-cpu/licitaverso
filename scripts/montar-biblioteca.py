@@ -52,7 +52,7 @@ body{margin:0}
 <div class="lvbar"><div class="in">
 <a class="marca" href="index.html" aria-label="Licitacon — página inicial"><span>L</span>Licitacon</a>
 <nav class="prin" aria-label="Navegação principal">
-<a href="biblioteca.html" aria-current="page">Biblioteca</a><a href="index.html?p=forum">Fórum</a><a href="index.html?p=cursos">Cursos</a>
+<a href="biblioteca.html" aria-current="page">Biblioteca Jurídica</a><a href="index.html?p=forum">Fórum</a><a href="index.html?p=cursos">Cursos</a>
 <a href="index.html?p=consultoria">Consultoria</a><a href="index.html?p=agente">O Parecerista</a><a href="index.html?p=elaborar">O Elaborador</a>
 <a href="index.html?p=calculadora">Calculadora</a><a href="index.html?p=planos">Planos</a>
 </nav>
@@ -62,7 +62,7 @@ body{margin:0}
 <button class="menu" type="button" aria-label="Abrir menu" aria-expanded="false" onclick="var m=document.getElementById('lvMenu'),a=m.hidden;m.hidden=!a;this.setAttribute('aria-expanded',a);this.textContent=a?'✕':'☰'">☰</button>
 </div></div>
 <nav class="movel" id="lvMenu" aria-label="Menu" hidden>
-<a href="biblioteca.html" aria-current="page">Biblioteca</a><a href="index.html?p=forum">Fórum</a><a href="index.html?p=cursos">Cursos</a>
+<a href="biblioteca.html" aria-current="page">Biblioteca Jurídica</a><a href="index.html?p=forum">Fórum</a><a href="index.html?p=cursos">Cursos</a>
 <a href="index.html?p=consultoria">Consultoria</a><a href="index.html?p=agente">O Parecerista</a><a href="index.html?p=elaborar">O Elaborador</a>
 <a href="index.html?p=calculadora">Calculadora</a><a href="index.html?p=planos">Planos</a>
 </nav></div>
