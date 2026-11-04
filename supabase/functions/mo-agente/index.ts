@@ -119,7 +119,8 @@ Deno.serve(async (req) => {
   if (!munServ || !UFS.includes(ufServ)) return erro("Antes da análise, informe o município e a UF onde o serviço será prestado.");
   const reforma = String(dados0.reforma ?? "");
   if (!["antes", "depois"].includes(reforma)) return erro("Antes da análise, escolha se os tributos devem ser calculados antes ou depois da reforma tributária.");
-  const regime = ["real", "presumido", "simples"].includes(String(dados0.regime)) ? String(dados0.regime) : "real";
+  if (!["real", "presumido", "simples"].includes(String(dados0.regime))) return erro("Antes da análise, escolha o regime de tributação da empresa (Lucro Real, Presumido ou Simples Nacional).");
+  const regime = String(dados0.regime);
   const okPdf = (c: string) => c.startsWith(usuario.id + "/mo/") && !c.includes("..") && /\.pdf$/i.test(c);
   const arquivo = String(corpo.arquivo ?? "");             // convenção coletiva (na repactuação: a nova, opcional)
   const planArq = String(corpo.planilha_arquivo ?? "");    // repactuação: planilha da contratação em PDF

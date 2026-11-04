@@ -2235,6 +2235,41 @@
                 <div><b>{{ moCctRot }}</b><small>Acordo, convenção ou dissídio coletivo da categoria, em PDF.</small></div>
                 <label class="lmo-arq"><input type="file" accept=".pdf,.doc,.docx" sc-camel-on-change="{{ moEscolherCct }}">{{ moCct }}<sc-if value="{{ moCct }}" hint-placeholder-val="{{ false }}"> · trocar</sc-if><sc-if value="{{ moSemCct }}" hint-placeholder-val="{{ true }}">Escolher arquivo</sc-if></label>
               </div>
+            </section>
+
+
+            <section class="lmo-bloco" id="lmo-trib">
+              <h2 class="lmo-h2">Tributação (Módulo 6)</h2>
+              <p class="lmo-nota" style="margin-top: 0"><b>Os tributos devem ser calculados antes ou depois da reforma tributária?</b> Antes: PIS, COFINS e ISS. Depois: CBS e IBS (EC 132/2023 e LC 214/2025), inclusive no período de transição de 2026 a 2033, ano a ano.</p>
+              <div class="lmo-modos" role="group" aria-label="Momento da tributação"><sc-for list="{{ moReformaOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
+              <sc-if value="{{ moReformaPendente }}" hint-placeholder-val="{{ true }}"><p class="lve-aviso" style="margin-top: 10px">Escolha se os tributos serão calculados antes ou depois da reforma e o regime de tributação da empresa: o agente usa essas escolhas na análise, e o download depende delas. Até lá, a tela mostra o cálculo com PIS, COFINS e ISS.</p></sc-if>
+              <p class="lmo-nota"><b>Regime de tributação da empresa</b></p>
+              <div class="lmo-modos" role="group" aria-label="Regime de tributação"><sc-for list="{{ moRegimes }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
+              <p class="lmo-nota">{{ moRegimeTxt }}</p>
+              <sc-if value="{{ moRegSimples }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>Receita bruta dos últimos 12 meses (RBT12, R$)</span><input type="text" inputmode="decimal" value="{{ moRbt12 }}" sc-camel-on-input="{{ onMoRbt12 }}" placeholder="Ex.: 1.200.000,00"></label></div>
+                <p class="{{ moSimplesCls }}">{{ moSimplesTxt }}</p>
+                <sc-if value="{{ moSimplesVedado }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso" role="alert">{{ moSimplesVedado }}</p></sc-if>
+              </sc-if>
+              <sc-if value="{{ moReformaDepois }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-campos" style="margin-top: 12px">
+                  <label class="lmo-campo"><span>Ano de execução calculado na planilha</span><select sc-camel-on-change="{{ onMoRfAno }}"><sc-for list="{{ moRfAnos }}" as="o" hint-placeholder-count="8"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                  <label class="lmo-campo"><span>Alíquota de referência da CBS (%)</span><input type="text" inputmode="decimal" value="{{ moRfCbs }}" sc-camel-on-input="{{ onMoRfCbs }}"></label>
+                  <label class="lmo-campo"><span>Alíquota de referência do IBS (%, estimativa)</span><input type="text" inputmode="decimal" value="{{ moRfIbs }}" sc-camel-on-input="{{ onMoRfIbs }}"></label>
+                </div>
+                <p class="lmo-nota">CBS: 11,3% é a referência calculada pelo TCU para 2027 (o Senado deve fixá-la até 15/12/2026). IBS: a referência ainda não foi fixada; 18,7% é estimativa. Atualize os dois campos quando as alíquotas forem publicadas.</p>
+                <div class="lmo-tabela" style="margin-top: 10px" role="table" aria-label="Período de transição">
+                  <div class="lmo-lin lmo-trans lmo-cab" role="row"><span>Ano</span><span>PIS e COFINS</span><span>CBS</span><span>IBS</span><span>ISS</span><span>Tributos no preço</span><span>Preço por empregado</span><span>Valor mensal</span></div>
+                  <sc-for list="{{ moTransicao }}" as="t" hint-placeholder-count="8">
+                    <div class="lmo-lin lmo-trans" role="row" data-forte="{{ t.atual }}"><span><button type="button" class="lmo-ano" aria-pressed="{{ t.atual }}" sc-camel-on-click="{{ t.usar }}">{{ t.ano }}</button></span><span class="lmo-pct">{{ t.pisCof }}</span><span class="lmo-pct">{{ t.cbs }}</span><span class="lmo-pct">{{ t.ibs }}</span><span class="lmo-pct">{{ t.iss }}</span><span class="lmo-pct">{{ t.trib }}</span><span class="lmo-val">{{ t.total }}</span><span class="lmo-val">{{ t.mensal }}</span></div>
+                  </sc-for>
+                </div>
+                <p class="lmo-nota">{{ moTransicaoNota }}</p>
+              </sc-if>
+            </section>
+
+            <section class="lmo-bloco" id="lmo-agente">
+              <h2 class="lmo-h2">{{ moAgenteTitulo }}</h2>
               <p class="lmo-nota">{{ moAgenteTxt }}</p>
               <div class="lmo-agente">
                 <sc-if value="{{ moPro }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moAgente }}">{{ moBotaoAgente }}</button></sc-if>
@@ -2352,35 +2387,6 @@
               <p class="lmo-nota">{{ moMemEmp }}</p>
             </section>
 
-            <section class="lmo-bloco" id="lmo-trib">
-              <h2 class="lmo-h2">Tributação (Módulo 6)</h2>
-              <p class="lmo-nota" style="margin-top: 0"><b>Os tributos devem ser calculados antes ou depois da reforma tributária?</b> Antes: PIS, COFINS e ISS. Depois: CBS e IBS (EC 132/2023 e LC 214/2025), inclusive no período de transição de 2026 a 2033, ano a ano.</p>
-              <div class="lmo-modos" role="group" aria-label="Momento da tributação"><sc-for list="{{ moReformaOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
-              <sc-if value="{{ moReformaPendente }}" hint-placeholder-val="{{ true }}"><p class="lve-aviso" style="margin-top: 10px">Escolha uma das opções: a análise pelo agente e o download da planilha dependem dessa escolha. Até lá, a tela mostra o cálculo com PIS, COFINS e ISS.</p></sc-if>
-              <p class="lmo-nota"><b>Regime de tributação da empresa</b></p>
-              <div class="lmo-modos" role="group" aria-label="Regime de tributação"><sc-for list="{{ moRegimes }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
-              <p class="lmo-nota">{{ moRegimeTxt }}</p>
-              <sc-if value="{{ moRegSimples }}" hint-placeholder-val="{{ false }}">
-                <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>Receita bruta dos últimos 12 meses (RBT12, R$)</span><input type="text" inputmode="decimal" value="{{ moRbt12 }}" sc-camel-on-input="{{ onMoRbt12 }}" placeholder="Ex.: 1.200.000,00"></label></div>
-                <p class="{{ moSimplesCls }}">{{ moSimplesTxt }}</p>
-                <sc-if value="{{ moSimplesVedado }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso" role="alert">{{ moSimplesVedado }}</p></sc-if>
-              </sc-if>
-              <sc-if value="{{ moReformaDepois }}" hint-placeholder-val="{{ false }}">
-                <div class="lmo-campos" style="margin-top: 12px">
-                  <label class="lmo-campo"><span>Ano de execução calculado na planilha</span><select sc-camel-on-change="{{ onMoRfAno }}"><sc-for list="{{ moRfAnos }}" as="o" hint-placeholder-count="8"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
-                  <label class="lmo-campo"><span>Alíquota de referência da CBS (%)</span><input type="text" inputmode="decimal" value="{{ moRfCbs }}" sc-camel-on-input="{{ onMoRfCbs }}"></label>
-                  <label class="lmo-campo"><span>Alíquota de referência do IBS (%, estimativa)</span><input type="text" inputmode="decimal" value="{{ moRfIbs }}" sc-camel-on-input="{{ onMoRfIbs }}"></label>
-                </div>
-                <p class="lmo-nota">CBS: 11,3% é a referência calculada pelo TCU para 2027 (o Senado deve fixá-la até 15/12/2026). IBS: a referência ainda não foi fixada; 18,7% é estimativa. Atualize os dois campos quando as alíquotas forem publicadas.</p>
-                <div class="lmo-tabela" style="margin-top: 10px" role="table" aria-label="Período de transição">
-                  <div class="lmo-lin lmo-trans lmo-cab" role="row"><span>Ano</span><span>PIS e COFINS</span><span>CBS</span><span>IBS</span><span>ISS</span><span>Tributos no preço</span><span>Preço por empregado</span><span>Valor mensal</span></div>
-                  <sc-for list="{{ moTransicao }}" as="t" hint-placeholder-count="8">
-                    <div class="lmo-lin lmo-trans" role="row" data-forte="{{ t.atual }}"><span><button type="button" class="lmo-ano" aria-pressed="{{ t.atual }}" sc-camel-on-click="{{ t.usar }}">{{ t.ano }}</button></span><span class="lmo-pct">{{ t.pisCof }}</span><span class="lmo-pct">{{ t.cbs }}</span><span class="lmo-pct">{{ t.ibs }}</span><span class="lmo-pct">{{ t.iss }}</span><span class="lmo-pct">{{ t.trib }}</span><span class="lmo-val">{{ t.total }}</span><span class="lmo-val">{{ t.mensal }}</span></div>
-                  </sc-for>
-                </div>
-                <p class="lmo-nota">{{ moTransicaoNota }}</p>
-              </sc-if>
-            </section>
 
             <sc-for list="{{ moModulos }}" as="md" hint-placeholder-count="3">
               <section class="lmo-bloco lmo-tab">
@@ -4789,7 +4795,7 @@ const MO_PADRAO = {
   ano_exec: "2", vigente: "",
   vg_calc: "", vg_an: "20", vg_hnot: "9", vg_div: "220", vg_ffix: "9", vg_fmov: "1", vg_fer: "100", vg_intra: "", vg_ih: "1", vg_ia: "50", mem_cf: "",
   gt_tipo: "", gt_multa: "5", rp_db_ant: "", rp_pedido: "", rp_prorrog: "", rp_fim: "", rp_inicio: "", rp_contrato: "", rp_orgao: "", rp_empresa: "",
-  regime: "real", rbt12: "", reforma: "", rf_ano: "", rf_cbs: "11,3", rf_ibs: "18,7",
+  regime: "", rbt12: "", reforma: "", rf_ano: "", rf_cbs: "11,3", rf_ibs: "18,7",
   rj_ativo: "", rj_indice: "ipca", rj_orcamento: "", rj_ref: "", rj_unif: "sim", rj_materiais: "sim", rj_equip: "sim", rj_outros5: "sim"
 };
 // Dimensionamento da equipe pelos cadernos técnicos (IN SEGES/MP nº 5/2017)
@@ -6581,8 +6587,8 @@ class Component extends DCLogic {
       try { document.querySelector(".lmo-aceite").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {}
       return;
     }
-    if (!d.reforma) {
-      this.setState((x) => ({ mo: { ...x.mo, erro: "Antes de baixar, escolha se os tributos devem ser calculados antes ou depois da reforma tributária (bloco Tributação)." } }));
+    if (!d.reforma || !d.regime) {
+      this.setState((x) => ({ mo: { ...x.mo, erro: "Antes de baixar, escolha no bloco Tributação se os tributos devem ser calculados antes ou depois da reforma tributária e o regime de tributação da empresa." } }));
       try { document.getElementById("lmo-trib").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {}
       return;
     }
@@ -6595,7 +6601,7 @@ class Component extends DCLogic {
     const memTab = Object.keys(MO_MEM).filter((k) => memU[k] && memU[k].ativo).map((k) => ({ rot: MO_MEM[k].rot, nota: MO_MEM[k].nota, col: MO_MEM[k].col.concat(["Custo mensal por empregado"]),
       linhas: memU[k].linhas.filter((l) => l.mensal > 0).map((l) => MO_MEM[k].campos.map((c) => String(l[c] == null ? "" : l[c])).concat(["R$ " + fmt(l.mensal, 4)]).concat([l.fonte || ""])),
       total: "R$ " + fmt(memU[k].total, 4) + (memU[k].financeiro ? " (inclui custo financeiro de R$ " + fmt(memU[k].financeiro) + ")" : "") }));
-    const regNome = { real: "Lucro Real", presumido: "Lucro Presumido", simples: "Simples Nacional (Anexo IV)" }[d.regime || "real"];
+    const regNome = { "": "Lucro Real", real: "Lucro Real", presumido: "Lucro Presumido", simples: "Simples Nacional (Anexo IV)" }[d.regime || "real"];
     const tribNome = d.reforma === "depois" ? "Depois da reforma tributária (CBS e IBS) · ano calculado: " + (r && r.tr ? r.tr.ano : "") : "Antes da reforma tributária (PIS, COFINS e ISS)";
     const num = (txt) => { const m = String(txt == null ? "" : txt).replace("→", "").replace("R$", "").replace("%", "").trim().replace(/\./g, "").replace(",", "."); const n = Number(m); return m !== "" && /\d/.test(m) && isFinite(n) ? n : null; };
     const brlTxt = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -6943,8 +6949,8 @@ class Component extends DCLogic {
       try { const el = document.querySelector('[data-mo-campo="municipio"]'); el.scrollIntoView({ behavior: "smooth", block: "center" }); el.focus(); } catch (e) {}
       return;
     }
-    if (!d.reforma) {
-      erro("Antes da análise, escolha se os tributos devem ser calculados antes ou depois da reforma tributária (bloco Tributação).");
+    if (!d.reforma || !d.regime) {
+      erro("Antes da análise, escolha no bloco Tributação " + (!d.reforma && !d.regime ? "se os tributos devem ser calculados antes ou depois da reforma tributária e o regime de tributação da empresa." : !d.reforma ? "se os tributos devem ser calculados antes ou depois da reforma tributária." : "o regime de tributação da empresa (Lucro Real, Presumido ou Simples Nacional)."));
       try { document.getElementById("lmo-trib").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {}
       return;
     }
@@ -7217,11 +7223,12 @@ class Component extends DCLogic {
         + " · adicional noturno R$ " + f2(vg.noturno) + " · hora noturna reduzida R$ " + f2(vg.hnr) + " · feriados R$ " + f2(vg.he) + (vg.intraVal ? " · intervalo R$ " + f2(vg.intraVal) : "") + ". Os valores entram no Módulo 1 (D, E e F) e no Submódulo 4.2." : "",
       moVgPericAviso: vg && !moNum(d0.peric) ? "O adicional de periculosidade do vigilante é de 30% (CLT, art. 193, II, Lei 12.740/2012): informe-o no Módulo 1 (B), salvo previsão diferente na convenção." : "",
       moReformaOpcoes: [["antes", "Antes da reforma (PIS, COFINS e ISS)"], ["depois", "Depois da reforma (CBS e IBS, com a transição)"]].map(([id, nome]) => ({ nome, ativo: d.reforma === id, escolher: () => this.moSet("reforma")(id), ...corBotao(d.reforma === id) })),
-      moReformaPendente: !d.reforma, moReformaDepois: depois,
-      moRegimes: [["real", "Lucro Real"], ["presumido", "Lucro Presumido"], ["simples", "Simples Nacional"]].map(([id, nome]) => ({ nome, ativo: (d.regime || "real") === id, escolher: () => this.moRegime(id), ...corBotao((d.regime || "real") === id) })),
+      moReformaPendente: !d.reforma || !d.regime, moReformaDepois: depois,
+      moAgenteTitulo: prop ? "Análise da proposta pelo agente" : rep ? "Análise da repactuação pelo agente" : "Preenchimento pelo agente",
+      moRegimes: [["real", "Lucro Real"], ["presumido", "Lucro Presumido"], ["simples", "Simples Nacional"]].map(([id, nome]) => ({ nome, ativo: d.regime === id, escolher: () => this.moRegime(id), ...corBotao(d.regime === id) })),
       moRegimeTxt: d.regime === "presumido" ? "Lucro Presumido: PIS (0,65%) e COFINS (3%) no regime cumulativo, sem créditos (Lei 9.718/1998)."
         : d.regime === "simples" ? "Simples Nacional: só para vigilância, limpeza ou conservação, tributadas no Anexo IV, com a contribuição previdenciária patronal (20% + RAT) recolhida fora do DAS e sem as contribuições a terceiros (Salário-Educação, SESC/SESI, SENAC/SENAI, SEBRAE, INCRA), zeradas no Submódulo 2.2 (LC 123/2006, art. 13, § 3º, art. 17, XII, e art. 18, §§ 5º-C e 5º-H)."
-        : "Lucro Real: PIS (1,65%) e COFINS (7,6%) no regime não cumulativo. Na proposta, valem as alíquotas efetivas recolhidas, descontados os créditos, comprovadas pela EFD-Contribuições (TCU, Acórdão 2.647/2009-Plenário)." + (depois ? " Depois da reforma, CBS e IBS seguem a não cumulatividade plena para todos os regimes regulares." : ""),
+        : !d.regime ? "Escolha o regime de tributação da empresa: ele define as alíquotas de PIS, COFINS e ISS (ou a parcela do Simples) e as contribuições do Submódulo 2.2." : "Lucro Real: PIS (1,65%) e COFINS (7,6%) no regime não cumulativo. Na proposta, valem as alíquotas efetivas recolhidas, descontados os créditos, comprovadas pela EFD-Contribuições (TCU, Acórdão 2.647/2009-Plenário)." + (depois ? " Depois da reforma, CBS e IBS seguem a não cumulatividade plena para todos os regimes regulares." : ""),
       moRegSimples: d.regime === "simples", moRbt12: d.rbt12 || "", onMoRbt12: this.moSet("rbt12"),
       moSimplesCls: simp ? "lmo-ok" : "lmo-nota",
       moSimplesTxt: simp ? "Faixa " + simp.faixa + " do Anexo IV: alíquota nominal " + String(simp.nom).replace(".", ",") + "%, parcela a deduzir " + brl(simp.ded) + " → alíquota efetiva " + pct(simp.ef) + ". Na planilha: PIS " + pct(simp.pis) + ", COFINS " + pct(simp.cofins) + (simp.issFora ? " e ISS do município (na 6ª faixa, o ISS é recolhido fora do Simples)." : " e ISS " + pct(simp.iss) + (simp.iss === 0.05 ? " (limitado a 5%)" : "") + ". IRPJ e CSLL não entram na planilha.")
