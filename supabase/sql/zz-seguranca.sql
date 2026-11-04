@@ -87,3 +87,7 @@ exception when duplicate_object then null; end $$;
 
 -- 4) Controle de uso da conferência prévia: tabela interna, nunca acessível pelo site
 revoke all on public.elab_triagens from anon, authenticated;
+
+-- 5) Visitantes sem login não têm nenhum privilégio nas tabelas de dados de usuários (antes já viam 0 linhas pelas
+--    regras de acesso; agora nem a consulta é aceita)
+revoke all on public.analises, public.renovacoes, public.normas_usuario, public.organizacoes, public.organizacao_membros from anon;
