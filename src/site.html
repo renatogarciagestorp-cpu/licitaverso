@@ -949,6 +949,25 @@
   .lvc-abas { margin-top: -26px; position: relative; display: flex; gap: 4px; background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 5px; box-shadow: 0 12px 28px rgba(11,31,42,0.07); width: max-content; max-width: 100%; overflow-x: auto; }
   .lvc-aba { border: 0; background: none; border-radius: 10px; padding: 10px 16px; font: inherit; font-size: 14px; font-weight: 800; color: #55666D; white-space: nowrap; }
   .lvc-aba.ativo { background: #0A1F2A; color: #fff; }
+  .lvc-apres { margin-top: 22px; display: grid; gap: 16px; }
+  .lvf-vit { margin-top: 16px; display: grid; gap: 12px; }
+  .lvf-vit-cta { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; background: #0A1F2A; color: #fff; border-radius: 16px; padding: 20px 22px; }
+  .lvf-vit-cta b { font-size: 18px; } .lvf-vit-cta p { margin: 6px 0 0; font-size: 14px; line-height: 1.55; color: #B3C6CD; max-width: 60ch; }
+  .lvf-vit-btns { display: flex; gap: 10px; flex-wrap: wrap; } .lvf-vit-btns .lve-voltar { background: transparent; color: #fff; border-color: rgba(255,255,255,0.3); }
+  .lvf-vit-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .lvf-vit-lista button { width: 100%; text-align: left; font: inherit; background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 14px 16px; cursor: pointer; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; }
+  .lvf-vit-lista button:hover { border-color: #0FA36B; }
+  .lvf-vit-t { font-size: 15px; font-weight: 700; color: #0B1F2A; } .lvf-vit-m { grid-column: 1; font-size: 12.5px; color: #7A8B91; }
+  .lvf-vit-l { grid-row: 1 / span 2; grid-column: 2; align-self: center; font-size: 12.5px; font-weight: 800; color: #0F6B7E; white-space: nowrap; }
+  .lvf-vit-vazio { margin: 4px; font-size: 14px; color: #7A8B91; }
+  .lvc-apres .lvc-bloq { margin-top: 0 !important; position: relative; }
+  .lvc-fcs { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .lvc-fc { text-align: left; font: inherit; background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 14px 16px; cursor: pointer; display: grid; gap: 6px; transition: border-color .15s, box-shadow .15s; }
+  .lvc-fc b { font-size: 15px; color: #0A1F2A; } .lvc-fc span { font-size: 13px; line-height: 1.5; color: #55666D; }
+  .lvc-fc:hover, .lvc-fc.ativo { border-color: #0FA36B; box-shadow: 0 10px 24px rgba(15,163,107,0.12); }
+  .lvc-benef { margin: 14px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px 22px; }
+  .lvc-benef li { position: relative; padding-left: 26px; font-size: 14.5px; line-height: 1.55; color: #26393F; }
+  .lvc-benef li::before { content: "✓"; position: absolute; left: 0; top: 0; color: #0FA36B; font-weight: 900; }
   .lvc-aba:not(:disabled) { cursor: pointer; }
   /* Mão de Obra Exclusiva (planilha IN 05/2017) */
   .lmo { margin-top: 22px; display: grid; gap: 16px; }
@@ -1083,7 +1102,7 @@
     .lvc-datas { grid-template-columns: minmax(0, 1fr); }
     .lvc-passo { padding: 18px 16px; }
     .lvc-calc-btn { display: block; }
-    .lvc-abas { width: 100%; box-sizing: border-box; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); overflow: visible; }
+    .lvc-abas { width: 100%; box-sizing: border-box; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible; }
     .lvc-aba { white-space: normal; padding: 8px 4px; font-size: 12.5px; line-height: 1.25; }
     .lvc-aba small { display: block; font-size: 9.5px; }
   }
@@ -1664,6 +1683,7 @@
               </button>
             </sc-for>
           </div>
+          <sc-if value="{{ forumNaoVisitante }}" hint-placeholder-val="{{ true }}">
           <div class="lvf-rank">
             <div class="lvf-rank-t">🏆 Ranking do mês</div>
             <sc-for list="{{ rankTop }}" as="rk" hint-placeholder-count="3">
@@ -1672,6 +1692,7 @@
             <sc-if value="{{ rankVazio }}" hint-placeholder-val="{{ true }}"><p class="lvf-rank-vazio">Ninguém pontuou ainda neste mês. Responda uma pergunta e seja o primeiro.</p></sc-if>
             <button class="lvf-rank-btn" sc-camel-on-click="{{ abrirRanking }}">Ver ranking e regras →</button>
           </div>
+          </sc-if>
         </aside>
 
         <div>
@@ -1722,6 +1743,21 @@
               <h3 style="margin: 10px 0 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em">Leia as discussões com o teste grátis de 7 dias</h3>
               <p style="margin: 10px 0 0; font-size: 15px; line-height: 1.6; color: #B3C6CD; max-width: 620px">Os tópicos são abertos a todos os cadastrados. A leitura das perguntas e respostas faz parte do teste e dos planos; perguntar e responder, dos planos Básico, Premium e Pro.</p>
               <button sc-camel-on-click="{{ comecarTeste }}" style="margin-top: 18px; background: #0FA36B; color: #06251A; border: 0; border-radius: 11px; padding: 12px 20px; font-size: 14.5px; font-weight: 700; cursor: pointer" style-hover="background: #14B978">Ver teste e planos</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ forumVitrine }}" hint-placeholder-val="{{ false }}">
+            <div class="lvf-vit">
+              <div class="lvf-vit-cta">
+                <div><b>{{ vitTitulo }}</b><p>{{ vitTexto }}</p></div>
+                <div class="lvf-vit-btns"><button class="lvh-btn" sc-camel-on-click="{{ vitAcao }}">{{ vitCta }}</button><sc-if value="{{ forumVisitante }}" hint-placeholder-val="{{ true }}"><button class="lve-voltar" sc-camel-on-click="{{ vitEntrar }}">Já tenho conta</button></sc-if></div>
+              </div>
+              <sc-if value="{{ vitCarregando }}" hint-placeholder-val="{{ false }}"><p class="lvf-vit-vazio">Carregando as discussões…</p></sc-if>
+              <sc-if value="{{ vitVazia }}" hint-placeholder-val="{{ false }}"><p class="lvf-vit-vazio">Ainda não há perguntas neste tema. Crie sua conta e faça a primeira.</p></sc-if>
+              <ul class="lvf-vit-lista">
+                <sc-for list="{{ vitLista }}" as="q" hint-placeholder-count="5">
+                  <li><button type="button" sc-camel-on-click="{{ vitAcao }}"><span class="lvf-vit-t">{{ q.titulo }}</span><span class="lvf-vit-m">{{ q.meta }}</span><span class="lvf-vit-l" aria-hidden="true">🔒 Ler as respostas</span></button></li>
+                </sc-for>
+              </ul>
             </div>
           </sc-if>
           <sc-if value="{{ forumCarregando }}" hint-placeholder-val="{{ false }}">
@@ -2216,27 +2252,25 @@
         </div>
       </section>
       <section class="lvc-corpo">
+        <div class="lvc-abas" role="tablist" aria-label="Ferramentas da calculadora">
+          <sc-for list="{{ calcAbas }}" as="a" hint-placeholder-count="4"><button class="{{ a.cls }}" role="tab" aria-selected="{{ a.ativo }}" sc-camel-on-click="{{ a.ir }}">{{ a.nome }}</button></sc-for>
+          <button class="lvc-aba" role="tab" aria-selected="false" disabled>Reequilíbrio <small>em breve</small></button>
+        </div>
         <sc-if value="{{ calcBloqueada }}" hint-placeholder-val="{{ false }}">
-          <div class="lvc-bloq">
-            <span class="lvh-bib-tag">Exclusivo para assinantes</span>
-            <h2 class="lva-h2" style="margin-top: 12px">A calculadora faz parte de todos os planos, inclusive o teste de 7 dias.</h2>
-            <p class="lva-sub" style="font-size: 15px; margin-top: 8px">{{ calcBloqTexto }}</p>
-            <div class="lvh-ctas" style="margin-top: 18px"><button class="lvh-btn" sc-camel-on-click="{{ calcBloqAcao }}">{{ calcBloqCta }}</button></div>
+          <div class="lvc-apres">
+            <div class="lvc-fcs"><sc-for list="{{ calcFerrCards }}" as="c" hint-placeholder-count="4"><button type="button" class="{{ c.cls }}" aria-pressed="{{ c.ativo }}" sc-camel-on-click="{{ c.ir }}"><b>{{ c.nome }}</b><span>{{ c.curto }}</span></button></sc-for></div>
+            <div class="lvc-bloq">
+              <span class="lvh-bib-tag">Exclusivo para assinantes</span>
+              <h2 class="lva-h2" style="margin-top: 12px">{{ calcFerrNome }}: o que você faz aqui</h2>
+              <ul class="lvc-benef"><sc-for list="{{ calcFerrBenef }}" as="b" hint-placeholder-count="6"><li>{{ b.t }}</li></sc-for></ul>
+              <p class="lva-sub" style="font-size: 14.5px; margin-top: 14px"><b>{{ calcFerrPlano }}</b> {{ calcBloqTexto }}</p>
+              <div class="lvh-ctas" style="margin-top: 16px"><button class="lvh-btn" sc-camel-on-click="{{ calcBloqAcao }}">{{ calcBloqCta }}</button><button class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ calcVerPlanos }}">Comparar os planos</button></div>
+            </div>
           </div>
         </sc-if>
         <sc-if value="{{ calcLiberada }}" hint-placeholder-val="{{ true }}">
-          <div class="lvc-abas" role="tablist" aria-label="Tipo de pedido">
-            <button class="{{ calcAbaIdxCls }}" role="tab" aria-selected="{{ calcAbaIndice }}" sc-camel-on-click="{{ calcIrIndice }}">Reajuste por índice</button>
-            <button class="{{ calcAbaMoCls }}" role="tab" aria-selected="{{ calcAbaMo }}" sc-camel-on-click="{{ calcIrMo }}">Mão de Obra Exclusiva</button>
-            <button class="lvc-aba" role="tab" aria-selected="false" disabled>Reequilíbrio <small>em breve</small></button>
-          </div>
           <sc-if value="{{ calcAbaMo }}" hint-placeholder-val="{{ false }}">
           <div class="lmo">
-            <div class="lmo-modos" role="group" aria-label="Modelo de planilha">
-              <sc-for list="{{ moModos }}" as="m" hint-placeholder-count="2">
-                <button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}">{{ m.nome }}</button>
-              </sc-for>
-            </div>
             <p class="lmo-intro">{{ moIntro }}</p>
             <div class="lmo-salvas">
               <sc-if value="{{ moSalvasAtivo }}" hint-placeholder-val="{{ false }}">
@@ -5200,6 +5234,38 @@ function moCalcular(d, modo, rj) {
   return r;
 }
 
+// Calculadora: uma subpágina por ferramenta (reajuste por índice e as três planilhas da Mão de Obra Exclusiva)
+const CALC_FERRAMENTAS = [
+  { id: "reajuste", nome: "Reajuste por índice", curto: "Reajuste de contratos por IPCA, IGP-M, INCC e outros índices oficiais, com a nota técnica pronta.",
+    h1: "Reajuste de contrato calculado certo, com a nota técnica pronta.",
+    lead: "Índices oficiais atualizados todos os dias, conferência dos 12 meses, ciclos acumulados e memória de cálculo mês a mês. No fim, você baixa a nota técnica em PDF para juntar ao processo.",
+    beneficios: ["IPCA, IPCA-E, INPC, IGP-M, IGP-DI e INCC atualizados automaticamente a partir das fontes oficiais (IBGE, FGV e Banco Central)", "Conferência da anualidade de 12 meses contada do orçamento estimado (Lei 14.133/2021, art. 25, § 7º; Lei 10.192/2001)",
+      "Ciclos anuais acumulados e alerta de possível preclusão quando o contrato foi prorrogado sem pedir o reajuste", "Memória de cálculo mês a mês, com os índices usados e o fator acumulado",
+      "Contratos da Lei 14.133/2021, das estatais (Lei 13.303/2016) e das parcerias (Lei 13.019/2014)", "Nota técnica em PDF pronta para juntar ao processo, com o apostilamento indicado"],
+    plano: "Incluído em todos os planos, inclusive no teste grátis de 7 dias." },
+  { id: "planejamento", nome: "Planilha de custos", curto: "Planilha de custos e formação de preços no formato da IN 05/2017, para estimar a contratação.",
+    h1: "Planilha de custos da mão de obra exclusiva, no formato da IN 05/2017.",
+    lead: "Monte a estimativa da contratação com os percentuais legais, o dimensionamento da equipe pelos cadernos técnicos, a memória de cálculo dos insumos e os tributos antes ou depois da reforma tributária.",
+    beneficios: ["Módulos 1 a 6 do Anexo VII-D da IN SEGES/MP nº 5/2017, com os percentuais legais de partida e totais truncados como no modelo", "Dimensionamento da equipe de limpeza (metragem e produtividade) e de vigilância (postos e escalas) pelos cadernos técnicos",
+      "Adicionais da escala de vigilância calculados: noturno, hora noturna reduzida, feriados e intervalo", "Memória de cálculo de uniformes, EPI, materiais e equipamentos, com o preço praticado no Compras.gov.br",
+      "Lucro Real, Presumido ou Simples Nacional e tributos antes ou depois da reforma tributária, com a transição de 2026 a 2033 ano a ano", "Conferência automática de falhas e inconsistências, quadro com várias categorias e conta vinculada ou fato gerador",
+      "Downloads separados em Excel e PDF: planilha, falhas e memória de cálculo", "No Pro, o agente de IA lê a convenção coletiva e preenche a planilha indicando a fonte de cada valor"],
+    plano: "Planilha incluída em todos os planos; preenchimento pelo agente de IA no plano Pro." },
+  { id: "repactuacao", nome: "Repactuação", curto: "Repactuação com a nova convenção, custos não renováveis, retroativo e nota técnica.",
+    h1: "Repactuação de mão de obra exclusiva demonstrada rubrica por rubrica.",
+    lead: "Atualize a planilha com a nova convenção coletiva, exclua os custos não renováveis, reajuste os insumos pelo índice do contrato, calcule o retroativo e gere a nota técnica.",
+    beneficios: ["Custos não renováveis tratados automaticamente, como o aviso prévio trabalhado a 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017)", "Reajuste dos insumos pelo índice do contrato, com a memória do índice mês a mês",
+      "Quadro comparativo contratação × repactuada com a variação por módulo, a participação de cada rubrica e o motivo", "Diferença retroativa mês a mês, separando mão de obra e insumos, com a conferência da anualidade e da preclusão",
+      "Nota técnica da repactuação em PDF, com relatório, análise e conclusão", "No Pro, o agente lê a planilha da contratação e a nova convenção, reproduz a planilha, aplica as mudanças e aponta as falhas com o fundamento"],
+    plano: "Planilha incluída em todos os planos; análise pelo agente de IA no plano Pro." },
+  { id: "proposta", nome: "Análise de proposta", curto: "Exequibilidade da planilha da licitante, falhas, diligência e comparativo das propostas.",
+    h1: "Análise da planilha da licitante, com a exequibilidade e a diligência prontas.",
+    lead: "Confira a planilha de custos da proposta item por item, veja as falhas com o fundamento, compare as licitantes lado a lado e envie a diligência pronta.",
+    beneficios: ["O agente reproduz a planilha da proposta e confere cada rubrica com a convenção, a lei, os cadernos técnicos e o TCU", "Falhas apontadas com o fundamento e se a correção cabe no preço ofertado (IN 05/2017, Anexo VII-A, item 7.9)",
+      "Conferência do preço ofertado com o valor estimado (IN 73/2022, art. 34) e com o valor de atenção da estimativa do órgão", "Minuta de diligência à licitante com as perguntas para comprovar os custos (Lei 14.133/2021, art. 59, § 2º)",
+      "Comparativo das propostas lado a lado, com os módulos fora da curva destacados", "Downloads separados em Excel e PDF"],
+    plano: "Comparativo e conferência em todos os planos; análise pelo agente de IA no plano Pro." }
+];
 const ELAB_TERMO_VERSAO = "elab-2";
 const ELAB_TERMO = [
   "Natureza: minuta de Estudo Técnico Preliminar, Termo de Referência ou Projeto Básico elaborada de forma automatizada por inteligência artificial, a partir das informações que você prestar e da pesquisa em bases oficiais. Não substitui a análise técnica e jurídica do órgão (Lei 14.133/2021, art. 53).",
@@ -5297,7 +5363,10 @@ const COMPRADORES = {
 // O site usa o Supabase (contas e banco) e o Mercado Pago (cobrança) quando
 // config.js está preenchido. Sem configuração, roda em modo demonstração.
 const PAGINAS = ["home", "forum", "cursos", "consultoria", "agente", "elaborar", "calculadora", "planos", "conta", "institucional", "login", "cadastro", "recuperar", "nova-senha"];
-const EXIGE_LOGIN = ["forum", "cursos", "conta"];
+// Visitantes sem cadastro navegam por todas as páginas (como nas demais plataformas do setor): veem o que cada
+// área oferece, a vitrine do fórum e o catálogo de cursos; ler as respostas do fórum, usar as ferramentas e
+// contratar pedem conta. Só a Área do Assinante exige login para abrir.
+const EXIGE_LOGIN = ["conta"];
 const PLANO_NOME = { teste: "Teste", basico: "Básico", premium: "Premium", pro: "Pro" };
 // Planos para equipes: mesmas regras do servidor (supabase/functions/_shared/precos.ts)
 const EQ_MENSAL = { basico: 119.9, premium: 199.9, pro: 479.9 };
@@ -5463,7 +5532,7 @@ class Component extends DCLogic {
     aviso: "", avisoTipo: "ok",
 
     // fórum
-    forumTopicos: null,
+    forumTopicos: null, forumVitrine: null,
     forumPerguntas: [],
     forumCarregando: false,
     forumErro: "",
@@ -5532,7 +5601,7 @@ class Component extends DCLogic {
       ACERVO_EM = j.gerado_em || "";
       this.setState({ acervoN: DOCS.length });
     }).catch(() => {});
-    if (pIni === "calculadora") this.carregarIndices();
+    if (pIni === "calculadora") { this.carregarIndices(); const fIni = qsIni.get("f"); if (fIni && CALC_FERRAMENTAS.some((x) => x.id === fIni)) this.calcFerramenta(fIni); }
     this.timer = setInterval(() => {
       if (!this.state.pausado && this.state.page === "home") {
         this.setState((s) => ({ slide: (s.slide + 1) % SLIDES.length }));
@@ -5616,6 +5685,7 @@ class Component extends DCLogic {
     if (u && (this.state.page === "login" || this.state.page === "cadastro")) { this.irPara(this.state.page, false); }
     this.carregarOferta();
     if (u) await this.carregarDados();
+    if (this.state.page === "forum" && (!u || !this.podeLerForum())) this.carregarVitrine();
     this.tratarRetornoPagamento();
     this.carregarCursos();
   }
@@ -6288,6 +6358,7 @@ class Component extends DCLogic {
       try { history.pushState({ p: destino }, "", url); } catch (e) { /* sem histórico */ }
     }
     if (destino === "forum" && this.u) this.carregarForum({ leve: true });
+    if (destino === "forum" && (!this.u || !this.podeLerForum())) this.carregarVitrine();
     if (destino === "agente" && this.u) this.carregarDados({ leve: true });
     if (destino === "calculadora") this.carregarIndices();
   }
@@ -6383,6 +6454,13 @@ class Component extends DCLogic {
   }
 
   // ------------------------------------------------------------ fórum
+  // vitrine pública do fórum (títulos das perguntas e temas), para visitantes e cadastrados sem plano
+  async carregarVitrine() {
+    if (!this.sb || this._vitrineEm && Date.now() - this._vitrineEm < 120000) return;
+    this._vitrineEm = Date.now();
+    const { data, error } = await this.sb.rpc("forum_vitrine");
+    if (!error && data) this.setStateSuave((s) => ({ forumVitrine: data, topico: (data.topicos || []).some((t) => t.nome === s.topico) ? s.topico : ((data.topicos || [])[0] || {}).nome || s.topico }));
+  }
   async carregarForum(opcoes) {
     if (!this.sb || !this.u) return;
     if (this._forumCarregando) return;
@@ -6442,7 +6520,7 @@ class Component extends DCLogic {
   };
 
   abrirNovaPergunta() {
-    if (this.state.sb && !this.state.usuario) { this.irPara("forum"); return; }
+    if (this.state.sb && !this.state.usuario) { this.setState({ volta: "forum" }); this.irPara("cadastro"); return; }
     if (this.state.sb && !this.podeParticipar()) { this.aviso("Perguntar e responder no fórum é para assinantes Básico, Premium e Pro.", "erro"); return; }
     this.setState((s) => ({ nova: { ...s.nova, aberta: !s.nova.aberta, erro: "" } }));
   }
@@ -6768,6 +6846,13 @@ class Component extends DCLogic {
       try { localStorage.setItem("lv-mo-" + x.mo.modo, JSON.stringify(d)); } catch (e) {}
       return { mo: { ...x.mo, d } };
     });
+  }
+  // troca de ferramenta da calculadora (subpágina com endereço próprio: ?p=calculadora&f=…)
+  calcFerramenta(id) {
+    if (id === "reajuste") this.setState({ calcAba: "indice" });
+    else { if (this.state.mo.modo !== id) this.moModo(id); this.setState({ calcAba: "mo" }); }
+    this.carregarIndices();
+    try { history.replaceState({ p: "calculadora" }, "", location.pathname + "?p=calculadora&f=" + id); } catch (e) {}
   }
   moPodeAgente() { const s = this.state; return !!(s.admin || s.plano === "pro"); }
 
@@ -7654,9 +7739,13 @@ class Component extends DCLogic {
       calcAbaIndice: s.calcAba !== "mo", calcAbaMo: s.calcAba === "mo",
       calcAbaIdxCls: "lvc-aba" + (s.calcAba !== "mo" ? " ativo" : ""), calcAbaMoCls: "lvc-aba" + (s.calcAba === "mo" ? " ativo" : ""),
       calcIrIndice: () => this.setState({ calcAba: "indice" }), calcIrMo: () => { this.setState({ calcAba: "mo" }); this.carregarIndices(); },
-      calcH1: s.calcAba === "mo" ? "Custo do profissional com dedicação exclusiva, no formato da IN 05/2017." : "Reajuste de contrato calculado certo, com a nota técnica pronta.",
-      calcLead: s.calcAba === "mo" ? "Planilha de custos e formação de preços (Anexo VII-D da IN SEGES/MP nº 5/2017) para formar o custo na fase de planejamento ou demonstrar a repactuação, com os percentuais legais e os custos não renováveis."
-        : "Índices oficiais atualizados todos os dias, conferência dos 12 meses, ciclos acumulados e memória de cálculo mês a mês. No fim, você baixa a nota técnica em PDF para juntar ao processo.",
+      ...(() => {
+        const atual = s.calcAba === "mo" ? mo.modo : "reajuste", f = CALC_FERRAMENTAS.find((x) => x.id === atual) || CALC_FERRAMENTAS[0];
+        const ir = (id) => () => this.calcFerramenta(id);
+        return { calcH1: f.h1, calcLead: f.lead, calcFerrNome: f.nome, calcFerrPlano: f.plano, calcFerrBenef: f.beneficios.map((t) => ({ t })),
+          calcAbas: CALC_FERRAMENTAS.map((x) => ({ nome: x.nome, ativo: x.id === atual, cls: "lvc-aba" + (x.id === atual ? " ativo" : ""), ir: ir(x.id) })),
+          calcFerrCards: CALC_FERRAMENTAS.map((x) => ({ nome: x.nome, curto: x.curto, ativo: x.id === atual, cls: "lvc-fc" + (x.id === atual ? " ativo" : ""), ir: ir(x.id) })) };
+      })(),
       moPlan: mo.modo === "planejamento", moRep: rep, moProp: prop, moTemPlanArq: rep || prop,
       moPlanRot: prop ? "Planilha de custos da proposta" : "Planilha utilizada na contratação",
       moPlanSub: prop ? "A planilha de custos e formação de preços apresentada pela licitante, em PDF ou Excel (.xlsx)." : "A planilha de custos da proposta vencedora ou do contrato, em PDF ou Excel (.xlsx).",
@@ -8354,8 +8443,10 @@ class Component extends DCLogic {
       { nome: "Dispensa e Inexigibilidade", perguntas: 73, ultima: "há 2 dias", descricao: "Hipóteses legais, singularidade do objeto e notória especialização." }
     ];
     const forumReal = conectado && Array.isArray(s.forumTopicos);
+    const vitrineAtiva = !!s.sb && (!logado || (s.sb && logado && !this.podeLerForum()));
     const topicosDefs = forumReal
       ? s.forumTopicos.map((t) => ({ id: t.id, nome: t.nome, descricao: t.descricao, perguntas: Number(t.perguntas || 0), ultima: t.ultima ? haQuanto(t.ultima) : "sem perguntas ainda" }))
+      : vitrineAtiva && s.forumVitrine ? (s.forumVitrine.topicos || []).map((t) => ({ nome: t.nome, descricao: t.descricao, perguntas: Number(t.perguntas || 0), ultima: t.ultima ? haQuanto(t.ultima) : "sem perguntas ainda" }))
       : topicosDemo;
     const topicoAtual = topicosDefs.find((t) => t.nome === s.topico) || topicosDefs[0] || { nome: "", descricao: "" };
 
@@ -8906,7 +8997,7 @@ class Component extends DCLogic {
         return {
           calcLiberada: liberada, calcBloqueada: !liberada,
           calcBloqTexto: s.usuario ? "Comece o teste grátis de 7 dias ou escolha um plano para usar a calculadora e baixar a nota técnica." : "Entre na sua conta para usar. Se ainda não assina, o teste de 7 dias é grátis e sem cartão.",
-          calcBloqCta: s.usuario ? "Ver teste e planos" : "Entrar ou criar conta", calcBloqAcao: s.usuario ? this.nav("planos") : () => { this.setState({ volta: "calculadora" }); this.irPara("login"); },
+          calcBloqCta: s.usuario ? "Começar o teste grátis" : "Criar conta grátis", calcVerPlanos: this.nav("planos"), calcBloqAcao: s.usuario ? this.nav("planos") : () => { this.setState({ volta: "calculadora" }); this.irPara("login"); },
           calcRegimes: opt([["14133", "Lei 14.133/2021"], ["13303", "Lei 13.303/2016 (estatais)"], ["13019", "Lei 13.019/2014 (parcerias)"]], c.regime, "regime"),
           calcIndices: opt(idxNomes, c.indice, "indice"),
           calcMetodos: opt([["a", "A partir do mês da data-base (ex.: mar a fev)"], ["b", "A partir do mês seguinte (ex.: abr a mar)"]], c.metodo, "metodo"),
@@ -9111,11 +9202,11 @@ class Component extends DCLogic {
 
       // fórum
       topicos: topicosDefs.map((t) => ({ ...t, ativo: t.nome === s.topico, classe: "lvf-tema" + (t.nome === s.topico ? " ativo" : ""), abrir: this.abrirTopico(t.nome) })),
-      forumMostraLista: !forumBloqueado && !s.nova.aberta && !s.forumVerRanking && !threads.some((t) => t.id === s.threadAberta) && threads.length > 0,
-      forumMostraDetalhe: !forumBloqueado && !s.nova.aberta && !s.forumVerRanking && threads.some((t) => t.id === s.threadAberta),
+      forumMostraLista: !forumBloqueado && !vitrineAtiva && !s.nova.aberta && !s.forumVerRanking && !threads.some((t) => t.id === s.threadAberta) && threads.length > 0,
+      forumMostraDetalhe: !forumBloqueado && !vitrineAtiva && !s.nova.aberta && !s.forumVerRanking && threads.some((t) => t.id === s.threadAberta),
       threadAtual: threads.filter((t) => t.id === s.threadAberta),
       fecharThread: () => this.setState({ threadAberta: null, respondendo: null }),
-      forumVerRanking: !!s.forumVerRanking && !forumBloqueado,
+      forumVerRanking: !!s.forumVerRanking && !forumBloqueado && !vitrineAtiva,
       abrirRanking: () => { this.setState({ forumVerRanking: true, threadAberta: null }); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} },
       fecharRanking: () => this.setState({ forumVerRanking: false }),
       rankTop: (s.forumRank.mes || []).slice(0, 5).map((x, i) => ({ pos: i + 1 + "º", nome: x.nome || "Participante", pontos: x.pontos + " pts" })),
@@ -9139,10 +9230,19 @@ class Component extends DCLogic {
       }),
       filtroVazio: threads.length > 0 && !threads.filter((t) => s.forumFiltro === "todas" || (s.forumFiltro === "sem" ? t.respostas.length === 0 : t.respostas.length > 0)).length,
       topicoAtual, threads,
-      semThreads: forumReal && !forumBloqueado && !s.forumCarregando && threads.length === 0,
+      semThreads: forumReal && !forumBloqueado && !vitrineAtiva && !s.forumCarregando && threads.length === 0,
       forumCarregando: forumReal && s.forumCarregando,
       forumErro: s.forumErro,
-      forumBloqueado,
+      forumBloqueado: forumBloqueado && !vitrineAtiva,
+      forumVitrine: vitrineAtiva, forumVisitante: !!s.sb && !logado, forumNaoVisitante: !(s.sb && !logado),
+      vitLista: vitrineAtiva && s.forumVitrine ? (s.forumVitrine.perguntas || []).filter((q) => q.topico === topicoAtual.nome).slice(0, 25)
+        .map((q) => ({ titulo: q.titulo, meta: (q.respostas ? q.respostas + (q.respostas === 1 ? " resposta" : " respostas") : "aguardando resposta") + " · " + haQuanto(q.criado_em) + (q.oficial ? " · com resposta do especialista" : "") })) : [],
+      vitVazia: vitrineAtiva && !!s.forumVitrine && !(s.forumVitrine.perguntas || []).some((q) => q.topico === topicoAtual.nome),
+      vitCarregando: vitrineAtiva && !s.forumVitrine,
+      vitTitulo: logado ? "Leia as respostas com o teste grátis de 7 dias" : "Crie sua conta grátis para ler as respostas",
+      vitTexto: logado ? "A leitura das perguntas e respostas faz parte do teste e de todos os planos; perguntar e responder, dos planos Básico, Premium e Pro." : "Os títulos das discussões são públicos. Com a conta grátis você ativa o teste de 7 dias e lê as respostas da comunidade e do especialista; nos planos, também pergunta e responde.",
+      vitCta: logado ? "Começar o teste grátis" : "Criar conta grátis", vitAcao: logado ? () => this.irPara("planos") : () => { this.setState({ volta: "forum" }); this.irPara("cadastro"); },
+      vitEntrar: () => { this.setState({ volta: "forum" }); this.irPara("login"); },
       forumLivre: !forumBloqueado,
       comecarTeste: () => { this.irPara("planos"); },
       novaPergunta: () => this.abrirNovaPergunta(),
@@ -9165,7 +9265,7 @@ class Component extends DCLogic {
       respBotao: s.respEnviando ? "Enviando…" : "Publicar resposta",
       cancelarResposta: () => this.setState({ respondendo: null }),
       seguirLabel: topicoSeguido ? "✓ Seguindo" : "🔔 Notificar-me",
-      seguirTopico: () => { if (forumReal) this.alternarSeguir(); else this.aviso("Disponível para quem está logado."); },
+      seguirTopico: () => { if (forumReal) this.alternarSeguir(); else if (s.sb && !logado) { this.setState({ volta: "forum" }); this.irPara("cadastro"); } else this.aviso("Disponível para assinantes."); },
       podeParticipar: !s.sb || this.podeParticipar(),
 
       // cursos
