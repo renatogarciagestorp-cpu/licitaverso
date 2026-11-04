@@ -988,6 +988,9 @@
   .lmo-falha { border: 1px solid #E3E9E8; border-left: 4px solid #C98A1B; border-radius: 10px; padding: 10px 12px; background: #fff; }
   .lmo-falha.g-alta { border-left-color: #B83232; } .lmo-falha.g-baixa { border-left-color: #0F6B7E; }
   .lmo-falha p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.5; color: #26393F; }
+  .lmo-aceite { display: grid; gap: 10px; margin-top: 12px; padding: 14px 16px; border: 1px solid #F1D9A6; background: #FFF8E8; border-radius: 12px; }
+  .lmo-aceite span { font-size: 14px; font-weight: 700; line-height: 1.5; color: #172B33; }
+  .lmo-aceite .lmo-btn { justify-self: start; }
   .lmo-imp { color: #8A1230 !important; }
   .lmo-falha-cab { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 14px; }
   .lmo-falha-cab span { font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: #66757F; }
@@ -2272,6 +2275,14 @@
               <h2 class="lmo-h2">Falhas e inconsistências da planilha da contratação</h2>
               <p class="lmo-nota">{{ moFalhasResumo }} Cada item traz o fundamento e o caminho correto. A planilha repactuada acima já considera as correções indicadas pelo agente; confira antes de concluir.</p>
               <p class="lve-aviso" role="note"><b>Atenção:</b> manter qualquer uma dessas falhas na planilha impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores. Corrija cada item antes de concluir a repactuação.</p>
+              <sc-if value="{{ moFalhasPendente }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-aceite">
+                  <label class="lvc-check" style="align-items: flex-start"><input type="checkbox" checked="{{ moFalhasMarcado }}" sc-camel-on-change="{{ onMoFalhasMarcar }}" style="margin-top: 2px">
+                    <span>Estou ciente das falhas e inconsistências apontadas na planilha juntada e concordo com o prosseguimento da análise da repactuação com base nela, sabendo que a manutenção das falhas impactará os valores da repactuação.</span></label>
+                  <button type="button" class="lmo-btn" sc-camel-on-click="{{ moFalhasConcordar }}">Concordo e prosseguir</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ moFalhasAceito }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok">✓ {{ moFalhasAceiteTxt }}</p></sc-if>
               <ol class="lmo-falhas">
                 <sc-for list="{{ moFalhas }}" as="f" hint-placeholder-count="2">
                   <li class="{{ f.cls }}">
@@ -2312,6 +2323,7 @@
                 <button type="button" class="lmo-btn lmo-btn2" sc-camel-on-click="{{ moBaixarPdf }}">Baixar em PDF</button>
                 <button type="button" class="lve-voltar" sc-camel-on-click="{{ moLimpar }}">Limpar a planilha</button>
               </div>
+              <sc-if value="{{ moErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moErro }}</p></sc-if>
             </section>
           </div>
           </sc-if>
@@ -6173,6 +6185,12 @@ class Component extends DCLogic {
     const notas = [].concat(rep ? ["Custos não renováveis: aviso prévio trabalhado limitado a 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário; IN 05/2017, art. 57)."] : [])
       .concat(rj && rj.pronto ? ["Insumos reajustados pelo índice do contrato (" + rj.msg + ")."] : []);
     const falhas = rep ? (d.falhas || []) : [];
+    if (falhas.length && !d.falhas_aceite) {
+      this.setState((x) => ({ mo: { ...x.mo, erro: "Antes de baixar, leia as falhas apontadas na planilha da contratação e confirme se concorda com o prosseguimento da análise." } }));
+      try { document.querySelector(".lmo-aceite").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {}
+      return;
+    }
+    if (falhas.length) notas.push("O assinante declarou estar ciente das falhas e inconsistências apontadas na planilha da contratação e concordou com o prosseguimento da análise com base nela, sabendo que a manutenção das falhas impacta os valores da repactuação (" + new Date(d.falhas_aceite).toLocaleString("pt-BR") + ").");
     const nome = (rep ? "planilha-repactuacao" : "planilha-planejamento") + "-" + (d.categoria || "mao-de-obra").toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
     this.setState((x) => ({ mo: { ...x.mo, baixando: true, erro: "" } }));
     try {
@@ -6254,7 +6272,7 @@ class Component extends DCLogic {
     if (error) { erro(await erroDaFuncao(error)); return; }
     const campos = (data && data.campos) || [];
     this.setState((x) => {
-      const d2 = { ...x.mo.d, fontes: { ...(x.mo.d.fontes || {}) }, falhas: x.mo.modo === "repactuacao" ? ((data && data.falhas) || []) : (x.mo.d.falhas || []) };
+      const d2 = { ...x.mo.d, fontes: { ...(x.mo.d.fontes || {}) }, falhas: x.mo.modo === "repactuacao" ? ((data && data.falhas) || []) : (x.mo.d.falhas || []), falhas_aceite: x.mo.modo === "repactuacao" ? "" : (x.mo.d.falhas_aceite || "") };
       campos.forEach((c) => {
         const num = /^-?\d+(\.\d+)?$/.test(String(c.valor).trim());
         d2[c.campo] = num ? String(c.valor).trim().replace(".", ",") : c.valor;
@@ -6364,7 +6382,12 @@ class Component extends DCLogic {
         campo("data_proposta", "Data de apresentação da proposta", "dd/mm/aaaa"), campo("meses", "Nº de meses de execução contratual", "12")]
         .concat(rep ? [campo("ano_exec", "Ano de execução do contrato após a repactuação", "Ex.: 2"), campo("vigente", "Preço vigente por empregado (antes da repactuação, R$)", "Ex.: 4.320,15")] : []),
       moCct: d.cct_nome || "", moSemCct: !d.cct_nome, moCctRot: rep ? "Nova convenção coletiva (obrigatória)" : "Convenção coletiva",
-      moTemFalhas: rep && (d.falhas || []).length > 0, moSemFalhasOk: rep && Array.isArray(d.falhas) && d.falhas.length === 0 && !!d.fontes,
+      moTemFalhas: rep && (d.falhas || []).length > 0,
+      moFalhasPendente: rep && (d.falhas || []).length > 0 && !d.falhas_aceite,
+      moFalhasAceito: rep && (d.falhas || []).length > 0 && !!d.falhas_aceite,
+      moFalhasAceiteTxt: d.falhas_aceite ? "Você concordou com o prosseguimento da análise em " + new Date(d.falhas_aceite).toLocaleString("pt-BR") + ", ciente das inconsistências." : "",
+      moFalhasMarcado: !!mo.falhasMarcado, onMoFalhasMarcar: (e) => { const v = e.target.checked; this.setState((x) => ({ mo: { ...x.mo, falhasMarcado: v } })); },
+      moFalhasConcordar: () => { if (!mo.falhasMarcado) { this.setState((x) => ({ mo: { ...x.mo, erro: "Marque a declaração para prosseguir." } })); return; } this.moSet("falhas_aceite")(new Date().toISOString()); this.setState((x) => ({ mo: { ...x.mo, erro: "" } })); }, moSemFalhasOk: rep && Array.isArray(d.falhas) && d.falhas.length === 0 && !!d.fontes,
       moFalhas: (d.falhas || []).map((f, i) => ({ n: i + 1, rubrica: f.rubrica, problema: f.problema, fundamento: f.fundamento, correcao: f.correcao, impacto: f.impacto || "", temImpacto: !!f.impacto,
         grav: { alta: "Alta", media: "Média", baixa: "Baixa" }[f.gravidade] || "Média", cls: "lmo-falha g-" + (f.gravidade || "media") })),
       moFalhasResumo: (() => { const fs = d.falhas || []; const c = (g) => fs.filter((f) => f.gravidade === g).length; return fs.length + " falha(s) na planilha da contratação: " + c("alta") + " alta(s), " + c("media") + " média(s), " + c("baixa") + " baixa(s)."; })(),
