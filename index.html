@@ -2380,27 +2380,6 @@
               </sc-if>
             </section>
 
-            <section class="lmo-bloco" id="lmo-agente">
-              <h2 class="lmo-h2">{{ moAgenteTitulo }}</h2>
-              <p class="lmo-nota">{{ moAgenteTxt }}</p>
-              <div class="lmo-agente">
-                <sc-if value="{{ moPro }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moAgente }}">{{ moBotaoAgente }}</button></sc-if>
-                <sc-if value="{{ moSemPro }}" hint-placeholder-val="{{ false }}"><span class="lmo-pro">Exclusivo do plano Pro</span><button type="button" class="lve-voltar" sc-camel-on-click="{{ moIrPlanos }}">Conhecer o Pro</button></sc-if>
-              </div>
-              <sc-if value="{{ moErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moErro }}</p></sc-if>
-              <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
-              <sc-if value="{{ moIssPedir }}" hint-placeholder-val="{{ false }}">
-                <div class="lmo-aceite">
-                  <span>Não encontramos em fonte oficial a alíquota do ISS de {{ moIssLocal }}. Informe a alíquota para ela entrar na planilha (Módulo 6, C.3).</span>
-                  <div class="lmo-campos">
-                    <label class="lmo-campo"><span>Alíquota do ISS (%)</span><input type="text" inputmode="decimal" value="{{ moIssAliq }}" sc-camel-on-input="{{ onMoIssAliq }}" placeholder="Ex.: 3"></label>
-                    <label class="lmo-campo"><span>Fonte (lei municipal, artigo)</span><input type="text" value="{{ moIssFonte }}" sc-camel-on-input="{{ onMoIssFonte }}" placeholder="Ex.: Lei Complementar nº 123/2017, art. 40"></label>
-                  </div>
-                  <button type="button" class="lmo-btn" sc-camel-on-click="{{ moIssUsar }}">Usar na planilha</button>
-                </div>
-              </sc-if>
-              <sc-if value="{{ moTemObs }}" hint-placeholder-val="{{ false }}"><ul class="lmo-obs"><sc-for list="{{ moObs }}" as="o" hint-placeholder-count="2"><li>{{ o }}</li></sc-for></ul></sc-if>
-            </section>
 
             <sc-if value="{{ moPlan }}" hint-placeholder-val="{{ true }}">
             <section class="lmo-bloco">
@@ -2465,14 +2444,6 @@
             </section>
             </sc-if>
 
-            <section class="lmo-bloco">
-              <h2 class="lmo-h2">Parâmetros dos benefícios (Submódulo 2.3)</h2>
-              <div class="lmo-campos">
-                <sc-for list="{{ moBenef }}" as="c" hint-placeholder-count="5">
-                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
-                </sc-for>
-              </div>
-            </section>
 
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Memória de cálculo dos insumos (Módulo 5)</h2>
@@ -2499,6 +2470,37 @@
               </sc-for>
               <div class="lmo-campos" style="margin-top: 12px"><label class="lmo-campo"><span>Custo financeiro dos equipamentos (% ao mês sobre o investimento, opcional)</span><input type="text" inputmode="decimal" value="{{ moMemCf }}" sc-camel-on-input="{{ onMoMemCf }}" placeholder="Ex.: 0,8363 (SELIC mensal)"></label></div>
               <p class="lmo-nota">{{ moMemEmp }}</p>
+            </section>
+
+            <section class="lmo-bloco" id="lmo-agente">
+              <h2 class="lmo-h2">{{ moAgenteTitulo }}</h2>
+              <p class="lmo-nota">{{ moAgenteTxt }}</p>
+              <div class="lmo-agente">
+                <sc-if value="{{ moPro }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moAgente }}">{{ moBotaoAgente }}</button></sc-if>
+                <sc-if value="{{ moSemPro }}" hint-placeholder-val="{{ false }}"><span class="lmo-pro">Exclusivo do plano Pro</span><button type="button" class="lve-voltar" sc-camel-on-click="{{ moIrPlanos }}">Conhecer o Pro</button></sc-if>
+              </div>
+              <sc-if value="{{ moErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moErro }}</p></sc-if>
+              <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
+              <sc-if value="{{ moIssPedir }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-aceite">
+                  <span>Não encontramos em fonte oficial a alíquota do ISS de {{ moIssLocal }}. Informe a alíquota para ela entrar na planilha (Módulo 6, C.3).</span>
+                  <div class="lmo-campos">
+                    <label class="lmo-campo"><span>Alíquota do ISS (%)</span><input type="text" inputmode="decimal" value="{{ moIssAliq }}" sc-camel-on-input="{{ onMoIssAliq }}" placeholder="Ex.: 3"></label>
+                    <label class="lmo-campo"><span>Fonte (lei municipal, artigo)</span><input type="text" value="{{ moIssFonte }}" sc-camel-on-input="{{ onMoIssFonte }}" placeholder="Ex.: Lei Complementar nº 123/2017, art. 40"></label>
+                  </div>
+                  <button type="button" class="lmo-btn" sc-camel-on-click="{{ moIssUsar }}">Usar na planilha</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ moTemObs }}" hint-placeholder-val="{{ false }}"><ul class="lmo-obs"><sc-for list="{{ moObs }}" as="o" hint-placeholder-count="2"><li>{{ o }}</li></sc-for></ul></sc-if>
+            </section>
+
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Parâmetros dos benefícios (Submódulo 2.3)</h2>
+              <div class="lmo-campos">
+                <sc-for list="{{ moBenef }}" as="c" hint-placeholder-count="5">
+                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
+                </sc-for>
+              </div>
             </section>
 
 
