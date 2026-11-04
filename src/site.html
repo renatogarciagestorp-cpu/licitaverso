@@ -556,6 +556,25 @@
 .lvh-art-linha li:first-child::before { border-color: #F0B44C; }
 .lvh-art-linha b { font-size: 13.5px; color: #0B1F2A; }
 .lvh-art-linha span { font-size: 12.5px; color: #6A7B82; }
+.lvh-ban-in.lvh-bd { display: block; }
+.lvh-bd-top { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 56px; align-items: center; }
+.lvh-bd-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.lvh-bd-nums > div { display: grid; gap: 4px; padding: 4px 18px; border-left: 1px solid #DDE4E3; }
+.lvh-bd-nums > div:first-child { border-left: 0; padding-left: 0; }
+.lvh-bd-nums > div > strong { display: block; font-family: Manrope, system-ui, sans-serif; font-size: 38px; line-height: 1; font-weight: 700; letter-spacing: -0.02em; color: #0A7A50; }
+.lvh-bd-nums > div > span { font-size: 13.5px; line-height: 1.4; color: #4A5D64; }
+.lvh-bd-fontes { margin: 22px 0 0; font-size: 12.5px; line-height: 1.6; color: #6A7B82; }
+.lvh-bd-dif { margin-top: 44px; padding-top: 32px; border-top: 1px solid #E6ECEB; }
+.lvh-bd-sub { margin: 0 0 22px; font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #0B1F2A; }
+.lvh-bd-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 26px 28px; }
+.lvh-bd-mais { align-self: start; justify-self: start; font: inherit; font-size: 14.5px; font-weight: 800; color: #0A7A50; background: #E3F5EC; border: 0; border-radius: 12px; padding: 12px 16px; cursor: pointer; }
+.lvh-bd-mais:hover, .lvh-bd-mais:focus-visible { background: #CDEEDD; outline: none; }
+.lvh-bd-item { display: flex; gap: 12px; align-items: flex-start; }
+.lvh-bd-item > span { width: 30px; height: 30px; border-radius: 9px; background: #E3F5EC; color: #0A7A50; display: grid; place-items: center; font-size: 14px; font-weight: 800; flex: none; }
+.lvh-bd-item b { display: block; font-size: 14.5px; color: #0B1F2A; line-height: 1.3; }
+.lvh-bd-item p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.5; color: #55666D; }
+@media (max-width: 980px) { .lvh-bd-top { grid-template-columns: 1fr; gap: 28px; } .lvh-bd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .lvh-bd-grid { grid-template-columns: 1fr; gap: 18px; } .lvh-bd-nums > div > strong { font-size: 28px; } .lvh-bd-nums > div { padding: 2px 10px; } .lvh-bd-dif { margin-top: 30px; padding-top: 24px; } }
 .lvh-top-in { max-width: 1240px; margin: 0 auto; }
 .lvh-top-h1 { font-size: 44px; line-height: 1.06; letter-spacing: -0.03em; font-weight: 800; margin: 12px 0 0; max-width: 24ch; }
 .lvh-top-h1 em { font-style: normal; color: #3FD49A; }
@@ -1711,35 +1730,33 @@
         </div>
       </section>
 
-      <section class="lvh-sec" id="h-biblioteca">
-        <div class="lvh-bibsec">
-          <div>
-            <span class="lvh-bib-tag">Biblioteca Jurídica · pesquisa aberta e gratuita</span>
-            <h2 class="lvh-h2" style="margin-top: 14px">Jurisprudência de todo o país, sem pagar nada.</h2>
-            <p class="lvh-bib-lead">Pesquise, sem cadastro, decisões do TCU, dos Tribunais de Contas, das Procuradorias-Gerais e dos Tribunais de Justiça, com filtros por órgão, estado, tema e ano, o link oficial em cada decisão. Com a conta grátis, suas anotações, marcadores e dossiês ficam salvos.</p>
-            <button class="lvh-btn" style="margin-top: 22px" sc-camel-on-click="{{ goBiblioteca }}">Pesquisar na Biblioteca</button>
-          </div>
-          <div>
-            <div class="lvh-nums">
-              <sc-for list="{{ homeNumeros }}" as="n" hint-placeholder-count="3">
-                <div class="lvh-num"><strong class="lvh-num-v">{{ n.v }}</strong><span>{{ n.r }}</span></div>
-              </sc-for>
+      <section class="lvh-ban" id="h-biblioteca">
+        <div class="lvh-ban-in lvh-ban-claro lvh-bd">
+          <div class="lvh-bd-top">
+            <div>
+              <span class="lvh-ban-eye">⌕ Biblioteca Jurídica · aberta e gratuita</span>
+              <h2 class="lvh-ban-h">Jurisprudência de todo o país, <em>sem pagar nada</em>.</h2>
+              <p class="lvh-ban-lead">Pesquise sem cadastro decisões do TCU, dos Tribunais de Contas, das Procuradorias-Gerais e dos Tribunais de Justiça, com filtros por órgão, estado, tema e ano e o link oficial em cada decisão. Com a conta grátis, anotações, marcadores e dossiês ficam salvos.</p>
+              <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goBiblioteca }}">Pesquisar na Biblioteca</button></div>
             </div>
-            <p class="lvh-fontes">TCU · CGU · STF · STJ · Tribunais de Contas dos 26 estados e do DF · TCMs de SP, RJ, GO, BA e PA · Procuradorias-Gerais e Tribunais de Justiça de todo o país</p>
+            <div>
+              <div class="lvh-bd-nums">
+                <sc-for list="{{ homeNumeros }}" as="n" hint-placeholder-count="3">
+                  <div><strong>{{ n.v }}</strong><span>{{ n.r }}</span></div>
+                </sc-for>
+              </div>
+              <p class="lvh-bd-fontes">TCU · CGU · STF · STJ · Tribunais de Contas dos 26 estados e do DF · TCMs de SP, RJ, GO, BA e PA · Procuradorias-Gerais e Tribunais de Justiça de todo o país</p>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <section class="lvh-sec">
-        <div class="lvh-dif">
-          <div class="lvh-dif-cab">
-            <p class="lvh-kicker" style="color: #3FD49A">Diferenciais</p>
-            <h2 class="lvh-h2" style="color: #fff; margin: 0">Por que não é mais uma base jurídica genérica</h2>
-            <p class="lvh-dif-lead">Tudo aqui foi feito só para licitações e contratos administrativos, da classificação por tema até o roteiro que o agente segue.</p>
+          <div class="lvh-bd-dif">
+            <p class="lvh-bd-sub">Por que não é mais uma base jurídica genérica</p>
+            <div class="lvh-bd-grid">
+              <sc-for list="{{ diferenciais }}" as="d" hint-placeholder-count="7">
+                <div class="lvh-bd-item"><span aria-hidden="true">{{ d.icon }}</span><div><b>{{ d.titulo }}</b><p>{{ d.desc }}</p></div></div>
+              </sc-for>
+              <button type="button" class="lvh-bd-mais" sc-camel-on-click="{{ goBiblioteca }}">Começar a pesquisar <span aria-hidden="true">→</span></button>
+            </div>
           </div>
-          <sc-for list="{{ diferenciais }}" as="d" hint-placeholder-count="7">
-            <div class="lvh-dif-item"><span class="lvh-dif-ic" aria-hidden="true">{{ d.icon }}</span><b>{{ d.titulo }}</b><span>{{ d.desc }}</span></div>
-          </sc-for>
         </div>
       </section>
 
