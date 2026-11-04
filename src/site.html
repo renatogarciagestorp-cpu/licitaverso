@@ -2205,7 +2205,7 @@
               <h2 class="lmo-h2">Dados para composição dos custos referentes à mão de obra</h2>
               <div class="lmo-campos">
                 <sc-for list="{{ moCamposIni }}" as="c" hint-placeholder-count="8">
-                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
+                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" data-mo-campo="{{ c.k }}" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
                 </sc-for>
               </div>
               <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
@@ -2225,6 +2225,16 @@
               </div>
               <sc-if value="{{ moErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moErro }}</p></sc-if>
               <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
+              <sc-if value="{{ moIssPedir }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-aceite">
+                  <span>Não encontramos em fonte oficial a alíquota do ISS de {{ moIssLocal }}. Informe a alíquota para ela entrar na planilha (Módulo 6, C.3).</span>
+                  <div class="lmo-campos">
+                    <label class="lmo-campo"><span>Alíquota do ISS (%)</span><input type="text" inputmode="decimal" value="{{ moIssAliq }}" sc-camel-on-input="{{ onMoIssAliq }}" placeholder="Ex.: 3"></label>
+                    <label class="lmo-campo"><span>Fonte (lei municipal, artigo)</span><input type="text" value="{{ moIssFonte }}" sc-camel-on-input="{{ onMoIssFonte }}" placeholder="Ex.: Lei Complementar nº 123/2017, art. 40"></label>
+                  </div>
+                  <button type="button" class="lmo-btn" sc-camel-on-click="{{ moIssUsar }}">Usar na planilha</button>
+                </div>
+              </sc-if>
               <sc-if value="{{ moTemObs }}" hint-placeholder-val="{{ false }}"><ul class="lmo-obs"><sc-for list="{{ moObs }}" as="o" hint-placeholder-count="2"><li>{{ o }}</li></sc-for></ul></sc-if>
             </section>
 
@@ -6348,6 +6358,11 @@ class Component extends DCLogic {
     if (!this.u) { this.setState({ volta: "calculadora" }); this.irPara("login"); return; }
     if (!this.moPodeAgente()) { erro("O preenchimento pelo agente é exclusivo do plano Pro."); return; }
     const rep = mo.modo === "repactuacao";
+    if (!String(d.municipio || "").trim() || !/^[A-Za-z]{2}$/.test(String(d.uf || "").trim())) {
+      erro("Antes da análise, informe o município e a UF onde o serviço será prestado: o agente busca a alíquota do ISS desse município.");
+      try { const el = document.querySelector('[data-mo-campo="municipio"]'); el.scrollIntoView({ behavior: "smooth", block: "center" }); el.focus(); } catch (e) {}
+      return;
+    }
     if (!d.cct_arquivo) { erro(rep ? "Envie a nova convenção coletiva em PDF: ela é obrigatória para a análise da repactuação." : "Envie primeiro a convenção coletiva em PDF."); return; }
     if (rep && !d.plan_arquivo && !this._moPlanTexto) { erro("Envie a planilha utilizada na contratação (PDF ou Excel)" + (d.plan_nome ? " de novo: o arquivo em Excel precisa ser escolhido nesta visita." : ".")); return; }
     this.setState((x) => ({ mo: { ...x.mo, agente: true, erro: "", ok: "", obs: [] } }));
@@ -6362,8 +6377,14 @@ class Component extends DCLogic {
         d2[c.campo] = num ? String(c.valor).trim().replace(".", ",") : c.valor;
         d2.fontes[c.campo] = c.fonte;
       });
+      const iss = (data && data.iss) || null;
+      let issPedir = null;
+      if (iss && iss.encontrado && iss.aliquota) {
+        d2.iss = String(iss.aliquota).replace(".", ",");
+        d2.fontes.iss = "ISS de " + iss.municipio + "/" + iss.uf + (iss.item ? " (item " + iss.item + " da LC 116/2003)" : "") + ": " + (iss.fonte || "fonte oficial do município");
+      } else if (iss) issPedir = { municipio: iss.municipio, uf: iss.uf, item: iss.item || "", aliquota: "", fonte: "" };
       try { localStorage.setItem("lv-mo-" + x.mo.modo, JSON.stringify(d2)); } catch (e) {}
-      return { mo: { ...x.mo, d: d2, agente: false, ok: campos.length ? "✓ O agente preencheu " + campos.length + " campo(s). Confira cada valor e a fonte indicada na linha." : "O agente não encontrou valores para preencher.", obs: (data && data.observacoes) || [] } };
+      return { mo: { ...x.mo, d: d2, agente: false, issPedir, ok: campos.length ? "✓ O agente preencheu " + campos.length + " campo(s). Confira cada valor e a fonte indicada na linha." : "O agente não encontrou valores para preencher.", obs: (data && data.observacoes) || [] } };
     });
   }
   moSet = (k) => (e) => {
@@ -6453,7 +6474,7 @@ class Component extends DCLogic {
         L("B", "Lucro", { k: "lucro", v: r.lucro, nota: "Sobre o subtotal + custos indiretos." }),
         L("C.1", "PIS", { k: "pis", v: r.pis }),
         L("C.2", "COFINS", { k: "cofins", v: r.cofins }),
-        L("C.3", "ISS", { k: "iss", v: r.iss, nota: "Tributos calculados \"por dentro\": P1 = Po ÷ (1 − tributos)." })], total: T("Total do Módulo 6", r.M6p, r.M6) }
+        L("C.3", "ISS", { k: "iss", v: r.iss, nota: "Alíquota do município onde o serviço será prestado (LC 116/2003: entre 2% e 5%). Tributos calculados \"por dentro\": P1 = Po ÷ (1 − tributos)." })], total: T("Total do Módulo 6", r.M6p, r.M6) }
     ];
     const campo = (k, rot, ph, tipo) => ({ k, rot, ph: ph || "", valor: d[k] == null ? "" : d[k], on: this.moSet(k), tipo: tipo || "text" });
     return {
@@ -6467,12 +6488,25 @@ class Component extends DCLogic {
       moModos: [["planejamento", "Planilha 1 · Planejamento da contratação"], ["repactuacao", "Planilha 2 · Repactuação"]].map(([id, nome]) => ({ nome, ativo: mo.modo === id, escolher: () => this.moModo(id), ...corBotao(mo.modo === id) })),
       moIntro: rep ? "Use na repactuação, quando o novo acordo, convenção ou dissídio coletivo der aumento à categoria. Você preenche os custos e percentuais da planilha repactuada; as adequações dos custos não renováveis são feitas automaticamente."
         : "Use na fase de planejamento para formar o custo do profissional que será contratado. Informe os dados iniciais e confira os percentuais: os valores de partida seguem a legislação e o modelo da IN.",
-      moCamposIni: [campo("tipo_servico", "Tipo de serviço", "Ex.: Limpeza"), campo("categoria", "Categoria profissional", "Ex.: Servente"), campo("cbo", "CBO", "Ex.: 5143-20"),
+      moCamposIni: [campo("municipio", "Município onde o serviço será prestado", "Ex.: Maricá"), campo("uf", "UF", "RJ"), campo("tipo_servico", "Tipo de serviço", "Ex.: Limpeza"), campo("categoria", "Categoria profissional", "Ex.: Servente"), campo("cbo", "CBO", "Ex.: 5143-20"),
         campo("salario", rep ? "Novo salário-base (convenção vigente)" : "Salário-base da categoria (R$)", "Ex.: 1.850,00"), campo("data_base", "Data-base da categoria", "dd/mm/aaaa"),
-        campo("ano_cct", "Ano do acordo, convenção ou dissídio", "Ex.: 2026"), campo("municipio", "Município", "Ex.: Maricá"), campo("uf", "UF", "RJ"),
+        campo("ano_cct", "Ano do acordo, convenção ou dissídio", "Ex.: 2026"),
         campo("data_proposta", "Data de apresentação da proposta", "dd/mm/aaaa"), campo("meses", "Nº de meses de execução contratual", "12")]
         .concat(rep ? [campo("ano_exec", "Ano de execução do contrato após a repactuação", "Ex.: 2"), campo("vigente", "Preço vigente por empregado (antes da repactuação, R$)", "Ex.: 4.320,15")] : []),
       moCct: d.cct_nome || "", moSemCct: !d.cct_nome, moCctRot: rep ? "Nova convenção coletiva (obrigatória)" : "Convenção coletiva",
+      moIssPedir: !!mo.issPedir, moIssLocal: mo.issPedir ? mo.issPedir.municipio + "/" + mo.issPedir.uf + (mo.issPedir.item ? " (item " + mo.issPedir.item + " da LC 116/2003)" : "") : "",
+      moIssAliq: mo.issPedir ? mo.issPedir.aliquota : "", moIssFonte: mo.issPedir ? mo.issPedir.fonte : "",
+      onMoIssAliq: (e) => { const v = e.target.value; this.setState((x) => ({ mo: { ...x.mo, issPedir: { ...x.mo.issPedir, aliquota: v } } })); },
+      onMoIssFonte: (e) => { const v = e.target.value; this.setState((x) => ({ mo: { ...x.mo, issPedir: { ...x.mo.issPedir, fonte: v } } })); },
+      moIssUsar: () => {
+        const ip = mo.issPedir, a = moNum(ip && ip.aliquota);
+        if (!(a >= 2 && a <= 5)) { this.setState((x) => ({ mo: { ...x.mo, erro: "A alíquota do ISS deve ficar entre 2% e 5% (LC 116/2003, arts. 8º e 8º-A)." } })); return; }
+        this.setState((x) => {
+          const d2 = { ...x.mo.d, iss: String(a).replace(".", ","), fontes: { ...(x.mo.d.fontes || {}), iss: "ISS de " + ip.municipio + "/" + ip.uf + " informado pelo assinante" + (ip.fonte.trim() ? ": " + ip.fonte.trim() : "") } };
+          try { localStorage.setItem("lv-mo-" + x.mo.modo, JSON.stringify(d2)); } catch (e) {}
+          return { mo: { ...x.mo, d: d2, issPedir: null, erro: "" } };
+        });
+      },
       moTemFalhas: rep && (d.falhas || []).length > 0,
       moFalhasPendente: rep && (d.falhas || []).length > 0 && !d.falhas_aceite,
       moFalhasAceito: rep && (d.falhas || []).length > 0 && !!d.falhas_aceite,

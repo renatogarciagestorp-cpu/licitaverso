@@ -68,8 +68,14 @@ const FERRAMENTA = (campos: Record<string, string>, comFalhas: boolean) => ({
         impacto: { type: "string", description: "efeito de manter a falha nos valores da repactuação: se aumenta ou reduz o preço e, quando possível, a estimativa em R$ por empregado por mês" },
         gravidade: { type: "string", enum: ["alta", "media", "baixa"], description: "alta: afeta o preço ou é vedado; media: afeta pouco o preço; baixa: forma ou transparência" },
       }, required: ["rubrica", "problema", "fundamento", "correcao", "gravidade"] } } } : {}),
+      iss: { type: "object", description: "alíquota do ISS do município onde o serviço será prestado", properties: {
+        encontrado: { type: "boolean", description: "true só se a alíquota foi confirmada em fonte oficial do município (lei, código tributário ou anexo) " },
+        aliquota: { type: ["number", "null"], description: "percentual, entre 2 e 5 (LC 116/2003, arts. 8º e 8º-A)" },
+        item_lc116: { type: "string", description: "item da lista anexa à LC 116/2003, ex.: 7.10 (limpeza e conservação), 11.02 (vigilância), 17.05 (fornecimento de mão de obra)" },
+        fonte: { type: "string", description: "lei municipal e artigo/anexo, com o endereço da página oficial consultada" } },
+        required: ["encontrado", "aliquota", "item_lc116", "fonte"] },
     },
-    required: comFalhas ? ["campos", "observacoes", "falhas"] : ["campos", "observacoes"],
+    required: comFalhas ? ["campos", "observacoes", "falhas", "iss"] : ["campos", "observacoes", "iss"],
   },
 });
 
@@ -88,7 +94,12 @@ Deno.serve(async (req) => {
   if (!chave) return erro("O agente está indisponível no momento. Tente mais tarde.", 503);
 
   const corpo = await req.json().catch(() => ({}));
+  const UFS = "AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".split(" ");
+
   const modo = corpo.modo === "repactuacao" ? "repactuacao" : "planejamento";
+  const dados0 = corpo.dados && typeof corpo.dados === "object" ? corpo.dados as Record<string, unknown> : {};
+  const munServ = String(dados0.municipio ?? "").trim().slice(0, 80), ufServ = String(dados0.uf ?? "").toUpperCase().trim();
+  if (!munServ || !UFS.includes(ufServ)) return erro("Antes da análise, informe o município e a UF onde o serviço será prestado.");
   const okPdf = (c: string) => c.startsWith(usuario.id + "/mo/") && !c.includes("..") && /\.pdf$/i.test(c);
   const arquivo = String(corpo.arquivo ?? "");             // convenção coletiva (na repactuação: a nova, opcional)
   const planArq = String(corpo.planilha_arquivo ?? "");    // repactuação: planilha da contratação em PDF
@@ -120,32 +131,44 @@ Deno.serve(async (req) => {
   const dados = corpo.dados && typeof corpo.dados === "object" ? corpo.dados as Record<string, unknown> : {};
   const linhasDados = Object.entries(dados).filter(([k, v]) => /^[a-z0-9_]{1,20}$/.test(k) && (typeof v === "string" || typeof v === "number") && String(v).trim() && k !== "cct_arquivo")
     .slice(0, 80).map(([k, v]) => `- ${k}: ${String(v).slice(0, 120)}`).join("\n");
+  // ISS: o agente busca a alíquota do município onde o serviço será prestado; se não confirmar em fonte oficial, o site pede ao assinante
+  const blocoIss = `ISS: o serviço será prestado em ${munServ}/${ufServ}. Pesquise com a ferramenta de busca a alíquota do ISS desse município para o item da LC 116/2003 que corresponde ao serviço (prefira o código tributário municipal, a lei do ISS ou o site oficial da prefeitura). Se não confirmar em fonte oficial, devolva encontrado = false e aliquota = null (não use 5% como padrão). Depois da pesquisa, chame obrigatoriamente a ferramenta preencher_planilha.`;
   const tarefa = modo === "repactuacao"
     ? `REPACTUAÇÃO (Planilha 2). Você recebe a planilha de custos utilizada na contratação e a nova convenção coletiva. Tarefa: (1) reproduza nos campos os valores e percentuais da planilha da contratação, rubrica por rubrica, e informe em "vigente" o preço total por empregado dessa planilha; (2) atualize o que decorre da nova convenção (salário-base, adicionais, auxílio-alimentação e participação, assistência médica, seguro de vida e demais benefícios), citando a cláusula; (3) faça a análise dos custos NÃO RENOVÁVEIS para o ano de execução informado (ano_exec): suprima ou reduza o que já foi pago ou amortizado no 1º ano (art. 57 da IN 05/2017), como o aviso prévio trabalhado (no máximo 0,194% por ano de prorrogação; Acórdão 1.186/2017-TCU-Plenário) e as incidências sobre ele, e equipamentos ou kits iniciais já amortizados, começando a fonte por "Não renovável:". NÃO reajuste insumos por índice (isso é feito à parte pelo sistema). Nos campos sem informação na planilha, não invente: omita o campo. (4) Como a planilha da contratação foi elaborada por terceiros, examine-a e liste em "falhas" cada erro de preenchimento ou inconsistência: percentuais ou bases de cálculo diferentes dos legais, da convenção ou dos cadernos técnicos, rubricas que faltam ou sobram, custos vedados (ex.: IRPJ e CSLL na planilha, Súmula TCU 254), contas que não fecham, benefício em desacordo com a convenção, tributos incompatíveis com o regime, incidências em duplicidade, entre outros. Para cada falha, indique o fundamento, o caminho correto e o impacto de mantê-la nos valores da repactuação, e já aplique a correção nos campos da planilha repactuada (fonte começando por "Correção:"); o campo "vigente" continua com o preço da planilha original. Se não houver falhas, devolva a lista vazia.`
     : `PLANEJAMENTO (Planilha 1). Preencha a planilha do profissional da categoria indicada a partir da convenção enviada e das normas: piso da categoria, adicionais, benefícios (com a participação do empregado), encargos e percentuais dos Módulos 2, 3 e 4. Para cada valor, indique a fonte. Se a convenção não tratar de um item, use o percentual legal ou do caderno técnico e diga isso na fonte. Não preencha custos indiretos, lucro nem tributos.`;
   const system = `Você é especialista em custos de serviços terceirizados com dedicação exclusiva de mão de obra na administração pública. ${REGRAS}
 ${tarefa}
+${blocoIss}
 Use apenas o que está na convenção enviada e nas normas citadas; nunca invente cláusula, valor ou acórdão. Valores mensais por empregado. Campos disponíveis: ${Object.entries(campos).map(([k, v]) => `${k} (${v})`).join("; ")}.`;
 
-  const resp = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "x-api-key": chave, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-    body: JSON.stringify({
-      model: MODELO, max_tokens: 9000, system, tools: [FERRAMENTA(campos, modo === "repactuacao")], tool_choice: { type: "tool", name: "preencher_planilha" },
-      messages: [{ role: "user", content: [
+  const mensagens = [{ role: "user", content: [
         ...docs.flatMap((x) => [{ type: "text", text: x.titulo + ":" }, { type: "document", source: { type: "base64", media_type: "application/pdf", data: x.pdf } }]),
         ...(planTexto.trim() ? [{ type: "text", text: "PLANILHA DA CONTRATAÇÃO (Excel convertido em texto; cada linha é uma linha da planilha, colunas separadas por |):\n" + planTexto }] : []),
         { type: "text", text: `DADOS JÁ INFORMADOS NA PLANILHA DO SITE:\n${linhasDados || "(nenhum)"}` },
-      ] }],
+      ] }];
+  const chamar = (comBusca: boolean) => fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "x-api-key": chave, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+    body: JSON.stringify({
+      model: MODELO, max_tokens: 9000, system, messages: mensagens,
+      tools: comBusca ? [FERRAMENTA(campos, modo === "repactuacao"), { type: "web_search_20250305", name: "web_search", max_uses: 3, user_location: { type: "approximate", country: "BR" } }]
+        : [FERRAMENTA(campos, modo === "repactuacao")],
+      tool_choice: comBusca ? { type: "auto" } : { type: "tool", name: "preencher_planilha" },
     }),
     signal: AbortSignal.timeout(140000),
   }).catch(() => null);
+  let resp = await chamar(true);
+  if (resp && resp.status === 400) {  // busca na internet indisponível na conta da API: segue sem ela (ISS fica para o assinante)
+    console.log("mo-agente: busca indisponível, seguindo sem ela:", (await resp.text().catch(() => "")).slice(0, 200));
+    resp = await chamar(false);
+  }
   if (!resp || !resp.ok) {
     console.log("mo-agente indisponível:", resp ? resp.status + " " + (await resp.text().catch(() => "")).slice(0, 300) : "sem resposta");
     return erro("O agente não conseguiu analisar a convenção agora. Tente de novo em alguns minutos.", 502);
   }
   const j = await resp.json().catch(() => ({}));
-  const bloco = (j.content ?? []).find((c: any) => c.type === "tool_use");
+  const bloco = (j.content ?? []).find((c: any) => c.type === "tool_use" && c.name === "preencher_planilha");
+  if (!bloco) { console.log("mo-agente: resposta sem preenchimento", j.stop_reason); return erro("O agente não concluiu a análise. Tente de novo em alguns minutos.", 502); }
   const saida = ((bloco?.input?.campos ?? []) as any[]).filter((c) => campos[c?.campo]).slice(0, 90).map((c) => ({
     campo: String(c.campo), valor: String(c.valor ?? "").slice(0, 120), fonte: String(c.fonte ?? "").slice(0, 300),
   }));
@@ -154,5 +177,9 @@ Use apenas o que está na convenção enviada e nas normas citadas; nunca invent
     rubrica: String(f?.rubrica ?? "").slice(0, 160), problema: String(f?.problema ?? "").slice(0, 600), fundamento: String(f?.fundamento ?? "").slice(0, 400),
     correcao: String(f?.correcao ?? "").slice(0, 600), impacto: String(f?.impacto ?? "").slice(0, 400), gravidade: ["alta", "media", "baixa"].includes(f?.gravidade) ? f.gravidade : "media",
   })).filter((f) => f.problema);
-  return resposta({ campos: saida, observacoes, falhas });
+  const iA = bloco?.input?.iss ?? {};
+  let iss = { encontrado: !!iA.encontrado && Number(iA.aliquota) >= 2 && Number(iA.aliquota) <= 5, aliquota: Number(iA.aliquota) || null,
+    item: String(iA.item_lc116 ?? "").slice(0, 10), fonte: String(iA.fonte ?? "").slice(0, 300), municipio: munServ, uf: ufServ };
+  if (!iss.encontrado) iss = { ...iss, aliquota: null };
+  return resposta({ campos: saida.filter((c) => c.campo !== "iss"), observacoes, falhas, iss });
 });
