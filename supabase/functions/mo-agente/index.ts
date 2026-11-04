@@ -1,7 +1,7 @@
 // Calculadora → Mão de Obra Exclusiva: o agente lê a convenção coletiva enviada e preenche a planilha da IN 05/2017.
 // Exclusivo do plano Pro (e administradores). Limite diário por pessoa (custo de API).
 // POST { modo: "planejamento" | "repactuacao", arquivo: "<uid>/mo/<nome>.pdf", dados: { ...campos da planilha } }
-//   -> { campos: [{ campo, valor, fonte }], observacoes: [] }
+//   -> { campos: [{ campo, valor, fonte }], observacoes: [], falhas: [{ rubrica, problema, fundamento, correcao, gravidade }] }
 
 import { clienteServico, CORS, erro, resposta, usuarioDaRequisicao } from "../_shared/comum.ts";
 
@@ -48,7 +48,7 @@ const REGRAS = `Planilha de custos e formação de preços da IN SEGES/MP nº 5/
 Estrutura: Módulo 1 (remuneração), Módulo 2 (2.1 13º e férias; 2.2 GPS, FGTS e outras contribuições, incidindo sobre Módulo 1 + 2.1 + Módulo 4; 2.3 benefícios), Módulo 3 (provisão para rescisão), Módulo 4 (reposição do profissional ausente), Módulo 5 (insumos), Módulo 6 (custos indiretos, tributos e lucro).
 Fontes a observar: a convenção/acordo coletivo enviado (piso da categoria, adicionais, vale-transporte, auxílio-alimentação e participação, assistência médica, seguro de vida, uniforme, data-base); CLT; Lei 7.418/1985 (vale-transporte, desconto de até 6% do salário-base); Lei 8.036/1990 (FGTS 8%); Lei 8.212/1991 (INSS 20%; RAT 1%, 2% ou 3% pelo grau de risco da atividade, multiplicado pelo FAP); Decreto-Lei 1.422/1975 (salário-educação 2,5%); SESC/SESI 1,5%; SENAC/SENAI 1%; SEBRAE 0,6%; INCRA 0,2%; Lei 12.506/2011 (aviso prévio proporcional); NR-15 (insalubridade 10%, 20% ou 40%) e NR-16 (periculosidade 30%); cadernos técnicos de serviços terceirizados do Ministério da Gestão (Compras.gov.br) para os percentuais de ausências legais, licença-paternidade, acidente de trabalho e maternidade; jurisprudência do TCU: Acórdão 1.904/2007-Plenário e Acórdão 1.186/2017-Plenário (aviso prévio trabalhado de no máximo 1,94% no 1º ano e 0,194% a cada ano de prorrogação; custo não renovável), Acórdão 3.006/2010-Plenário (exclusão do aviso prévio trabalhado após o 1º ano), e o art. 57 da IN 05/2017 (na repactuação, excluem-se os custos não renováveis já pagos ou amortizados no primeiro ano).`;
 
-const FERRAMENTA = (campos: Record<string, string>) => ({
+const FERRAMENTA = (campos: Record<string, string>, comFalhas: boolean) => ({
   name: "preencher_planilha",
   description: "Devolve os valores da planilha, cada um com a fonte (cláusula da convenção, lei, caderno técnico ou acórdão).",
   input_schema: {
@@ -60,8 +60,15 @@ const FERRAMENTA = (campos: Record<string, string>) => ({
         fonte: { type: "string", description: "de onde veio: cláusula e página da convenção, artigo da lei, caderno técnico ou acórdão, em uma frase" },
       }, required: ["campo", "valor", "fonte"] } },
       observacoes: { type: "array", items: { type: "string" }, description: "pontos de atenção para quem confere a planilha (no máximo 6)" },
+      ...(comFalhas ? { falhas: { type: "array", maxItems: 25, description: "falhas de preenchimento e inconsistências encontradas na planilha da contratação, uma por item", items: { type: "object", properties: {
+        rubrica: { type: "string", description: "módulo e rubrica, ex.: Submódulo 2.2, C – SAT" },
+        problema: { type: "string", description: "o que está errado na planilha da contratação, com os valores encontrados" },
+        fundamento: { type: "string", description: "norma, cláusula da convenção, caderno técnico ou acórdão que fundamenta, com número e ano" },
+        correcao: { type: "string", description: "o caminho correto: como deve ser preenchido, com o percentual ou valor e a base de cálculo" },
+        gravidade: { type: "string", enum: ["alta", "media", "baixa"], description: "alta: afeta o preço ou é vedado; media: afeta pouco o preço; baixa: forma ou transparência" },
+      }, required: ["rubrica", "problema", "fundamento", "correcao", "gravidade"] } } } : {}),
     },
-    required: ["campos", "observacoes"],
+    required: comFalhas ? ["campos", "observacoes", "falhas"] : ["campos", "observacoes"],
   },
 });
 
@@ -85,7 +92,7 @@ Deno.serve(async (req) => {
   const arquivo = String(corpo.arquivo ?? "");             // convenção coletiva (na repactuação: a nova, opcional)
   const planArq = String(corpo.planilha_arquivo ?? "");    // repactuação: planilha da contratação em PDF
   const planTexto = String(corpo.planilha_texto ?? "").slice(0, 120000);  // repactuação: planilha em Excel, convertida em texto no navegador
-  if (modo === "planejamento" && !okPdf(arquivo)) return erro("Envie a convenção coletiva em PDF.");
+  if (!okPdf(arquivo)) return erro(modo === "repactuacao" ? "Envie a nova convenção coletiva em PDF: ela é obrigatória para a análise da repactuação." : "Envie a convenção coletiva em PDF.");
   if (modo === "repactuacao" && !okPdf(planArq) && planTexto.trim().length < 50) return erro("Envie a planilha utilizada na contratação, em PDF ou Excel.");
   if (arquivo && !okPdf(arquivo)) return erro("Arquivo da convenção inválido.");
   if (planArq && !okPdf(planArq)) return erro("Arquivo da planilha inválido.");
@@ -113,7 +120,7 @@ Deno.serve(async (req) => {
   const linhasDados = Object.entries(dados).filter(([k, v]) => /^[a-z0-9_]{1,20}$/.test(k) && (typeof v === "string" || typeof v === "number") && String(v).trim() && k !== "cct_arquivo")
     .slice(0, 80).map(([k, v]) => `- ${k}: ${String(v).slice(0, 120)}`).join("\n");
   const tarefa = modo === "repactuacao"
-    ? `REPACTUAÇÃO (Planilha 2). Você recebe a planilha de custos utilizada na contratação (e, se enviada, a nova convenção coletiva). Tarefa: (1) reproduza nos campos os valores e percentuais da planilha da contratação, rubrica por rubrica, e informe em "vigente" o preço total por empregado dessa planilha; (2) se a nova convenção foi enviada, atualize o que decorre dela (salário-base, adicionais, auxílio-alimentação e participação, assistência médica, seguro de vida e demais benefícios), citando a cláusula; (3) faça a análise dos custos NÃO RENOVÁVEIS para o ano de execução informado (ano_exec): suprima ou reduza o que já foi pago ou amortizado no 1º ano (art. 57 da IN 05/2017), como o aviso prévio trabalhado (no máximo 0,194% por ano de prorrogação; Acórdão 1.186/2017-TCU-Plenário) e as incidências sobre ele, e equipamentos ou kits iniciais já amortizados, começando a fonte por "Não renovável:". NÃO reajuste insumos por índice (isso é feito à parte pelo sistema). Nos campos sem informação na planilha, não invente: omita o campo.`
+    ? `REPACTUAÇÃO (Planilha 2). Você recebe a planilha de custos utilizada na contratação e a nova convenção coletiva. Tarefa: (1) reproduza nos campos os valores e percentuais da planilha da contratação, rubrica por rubrica, e informe em "vigente" o preço total por empregado dessa planilha; (2) atualize o que decorre da nova convenção (salário-base, adicionais, auxílio-alimentação e participação, assistência médica, seguro de vida e demais benefícios), citando a cláusula; (3) faça a análise dos custos NÃO RENOVÁVEIS para o ano de execução informado (ano_exec): suprima ou reduza o que já foi pago ou amortizado no 1º ano (art. 57 da IN 05/2017), como o aviso prévio trabalhado (no máximo 0,194% por ano de prorrogação; Acórdão 1.186/2017-TCU-Plenário) e as incidências sobre ele, e equipamentos ou kits iniciais já amortizados, começando a fonte por "Não renovável:". NÃO reajuste insumos por índice (isso é feito à parte pelo sistema). Nos campos sem informação na planilha, não invente: omita o campo. (4) Como a planilha da contratação foi elaborada por terceiros, examine-a e liste em "falhas" cada erro de preenchimento ou inconsistência: percentuais ou bases de cálculo diferentes dos legais, da convenção ou dos cadernos técnicos, rubricas que faltam ou sobram, custos vedados (ex.: IRPJ e CSLL na planilha, Súmula TCU 254), contas que não fecham, benefício em desacordo com a convenção, tributos incompatíveis com o regime, incidências em duplicidade, entre outros. Para cada falha, indique o fundamento e o caminho correto, e já aplique a correção nos campos da planilha repactuada (fonte começando por "Correção:"); o campo "vigente" continua com o preço da planilha original. Se não houver falhas, devolva a lista vazia.`
     : `PLANEJAMENTO (Planilha 1). Preencha a planilha do profissional da categoria indicada a partir da convenção enviada e das normas: piso da categoria, adicionais, benefícios (com a participação do empregado), encargos e percentuais dos Módulos 2, 3 e 4. Para cada valor, indique a fonte. Se a convenção não tratar de um item, use o percentual legal ou do caderno técnico e diga isso na fonte. Não preencha custos indiretos, lucro nem tributos.`;
   const system = `Você é especialista em custos de serviços terceirizados com dedicação exclusiva de mão de obra na administração pública. ${REGRAS}
 ${tarefa}
@@ -123,7 +130,7 @@ Use apenas o que está na convenção enviada e nas normas citadas; nunca invent
     method: "POST",
     headers: { "x-api-key": chave, "anthropic-version": "2023-06-01", "content-type": "application/json" },
     body: JSON.stringify({
-      model: MODELO, max_tokens: 6000, system, tools: [FERRAMENTA(campos)], tool_choice: { type: "tool", name: "preencher_planilha" },
+      model: MODELO, max_tokens: 9000, system, tools: [FERRAMENTA(campos, modo === "repactuacao")], tool_choice: { type: "tool", name: "preencher_planilha" },
       messages: [{ role: "user", content: [
         ...docs.flatMap((x) => [{ type: "text", text: x.titulo + ":" }, { type: "document", source: { type: "base64", media_type: "application/pdf", data: x.pdf } }]),
         ...(planTexto.trim() ? [{ type: "text", text: "PLANILHA DA CONTRATAÇÃO (Excel convertido em texto; cada linha é uma linha da planilha, colunas separadas por |):\n" + planTexto }] : []),
@@ -142,5 +149,9 @@ Use apenas o que está na convenção enviada e nas normas citadas; nunca invent
     campo: String(c.campo), valor: String(c.valor ?? "").slice(0, 120), fonte: String(c.fonte ?? "").slice(0, 300),
   }));
   const observacoes = ((bloco?.input?.observacoes ?? []) as unknown[]).slice(0, 6).map((o) => String(o).slice(0, 400));
-  return resposta({ campos: saida, observacoes });
+  const falhas = ((bloco?.input?.falhas ?? []) as any[]).slice(0, 25).map((f) => ({
+    rubrica: String(f?.rubrica ?? "").slice(0, 160), problema: String(f?.problema ?? "").slice(0, 600), fundamento: String(f?.fundamento ?? "").slice(0, 400),
+    correcao: String(f?.correcao ?? "").slice(0, 600), gravidade: ["alta", "media", "baixa"].includes(f?.gravidade) ? f.gravidade : "media",
+  })).filter((f) => f.problema);
+  return resposta({ campos: saida, observacoes, falhas });
 });

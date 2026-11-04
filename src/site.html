@@ -984,6 +984,12 @@
   .lmo-dif { margin: 12px 0 0; font-size: 14.5px; color: #0B1F2A; }
   .lmo-agente { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
   .lmo-btn { font: inherit; font-size: 14.5px; font-weight: 800; background: #0FA36B; color: #06251A; border: 0; border-radius: 12px; padding: 12px 18px; cursor: pointer; box-shadow: 0 8px 20px rgba(15,163,107,0.22); }
+  .lmo-falhas { margin: 12px 0 0; padding-left: 22px; display: grid; gap: 10px; }
+  .lmo-falha { border: 1px solid #E3E9E8; border-left: 4px solid #C98A1B; border-radius: 10px; padding: 10px 12px; background: #fff; }
+  .lmo-falha.g-alta { border-left-color: #B83232; } .lmo-falha.g-baixa { border-left-color: #0F6B7E; }
+  .lmo-falha p { margin: 4px 0 0; font-size: 13.5px; line-height: 1.5; color: #26393F; }
+  .lmo-falha-cab { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 14px; }
+  .lmo-falha-cab span { font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: #66757F; }
   .lmo-btn2 { background: #0A1F2A; color: #fff; box-shadow: none; }
   .lmo-campo select { font: inherit; font-size: 14px; font-weight: 600; border: 1px solid #D6DEDD; border-radius: 9px; padding: 8px 10px; background: #FBFDF6; }
   .lmo-pro { font-size: 12px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: #8A5A00; background: #FBF0DA; border-radius: 999px; padding: 6px 12px; }
@@ -2259,6 +2265,24 @@
                 </div>
               </section>
             </sc-for>
+
+            <sc-if value="{{ moTemFalhas }}" hint-placeholder-val="{{ false }}">
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Falhas e inconsistências da planilha da contratação</h2>
+              <p class="lmo-nota">{{ moFalhasResumo }} Cada item traz o fundamento e o caminho correto. A planilha repactuada acima já considera as correções indicadas pelo agente; confira antes de concluir.</p>
+              <ol class="lmo-falhas">
+                <sc-for list="{{ moFalhas }}" as="f" hint-placeholder-count="2">
+                  <li class="{{ f.cls }}">
+                    <div class="lmo-falha-cab"><b>{{ f.rubrica }}</b><span>Gravidade {{ f.grav }}</span></div>
+                    <p><b>Falha:</b> {{ f.problema }}</p>
+                    <p><b>Fundamento:</b> {{ f.fundamento }}</p>
+                    <p><b>Caminho correto:</b> {{ f.correcao }}</p>
+                  </li>
+                </sc-for>
+              </ol>
+            </section>
+            </sc-if>
+            <sc-if value="{{ moSemFalhasOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok">✓ O agente não encontrou falhas de preenchimento na planilha da contratação.</p></sc-if>
 
             <section class="lmo-bloco lmo-tab">
               <h2 class="lmo-h2">Quadro-resumo do custo por empregado</h2>
@@ -6145,6 +6169,7 @@ class Component extends DCLogic {
       .concat(P.moTemUnidade ? [[P.moUnidadeRot, P.moUnidade]] : []).concat(P.moTemDif ? [["Variação em relação ao preço vigente", P.moDif]] : []);
     const notas = [].concat(rep ? ["Custos não renováveis: aviso prévio trabalhado limitado a 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário; IN 05/2017, art. 57)."] : [])
       .concat(rj && rj.pronto ? ["Insumos reajustados pelo índice do contrato (" + rj.msg + ")."] : []);
+    const falhas = rep ? (d.falhas || []) : [];
     const nome = (rep ? "planilha-repactuacao" : "planilha-planejamento") + "-" + (d.categoria || "mao-de-obra").toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
     this.setState((x) => ({ mo: { ...x.mo, baixando: true, erro: "" } }));
     try {
@@ -6174,6 +6199,11 @@ class Component extends DCLogic {
         resumo.forEach(([c, rot, v], i) => { const row = add([c, rot, "", num(v)]); row.getCell(4).numFmt = '"R$" #,##0.00'; if (!c) row.font = { bold: true }; });
         ws.addRow([]);
         kpis.forEach(([k, v]) => { const row = add(["", k, "", String(v)]); row.getCell(2).font = { bold: true }; });
+        if (falhas.length) {
+          ws.addRow([]);
+          const fr = add(["FALHAS E INCONSISTÊNCIAS DA PLANILHA DA CONTRATAÇÃO", "", "", ""]); ws.mergeCells(fr.number, 1, fr.number, 4); fr.font = { bold: true, color: { argb: "FFFFFFFF" } }; fr.getCell(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF8A1230" } };
+          falhas.forEach((f, i) => { const row = add([String(i + 1), f.rubrica + " (gravidade " + ({ alta: "alta", media: "média", baixa: "baixa" }[f.gravidade] || "média") + ")\nFalha: " + f.problema + "\nFundamento: " + f.fundamento + "\nCaminho correto: " + f.correcao, "", ""]); ws.mergeCells(row.number, 2, row.number, 4); row.getCell(2).font = { size: 10 }; });
+        }
         if (notas.length) { ws.addRow([]); notas.forEach((n2) => { const row = ws.addRow(["", n2]); ws.mergeCells(row.number, 2, row.number, 4); row.getCell(2).alignment = { wrapText: true }; row.getCell(2).font = { size: 9, italic: true }; }); }
         const buf = await wb.xlsx.writeBuffer();
         baixarArquivo(nome + ".xlsx", buf, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -6192,6 +6222,11 @@ class Component extends DCLogic {
           styles: { fontSize: 8, cellPadding: 1.4, valign: "middle" }, columnStyles: { 0: { cellWidth: 10, fontStyle: "bold" }, 2: { cellWidth: 24 }, 3: { cellWidth: 30 } }, margin: { left: 14, right: 14 } });
         doc.autoTable({ startY: doc.lastAutoTable.finalY + 4, head: [[{ content: "QUADRO-RESUMO DO CUSTO POR EMPREGADO", colSpan: 3 }]], body: resumo.map(([c, rot, v]) => [c, { content: rot, styles: { fontStyle: c ? "normal" : "bold" } }, { content: v, styles: { halign: "right", fontStyle: c ? "normal" : "bold" } }]).concat(kpis.map(([k, v]) => ["", k, { content: String(v), styles: { halign: "right" } }])),
           theme: "grid", headStyles: { fillColor: [10, 31, 42] }, styles: { fontSize: 8.5, cellPadding: 1.6 }, columnStyles: { 0: { cellWidth: 10 }, 2: { cellWidth: 40 } }, margin: { left: 14, right: 14 } });
+        if (falhas.length) {
+          doc.autoTable({ startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "FALHAS E INCONSISTÊNCIAS DA PLANILHA DA CONTRATAÇÃO", colSpan: 2 }]],
+            body: falhas.map((f, i) => [String(i + 1), f.rubrica + " (gravidade " + ({ alta: "alta", media: "média", baixa: "baixa" }[f.gravidade] || "média") + ")\nFalha: " + f.problema + "\nFundamento: " + f.fundamento + "\nCaminho correto: " + f.correcao]),
+            theme: "grid", headStyles: { fillColor: [138, 18, 48] }, styles: { fontSize: 8, cellPadding: 1.8 }, columnStyles: { 0: { cellWidth: 8, fontStyle: "bold" } }, margin: { left: 14, right: 14 } });
+        }
         let y = doc.lastAutoTable.finalY + 6; doc.setFontSize(7.5); doc.setTextColor(85, 102, 109);
         notas.forEach((n2) => { const ls = doc.splitTextToSize(n2, 182); if (y + ls.length * 3.5 > 285) { doc.addPage(); y = 16; } doc.text(ls, 14, y); y += ls.length * 3.5 + 1.5; });
         doc.save(nome + ".pdf");
@@ -6207,7 +6242,7 @@ class Component extends DCLogic {
     if (!this.u) { this.setState({ volta: "calculadora" }); this.irPara("login"); return; }
     if (!this.moPodeAgente()) { erro("O preenchimento pelo agente é exclusivo do plano Pro."); return; }
     const rep = mo.modo === "repactuacao";
-    if (!rep && !d.cct_arquivo) { erro("Envie primeiro a convenção coletiva em PDF."); return; }
+    if (!d.cct_arquivo) { erro(rep ? "Envie a nova convenção coletiva em PDF: ela é obrigatória para a análise da repactuação." : "Envie primeiro a convenção coletiva em PDF."); return; }
     if (rep && !d.plan_arquivo && !this._moPlanTexto) { erro("Envie a planilha utilizada na contratação (PDF ou Excel)" + (d.plan_nome ? " de novo: o arquivo em Excel precisa ser escolhido nesta visita." : ".")); return; }
     this.setState((x) => ({ mo: { ...x.mo, agente: true, erro: "", ok: "", obs: [] } }));
     const { data, error } = await this.sb.functions.invoke("mo-agente", { body: { modo: mo.modo, arquivo: d.cct_arquivo || "", planilha_arquivo: rep ? (d.plan_arquivo || "") : "",
@@ -6215,7 +6250,7 @@ class Component extends DCLogic {
     if (error) { erro(await erroDaFuncao(error)); return; }
     const campos = (data && data.campos) || [];
     this.setState((x) => {
-      const d2 = { ...x.mo.d, fontes: { ...(x.mo.d.fontes || {}) } };
+      const d2 = { ...x.mo.d, fontes: { ...(x.mo.d.fontes || {}) }, falhas: x.mo.modo === "repactuacao" ? ((data && data.falhas) || []) : (x.mo.d.falhas || []) };
       campos.forEach((c) => {
         const num = /^-?\d+(\.\d+)?$/.test(String(c.valor).trim());
         d2[c.campo] = num ? String(c.valor).trim().replace(".", ",") : c.valor;
@@ -6324,7 +6359,11 @@ class Component extends DCLogic {
         campo("ano_cct", "Ano do acordo, convenção ou dissídio", "Ex.: 2026"), campo("municipio", "Município", "Ex.: Maricá"), campo("uf", "UF", "RJ"),
         campo("data_proposta", "Data de apresentação da proposta", "dd/mm/aaaa"), campo("meses", "Nº de meses de execução contratual", "12")]
         .concat(rep ? [campo("ano_exec", "Ano de execução do contrato após a repactuação", "Ex.: 2"), campo("vigente", "Preço vigente por empregado (antes da repactuação, R$)", "Ex.: 4.320,15")] : []),
-      moCct: d.cct_nome || "", moSemCct: !d.cct_nome, moCctRot: rep ? "Nova convenção coletiva (opcional)" : "Convenção coletiva",
+      moCct: d.cct_nome || "", moSemCct: !d.cct_nome, moCctRot: rep ? "Nova convenção coletiva (obrigatória)" : "Convenção coletiva",
+      moTemFalhas: rep && (d.falhas || []).length > 0, moSemFalhasOk: rep && Array.isArray(d.falhas) && d.falhas.length === 0 && !!d.fontes,
+      moFalhas: (d.falhas || []).map((f, i) => ({ n: i + 1, rubrica: f.rubrica, problema: f.problema, fundamento: f.fundamento, correcao: f.correcao,
+        grav: { alta: "Alta", media: "Média", baixa: "Baixa" }[f.gravidade] || "Média", cls: "lmo-falha g-" + (f.gravidade || "media") })),
+      moFalhasResumo: (() => { const fs = d.falhas || []; const c = (g) => fs.filter((f) => f.gravidade === g).length; return fs.length + " falha(s) na planilha da contratação: " + c("alta") + " alta(s), " + c("media") + " média(s), " + c("baixa") + " baixa(s)."; })(),
       moPlanNome: d.plan_nome || "", moSemPlan: !d.plan_nome,
       moEscolherPlan: (e) => { const f = e.target && e.target.files && e.target.files[0]; if (e.target) e.target.value = ""; if (f) this.moEnviarPlanilha(f); },
       moRjAtivo: d.rj_ativo === "sim", onMoRj: (e) => { this.moSet("rj_ativo")(e.target.checked ? "sim" : ""); if (e.target.checked) this.carregarIndices(); },
