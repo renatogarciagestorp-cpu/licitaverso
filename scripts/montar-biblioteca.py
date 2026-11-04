@@ -22,10 +22,17 @@ src = troca(src, '${pc?" (computador desligado ou app fechado?)":""}', '')
 # A situação da coleta só aparece no Acervo, não na Biblioteca do site
 src = troca(src, '<div>\n        <h2>Situação da coleta</h2>', '<div hidden>\n        <h2>Situação da coleta</h2>')
 src = troca(src, '<title>Acervo Licitacon</title>', '<title>Biblioteca Jurídica — Licitacon</title>')
+# as fontes do site (Manrope e Source Serif 4) vêm na barra; as do acervo não são usadas
+src = src.replace('<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">', '')
 
-barra = """<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap">
+barra = """<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap">
+<script type="speculationrules">{"prerender":[{"where":{"href_matches":"*index.html*"},"eagerness":"moderate"}],"prefetch":[{"where":{"href_matches":"*index.html*"},"eagerness":"conservative"}]}</script>
+
 <style>
 /* mesma barra do site (index.html): mesmos itens, tamanhos, cores e destaque da página atual */
+@view-transition{navigation:auto}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.16s}
+:root:root{--f-display:"Source Serif 4",Georgia,"Times New Roman",serif;--f-body:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif;--f-mono:Manrope,system-ui,-apple-system,"Segoe UI",sans-serif}
 body{margin:0}
 .lvbar{margin-left:calc(-1*max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1*max(16px,env(safe-area-inset-right,0px)));position:sticky;top:0;z-index:40;background:#0A1F2A;border-bottom:1px solid rgba(255,255,255,.09);font-family:Manrope,-apple-system,"Segoe UI",sans-serif}
 .lvbar .in{max-width:1240px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;gap:28px}

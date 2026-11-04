@@ -424,6 +424,9 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
+  /* troca suave entre a Biblioteca Jurídica e as demais páginas (navegadores que suportam) */
+  @view-transition { navigation: auto; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.16s; }
   body { margin: 0; background: #F6F8F7; color: #0B1F2A; font-family: Manrope, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
   a { color: #0F6B7E; text-decoration: none; }
   a:hover { color: #0FA36B; text-decoration: underline; }
@@ -4592,7 +4595,27 @@ class Component extends DCLogic {
     instalar: null
   };
 
+  // a Biblioteca é outra página: ao apontar para o item do menu, o navegador já a prepara (prerender no Chrome/Edge,
+  // prefetch nos demais), para a troca ser imediata
+  prepararBiblioteca() {
+    if (this._bibPronta) return;
+    this._bibPronta = true;
+    try {
+      if (HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules")) {
+        const sr = document.createElement("script"); sr.type = "speculationrules";
+        sr.textContent = JSON.stringify({ prerender: [{ urls: ["biblioteca.html"] }] });
+        document.head.appendChild(sr);
+      } else {
+        ["biblioteca.html", "acervo-completo.json"].forEach((u) => { const l = document.createElement("link"); l.rel = "prefetch"; l.href = u; document.head.appendChild(l); });
+      }
+    } catch (e) {}
+  }
+
   componentDidMount() {
+    const alvoBib = (e) => { const b = e.target && e.target.closest && e.target.closest("button"); if (b && b.textContent.trim() === "Biblioteca Jurídica") this.prepararBiblioteca(); };
+    document.addEventListener("pointerover", alvoBib, { passive: true });
+    document.addEventListener("touchstart", alvoBib, { passive: true });
+    document.addEventListener("focusin", alvoBib);
     const pIni = new URLSearchParams(window.location.search).get("p");
     if (pIni && PAGINAS.includes(pIni)) this.setState({ page: pIni });
     const qsIni = new URLSearchParams(window.location.search);
@@ -5360,7 +5383,7 @@ class Component extends DCLogic {
     if (destino === "painel") { window.location.href = "painel.html"; return; }
     // troca de página como transição: cliques rápidos seguidos interrompem a renderização anterior em vez de enfileirar
     if (this.state.menuAberto) this.setState({ menuAberto: false });
-    this.setStateSuave({ page: destino, auth: { ...AUTH_VAZIO, email: s.auth.email } }, () => window.scrollTo(0, 0));
+    this.setStateSuave({ page: destino, auth: { ...AUTH_VAZIO, email: s.auth.email } }, () => window.scrollTo({ top: 0, left: 0, behavior: "instant" }));
     if (registrar !== false) {
       const url = destino === "home" ? location.pathname : location.pathname + "?p=" + destino;
       try { history.pushState({ p: destino }, "", url); } catch (e) { /* sem histórico */ }

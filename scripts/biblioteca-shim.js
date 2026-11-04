@@ -5,9 +5,9 @@
      disponíveis em qualquer aparelho; sem contas, ficam no navegador (localStorage);
    - recursos que dependem do Claude (perguntar ao acervo, síntese, minuta, conferência de divergência) ficam ocultos. */
 (function(){
-  const DATA_URL = "acervo-completo.json?v=" + Date.now();
+  const DATA_URL = "acervo-completo.json"; // revalidado pelo navegador (cache "no-cache"): só baixa de novo se mudou
   let carga = null;
-  const carregar = () => carga || (carga = fetch(DATA_URL, {cache:"no-store"}).then(r => { if(!r.ok) throw new Error(r.status); return r.json(); }));
+  const carregar = () => carga || (carga = fetch(DATA_URL, {cache:"no-cache"}).then(r => { if(!r.ok) throw new Error(r.status); return r.json(); }));
   const snap = rows => ({ docs: rows.map(([id, d]) => ({ id, data: () => d })) });
   const LS = "licitaverso:";
   const ler = p => { try { return JSON.parse(localStorage.getItem(LS + p) || "{}"); } catch(e) { return {}; } };
