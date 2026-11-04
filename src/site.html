@@ -1535,8 +1535,6 @@
   .lvh-top-ic { background: #E3F5EC; color: #0A7A50; }
   .lvh-top-tag { color: #6A8A80; }
   .lvh-top-d { color: #55666D; }
-  .lvh-ban-claro, .lvh-ban-menta { background: linear-gradient(180deg, #F1F9F5 0%, #FFFFFF 55%); border-color: #DCE8E3; }
-  .lvh-art, .lvh-ban-menta .lvh-art { background: #E9F4EF; }
   /* ===== etapa 4 do "clean": faixa final da página inicial ===== */
   .lvh-final { background: #fff; color: #0B1F2A; border-top: 1px solid #E3E9E8; margin-top: 56px; }
   .lvh-final-sub { color: #4A5D65; }
@@ -1552,16 +1550,19 @@
   .lvh-ticket-off > b { color: #B07400; }
   .lvh-ticket-txt > b, .lvh-ticket-vagas > b { color: #0B1F2A; }
   .lvh-ticket-txt > span, .lvh-ticket-vagas > span { color: #5E4A21; }
-  /* ===== tom verde um pouco mais escuro, igual em topo, banners e faixa final ===== */
-  .lvh-top { background: linear-gradient(180deg, #D9EEE3 0%, #E8F4EE 100%); border-bottom-color: #CFE3D9; }
-  .lvh-ban-claro, .lvh-ban-menta { background: linear-gradient(180deg, #DDF0E6 0%, #EDF7F2 100%); border-color: #CFE3D9; }
-  .lvh-final { background: linear-gradient(180deg, #DDF0E6 0%, #EDF7F2 100%); border-top-color: #CFE3D9; }
-  .lvh-art, .lvh-ban-menta .lvh-art { background: #CDE6DA; }
-  .lvh-calc4 > button, .lvh-ban-3 > div, .lvh-ban-3 > button, .lvh-free-card { background: #fff; border-color: #CFE3D9; }
-  .lvh-top-card { border-color: #CFE3D9; }
-  .lvh-bd-dif { border-top-color: #CFE3D9; }
-  .lvh-ban-eye, .lvh-art-sel { background: transparent; }
-  .lvh-free-ic, .lvh-free-selo, .lvh-top-ic, .lvh-bd-item > span { background: #fff; }
+  /* ===== verde-escuro suave: só o topo e a faixa final ===== */
+  .lvh-top, .lvh-final { background: linear-gradient(180deg, #14403D 0%, #0F3431 100%); color: #fff; border-color: transparent; }
+  .lvh-top .lvh-eyebrow, .lvh-final .lvh-kicker { color: #7FE3B6; }
+  .lvh-top-h1 em { color: #6FE0AE; }
+  .lvh-top-lead, .lvh-final-sub { color: #C3D9D3; }
+  .lvh-final .lvh-h2 { color: #fff; }
+  .lvh-top .lvh-btn-sec-claro { background: transparent; border-color: rgba(255,255,255,0.35); color: #fff; }
+  .lvh-top-card, .lvh-free-card { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.14); color: #fff; }
+  .lvh-top-card:hover, .lvh-top-card:focus-visible, .lvh-free-card:hover { background: rgba(255,255,255,0.12); border-color: #6FE0AE; }
+  .lvh-top-ic, .lvh-free-ic, .lvh-free-selo { background: rgba(111,224,174,0.16); color: #7FE3B6; }
+  .lvh-top-tag { color: #8FB8AC; }
+  .lvh-top-d, .lvh-free-d { color: #C3D9D3; }
+  .lvh-free-cta { color: #7FE3B6; }
 </style>
 </helmet>
 
