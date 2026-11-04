@@ -1484,7 +1484,7 @@
       </section>
 
       <section class="lvh-sec lvh-sec-claro">
-        <p class="lvh-kicker">Como funciona</p>
+        <p class="lvh-kicker">Como funciona O Parecerista</p>
         <h2 class="lvh-h2">Três passos, um parecer que você pode usar.</h2>
         <ol class="lvh-passos">
           <sc-for list="{{ homePassos }}" as="ps" hint-placeholder-count="3">
@@ -1497,6 +1497,7 @@
       <section class="lvh-sec">
         <p class="lvh-kicker">Tudo em um só lugar</p>
         <h2 class="lvh-h2">O que hoje está espalhado em dez abas do navegador.</h2>
+        <p class="lvh-bib-lead" style="max-width: 70ch">Três agentes de IA – O Parecerista, O Elaborador e o agente das planilhas de mão de obra –, a Calculadora, a Biblioteca Jurídica, o fórum, a consultoria e os cursos, para quem conduz, disputa, assessora ou controla contratações.</p>
         <div class="lvh-bento">
           <sc-for list="{{ ferramentas }}" as="f" hint-placeholder-count="5">
             <button class="{{ f.classe }}" sc-camel-on-click="{{ f.go }}">
@@ -1515,7 +1516,7 @@
           <div>
             <span class="lvh-bib-tag">Biblioteca Jurídica · pesquisa aberta e gratuita</span>
             <h2 class="lvh-h2" style="margin-top: 14px">Jurisprudência de todo o país, sem pagar nada.</h2>
-            <p class="lvh-bib-lead">Crie sua conta e pesquise decisões do TCU, dos Tribunais de Contas, das Procuradorias-Gerais e dos Tribunais de Justiça, com filtros por órgão, estado, tema e ano, o link oficial em cada decisão e espaço para suas anotações.</p>
+            <p class="lvh-bib-lead">Pesquise, sem cadastro, decisões do TCU, dos Tribunais de Contas, das Procuradorias-Gerais e dos Tribunais de Justiça, com filtros por órgão, estado, tema e ano, o link oficial em cada decisão. Com a conta grátis, suas anotações, marcadores e dossiês ficam salvos.</p>
             <button class="lvh-btn" style="margin-top: 22px" sc-camel-on-click="{{ goBiblioteca }}">Pesquisar na Biblioteca</button>
           </div>
           <div>
@@ -9142,8 +9143,11 @@ class Component extends DCLogic {
       // home
       ferramentas: [
         { icon: "✦", tag: "O Parecerista", titulo: "Análise de documentos com parecer técnico", desc: "Envie até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e receba um parecer em PDF e Word: constatação, texto legal, risco, providência, redação sugerida e jurisprudência. A primeira análise é grátis.", cta: "Analisar um documento", go: this.nav("agente"), big: true },
-        { icon: "⌕", tag: "Biblioteca Jurídica", titulo: "Jurisprudência de todo o país", desc: "TCU, Tribunais de Contas, PGEs e TJs com filtros por órgão, estado, tema e ano, e o link oficial em cada decisão. Grátis com cadastro.", cta: "Pesquisar agora", go: this.nav("biblioteca") },
-        { icon: "◍", tag: "Comunidade", titulo: "Fórum por tema", desc: "Perguntas organizadas por tema, com resposta oficial do especialista. Setor público e privado no mesmo lugar.", cta: "Ver tópicos", go: this.nav("forum") },
+        { icon: "✎", tag: "O Elaborador", titulo: "ETP, TR e Projeto Básico prontos para revisar", desc: "Responda a um questionário e receba a minuta em Word e PDF, com pesquisa de mercado no PNCP e no Compras.gov.br, já conferida pelo agente.", cta: "Criar um documento", go: this.nav("elaborar") },
+        { icon: "%", tag: "Calculadora", titulo: "Reajuste por índice com a nota técnica", desc: "IPCA, IGP-M, INCC e outros índices oficiais atualizados todos os dias, anualidade conferida, memória mês a mês e nota técnica em PDF.", cta: "Calcular um reajuste", go: () => { this.irPara("calculadora"); this.calcFerramenta("reajuste"); } },
+        { icon: "▦", tag: "Mão de obra exclusiva", titulo: "Planilhas da IN 05/2017", desc: "Planilha de custos, repactuação com retroativo e análise da proposta da licitante, com a reforma tributária e downloads em Excel e PDF. No Pro, o agente lê a convenção.", cta: "Montar uma planilha", go: () => { this.irPara("calculadora"); this.calcFerramenta("planejamento"); } },
+        { icon: "⌕", tag: "Biblioteca Jurídica", titulo: "Jurisprudência de todo o país", desc: "TCU, Tribunais de Contas, PGEs e TJs com filtros por órgão, estado, tema e ano, e o link oficial em cada decisão. Pesquisa aberta e gratuita.", cta: "Pesquisar agora", go: this.nav("biblioteca") },
+        { icon: "◍", tag: "Comunidade", titulo: "Fórum por tema", desc: "Perguntas organizadas por tema, com resposta oficial do especialista. Setor público e privado no mesmo lugar.", cta: "Ver as discussões", go: this.nav("forum") },
         { icon: "◈", tag: "Especialista", titulo: "Consultoria técnica", desc: "Por escrito, em vídeo ou ao vivo, com desconto de assinante. O Pro inclui 1 consultoria por escrito por mês.", cta: "Ver consultoria", go: this.nav("consultoria") },
         { icon: "▤", tag: "Capacitação", titulo: "Cursos", desc: "Cursos práticos de licitações e contratos, com até 50% de desconto no plano Pro.", cta: "Explorar cursos", go: this.nav("cursos") }
       ].map((f) => ({ ...f, classe: "lvh-f" + (f.big ? " lvh-f-big" : "") })),
@@ -9152,6 +9156,8 @@ class Component extends DCLogic {
         { titulo: "Classificação por tema, não por data", desc: "Reajuste vai para reajuste, adesão a ata vai para adesão a ata: jurisprudência e fórum organizados pelo vocabulário de licitações." },
         { titulo: "Fonte oficial em cada item", desc: "Toda decisão traz o link para o inteiro teor no portal de origem, para você conferir antes de citar." },
         { titulo: "IA que cita a lei e a decisão", desc: "O agente confere o texto legal e usa a jurisprudência da Biblioteca em cada apontamento. O parecer é opinativo: a decisão é sempre sua." },
+        { titulo: "Do planejamento à execução", desc: "Parecer sobre o edital, minuta do ETP e do TR, planilha de custos, análise da proposta, reajuste e repactuação: o ciclo inteiro do contrato no mesmo lugar." },
+        { titulo: "Documentos prontos para o processo", desc: "Pareceres, minutas, notas técnicas, memórias de cálculo e planilhas em Word, Excel e PDF, com a fundamentação em cada item." },
         { titulo: "Os dois lados do balcão", desc: "Agentes de contratação, pregoeiros e controle interno ao lado de fornecedores e consultores." }
       ],
       goAgente: this.nav("agente"), goElaborar: this.nav("elaborar"),
@@ -9178,9 +9184,9 @@ class Component extends DCLogic {
         { n: "3", t: "Receba o parecer", d: "Em PDF e Word, no formato ABNT: cada apontamento com gravidade, fundamento, providência e redação sugerida." }
       ],
       homeGratis: [
-        { icon: "⌕", selo: "Grátis com cadastro", t: "Biblioteca Jurídica", d: "Pesquise jurisprudência de todo o país, com filtros e o link oficial de cada decisão.", cta: s.usuario ? "Pesquisar agora" : "Criar conta e pesquisar", go: s.usuario ? this.nav("biblioteca") : this.nav("cadastro") },
+        { icon: "⌕", selo: "Aberta a todos", t: "Biblioteca Jurídica", d: "Pesquise jurisprudência de todo o país, com filtros e o link oficial de cada decisão. Com a conta grátis, guarde anotações e dossiês.", cta: "Pesquisar agora", go: this.nav("biblioteca") },
         { icon: "✦", selo: this.cortesiaAnalise() ? "1 por CPF" : "O Parecerista", t: this.cortesiaAnalise() ? "Primeira análise grátis" : "Análise de documentos", d: "Envie até 3 documentos da contratação e receba o parecer técnico em PDF e Word.", cta: this.cortesiaAnalise() ? "Fazer minha análise grátis" : "Analisar um documento", go: this.nav("agente") },
-        { icon: "◍", selo: "Sem cartão", t: "Teste de 7 dias", d: "Conheça o fórum da comunidade e a plataforma antes de escolher um plano.", cta: "Começar o teste", go: this.nav("planos") }
+        { icon: "◍", selo: "Sem cartão", t: "Teste de 7 dias", d: "Leia o fórum da comunidade e use a Calculadora e as planilhas de mão de obra antes de escolher um plano.", cta: "Começar o teste", go: this.nav("planos") }
       ],
       fundTextoCurto: s.oferta && s.oferta.sou_fundador ? "Seu desconto está garantido enquanto a assinatura continuar ativa." : "Para os primeiros " + ((s.oferta && s.oferta.limite) || 100) + " assinantes, travado enquanto a assinatura continuar ativa. Vale no Básico, no Premium e no Pro.",
       fundTicketTitulo: s.oferta && s.oferta.sou_fundador ? "Você é fundador do Licitacon" : "Assine agora e trave 30% de desconto",
