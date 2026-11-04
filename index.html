@@ -2660,7 +2660,7 @@
               <h2 class="lva-h2" style="margin-top: 12px">{{ calcFerrNome }}: o que você faz aqui</h2>
               <ul class="lvc-benef"><sc-for list="{{ calcFerrBenef }}" as="b" hint-placeholder-count="6"><li>{{ b.t }}</li></sc-for></ul>
               <p class="lva-sub" style="font-size: 14.5px; margin-top: 14px"><b>{{ calcFerrPlano }}</b> {{ calcBloqTexto }}</p>
-              <div class="lvh-ctas" style="margin-top: 16px"><button class="lvh-btn" sc-camel-on-click="{{ calcBloqAcao }}">{{ calcBloqCta }}</button><button class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ calcVerPlanos }}">Comparar os planos</button></div>
+              <div class="lvh-ctas" style="margin-top: 16px"><button class="lvh-btn" sc-camel-on-click="{{ calcBloqAcao }}">{{ calcBloqCta }}</button><button class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ calcVerPlanos }}">Ver os planos</button></div>
             </div>
           </div>
         </sc-if>
@@ -3728,19 +3728,6 @@
         </section>
         </sc-if>
 
-        <section class="lvp-bloco" aria-labelledby="lvp-comp-t">
-          <h2 id="lvp-comp-t" class="lvp-h2">Compare os planos</h2>
-          <div class="lvp-tabela-rolar">
-            <div class="lvp-tabela" role="table" aria-label="Comparação dos planos">
-              <div class="lvp-tr lvp-thead" role="row"><span role="columnheader"><span class="lvp-sr">Recurso</span></span>
-                <sc-for list="{{ compCols }}" as="c" hint-placeholder-count="3"><span role="columnheader">{{ c }}</span></sc-for></div>
-              <sc-for list="{{ compLinhas }}" as="l" hint-placeholder-count="6">
-                <div class="lvp-tr" role="row"><span class="lvp-th" role="rowheader">{{ l.rot }}</span>
-                  <sc-for list="{{ l.vals }}" as="v" hint-placeholder-count="3"><span class="{{ v.cls }}" role="cell">{{ v.txt }}</span></sc-for></div>
-              </sc-for>
-            </div>
-          </div>
-        </section>
 
         <section class="lvp-garantias" aria-label="Garantias">
           <sc-for list="{{ garantiasPlanos }}" as="g" hint-placeholder-count="4">
