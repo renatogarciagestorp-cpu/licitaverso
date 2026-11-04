@@ -692,6 +692,8 @@
   .lve-docs { margin-top: -28px; position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
   .lve-doc { font: inherit; text-align: left; display: flex; flex-direction: column; gap: 8px; background: #fff; border: 1px solid #E3E9E8; border-radius: 20px; padding: 24px; cursor: pointer; color: #0B1F2A; box-shadow: 0 14px 34px rgba(11,31,42,0.08); transition: border-color 0.14s ease, transform 0.14s ease; }
   .lve-doc:hover { border-color: #0FA36B; transform: translateY(-3px); }
+  .lve-nota-docs { margin: -4px 0 18px; font-size: 14px; color: #55666D; }
+  .lve-link { background: none; border: 0; padding: 0; font: inherit; font-weight: 700; color: #0F6B7E; cursor: pointer; text-decoration: underline; }
   .lve-doc[aria-pressed="true"] { border-color: #0FA36B; box-shadow: 0 0 0 2px #0FA36B, 0 14px 34px rgba(11,31,42,0.08); }
   .lve-doc-sig { align-self: flex-start; background: #0A1F2A; color: #7FE3B6; font-weight: 800; font-size: 13px; border-radius: 8px; padding: 5px 10px; }
   .lve-doc > b { font-size: 20px; }
@@ -809,7 +811,7 @@
   .lve-como p { margin: 0; font-size: 13.5px; color: #55666E; line-height: 1.5; }
   .lve-como-n { width: 28px; height: 28px; border-radius: 50%; background: #E3F6EC; color: #0A7A50; font-weight: 800; display: grid; place-items: center; font-size: 14px; margin-bottom: 4px; }
   .lve-h2 { font-size: 22px; margin: 34px 0 14px; color: #0B1F2A; font-family: Manrope, system-ui, sans-serif; font-weight: 800; }
-  .lve-como + .lve-h2 + .lve-docs, .lve-h2 + .lve-docs { margin-top: 0; }
+  .lve-como + .lve-h2 + .lve-docs, .lve-h2 + .lve-docs, .lve-nota-docs + .lve-docs { margin-top: 0; }
   .lve-wiz { margin-top: -28px; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
   .lve-principal { background: #fff; border: 1px solid #E3E9E8; border-radius: 22px; padding: 24px 28px 28px; box-shadow: 0 16px 40px rgba(11,31,42,0.08); display: grid; gap: 18px; min-width: 0; }
   .lve-w-cab { display: flex; align-items: center; gap: 12px; }
@@ -1812,14 +1814,8 @@
             <div class="lve-valid lve-valid-ok" role="status" style="margin-top: 22px"><b>✓ {{ elLiberadoTexto }}</b>
               <button type="button" class="lve-voltar" sc-camel-on-click="{{ elIrLiberado }}" style="margin-left: 10px">Preencher agora →</button></div>
           </sc-if>
-          <sc-if value="{{ elTemRecentes }}" hint-placeholder-val="{{ false }}">
-            <h2 class="lve-h2">Seus documentos recentes</h2>
-            <div class="lve-recentes"><sc-for list="{{ elRecentes }}" as="g" hint-placeholder-count="2">
-              <div class="lve-rec"><span class="lve-doc-sig">{{ g.sigla }}</span><div><b>{{ g.objeto }}</b><small>{{ g.situacao }}</small></div>
-                <button type="button" class="lve-voltar" sc-camel-on-click="{{ g.abrir }}">{{ g.acao }}</button></div>
-            </sc-for></div>
-          </sc-if>
           <h2 class="lve-h2">Qual documento você quer criar?</h2>
+          <sc-if value="{{ elTemRecentes }}" hint-placeholder-val="{{ false }}"><p class="lve-nota-docs">Para acompanhar ou baixar os documentos que você já criou, abra <button type="button" class="lve-link" sc-camel-on-click="{{ elIrMeusDocs }}">Minha conta → Meus documentos</button>.</p></sc-if>
           <div class="lve-docs">
             <sc-for list="{{ elDocs }}" as="dc" hint-placeholder-count="3">
               <button type="button" class="lve-doc" sc-camel-on-click="{{ dc.escolher }}" aria-pressed="{{ dc.sel }}">
@@ -6882,6 +6878,7 @@ class Component extends DCLogic {
                   acao: pr ? "Baixar" : er ? "Ver motivo" : x.status === "aguardando_informacoes" ? "Responder" : "Acompanhar",
                   abrir: () => { this.setState({ el: { doc: x.documento, passo: 0, respostas: {}, aceite: false, acompanhar: x.id } }); this.elAcompanhar(); } };
               }),
+              elIrMeusDocs: () => { this.setState({ contaTab: "documentos" }); this.irPara("conta"); },
               elTemRecentes: (s.analises || []).some((x) => x.tipo === "geracao" && x.status !== "aguardando_documentos" && x.status !== "cancelada"),
               elAcompanhando: !!el.acompanhar, elFormVisivel: !el.reapAberto && !el.acompanhar && !el.tri && !el.triando,
               ...(() => {
