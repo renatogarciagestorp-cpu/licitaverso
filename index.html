@@ -1550,6 +1550,18 @@
   .lvh-btn-sec.lvh-btn-sec-claro:hover { background: #F1F5F4; }
   .lvh-art .lvh-doc { transform: none; box-shadow: 0 1px 2px rgba(10,31,42,0.06); border: 1px solid #E3E9E8; background: #fff; }
   .lvh-bd-dif .lvh-pa-h { margin-top: -8px; }
+  /* ===== tom único e claro para o topo e os banners ===== */
+  .lvh-top { background: linear-gradient(180deg, #EAF6EF 0%, #F6F8F7 100%); color: #0B1F2A; border-bottom: 1px solid #E3E9E8; }
+  .lvh-top .lvh-eyebrow { color: #0A7A50; }
+  .lvh-top-h1 em { color: #0A7A50; }
+  .lvh-top-lead { color: #4A5D65; }
+  .lvh-top-card { background: #fff; border: 1px solid #DCE8E3; color: #0B1F2A; }
+  .lvh-top-card:hover, .lvh-top-card:focus-visible { background: #fff; border-color: #0FA36B; }
+  .lvh-top-ic { background: #E3F5EC; color: #0A7A50; }
+  .lvh-top-tag { color: #6A8A80; }
+  .lvh-top-d { color: #55666D; }
+  .lvh-ban-claro, .lvh-ban-menta { background: linear-gradient(180deg, #F1F9F5 0%, #FFFFFF 55%); border-color: #DCE8E3; }
+  .lvh-art, .lvh-ban-menta .lvh-art { background: #E9F4EF; }
   /* ===== etapa 4 do "clean": faixa final da página inicial ===== */
   .lvh-final { background: #fff; color: #0B1F2A; border-top: 1px solid #E3E9E8; margin-top: 56px; }
   .lvh-final-sub { color: #4A5D65; }
@@ -1719,7 +1731,7 @@
           <p class="lvh-top-lead">Agentes de IA que analisam e elaboram documentos, calculadora de reajuste e planilhas de mão de obra, jurisprudência de todo o país, fórum, consultoria e cursos – para quem conduz, disputa, assessora ou controla contratações.</p>
           <div class="lvh-ctas">
             <button class="{{ ctaClasse }}" sc-camel-on-click="{{ topCta }}">{{ topCtaTxt }}</button>
-            <button class="lvh-btn-sec" sc-camel-on-click="{{ topSec }}">{{ topSecTxt }}</button>
+            <button class="lvh-btn-sec lvh-btn-sec-claro" sc-camel-on-click="{{ topSec }}">{{ topSecTxt }}</button>
           </div>
           <div class="lvh-top-grid" role="list" aria-label="O que o Licitacon oferece">
             <sc-for list="{{ homeTopo }}" as="t" hint-placeholder-count="8">
