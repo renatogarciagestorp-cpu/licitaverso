@@ -1506,6 +1506,21 @@
   .lvp-tr > .lvp-forte { background: #F6FBF8; }
   .lvp-faq-sinal { background: transparent; }
   @media (max-width: 960px) { .lvp-hero { padding: 32px 16px 28px; } .lvp-h1 { font-size: 32px; } }
+  /* ===== etapa 3 do "clean": topos das páginas internas em fundo claro ===== */
+  .lvx-ph { background: #F6F8F7 !important; color: #0B1F2A; padding: 44px 24px 44px; border-bottom: 1px solid #E3E9E8; }
+  .lvx-ph-simples { padding: 40px 24px 32px; }
+  .lvx-ph .lvh-eyebrow { color: #0A7A50; }
+  .lvx-ph .lva-h1 { font-size: 38px; }
+  .lvx-ph .lvf-h1 { font-size: 34px; }
+  .lvx-ph .lva-lead, .lvx-ph .lvf-lead, .lvx-ph .lvx-ph-lead { color: #4A5D65; }
+  .lvx-ph .lvh-micro { color: #6A7B82; }
+  .lvx-ph .lvh-btn-sec { border-color: #D5DFDD; background: #fff; color: #0B1F2A; }
+  .lvx-ph .lva-amostra { box-shadow: none; border: 1px solid #E3E9E8; background: #fff; }
+  .lvx-ph + .lvc-corpo, .lvx-ph + section { position: relative; }
+  .lvx-ph ~ .lvc-corpo .lvc-abas, .lvx-ph ~ .lvc-corpo .lva-passos, .lvx-ph ~ .lvc-corpo .lve-docs, .lvx-ph ~ .lvc-corpo .lve-grid, .lvx-ph ~ .lvc-corpo .lve-rapido, .lvx-ph ~ .lvc-corpo .lve-como, .lvx-ph ~ .lvc-corpo .lve-wiz, .lvx-ph ~ .lvc-corpo .lvc-tipos { margin-top: 24px; box-shadow: none; }
+  .lva-passos > li, .lve-como > *, .lve-docs > * { box-shadow: none !important; }
+  .lva-passos, .lve-docs, .lve-grid, .lve-rapido, .lve-como, .lve-wiz, .lvc-tipos, .lvc-abas { margin-top: 24px; box-shadow: none; }
+  @media (max-width: 760px) { .lvx-ph { padding: 30px 16px 30px; } .lvx-ph .lva-h1 { font-size: 29px; } .lvx-ph .lvf-h1 { font-size: 27px; } }
 </style>
 </helmet>
 
@@ -1978,7 +1993,7 @@
 
     <!-- ===================== FÓRUM ===================== -->
     <sc-if value="{{ isForum }}" hint-placeholder-val="{{ false }}">
-      <section class="lvf-hero">
+      <section class="lvf-hero lvx-ph">
         <div class="lvf-hero-in">
           <div>
             <span class="lvh-eyebrow">Fórum da comunidade</span>
@@ -2241,7 +2256,7 @@
 
     <!-- ===================== ELABORAR DOCUMENTOS ===================== -->
     <sc-if value="{{ isElaborar }}" hint-placeholder-val="{{ false }}">
-      <section class="lva-hero">
+      <section class="lva-hero lvx-ph">
         <div class="lvc-hero-in">
           <span class="lvh-eyebrow">O Elaborador · Lei 14.133/2021</span>
           <h1 class="lva-h1" style="max-width: 22ch">ETP, TR ou Projeto Básico em minutos, não em dias.</h1>
@@ -2560,7 +2575,7 @@
 
     <!-- ===================== CALCULADORA ===================== -->
     <sc-if value="{{ isCalculadora }}" hint-placeholder-val="{{ false }}">
-      <section class="lva-hero" style="padding-bottom: 56px">
+      <section class="lva-hero lvx-ph">
         <div class="lvc-hero-in">
           <span class="lvh-eyebrow">Calculadora · gestão de contratos</span>
           <h1 class="lva-h1" style="max-width: 24ch">{{ calcH1 }}</h1>
@@ -3091,10 +3106,10 @@
 
     <!-- ===================== CURSOS ===================== -->
     <sc-if value="{{ isCursos }}" hint-placeholder-val="{{ false }}">
-      <section style="background: #0A1F2A; color: #fff; padding: 48px 24px 32px">
+      <section class="lvx-ph lvx-ph-simples">
         <div style="max-width: 1240px; margin: 0 auto">
           <h1 style="font-size: 40px; letter-spacing: -0.03em; font-weight: 800; margin: 0">Cursos</h1>
-          <p style="font-size: 16.5px; color: #A9BEC6; margin: 10px 0 0; max-width: 680px">Nesta primeira fase, todos os cursos são ministrados por Renato Garcia. As aulas acontecem na plataforma Hotmart, com área do aluno e certificado.</p>
+          <p class="lvx-ph-lead" style="font-size: 16.5px; margin: 10px 0 0; max-width: 680px">Nesta primeira fase, todos os cursos são ministrados por Renato Garcia. As aulas acontecem na plataforma Hotmart, com área do aluno e certificado.</p>
         </div>
       </section>
       <section style="max-width: 1240px; margin: 0 auto; padding: 30px 24px 0">
@@ -3151,10 +3166,10 @@
 
     <!-- ===================== CONSULTORIA ===================== -->
     <sc-if value="{{ isConsultoria }}" hint-placeholder-val="{{ false }}">
-      <section style="background: #0A1F2A; color: #fff; padding: 48px 24px 32px">
+      <section class="lvx-ph lvx-ph-simples">
         <div style="max-width: 1240px; margin: 0 auto">
           <h1 style="font-size: 40px; letter-spacing: -0.03em; font-weight: 800; margin: 0">Consultoria técnica</h1>
-          <p style="font-size: 16.5px; color: #A9BEC6; margin: 10px 0 0; max-width: 720px">Análise de conformidade processual, orientação sobre procedimentos e boas práticas de gestão em licitações e contratos, feita por especialista em gestão pública. Assinantes têm desconto, e o plano Pro inclui 1 consultoria por escrito por mês.</p>
+          <p class="lvx-ph-lead" style="font-size: 16.5px; margin: 10px 0 0; max-width: 720px">Análise de conformidade processual, orientação sobre procedimentos e boas práticas de gestão em licitações e contratos, feita por especialista em gestão pública. Assinantes têm desconto, e o plano Pro inclui 1 consultoria por escrito por mês.</p>
         </div>
       </section>
       <section style="max-width: 1240px; margin: 0 auto; padding: 32px 24px 0">
@@ -3246,7 +3261,7 @@
     <!-- ===================== AGENTE IA ===================== -->
     <sc-if value="{{ isAgente }}" hint-placeholder-val="{{ false }}">
       <sc-if value="{{ anEtapaInfo }}" hint-placeholder-val="{{ true }}">
-      <section class="lva-hero">
+      <section class="lva-hero lvx-ph">
         <div class="lva-hero-in">
           <div>
             <span class="lvh-eyebrow">O Parecerista · Leis 14.133, 13.303 e 13.019</span>
