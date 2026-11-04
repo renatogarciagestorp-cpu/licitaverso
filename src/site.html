@@ -2225,9 +2225,9 @@
                   <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" data-mo-campo="{{ c.k }}" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
                 </sc-for>
               </div>
-              <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
+              <sc-if value="{{ moTemPlanArq }}" hint-placeholder-val="{{ false }}">
               <div class="lmo-cct">
-                <div><b>Planilha utilizada na contratação</b><small>A planilha de custos da proposta vencedora ou do contrato, em PDF ou Excel (.xlsx).</small></div>
+                <div><b>{{ moPlanRot }}</b><small>{{ moPlanSub }}</small></div>
                 <label class="lmo-arq"><input type="file" accept=".pdf,.xlsx" sc-camel-on-change="{{ moEscolherPlan }}">{{ moPlanNome }}<sc-if value="{{ moPlanNome }}" hint-placeholder-val="{{ false }}"> · trocar</sc-if><sc-if value="{{ moSemPlan }}" hint-placeholder-val="{{ true }}">Escolher arquivo</sc-if></label>
               </div>
               </sc-if>
@@ -2403,9 +2403,9 @@
 
             <sc-if value="{{ moTemFalhas }}" hint-placeholder-val="{{ false }}">
             <section class="lmo-bloco">
-              <h2 class="lmo-h2">Falhas e inconsistências da planilha da contratação</h2>
-              <p class="lmo-nota">{{ moFalhasResumo }} Cada item traz o fundamento e o caminho correto. A planilha repactuada acima já considera as correções indicadas pelo agente; confira antes de concluir.</p>
-              <p class="lve-aviso" role="note"><b>Atenção:</b> manter qualquer uma dessas falhas na planilha impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores. Corrija cada item antes de concluir a repactuação.</p>
+              <h2 class="lmo-h2">{{ moFalhasTitulo }}</h2>
+              <p class="lmo-nota">{{ moFalhasResumo }} {{ moFalhasNota }}</p>
+              <p class="lve-aviso" role="note"><b>Atenção:</b> {{ moFalhasAviso }}</p>
               <sc-if value="{{ moFalhasPendente }}" hint-placeholder-val="{{ false }}">
                 <div class="lmo-aceite">
                   <label class="lvc-check" style="align-items: flex-start"><input type="checkbox" checked="{{ moFalhasMarcado }}" sc-camel-on-change="{{ onMoFalhasMarcar }}" style="margin-top: 2px">
@@ -2421,13 +2421,26 @@
                     <p><b>Falha:</b> {{ f.problema }}</p>
                     <p><b>Fundamento:</b> {{ f.fundamento }}</p>
                     <p><b>Caminho correto:</b> {{ f.correcao }}</p>
-                    <sc-if value="{{ f.temImpacto }}" hint-placeholder-val="{{ false }}"><p class="lmo-imp"><b>Impacto se mantida:</b> {{ f.impacto }}</p></sc-if>
+                    <sc-if value="{{ f.temImpacto }}" hint-placeholder-val="{{ false }}"><p class="lmo-imp"><b>{{ f.impRot }}</b> {{ f.impacto }}</p></sc-if>
                   </li>
                 </sc-for>
               </ol>
             </section>
             </sc-if>
-            <sc-if value="{{ moSemFalhasOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok">✓ O agente não encontrou falhas de preenchimento na planilha da contratação.</p></sc-if>
+            <sc-if value="{{ moSemFalhasOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok">✓ {{ moSemFalhasTxt }}</p></sc-if>
+
+            <sc-if value="{{ moProp }}" hint-placeholder-val="{{ false }}">
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Exequibilidade da proposta e diligência</h2>
+              <p class="lmo-nota" style="margin-top: 0">A planilha acima reproduz a proposta como apresentada. Erros de preenchimento não desclassificam se a planilha puder ser ajustada sem majorar o preço, e itens isolados abaixo do estimado não bastam, se não contrariarem exigência legal (IN 05/2017, Anexo VII-A, itens 7.9 e 9.3). Havendo dúvida, a diligência é o caminho (Lei 14.133/2021, art. 59, § 2º).</p>
+              <sc-for list="{{ moExeqItens }}" as="a" hint-placeholder-count="2"><p class="{{ a.cls }}" style="margin-top: 8px">{{ a.t }}</p></sc-for>
+              <sc-if value="{{ moTemDilig }}" hint-placeholder-val="{{ false }}">
+                <p class="lmo-nota"><b>Minuta de diligência à licitante</b> · confira, ajuste e envie pelo sistema da licitação.</p>
+                <pre class="lmo-minuta">{{ moDiligTexto }}</pre>
+                <div class="lmo-agente" style="margin-top: 8px"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCopiarDilig }}">Copiar a diligência</button></div>
+              </sc-if>
+            </section>
+            </sc-if>
 
             <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
             <section class="lmo-bloco">
@@ -2503,7 +2516,7 @@
                 <sc-if value="{{ moTemUnidade }}" hint-placeholder-val="{{ false }}"><div><small>{{ moUnidadeRot }}</small><b>{{ moUnidade }}</b></div></sc-if>
               </div>
               <sc-if value="{{ moLiderTxt }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ moLiderTxt }}</p></sc-if>
-              <sc-if value="{{ moTemDif }}" hint-placeholder-val="{{ false }}"><p class="lmo-dif">Variação em relação ao preço vigente: <b>{{ moDif }}</b></p></sc-if>
+              <sc-if value="{{ moTemDif }}" hint-placeholder-val="{{ false }}"><p class="lmo-dif">{{ moDifRot }} <b>{{ moDif }}</b></p></sc-if>
               <div class="lmo-agente" style="margin-top: 16px">
                 <button type="button" class="lmo-btn" sc-camel-on-click="{{ moBaixarExcel }}">Baixar em Excel</button>
                 <button type="button" class="lmo-btn lmo-btn2" sc-camel-on-click="{{ moBaixarPdf }}">Baixar em PDF</button>
@@ -6559,10 +6572,11 @@ class Component extends DCLogic {
   // módulos em blocos com cabeçalho de cor, notas e fontes em letra menor sob cada rubrica, totais destacados
   // e linhas preenchidas pelo agente marcadas em âmbar (com legenda).
   async moBaixar(formato) {
-    const s = this.state, mo = s.mo, d = mo.d, rep = mo.modo === "repactuacao";
+    const s = this.state, mo = s.mo, d = mo.d, rep = mo.modo === "repactuacao", prop = mo.modo === "proposta";
     const P = this.moProps(), { r, rj } = this._moUltimo || {};
-    const falhas = rep ? (d.falhas || []) : [];
-    if (falhas.length && !d.falhas_aceite) {
+    const falhas = rep || prop ? (d.falhas || []) : [];
+    const dilig = (prop && this._moUltimo && this._moUltimo.dilig) || [], exeqItens = (prop && this._moUltimo && this._moUltimo.exeqItens) || [];
+    if (rep && falhas.length && !d.falhas_aceite) {
       this.setState((x) => ({ mo: { ...x.mo, erro: "Antes de baixar, leia as falhas apontadas na planilha da contratação e confirme se concorda com o prosseguimento da análise." } }));
       try { document.querySelector(".lmo-aceite").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {}
       return;
@@ -6585,12 +6599,13 @@ class Component extends DCLogic {
     const tribNome = d.reforma === "depois" ? "Depois da reforma tributária (CBS e IBS) · ano calculado: " + (r && r.tr ? r.tr.ano : "") : "Antes da reforma tributária (PIS, COFINS e ISS)";
     const num = (txt) => { const m = String(txt == null ? "" : txt).replace("→", "").replace("R$", "").replace("%", "").trim().replace(/\./g, "").replace(",", "."); const n = Number(m); return m !== "" && /\d/.test(m) && isFinite(n) ? n : null; };
     const brlTxt = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    const titulo = rep ? "Repactuação" : "Planejamento da contratação";
+    const titulo = prop ? "Análise da proposta" + (d.pr_licitante ? " – " + d.pr_licitante : "") : rep ? "Repactuação" : "Planejamento da contratação";
     const hoje = new Date().toLocaleDateString("pt-BR");
     const ident = [["Categoria profissional", d.categoria], ["CBO", d.cbo], ["Tipo de serviço", d.tipo_servico], ["Município/UF da prestação", [d.municipio, d.uf].filter(Boolean).join("/")],
       ["Salário-base", d.salario ? brlTxt(moNum(d.salario)) : ""], ["Data-base da categoria", d.data_base], ["Instrumento coletivo (ano)", d.ano_cct], ["Convenção coletiva", d.cct_nome],
       ["Data da proposta", d.data_proposta], ["Meses de execução", d.meses], ["Regime de tributação", regNome], ["Tributos", tribNome]]
-      .concat(rep ? [["Ano de execução após a repactuação", d.ano_exec], ["Planilha da contratação", d.plan_nome]] : []).filter((x) => String(x[1] || "").trim());
+      .concat(rep ? [["Ano de execução após a repactuação", d.ano_exec], ["Planilha da contratação", d.plan_nome]] : [])
+      .concat(prop ? [["Licitante", d.pr_licitante], ["Processo", d.pr_processo], ["Preço ofertado por empregado", d.vigente ? brlTxt(moNum(d.vigente)) : ""], ["Valor estimado por empregado", d.pr_estimado ? brlTxt(moNum(d.pr_estimado)) : ""], ["Planilha da proposta", d.plan_nome]] : []).filter((x) => String(x[1] || "").trim());
     // módulos estruturados
     const modulos = P.moModulos.map((md) => {
       const [cab, ...resto] = md.titulo.split(" – ");
@@ -6618,11 +6633,12 @@ class Component extends DCLogic {
       .concat(d.reforma === "depois" ? ["Reforma tributária (EC 132/2023; LC 214/2025): 2026, teste com CBS 0,9% e IBS 0,1% compensáveis com PIS/COFINS; 2027 e 2028, CBS pela referência reduzida em 0,1 p.p. e IBS de 0,1%, sem PIS/COFINS; 2029 a 2032, ISS a 90%, 80%, 70% e 60% da alíquota, com o IBS crescendo na mesma proporção; 2033, IBS integral, sem ISS. CBS e IBS calculados por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º). Referências usadas: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa); confira as alíquotas publicadas. A mudança de tributos em contrato vigente pede reequilíbrio (LC 214/2025, arts. 374 a 378)."] : [])
       .concat(gtTxt ? [gtTxt] : [])
       .concat(retro ? retro.alertas.map((a) => (a.ok ? "" : "Atenção: ") + a.t) : [])
-      .concat(falhas.length ? ["O assinante declarou estar ciente das falhas e inconsistências apontadas na planilha da contratação e concordou com o prosseguimento da análise com base nela, sabendo que a manutenção das falhas impacta os valores da repactuação (" + new Date(d.falhas_aceite).toLocaleString("pt-BR") + ")."] : [])
+      .concat(exeqItens.map((a) => "Exequibilidade: " + a.t))
+      .concat(rep && falhas.length ? ["O assinante declarou estar ciente das falhas e inconsistências apontadas na planilha da contratação e concordou com o prosseguimento da análise com base nela, sabendo que a manutenção das falhas impacta os valores da repactuação (" + new Date(d.falhas_aceite).toLocaleString("pt-BR") + ")."] : [])
       .concat(["Planilha de custos e formação de preços no formato do Anexo VII-D da IN SEGES/MP nº 5/2017. Valores mensais por empregado; totais truncados em duas casas, como no modelo da IN. Confira cada valor e fonte antes de juntar ao processo."]);
     const dims = P.moDimLimpeza ? (P.moDimGrupos || []).flatMap((g) => g.linhas.filter((l) => num(l.m2)).map((l) => [g.titulo, l.rot, l.m2, l.p, l.temH ? l.h : "—", l.q, l.precoM2])) : [];
     const grav = { alta: ["Alta", [184, 50, 50], "FFB83232"], media: ["Média", [201, 138, 27], "FFC98A1B"], baixa: ["Baixa", [15, 107, 126], "FF0F6B7E"] };
-    const nome = (rep ? "planilha-repactuacao" : "planilha-planejamento") + "-" + (d.categoria || "mao-de-obra").toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+    const nome = (prop ? "analise-proposta" : rep ? "planilha-repactuacao" : "planilha-planejamento") + "-" + (d.categoria || "mao-de-obra").toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
     this.setState((x) => ({ mo: { ...x.mo, baixando: true, erro: "" } }));
     try {
       if (formato === "xlsx") {
@@ -6700,6 +6716,11 @@ class Component extends DCLogic {
           retro.linhas.forEach((l) => { const x = wr.addRow([l.mes, l.frac, num(l.lab), l.ins === "—" ? "—" : num(l.ins), num(l.dif)]); x.eachCell((c) => { c.border = { bottom: fino }; }); [3, 4, 5].forEach((i) => { x.getCell(i).numFmt = '"R$" #,##0.00'; }); });
           rr0 = wr.addRow(["Total", "", "", "", retro.total]); rr0.eachCell((c) => { c.font = { bold: true }; c.fill = fill(X.tot); }); rr0.getCell(5).numFmt = '"R$" #,##0.00';
         }
+        if (dilig.length) {
+          const wdg = wb.addWorksheet("Diligência", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
+          wdg.columns = [{ width: 100 }];
+          dilig.forEach((t, i) => { const x = wdg.addRow([t]); x.getCell(1).alignment = { wrapText: true, vertical: "top" }; x.getCell(1).font = { size: 11, bold: i === 0 }; x.height = altura(t, 95, 15); });
+        }
         if (minuta.length) {
           const wmn = wb.addWorksheet("Minuta de apostilamento", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
           wmn.columns = [{ width: 100 }];
@@ -6736,11 +6757,11 @@ class Component extends DCLogic {
         if (falhas.length) {
           const wf = wb.addWorksheet("Falhas da planilha", { views: [{ showGridLines: false, state: "frozen", ySplit: 4 }], pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
           wf.columns = [{ width: 5 }, { width: 26 }, { width: 10 }, { width: 42 }, { width: 34 }, { width: 42 }, { width: 30 }];
-          let fr = wf.addRow(["Falhas e inconsistências da planilha da contratação"]); wf.mergeCells(fr.number, 1, fr.number, 7); fr.getCell(1).font = { bold: true, size: 14, color: { argb: X.branco } }; fr.getCell(1).fill = fill("FF8A1230"); fr.height = 26;
-          fr = wf.addRow(["Atenção: manter qualquer uma destas falhas impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores."]); wf.mergeCells(fr.number, 1, fr.number, 7);
+          let fr = wf.addRow([P.moFalhasTitulo]); wf.mergeCells(fr.number, 1, fr.number, 7); fr.getCell(1).font = { bold: true, size: 14, color: { argb: X.branco } }; fr.getCell(1).fill = fill("FF8A1230"); fr.height = 26;
+          fr = wf.addRow(["Atenção: " + P.moFalhasAviso]); wf.mergeCells(fr.number, 1, fr.number, 7);
           fr.getCell(1).font = { bold: true, size: 10, color: { argb: "FF8A1230" } }; fr.getCell(1).alignment = { wrapText: true }; fr.height = 30;
           wf.addRow([]);
-          const hr = wf.addRow(["Nº", "Rubrica", "Gravidade", "Falha", "Fundamento", "Caminho correto", "Impacto se mantida"]);
+          const hr = wf.addRow(["Nº", "Rubrica", "Gravidade", "Falha", "Fundamento", "Caminho correto", prop ? "Efeito no preço e na exequibilidade" : "Impacto se mantida"]);
           hr.eachCell((c) => { c.font = { bold: true, size: 9.5, color: { argb: X.branco } }; c.fill = fill(X.navy); c.alignment = { vertical: "middle", wrapText: true }; });
           falhas.forEach((f, i) => {
             const g = grav[f.gravidade] || grav.media;
@@ -6849,12 +6870,12 @@ class Component extends DCLogic {
         // falhas
         if (falhas.length) {
           doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6,
-            head: [[{ content: "FALHAS E INCONSISTÊNCIAS DA PLANILHA DA CONTRATAÇÃO", colSpan: 3, styles: { fillColor: [138, 18, 48], textColor: 255, fontSize: 8.5, fontStyle: "bold" } }]],
-            body: [[{ content: "Atenção: manter qualquer uma destas falhas impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores.", colSpan: 3, styles: { fontStyle: "bold", textColor: [138, 18, 48], fillColor: [253, 236, 239] } }]]
+            head: [[{ content: P.moFalhasTitulo.toUpperCase(), colSpan: 3, styles: { fillColor: [138, 18, 48], textColor: 255, fontSize: 8.5, fontStyle: "bold" } }]],
+            body: [[{ content: "Atenção: " + P.moFalhasAviso, colSpan: 3, styles: { fontStyle: "bold", textColor: [138, 18, 48], fillColor: [253, 236, 239] } }]]
               .concat(falhas.map((f, i) => { const g = grav[f.gravidade] || grav.media; return [
                 { content: String(i + 1), styles: { fontStyle: "bold", halign: "center" } },
                 { content: g[0].toUpperCase(), styles: { fillColor: g[1], textColor: 255, fontStyle: "bold", halign: "center", fontSize: 6.5 } },
-                { content: f.rubrica + "\nFalha: " + f.problema + "\nFundamento: " + f.fundamento + "\nCaminho correto: " + f.correcao + (f.impacto ? "\nImpacto se mantida: " + f.impacto : "") }]; })),
+                { content: f.rubrica + "\nFalha: " + f.problema + "\nFundamento: " + f.fundamento + "\nCaminho correto: " + f.correcao + (f.impacto ? (prop ? "\nEfeito no preço: " : "\nImpacto se mantida: ") + f.impacto : "") }]; })),
             theme: "plain", rowPageBreak: "avoid", styles: { ...base.styles, fontSize: 7.6, cellPadding: 2, lineWidth: { bottom: 0.1 }, valign: "top" }, columnStyles: { 0: { cellWidth: 8 }, 1: { cellWidth: 16 } } });
         }
         // dimensionamento
@@ -6890,6 +6911,12 @@ class Component extends DCLogic {
         // notas
         doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "NOTAS E FUNDAMENTAÇÃO", colSpan: 2, styles: { fillColor: C.teal, textColor: 255, fontSize: 8, fontStyle: "bold" } }]],
           body: notas.map((n2, i) => [String(i + 1), n2]), theme: "plain", rowPageBreak: "avoid", styles: { ...base.styles, fontSize: 7.2, textColor: C.fraco, cellPadding: 1.6 }, columnStyles: { 0: { cellWidth: 7, fontStyle: "bold" } } });
+        if (dilig.length) {
+          doc.addPage(); cab();
+          doc.autoTable({ ...base, startY: 30, head: [[{ content: "MINUTA DE DILIGÊNCIA À LICITANTE", styles: { fillColor: C.teal, textColor: 255, fontSize: 9, fontStyle: "bold" } }]],
+            body: dilig.map((t, i) => [{ content: t, styles: { fontStyle: i === 0 ? "bold" : "normal", fontSize: i === 0 ? 10 : 9, cellPadding: { top: 2.2, bottom: 2.2, left: 2, right: 2 } } }]),
+            theme: "plain", styles: { ...base.styles, lineWidth: 0 } });
+        }
         if (minuta.length) {
           doc.addPage(); cab();
           doc.autoTable({ ...base, startY: 30, head: [[{ content: "MINUTA DE APOSTILAMENTO", styles: { fillColor: C.teal, textColor: 255, fontSize: 9, fontStyle: "bold" } }]],
@@ -6910,7 +6937,7 @@ class Component extends DCLogic {
     if (!this.sb) { erro("O agente ainda não está ativo neste site (modo demonstração)."); return; }
     if (!this.u) { this.setState({ volta: "calculadora" }); this.irPara("login"); return; }
     if (!this.moPodeAgente()) { erro("O preenchimento pelo agente é exclusivo do plano Pro."); return; }
-    const rep = mo.modo === "repactuacao";
+    const rep = mo.modo === "repactuacao", prop = mo.modo === "proposta";
     if (!String(d.municipio || "").trim() || !/^[A-Za-z]{2}$/.test(String(d.uf || "").trim())) {
       erro("Antes da análise, informe o município e a UF onde o serviço será prestado: o agente busca a alíquota do ISS desse município.");
       try { const el = document.querySelector('[data-mo-campo="municipio"]'); el.scrollIntoView({ behavior: "smooth", block: "center" }); el.focus(); } catch (e) {}
@@ -6922,14 +6949,17 @@ class Component extends DCLogic {
       return;
     }
     if (!d.cct_arquivo) { erro(rep ? "Envie a nova convenção coletiva em PDF: ela é obrigatória para a análise da repactuação." : "Envie primeiro a convenção coletiva em PDF."); return; }
-    if (rep && !d.plan_arquivo && !this._moPlanTexto) { erro("Envie a planilha utilizada na contratação (PDF ou Excel)" + (d.plan_nome ? " de novo: o arquivo em Excel precisa ser escolhido nesta visita." : ".")); return; }
+    if (!d.cct_arquivo && prop) { erro("Envie a convenção coletiva da categoria em PDF."); return; }
+    if ((rep || prop) && !d.plan_arquivo && !this._moPlanTexto) { erro("Envie a planilha " + (prop ? "de custos da proposta" : "utilizada na contratação") + " (PDF ou Excel)" + (d.plan_nome ? " de novo: o arquivo em Excel precisa ser escolhido nesta visita." : ".")); return; }
     this.setState((x) => ({ mo: { ...x.mo, agente: true, erro: "", ok: "", obs: [] } }));
-    const { data, error } = await this.sb.functions.invoke("mo-agente", { body: { modo: mo.modo, arquivo: d.cct_arquivo || "", planilha_arquivo: rep ? (d.plan_arquivo || "") : "",
-      planilha_texto: rep ? (this._moPlanTexto || "") : "", dados: d } });
+    const { data, error } = await this.sb.functions.invoke("mo-agente", { body: { modo: mo.modo, arquivo: d.cct_arquivo || "", planilha_arquivo: rep || prop ? (d.plan_arquivo || "") : "",
+      planilha_texto: rep || prop ? (this._moPlanTexto || "") : "", dados: d } });
     if (error) { erro(await erroDaFuncao(error)); return; }
     const campos = (data && data.campos) || [];
     this.setState((x) => {
-      const d2 = { ...x.mo.d, fontes: { ...(x.mo.d.fontes || {}) }, falhas: x.mo.modo === "repactuacao" ? ((data && data.falhas) || []) : (x.mo.d.falhas || []), falhas_aceite: x.mo.modo === "repactuacao" ? "" : (x.mo.d.falhas_aceite || "") };
+      const comPlan = x.mo.modo !== "planejamento";
+      const d2 = { ...x.mo.d, fontes: { ...(x.mo.d.fontes || {}) }, falhas: comPlan ? ((data && data.falhas) || []) : (x.mo.d.falhas || []), falhas_aceite: comPlan ? "" : (x.mo.d.falhas_aceite || "") };
+      if (x.mo.modo === "proposta") { d2.exeq = (data && data.exequibilidade) || null; d2.diligencias = (data && data.diligencias) || []; }
       campos.forEach((c) => {
         const num = /^-?\d+(\.\d+)?$/.test(String(c.valor).trim());
         d2[c.campo] = num ? String(c.valor).trim().replace(".", ",") : c.valor;
@@ -6959,8 +6989,8 @@ class Component extends DCLogic {
   }
 
   moProps() {
-    const s = this.state, mo = s.mo, d0 = mo.d, rep = mo.modo === "repactuacao", rj = rep ? moReajuste(d0, s.indices) : { ativo: false, fator: 1 };
-    const dim = !rep ? moDimensionar(d0) : null;
+    const s = this.state, mo = s.mo, d0 = mo.d, rep = mo.modo === "repactuacao", prop = mo.modo === "proposta", rj = rep ? moReajuste(d0, s.indices) : { ativo: false, fator: 1 };
+    const dim = mo.modo === "planejamento" ? moDimensionar(d0) : null;
     let d = dim && dim.tipo === "limpeza" && dim.serventes ? { ...d0, emp_posto: "1", postos: String(dim.serventes), unidade: "m²", quantidade: String(dim.area) }
       : dim && dim.tipo === "vigilancia" && dim.postos ? { ...d0, emp_posto: String(dim.porPosto), postos: String(dim.postos), unidade: "Posto", quantidade: String(dim.postos) } : d0;
     // adicionais da escala de vigilância calculados pelo caderno técnico
@@ -7157,6 +7187,25 @@ class Component extends DCLogic {
       moRpInicio: d.rp_inicio || "", onMoRpInicio: this.moSet("rp_inicio"),
       moMinuta: minuta.join("\n\n"), moTemMinuta: minuta.length > 0,
       moCopiarMinuta: () => { try { navigator.clipboard.writeText(minuta.join("\n\n")); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Minuta do apostilamento copiada." } })); } catch (e) {} },
+      ...(() => {
+        if (!prop) return { moExeqItens: [], moTemDilig: false, moDiligTexto: "", moCopiarDilig: null };
+        const itens = [], est = moNum(d.pr_estimado), of = r.vigente;
+        if (of && est) { const razao = of / est;
+          itens.push(razao < 0.5 ? { ok: false, t: "Preço ofertado de " + brl(of) + " = " + pct(razao) + " do estimado (" + brl(est) + "): abaixo de 50%, há indício de inexequibilidade, e a diligência é obrigatória antes de qualquer decisão (IN SEGES/ME nº 73/2022, art. 34)." }
+            : { ok: true, t: "Preço ofertado de " + brl(of) + " = " + pct(razao) + " do estimado (" + brl(est) + "): não há o indício de inexequibilidade do art. 34 da IN SEGES/ME nº 73/2022; confira as falhas item a item." }); }
+        if (of && r.total && Math.abs(r.total - of) > 0.05) itens.push({ ok: false, t: "Recalculada com os percentuais e valores da própria proposta, a planilha dá " + brl(r.total) + " por empregado, " + (r.total > of ? "acima" : "abaixo") + " do preço ofertado (" + brl(of) + "): diferença de " + brl(Math.abs(r.total - of)) + ". Confira as contas da licitante." + (r.total > of ? " Se a correção exigir majorar o preço, ela não é admitida (IN 05/2017, Anexo VII-A, item 7.9)." : "") });
+        const ex = d.exeq || null, rot = { exequivel: "Proposta exequível", indicios: "Indícios de inexequibilidade: diligência necessária", inexequivel: "Proposta inexequível" };
+        if (ex) itens.push({ ok: ex.conclusao === "exequivel", t: "Agente – " + rot[ex.conclusao] + ": " + ex.fundamento });
+        else if (!of) itens.push({ ok: false, t: "Informe o preço ofertado e o valor estimado, ou analise a proposta com o agente." });
+        const dil = d.diligencias || [];
+        const texto = dil.length ? ["DILIGÊNCIA" + (d.pr_processo ? " – " + d.pr_processo : ""), "À licitante " + (d.pr_licitante || "______________________") + ".",
+          "Com fundamento no art. 59, § 2º, da Lei nº 14.133/2021 e nos itens 7.9 e 9.4 do Anexo VII-A da IN SEGES/MP nº 5/2017, solicita-se, no prazo de ___ (____) horas, a apresentação de justificativas e documentos que comprovem a exequibilidade da proposta e a adequação da planilha de custos e formação de preços, quanto aos seguintes pontos:"]
+          .concat(dil.map((q, i) => (i + 1) + ". " + q))
+          .concat(["Eventuais ajustes na planilha não poderão majorar o preço ofertado. A ausência de resposta ou de comprovação no prazo poderá ensejar a desclassificação da proposta (Lei 14.133/2021, art. 59, IV e V).", (d.municipio || "________") + ", ___ de ____________ de ______.", "______________________________________\nAgente de contratação / Pregoeiro"]) : [];
+        this._moUltimo.dilig = texto; this._moUltimo.exeqItens = itens;
+        return { moExeqItens: itens.map((a) => ({ t: a.t, cls: a.ok ? "lmo-ok" : "lve-aviso" })), moTemDilig: texto.length > 0, moDiligTexto: texto.join("\n\n"),
+          moCopiarDilig: () => { try { navigator.clipboard.writeText(texto.join("\n\n")); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Diligência copiada." } })); } catch (e) {} } };
+      })(),
       moMem: memGrupos, moMemEmp: "Empregados considerados no rateio de materiais e equipamentos: " + empTot + " (empregados por posto × postos).",
       moMemCf: d0.mem_cf || "", onMoMemCf: this.moSet("mem_cf"),
       moVgCalc: d0.vg_calc === "sim", onMoVgCalc: (e) => this.moSet("vg_calc")(e.target.checked ? "sim" : ""),
@@ -7188,16 +7237,20 @@ class Component extends DCLogic {
       calcH1: s.calcAba === "mo" ? "Custo do profissional com dedicação exclusiva, no formato da IN 05/2017." : "Reajuste de contrato calculado certo, com a nota técnica pronta.",
       calcLead: s.calcAba === "mo" ? "Planilha de custos e formação de preços (Anexo VII-D da IN SEGES/MP nº 5/2017) para formar o custo na fase de planejamento ou demonstrar a repactuação, com os percentuais legais e os custos não renováveis."
         : "Índices oficiais atualizados todos os dias, conferência dos 12 meses, ciclos acumulados e memória de cálculo mês a mês. No fim, você baixa a nota técnica em PDF para juntar ao processo.",
-      moPlan: !rep, moRep: rep,
-      moModos: [["planejamento", "Planilha 1 · Planejamento da contratação"], ["repactuacao", "Planilha 2 · Repactuação"]].map(([id, nome]) => ({ nome, ativo: mo.modo === id, escolher: () => this.moModo(id), ...corBotao(mo.modo === id) })),
-      moIntro: rep ? "Use na repactuação, quando o novo acordo, convenção ou dissídio coletivo der aumento à categoria. Você preenche os custos e percentuais da planilha repactuada; as adequações dos custos não renováveis são feitas automaticamente."
+      moPlan: mo.modo === "planejamento", moRep: rep, moProp: prop, moTemPlanArq: rep || prop,
+      moPlanRot: prop ? "Planilha de custos da proposta" : "Planilha utilizada na contratação",
+      moPlanSub: prop ? "A planilha de custos e formação de preços apresentada pela licitante, em PDF ou Excel (.xlsx)." : "A planilha de custos da proposta vencedora ou do contrato, em PDF ou Excel (.xlsx).",
+      moModos: [["planejamento", "Planilha 1 · Planejamento da contratação"], ["repactuacao", "Planilha 2 · Repactuação"], ["proposta", "Planilha 3 · Análise da proposta"]].map(([id, nome]) => ({ nome, ativo: mo.modo === id, escolher: () => this.moModo(id), ...corBotao(mo.modo === id) })),
+      moIntro: prop ? "Use no julgamento, para analisar a planilha de custos apresentada por uma licitante: o agente reproduz a proposta, confere item por item com a convenção, a lei e os cadernos técnicos, aponta as falhas e os custos abaixo do mínimo, conclui sobre a exequibilidade e monta as perguntas da diligência (Lei 14.133/2021, art. 59; IN 05/2017, Anexo VII-A, itens 7 e 9)."
+        : rep ? "Use na repactuação, quando o novo acordo, convenção ou dissídio coletivo der aumento à categoria. Você preenche os custos e percentuais da planilha repactuada; as adequações dos custos não renováveis são feitas automaticamente."
         : "Use na fase de planejamento para formar o custo do profissional que será contratado. Informe os dados iniciais e confira os percentuais: os valores de partida seguem a legislação e o modelo da IN.",
       moCamposIni: [campo("municipio", "Município onde o serviço será prestado", "Ex.: Maricá"), campo("uf", "UF", "RJ"), campo("tipo_servico", "Tipo de serviço", "Ex.: Limpeza"), campo("categoria", "Categoria profissional", "Ex.: Servente"), campo("cbo", "CBO", "Ex.: 5143-20"),
         campo("salario", rep ? "Novo salário-base (convenção vigente)" : "Salário-base da categoria (R$)", "Ex.: 1.850,00"), campo("data_base", "Data-base da categoria", "dd/mm/aaaa"),
         campo("ano_cct", "Ano do acordo, convenção ou dissídio", "Ex.: 2026"),
         campo("data_proposta", "Data de apresentação da proposta", "dd/mm/aaaa"), campo("meses", "Nº de meses de execução contratual", "12")]
-        .concat(rep ? [campo("ano_exec", "Ano de execução do contrato após a repactuação", "Ex.: 2"), campo("vigente", "Preço vigente por empregado (antes da repactuação, R$)", "Ex.: 4.320,15")] : []),
-      moCct: d.cct_nome || "", moSemCct: !d.cct_nome, moCctRot: rep ? "Nova convenção coletiva (obrigatória)" : "Convenção coletiva",
+        .concat(rep ? [campo("ano_exec", "Ano de execução do contrato após a repactuação", "Ex.: 2"), campo("vigente", "Preço vigente por empregado (antes da repactuação, R$)", "Ex.: 4.320,15")] : [])
+        .concat(prop ? [campo("pr_licitante", "Licitante", "Razão social"), campo("vigente", "Preço ofertado por empregado (R$)", "Ex.: 4.150,00"), campo("pr_estimado", "Valor estimado pela Administração por empregado (R$)", "Ex.: 4.600,00"), campo("pr_processo", "Processo ou pregão", "Ex.: Pregão Eletrônico 10/2026")] : []),
+      moCct: d.cct_nome || "", moSemCct: !d.cct_nome, moCctRot: rep ? "Nova convenção coletiva (obrigatória)" : prop ? "Convenção coletiva da categoria (obrigatória)" : "Convenção coletiva",
       moIssPedir: !!mo.issPedir, moIssLocal: mo.issPedir ? mo.issPedir.municipio + "/" + mo.issPedir.uf + (mo.issPedir.item ? " (item " + mo.issPedir.item + " da LC 116/2003)" : "") : "",
       moIssAliq: mo.issPedir ? mo.issPedir.aliquota : "", moIssFonte: mo.issPedir ? mo.issPedir.fonte : "",
       onMoIssAliq: (e) => { const v = e.target.value; this.setState((x) => ({ mo: { ...x.mo, issPedir: { ...x.mo.issPedir, aliquota: v } } })); },
@@ -7211,15 +7264,19 @@ class Component extends DCLogic {
           return { mo: { ...x.mo, d: d2, issPedir: null, erro: "" } };
         });
       },
-      moTemFalhas: rep && (d.falhas || []).length > 0,
+      moTemFalhas: (rep || prop) && (d.falhas || []).length > 0,
+      moFalhasTitulo: prop ? "Falhas e inconsistências da planilha da proposta" : "Falhas e inconsistências da planilha da contratação",
+      moFalhasNota: prop ? "Cada item traz o fundamento, o caminho correto e se a correção cabe no preço ofertado. A planilha acima reproduz a proposta sem correções." : "Cada item traz o fundamento e o caminho correto. A planilha repactuada acima já considera as correções indicadas pelo agente; confira antes de concluir.",
+      moFalhasAviso: prop ? "falha que exija majorar o preço ofertado ou que contrarie exigência legal (salário abaixo do piso, encargo legal a menor, benefício obrigatório da convenção) pode levar à desclassificação; as demais devem ser corrigidas pela licitante sem aumento do preço (IN 05/2017, Anexo VII-A, itens 7.9, 9.1 e 9.3)." : "manter qualquer uma dessas falhas na planilha impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores. Corrija cada item antes de concluir a repactuação.",
+      moSemFalhasTxt: prop ? "O agente não encontrou falhas de preenchimento na planilha da proposta." : "O agente não encontrou falhas de preenchimento na planilha da contratação.",
       moFalhasPendente: rep && (d.falhas || []).length > 0 && !d.falhas_aceite,
       moFalhasAceito: rep && (d.falhas || []).length > 0 && !!d.falhas_aceite,
       moFalhasAceiteTxt: d.falhas_aceite ? "Você concordou com o prosseguimento da análise em " + new Date(d.falhas_aceite).toLocaleString("pt-BR") + ", ciente das inconsistências." : "",
       moFalhasMarcado: !!mo.falhasMarcado, onMoFalhasMarcar: (e) => { const v = e.target.checked; this.setState((x) => ({ mo: { ...x.mo, falhasMarcado: v } })); },
-      moFalhasConcordar: () => { if (!mo.falhasMarcado) { this.setState((x) => ({ mo: { ...x.mo, erro: "Marque a declaração para prosseguir." } })); return; } this.moSet("falhas_aceite")(new Date().toISOString()); this.setState((x) => ({ mo: { ...x.mo, erro: "" } })); }, moSemFalhasOk: rep && Array.isArray(d.falhas) && d.falhas.length === 0 && !!d.fontes,
-      moFalhas: (d.falhas || []).map((f, i) => ({ n: i + 1, rubrica: f.rubrica, problema: f.problema, fundamento: f.fundamento, correcao: f.correcao, impacto: f.impacto || "", temImpacto: !!f.impacto,
+      moFalhasConcordar: () => { if (!mo.falhasMarcado) { this.setState((x) => ({ mo: { ...x.mo, erro: "Marque a declaração para prosseguir." } })); return; } this.moSet("falhas_aceite")(new Date().toISOString()); this.setState((x) => ({ mo: { ...x.mo, erro: "" } })); }, moSemFalhasOk: (rep || prop) && Array.isArray(d.falhas) && d.falhas.length === 0 && !!d.fontes,
+      moFalhas: (d.falhas || []).map((f, i) => ({ n: i + 1, rubrica: f.rubrica, problema: f.problema, fundamento: f.fundamento, correcao: f.correcao, impacto: f.impacto || "", temImpacto: !!f.impacto, impRot: prop ? "Efeito no preço:" : "Impacto se mantida:",
         grav: { alta: "Alta", media: "Média", baixa: "Baixa" }[f.gravidade] || "Média", cls: "lmo-falha g-" + (f.gravidade || "media") })),
-      moFalhasResumo: (() => { const fs = d.falhas || []; const c = (g) => fs.filter((f) => f.gravidade === g).length; return fs.length + " falha(s) na planilha da contratação: " + c("alta") + " alta(s), " + c("media") + " média(s), " + c("baixa") + " baixa(s)."; })(),
+      moFalhasResumo: (() => { const fs = d.falhas || []; const c = (g) => fs.filter((f) => f.gravidade === g).length; return fs.length + " falha(s) na planilha " + (prop ? "da proposta" : "da contratação") + ": " + c("alta") + " alta(s), " + c("media") + " média(s), " + c("baixa") + " baixa(s)."; })(),
       moPlanNome: d.plan_nome || "", moSemPlan: !d.plan_nome,
       moEscolherPlan: (e) => { const f = e.target && e.target.files && e.target.files[0]; if (e.target) e.target.value = ""; if (f) this.moEnviarPlanilha(f); },
       moRjAtivo: d.rj_ativo === "sim", onMoRj: (e) => { this.moSet("rj_ativo")(e.target.checked ? "sim" : ""); if (e.target.checked) this.carregarIndices(); },
@@ -7229,11 +7286,12 @@ class Component extends DCLogic {
       moRjItens: MO_INSUMOS.map(([k, nome]) => ({ nome, sel: d["rj_" + k] === "sim", alternar: () => this.moSet("rj_" + k)(d["rj_" + k] === "sim" ? "" : "sim") })),
       moRjMsg: rj.msg || "", moRjOk: !!rj.pronto, moRjCls: rj.pronto ? "lmo-ok" : "lmo-nota", moRjIndiceSel: d.rj_indice || "ipca",
       moBaixarExcel: () => this.moBaixar("xlsx"), moBaixarPdf: () => this.moBaixar("pdf"), moBaixando: !!mo.baixando,
-      moAgenteTxt: rep ? "No plano Pro, envie a planilha utilizada na contratação (PDF ou Excel) e, se quiser, a nova convenção: o agente reproduz a planilha, atualiza o que decorre da convenção e suprime ou reduz os custos não renováveis, indicando o fundamento. Você confere e ajusta qualquer valor."
+      moAgenteTxt: prop ? "No plano Pro, envie a planilha de custos da proposta (PDF ou Excel) e a convenção coletiva: o agente reproduz a proposta, confere cada rubrica, aponta as falhas com o fundamento, conclui sobre a exequibilidade e monta a diligência. A decisão é do agente de contratação ou do pregoeiro."
+        : rep ? "No plano Pro, envie a planilha utilizada na contratação (PDF ou Excel) e, se quiser, a nova convenção: o agente reproduz a planilha, atualiza o que decorre da convenção e suprime ou reduz os custos não renováveis, indicando o fundamento. Você confere e ajusta qualquer valor."
         : "No plano Pro, o agente lê a convenção, a legislação trabalhista, os cadernos técnicos e a jurisprudência do TCU e preenche salário, adicionais, benefícios e percentuais, indicando a fonte de cada valor. Sem o agente, a planilha parte dos percentuais legais e você confere e ajusta.",
       moEscolherCct: (e) => { const f = e.target && e.target.files && e.target.files[0]; if (e.target) e.target.value = ""; if (f) this.moEnviarCct(f); },
       moPro: this.moPodeAgente(), moSemPro: !this.moPodeAgente(),
-      moBotaoAgente: mo.agente ? (rep ? "O agente está analisando a repactuação…" : "O agente está lendo a convenção…") : mo.enviando ? "Enviando o arquivo…" : (rep ? "Analisar a repactuação com o agente" : "Preencher a planilha com o agente"),
+      moBotaoAgente: mo.agente ? (prop ? "O agente está analisando a proposta…" : rep ? "O agente está analisando a repactuação…" : "O agente está lendo a convenção…") : mo.enviando ? "Enviando o arquivo…" : (prop ? "Analisar a proposta com o agente" : rep ? "Analisar a repactuação com o agente" : "Preencher a planilha com o agente"),
       moAgente: () => { if (!mo.agente && !mo.enviando) this.moAgente(); },
       moIrPlanos: () => this.irPara("planos"),
       moErro: mo.erro || "", moOk: mo.ok || "", moObs: mo.obs || [], moTemObs: (mo.obs || []).length > 0,
@@ -7279,7 +7337,7 @@ class Component extends DCLogic {
       moTemUnidade: !!moNum(d.quantidade) && !/posto/i.test(d.unidade || "Posto"),
       moUnidadeRot: "Valor por " + (d.unidade || "unidade") + " (mensal ÷ quantidade)",
       moUnidade: moNum(d.quantidade) ? "R$ " + (r.mensal / moNum(d.quantidade)).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) : "—",
-      moTemDif: rep && !!r.vigente, moDif: (r.dif >= 0 ? "+" : "−") + brl(Math.abs(r.dif)).replace("R$ ", "R$ ") + " por empregado (" + (r.difp >= 0 ? "+" : "−") + pct(Math.abs(r.difp)) + ")",
+      moTemDif: (rep || prop) && !!r.vigente, moDifRot: prop ? "Planilha recalculada em relação ao preço ofertado:" : "Variação em relação ao preço vigente:", moDif: (r.dif >= 0 ? "+" : "−") + brl(Math.abs(r.dif)).replace("R$ ", "R$ ") + " por empregado (" + (r.difp >= 0 ? "+" : "−") + pct(Math.abs(r.difp)) + ")",
       moLimpar: () => this.moLimpar(),
       moCopiar: () => { const base = this.moCarregar("planejamento"); const d2 = { ...base, ano_exec: d.ano_exec || "2", vigente: d.vigente || "" };
         try { localStorage.setItem("lv-mo-repactuacao", JSON.stringify(d2)); } catch (e) {} this.setState((x) => ({ mo: { ...x.mo, d: d2 } })); }
