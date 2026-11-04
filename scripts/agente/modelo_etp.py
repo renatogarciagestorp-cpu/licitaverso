@@ -17,7 +17,11 @@ LISTA = {"type": "array", "items": {"type": "string"}}
 CHAVES = ["informacoes", "necessidade", "motivacao", "area", "negocio", "tecnologicas", "requisitos", "demanda", "levantamento",
           "comparativa", "inviaveis", "custos", "solucao", "estimativa", "just_tecnica", "parcelamento_tecnico", "just_economica",
           "parcelamento_economico", "beneficios", "providencias", "correlatas", "ambientais", "viabilidade_justificativa",
-          "forma_contratacao", "medicao", "particularidades", "riscos_texto"]
+          "forma_contratacao", "medicao", "particularidades", "riscos_texto", "sustentabilidade"]
+# art. 18, § 2º: elementos que o ETP deve conter sempre (incisos I, IV, VI, VIII e XIII do § 1º)
+OBRIGATORIAS = {"necessidade": "I", "demanda": "IV", "estimativa": "VI", "parcelamento_tecnico": "VIII", "viabilidade_justificativa": "XIII"}
+ME_EPP = ["Licitação exclusiva para ME/EPP (art. 48, I, da LC 123/2006)", "Cota reservada para ME/EPP (art. 48, III, da LC 123/2006)",
+          "Ampla participação, com os benefícios dos arts. 42 a 45 da LC 123/2006", "Tratamento diferenciado afastado (art. 49 da LC 123/2006 ou art. 4º, § 1º, da Lei 14.133/2021)"]
 MODALIDADES = ["Pregão", "Concorrência", "Concurso", "Diálogo competitivo", "Dispensa", "Inexigibilidade", "Adesão a ata"]
 CRITERIOS = ["Menor preço", "Maior desconto", "Melhor técnica ou conteúdo artístico", "Técnica e preço", "Maior retorno econômico", "Não se aplica"]
 MODOS = ["Aberto", "Fechado", "Aberto e fechado", "Fechado e aberto", "Não se aplica"]
@@ -31,7 +35,8 @@ FERRAMENTA = {
     "input_schema": {"type": "object", "properties": {
         "eh_tic": {"type": "boolean", "description": "true só se o objeto for solução de tecnologia da informação e comunicação"},
         "categoria": {"type": "string", "description": "categoria do objeto, ex.: Serviço contínuo sem dedicação exclusiva de mão de obra"},
-        "secoes": {"type": "object", "properties": {k: LISTA for k in CHAVES},
+        "secoes": {"type": "object", "properties": {k: ({**LISTA, "minItems": 1} if k in OBRIGATORIAS else LISTA) for k in CHAVES},
+                   "required": list(OBRIGATORIAS),
                    "description": "parágrafos de cada seção; um parágrafo começando com '### ' vira subtítulo"},
         "solucoes": {"type": "array", "items": {"type": "object", "properties": {
             "id": {"type": "integer"}, "nome": {"type": "string"}, "descricao": {"type": "string"},
@@ -73,8 +78,10 @@ FERRAMENTA = {
             "regime_execucao": {"type": "string", "enum": REGIMES, "description": "art. 46, para obras e serviços"},
             "registro_precos": {"type": "boolean", "description": "true se recomenda o Sistema de Registro de Preços (art. 82)"},
             "fundamento_srp": {"type": "string"},
-            "do_requisitante": {"type": "boolean", "description": "true se modalidade e critério foram decididos pelo requisitante"}},
-            "required": ["modalidade", "fundamento_modalidade", "criterio", "fundamento_criterio"]},
+            "do_requisitante": {"type": "boolean", "description": "true se modalidade e critério foram decididos pelo requisitante"},
+            "me_epp": {"type": "string", "enum": ME_EPP, "description": "tratamento das microempresas e empresas de pequeno porte"},
+            "fundamento_me_epp": {"type": "string", "description": "por que, com o valor estimado do item e o dispositivo aplicável"}},
+            "required": ["modalidade", "fundamento_modalidade", "criterio", "fundamento_criterio", "me_epp", "fundamento_me_epp"]},
         "riscos": {"type": "array", "description": "matriz de riscos ESPECÍFICOS desta contratação (não genéricos): 5 a 10 riscos", "items": {"type": "object", "properties": {
             "risco": {"type": "string"}, "categoria": {"type": "string", "enum": ["Técnico", "Operacional", "Financeiro", "Jurídico"]},
             "fase": {"type": "string", "enum": ["Planejamento", "Seleção do fornecedor", "Execução contratual"]},
@@ -94,7 +101,9 @@ INSTRUCOES = (
     "necessidade: descrição da necessidade e do problema, sob a perspectiva do interesse público (inciso I); motivacao: motivação e justificativa; "
     "area: área requisitante e responsáveis (gestor e fiscais informados); negocio: necessidades de negócio (resultados que a solução deve entregar); "
     "tecnologicas: se TIC, necessidades tecnológicas; se não, requisitos técnicos da solução; requisitos: demais requisitos necessários e "
-    "suficientes à escolha da solução, inclusive sustentabilidade (inciso III); demanda: estimativa das quantidades com memória de cálculo "
+    "suficientes à escolha da solução (inciso III); sustentabilidade: critérios de sustentabilidade ESPECÍFICOS do objeto (art. 5º, art. 11, IV, "
+    "e art. 144 da Lei 14.133/2021; Guia Nacional de Contratações Sustentáveis da AGU), como eficiência energética, logística reversa, "
+    "destinação de resíduos, rotulagem, produtos de menor impacto, conforme couber; nada genérico; demanda: estimativa das quantidades com memória de cálculo "
     "(inciso IV); levantamento: levantamento de mercado com TODAS as soluções possíveis (aquisição, locação, serviço com fornecimento, adesão a "
     "ata, execução direta etc., conforme o objeto) e o que a pesquisa encontrou para cada uma (inciso V); comparativa: análise crítica comparando "
     "as soluções; inviaveis: soluções consideradas inviáveis e por quê; custos: método da análise comparativa de custos (custo total ao longo do "
@@ -110,6 +119,15 @@ INSTRUCOES = (
     "particularidades: pontos próprios do tipo de objeto: serviço contínuo: vigência e prorrogação (arts. 106 e 107), transição entre contratos "
     "e repactuação ou reajuste; registro de preços: quantidades mínimas e máximas, órgãos participantes, adesões e risco de desabastecimento; "
     "obras e engenharia: licenças, projeto e prazos; TIC: compatibilidade, licenciamento e obsolescência; lista vazia se nada se aplicar; "
+    "CONTEÚDO MÍNIMO (art. 18, § 2º): necessidade, demanda, estimativa, parcelamento_tecnico e viabilidade_justificativa são obrigatórios e "
+    "nunca ficam vazios; nos demais elementos, se algum não se aplicar à contratação, escreva \"Não se aplica a esta contratação, porque …\" "
+    "com a justificativa (não deixe a seção vazia nem genérica). "
+    "custos: quando houver comparação entre compra e locação (ou outra forma de obtenção do bem), fundamente a escolha na avaliação de custo "
+    "e benefício do art. 44 da Lei 14.133/2021. "
+    "contratacao.me_epp: tratamento das microempresas e empresas de pequeno porte (art. 4º da Lei 14.133/2021 e arts. 42 a 49 da LC 123/2006): "
+    "licitação exclusiva para itens de valor estimado até o limite do art. 48, I; cota reservada em bens divisíveis (art. 48, III); "
+    "ampla participação com os benefícios dos arts. 42 a 45 quando os limites não se aplicam; afastamento só nas hipóteses do art. 49 ou do "
+    "art. 4º, § 1º, da Lei 14.133/2021, com justificativa; use o valor estimado do item e cite o dispositivo. "
     "riscos_texto: um ou dois parágrafos apresentando a matriz de riscos (gestão de riscos do art. 18, X, e art. 22). "
     "contratacao: a modalidade e o critério recomendados para a solução escolhida, com fundamento legal (adesão a ata: art. 86; dispensa: inciso "
     "do art. 75; inexigibilidade: inciso do art. 74; bem ou serviço comum: pregão, art. 29; obra e serviço especial de engenharia: concorrência). "
@@ -209,7 +227,8 @@ def simulado(respostas):
             "contratacao": {"modalidade": "Pregão", "fundamento_modalidade": "Notebooks são bens comuns, com padrões de desempenho e qualidade definidos objetivamente por especificações usuais de mercado (art. 6º, XIII, e art. 29 da Lei nº 14.133/2021).",
                             "criterio": "Menor preço", "fundamento_criterio": "O critério de menor preço por item atende ao interesse público, pois a especificação mínima garante a qualidade (art. 33, I).",
                             "modo_disputa": "Aberto", "regime_execucao": "Não se aplica (fornecimento de bens)", "registro_precos": False,
-                            "fundamento_srp": "A quantidade é certa e a entrega é única, sem necessidade de contratações frequentes (art. 82).", "do_requisitante": False},
+                            "fundamento_srp": "A quantidade é certa e a entrega é única, sem necessidade de contratações frequentes (art. 82).", "do_requisitante": False,
+                            "me_epp": ME_EPP[1], "fundamento_me_epp": "O objeto é divisível e o valor estimado supera o limite da licitação exclusiva; reserva-se cota de até 25% para ME/EPP (art. 48, III, da LC 123/2006)."},
             "riscos": [{"risco": "Equipamento entregue abaixo da especificação mínima", "categoria": "Técnico", "fase": "Execução contratual", "probabilidade": "Média", "impacto": "Alto",
                         "mitigacao": "Exigir ficha técnica na proposta e conferir cada unidade no recebimento provisório.", "responsavel": "Fiscal técnico"},
                        {"risco": "Licitação deserta ou fracassada por preço estimado defasado", "categoria": "Financeiro", "fase": "Seleção do fornecedor", "probabilidade": "Baixa", "impacto": "Médio",
@@ -249,7 +268,16 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
     nrm.paragraph_format.space_after = Pt(4); nrm.paragraph_format.line_spacing = 1.2
 
     tic = bool(docj.get("eh_tic"))
-    S = docj.get("secoes") or {}
+    S = dict(docj.get("secoes") or {})
+    vazio = lambda k: not [t_ for t_ in (S.get(k) or []) if str(t_).strip()]
+    reserva = {  # art. 18, § 2º: se a redação deixar um elemento obrigatório vazio, entra o que o requisitante informou
+        "necessidade": respostas.get("necessidade"), "demanda": respostas.get("quantidades") and f"As quantidades estimadas são: {respostas['quantidades']}.",
+        "estimativa": "A estimativa preliminar do valor está demonstrada no quadro a seguir, com base na pesquisa de mercado realizada.",
+        "parcelamento_tecnico": respostas.get("parcelamento") and f"Quanto ao parcelamento da solução, adota-se: {respostas['parcelamento']}" + (f", em razão de: {respostas['parc_motivo']}." if respostas.get("parc_motivo") else "."),
+        "viabilidade_justificativa": docj.get("viabilidade") and f"Diante dos estudos realizados, conclui-se que a contratação é {str(docj['viabilidade']).lower()} e adequada ao atendimento da necessidade descrita."}
+    for k_ in OBRIGATORIAS:
+        if vazio(k_):
+            S[k_] = [reserva.get(k_) or f"[PREENCHER: elemento obrigatório do art. 18, § 1º, {OBRIGATORIAS[k_]}, da Lei nº 14.133/2021]"]
     hoje = datetime.date.today()
     sols = docj.get("solucoes") or []
     viaveis = [x for x in sols if x.get("viavel")]
@@ -484,7 +512,8 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
     # 4. Requisitos
     secao(4, "Requisitos da contratação")
     k = 0
-    for chave, titulo in (("tecnologicas", "Requisitos tecnológicos" if tic else "Requisitos técnicos"), ("requisitos", "Demais requisitos e sustentabilidade")):
+    for chave, titulo in (("tecnologicas", "Requisitos tecnológicos" if tic else "Requisitos técnicos"), ("requisitos", "Demais requisitos"),
+                          ("sustentabilidade", "Critérios de sustentabilidade")):
         if S.get(chave):
             k += 1; subsecao(f"4.{k}.", titulo); Num(f"4.{k}").varios(S.get(chave))
     if S.get("area"):
@@ -535,6 +564,9 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
     vu = docj.get("vida_util") or {}
     if vu.get("anos"):
         n64.p(f"**Horizonte da análise: {num(vu.get('anos'))} anos**, correspondente à vida útil do objeto" + (f" ({vu['fundamento']})" if vu.get("fundamento") else "") + ". Todas as soluções foram comparadas nesse mesmo período, para a mesma quantidade e especificação.")
+    nomes_ = sem_acento(" ".join(str(x.get("nome", "")) for x in viaveis))
+    if "LOCAC" in nomes_ and ("AQUISIC" in nomes_ or "COMPRA" in nomes_) and "ART. 44" not in sem_acento(" ".join(S.get("custos") or [])):
+        n64.p("Em atenção ao art. 44 da Lei nº 14.133/2021, a escolha entre a compra e a locação do bem considera a avaliação dos custos e dos benefícios de cada opção, demonstrada a seguir pelo custo total no horizonte de análise.")
     n64.varios(S.get("custos"))
     for s_ in tco.get("solucoes") or []:
         comps = s_.get("componentes") or []
@@ -608,6 +640,8 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
                 linhas.append(["Regime de execução", ct["regime_execucao"]])
             if ct.get("registro_precos") is not None:
                 linhas.append(["Registro de preços", [f"**{'Sim' if ct.get('registro_precos') else 'Não'}**"] + ([ct["fundamento_srp"]] if ct.get("fundamento_srp") else [])])
+            if ct.get("me_epp"):
+                linhas.append(["Participação de ME/EPP", [f"**{ct['me_epp']}**"] + ([ct["fundamento_me_epp"]] if ct.get("fundamento_me_epp") else [])])
             tabela(None, linhas, [4.2, 12.3], chave_valor=True)
         n83.varios(S.get("forma_contratacao"))
 

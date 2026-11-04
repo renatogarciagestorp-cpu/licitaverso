@@ -320,7 +320,7 @@ NOMES_SECAO = {"informacoes": "Previsão no PCA e alinhamento", "necessidade": "
                "parcelamento_economico": "Parcelamento", "beneficios": "Resultados pretendidos", "providencias": "Providências prévias",
                "correlatas": "Contratações correlatas", "ambientais": "Impactos ambientais", "viabilidade_justificativa": "Posicionamento conclusivo",
                "forma_contratacao": "Forma de contratação", "medicao": "Medição e pagamento", "particularidades": "Aspectos específicos",
-               "riscos_texto": "Análise de riscos", "riscos": "Matriz de riscos", "contratacao": "Forma de contratação",
+               "riscos_texto": "Análise de riscos", "sustentabilidade": "Critérios de sustentabilidade", "riscos": "Matriz de riscos", "contratacao": "Forma de contratação",
                "solucoes": "Alternativas do mercado", "itens": "Estimativa de custo", "tco": "Custos das soluções", "resumo": "Síntese do estudo"}
 VALOR = re.compile(r"valor|pre[cç]o|custo|r\$|mediana|or[cç]amento estimado|cota[cç]", re.I)
 TEXTO_VALOR = "conforme a pesquisa de preços a ser juntada aos autos (art. 23 da Lei nº 14.133/2021)"
@@ -746,7 +746,7 @@ def main():
                        capture_output=True, timeout=300)
     ct = docj.get("contratacao") or {}
     resumo = {"custo_usd": round(custo_usd, 4), "segundos": round(time.time() - t0), "uso": uso,
-              "recomendacao": {k: ct.get(k) for k in ("modalidade", "criterio", "modo_disputa", "regime_execucao", "registro_precos") if ct.get(k) is not None} or None,
+              "recomendacao": {k: ct.get(k) for k in ("modalidade", "criterio", "modo_disputa", "regime_execucao", "registro_precos", "me_epp") if ct.get(k) is not None} or None,
               "pendencias": len(docj.get("pendencias") or []),
               "alta": sum(1 for r in (conferencia or {}).get("resultados", []) if r.get("gravidade") == "alta" and r.get("resultado") in ("nao_conforme", "parcial")),
               "media": sum(1 for r in (conferencia or {}).get("resultados", []) if r.get("gravidade") == "media" and r.get("resultado") in ("nao_conforme", "parcial"))}
