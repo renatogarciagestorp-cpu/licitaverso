@@ -20,6 +20,24 @@ CHAVES = ["informacoes", "necessidade", "motivacao", "area", "negocio", "tecnolo
           "forma_contratacao", "medicao", "particularidades", "riscos_texto", "sustentabilidade"]
 # art. 18, § 2º: elementos que o ETP deve conter sempre (incisos I, IV, VI, VIII e XIII do § 1º)
 OBRIGATORIAS = {"necessidade": "I", "demanda": "IV", "estimativa": "VI", "parcelamento_tecnico": "VIII", "viabilidade_justificativa": "XIII"}
+# Limites do tratamento diferenciado (conferidos em 03/11/2026):
+# - art. 48, I, da LC 123/2006: R$ 80.000,00 por item até 31/12/2026; a partir de 1º/1/2027 (LC 238/2026), o valor do art. 75, I,
+#   da Lei 14.133/2021, atualizado todo ano por decreto (art. 182). 2026: R$ 130.984,20 (Decreto 12.807/2025).
+#   ATUALIZAR LIMITE_ART75_I quando sair o decreto de cada ano.
+# - art. 4º, § 1º, da Lei 14.133/2021: receita bruta máxima da EPP, R$ 4.800.000,00 (art. 3º, II, da LC 123/2006).
+LIMITE_ART75_I = {2026: 130984.20}
+RECEITA_EPP = 4800000.00
+
+
+def limite_exclusiva():
+    """Texto do limite da licitação exclusiva para ME/EPP (art. 48, I, da LC 123/2006), conforme a data da publicação do edital."""
+    ano = max(LIMITE_ART75_I)
+    return ("R$ 80.000,00 por item para editais publicados até 31/12/2026; para editais publicados a partir de 1º/1/2027, o valor do "
+            f"art. 75, I, da Lei nº 14.133/2021 vigente na publicação (redação da LC nº 238/2026), que em {ano} é de "
+            + "R$ " + f"{LIMITE_ART75_I[ano]:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+            + ", atualizado anualmente por decreto (art. 182)")
+
+
 ME_EPP = ["Licitação exclusiva para ME/EPP (art. 48, I, da LC 123/2006)", "Cota reservada para ME/EPP (art. 48, III, da LC 123/2006)",
           "Ampla participação, com os benefícios dos arts. 42 a 45 da LC 123/2006", "Tratamento diferenciado afastado (art. 49 da LC 123/2006 ou art. 4º, § 1º, da Lei 14.133/2021)"]
 MODALIDADES = ["Pregão", "Concorrência", "Concurso", "Diálogo competitivo", "Dispensa", "Inexigibilidade", "Adesão a ata"]
@@ -125,9 +143,10 @@ INSTRUCOES = (
     "custos: quando houver comparação entre compra e locação (ou outra forma de obtenção do bem), fundamente a escolha na avaliação de custo "
     "e benefício do art. 44 da Lei 14.133/2021. "
     "contratacao.me_epp: tratamento das microempresas e empresas de pequeno porte (art. 4º da Lei 14.133/2021 e arts. 42 a 49 da LC 123/2006): "
-    "licitação exclusiva para itens de valor estimado até o limite do art. 48, I; cota reservada em bens divisíveis (art. 48, III); "
+    "licitação exclusiva para itens de valor estimado até o limite do art. 48, I (" + limite_exclusiva() + "); cota reservada em bens divisíveis (art. 48, III); "
     "ampla participação com os benefícios dos arts. 42 a 45 quando os limites não se aplicam; afastamento só nas hipóteses do art. 49 ou do "
-    "art. 4º, § 1º, da Lei 14.133/2021, com justificativa; use o valor estimado do item e cite o dispositivo. "
+    "art. 4º, § 1º, da Lei 14.133/2021 (item de valor estimado superior a R$ 4.800.000,00, receita bruta máxima da EPP), com justificativa; "
+    "compare o valor estimado de cada item com esses limites, considerando quando o edital deverá ser publicado, e cite o dispositivo. "
     "riscos_texto: um ou dois parágrafos apresentando a matriz de riscos (gestão de riscos do art. 18, X, e art. 22). "
     "contratacao: a modalidade e o critério recomendados para a solução escolhida, com fundamento legal (adesão a ata: art. 86; dispensa: inciso "
     "do art. 75; inexigibilidade: inciso do art. 74; bem ou serviço comum: pregão, art. 29; obra e serviço especial de engenharia: concorrência). "
@@ -641,7 +660,8 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
             if ct.get("registro_precos") is not None:
                 linhas.append(["Registro de preços", [f"**{'Sim' if ct.get('registro_precos') else 'Não'}**"] + ([ct["fundamento_srp"]] if ct.get("fundamento_srp") else [])])
             if ct.get("me_epp"):
-                linhas.append(["Participação de ME/EPP", [f"**{ct['me_epp']}**"] + ([ct["fundamento_me_epp"]] if ct.get("fundamento_me_epp") else [])])
+                linhas.append(["Participação de ME/EPP", [f"**{ct['me_epp']}**"] + ([ct["fundamento_me_epp"]] if ct.get("fundamento_me_epp") else [])
+                               + [f"Limite da licitação exclusiva (art. 48, I, da LC nº 123/2006): {limite_exclusiva()}."]])
             tabela(None, linhas, [4.2, 12.3], chave_valor=True)
         n83.varios(S.get("forma_contratacao"))
 
