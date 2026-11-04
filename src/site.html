@@ -950,6 +950,7 @@
   .lvc-aba { border: 0; background: none; border-radius: 10px; padding: 10px 16px; font: inherit; font-size: 14px; font-weight: 800; color: #55666D; white-space: nowrap; }
   .lvc-aba.ativo { background: #0A1F2A; color: #fff; }
   .lvc-apres { margin-top: 22px; display: grid; gap: 16px; }
+  .lvc-ferr-int { margin: 22px 0 0; max-width: 90ch; } .lvc-ferr-int h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: #0A1F2A; } .lvc-ferr-int p { margin: 6px 0 0; font-size: 15px; line-height: 1.6; color: #3D5058; }
   .lvf-vit { margin-top: 16px; display: grid; gap: 12px; }
   .lvf-vit-cta { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; background: #0A1F2A; color: #fff; border-radius: 16px; padding: 20px 22px; }
   .lvf-vit-cta b { font-size: 18px; } .lvf-vit-cta p { margin: 6px 0 0; font-size: 14px; line-height: 1.55; color: #B3C6CD; max-width: 60ch; }
@@ -2256,6 +2257,7 @@
           <sc-for list="{{ calcAbas }}" as="a" hint-placeholder-count="4"><button class="{{ a.cls }}" role="tab" aria-selected="{{ a.ativo }}" sc-camel-on-click="{{ a.ir }}">{{ a.nome }}</button></sc-for>
           <button class="lvc-aba" role="tab" aria-selected="false" disabled>Reequilíbrio <small>em breve</small></button>
         </div>
+        <div class="lvc-ferr-int"><h2>{{ calcFerrTitulo }}</h2><p>{{ calcFerrLead }}</p></div>
         <sc-if value="{{ calcBloqueada }}" hint-placeholder-val="{{ false }}">
           <div class="lvc-apres">
             <div class="lvc-fcs"><sc-for list="{{ calcFerrCards }}" as="c" hint-placeholder-count="4"><button type="button" class="{{ c.cls }}" aria-pressed="{{ c.ativo }}" sc-camel-on-click="{{ c.ir }}"><b>{{ c.nome }}</b><span>{{ c.curto }}</span></button></sc-for></div>
@@ -2271,7 +2273,6 @@
         <sc-if value="{{ calcLiberada }}" hint-placeholder-val="{{ true }}">
           <sc-if value="{{ calcAbaMo }}" hint-placeholder-val="{{ false }}">
           <div class="lmo">
-            <p class="lmo-intro">{{ moIntro }}</p>
             <div class="lmo-salvas">
               <sc-if value="{{ moSalvasAtivo }}" hint-placeholder-val="{{ false }}">
                 <div class="lmo-salvas-barra">
@@ -5388,6 +5389,8 @@ const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "C
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
 const CHAT_VERSAO = "7";
+// versão da Biblioteca no endereço: força o navegador a buscar a página nova depois de cada mudança (o GitHub Pages guarda em cache por 10 minutos)
+const BIB_URL = "biblioteca.html?v=2";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
 // Pro: 1 consultoria por escrito por mês incluída (mês do calendário, horário de Brasília)
 const inicioMesBR = () => { const d = new Date(Date.now() - 3 * 3600000); return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1, 3)); };
@@ -5564,10 +5567,10 @@ class Component extends DCLogic {
     try {
       if (HTMLScriptElement.supports && HTMLScriptElement.supports("speculationrules")) {
         const sr = document.createElement("script"); sr.type = "speculationrules";
-        sr.textContent = JSON.stringify({ prerender: [{ urls: ["biblioteca.html"] }] });
+        sr.textContent = JSON.stringify({ prerender: [{ urls: [BIB_URL] }] });
         document.head.appendChild(sr);
       } else {
-        ["biblioteca.html", "acervo-completo.json"].forEach((u) => { const l = document.createElement("link"); l.rel = "prefetch"; l.href = u; document.head.appendChild(l); });
+        [BIB_URL, "acervo-completo.json"].forEach((u) => { const l = document.createElement("link"); l.rel = "prefetch"; l.href = u; document.head.appendChild(l); });
       }
     } catch (e) {}
   }
@@ -6348,7 +6351,7 @@ class Component extends DCLogic {
       destino = "login";
     }
     if ((destino === "login" || destino === "cadastro") && this.u) destino = s.volta || "conta";
-    if (destino === "biblioteca") { window.location.href = "biblioteca.html"; return; }
+    if (destino === "biblioteca") { window.location.href = BIB_URL; return; }
     if (destino === "painel") { window.location.href = "painel.html"; return; }
     // troca de página como transição: cliques rápidos seguidos interrompem a renderização anterior em vez de enfileirar
     if (this.state.menuAberto) this.setState({ menuAberto: false });
@@ -7742,7 +7745,9 @@ class Component extends DCLogic {
       ...(() => {
         const atual = s.calcAba === "mo" ? mo.modo : "reajuste", f = CALC_FERRAMENTAS.find((x) => x.id === atual) || CALC_FERRAMENTAS[0];
         const ir = (id) => () => this.calcFerramenta(id);
-        return { calcH1: f.h1, calcLead: f.lead, calcFerrNome: f.nome, calcFerrPlano: f.plano, calcFerrBenef: f.beneficios.map((t) => ({ t })),
+        return { calcH1: "Cálculos de contratos e planilhas de mão de obra, com a fundamentação pronta.",
+          calcLead: "Reajuste por índice, planilha de custos no formato da IN 05/2017, repactuação e análise da proposta da licitante: índices oficiais atualizados todos os dias, memória de cálculo, falhas apontadas com o fundamento e documentos em Excel e PDF para juntar ao processo.",
+          calcFerrTitulo: f.h1, calcFerrLead: f.lead, calcFerrNome: f.nome, calcFerrPlano: f.plano, calcFerrBenef: f.beneficios.map((t) => ({ t })),
           calcAbas: CALC_FERRAMENTAS.map((x) => ({ nome: x.nome, ativo: x.id === atual, cls: "lvc-aba" + (x.id === atual ? " ativo" : ""), ir: ir(x.id) })),
           calcFerrCards: CALC_FERRAMENTAS.map((x) => ({ nome: x.nome, curto: x.curto, ativo: x.id === atual, cls: "lvc-fc" + (x.id === atual ? " ativo" : ""), ir: ir(x.id) })) };
       })(),
@@ -9819,13 +9824,13 @@ class Component extends DCLogic {
         ? s.favBib.map((r) => ({
             orgao: r.dados.orgao || "Acervo", numero: r.dados.numero || r.dados.titulo_decisao || r.chave.slice(5), data: r.dados.data_decisao ? brData(r.dados.data_decisao) : "",
             resumo: r.dados.texto ? (r.dados.texto.length > 200 ? r.dados.texto.slice(0, 200) + "…" : r.dados.texto) : (r.dados.titulo_decisao || "Marcado como favorito na Biblioteca Jurídica."),
-            abrir: () => { window.location.href = "biblioteca.html"; },
+            abrir: () => { window.location.href = BIB_URL; },
             remover: () => this.removerFavorito(r)
           }))
         : DOCS.filter((d) => s.favoritos[d.numero]).map((d) => ({
             orgao: d.orgao, numero: d.numero, data: d.data,
             resumo: d.ementa.length > 200 ? d.ementa.slice(0, 200) + "…" : d.ementa,
-            abrir: () => { window.location.href = "biblioteca.html"; },
+            abrir: () => { window.location.href = BIB_URL; },
             remover: this.toggleFav(d.numero)
           })),
       favTotal: (s.sb ? s.favBib.length : Object.keys(s.favoritos).filter((k) => s.favoritos[k]).length) + " documento(s)",
