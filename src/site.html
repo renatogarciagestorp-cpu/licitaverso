@@ -1796,7 +1796,7 @@
 
     <!-- ===================== ELABORAR DOCUMENTOS ===================== -->
     <sc-if value="{{ isElaborar }}" hint-placeholder-val="{{ false }}">
-      <section class="lva-hero" style="padding-bottom: 56px">
+      <section class="lva-hero">
         <div class="lvc-hero-in">
           <span class="lvh-eyebrow">O Elaborador · Lei 14.133/2021</span>
           <h1 class="lva-h1" style="max-width: 22ch">ETP, TR ou Projeto Básico em minutos, não em dias.</h1>
@@ -1805,7 +1805,7 @@
       </section>
       <section class="lvc-corpo" id="el-topo">
         <sc-if value="{{ elSemDoc }}" hint-placeholder-val="{{ true }}">
-          <ol class="lva-passos" style="margin-top: 0">
+          <ol class="lva-passos">
             <sc-for list="{{ elComoFunciona }}" as="c" hint-placeholder-count="4">
               <li><span class="lva-passo-n">{{ c.n }}</span><b>{{ c.t }}</b><span class="lva-passo-d">{{ c.d }}</span></li>
             </sc-for>
