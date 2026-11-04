@@ -9200,8 +9200,8 @@ class Component extends DCLogic {
         };
       })(),
       // home
-      topCtaTxt: s.usuario ? (this.cortesiaAnalise() ? "Fazer minha primeira análise grátis" : "Analisar um documento") : "Criar conta grátis",
-      topCta: s.usuario ? this.nav("agente") : this.nav("cadastro"),
+      topCtaTxt: !s.usuario ? "Criar conta grátis" : (!s.plano && !s.admin ? "Começar o teste grátis" : "Conhecer cada ferramenta"),
+      topCta: !s.usuario ? this.nav("cadastro") : (!s.plano && !s.admin ? this.nav("planos") : () => { try { document.getElementById("h-parecerista").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }),
       homeTopo: [
         ["✦", "Agente de IA", "O Parecerista", "Parecer técnico sobre edital, ETP, TR e planilhas, com a lei e a jurisprudência.", "h-parecerista"],
         ["✎", "Agente de IA", "O Elaborador", "ETP, TR e Projeto Básico em Word e PDF, com pesquisa de preços no PNCP.", "h-elaborador"],
