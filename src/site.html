@@ -1791,7 +1791,7 @@
     <sc-if value="{{ isElaborar }}" hint-placeholder-val="{{ false }}">
       <section class="lva-hero" style="padding-bottom: 56px">
         <div class="lvc-hero-in">
-          <span class="lvh-eyebrow">Agente de IA · Lei 14.133/2021</span>
+          <span class="lvh-eyebrow">O Elaborador · Lei 14.133/2021</span>
           <h1 class="lva-h1" style="max-width: 22ch">ETP, TR ou Projeto Básico em minutos, não em dias.</h1>
           <p class="lva-lead">Você informa a contratação. Nós pesquisamos o mercado, comparamos as soluções e entregamos o documento pronto para revisar.</p>
         </div>
@@ -4410,13 +4410,13 @@ const eqPreco = (plano, n, anual) => { const pa = Math.round(EQ_MENSAL[plano] * 
 const EQ_INCLUI = {
   basico: ["Fórum (leitura e participação) para cada acesso", "Descontos do Básico em cursos, consultoria e análises do Parecerista"],
   premium: ["Tudo do Premium para cada acesso: fórum, cursos e consultoria com desconto", "O Parecerista com 15% de desconto por análise"],
-  pro: ["Tudo do Pro para cada acesso", "O Parecerista: 6 por acesso por mês, somados para a equipe, entre analisar documentos e criar ETP, TR ou Projeto Básico", "1 consultoria por escrito por mês para a organização; as demais com 30% de desconto"]
+  pro: ["Tudo do Pro para cada acesso", "O Parecerista e O Elaborador: 6 por acesso por mês, somados para a equipe, entre analisar documentos e criar ETP, TR ou Projeto Básico", "1 consultoria por escrito por mês para a organização; as demais com 30% de desconto"]
 };
 const PLANO_BENEFICIOS = {
   teste: ["Leitura do fórum da comunidade", "Biblioteca Jurídica (grátis com cadastro)", "Sem cobrança automática ao final"],
   basico: ["Fórum: leitura e participação", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "O Parecerista: análise com 10% de desconto (R$ 261,00)"],
   premium: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "O Parecerista: análise com 15% de desconto (R$ 246,50)", "Prioridade na agenda do especialista"],
-  pro: ["Tudo do Premium", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "O Parecerista: 2 por semana sem custo, entre analisar documentos e criar ETP, TR ou Projeto Básico; a partir do 3º, 30% de desconto (R$ 203,00)", "Selo de resposta oficial no fórum", "Suporte prioritário"]
+  pro: ["Tudo do Premium", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "O Parecerista e O Elaborador: 2 por semana sem custo, entre analisar documentos e criar ETP, TR ou Projeto Básico; a partir do 3º, 30% de desconto (R$ 203,00)", "Selo de resposta oficial no fórum", "Suporte prioritário"]
 };
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
@@ -6206,7 +6206,7 @@ class Component extends DCLogic {
 
     const navDefs = [
       ["Biblioteca", "biblioteca"], ["Fórum", "forum"], ["Cursos", "cursos"],
-      ["Consultoria", "consultoria"], ["O Parecerista", "agente"], ["Criar documento", "elaborar"], ["Calculadora", "calculadora"], ["Planos", "planos"]
+      ["Consultoria", "consultoria"], ["O Parecerista", "agente"], ["O Elaborador", "elaborar"], ["Calculadora", "calculadora"], ["Planos", "planos"]
     ];
 
     const filtradosTodos = this.filtrar();
@@ -7451,7 +7451,7 @@ class Component extends DCLogic {
           ["Fórum da comunidade", ["Ler e participar", "Ler e participar", "Ler, participar e selo de resposta oficial"]],
           ["Cursos", ["10% de desconto", "15% de desconto", "50% de desconto"]],
           ["Consultoria técnica", ["10% de desconto", "15% de desconto", eq ? "1 por escrito por mês para a equipe; demais com 30%" : "1 por escrito por mês incluída; demais com 30%"]],
-          ["O Parecerista e criação de ETP, TR e Projeto Básico", ["10% de desconto", "15% de desconto", eq ? "6 por acesso por mês, somados para a equipe" : "2 por semana incluídos, entre analisar e criar; demais com 30%"]],
+          ["O Parecerista e O Elaborador (ETP, TR e Projeto Básico)", ["10% de desconto", "15% de desconto", eq ? "6 por acesso por mês, somados para a equipe" : "2 por semana incluídos, entre analisar e criar; demais com 30%"]],
           ["Prioridade na agenda do especialista", ["—", "Sim", "Sim"]],
           ["Suporte prioritário", ["—", "—", "Sim"]]
         ];
@@ -7468,7 +7468,7 @@ class Component extends DCLogic {
         ["Posso cancelar quando quiser?", "Sim. Não há fidelidade nem multa. Sem a renovação automática, o plano simplesmente termina no fim do período pago e avisamos antes. Se você ativou a renovação no cartão, desligue a qualquer momento em Minha conta → Assinatura."],
         ["Órgão público pode contratar? Como funciona?", "Pode. Escolha “órgão público”, monte o plano e peça a proposta para empenho — ou baixe a proposta preliminar para instruir o processo. O enquadramento (por exemplo, dispensa por valor, art. 75, II, da Lei nº 14.133/2021) cabe ao órgão. Os acessos são liberados após a nota de empenho. Quem preferir também pode assinar como pessoa física."],
         ["Como funciona o plano para equipes?", "Você contrata a quantidade de acessos e quem contrata vira o gestor. Ele inclui as pessoas pelo e-mail e troca quando alguém sai da equipe. Cada acesso é de uma pessoa, e o desconto cresce com a quantidade: 5% de 3 a 5 acessos, 10% de 6 a 10 e 15% de 11 a 25, além dos 20% do anual."],
-        ["O que faz O Parecerista e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. Ele também cria a minuta do ETP, do Termo de Referência ou do Projeto Básico a partir de um questionário, já conferida. O Pro inclui 2 por semana, somando análises e documentos criados; equipes Pro têm 6 por acesso por mês, somados. Nos demais planos cada análise ou documento é pago com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
+        ["O que faz O Parecerista e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. Com O Elaborador, você também cria a minuta do ETP, do Termo de Referência ou do Projeto Básico a partir de um questionário, já conferida. O Pro inclui 2 por semana, somando análises e documentos criados; equipes Pro têm 6 por acesso por mês, somados. Nos demais planos cada análise ou documento é pago com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
         ["O que é o preço de fundador?", "É o preço de lançamento para os primeiros " + ((s.oferta && s.oferta.limite) || 100) + " assinantes: 30% de desconto no Básico, no Premium ou no Pro, no mensal ou no anual (não se soma ao desconto de 20% do anual nem aos planos de equipe). O preço fica travado enquanto a sua assinatura continuar ativa; se ela ficar mais de 30 dias sem renovação, o preço de fundador deixa de valer."],
         ["A primeira análise do Parecerista é grátis mesmo?", "Sim. Cada CPF tem direito a uma análise grátis, com até 3 documentos, assinante ou não: basta informar o CPF no perfil e confirmar o e-mail. Se a análise não puder ser concluída por falha técnica, a cortesia continua disponível. Quando o limite diário de análises grátis é atingido, a sua entra na fila e é processada no dia seguinte, com prioridade."],
         ["Posso mudar de plano depois?", "Sim. Basta contratar o novo plano; se for o mesmo plano, o tempo que ainda falta é somado ao novo período."]

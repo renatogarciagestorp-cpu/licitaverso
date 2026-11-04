@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
           `${esc(primeiro)}, a minuta do <strong>${esc(doc)}</strong> foi elaborada e conferida pelo Agente Licitacon.`,
           r.objeto ? `<strong>Objeto:</strong> ${esc(String(r.objeto).slice(0, 300))}` : "",
           anexos.length ? `O documento segue <strong>anexado a este e-mail</strong>, em Word (editável) e PDF, e também fica disponível na sua área.`
-            : `O documento está disponível em Word (editável) e PDF na sua área, em <em>Criar documento</em> e em <em>Minha conta</em>.`,
+            : `O documento está disponível em Word (editável) e PDF na sua área, em <em>O Elaborador</em> e em <em>Minha conta</em>.`,
           Number(r.pendencias || 0) ? `No anexo final estão as <strong>${Number(r.pendencias)} informações</strong> que você optou por completar depois, destacadas em amarelo no texto.` : "",
           `Lembre-se: é uma minuta elaborada por inteligência artificial. Revise todo o texto e complete as lacunas destacadas antes de juntar ao processo.`,
         ].filter(Boolean), { texto: "Abrir o documento", url: link }, undefined, "Andamento de consultoria");
