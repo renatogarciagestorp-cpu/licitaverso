@@ -9185,7 +9185,9 @@ class Component extends DCLogic {
       ],
       homeGratis: [
         { icon: "⌕", selo: "Aberta a todos", t: "Biblioteca Jurídica", d: "Pesquise jurisprudência de todo o país, com filtros e o link oficial de cada decisão. Com a conta grátis, guarde anotações e dossiês.", cta: "Pesquisar agora", go: this.nav("biblioteca") },
-        { icon: "✦", selo: this.cortesiaAnalise() ? "1 por CPF" : "O Parecerista", t: this.cortesiaAnalise() ? "Primeira análise grátis" : "Análise de documentos", d: "Envie até 3 documentos da contratação e receba o parecer técnico em PDF e Word.", cta: this.cortesiaAnalise() ? "Fazer minha análise grátis" : "Analisar um documento", go: this.nav("agente") },
+        this.cortesiaAnalise()
+          ? { icon: "✦", selo: "1 por CPF", t: "Primeira análise grátis", d: "Envie até 3 documentos da contratação ao Parecerista e receba o parecer técnico em PDF e Word, sem pagar.", cta: "Fazer minha análise grátis", go: this.nav("agente") }
+          : { icon: "%", selo: "No teste grátis", t: "Calculadora e planilhas", d: "Reajuste por índice com nota técnica e planilhas de mão de obra da IN 05/2017: planilha de custos, repactuação e análise de proposta.", cta: "Conhecer a Calculadora", go: this.nav("calculadora") },
         { icon: "◍", selo: "Sem cartão", t: "Teste de 7 dias", d: "Leia o fórum da comunidade e use a Calculadora e as planilhas de mão de obra antes de escolher um plano.", cta: "Começar o teste", go: this.nav("planos") }
       ],
       fundTextoCurto: s.oferta && s.oferta.sou_fundador ? "Seu desconto está garantido enquanto a assinatura continuar ativa." : "Para os primeiros " + ((s.oferta && s.oferta.limite) || 100) + " assinantes, travado enquanto a assinatura continuar ativa. Vale no Básico, no Premium e no Pro.",
