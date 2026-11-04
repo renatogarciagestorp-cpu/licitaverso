@@ -183,13 +183,13 @@ def texto_plano(docj):
 
 def simulado(respostas):
     obj = respostas.get("objeto", "[PREENCHER: objeto]")
-    s = {k: [f"[Texto de exemplo da seção '{k}'. Na elaboração real, eu redijo a partir das respostas e da pesquisa: {obj}.]"] for k in CHAVES}
+    s = {k: [f"[Texto de exemplo da seção '{k}'. Na elaboração real, o texto é redigido a partir das respostas e da pesquisa: {obj}.]"] for k in CHAVES}
     return {"eh_tic": False, "categoria": respostas.get("natureza", "Bem"), "secoes": s,
             "vida_util": {"anos": 5, "fundamento": "vida útil usual de equipamentos de informática na depreciação patrimonial"},
             "resumo": {"necessidade": "Substituir 40 notebooks obsoletos das escolas.", "solucao": "Aquisição com garantia on-site de 36 meses e manutenção nos anos 4 e 5.",
                        "por_que": "Menor custo total em 5 anos: R$ 236.000 contra R$ 288.000 da locação.", "custo_total": 236000, "horizonte": "5 anos (vida útil)"},
             "solucoes": [{"id": 1, "nome": "Aquisição com garantia de 36 meses", "descricao": "Compra dos equipamentos com garantia on-site.", "viavel": True, "custo_total": 236000,
-                          "mercado": ["Encontrei 40 compras de notebooks no RJ nos últimos 12 meses [C1]; mediana de R$ 5.122 por unidade."],
+                          "mercado": ["Foram encontradas 40 compras de notebooks no RJ nos últimos 12 meses [C1]; mediana de R$ 5.122 por unidade."],
                           "vantagens": ["Menor custo total no horizonte"], "desvantagens": ["Manutenção após a garantia"], "riscos": ["Obsolescência antes do fim da vida útil"]},
                          {"id": 2, "nome": "Locação com manutenção incluída", "descricao": "Locação mensal com suporte.", "viavel": True, "custo_total": 288000,
                           "mercado": ["Contratações de locação de notebooks [P5][P6] indicam R$ 120 por unidade/mês."], "vantagens": ["Manutenção incluída"],
@@ -505,7 +505,7 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
     n61.varios(S.get("levantamento"))
     refs_p = (pesquisa or {}).get("referencias") or []
     if refs_p:
-        n61.p("Na pesquisa em bases oficiais (PNCP e Compras.gov.br), encontrei as seguintes contratações e atas semelhantes:")
+        n61.p("Na pesquisa em bases oficiais (PNCP e Compras.gov.br), foram identificadas as seguintes contratações e atas semelhantes:")
         for n, r_ in enumerate(refs_p[:12], 1):
             par(f"•\t[P{n}] {r_['orgao']} ({r_['municipio']}/{r_['uf']}) – " + (r_.get("numero") or r_.get("tipo", "")) + f", publicada em {'/'.join(reversed(r_['data'].split('-'))) if r_.get('data') else ''}"
                 + (f", valor total estimado {brl(r_.get('valor_total_estimado'))}" if r_.get("valor_total_estimado") else "") + ".", recuo=1.6, pendente=0.5, tam=9.5, alinhar="e")
@@ -516,7 +516,7 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
                [[f"C{n}", f"{x['catalogo']} ({x.get('solucao', '')})", x["unidade"], str(x["n"]), brl(x["minimo"]), brl(x["mediana"]), brl(x["maximo"])] for n, x in enumerate(pp[:10], 1)],
                [1.0, 5.6, 1.2, 1.3, 2.4, 2.4, 2.6], alinhar=["c", "e", "c", "c", "d", "d", "d"])
     subsecao("6.2.", "Alternativas do mercado")
-    Num("6.2").p("Considerando os requisitos desta demanda, identifiquei as seguintes alternativas para atender à necessidade:")
+    Num("6.2").p("Considerando os requisitos desta demanda, identificaram-se as seguintes alternativas para atender à necessidade:")
     for x in sols:
         quadro_solucao(x)
     comp = docj.get("comparativo") or []
@@ -534,7 +534,7 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
     n64 = Num("6.4")
     vu = docj.get("vida_util") or {}
     if vu.get("anos"):
-        n64.p(f"**Horizonte da análise: {num(vu.get('anos'))} anos**, correspondente à vida útil do objeto" + (f" ({vu['fundamento']})" if vu.get("fundamento") else "") + ". Comparei todas as soluções nesse mesmo período, para a mesma quantidade e especificação.")
+        n64.p(f"**Horizonte da análise: {num(vu.get('anos'))} anos**, correspondente à vida útil do objeto" + (f" ({vu['fundamento']})" if vu.get("fundamento") else "") + ". Todas as soluções foram comparadas nesse mesmo período, para a mesma quantidade e especificação.")
     n64.varios(S.get("custos"))
     for s_ in tco.get("solucoes") or []:
         comps = s_.get("componentes") or []
@@ -599,7 +599,7 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
         n83 = Num("8.3")
         if ct:
             n83.p("Decorre da solução escolhida e do mercado pesquisado a seguinte forma de contratação (art. 18, VIII, da Lei nº 14.133/2021)"
-                  + (", conforme a decisão da área requisitante:" if ct.get("do_requisitante") else ", que recomendo à autoridade competente:"))
+                  + (", conforme a decisão da área requisitante:" if ct.get("do_requisitante") else ", que se recomenda à autoridade competente:"))
             linhas = [["Modalidade / forma", [f"**{ct.get('modalidade', '')}**", ct.get("fundamento_modalidade", "")]],
                       ["Critério de julgamento", [f"**{ct.get('criterio', '')}**", ct.get("fundamento_criterio", "")]]]
             if ct.get("modo_disputa") and ct["modo_disputa"] != "Não se aplica":
@@ -635,7 +635,7 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
     Num("14").varios(S.get("ambientais") or ["[PREENCHER: impactos ambientais e medidas mitigadoras.]"])
     secao(15, "Análise de riscos")
     n15 = Num("15")
-    n15.varios(S.get("riscos_texto") or ["Identifiquei os riscos específicos desta contratação, com as medidas de prevenção e de contingência e os responsáveis por acompanhá-los (art. 18, X, e art. 22 da Lei nº 14.133/2021):"])
+    n15.varios(S.get("riscos_texto") or ["Foram identificados os riscos específicos desta contratação, com as medidas de prevenção e de contingência e os responsáveis por acompanhá-los (art. 18, X, e art. 22 da Lei nº 14.133/2021):"])
     rk = docj.get("riscos") or []
     if rk:
         cores = {"Alta": "F4CCCC", "Alto": "F4CCCC", "Média": "FCE8B2", "Médio": "FCE8B2", "Baixa": "D9EAD3", "Baixo": "D9EAD3"}
@@ -651,7 +651,7 @@ def gerar(docj, respostas, saida, logo=None, pesquisa=None, refs=None, conferenc
     Num("16").varios(S.get("viabilidade_justificativa"))
     secao(17, "Declaração de viabilidade da contratação")
     v = docj.get("viabilidade") or "[PREENCHER]"
-    Num("17").p(f"Com base nos estudos e justificativas apresentados, declaro que a contratação é **{v.upper()}**"
+    Num("17").p(f"Com base nos estudos e justificativas apresentados, declara-se que a contratação é **{v.upper()}**"
                 + (f", sendo indicada a Solução {escolhida} – {nome_sol.get(escolhida)}" if escolhida in nome_sol else "") + ".")
 
     n_sec = 17

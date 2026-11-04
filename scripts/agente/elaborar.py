@@ -180,10 +180,13 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
     bloco_juris = "\n".join(f"- [{j['id']}] {j.get('orgao','')} {j.get('numero','')} ({j.get('data','')[:4]}): {(j.get('tese') or j.get('titulo') or '')[:500]}" for j in juris) or "(nenhuma)"
     system = (
         f"Você é especialista em planejamento de contratações públicas e redige o {d['nome']} conforme o {d['base']}. "
-        "Escreva em português formal, claro e técnico, NA PRIMEIRA PESSOA, como o próprio responsável pela elaboração que assina o "
-        "documento (ex.: \"verifiquei\", \"constatei\", \"proponho\", \"indico\", \"esta unidade necessita\"); nunca se refira ao "
-        "\"requisitante\" em terceira pessoa (não escreva \"foi a solução indicada pelo requisitante\") e nunca mencione inteligência "
-        "artificial, agente ou questionário. Quem ler deve entender que quem escreveu é quem assina. "
+        "Escreva em linguagem técnica de documento oficial, com rigor jurídico, na voz da própria unidade que assina o documento: "
+        "use preferencialmente a forma impessoal (voz passiva sintética: \"informa-se\", \"verifica-se\", \"constatou-se\", "
+        "\"propõe-se\", \"recomenda-se\", \"identificaram-se\", \"declara-se\") e, quando natural, a primeira pessoa do plural "
+        "(\"informamos\", \"esta unidade necessita\"); NUNCA use a primeira pessoa do singular (\"verifiquei\", \"proponho\"); "
+        "nunca se refira ao \"requisitante\" em terceira pessoa (não escreva \"o requisitante informou que não há contratações "
+        "correlatas\"; escreva \"Informa-se que não há contratações correlatas\") e nunca mencione inteligência artificial, agente ou "
+        "questionário. Quem ler deve entender que o texto é da unidade que assina. "
         "Regras: (1) use exclusivamente as informações do requisitante; nunca invente números, valores, datas, nomes, quantitativos, "
         "marcas ou fontes de pesquisa de preços; (2) as dúvidas foram resolvidas com o requisitante antes desta redação (veja os "
         "esclarecimentos): preencha TODOS os campos; use [PREENCHER: o que falta — por que é necessário] SOMENTE para dados que só o órgão "
@@ -277,6 +280,26 @@ def textos(obj):
     elif isinstance(obj, list):
         for v in obj:
             yield from textos(v)
+
+
+IMPESSOAL = [  # rede de segurança: frases em terceira pessoa ou no singular que escapem da redação
+    (r"\b[Oo] requisitante (?:informou|declarou|esclareceu|indicou|relatou|afirmou|confirmou) que\b", "Informa-se que"),
+    (r"\b[Ss]egundo (?:informado pel)?o requisitante,?\s*", "Segundo a área requisitante, "),
+    (r"\b(?:conforme|como) (?:informado|indicado|declarado) pelo requisitante\b", "conforme informado pela área requisitante"),
+    (r"\bpelo requisitante\b", "pela área requisitante"), (r"\bdo requisitante\b", "da área requisitante"),
+    (r"\bao requisitante\b", "à área requisitante"), (r"\bo requisitante\b", "a área requisitante"), (r"\bO requisitante\b", "A área requisitante"),
+    (r"\bInformo que\b", "Informa-se que"), (r"\binformo que\b", "informa-se que"), (r"\bDeclaro que\b", "Declara-se que"),
+    (r"\bdeclaro que\b", "declara-se que"), (r"\bVerifiquei que\b", "Verificou-se que"), (r"\bverifiquei que\b", "verificou-se que"),
+    (r"\bConstatei que\b", "Constatou-se que"), (r"\bconstatei que\b", "constatou-se que"), (r"\bRecomendo\b", "Recomenda-se"),
+    (r"\bProponho\b", "Propõe-se"), (r"\bConsiderei\b", "Considerou-se"), (r"\bAdotei\b", "Adotou-se"),
+]
+
+
+def impessoal(t):
+    for a, b in IMPESSOAL:
+        t = re.sub(a, b, t)
+    # "Informa-se que" no meio da frase fica com minúscula
+    return re.sub(r"(?<=[a-zà-ú,;:] )Informa-se que", "informa-se que", t)
 
 
 def trocar_textos(obj, f):
@@ -707,6 +730,7 @@ def main():
             aguardar(pasta, perguntas, "completar", custo_usd, docj)
             return
     docj = aplicar_lacunas(docj, {})
+    docj = {**docj, **{k: trocar_textos(v, impessoal) for k, v in docj.items() if k not in ("jurisprudencia_ids", "contratacao")}}
     print("ETAPA: word", flush=True)
     if padrao:
         try:
