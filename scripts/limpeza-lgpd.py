@@ -16,6 +16,10 @@ def http(metodo, url, dados=None, cab=None):
 
 
 def chave():
+    direta = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+    if direta:
+        print(f"::add-mask::{direta}")
+        return direta
     lista = http("GET", f"https://api.supabase.com/v1/projects/{REF}/api-keys?reveal=true",
                  cab={"Authorization": "Bearer " + os.environ["SUPABASE_ACCESS_TOKEN"]})
     for k in lista:

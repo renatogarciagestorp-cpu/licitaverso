@@ -2,7 +2,7 @@
 """Fila de análises do site: pega as análises pagas ou incluídas no Pro, processa e devolve o parecer.
 
 Roda no GitHub Actions (workflow "Agente — fila de análises"). Segredos usados (variáveis de ambiente):
-SUPABASE_ACCESS_TOKEN (só para obter a chave de serviço), ANTHROPIC_API_KEY, AVISOS_SECRET.
+SUPABASE_SERVICE_ROLE_KEY (chave de serviço do projeto; SUPABASE_ACCESS_TOKEN só como reserva), ANTHROPIC_API_KEY, AVISOS_SECRET.
 O repositório é público: o log nunca mostra nome de arquivo, conteúdo ou dados do cliente — só o id da análise.
 
 Uso: python3 scripts/agente/fila.py [--verificar]   (--verificar só informa se há análise na fila)
@@ -32,6 +32,13 @@ def chave_servico():
     global _chave
     if _chave:
         return _chave
+    # preferido: só a chave de serviço do projeto (segredo SUPABASE_SERVICE_ROLE_KEY). O token de gerenciamento
+    # da conta inteira fica apenas como reserva, até o segredo novo ser cadastrado.
+    direta = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+    if direta:
+        print(f"::add-mask::{direta}")
+        _chave = direta
+        return direta
     lista = http("GET", f"https://api.supabase.com/v1/projects/{REF}/api-keys?reveal=true",
                  cab={"Authorization": "Bearer " + os.environ["SUPABASE_ACCESS_TOKEN"]})
     k = next((x["api_key"] for x in lista if x.get("name") == "service_role" and x.get("api_key")), None) \

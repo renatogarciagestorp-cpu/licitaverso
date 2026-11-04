@@ -11,7 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      # o token de gerenciamento (acesso à conta inteira) só é usado enquanto a chave de serviço não estiver cadastrada
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY == '' && secrets.SUPABASE_ACCESS_TOKEN || '' }}
       PROJECT_REF: umnhhztdqersjfrzqcea
       BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
       EMAIL_REMETENTE: ${{ secrets.EMAIL_REMETENTE }}
