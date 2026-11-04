@@ -63,6 +63,16 @@ for fn, corpo in [("meu_email_conta", {"uid": str(uuid.uuid4())}), ("org_do_usua
     vazio = txt.strip() in ("", "null", "[]", '""')
     checar(f"executar {fn}()", st >= 400 or (st == 200 and vazio), f"HTTP {st}")
 
+# vitrine pública do fórum: responde sem login, mas só com títulos e contagens (nunca autores, contexto ou respostas)
+st, txt = req("POST", "/rest/v1/rpc/forum_vitrine", {})
+try:
+    j = json.loads(txt) if st == 200 else {}
+    chaves = set().union(*[set(q.keys()) for q in j.get("perguntas", [])]) if j.get("perguntas") else set()
+    ok = st == 200 and chaves <= {"topico", "titulo", "criado_em", "respostas", "oficial"}
+except Exception:
+    ok = False
+checar("vitrine do fórum sem dados pessoais", ok, f"HTTP {st}")
+
 # arquivos privados
 for b in ["analises", "consultorias"]:
     st, txt = req("POST", f"/storage/v1/object/list/{b}", {"prefix": "", "limit": 5})
