@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""LGPD — retenção mínima: apaga os documentos enviados ao Agente IA 30 dias depois que a análise termina
+"""LGPD — retenção mínima: apaga os documentos enviados ao Parecerista 30 dias depois que a análise termina
 (concluída, com erro ou cancelada). O parecer gerado continua na conta do assinante. Não imprime dados pessoais."""
 import datetime, json, os, sys, urllib.parse, urllib.request
 

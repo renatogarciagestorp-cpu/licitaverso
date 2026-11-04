@@ -453,7 +453,7 @@ Deno.serve(async (req) => {
         }
       }
       valor = franquia ? 0 : precoAnalise(vigente ?? null);
-      titulo = geracao ? `Licitacon · Elaboração de ${DOC_GERACAO[docG]} pelo Agente IA` : "Licitacon · Análise pelo Agente IA (até 3 documentos)";
+      titulo = geracao ? `Licitacon · Elaboração de ${DOC_GERACAO[docG]} pelo Parecerista` : "Licitacon · Análise pelo Parecerista (até 3 documentos)";
       const { data: nova, error } = await admin.from("analises").insert({
         usuario_id: usuario.id, ...base, arquivo: null, pncp_link: null,
         cobranca: franquia ? "franquia_pro" : "avulsa", plano: vigente ?? null, valor,
