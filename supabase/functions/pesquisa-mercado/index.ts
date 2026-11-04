@@ -157,6 +157,12 @@ Deno.serve(async (req) => {
   const uf = String(corpo.uf ?? "").toUpperCase().replace(/[^A-Z]/g, "").slice(0, 2);
   const chaves = chavesDe(objeto), raizes = chaves.map((c) => c.slice(0, 5));
   if (!chaves.length) return resposta({ referencias: [], erro: "Descreva melhor o objeto para pesquisar." });
+  // só o preço praticado de um item (memória de cálculo dos insumos da planilha de mão de obra): sem a busca no PNCP
+  if (corpo.so_precos === true) {
+    let precos: any[] = [];
+    try { precos = await precosPraticados(objeto, "compra", uf, "", Date.now() + 40000); } catch { precos = []; }
+    return resposta({ referencias: [], precos_praticados: precos, erro: precos.length ? "" : "Nenhum preço praticado encontrado nos últimos 12 meses." });
+  }
   const inicio = Date.now(), refs: any[] = [], vistos = new Set<string>();
   pncpItensOk = true;
   let falha = "";

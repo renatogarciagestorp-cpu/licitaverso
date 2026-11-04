@@ -996,6 +996,13 @@
   .lmo-ano { font: inherit; font-weight: 800; color: #0F6B7E; background: #fff; border: 1px solid #C9D9D6; border-radius: 8px; padding: 3px 8px; cursor: pointer; }
   .lmo-ano[aria-pressed="true"] { background: #0F6B7E; color: #fff; border-color: #0F6B7E; }
   @media (max-width: 900px) { .lmo-trans { grid-template-columns: 62px repeat(3, minmax(0, 1fr)) 110px; font-size: 12px; } .lmo-trans > span:nth-child(2), .lmo-trans > span:nth-child(5), .lmo-trans > span:nth-child(8) { display: none; } }
+  .lmo-mem { grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr)) 120px 150px; font-size: 13px; }
+  .lmo-mem-equip { grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr)) 120px 150px; }
+  .lmo-mem input { width: 100%; }
+  .lmo-mem-acoes { display: flex; gap: 6px; justify-content: flex-end; }
+  .lmo-x { font: inherit; font-weight: 800; color: #8A1230; background: #fff; border: 1px solid #E8C9CF; border-radius: 8px; width: 28px; cursor: pointer; }
+  .lmo-mem-fonte { grid-column: 1 / -1; font-size: 11.5px; color: #66757F; line-height: 1.4; }
+  @media (max-width: 900px) { .lmo-mem, .lmo-mem-equip { grid-template-columns: 1fr 1fr; } .lmo-mem.lmo-cab { display: none; } .lmo-mem > span:first-child { grid-column: 1 / -1; } }
   .lmo-aceite { display: grid; gap: 10px; margin-top: 12px; padding: 14px 16px; border: 1px solid #F1D9A6; background: #FFF8E8; border-radius: 12px; }
   .lmo-aceite span { font-size: 14px; font-weight: 700; line-height: 1.5; color: #172B33; }
   .lmo-aceite .lmo-btn { justify-self: start; }
@@ -2270,6 +2277,14 @@
                   <label class="lmo-campo"><span>Escala do posto</span><select sc-camel-on-change="{{ onMoVgEscala }}"><sc-for list="{{ moVgEscalas }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
                   <label class="lmo-campo"><span>Quantidade de postos</span><input type="text" inputmode="numeric" value="{{ moVgPostos }}" sc-camel-on-input="{{ onMoVgPostos }}" placeholder="Ex.: 4"></label>
                 </div>
+                <label class="lvc-check" style="margin-top: 12px"><input type="checkbox" checked="{{ moVgCalc }}" sc-camel-on-change="{{ onMoVgCalc }}"> Calcular os adicionais da escala pelo caderno técnico de vigilância (adicional noturno, hora noturna reduzida e feriados trabalhados)</label>
+                <sc-if value="{{ moVgCalc }}" hint-placeholder-val="{{ false }}">
+                  <label class="lvc-check"><input type="checkbox" checked="{{ moVgIntra }}" sc-camel-on-change="{{ onMoVgIntra }}"> O intervalo intrajornada não será concedido (posto sem rendição): pagar o período com o adicional</label>
+                  <div class="lmo-campos" style="margin-top: 8px"><sc-for list="{{ moVgCampos }}" as="c" hint-placeholder-count="4"><label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" inputmode="decimal" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label></sc-for></div>
+                  <p class="lmo-ok">{{ moVgResumo }}</p>
+                  <sc-if value="{{ moVgPericAviso }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso">{{ moVgPericAviso }}</p></sc-if>
+                  <p class="lmo-nota">Se a convenção fixar outro critério (por exemplo, adicional noturno de 12x36 em percentual sobre a remuneração ou hora reduzida já incorporada ao salário), ajuste os parâmetros: a convenção prevalece (CLT, art. 611-A).</p>
+                </sc-if>
               </sc-if>
               <sc-if value="{{ moDimAtivo }}" hint-placeholder-val="{{ false }}">
                 <p class="lmo-ok">{{ moDimResumo }}</p>
@@ -2303,6 +2318,33 @@
                   <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
                 </sc-for>
               </div>
+            </section>
+
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Memória de cálculo dos insumos (Módulo 5)</h2>
+              <p class="lmo-nota" style="margin-top: 0">Detalhe cada item com quantidade, vida útil e preço: o custo mensal por empregado vai para o Módulo 5 e para os downloads. O preço pode vir da sua pesquisa ou da mediana das compras públicas dos últimos 12 meses no Compras.gov.br (Lei 14.133/2021, art. 23). Sem itens, vale o valor digitado no Módulo 5.</p>
+              <sc-for list="{{ moMem }}" as="g" hint-placeholder-count="3">
+                <div style="margin-top: 14px">
+                  <p class="lmo-nota" style="margin: 0 0 6px"><b>{{ g.rot }}</b> · {{ g.nota }}</p>
+                  <sc-if value="{{ g.temLinhas }}" hint-placeholder-val="{{ false }}">
+                  <div class="lmo-tabela" role="table">
+                    <div class="{{ g.clsCab }}" role="row"><sc-for list="{{ g.cols }}" as="h" hint-placeholder-count="5"><span>{{ h.c }}</span></sc-for></div>
+                    <sc-for list="{{ g.linhas }}" as="l" hint-placeholder-count="2">
+                      <div class="{{ g.cls }}" role="row">
+                        <sc-for list="{{ l.cels }}" as="c" hint-placeholder-count="4"><span><input type="text" aria-label="{{ c.rot }}" value="{{ c.v }}" sc-camel-on-input="{{ c.on }}" style="text-align: left"></span></sc-for>
+                        <span class="lmo-val">{{ l.mensal }}</span>
+                        <span class="lmo-mem-acoes"><button type="button" class="lmo-ano" sc-camel-on-click="{{ l.pesquisar }}">{{ l.busTxt }}</button><button type="button" class="lmo-x" aria-label="Remover item" sc-camel-on-click="{{ l.remover }}">×</button></span>
+                        <sc-if value="{{ l.temFonte }}" hint-placeholder-val="{{ false }}"><small class="lmo-mem-fonte">{{ l.fonte }}</small></sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <p class="lmo-ok" style="margin-top: 6px">{{ g.total }}</p>
+                  </sc-if>
+                  <div class="lmo-agente" style="margin-top: 6px"><button type="button" class="lve-voltar" sc-camel-on-click="{{ g.adicionar }}">+ Adicionar item</button><sc-if value="{{ g.temModelo }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ g.modelo }}">Carregar os itens de referência do caderno técnico</button></sc-if></div>
+                </div>
+              </sc-for>
+              <div class="lmo-campos" style="margin-top: 12px"><label class="lmo-campo"><span>Custo financeiro dos equipamentos (% ao mês sobre o investimento, opcional)</span><input type="text" inputmode="decimal" value="{{ moMemCf }}" sc-camel-on-input="{{ onMoMemCf }}" placeholder="Ex.: 0,8363 (SELIC mensal)"></label></div>
+              <p class="lmo-nota">{{ moMemEmp }}</p>
             </section>
 
             <section class="lmo-bloco" id="lmo-trib">
@@ -4675,6 +4717,7 @@ const MO_PADRAO = {
   ci: "3", lucro: "6,79", pis: "1,65", cofins: "7,6", iss: "5",
   emp_posto: "1", postos: "1",
   ano_exec: "2", vigente: "",
+  vg_calc: "", vg_an: "20", vg_hnot: "9", vg_div: "220", vg_ffix: "9", vg_fmov: "1", vg_fer: "100", vg_intra: "", vg_ih: "1", vg_ia: "50", mem_cf: "",
   regime: "real", rbt12: "", reforma: "", rf_ano: "", rf_cbs: "11,3", rf_ibs: "18,7",
   rj_ativo: "", rj_indice: "ipca", rj_orcamento: "", rj_ref: "", rj_unif: "sim", rj_materiais: "sim", rj_equip: "sim", rj_outros5: "sim"
 };
@@ -4717,6 +4760,64 @@ function moDimensionar(d) {
     return { tipo: "vigilancia", escala: esc, postos, porPosto: esc[2], vigilantes: vig, supervisores: vig ? Math.ceil(vig / 40) : 0 };
   }
   return null;
+}
+// Vigilância: adicionais da escala pelo caderno técnico de vigilância (Ministério da Gestão), com 30,4375 dias por mês
+// (ano de 365,25 dias). Adicional noturno: salário de referência × (horas noturnas ÷ 12) × alíquota, com as horas prorrogadas
+// após as 5 h (Súmula 60, II, do TST: 22 h às 7 h = 9 h). Hora noturna reduzida: cada hora noturna vale 52'30" (CLT, art. 73,
+// § 1º): 9 h × (60 ÷ 52,5 − 1) ≈ 1,29 h por jornada, com o adicional noturno. Feriados trabalhados na 12x36 de segunda a
+// domingo pagos em dobro (Súmula 444 do TST; CLT, art. 59-A, parágrafo único, se a convenção não dispuser de outro modo).
+// Intervalo intrajornada não concedido: período suprimido pago com 50% (CLT, art. 71, § 4º).
+function moVigAdicionais(d) {
+  const n = (k) => moNum(d[k]), pc = (k) => moNum(d[k]) / 100;
+  const esc = MO_VIGILANCIA.find((e) => e[0] === d.vg_escala) || MO_VIGILANCIA[0], id = esc[0];
+  const v12 = id.indexOf("12x36") === 0, noturna = /n/.test(id.slice(5)), segDom = id === "12x36d" || id === "12x36n";
+  const S = n("salario"), ref = S * (1 + pc("peric") + pc("insal")), div = n("vg_div") || 220, an = pc("vg_an");
+  const dias = v12 ? 30.4375 * 0.5 : 30.4375 * (1 - 0.31544), jornada = v12 ? 12 : 8;
+  const hnot = noturna ? (n("vg_hnot") || 9) : 0, hRed = hnot * (60 / 52.5 - 1);
+  const noturno = ref * (hnot / jornada) * an, hnr = ref * (hRed / jornada) * (1 + an);
+  const ferAno = n("vg_ffix") * 6 / 7 + n("vg_fmov"), ferMes = v12 && segDom ? (ferAno / 365.25) * 30.4375 * 0.5 : 0;
+  const he = ((ref + noturno + hnr) / div) * jornada * pc("vg_fer") * ferMes;
+  const intraVal = d.vg_intra === "sim" ? ((ref + noturno) / div) * (n("vg_ih") || 1) * dias * (1 + pc("vg_ia")) : 0;
+  const M1 = S * (1 + pc("peric") + pc("insal")) + noturno + hnr + he + n("outros1");
+  const f2 = (x) => x.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }), f4 = (x) => x.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+  return { esc, v12, noturna, segDom, ref, dias, hnot, hRed, ferMes, noturno, hnr, he, intraVal, intraPct: M1 ? intraVal / M1 * 100 : 0,
+    notas: {
+      noturno: noturna ? "Caderno de vigilância: R$ " + f2(ref) + " (salário + adicionais de risco) × " + f4(hnot) + " h noturnas ÷ " + jornada + " h × " + f4(an * 100) + "% (CLT, art. 73; Súmula 60, II, do TST)." : "Escala diurna: sem adicional noturno.",
+      hnr: noturna ? "Hora noturna de 52'30\" (CLT, art. 73, § 1º): " + f4(hRed) + " h a mais por jornada ÷ " + jornada + " h × R$ " + f2(ref) + " × (1 + " + f4(an * 100) + "%)." : "Escala diurna: sem hora noturna reduzida.",
+      he: ferMes ? "Feriados trabalhados na 12x36 de segunda a domingo: (" + f4(n("vg_ffix")) + " fixos × 6/7 + " + f4(n("vg_fmov")) + " móveis) ÷ 365,25 × 30,4375 × 50% = " + f4(ferMes) + " por mês × " + jornada + " h × hora de R$ " + f2((ref + noturno + hnr) / div) + " × " + f4(pc("vg_fer") * 100) + "% (Súmula 444 do TST; confira a convenção)." : "Sem feriados trabalhados nesta escala (o posto não funciona nos feriados ou a escala não é 12x36 de segunda a domingo).",
+      intra: intraVal ? "Intervalo não concedido: hora de R$ " + f2((ref + noturno) / div) + " × " + f4(n("vg_ih") || 1) + " h × " + f2(dias) + " dias × (1 + " + f4(pc("vg_ia") * 100) + "%) = R$ " + f2(intraVal) + " (CLT, art. 71, § 4º)." : ""
+    } };
+}
+// Memória de cálculo dos insumos (cadernos técnicos): uniformes e EPI pelo custo anual de cada item = preço × quantidade ×
+// (12 ÷ vida útil em meses), por empregado; materiais pelo consumo mensal do contrato ÷ empregados; equipamentos pela
+// depreciação mensal = preço × quantidade × (1 − valor residual) ÷ (vida útil em anos × 12) ÷ empregados, mais o custo
+// financeiro do investimento, se adotado (caderno de vigilância: taxa SELIC mensalizada)
+const MO_MEM = {
+  unif: { rot: "Uniformes e EPI", col: ["Item", "Quantidade por entrega", "Vida útil (meses)", "Preço unitário (R$)"], campos: ["desc", "qtd", "vida", "preco"],
+    nota: "Por empregado: preço × quantidade × 12 ÷ vida útil (meses) = custo anual; ÷ 12 = custo mensal." },
+  materiais: { rot: "Materiais", col: ["Item", "Quantidade por mês (contrato)", "Unidade", "Preço unitário (R$)"], campos: ["desc", "qtd", "un", "preco"],
+    nota: "Consumo mensal do contrato × preço ÷ número de empregados." },
+  equip: { rot: "Equipamentos", col: ["Item", "Quantidade (contrato)", "Vida útil (anos)", "Preço unitário (R$)", "Valor residual (%)"], campos: ["desc", "qtd", "vida", "preco", "res"],
+    nota: "Depreciação: preço × quantidade × (1 − residual) ÷ (vida útil × 12) ÷ número de empregados." }
+};
+const MO_MEM_MODELOS = {
+  limpeza: [["Calça", 2, 6], ["Camisa", 2, 6], ["Tênis ou sapato antiderrapante", 2, 6], ["Meia (par)", 2, 6], ["Boné", 2, 6], ["Crachá", 1, 6], ["Luva de borracha (par)", 2, 6], ["Bota de borracha (par)", 2, 6]],
+  vigilancia: [["Calça", 2, 6], ["Camisa", 2, 6], ["Sapato ou coturno (par)", 1, 6], ["Cinto de náilon", 1, 12], ["Distintivo", 1, 12], ["Jaqueta ou japona", 1, 12], ["Meia (par)", 2, 6], ["Quepe ou boné", 1, 12], ["Colete balístico nível II-A", 1, 60], ["Crachá", 1, 12]]
+};
+function moMemoria(d, empregados) {
+  const linhas = (k) => (Array.isArray(d["mem_" + k]) ? d["mem_" + k] : []);
+  const emp = empregados > 0 ? empregados : 1, out = {};
+  Object.keys(MO_MEM).forEach((k) => {
+    const ls = linhas(k).map((l) => {
+      const q = moNum(l.qtd), p = moNum(l.preco), v = moNum(l.vida);
+      const mensal = k === "unif" ? (v > 0 ? p * q / v : 0) : k === "materiais" ? p * q / emp : (v > 0 ? p * q * (1 - moNum(l.res) / 100) / (v * 12) / emp : 0);
+      return { ...l, mensal };
+    });
+    let total = ls.reduce((a, l) => a + l.mensal, 0), financeiro = 0;
+    if (k === "equip" && moNum(d.mem_cf) > 0) { financeiro = ls.reduce((a, l) => a + moNum(l.preco) * moNum(l.qtd), 0) * moNum(d.mem_cf) / 100 / emp; total += financeiro; }
+    out[k] = { linhas: ls, total, financeiro, ativo: ls.some((l) => l.mensal > 0) };
+  });
+  return out;
 }
 const MO_INSUMOS = [["unif", "Uniformes e EPI"], ["materiais", "Materiais"], ["equip", "Equipamentos"], ["outros5", "Outros insumos"]];
 // reajuste dos insumos por índice: ciclos de 12 meses a partir do mês do orçamento estimado (mesma contagem da calculadora:
@@ -6284,6 +6385,36 @@ class Component extends DCLogic {
   }
   moModo(modo) { this.setState({ mo: { modo, d: this.moCarregar(modo), enviando: false, agente: false, erro: "", ok: "", obs: [] } }); }
 
+  // memória de cálculo dos insumos (Módulo 5)
+  moMemMudar(k, fn) {
+    this.setState((x) => {
+      const lista = (Array.isArray(x.mo.d["mem_" + k]) ? x.mo.d["mem_" + k] : []).map((l) => ({ ...l }));
+      const d = { ...x.mo.d, ["mem_" + k]: fn(lista) || lista };
+      try { localStorage.setItem("lv-mo-" + x.mo.modo, JSON.stringify(d)); } catch (e) {}
+      return { mo: { ...x.mo, d } };
+    });
+  }
+  moMemModelo() {
+    const tipo = this.state.mo.d.dim === "vigilancia" || /vigil/i.test(this.state.mo.d.tipo_servico || "") ? "vigilancia" : "limpeza";
+    this.moMemMudar("unif", (l) => l.concat(MO_MEM_MODELOS[tipo].map(([desc, qtd, vida]) => ({ desc, qtd: String(qtd), vida: String(vida), preco: "", fonte: "Quantidade e vida útil de referência do caderno técnico de " + (tipo === "vigilancia" ? "vigilância" : "limpeza") + "; confira o termo de referência e a convenção." }))));
+  }
+  // preço praticado (Compras.gov.br, últimos 12 meses): mediana das compras do item, primeiro no estado; sem custo
+  async moMemPesquisar(k, i) {
+    const d = this.state.mo.d, l = (d["mem_" + k] || [])[i];
+    const erro = (m) => this.setState((x) => ({ mo: { ...x.mo, erro: m, memBusca: "" } }));
+    if (!l || String(l.desc || "").trim().length < 3) { erro("Descreva o item antes de pesquisar o preço."); return; }
+    if (!this.sb || !this.u) { erro("Entre na sua conta para pesquisar preços no Compras.gov.br."); return; }
+    this.setState((x) => ({ mo: { ...x.mo, memBusca: k + ":" + i, erro: "" } }));
+    try {
+      const { data, error } = await this.sb.functions.invoke("pesquisa-mercado", { body: { objeto: l.desc, uf: d.uf || "", natureza: "compra", so_precos: true } });
+      if (error) throw error;
+      const ps = ((data && data.precos_praticados) || []).filter((x) => x.mediana > 0).sort((a, b) => b.n - a.n);
+      if (!ps.length) { erro("Nenhum preço praticado de \"" + l.desc + "\" no Compras.gov.br nos últimos 12 meses. Informe o preço da sua pesquisa (Lei 14.133/2021, art. 23)."); return; }
+      const p0 = ps[0];
+      this.moMemMudar(k, (lista) => { lista[i] = { ...lista[i], preco: String(p0.mediana).replace(".", ","), fonte: "Compras.gov.br: mediana de " + p0.n + " compra(s) em 12 meses, " + (p0.abrangencia === "estado" ? "no estado" : "no país") + ", unidade " + p0.unidade + " (" + p0.catalogo + "; mín. R$ " + String(p0.minimo).replace(".", ",") + ", máx. R$ " + String(p0.maximo).replace(".", ",") + ")." }; });
+      this.setState((x) => ({ mo: { ...x.mo, memBusca: "" } }));
+    } catch (e) { erro("A pesquisa de preços não respondeu agora. Tente de novo."); }
+  }
   // regime de tributação: ajusta os percentuais de partida (o assinante confere e pode alterar)
   moRegime(id) {
     this.setState((x) => {
@@ -6373,6 +6504,11 @@ class Component extends DCLogic {
       return;
     }
     const transicao = (this._moUltimo && this._moUltimo.transicao) || [];
+    const memU = (this._moUltimo && this._moUltimo.mem) || {};
+    const fmt = (v, c) => (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: c == null ? 2 : c, maximumFractionDigits: c == null ? 2 : c });
+    const memTab = Object.keys(MO_MEM).filter((k) => memU[k] && memU[k].ativo).map((k) => ({ rot: MO_MEM[k].rot, nota: MO_MEM[k].nota, col: MO_MEM[k].col.concat(["Custo mensal por empregado"]),
+      linhas: memU[k].linhas.filter((l) => l.mensal > 0).map((l) => MO_MEM[k].campos.map((c) => String(l[c] == null ? "" : l[c])).concat(["R$ " + fmt(l.mensal, 4)]).concat([l.fonte || ""])),
+      total: "R$ " + fmt(memU[k].total, 4) + (memU[k].financeiro ? " (inclui custo financeiro de R$ " + fmt(memU[k].financeiro) + ")" : "") }));
     const regNome = { real: "Lucro Real", presumido: "Lucro Presumido", simples: "Simples Nacional (Anexo IV)" }[d.regime || "real"];
     const tribNome = d.reforma === "depois" ? "Depois da reforma tributária (CBS e IBS) · ano calculado: " + (r && r.tr ? r.tr.ano : "") : "Antes da reforma tributária (PIS, COFINS e ISS)";
     const num = (txt) => { const m = String(txt == null ? "" : txt).replace("→", "").replace("R$", "").replace("%", "").trim().replace(/\./g, "").replace(",", "."); const n = Number(m); return m !== "" && /\d/.test(m) && isFinite(n) ? n : null; };
@@ -6481,6 +6617,19 @@ class Component extends DCLogic {
         ws.addRow([]);
         kpis.forEach(([k, v]) => { const rr = linha(["", k, "", String(v)], { borda: true }); rr.getCell(2).font = { bold: true, size: 10, color: { argb: X.fraco } }; });
         ws.addRow([]);
+        if (memTab.length) {
+          const wm = wb.addWorksheet("Memória dos insumos", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
+          wm.columns = [{ width: 38 }, { width: 16 }, { width: 16 }, { width: 16 }, { width: 16 }, { width: 20 }, { width: 50 }];
+          let mr = wm.addRow(["Memória de cálculo dos insumos – Módulo 5 (custo mensal por empregado)"]); wm.mergeCells(mr.number, 1, mr.number, 7); mr.getCell(1).font = { bold: true, size: 13, color: { argb: X.branco } }; mr.getCell(1).fill = fill(X.navy); mr.height = 24;
+          memTab.forEach((g) => {
+            wm.addRow([]);
+            mr = wm.addRow([g.rot + " · " + g.nota]); wm.mergeCells(mr.number, 1, mr.number, 7); mr.getCell(1).font = { bold: true, color: { argb: X.teal } };
+            const hm = wm.addRow(g.col.concat(["Fonte"])); hm.eachCell((c) => { c.font = { bold: true, size: 9.5, color: { argb: X.fraco } }; c.fill = fill(X.cinza); c.alignment = { wrapText: true, vertical: "middle" }; });
+            g.linhas.forEach((v) => { const rr = wm.addRow(v);
+              rr.eachCell({ includeEmpty: true }, (c) => { c.border = { bottom: fino }; c.font = { size: 10 }; c.alignment = { wrapText: true, vertical: "top" }; }); rr.getCell(v.length).font = { size: 8.5, italic: true, color: { argb: X.fraco } }; });
+            mr = wm.addRow(new Array(g.col.length - 1).fill("").map((x, i) => (i === 0 ? "Total" : "")).concat([g.total])); mr.eachCell((c) => { c.font = { bold: true }; c.fill = fill(X.tot); });
+          });
+        }
         if (transicao.length) {
           const wt = wb.addWorksheet("Transição tributária", { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
           wt.columns = [{ width: 9 }, { width: 18 }, { width: 18 }, { width: 18 }, { width: 13 }, { width: 16 }, { width: 20 }, { width: 20 }];
@@ -6628,6 +6777,13 @@ class Component extends DCLogic {
             theme: "plain", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8 }, styles: { ...base.styles, fontSize: 7.6, cellPadding: 1.6, lineWidth: { bottom: 0.1 } },
             columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" }, 4: { halign: "right" }, 5: { halign: "right" } } });
         }
+        // memória dos insumos
+        memTab.forEach((g) => {
+          const nc = g.col.length;
+          doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "MEMÓRIA DE CÁLCULO – " + g.rot.toUpperCase(), colSpan: nc, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }], g.col],
+            body: g.linhas.map((v) => v.slice(0, nc)).concat([[{ content: g.nota + " Total: " + g.total, colSpan: nc, styles: { fontStyle: "bold", textColor: C.teal } }]]),
+            theme: "plain", rowPageBreak: "avoid", headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.6 }, styles: { ...base.styles, fontSize: 7.2, cellPadding: 1.4, lineWidth: { bottom: 0.1 } } });
+        });
         // transição da reforma tributária
         if (transicao.length) {
           doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + 6, head: [[{ content: "PERÍODO DE TRANSIÇÃO DA REFORMA TRIBUTÁRIA – PREÇO POR EMPREGADO ANO A ANO", colSpan: 8, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }],
@@ -6704,8 +6860,14 @@ class Component extends DCLogic {
   moProps() {
     const s = this.state, mo = s.mo, d0 = mo.d, rep = mo.modo === "repactuacao", rj = rep ? moReajuste(d0, s.indices) : { ativo: false, fator: 1 };
     const dim = !rep ? moDimensionar(d0) : null;
-    const d = dim && dim.tipo === "limpeza" && dim.serventes ? { ...d0, emp_posto: "1", postos: String(dim.serventes), unidade: "m²", quantidade: String(dim.area) }
+    let d = dim && dim.tipo === "limpeza" && dim.serventes ? { ...d0, emp_posto: "1", postos: String(dim.serventes), unidade: "m²", quantidade: String(dim.area) }
       : dim && dim.tipo === "vigilancia" && dim.postos ? { ...d0, emp_posto: String(dim.porPosto), postos: String(dim.postos), unidade: "Posto", quantidade: String(dim.postos) } : d0;
+    // adicionais da escala de vigilância calculados pelo caderno técnico
+    const vg = dim && dim.tipo === "vigilancia" && d0.vg_calc === "sim" ? moVigAdicionais(d0) : null;
+    if (vg) d = { ...d, noturno: vg.noturno.toFixed(4), hnr: vg.hnr.toFixed(4), he_feriado: vg.he.toFixed(4), intra: vg.intraPct.toFixed(12), dias: vg.v12 ? "15,22" : d.dias };
+    // memória de cálculo dos insumos: quando preenchida, o valor do Módulo 5 vem dela
+    const empTot = Math.max(1, moNum(d.emp_posto) * moNum(d.postos)), mem = moMemoria(d0, empTot);
+    if (Object.values(mem).some((m) => m.ativo)) { d = { ...d }; Object.keys(MO_MEM).forEach((k) => { if (mem[k].ativo) d[k] = mem[k].total.toFixed(4); }); }
     const r = moCalcular(d, mo.modo, rj);
     // encarregados (limpeza) ou supervisores (vigilância) entram no valor mensal pelo preço informado da respectiva planilha
     const lider = dim ? (dim.tipo === "limpeza" ? dim.encarregados : dim.supervisores) : 0, precoLider = moNum(d0.preco_lider);
@@ -6742,9 +6904,9 @@ class Component extends DCLogic {
         L("A", "Salário-base", { kv: "salario" }),
         L("B", "Adicional de periculosidade", { k: "peric", v: r.peric }),
         L("C", "Adicional de insalubridade", { k: "insal", v: r.insal, nota: "Calculado sobre o salário-base, como no modelo. Confira a base prevista na convenção (salário mínimo ou salário-base)." }),
-        L("D", "Adicional noturno", { kv: "noturno" }),
-        L("E", "Adicional de hora noturna reduzida", { kv: "hnr" }),
-        L("F", "Adicional de hora extra no feriado trabalhado", { kv: "he_feriado" }),
+        vg ? L("D", "Adicional noturno", { p: "-", v: r.noturno, auto: true, nota: vg.notas.noturno }) : L("D", "Adicional noturno", { kv: "noturno" }),
+        vg ? L("E", "Adicional de hora noturna reduzida", { p: "-", v: r.hnr, auto: true, nota: vg.notas.hnr }) : L("E", "Adicional de hora noturna reduzida", { kv: "hnr" }),
+        vg ? L("F", "Adicional de hora extra no feriado trabalhado", { p: "-", v: r.he_feriado, auto: true, nota: vg.notas.he }) : L("F", "Adicional de hora extra no feriado trabalhado", { kv: "he_feriado" }),
         L("G", "Outros (especificar)", { kv: "outros1" })], total: T("Total do Módulo 1", null, r.M1) },
       { titulo: "Submódulo 2.1 – 13º salário, férias e adicional de férias", linhas: [
         L("A", "13º (décimo terceiro) salário", { k: "p13", v: r.p13 }),
@@ -6780,10 +6942,12 @@ class Component extends DCLogic {
         L("E", "Afastamento maternidade", { k: "mat", v: r.mat, nota: "Base: 13º + férias e adicional + assistência médica + seguro de vida = " + brl(r.base_mat) }),
         L("F", "Outros (especificar)", { k: "outros41", v: r.outros41 })], total: T("Total do Submódulo 4.1", r.M41p, r.M41) },
       { titulo: "Submódulo 4.2 – Intrajornada", linhas: [
-        L("A", "Intervalo para repouso ou alimentação", { k: "intra", v: r.intra })], total: T("Total do Submódulo 4.2", moNum(d.intra) / 100, r.M42) },
+        vg && vg.intraVal ? L("A", "Intervalo para repouso ou alimentação", { p: moNum(d.intra) / 100, v: r.intra, auto: true, nota: vg.notas.intra }) : L("A", "Intervalo para repouso ou alimentação", { k: "intra", v: r.intra })], total: T("Total do Submódulo 4.2", moNum(d.intra) / 100, r.M42) },
       { titulo: "Módulo 5 – Insumos diversos", linhas: [
         ...[["A", "unif", "Uniformes e EPI", "Custo mensal por empregado (custo anual ÷ 12)."], ["B", "materiais", "Materiais", ""], ["C", "equip", "Equipamentos", "Depreciação mensal por empregado."], ["D", "outros5", "Outros (especificar)", ""]]
-          .map(([cod, k, rot, nota]) => r["rj_" + k]
+          .map(([cod, k, rot, nota]) => mem[k] && mem[k].ativo
+            ? { ...L(cod, rot, { p: "-", v: r[k], auto: true, nota: "Memória de cálculo: " + mem[k].linhas.filter((l) => l.mensal > 0).length + " item(ns)" + (mem[k].financeiro ? ", com custo financeiro de " + brl(mem[k].financeiro) : "") + (r["rj_" + k] ? " · reajustado pelo índice do contrato (valor da contratação: " + brl(r["orig_" + k]) + ")" : "") + ". " + MO_MEM[k].nota }) }
+            : r["rj_" + k]
             ? { ...L(cod, rot, { kv: k, nota: "Valor da contratação: " + brl(r["orig_" + k]) + " · reajustado pelo índice do contrato: " + brl(r[k]) }), auto: true, valTxt: "→ " + brl(r[k]) }
             : L(cod, rot, { kv: k, nota }))], total: T("Total do Módulo 5", null, r.M5) },
       { titulo: "Módulo 6 – Custos indiretos, tributos e lucro", linhas: [
@@ -6801,9 +6965,32 @@ class Component extends DCLogic {
         pisCof: t2.antigos ? pctC(r2.aPis + r2.aCof) : "—", cbs: t2.antigos ? (t2.teste ? "0,9% (compensável)" : "—") : pctC(r2.aCbs), ibs: t2.antigos ? (t2.teste ? "0,1% (compensável)" : "—") : pctC(r2.aIbs),
         iss: pctC(t2.antigos ? r2.aIss : r2.aIssT), trib: pct(r2.To), total: brl(r2.total), mensal: brl(mensal), r: r2 };
     }) : [];
-    this._moUltimo.transicao = transicao;
+    this._moUltimo.transicao = transicao; this._moUltimo.mem = mem; this._moUltimo.empTot = empTot;
     const vedado = d.regime === "simples" && !/limp|vigil|conserva/i.test((d.tipo_servico || "") + " " + (d.categoria || ""));
+    const f2 = (v) => (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const memGrupos = Object.keys(MO_MEM).map((k) => {
+      const cfg = MO_MEM[k], m = mem[k];
+      return { k, rot: cfg.rot, nota: cfg.nota, cols: cfg.col.concat(["Custo mensal por empregado", ""]).map((c) => ({ c })), cls: "lmo-lin lmo-mem lmo-mem-" + k, clsCab: "lmo-lin lmo-mem lmo-cab lmo-mem-" + k,
+        temLinhas: m.linhas.length > 0, total: "Total mensal por empregado: " + brl(m.total) + (m.financeiro ? " (com custo financeiro de " + brl(m.financeiro) + ")" : ""),
+        adicionar: () => this.moMemMudar(k, (l) => l.concat([{ desc: "", qtd: "", vida: "", preco: "", un: "", res: "", fonte: "" }])),
+        temModelo: k === "unif", modelo: () => this.moMemModelo(),
+        linhas: m.linhas.map((l, i) => ({
+          cels: cfg.campos.map((c) => ({ v: l[c] == null ? "" : String(l[c]), larga: c === "desc", rot: cfg.rot + ", linha " + (i + 1) + ": " + c, on: (e) => { const v = e.target.value; this.moMemMudar(k, (lista) => { lista[i] = { ...lista[i], [c]: v, ...(c === "preco" ? { fonte: "" } : {}) }; }); } })),
+          mensal: l.mensal ? "R$ " + l.mensal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) : "—", fonte: l.fonte || "", temFonte: !!l.fonte,
+          remover: () => this.moMemMudar(k, (lista) => lista.filter((_, j) => j !== i)),
+          pesquisar: () => this.moMemPesquisar(k, i), busTxt: mo.memBusca === k + ":" + i ? "Pesquisando…" : "Pesquisar preço" })) };
+    });
     return {
+      moMem: memGrupos, moMemEmp: "Empregados considerados no rateio de materiais e equipamentos: " + empTot + " (empregados por posto × postos).",
+      moMemCf: d0.mem_cf || "", onMoMemCf: this.moSet("mem_cf"),
+      moVgCalc: d0.vg_calc === "sim", onMoVgCalc: (e) => this.moSet("vg_calc")(e.target.checked ? "sim" : ""),
+      moVgIntra: d0.vg_intra === "sim", onMoVgIntra: (e) => this.moSet("vg_intra")(e.target.checked ? "sim" : ""),
+      moVgCampos: [campo("vg_an", "Adicional noturno (%)", "20")].concat(vg && vg.noturna ? [campo("vg_hnot", "Horas noturnas na jornada (22 h às 7 h = 9)", "9")] : [])
+        .concat([campo("vg_div", "Divisor do salário-hora", "220")]).concat(vg && vg.segDom ? [campo("vg_ffix", "Feriados de data fixa no ano (nacionais, estaduais e municipais)", "9"), campo("vg_fmov", "Feriados móveis no ano", "1"), campo("vg_fer", "Adicional do feriado trabalhado (%)", "100")] : [])
+        .concat(d0.vg_intra === "sim" ? [campo("vg_ih", "Horas de intervalo não concedido por dia", "1"), campo("vg_ia", "Adicional do intervalo (%)", "50")] : []),
+      moVgResumo: vg ? "Salário de referência R$ " + f2(vg.ref) + " · " + f2(vg.dias) + " dias de trabalho por mês" + (vg.v12 ? " (12x36: metade dos 30,4375 dias; usados também no vale-transporte e no auxílio-alimentação)" : "")
+        + " · adicional noturno R$ " + f2(vg.noturno) + " · hora noturna reduzida R$ " + f2(vg.hnr) + " · feriados R$ " + f2(vg.he) + (vg.intraVal ? " · intervalo R$ " + f2(vg.intraVal) : "") + ". Os valores entram no Módulo 1 (D, E e F) e no Submódulo 4.2." : "",
+      moVgPericAviso: vg && !moNum(d0.peric) ? "O adicional de periculosidade do vigilante é de 30% (CLT, art. 193, II, Lei 12.740/2012): informe-o no Módulo 1 (B), salvo previsão diferente na convenção." : "",
       moReformaOpcoes: [["antes", "Antes da reforma (PIS, COFINS e ISS)"], ["depois", "Depois da reforma (CBS e IBS, com a transição)"]].map(([id, nome]) => ({ nome, ativo: d.reforma === id, escolher: () => this.moSet("reforma")(id), ...corBotao(d.reforma === id) })),
       moReformaPendente: !d.reforma, moReformaDepois: depois,
       moRegimes: [["real", "Lucro Real"], ["presumido", "Lucro Presumido"], ["simples", "Simples Nacional"]].map(([id, nome]) => ({ nome, ativo: (d.regime || "real") === id, escolher: () => this.moRegime(id), ...corBotao((d.regime || "real") === id) })),
