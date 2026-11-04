@@ -27,14 +27,21 @@ const CAMPOS_PLANEJAMENTO: Record<string, string> = {
   mat: "afastamento maternidade, %", outros41: "outras ausências, %", intra: "intervalo intrajornada, % (quando não usufruído e indenizado)",
   unif: "uniformes, R$ por empregado por mês (se a convenção fixar quantidade ou valor)",
 };
+// Na repactuação, o agente reproduz a planilha da contratação (enviada em PDF ou Excel) e aplica as adequações
 const CAMPOS_REPACTUACAO: Record<string, string> = {
-  apt: "aviso prévio trabalhado na repactuação/prorrogação, % (custo não renovável)",
-  api: "aviso prévio indenizado, % (adequação na prorrogação, se cabível)",
-  unif: "uniformes, R$ por mês (kit inicial já amortizado no 1º ano?)",
-  equip: "equipamentos, R$ por mês (depreciação já concluída?)",
-  materiais: "materiais, R$ por mês (itens não renováveis?)",
-  outros41: "outros custos de reposição não renováveis, %",
-  outros5: "outros insumos não renováveis, R$ por mês",
+  ...CAMPOS_PLANEJAMENTO,
+  apt: "aviso prévio trabalhado, % (custo não renovável: no máximo 0,194% por ano de prorrogação)",
+  api: "aviso prévio indenizado, %",
+  unif: "uniformes/EPI, R$ por empregado por mês (valor da planilha da contratação, sem reajuste; zere ou reduza se for custo não renovável já amortizado)",
+  materiais: "materiais, R$ por empregado por mês (valor da planilha da contratação, sem reajuste)",
+  equip: "equipamentos, R$ por empregado por mês (valor da planilha da contratação, sem reajuste; zere ou reduza a depreciação já concluída)",
+  outros5: "outros insumos, R$ por empregado por mês (valor da planilha da contratação)",
+  fap: "FAP (fator, ex.: 0.843)",
+  ci: "custos indiretos, % (da planilha da contratação)", lucro: "lucro, % (da planilha da contratação)",
+  pis: "PIS, %", cofins: "COFINS, %", iss: "ISS, %",
+  emp_posto: "empregados por posto", postos: "quantidade de postos", meses: "meses de execução",
+  tipo_servico: "tipo de serviço (texto)", municipio: "município (texto)", uf: "UF (texto)",
+  vigente: "preço total por empregado na planilha da contratação (antes da repactuação), R$",
 };
 
 const REGRAS = `Planilha de custos e formação de preços da IN SEGES/MP nº 5/2017, Anexo VII-D (com a redação da IN nº 7/2018), para serviço com dedicação exclusiva de mão de obra.
@@ -74,19 +81,30 @@ Deno.serve(async (req) => {
 
   const corpo = await req.json().catch(() => ({}));
   const modo = corpo.modo === "repactuacao" ? "repactuacao" : "planejamento";
-  const arquivo = String(corpo.arquivo ?? "");
-  if (!arquivo.startsWith(usuario.id + "/mo/") || arquivo.includes("..") || !/\.pdf$/i.test(arquivo)) return erro("Envie a convenção coletiva em PDF.");
+  const okPdf = (c: string) => c.startsWith(usuario.id + "/mo/") && !c.includes("..") && /\.pdf$/i.test(c);
+  const arquivo = String(corpo.arquivo ?? "");             // convenção coletiva (na repactuação: a nova, opcional)
+  const planArq = String(corpo.planilha_arquivo ?? "");    // repactuação: planilha da contratação em PDF
+  const planTexto = String(corpo.planilha_texto ?? "").slice(0, 120000);  // repactuação: planilha em Excel, convertida em texto no navegador
+  if (modo === "planejamento" && !okPdf(arquivo)) return erro("Envie a convenção coletiva em PDF.");
+  if (modo === "repactuacao" && !okPdf(planArq) && planTexto.trim().length < 50) return erro("Envie a planilha utilizada na contratação, em PDF ou Excel.");
+  if (arquivo && !okPdf(arquivo)) return erro("Arquivo da convenção inválido.");
+  if (planArq && !okPdf(planArq)) return erro("Arquivo da planilha inválido.");
 
   const desde = new Date(Date.now() - 864e5).toISOString();
   const { count } = await admin.from("mo_preenchimentos").select("id", { count: "exact", head: true }).eq("usuario_id", usuario.id).gte("criado_em", desde);
   if ((count ?? 0) >= LIMITE_DIA) return erro("Limite diário de preenchimentos pelo agente atingido. Tente de novo amanhã.", 429);
 
-  const { data: blob, error: eDown } = await admin.storage.from("analises").download(arquivo);
-  if (eDown || !blob) return erro("Não foi possível ler o arquivo da convenção. Envie de novo.");
-  if (blob.size > 20 * 1024 * 1024) return erro("O arquivo da convenção passa de 20 MB.");
-  const bytes = new Uint8Array(await blob.arrayBuffer());
-  let bin = ""; for (let i = 0; i < bytes.length; i += 32768) bin += String.fromCharCode(...bytes.subarray(i, i + 32768));
-  const pdf = btoa(bin);
+  const lerPdf = async (caminho: string, nome: string): Promise<string | Response> => {
+    const { data: blob, error: eDown } = await admin.storage.from("analises").download(caminho);
+    if (eDown || !blob) return erro(`Não foi possível ler o arquivo da ${nome}. Envie de novo.`);
+    if (blob.size > 20 * 1024 * 1024) return erro(`O arquivo da ${nome} passa de 20 MB.`);
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    let bin = ""; for (let i = 0; i < bytes.length; i += 32768) bin += String.fromCharCode(...bytes.subarray(i, i + 32768));
+    return btoa(bin);
+  };
+  const docs: { titulo: string; pdf: string }[] = [];
+  if (planArq) { const x = await lerPdf(planArq, "planilha"); if (x instanceof Response) return x; docs.push({ titulo: "PLANILHA DA CONTRATAÇÃO", pdf: x }); }
+  if (arquivo) { const x = await lerPdf(arquivo, "convenção"); if (x instanceof Response) return x; docs.push({ titulo: modo === "repactuacao" ? "NOVA CONVENÇÃO COLETIVA" : "CONVENÇÃO COLETIVA", pdf: x }); }
 
   await admin.from("mo_preenchimentos").insert({ usuario_id: usuario.id, modo });
 
@@ -95,7 +113,7 @@ Deno.serve(async (req) => {
   const linhasDados = Object.entries(dados).filter(([k, v]) => /^[a-z0-9_]{1,20}$/.test(k) && (typeof v === "string" || typeof v === "number") && String(v).trim() && k !== "cct_arquivo")
     .slice(0, 80).map(([k, v]) => `- ${k}: ${String(v).slice(0, 120)}`).join("\n");
   const tarefa = modo === "repactuacao"
-    ? `REPACTUAÇÃO (Planilha 2). O assinante preenche a planilha repactuada. Sua tarefa é SOMENTE indicar as adequações dos custos NÃO RENOVÁVEIS para o ano de execução informado (ano_exec), com o fundamento: o aviso prévio trabalhado (no máximo 0,194% por ano de prorrogação) e, conforme a convenção e os dados, insumos e outros custos já pagos ou amortizados no 1º ano. Não altere salário, benefícios nem encargos.`
+    ? `REPACTUAÇÃO (Planilha 2). Você recebe a planilha de custos utilizada na contratação (e, se enviada, a nova convenção coletiva). Tarefa: (1) reproduza nos campos os valores e percentuais da planilha da contratação, rubrica por rubrica, e informe em "vigente" o preço total por empregado dessa planilha; (2) se a nova convenção foi enviada, atualize o que decorre dela (salário-base, adicionais, auxílio-alimentação e participação, assistência médica, seguro de vida e demais benefícios), citando a cláusula; (3) faça a análise dos custos NÃO RENOVÁVEIS para o ano de execução informado (ano_exec): suprima ou reduza o que já foi pago ou amortizado no 1º ano (art. 57 da IN 05/2017), como o aviso prévio trabalhado (no máximo 0,194% por ano de prorrogação; Acórdão 1.186/2017-TCU-Plenário) e as incidências sobre ele, e equipamentos ou kits iniciais já amortizados, começando a fonte por "Não renovável:". NÃO reajuste insumos por índice (isso é feito à parte pelo sistema). Nos campos sem informação na planilha, não invente: omita o campo.`
     : `PLANEJAMENTO (Planilha 1). Preencha a planilha do profissional da categoria indicada a partir da convenção enviada e das normas: piso da categoria, adicionais, benefícios (com a participação do empregado), encargos e percentuais dos Módulos 2, 3 e 4. Para cada valor, indique a fonte. Se a convenção não tratar de um item, use o percentual legal ou do caderno técnico e diga isso na fonte. Não preencha custos indiretos, lucro nem tributos.`;
   const system = `Você é especialista em custos de serviços terceirizados com dedicação exclusiva de mão de obra na administração pública. ${REGRAS}
 ${tarefa}
@@ -105,10 +123,11 @@ Use apenas o que está na convenção enviada e nas normas citadas; nunca invent
     method: "POST",
     headers: { "x-api-key": chave, "anthropic-version": "2023-06-01", "content-type": "application/json" },
     body: JSON.stringify({
-      model: MODELO, max_tokens: 4000, system, tools: [FERRAMENTA(campos)], tool_choice: { type: "tool", name: "preencher_planilha" },
+      model: MODELO, max_tokens: 6000, system, tools: [FERRAMENTA(campos)], tool_choice: { type: "tool", name: "preencher_planilha" },
       messages: [{ role: "user", content: [
-        { type: "document", source: { type: "base64", media_type: "application/pdf", data: pdf } },
-        { type: "text", text: `DADOS JÁ INFORMADOS NA PLANILHA:\n${linhasDados || "(nenhum)"}` },
+        ...docs.flatMap((x) => [{ type: "text", text: x.titulo + ":" }, { type: "document", source: { type: "base64", media_type: "application/pdf", data: x.pdf } }]),
+        ...(planTexto.trim() ? [{ type: "text", text: "PLANILHA DA CONTRATAÇÃO (Excel convertido em texto; cada linha é uma linha da planilha, colunas separadas por |):\n" + planTexto }] : []),
+        { type: "text", text: `DADOS JÁ INFORMADOS NA PLANILHA DO SITE:\n${linhasDados || "(nenhum)"}` },
       ] }],
     }),
     signal: AbortSignal.timeout(140000),
@@ -119,7 +138,7 @@ Use apenas o que está na convenção enviada e nas normas citadas; nunca invent
   }
   const j = await resp.json().catch(() => ({}));
   const bloco = (j.content ?? []).find((c: any) => c.type === "tool_use");
-  const saida = ((bloco?.input?.campos ?? []) as any[]).filter((c) => campos[c?.campo]).slice(0, 60).map((c) => ({
+  const saida = ((bloco?.input?.campos ?? []) as any[]).filter((c) => campos[c?.campo]).slice(0, 90).map((c) => ({
     campo: String(c.campo), valor: String(c.valor ?? "").slice(0, 120), fonte: String(c.fonte ?? "").slice(0, 300),
   }));
   const observacoes = ((bloco?.input?.observacoes ?? []) as unknown[]).slice(0, 6).map((o) => String(o).slice(0, 400));

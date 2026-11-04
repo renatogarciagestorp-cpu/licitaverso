@@ -984,6 +984,8 @@
   .lmo-dif { margin: 12px 0 0; font-size: 14.5px; color: #0B1F2A; }
   .lmo-agente { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
   .lmo-btn { font: inherit; font-size: 14.5px; font-weight: 800; background: #0FA36B; color: #06251A; border: 0; border-radius: 12px; padding: 12px 18px; cursor: pointer; box-shadow: 0 8px 20px rgba(15,163,107,0.22); }
+  .lmo-btn2 { background: #0A1F2A; color: #fff; box-shadow: none; }
+  .lmo-campo select { font: inherit; font-size: 14px; font-weight: 600; border: 1px solid #D6DEDD; border-radius: 9px; padding: 8px 10px; background: #FBFDF6; }
   .lmo-pro { font-size: 12px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: #8A5A00; background: #FBF0DA; border-radius: 999px; padding: 6px 12px; }
   .lmo-ok { margin: 10px 0 0; font-size: 14px; font-weight: 700; color: #0A7A50; }
   .lmo-obs { margin: 8px 0 0; padding-left: 20px; font-size: 13px; line-height: 1.5; color: #3D5058; }
@@ -2193,8 +2195,14 @@
                   <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
                 </sc-for>
               </div>
+              <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
               <div class="lmo-cct">
-                <div><b>Convenção coletiva</b><small>Acordo, convenção ou dissídio coletivo da categoria, em PDF.</small></div>
+                <div><b>Planilha utilizada na contratação</b><small>A planilha de custos da proposta vencedora ou do contrato, em PDF ou Excel (.xlsx).</small></div>
+                <label class="lmo-arq"><input type="file" accept=".pdf,.xlsx" sc-camel-on-change="{{ moEscolherPlan }}">{{ moPlanNome }}<sc-if value="{{ moPlanNome }}" hint-placeholder-val="{{ false }}"> · trocar</sc-if><sc-if value="{{ moSemPlan }}" hint-placeholder-val="{{ true }}">Escolher arquivo</sc-if></label>
+              </div>
+              </sc-if>
+              <div class="lmo-cct">
+                <div><b>{{ moCctRot }}</b><small>Acordo, convenção ou dissídio coletivo da categoria, em PDF.</small></div>
                 <label class="lmo-arq"><input type="file" accept=".pdf,.doc,.docx" sc-camel-on-change="{{ moEscolherCct }}">{{ moCct }}<sc-if value="{{ moCct }}" hint-placeholder-val="{{ false }}"> · trocar</sc-if><sc-if value="{{ moSemCct }}" hint-placeholder-val="{{ true }}">Escolher arquivo</sc-if></label>
               </div>
               <p class="lmo-nota">{{ moAgenteTxt }}</p>
@@ -2206,6 +2214,23 @@
               <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
               <sc-if value="{{ moTemObs }}" hint-placeholder-val="{{ false }}"><ul class="lmo-obs"><sc-for list="{{ moObs }}" as="o" hint-placeholder-count="2"><li>{{ o }}</li></sc-for></ul></sc-if>
             </section>
+
+            <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Reajuste dos insumos por índice</h2>
+              <label class="lvc-check"><input type="checkbox" checked="{{ moRjAtivo }}" sc-camel-on-change="{{ onMoRj }}"> Também quero reajustar os insumos (EPI, uniformes, materiais, equipamentos)</label>
+              <p class="lmo-nota">Na repactuação, os custos com mão de obra seguem a convenção; os insumos, quando já completada a periodicidade, são reajustados pelo índice previsto no contrato, contado da data do orçamento estimado (Lei 14.133/2021, art. 25, § 7º, e art. 135).</p>
+              <sc-if value="{{ moRjAtivo }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-campos" style="margin-top: 10px">
+                  <label class="lmo-campo"><span>Índice previsto no contrato</span><select value="{{ moRjIndiceSel }}" sc-camel-on-change="{{ onMoRjIndice }}"><sc-for list="{{ moRjIndices }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                  <label class="lmo-campo"><span>Mês do orçamento estimado</span><input type="month" value="{{ moRjOrc }}" sc-camel-on-input="{{ onMoRjOrc }}"></label>
+                  <label class="lmo-campo"><span>Calcular até (em branco: último índice divulgado)</span><input type="month" value="{{ moRjRef }}" sc-camel-on-input="{{ onMoRjRef }}"></label>
+                </div>
+                <div class="lvc-chips" style="margin-top: 10px"><sc-for list="{{ moRjItens }}" as="o" hint-placeholder-count="4"><button type="button" class="lvc-chip" aria-pressed="{{ o.sel }}" sc-camel-on-click="{{ o.alternar }}">{{ o.nome }}</button></sc-for></div>
+                <p class="{{ moRjCls }}">{{ moRjMsg }}</p>
+              </sc-if>
+            </section>
+            </sc-if>
 
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Parâmetros dos benefícios (Submódulo 2.3)</h2>
@@ -2255,7 +2280,11 @@
                 <sc-if value="{{ moTemUnidade }}" hint-placeholder-val="{{ false }}"><div><small>{{ moUnidadeRot }}</small><b>{{ moUnidade }}</b></div></sc-if>
               </div>
               <sc-if value="{{ moTemDif }}" hint-placeholder-val="{{ false }}"><p class="lmo-dif">Variação em relação ao preço vigente: <b>{{ moDif }}</b></p></sc-if>
-              <button type="button" class="lve-voltar" sc-camel-on-click="{{ moLimpar }}" style="margin-top: 14px">Limpar a planilha</button>
+              <div class="lmo-agente" style="margin-top: 16px">
+                <button type="button" class="lmo-btn" sc-camel-on-click="{{ moBaixarExcel }}">Baixar em Excel</button>
+                <button type="button" class="lmo-btn lmo-btn2" sc-camel-on-click="{{ moBaixarPdf }}">Baixar em PDF</button>
+                <button type="button" class="lve-voltar" sc-camel-on-click="{{ moLimpar }}">Limpar a planilha</button>
+              </div>
             </section>
           </div>
           </sc-if>
@@ -4519,15 +4548,40 @@ const MO_PADRAO = {
   unif: "0", materiais: "0", equip: "0", outros5: "0",
   ci: "3", lucro: "6,79", pis: "1,65", cofins: "7,6", iss: "5",
   emp_posto: "1", postos: "1",
-  ano_exec: "2", vigente: ""
+  ano_exec: "2", vigente: "",
+  rj_ativo: "", rj_indice: "ipca", rj_orcamento: "", rj_ref: "", rj_unif: "sim", rj_materiais: "sim", rj_equip: "sim", rj_outros5: "sim"
 };
+const MO_INSUMOS = [["unif", "Uniformes e EPI"], ["materiais", "Materiais"], ["equip", "Equipamentos"], ["outros5", "Outros insumos"]];
+// reajuste dos insumos por índice: ciclos de 12 meses a partir do mês do orçamento estimado (mesma contagem da calculadora:
+// do mês do orçamento ao 11º mês seguinte, 12 variações mensais), acumulados até o mês de referência
+function moReajuste(d, indices) {
+  const serie = indices && indices.series && indices.series[d.rj_indice];
+  const mesNum = (v) => { const m = /^(\d{4})-(\d{2})/.exec(v || ""); return m ? Number(m[1]) * 12 + Number(m[2]) - 1 : null; };
+  const ym = (n) => Math.floor(n / 12) + "-" + String(n % 12 + 1).padStart(2, "0");
+  const mesBR = (v) => { const m = /^(\d{4})-(\d{2})/.exec(v || ""); return m ? m[2] + "/" + m[1] : v; };
+  if (d.rj_ativo !== "sim") return { ativo: false, fator: 1 };
+  if (!serie) return { ativo: true, pronto: false, fator: 1, msg: "Carregando os índices…" };
+  const meses = Object.keys(serie.mensal).sort(), ult = meses[meses.length - 1];
+  const base = mesNum(d.rj_orcamento), ref = mesNum(d.rj_ref) ?? mesNum(ult);
+  if (base === null) return { ativo: true, pronto: false, fator: 1, msg: "Informe o mês do orçamento estimado que deu origem à contratação." };
+  const ciclos = []; let fator = 1, falta = false;
+  for (let k = 1; base + 12 * (k - 1) + 11 <= ref && k <= 10; k++) {
+    const ini = base + 12 * (k - 1); let f = 1;
+    for (let m = ini; m < ini + 12; m++) { const v = serie.mensal[ym(m)]; if (typeof v !== "number") { falta = true; continue; } f *= 1 + v / 100; }
+    fator *= f; ciclos.push({ ini: mesBR(ym(ini)), fim: mesBR(ym(ini + 11)), pct: (f - 1) * 100 });
+  }
+  if (!ciclos.length) return { ativo: true, pronto: false, fator: 1, msg: "Ainda não se completaram 12 meses do orçamento estimado até " + mesBR(ym(ref)) + ": não há reajuste dos insumos." };
+  return { ativo: true, pronto: true, fator, falta, ciclos, serieNome: serie.nome, fonte: serie.fonte, ult: mesBR(ult),
+    msg: serie.nome + ": " + ciclos.map((c) => c.ini + " a " + c.fim + " = " + c.pct.toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + "%").join("; ")
+      + " · fator acumulado " + fator.toLocaleString("pt-BR", { minimumFractionDigits: 6, maximumFractionDigits: 6 }) + (falta ? " (há mês sem índice divulgado)" : "") };
+}
 const moNum = (v) => { const n = parseFloat(String(v == null ? "" : v).replace(/\./g, (m, i, t) => (/,/.test(t) ? "" : m)).replace(",", ".")); return isFinite(n) ? n : 0; };
 const moT2 = (x) => Math.trunc(x * 100 + 1e-7) / 100;
 const moT4 = (x) => Math.trunc(x * 10000 + 1e-7) / 10000;
 // APT nas repactuações e prorrogações: o aviso prévio trabalhado é custo não renovável (1,94% só no 1º ano);
 // a partir do 2º ano, no máximo 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário)
 const MO_APT_PRORROGACAO = 0.194;
-function moCalcular(d, modo) {
+function moCalcular(d, modo, rj) {
   const n = (k) => moNum(d[k]), pc = (k) => moNum(d[k]) / 100;
   const r = {}, S = n("salario");
   r.salario = S; r.peric = S * pc("peric"); r.insal = S * pc("insal");
@@ -4559,7 +4613,8 @@ function moCalcular(d, modo) {
   Object.entries(r.m3p).forEach(([k, v]) => { r["r_" + k] = r.M1 * v; });
   r.M3p = moT4(Object.values(r.m3p).reduce((a, b) => a + b, 0));
   r.M3 = moT2(Object.keys(r.m3p).reduce((a, k) => a + r["r_" + k], 0));
-  r.unif = n("unif"); r.materiais = n("materiais"); r.equip = n("equip"); r.outros5 = n("outros5");
+  const fIns = (k) => (rj && rj.pronto && modo === "repactuacao" && d["rj_" + k] === "sim" ? rj.fator : 1);
+  MO_INSUMOS.forEach(([k]) => { r["orig_" + k] = n(k); r[k] = moT2(n(k) * fIns(k)); r["rj_" + k] = fIns(k) !== 1 && n(k) > 0; });
   r.M5 = moT2(r.unif + r.materiais + r.equip + r.outros5);
   r.sub = moT2(r.M1 + r.M2 + r.M3 + r.M4 + r.M5);
   r.ci = moT2(pc("ci") * r.sub); r.lucro = moT2(pc("lucro") * (r.ci + r.sub));
@@ -6029,15 +6084,134 @@ class Component extends DCLogic {
     if (!up.error) this.moSet("cct_arquivo")(caminho);
   }
 
+  async moEnviarPlanilha(f) {
+    if (!f) return;
+    const ext = (f.name.split(".").pop() || "").toLowerCase();
+    const erro = (m) => this.setState((x) => ({ mo: { ...x.mo, enviando: false, erro: m } }));
+    if (!["pdf", "xlsx"].includes(ext)) { erro("Envie a planilha em PDF ou Excel (.xlsx)."); return; }
+    if (f.size > 20 * 1024 * 1024) { erro("O arquivo passa de 20 MB."); return; }
+    this.setState((x) => ({ mo: { ...x.mo, enviando: true, erro: "", ok: "" } }));
+    if (ext === "xlsx") {
+      try {
+        if (!window.ExcelJS) await carregarScript(baseSite() + "vendor/exceljs-4.4.0.min.js");
+        const wb = new window.ExcelJS.Workbook();
+        await wb.xlsx.load(await f.arrayBuffer());
+        const linhas = [];
+        wb.eachSheet((ws) => {
+          linhas.push("=== Aba: " + ws.name);
+          ws.eachRow({ includeEmpty: false }, (row) => {
+            const cels = [];
+            row.eachCell({ includeEmpty: false }, (c) => {
+              let v = c.value;
+              if (v && typeof v === "object") v = v.result != null ? v.result : (v.richText ? v.richText.map((t) => t.text).join("") : (v.text != null ? v.text : (v instanceof Date ? v.toISOString().slice(0, 10) : "")));
+              if (v !== null && v !== undefined && String(v).trim() !== "") cels.push(c.address + "=" + String(typeof v === "number" ? Math.round(v * 1e6) / 1e6 : v).slice(0, 120));
+            });
+            if (cels.length) linhas.push(cels.join(" | "));
+          });
+        });
+        this._moPlanTexto = linhas.join("\n").slice(0, 120000);
+        this.moSet("plan_arquivo")("");
+        this.moSet("plan_nome")(f.name);
+        this.setState((x) => ({ mo: { ...x.mo, enviando: false } }));
+      } catch (e) { erro("Não foi possível ler a planilha em Excel. Confira o arquivo ou envie em PDF."); }
+      return;
+    }
+    this.moSet("plan_nome")(f.name);
+    if (!this.sb || !this.u || !this.moPodeAgente()) { this.setState((x) => ({ mo: { ...x.mo, enviando: false } })); return; }
+    const caminho = this.u.id + "/mo/" + Date.now() + "-planilha.pdf";
+    const up = await this.sb.storage.from("analises").upload(caminho, f, { upsert: false, contentType: "application/pdf" });
+    if (up.error) { erro("Não foi possível enviar o arquivo. Tente de novo."); return; }
+    this._moPlanTexto = "";
+    this.moSet("plan_arquivo")(caminho);
+    this.setState((x) => ({ mo: { ...x.mo, enviando: false } }));
+  }
+
+  // download da planilha preenchida (Planilha 1 ou 2), em Excel ou PDF, com os valores da tela
+  async moBaixar(formato) {
+    const s = this.state, mo = s.mo, d = mo.d, rep = mo.modo === "repactuacao";
+    const P = this.moProps(), { r, rj } = this._moUltimo || {};
+    const titulo = rep ? "Planilha de custos e formação de preços – Repactuação" : "Planilha de custos e formação de preços – Planejamento da contratação";
+    const ident = [["Tipo de serviço", d.tipo_servico], ["Categoria profissional", d.categoria], ["CBO", d.cbo], ["Salário-base", d.salario], ["Data-base da categoria", d.data_base],
+      ["Acordo, convenção ou dissídio (ano)", d.ano_cct], ["Município/UF", [d.municipio, d.uf].filter(Boolean).join("/")], ["Data da proposta", d.data_proposta], ["Meses de execução", d.meses]]
+      .concat(rep ? [["Ano de execução após a repactuação", d.ano_exec], ["Planilha da contratação", d.plan_nome || "—"]] : []).filter((x) => String(x[1] || "").trim());
+    const linhas = [];
+    P.moModulos.forEach((md) => {
+      linhas.push({ tipo: "mod", t: md.titulo });
+      md.linhas.forEach((l) => linhas.push({ tipo: "lin", cod: l.cod, rot: l.rot, pct: l.pctEdit ? String(l.pctK || "") + (l.rot.indexOf("FAP") === 0 ? "" : "%") : l.pctTxt, val: l.valEdit ? (l.valTxt.indexOf("→") === 0 ? l.valTxt.slice(2) : "R$ " + moNum(l.valK).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })) : l.valTxt, nota: l.nota }));
+      linhas.push({ tipo: "tot", rot: md.total.rot, pct: md.total.pctTxt, val: md.total.valTxt });
+    });
+    const resumo = P.moResumo.map((l) => [l.cod, l.rot, l.valTxt]).concat([["", "Preço total por empregado", P.moTotal]]);
+    const kpis = [["Fator K", P.moFatorK], ["Empregados por posto", d.emp_posto], ["Quantidade de postos", d.postos], ["Valor por posto", P.moPosto], ["Valor mensal dos serviços", P.moMensal], ["Valor global", P.moGlobal]]
+      .concat(P.moTemUnidade ? [[P.moUnidadeRot, P.moUnidade]] : []).concat(P.moTemDif ? [["Variação em relação ao preço vigente", P.moDif]] : []);
+    const notas = [].concat(rep ? ["Custos não renováveis: aviso prévio trabalhado limitado a 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário; IN 05/2017, art. 57)."] : [])
+      .concat(rj && rj.pronto ? ["Insumos reajustados pelo índice do contrato (" + rj.msg + ")."] : []);
+    const nome = (rep ? "planilha-repactuacao" : "planilha-planejamento") + "-" + (d.categoria || "mao-de-obra").toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+    this.setState((x) => ({ mo: { ...x.mo, baixando: true, erro: "" } }));
+    try {
+      if (formato === "xlsx") {
+        if (!window.ExcelJS) await carregarScript(baseSite() + "vendor/exceljs-4.4.0.min.js");
+        const wb = new window.ExcelJS.Workbook(); wb.creator = "Licitacon";
+        const ws = wb.addWorksheet(rep ? "Repactuação" : "Planejamento", { pageSetup: { paperSize: 9, orientation: "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
+        ws.columns = [{ width: 7 }, { width: 62 }, { width: 14 }, { width: 18 }];
+        const borda = { top: { style: "thin", color: { argb: "FFD6DEDD" } }, bottom: { style: "thin", color: { argb: "FFD6DEDD" } }, left: { style: "thin", color: { argb: "FFD6DEDD" } }, right: { style: "thin", color: { argb: "FFD6DEDD" } } };
+        const add = (vals, est) => { const row = ws.addRow(vals); row.eachCell({ includeEmpty: true }, (c) => { c.border = borda; c.alignment = { vertical: "middle", wrapText: true }; Object.assign(c, est || {}); }); return row; };
+        const t = ws.addRow([titulo]); ws.mergeCells(t.number, 1, t.number, 4); t.font = { bold: true, size: 13 };
+        const sub = ws.addRow(["IN SEGES/MP nº 5/2017, Anexo VII-D · gerada no Licitacon em " + new Date().toLocaleDateString("pt-BR")]); ws.mergeCells(sub.number, 1, sub.number, 4); sub.font = { size: 9, color: { argb: "FF66757F" } };
+        ws.addRow([]);
+        ident.forEach(([k, v]) => { const row = add(["", k, String(v), ""]); ws.mergeCells(row.number, 3, row.number, 4); row.getCell(2).font = { bold: true }; });
+        ws.addRow([]);
+        const num = (txt) => { const m = String(txt || "").replace("R$", "").replace("%", "").replace(/\./g, "").replace(",", ".").replace("→", "").trim(); const n = Number(m); return txt && /\d/.test(m) && isFinite(n) ? n : txt; };
+        linhas.forEach((l) => {
+          if (l.tipo === "mod") { const row = add([l.t.toUpperCase(), "", "", ""]); ws.mergeCells(row.number, 1, row.number, 4); row.font = { bold: true, color: { argb: "FFFFFFFF" } }; row.getCell(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF0A1F2A" } }; add(["", "Rubrica", "%", "Valor (R$)"]).font = { bold: true }; return; }
+          if (l.tipo === "tot") { const row = add(["", l.rot, l.pct ? num(l.pct) / 100 : "", num(l.val)]); row.font = { bold: true }; row.eachCell((c) => { c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFEEF3F2" } }; }); row.getCell(3).numFmt = "0.00%"; row.getCell(4).numFmt = '"R$" #,##0.00'; ws.addRow([]); return; }
+          const pv = l.pct && l.pct !== "—" && /%$/.test(l.pct) ? num(l.pct) / 100 : (l.pct === "—" ? "" : num(l.pct));
+          const row = add([l.cod, l.rot + (l.nota ? "\n" + l.nota : ""), pv, num(l.val)]);
+          if (typeof pv === "number" && /%$/.test(l.pct)) row.getCell(3).numFmt = "0.00##%";
+          row.getCell(4).numFmt = '"R$" #,##0.00';
+          if (l.nota) row.getCell(2).font = { size: 10 };
+        });
+        const tr = add(["QUADRO-RESUMO DO CUSTO POR EMPREGADO", "", "", ""]); ws.mergeCells(tr.number, 1, tr.number, 4); tr.font = { bold: true, color: { argb: "FFFFFFFF" } }; tr.getCell(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF0A1F2A" } };
+        resumo.forEach(([c, rot, v], i) => { const row = add([c, rot, "", num(v)]); row.getCell(4).numFmt = '"R$" #,##0.00'; if (!c) row.font = { bold: true }; });
+        ws.addRow([]);
+        kpis.forEach(([k, v]) => { const row = add(["", k, "", String(v)]); row.getCell(2).font = { bold: true }; });
+        if (notas.length) { ws.addRow([]); notas.forEach((n2) => { const row = ws.addRow(["", n2]); ws.mergeCells(row.number, 2, row.number, 4); row.getCell(2).alignment = { wrapText: true }; row.getCell(2).font = { size: 9, italic: true }; }); }
+        const buf = await wb.xlsx.writeBuffer();
+        baixarArquivo(nome + ".xlsx", buf, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+      } else {
+        if (!window.jspdf) await carregarScript(baseSite() + "vendor/jspdf-2.5.1.umd.min.js");
+        if (!(window.jspdf && window.jspdf.jsPDF && window.jspdf.jsPDF.API.autoTable)) await carregarScript(baseSite() + "vendor/jspdf-autotable-3.8.2.min.js");
+        const { jsPDF } = window.jspdf; const doc = new jsPDF({ unit: "mm", format: "a4" });
+        doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text(titulo, 14, 16);
+        doc.setFont("helvetica", "normal"); doc.setFontSize(8.5); doc.setTextColor(102, 117, 127);
+        doc.text("IN SEGES/MP nº 5/2017, Anexo VII-D · gerada no Licitacon em " + new Date().toLocaleDateString("pt-BR"), 14, 21); doc.setTextColor(0, 0, 0);
+        doc.autoTable({ startY: 25, body: ident, theme: "grid", styles: { fontSize: 8.5, cellPadding: 1.6 }, columnStyles: { 0: { fontStyle: "bold", cellWidth: 70 } }, margin: { left: 14, right: 14 } });
+        const body = linhas.map((l) => l.tipo === "mod" ? [{ content: l.t.toUpperCase(), colSpan: 4, styles: { fillColor: [10, 31, 42], textColor: 255, fontStyle: "bold" } }]
+          : l.tipo === "tot" ? [{ content: "", styles: { fillColor: [238, 243, 242] } }, { content: l.rot, styles: { fontStyle: "bold", fillColor: [238, 243, 242] } }, { content: l.pct || "", styles: { halign: "right", fontStyle: "bold", fillColor: [238, 243, 242] } }, { content: l.val, styles: { halign: "right", fontStyle: "bold", fillColor: [238, 243, 242] } }]
+          : [l.cod, l.rot + (l.nota ? "\n" + l.nota : ""), { content: l.pct || "", styles: { halign: "right" } }, { content: l.val, styles: { halign: "right" } }]);
+        doc.autoTable({ startY: doc.lastAutoTable.finalY + 4, head: [["", "Rubrica", "%", "Valor (R$)"]], body, theme: "grid", headStyles: { fillColor: [244, 247, 246], textColor: [85, 102, 109] },
+          styles: { fontSize: 8, cellPadding: 1.4, valign: "middle" }, columnStyles: { 0: { cellWidth: 10, fontStyle: "bold" }, 2: { cellWidth: 24 }, 3: { cellWidth: 30 } }, margin: { left: 14, right: 14 } });
+        doc.autoTable({ startY: doc.lastAutoTable.finalY + 4, head: [[{ content: "QUADRO-RESUMO DO CUSTO POR EMPREGADO", colSpan: 3 }]], body: resumo.map(([c, rot, v]) => [c, { content: rot, styles: { fontStyle: c ? "normal" : "bold" } }, { content: v, styles: { halign: "right", fontStyle: c ? "normal" : "bold" } }]).concat(kpis.map(([k, v]) => ["", k, { content: String(v), styles: { halign: "right" } }])),
+          theme: "grid", headStyles: { fillColor: [10, 31, 42] }, styles: { fontSize: 8.5, cellPadding: 1.6 }, columnStyles: { 0: { cellWidth: 10 }, 2: { cellWidth: 40 } }, margin: { left: 14, right: 14 } });
+        let y = doc.lastAutoTable.finalY + 6; doc.setFontSize(7.5); doc.setTextColor(85, 102, 109);
+        notas.forEach((n2) => { const ls = doc.splitTextToSize(n2, 182); if (y + ls.length * 3.5 > 285) { doc.addPage(); y = 16; } doc.text(ls, 14, y); y += ls.length * 3.5 + 1.5; });
+        doc.save(nome + ".pdf");
+      }
+    } catch (e) { this.setState((x) => ({ mo: { ...x.mo, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
+    this.setState((x) => ({ mo: { ...x.mo, baixando: false } }));
+  }
+
   async moAgente() {
     const mo = this.state.mo, d = mo.d;
     const erro = (m) => this.setState((x) => ({ mo: { ...x.mo, agente: false, erro: m } }));
     if (!this.sb) { erro("O agente ainda não está ativo neste site (modo demonstração)."); return; }
     if (!this.u) { this.setState({ volta: "calculadora" }); this.irPara("login"); return; }
     if (!this.moPodeAgente()) { erro("O preenchimento pelo agente é exclusivo do plano Pro."); return; }
-    if (!d.cct_arquivo) { erro("Envie primeiro a convenção coletiva em PDF."); return; }
+    const rep = mo.modo === "repactuacao";
+    if (!rep && !d.cct_arquivo) { erro("Envie primeiro a convenção coletiva em PDF."); return; }
+    if (rep && !d.plan_arquivo && !this._moPlanTexto) { erro("Envie a planilha utilizada na contratação (PDF ou Excel)" + (d.plan_nome ? " de novo: o arquivo em Excel precisa ser escolhido nesta visita." : ".")); return; }
     this.setState((x) => ({ mo: { ...x.mo, agente: true, erro: "", ok: "", obs: [] } }));
-    const { data, error } = await this.sb.functions.invoke("mo-agente", { body: { modo: mo.modo, arquivo: d.cct_arquivo, dados: d } });
+    const { data, error } = await this.sb.functions.invoke("mo-agente", { body: { modo: mo.modo, arquivo: d.cct_arquivo || "", planilha_arquivo: rep ? (d.plan_arquivo || "") : "",
+      planilha_texto: rep ? (this._moPlanTexto || "") : "", dados: d } });
     if (error) { erro(await erroDaFuncao(error)); return; }
     const campos = (data && data.campos) || [];
     this.setState((x) => {
@@ -6065,7 +6239,8 @@ class Component extends DCLogic {
   }
 
   moProps() {
-    const s = this.state, mo = s.mo, d = mo.d, rep = mo.modo === "repactuacao", r = moCalcular(d, mo.modo);
+    const s = this.state, mo = s.mo, d = mo.d, rep = mo.modo === "repactuacao", rj = rep ? moReajuste(d, s.indices) : { ativo: false, fator: 1 }, r = moCalcular(d, mo.modo, rj);
+    this._moUltimo = { r, rj };
     const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const pct = (v) => ((Number(v) || 0) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
     // linha: percentual editável (k) ou calculado (p), valor calculado (v) ou editável (kv)
@@ -6121,10 +6296,10 @@ class Component extends DCLogic {
       { titulo: "Submódulo 4.2 – Intrajornada", linhas: [
         L("A", "Intervalo para repouso ou alimentação", { k: "intra", v: r.intra })], total: T("Total do Submódulo 4.2", moNum(d.intra) / 100, r.M42) },
       { titulo: "Módulo 5 – Insumos diversos", linhas: [
-        L("A", "Uniformes", { kv: "unif", nota: "Custo mensal por empregado (memória de cálculo: custo anual ÷ 12)." }),
-        L("B", "Materiais", { kv: "materiais" }),
-        L("C", "Equipamentos", { kv: "equip", nota: "Depreciação mensal por empregado." }),
-        L("D", "Outros (especificar)", { kv: "outros5" })], total: T("Total do Módulo 5", null, r.M5) },
+        ...[["A", "unif", "Uniformes e EPI", "Custo mensal por empregado (custo anual ÷ 12)."], ["B", "materiais", "Materiais", ""], ["C", "equip", "Equipamentos", "Depreciação mensal por empregado."], ["D", "outros5", "Outros (especificar)", ""]]
+          .map(([cod, k, rot, nota]) => r["rj_" + k]
+            ? { ...L(cod, rot, { kv: k, nota: "Valor da contratação: " + brl(r["orig_" + k]) + " · reajustado pelo índice do contrato: " + brl(r[k]) }), auto: true, valTxt: "→ " + brl(r[k]) }
+            : L(cod, rot, { kv: k, nota }))], total: T("Total do Módulo 5", null, r.M5) },
       { titulo: "Módulo 6 – Custos indiretos, tributos e lucro", linhas: [
         L("A", "Custos indiretos", { k: "ci", v: r.ci, nota: "Sobre o subtotal dos Módulos 1 a 5." }),
         L("B", "Lucro", { k: "lucro", v: r.lucro, nota: "Sobre o subtotal + custos indiretos." }),
@@ -6136,7 +6311,7 @@ class Component extends DCLogic {
     return {
       calcAbaIndice: s.calcAba !== "mo", calcAbaMo: s.calcAba === "mo",
       calcAbaIdxCls: "lvc-aba" + (s.calcAba !== "mo" ? " ativo" : ""), calcAbaMoCls: "lvc-aba" + (s.calcAba === "mo" ? " ativo" : ""),
-      calcIrIndice: () => this.setState({ calcAba: "indice" }), calcIrMo: () => this.setState({ calcAba: "mo" }),
+      calcIrIndice: () => this.setState({ calcAba: "indice" }), calcIrMo: () => { this.setState({ calcAba: "mo" }); this.carregarIndices(); },
       calcH1: s.calcAba === "mo" ? "Custo do profissional com dedicação exclusiva, no formato da IN 05/2017." : "Reajuste de contrato calculado certo, com a nota técnica pronta.",
       calcLead: s.calcAba === "mo" ? "Planilha de custos e formação de preços (Anexo VII-D da IN SEGES/MP nº 5/2017) para formar o custo na fase de planejamento ou demonstrar a repactuação, com os percentuais legais e os custos não renováveis."
         : "Índices oficiais atualizados todos os dias, conferência dos 12 meses, ciclos acumulados e memória de cálculo mês a mês. No fim, você baixa a nota técnica em PDF para juntar ao processo.",
@@ -6149,12 +6324,21 @@ class Component extends DCLogic {
         campo("ano_cct", "Ano do acordo, convenção ou dissídio", "Ex.: 2026"), campo("municipio", "Município", "Ex.: Maricá"), campo("uf", "UF", "RJ"),
         campo("data_proposta", "Data de apresentação da proposta", "dd/mm/aaaa"), campo("meses", "Nº de meses de execução contratual", "12")]
         .concat(rep ? [campo("ano_exec", "Ano de execução do contrato após a repactuação", "Ex.: 2"), campo("vigente", "Preço vigente por empregado (antes da repactuação, R$)", "Ex.: 4.320,15")] : []),
-      moCct: d.cct_nome || "", moSemCct: !d.cct_nome,
-      moAgenteTxt: rep ? "No plano Pro, o agente lê a convenção e indica as adequações dos custos não renováveis (aviso prévio trabalhado, insumos já amortizados), com o fundamento. Os demais custos você preenche."
+      moCct: d.cct_nome || "", moSemCct: !d.cct_nome, moCctRot: rep ? "Nova convenção coletiva (opcional)" : "Convenção coletiva",
+      moPlanNome: d.plan_nome || "", moSemPlan: !d.plan_nome,
+      moEscolherPlan: (e) => { const f = e.target && e.target.files && e.target.files[0]; if (e.target) e.target.value = ""; if (f) this.moEnviarPlanilha(f); },
+      moRjAtivo: d.rj_ativo === "sim", onMoRj: (e) => { this.moSet("rj_ativo")(e.target.checked ? "sim" : ""); if (e.target.checked) this.carregarIndices(); },
+      moRjIndices: [["ipca", "IPCA (IBGE)"], ["ipca_e", "IPCA-E (IBGE)"], ["inpc", "INPC (IBGE)"], ["igpm", "IGP-M (FGV)"], ["igpdi", "IGP-DI (FGV)"], ["incc", "INCC-DI (FGV)"]]
+        .map(([id, nome]) => ({ id, nome, sel: d.rj_indice === id })),
+      onMoRjIndice: this.moSet("rj_indice"), moRjOrc: d.rj_orcamento || "", onMoRjOrc: this.moSet("rj_orcamento"), moRjRef: d.rj_ref || "", onMoRjRef: this.moSet("rj_ref"),
+      moRjItens: MO_INSUMOS.map(([k, nome]) => ({ nome, sel: d["rj_" + k] === "sim", alternar: () => this.moSet("rj_" + k)(d["rj_" + k] === "sim" ? "" : "sim") })),
+      moRjMsg: rj.msg || "", moRjOk: !!rj.pronto, moRjCls: rj.pronto ? "lmo-ok" : "lmo-nota", moRjIndiceSel: d.rj_indice || "ipca",
+      moBaixarExcel: () => this.moBaixar("xlsx"), moBaixarPdf: () => this.moBaixar("pdf"), moBaixando: !!mo.baixando,
+      moAgenteTxt: rep ? "No plano Pro, envie a planilha utilizada na contratação (PDF ou Excel) e, se quiser, a nova convenção: o agente reproduz a planilha, atualiza o que decorre da convenção e suprime ou reduz os custos não renováveis, indicando o fundamento. Você confere e ajusta qualquer valor."
         : "No plano Pro, o agente lê a convenção, a legislação trabalhista, os cadernos técnicos e a jurisprudência do TCU e preenche salário, adicionais, benefícios e percentuais, indicando a fonte de cada valor. Sem o agente, a planilha parte dos percentuais legais e você confere e ajusta.",
       moEscolherCct: (e) => { const f = e.target && e.target.files && e.target.files[0]; if (e.target) e.target.value = ""; if (f) this.moEnviarCct(f); },
       moPro: this.moPodeAgente(), moSemPro: !this.moPodeAgente(),
-      moBotaoAgente: mo.agente ? "O agente está lendo a convenção…" : mo.enviando ? "Enviando o arquivo…" : (rep ? "Ajustar os custos não renováveis com o agente" : "Preencher a planilha com o agente"),
+      moBotaoAgente: mo.agente ? (rep ? "O agente está analisando a repactuação…" : "O agente está lendo a convenção…") : mo.enviando ? "Enviando o arquivo…" : (rep ? "Analisar a repactuação com o agente" : "Preencher a planilha com o agente"),
       moAgente: () => { if (!mo.agente && !mo.enviando) this.moAgente(); },
       moIrPlanos: () => this.irPara("planos"),
       moErro: mo.erro || "", moOk: mo.ok || "", moObs: mo.obs || [], moTemObs: (mo.obs || []).length > 0,
