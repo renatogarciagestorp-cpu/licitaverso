@@ -6846,7 +6846,7 @@ function ppDocumento(d, res, hoje) {
       blocos.push({ t: "tabela", titulo: "4. Fontes dos preços", cab: ["Fonte", "Itens", "Valor", "% do total"], larg: [40, 12, 22, 14], alin: "lrrr",
         linhas: Object.entries(o.fontes).sort((a, b) => b[1].v - a[1].v).map(([f, x]) => ({ c: [f, String(x.n), ppBRL(x.v), ppPct(o.total ? x.v / o.total : 0, 1)] })) });
       blocos.push({ t: "tabela", titulo: "5. Curva ABC – itens da classe A (até 80% do valor)", sub: "Itens que concentram o valor da obra: a conferência dos preços unitários com a tabela da data-base deve começar por eles.",
-        cab: ["Item", "Código", "Fonte", "Descrição", "Unid.", "Quant.", "Preço unit.", "Total", "% acum."], larg: [8, 12, 10, 44, 8, 10, 14, 15, 10], alin: "llllrrrrr",
+        cab: ["Item", "Código", "Fonte", "Descrição", "Unid.", "Quant.", "Preço unit.", "Total", "% acum."], larg: [7, 11, 9, 38, 7, 9, 13, 14, 9], alin: "llllrrrrr",
         linhas: o.classeA.slice(0, 60).map((l) => ({ c: [String(l.item || l.n), String(l.cod || ""), String(l.fonte || ""), String(l.desc || "").slice(0, 120), String(l.un || ""), l.qtdN != null ? l.qtdN.toLocaleString("pt-BR") : "", ppBRL(l.unitN), ppBRL(l.totalN), ppPct(l.acum, 1)] })), paisagem: true });
       blocos.push({ t: "texto", titulo: "6. BDI", paragrafos: [o.bdiTxt || "BDI não informado."] });
       blocos.push({ t: "tabela", titulo: "7. Apontamentos", cab: ["Gravidade", "Apontamento", "Fundamento", "Providência"], larg: [12, 44, 34, 34], alin: "llll",
@@ -6877,20 +6877,23 @@ function ppDocumento(d, res, hoje) {
         ["Quantidade", { qualquer: "qualquer quantidade", ordem: "de 1/10 a 10 vezes a quantidade pesquisada", proxima: "da metade ao dobro da quantidade pesquisada" }[f.qtd]],
         ["Unidade", f.un ? f.un.toUpperCase() : "todas"], ["Localidade", { todas: "estado, região e país", regiao: "estado e região", estado: "só o estado" }[f.abr]], ["Período", "últimos " + f.meses + " meses"],
         ["Selecionados pelo agente", String(usados.length)], ["Não selecionados", String(naoSel.length)]] });
-      blocos.push({ t: "tabela", titulo: "Contratações e preços selecionados – dados completos", sub: "Contratante, contratada, objeto, especificação, quantidade, unidade, valores, modalidade e critério de julgamento de cada preço considerado. Situação após o saneamento de ±25% da mediana.",
-        cab: ["#", "Fonte", "Contratante", "Contratada", "Compra", "Objeto da contratação", "Item e especificação", "Quant.", "Unid.", "Valor unit.", "Atualizado", "Valor total", "Situação"],
-        larg: [5, 10, 20, 17, 18, 20, 28, 7, 6, 10, 10, 11, 15], alin: "lllllllrlrrrl", paisagem: true,
-        linhas: usados.map((p, j) => ({ fraco: p.sit !== "ok", c: [String(j + 1),
-          p.inciso + " · " + (p.fonte === "painel" ? "Painel" : p.fonte === "pncp" ? "PNCP" : p.inciso === "IV" ? "cotação" : p.inciso === "V" ? "nota fiscal" : "mídia/sítio") + (p.sim != null ? "\nsemelh. " + Math.round(p.sim * 100) + "%" : ""),
-          [p.orgao, p.unidadeCompradora && p.unidadeCompradora !== p.orgao ? p.unidadeCompradora : "", p.uasg && "UASG " + p.uasg, p.orgaoDoc, [p.municipio, p.uf].filter(Boolean).join("/"), [p.esfera, p.poder].filter(Boolean).join(" · ")].filter(Boolean).join(" · ") || (p.fonteNome || "—"),
-          [p.fornecedor || (p.fonte === "manual" ? p.fonteNome : ""), p.cnpj && "CNPJ " + p.cnpj, p.porte && "porte: " + p.porte, p.marca && "marca: " + p.marca].filter(Boolean).join(" · ") || "—",
-          [p.numeroCompra, p.modalidade, p.criterio && "critério: " + p.criterio, p.srp && "SRP: " + p.srp, p.amparo, p.data && "resultado em " + ppData(p.data), p.link || p.consulta || "", p.acesso && "acesso em " + p.acesso].filter(Boolean).join(" · "),
-          String(p.objeto || "").slice(0, 260), [p.descricao, p.espec && p.espec !== p.descricao ? p.espec : "", p.catalogo].filter(Boolean).join(" · ").slice(0, 420),
-          p.quantidade != null ? p.quantidade.toLocaleString("pt-BR") : "", p.unidade || "", ppBRL(p.preco), ppBRL(p.atual), p.valorTotal != null ? ppBRL(p.valorTotal) : (p.quantidade != null ? ppBRL(p.preco * p.quantidade) : ""), p.sit === "ok" ? "Válido" : p.motivo] })) });
+      blocos.push({ t: "tabela", titulo: "Contratações e preços selecionados – dados completos", sub: "Contratante, contratada, compra, objeto, especificação, quantidade, unidade, valores e situação de cada preço considerado (saneamento de ±25% da mediana).",
+        cab: ["#", "Contratante e contratada", "Compra e objeto", "Item e especificação", "Quant. · unid.", "Valores", "Situação"],
+        larg: [10, 26, 27, 29, 10, 16, 14], alin: "llllrrl",
+        linhas: usados.map((p, j) => ({ fraco: p.sit !== "ok", c: [
+          "P" + (j + 1) + "\n" + p.inciso + " · " + (p.fonte === "painel" ? "Painel" : p.fonte === "pncp" ? "PNCP" : p.inciso === "IV" ? "cotação" : p.inciso === "V" ? "nota fiscal" : "mídia/sítio") + (p.sim != null ? "\nsemelh. " + Math.round(p.sim * 100) + "%" : ""),
+          "Contratante: " + ([p.orgao, p.unidadeCompradora && p.unidadeCompradora !== p.orgao ? p.unidadeCompradora : "", p.uasg && "UASG " + p.uasg, p.orgaoDoc, [p.municipio, p.uf].filter(Boolean).join("/"), [p.esfera, p.poder].filter(Boolean).join(" · ")].filter(Boolean).join(" · ") || p.fonteNome || "—") +
+            "\nContratada: " + ([p.fornecedor || (p.fonte === "manual" ? p.fonteNome : ""), p.cnpj && "CNPJ " + p.cnpj, p.porte && "porte: " + p.porte, p.marca && "marca: " + p.marca].filter(Boolean).join(" · ") || "—"),
+          [p.numeroCompra, p.modalidade, p.criterio && "critério: " + p.criterio, p.srp && "SRP: " + p.srp, p.amparo, p.data && "data: " + ppData(p.data), p.acesso && "acesso em " + p.acesso].filter(Boolean).join(" · ") +
+            (p.objeto ? "\nObjeto: " + String(p.objeto).slice(0, 240) : "") + ((p.link || p.consulta) ? "\n" + (p.link || p.consulta) : ""),
+          [p.descricao, p.espec && p.espec !== p.descricao ? p.espec : "", p.catalogo].filter(Boolean).join(" · ").slice(0, 380),
+          [p.quantidade != null ? p.quantidade.toLocaleString("pt-BR") : "", p.unidade || ""].filter(Boolean).join("\n"),
+          "unit. " + ppBRL(p.preco) + "\natual. " + ppBRL(p.atual) + "\ntotal " + (p.valorTotal != null ? ppBRL(p.valorTotal) : p.quantidade != null ? ppBRL(p.preco * p.quantidade) : "—"),
+          p.sit === "ok" ? "Válido" : p.motivo] })) });
       if (naoSel.length) blocos.push({ t: "tabela", titulo: "Registros coletados e não selecionados (" + naoSel.length + ")", sub: "Mantidos para transparência da pesquisa, com o motivo de não terem sido considerados" + (naoSel.length > 150 ? "; listados os 150 de maior semelhança." : "."),
-        cab: ["Fonte", "Contratante", "Item", "Quant.", "Unid.", "Data", "Preço", "Motivo"], larg: [7, 26, 40, 8, 7, 10, 11, 40], alin: "lllrllrl", paisagem: true,
+        cab: ["Fonte", "Contratante", "Item", "Quant. · unid.", "Data · preço", "Motivo"], larg: [7, 24, 36, 10, 12, 30], alin: "lllrrl",
         linhas: [...naoSel].sort((a, b) => (b.sim || 0) - (a.sim || 0)).slice(0, 150).map((p) => ({ fraco: true, c: ["Inc. " + p.inciso, [p.orgao, [p.municipio, p.uf].filter(Boolean).join("/")].filter(Boolean).join(" · "), String(p.descricao || "").slice(0, 160),
-          p.quantidade != null ? p.quantidade.toLocaleString("pt-BR") : "", p.unidade || "", ppData(p.data), ppBRL(p.preco), p.motivo] })) });
+          [p.quantidade != null ? p.quantidade.toLocaleString("pt-BR") : "", p.unidade || ""].filter(Boolean).join("\n"), ppData(p.data) + "\n" + ppBRL(p.preco), p.motivo] })) });
       blocos.push({ t: "pares", titulo: "Tratamento estatístico", pares: [["Preços coletados / selecionados", st.coletados + " / " + st.selecionados], ["Mediana dos selecionados", ppBRL(st.med0)],
         ["Faixa de aceitação (±25% da mediana)", ppBRL(st.lo) + " a " + ppBRL(st.hi)], ["Desconsiderados no saneamento", String(st.excluidos)], ["Preços válidos", String(st.n)],
         ["Média · desvio-padrão", ppBRL(st.media) + " · " + ppBRL(st.dp)], ["Coeficiente de variação", ppPct(st.cv)], ["Mediana · menor preço", ppBRL(st.mediana) + " · " + ppBRL(st.menor)],
@@ -6903,13 +6906,32 @@ function ppDocumento(d, res, hoje) {
       }
     });
     sec++;
-    blocos.push({ t: "tabela", titulo: sec++ + ". Resumo do valor estimado", cab: ["Item", "Descrição", "Unid.", "Quant.", "Método", "Valor unitário", "Valor total"], larg: [7, 46, 9, 10, 13, 17, 18], alin: "lllrlrr",
-      linhas: res.itens.map((x, i) => ({ c: [String(i + 1), x.item.desc || "", x.item.un || "", String(x.item.qtd || 1), x.st.nomeMet, ppBRL(x.st.valor), ppBRL(x.st.total)] })).concat([{ c: ["", "Valor total estimado", "", "", "", "", ppBRL(res.total)], total: true }]) });
+    // planilha de orçamento estimado: preços selecionados lado a lado, com a origem no topo de cada coluna, e o valor estimado pela metodologia
+    const POR = 5, secPlan = sec++;
+    blocos.push({ t: "secao", titulo: secPlan + ". Planilha de orçamento estimado", sub: "Preços selecionados lado a lado, com a origem no topo de cada coluna." });
+    blocos.push({ t: "legenda", texto: "Valores atualizados pelo IPCA. Em amarelo, os preços desconsiderados no saneamento de ±25% da mediana. O valor unitário estimado segue a metodologia da seção 3." });
+    res.itens.forEach((x, i) => {
+      const it = x.item, st = x.st, sel = st.precos.filter((p) => p.incl !== false);
+      const origem = (p) => (p.fonte === "manual" ? (p.fornecedor || p.fonteNome || "Fonte manual") : [p.municipio, p.uf].filter(Boolean).join("/") || p.orgao || "—");
+      const grupos = []; for (let g = 0; g < Math.max(1, sel.length); g += POR) grupos.push(sel.slice(g, g + POR));
+      grupos.forEach((gp, gi) => {
+        const ini = gi * POR;
+        const cab = ["Item", "Descrição", "Unid.", "Quant."].concat(gp.map((p, k) => "P" + (ini + k + 1) + "\n" + origem(p) + "\n" + (p.inciso === "IV" ? "cotação" : p.inciso === "V" ? "nota fiscal" : p.inciso === "III" ? "mídia/sítio" : p.fonte === "pncp" ? "PNCP" : "Painel") + (p.data ? " · " + ppData(p.data) : ""))).concat(["Valor unitário estimado\n(" + st.nomeMet + ")", "Valor total estimado"]);
+        const vals = gp.map((p) => ppBRL(p.atual) + (p.sit === "ok" ? "" : "\n(desconsiderado)"));
+        const alerta = gp.map((p, k) => (p.sit === "ok" ? -1 : 4 + k)).filter((k) => k >= 0);
+        blocos.push({ t: "tabela", titulo: "Item " + (i + 1) + (grupos.length > 1 ? " – preços " + (ini + 1) + " a " + (ini + gp.length) + " de " + sel.length : "") + (gp.length ? "" : " – sem preços selecionados"),
+          cab, larg: [8, 21, 10, 9].concat(gp.map(() => 13)).concat([14, 15]), alin: "llrr" + gp.map(() => "r").join("") + "rr",
+          linhas: [{ c: [String(i + 1), String(it.desc || "").slice(0, 160), it.un || "", String(it.qtd || 1)].concat(vals).concat([ppBRL(st.valor), ppBRL(st.total)]), alerta }] });
+      });
+      blocos.push({ t: "legenda", texto: "Item " + (i + 1) + ": " + st.n + " preço(s) válido(s) de " + sel.length + " selecionado(s) · média " + ppBRL(st.media) + " · mediana " + ppBRL(st.mediana) + " · menor " + ppBRL(st.menor) + " · coeficiente de variação " + ppPct(st.cv) + " · método: " + st.nomeMet + "." });
+    });
+    blocos.push({ t: "tabela", titulo: sec++ + ". Planilha de orçamento estimado – consolidação", cab: ["Item", "Descrição", "Unid.", "Quant.", "Valor unitário estimado", "Valor total estimado"], larg: [7, 52, 10, 10, 18, 18], alin: "llrrrr",
+      linhas: res.itens.map((x, i) => ({ c: [String(i + 1), x.item.desc || "", x.item.un || "", String(x.item.qtd || 1), ppBRL(x.st.valor), ppBRL(x.st.total)] })).concat([{ c: ["", "Valor total estimado da contratação", "", "", "", ppBRL(res.total)], total: true }]) });
   }
   blocos.push({ t: "texto", titulo: "Responsabilidade", paragrafos: ["Documento de apoio gerado pelo Licitacon a partir das fontes indicadas. A pesquisa de preços é ato do agente responsável, que deve conferir as fontes, os itens considerados semelhantes, as justificativas e o enquadramento legal antes de juntá-la ao processo. A decisão final e a responsabilidade são de quem assina a pesquisa."] });
   notas.push("Fontes públicas consultadas: API de dados abertos do Compras.gov.br (Painel de Preços) e Portal Nacional de Contratações Públicas (PNCP), com a data da consulta e o link de cada preço.");
   return { id: "pesquisa", titulo: "Pesquisa de preços", sub: (d.titulo || d.descricao || "Pesquisa de preços") + (d.orgao ? " · " + d.orgao : ""), selo: d.objeto === "obras" ? "Lei 14.133/2021, art. 23, §§ 2º e 3º" : "Lei 14.133/2021, art. 23 · IN SEGES/ME 65/2021",
-    arquivo: "Pesquisa de precos - " + String(d.titulo || d.descricao || "Licitacon").replace(/[\\/:*?"<>|]+/g, "-").slice(0, 60), blocos, notas, paisagem: true };
+    arquivo: "Pesquisa de precos - " + String(d.titulo || d.descricao || "Licitacon").replace(/[\\/:*?"<>|]+/g, "-").slice(0, 60), blocos, notas, paisagem: false };
 }
 
 // Word (.doc em HTML, aberto pelo Word e pelo LibreOffice) a partir dos mesmos blocos do PDF
@@ -6928,7 +6950,7 @@ function ppDocWord(doc0, hoje) {
   if (doc0.notas && doc0.notas.length) h.push("<h3>Notas</h3>" + doc0.notas.map((n) => "<p class=nota>" + esc(n) + "</p>").join(""));
   const css = "body{font-family:Calibri,Arial,sans-serif;font-size:10.5pt;color:#0B1F2A} h1{font-size:18pt;color:#0A1F2A;margin:0} h2{font-size:12.5pt;color:#0F6B7E;border-bottom:1px solid #0FA36B;padding-bottom:2pt;margin-top:16pt} h2.secao{color:#0A1F2A} h3{font-size:11pt;margin:10pt 0 4pt} p{margin:4pt 0;line-height:1.4;text-align:justify} .sub{font-size:11pt;color:#3D5058;margin:2pt 0} .selo,.sub2,.nota{font-size:9pt;color:#66757F} table{border-collapse:collapse;width:100%;margin:4pt 0} .tab th{background:#EEF3F2;font-size:8.5pt;text-align:left;border:1px solid #DDE5E4;padding:3pt} .tab td{font-size:8.5pt;border:1px solid #DDE5E4;padding:3pt;vertical-align:top} .tab tr.tot td{font-weight:bold;background:#E3F2EA} .pares th{width:38%;text-align:left;font-size:9.5pt;color:#55666D;border-bottom:1px solid #EEF2F1;padding:3pt} .pares td{border-bottom:1px solid #EEF2F1;padding:3pt} .dest td{background:#F6F8F7;border:1px solid #DDE5E4;padding:6pt} .dest b{font-size:13pt;color:#0F6B7E}";
   return "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>" + esc(doc0.titulo) +
-    "</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]--><style>@page Section1{size:841.9pt 595.3pt;mso-page-orientation:landscape;margin:2cm 1.5cm 2cm 1.5cm} div.Section1{page:Section1} " + css + "</style></head><body><div class=Section1>" + h.join("\n") + "</div></body></html>";
+    "</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]--><style>@page Section1{size:595.3pt 841.9pt;margin:2cm 1.5cm 2cm 1.5cm} div.Section1{page:Section1} " + css + "</style></head><body><div class=Section1>" + h.join("\n") + "</div></body></html>";
 }
 
 function ctProrrog(c, si) {
