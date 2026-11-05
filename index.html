@@ -1419,6 +1419,57 @@
   .ct-sel { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; } .ct-sel label { display: grid; gap: 5px; font-size: 12.5px; font-weight: 700; color: #3D5058; min-width: 280px; flex: 1; max-width: 520px; }
   .ct-sel select { font: inherit; font-size: 14px; font-weight: 600; border: 1px solid #D6DEDD; border-radius: 9px; padding: 9px 10px; background: #fff; }
   .ct-lista { display: grid; gap: 12px; }
+  .pp { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding-top: 22px; padding-bottom: 60px; } .pp > * , .pp .lmo-bloco { min-width: 0; }
+  .pp-barra { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .pp-ets { display: flex; gap: 6px; flex-wrap: wrap; } .pp-barra-acoes { display: flex; gap: 8px; }
+  .pp-et { font: inherit; font-size: 14px; font-weight: 700; color: #3D5058; background: #fff; border: 1px solid #DCE4E2; border-radius: 999px; padding: 8px 16px; cursor: pointer; }
+  .pp-et.ativo { background: #0A1F2A; border-color: #0A1F2A; color: #fff; }
+  .pp-salvas { background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 10px 16px; } .pp-salvas summary { cursor: pointer; font-weight: 700; color: #0F6B7E; font-size: 14px; }
+  .pp-salvas ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; } .pp-salvas li { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; border-top: 1px solid #EEF2F1; padding-top: 8px; }
+  .pp-salvas li div:first-child { display: grid; gap: 2px; min-width: 0; } .pp-salvas li span { font-size: 12.5px; color: #66757F; } .pp-salvas-acoes { display: flex; gap: 6px; align-items: center; }
+  .pp-h { margin: 0 0 12px; font-size: 17px; color: #0B1F2A; } .pp-h3 { margin: 18px 0 8px; font-size: 15px; color: #0B1F2A; }
+  .pp-rot { margin: 14px 0 8px; font-size: 12.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #55666D; }
+  .pp-ops { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; } .pp-ops-p { display: flex; flex-wrap: wrap; }
+  .pp-op { font: inherit; text-align: left; display: grid; gap: 3px; background: #fff; border: 1px solid #DCE4E2; border-radius: 12px; padding: 10px 14px; cursor: pointer; color: #22343B; }
+  .pp-op b { font-size: 14px; } .pp-op span { font-size: 12.5px; color: #66757F; } .pp-op:hover { border-color: #0FA36B; }
+  .pp-op.ativo { border-color: #0FA36B; background: #E9F7F0; box-shadow: inset 0 0 0 1px #0FA36B; } .pp-op-p { padding: 7px 12px; font-size: 13.5px; font-weight: 700; display: inline-block; }
+  .pp-fund { background: #F4F9F7; border-color: #CFE7DC; } .pp-fund p { margin: 0 0 8px; font-size: 14px; line-height: 1.6; color: #22343B; }
+  .pp-rilc { display: grid; gap: 10px; margin-top: 14px; padding-top: 12px; border-top: 1px dashed #DCE4E2; }
+  .pp-pares { margin: 0; display: grid; gap: 6px; } .pp-pares div { display: grid; grid-template-columns: minmax(150px, 220px) minmax(0, 1fr); gap: 10px; font-size: 13.5px; border-top: 1px solid #EEF2F1; padding-top: 6px; }
+  .pp-pares dt { font-weight: 700; color: #55666D; } .pp-pares dd { margin: 0; color: #0B1F2A; }
+  .pp-nav { display: flex; justify-content: flex-end; gap: 10px; } .pp-nav-e { justify-content: space-between; align-items: center; } .pp-total { font-size: 17px; color: #0B1F2A; }
+  .pp-item-cab { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .pp-cod { margin: 0 0 8px; font-size: 13.5px; font-weight: 700; color: #0A7A50; }
+  .pp-busca { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; } .pp-busca input { flex: 1; min-width: 200px; font: inherit; font-size: 14px; border: 1px solid #D6DEDD; border-radius: 9px; padding: 8px 10px; background: #FBFDF6; }
+  .pp-cands { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; max-height: 260px; overflow: auto; border: 1px solid #E3E9E8; border-radius: 10px; }
+  .pp-cands button { font: inherit; font-size: 13px; text-align: left; width: 100%; background: #fff; border: 0; border-bottom: 1px solid #F0F3F2; padding: 7px 10px; cursor: pointer; } .pp-cands button:hover { background: #E9F7F0; }
+  .pp-coleta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; } .pp-btn2 { background: #0A1F2A; color: #fff; }
+  .pp-manual { margin-top: 12px; padding: 12px 14px; border: 1px dashed #9ED9BE; border-radius: 12px; background: #FBFDFC; display: grid; gap: 10px; }
+  .pp-tab-acoes { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 16px 0 8px; font-size: 13px; color: #55666D; } .pp-tab-acoes div { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pp-ia-btn { border-color: #9ED9BE; color: #0A7A50; }
+  .pp-tab { border: 1px solid #DDE5E4; border-radius: 12px; overflow: auto; max-height: 560px; }
+  .pp-pl { display: grid; grid-template-columns: 30px 40px minmax(220px, 1fr) 86px 64px 110px 170px 34px; gap: 8px; align-items: start; padding: 8px 10px; border-top: 1px solid #EEF2F1; font-size: 13px; min-width: 820px; }
+  .pp-pl-cab { position: sticky; top: 0; background: #F4F7F6; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: #55666D; border-top: 0; z-index: 1; }
+  .pp-pl.fora { background: #FAFBFB; color: #7A8A90; } .pp-pl.fora .pp-pr b { text-decoration: line-through; }
+  .pp-inc { font-weight: 800; color: #0F6B7E; } .pp-org { display: grid; gap: 2px; min-width: 0; } .pp-org b { font-size: 13px; overflow-wrap: anywhere; } .pp-org small, .pp-pl small { display: block; font-size: 11.5px; color: #66757F; line-height: 1.35; overflow-wrap: anywhere; }
+  .pp-org a { font-size: 12px; color: #0F6B7E; } .pp-pr { display: grid; text-align: right; } .pp-ia { color: #0A7A50 !important; } .pp-ia.nao, .pp-alerta { color: #9A5B00 !important; }
+  .pp-sit { font-style: normal; font-size: 11.5px; font-weight: 800; border-radius: 99px; padding: 2px 8px; display: inline-block; } .pp-sit-ok { background: #E3F5EC; color: #0A7A50; } .pp-sit-inex, .pp-sit-exc { background: #FFF1D6; color: #8A5A00; } .pp-sit-fora { background: #EEF2F1; color: #66757F; }
+  .pp-opcoes { display: flex; gap: 16px; align-items: end; justify-content: space-between; flex-wrap: wrap; margin-top: 12px; }
+  .pp-kpi { background: #F6F8F7; border: 1px solid #E3E9E8; border-radius: 10px; padding: 8px 12px; display: grid; gap: 2px; } .pp-kpi small { font-size: 11.5px; color: #66757F; font-weight: 700; } .pp-kpi b { font-size: 14.5px; color: #0B1F2A; }
+  .pp-valor { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; } .pp-valor div { flex: 1; min-width: 200px; background: #0A1F2A; color: #fff; border-radius: 12px; padding: 12px 16px; display: grid; gap: 2px; }
+  .pp-valor small { font-size: 12px; color: #9FC3CC; } .pp-valor b { font-size: 20px; }
+  .pp-just input { border-color: #E0A21B !important; }
+  .pp-ratif { border-radius: 16px; padding: 18px 20px; border: 1px solid #E3E9E8; background: #fff; } .pp-ratif.ok { border-color: #9ED9BE; background: #F1FAF5; } .pp-ratif.alerta { border-color: #F0C46C; background: #FFF9EC; } .pp-ratif p { margin: 12px 0 0; font-size: 14.5px; font-weight: 600; }
+  .pp-ap { border: 1px solid #E3E9E8; border-left: 5px solid #8A9A9F; border-radius: 10px; padding: 10px 14px; margin-top: 8px; background: #fff; } .pp-ap small { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: #66757F; }
+  .pp-ap b { display: block; font-size: 14.5px; margin-top: 2px; } .pp-ap p { margin: 4px 0 0; font-size: 13.5px; color: #3D5058; } .pp-ap ul { margin: 4px 0 0; padding-left: 18px; font-size: 12.5px; color: #55666D; } .pp-ap em { font-style: normal; font-weight: 700; color: #0B1F2A; }
+  .pp-ap-alta { border-left-color: #C24A43; } .pp-ap-media { border-left-color: #E0A21B; } .pp-ap-baixa { border-left-color: #0F6B7E; }
+  .pp-abc { display: grid; grid-template-columns: 60px 90px 80px minmax(200px, 1fr) 120px 70px; gap: 8px; padding: 7px 10px; border-top: 1px solid #EEF2F1; font-size: 13px; min-width: 640px; }
+  .pp-docs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .pp-entrada { font: inherit; text-align: left; width: 100%; display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 16px; align-items: center; margin-top: 18px; background: linear-gradient(135deg, #E6F6EE, #fff); border: 1px solid #9ED9BE; border-radius: 18px; padding: 18px 20px; cursor: pointer; }
+  .pp-entrada:hover { box-shadow: 0 10px 26px rgba(11,31,42,.08); } .pp-entrada-sig { width: 54px; height: 54px; border-radius: 14px; background: #0A1F2A; color: #3FD49A; display: grid; place-items: center; font-weight: 800; font-size: 18px; }
+  .pp-entrada-txt { display: grid; gap: 4px; } .pp-entrada-txt b { font-size: 17px; color: #0B1F2A; } .pp-entrada-txt span { font-size: 14px; color: #3D5058; line-height: 1.5; } .pp-entrada-txt small { font-size: 12px; color: #0A7A50; font-weight: 700; }
+  .pp-entrada-cta { font-weight: 800; color: #0A7A50; white-space: nowrap; }
+  @media (max-width: 700px) { .pp-entrada { grid-template-columns: 1fr; } .pp-pares div { grid-template-columns: 1fr; } }
   .gcl-resumo { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
   .gcl-rb { --fc: #0B3B4A; display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: 13.5px; font-weight: 600; color: #3D5058; background: #fff; border: 1px solid #DCE4E2; border-radius: 999px; padding: 6px 13px; cursor: pointer; }
   .gcl-rb:hover { border-color: var(--fc); } .gcl-rb i { width: 8px; height: 8px; border-radius: 50%; background: var(--fc); } .gcl-rb b { font-weight: 800; }
@@ -2516,6 +2567,7 @@
           <sc-if value="{{ elSemDoc }}" hint-placeholder-val="{{ true }}">
             <div class="lvh-ctas" style="margin-top: 22px">
               <button type="button" class="lvh-btn" sc-camel-on-click="{{ elIrEscolher }}">Criar um documento</button>
+              <button type="button" class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ goPrecos }}">Pesquisa de preços</button>
               <sc-if value="{{ elTemMeus }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ elIrMeusDocs }}">{{ elMeusTxt }}</button></sc-if>
             </div>
           </sc-if>
@@ -2540,6 +2592,12 @@
               </button>
             </sc-for>
           </div>
+
+          <button type="button" class="pp-entrada" sc-camel-on-click="{{ goPrecos }}">
+            <span class="pp-entrada-sig">R$</span>
+            <span class="pp-entrada-txt"><b>Pesquisa de preços</b><span>Estime o valor da contratação com o Painel de Preços e as contratações similares do PNCP, saneamento de 25% e escolha do método pelo coeficiente de variação. Ratifica a planilha de mão de obra, analisa o orçamento de obras e leva o resultado ao Termo de Referência.</span><small>Lei 14.133/2021, art. 23 · IN SEGES/ME 65/2021 · Leis 13.303 e 13.019 · incluída nos planos Básico, Premium e Pro</small></span>
+            <span class="pp-entrada-cta">Abrir →</span>
+          </button>
 
           <div class="lva-duas" style="margin-top: 28px">
             <div class="lva-card">
@@ -2826,6 +2884,222 @@
               <p class="lve-lado-nota">Pronto em poucos minutos, por e-mail e na sua conta, em Word e PDF, com as lacunas destacadas em amarelo.</p>
             </aside>
           </div>
+        </sc-if>
+      </section>
+    </sc-if>
+
+    <!-- ===================== O ELABORADOR → PESQUISA DE PREÇOS ===================== -->
+    <sc-if value="{{ isPrecos }}" hint-placeholder-val="{{ false }}">
+      <section class="gcm-topo">
+        <div class="gcm-in">
+          <button type="button" class="gcm-volta" sc-camel-on-click="{{ goElaborarInicio }}">← O Elaborador</button>
+          <h1>Pesquisa de preços</h1>
+          <p>Estimativa do valor da contratação na fase de planejamento, com as fontes, o tratamento estatístico e a fundamentação de cada decisão.</p>
+        </div>
+      </section>
+      <section class="lvc-corpo pp">
+        <sc-if value="{{ ppBloqueada }}" hint-placeholder-val="{{ false }}">
+          <div class="lvc-bloq" style="margin-top: 24px">
+            <span class="lvh-bib-tag">Planos Básico, Premium e Pro</span>
+            <h2 class="lva-h2" style="margin-top: 12px">O que a pesquisa de preços faz</h2>
+            <ul class="lvc-benef">
+              <li>Enquadramento pela Lei 14.133/2021 (art. 23 e IN SEGES/ME 65/2021), pela Lei 13.303/2016 (regulamento interno da estatal) ou pela Lei 13.019/2014 (parcerias)</li>
+              <li>Coleta automática no Painel de Preços do Compras.gov.br e de contratações similares no PNCP, com o link de cada preço</li>
+              <li>Saneamento dos preços mais de 25% abaixo ou acima da mediana e escolha do método pelo coeficiente de variação</li>
+              <li>Ratificação da planilha de mão de obra exclusiva e análise da planilha de orçamento de obras</li>
+              <li>Relatório técnico em PDF, Word e Excel, pronto para o processo, e envio do resultado ao Termo de Referência</li>
+            </ul>
+            <p class="lva-sub" style="font-size: 14.5px; margin-top: 14px">{{ ppBloqTexto }}</p>
+            <div class="lvh-ctas" style="margin-top: 16px"><button class="lvh-btn" sc-camel-on-click="{{ ppBloqAcao }}">{{ ppBloqCta }}</button></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ ppLiberada }}" hint-placeholder-val="{{ true }}">
+          <div class="pp-barra">
+            <div class="pp-ets"><sc-for list="{{ ppEtapas }}" as="e" hint-placeholder-count="3"><button type="button" class="{{ e.cls }}" sc-camel-on-click="{{ e.ir }}">{{ e.nome }}</button></sc-for></div>
+            <div class="pp-barra-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ ppNova }}">Nova pesquisa</button><button type="button" class="lmo-btn" sc-camel-on-click="{{ ppSalvar }}">Salvar</button></div>
+          </div>
+          <sc-if value="{{ ppTemLista }}" hint-placeholder-val="{{ false }}">
+            <details class="pp-salvas"><summary>Minhas pesquisas salvas</summary>
+              <ul><sc-for list="{{ ppLista }}" as="l" hint-placeholder-count="2"><li><div><b>{{ l.titulo }}</b><span>{{ l.sub }}</span></div><div class="pp-salvas-acoes"><button type="button" class="ct-ev-btn" sc-camel-on-click="{{ l.abrir }}">Abrir</button><button type="button" class="ct-ev-btn ct-ev-del" sc-camel-on-click="{{ l.excluir }}">{{ l.excluirTxt }}</button></div></li></sc-for></ul>
+            </details>
+          </sc-if>
+          <sc-if value="{{ ppErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ ppErro }}</p></sc-if>
+          <sc-if value="{{ ppOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ ppOk }}</p></sc-if>
+
+          <!-- etapa 1: enquadramento -->
+          <sc-if value="{{ ppEtEnq }}" hint-placeholder-val="{{ true }}">
+            <section class="lmo-bloco">
+              <h2 class="pp-h">Identificação</h2>
+              <div class="lmo-campos">
+                <label class="lmo-campo" style="grid-column: 1 / -1"><span>Título da pesquisa *</span><input type="text" value="{{ ppTitulo }}" sc-camel-on-input="{{ onPpTitulo }}" placeholder="Ex.: Aquisição de papel A4 para 2027"></label>
+                <label class="lmo-campo" style="grid-column: 1 / -1"><span>Objeto da contratação</span><input type="text" value="{{ ppDescricao }}" sc-camel-on-input="{{ onPpDescricao }}" placeholder="Descrição resumida do objeto"></label>
+                <label class="lmo-campo"><span>Processo</span><input type="text" value="{{ ppProcesso }}" sc-camel-on-input="{{ onPpProcesso }}"></label>
+                <label class="lmo-campo"><span>Órgão ou entidade</span><input type="text" value="{{ ppOrgao }}" sc-camel-on-input="{{ onPpOrgao }}"></label>
+                <label class="lmo-campo"><span>Município</span><input type="text" value="{{ ppMunicipio }}" sc-camel-on-input="{{ onPpMunicipio }}"></label>
+                <label class="lmo-campo"><span>UF (prioriza os preços do estado)</span><select sc-camel-on-change="{{ onPpUf }}"><sc-for list="{{ ppUfs }}" as="u" hint-placeholder-count="3"><option value="{{ u.u }}" selected="{{ u.sel }}">{{ u.nome }}</option></sc-for></select></label>
+                <label class="lmo-campo"><span>Agente responsável pela pesquisa</span><input type="text" value="{{ ppAgente }}" sc-camel-on-input="{{ onPpAgente }}"></label>
+                <label class="lmo-campo"><span>Cargo ou função</span><input type="text" value="{{ ppCargo }}" sc-camel-on-input="{{ onPpCargo }}"></label>
+              </div>
+            </section>
+            <section class="lmo-bloco">
+              <h2 class="pp-h">Regime legal</h2>
+              <div class="pp-ops"><sc-for list="{{ ppRegimes }}" as="o" hint-placeholder-count="3"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.escolher }}"><b>{{ o.nome }}</b><span>{{ o.sub }}</span></button></sc-for></div>
+              <sc-if value="{{ ppEh14133 }}" hint-placeholder-val="{{ true }}">
+                <p class="pp-rot">Quem contrata e com quais recursos</p>
+                <div class="pp-ops"><sc-for list="{{ ppOrigens }}" as="o" hint-placeholder-count="3"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.escolher }}"><b>{{ o.nome }}</b></button></sc-for></div>
+              </sc-if>
+              <sc-if value="{{ ppEh13019 }}" hint-placeholder-val="{{ false }}">
+                <p class="pp-rot">Esfera da parceria</p>
+                <div class="pp-ops"><sc-for list="{{ ppEsferas }}" as="o" hint-placeholder-count="2"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.escolher }}"><b>{{ o.nome }}</b></button></sc-for></div>
+              </sc-if>
+              <label class="lmo-campo" style="margin-top: 12px"><span>{{ ppNormaRot }}</span><input type="text" value="{{ ppNorma }}" sc-camel-on-input="{{ onPpNorma }}" placeholder="{{ ppNormaDica }}"></label>
+              <sc-if value="{{ ppEh13303 }}" hint-placeholder-val="{{ false }}">
+                <div class="pp-rilc">
+                  <p class="lmo-nota" style="margin-top: 0">Na Lei 13.303/2016, a pesquisa segue o regulamento interno da estatal. Envie o regulamento: a IA identifica as regras de pesquisa de preços com o artigo de cada uma, para você conferir.</p>
+                  <label class="lmo-arq"><input type="file" accept=".pdf,application/pdf" sc-camel-on-change="{{ ppOnRilc }}">{{ ppRilcTxt }}</label>
+                  <sc-if value="{{ ppTemRilc }}" hint-placeholder-val="{{ false }}"><dl class="pp-pares"><sc-for list="{{ ppRilc }}" as="r" hint-placeholder-count="3"><div><dt>{{ r.k }}</dt><dd>{{ r.v }}</dd></div></sc-for></dl></sc-if>
+                </div>
+              </sc-if>
+            </section>
+            <section class="lmo-bloco">
+              <h2 class="pp-h">Tipo de objeto</h2>
+              <div class="pp-ops"><sc-for list="{{ ppObjetos }}" as="o" hint-placeholder-count="3"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.escolher }}"><b>{{ o.nome }}</b><span>{{ o.sub }}</span></button></sc-for></div>
+            </section>
+            <section class="lmo-bloco pp-fund">
+              <h2 class="pp-h">Enquadramento legal desta pesquisa</h2>
+              <sc-for list="{{ ppFund }}" as="f" hint-placeholder-count="3"><p>{{ f.t }}</p></sc-for>
+            </section>
+            <div class="pp-nav"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ppIrDados }}">Continuar →</button></div>
+          </sc-if>
+
+          <!-- etapa 2: dados -->
+          <sc-if value="{{ ppEtDados }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ ppEhMo }}" hint-placeholder-val="{{ false }}">
+              <section class="lmo-bloco">
+                <h2 class="pp-h">Valor da planilha de custos (IN 5/2017)</h2>
+                <p class="lmo-nota" style="margin-top: 0">O custo do serviço com dedicação exclusiva de mão de obra vem da planilha de custos e formação de preços. A pesquisa abaixo ratifica esse valor com contratações similares, sem substituí-lo.</p>
+                <div class="lmo-campos">
+                  <label class="lmo-campo"><span>Valor mensal por posto (R$)</span><input type="text" inputmode="decimal" value="{{ ppMoValor }}" sc-camel-on-input="{{ onPpMoValor }}" placeholder="0,00"></label>
+                  <label class="lmo-campo"><span>Quantidade de postos</span><input type="text" inputmode="numeric" value="{{ ppMoPostos }}" sc-camel-on-input="{{ onPpMoPostos }}"></label>
+                </div>
+                <div class="lmo-agente"><button type="button" class="lve-voltar" sc-camel-on-click="{{ ppUsarPlanilha }}">Usar o valor da Planilha 1 da Calculadora</button><span class="lmo-nota" style="margin: 0">{{ ppMoFonte }}</span></div>
+              </section>
+            </sc-if>
+            <sc-if value="{{ ppNaoObras }}" hint-placeholder-val="{{ true }}">
+              <sc-for list="{{ ppItens }}" as="it" hint-placeholder-count="1">
+                <section class="lmo-bloco pp-item">
+                  <div class="pp-item-cab"><h2 class="pp-h">Item {{ it.n }}</h2><sc-if value="{{ it.podeRemover }}" hint-placeholder-val="{{ false }}"><button type="button" class="ct-ev-btn ct-ev-del" sc-camel-on-click="{{ it.remover }}">Remover item</button></sc-if></div>
+                  <div class="lmo-campos">
+                    <label class="lmo-campo" style="grid-column: 1 / -1"><span>Descrição do item (especificação essencial)</span><input type="text" value="{{ it.desc }}" sc-camel-on-input="{{ it.onDesc }}" placeholder="Ex.: Papel sulfite A4, 75 g/m², resma com 500 folhas"></label>
+                    <label class="lmo-campo"><span>Unidade</span><input type="text" value="{{ it.un }}" sc-camel-on-input="{{ it.onUn }}" placeholder="Ex.: resma"></label>
+                    <label class="lmo-campo"><span>Quantidade</span><input type="text" inputmode="decimal" value="{{ it.qtd }}" sc-camel-on-input="{{ it.onQtd }}"></label>
+                  </div>
+                  <p class="pp-rot">Item no catálogo do Compras.gov.br (para o Painel de Preços)</p>
+                  <div class="pp-ops pp-ops-p"><sc-for list="{{ it.tipos }}" as="t" hint-placeholder-count="2"><button type="button" class="{{ t.cls }}" sc-camel-on-click="{{ t.escolher }}">{{ t.nome }}</button></sc-for></div>
+                  <sc-if value="{{ it.temCod }}" hint-placeholder-val="{{ false }}"><p class="pp-cod">✓ {{ it.cod }} – {{ it.codNome }} <button type="button" class="lve-link" sc-camel-on-click="{{ it.limparCod }}">trocar</button></p></sc-if>
+                  <div class="pp-busca"><input type="text" value="{{ it.busca }}" sc-camel-on-input="{{ it.onBusca }}" placeholder="Palavras do item ou código CATMAT/CATSER"><button type="button" class="lve-voltar" sc-camel-on-click="{{ it.buscarCat }}">Buscar no catálogo</button></div>
+                  <sc-if value="{{ it.temCands }}" hint-placeholder-val="{{ false }}"><ul class="pp-cands"><sc-for list="{{ it.cands }}" as="c" hint-placeholder-count="3"><li><button type="button" sc-camel-on-click="{{ c.escolher }}">{{ c.txt }}</button></li></sc-for></ul></sc-if>
+                  <div class="pp-coleta">
+                    <button type="button" class="lmo-btn" sc-camel-on-click="{{ it.coletarPainel }}">{{ it.txtPainel }}</button>
+                    <button type="button" class="lmo-btn pp-btn2" sc-camel-on-click="{{ it.coletarPncp }}">{{ it.txtPncp }}</button>
+                    <button type="button" class="lve-voltar" sc-camel-on-click="{{ it.manualAbrir }}">+ Preço manual (incisos III, IV ou V)</button>
+                  </div>
+                  <sc-if value="{{ it.manualAberto }}" hint-placeholder-val="{{ false }}">
+                    <div class="pp-manual">
+                      <div class="pp-ops pp-ops-p"><sc-for list="{{ it.mIncisos }}" as="m" hint-placeholder-count="3"><button type="button" class="{{ m.cls }}" sc-camel-on-click="{{ m.escolher }}">{{ m.nome }}</button></sc-for></div>
+                      <div class="lmo-campos">
+                        <label class="lmo-campo"><span>{{ it.mFonteRot }}</span><input type="text" value="{{ it.mFonte }}" sc-camel-on-input="{{ it.onMFonte }}"></label>
+                        <label class="lmo-campo"><span>CNPJ (opcional)</span><input type="text" value="{{ it.mCnpj }}" sc-camel-on-input="{{ it.onMCnpj }}"></label>
+                        <label class="lmo-campo"><span>Data do preço</span><input type="date" value="{{ it.mData }}" sc-camel-on-input="{{ it.onMData }}"></label>
+                        <label class="lmo-campo"><span>Preço unitário (R$)</span><input type="text" inputmode="decimal" value="{{ it.mPreco }}" sc-camel-on-input="{{ it.onMPreco }}"></label>
+                        <label class="lmo-campo"><span>Link ou referência do documento</span><input type="text" value="{{ it.mLink }}" sc-camel-on-input="{{ it.onMLink }}"></label>
+                        <sc-if value="{{ it.mEhIII }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>Data e hora de acesso *</span><input type="datetime-local" value="{{ it.mAcesso }}" sc-camel-on-input="{{ it.onMAcesso }}"></label></sc-if>
+                        <sc-if value="{{ it.mEhIV }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo" style="grid-column: 1 / -1"><span>Justificativa da escolha do fornecedor *</span><input type="text" value="{{ it.mJust }}" sc-camel-on-input="{{ it.onMJust }}" placeholder="Ex.: fornecedor do ramo, localizado na região, cadastrado no SICAF"></label></sc-if>
+                      </div>
+                      <div class="lmo-agente"><button type="button" class="lmo-btn" sc-camel-on-click="{{ it.manualSalvar }}">Incluir preço</button></div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ it.temPrecos }}" hint-placeholder-val="{{ false }}">
+                    <div class="pp-tab-acoes"><span>Marque os preços que correspondem ao item. Os desmarcados ficam no relatório com o motivo.</span>
+                      <div><button type="button" class="ct-ev-btn" sc-camel-on-click="{{ it.todos }}">Marcar todos</button><button type="button" class="ct-ev-btn" sc-camel-on-click="{{ it.nenhum }}">Desmarcar todos</button><button type="button" class="ct-ev-btn pp-ia-btn" sc-camel-on-click="{{ it.filtrarIA }}">{{ it.txtIA }}</button></div></div>
+                    <div class="pp-tab">
+                      <div class="pp-pl pp-pl-cab"><span></span><span>Inc.</span><span>Origem e item</span><span>Data</span><span>Unid.</span><span>Preço</span><span>Situação</span><span></span></div>
+                      <sc-for list="{{ it.precos }}" as="p" hint-placeholder-count="3">
+                        <div class="{{ p.cls }}">
+                          <span><input type="checkbox" checked="{{ p.incl }}" sc-camel-on-change="{{ p.alternar }}" aria-label="Considerar este preço"></span>
+                          <span class="pp-inc">{{ p.inciso }}</span>
+                          <span class="pp-org"><b>{{ p.origem }}</b><small>{{ p.desc }}</small><small>{{ p.forn }}</small><sc-if value="{{ p.temIa }}" hint-placeholder-val="{{ false }}"><small class="{{ p.iaCls }}">{{ p.ia }}</small></sc-if><sc-if value="{{ p.temAlerta }}" hint-placeholder-val="{{ false }}"><small class="pp-alerta">{{ p.alerta }}</small></sc-if><sc-if value="{{ p.temLink }}" hint-placeholder-val="{{ false }}"><a href="{{ p.link }}" target="_blank" rel="noopener">abrir no PNCP</a></sc-if></span>
+                          <span>{{ p.data }}</span><span>{{ p.un }}</span>
+                          <span class="pp-pr"><b>{{ p.preco }}</b><small>{{ p.atual }}</small></span>
+                          <span><em class="{{ p.sitCls }}">{{ p.sit }}</em><small>{{ p.motivo }}</small></span>
+                          <span><button type="button" class="lmo-x" sc-camel-on-click="{{ p.remover }}" aria-label="Remover">×</button></span>
+                        </div>
+                      </sc-for>
+                    </div>
+                    <div class="pp-opcoes">
+                      <label class="lmo-nota" style="display: flex; gap: 8px; align-items: center; margin: 0"><input type="checkbox" checked="{{ it.restrito }}" sc-camel-on-change="{{ it.onRestrito }}"> Mercado restrito, com poucos fornecedores (adota o menor preço)</label>
+                      <label class="lmo-campo" style="min-width: 260px"><span>Método</span><select sc-camel-on-change="{{ it.onMetodo }}"><sc-for list="{{ it.metodos }}" as="m" hint-placeholder-count="4"><option value="{{ m.id }}" selected="{{ m.sel }}">{{ m.nome }}</option></sc-for></select></label>
+                    </div>
+                    <div class="lmo-kpis"><sc-for list="{{ it.kpis }}" as="k" hint-placeholder-count="7"><div class="pp-kpi"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
+                    <div class="pp-valor"><div><small>Valor unitário estimado</small><b>{{ it.valor }}</b></div><div><small>Valor total do item</small><b>{{ it.total }}</b></div></div>
+                    <p class="lmo-nota">{{ it.justMet }}</p>
+                    <sc-if value="{{ it.poucos }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo pp-just"><span>Menos de três preços válidos: justificativa do agente responsável (será submetida à autoridade competente, IN 65/2021, art. 6º)</span><input type="text" value="{{ it.just }}" sc-camel-on-input="{{ it.onJust }}"></label></sc-if>
+                  </sc-if>
+                  <sc-if value="{{ it.semPrecos }}" hint-placeholder-val="{{ true }}"><p class="ct-pb-vazio">Nenhum preço ainda. Comece pelo Painel de Preços e pelas contratações similares, que são os parâmetros prioritários (IN 65/2021, art. 5º, § 1º).</p></sc-if>
+                </section>
+              </sc-for>
+              <sc-if value="{{ ppEhBens }}" hint-placeholder-val="{{ true }}"><div class="pp-nav pp-nav-e"><button type="button" class="lve-voltar" sc-camel-on-click="{{ ppNovoItem }}">+ Adicionar item</button><sc-if value="{{ ppTemTotal }}" hint-placeholder-val="{{ false }}"><b class="pp-total">Total estimado: {{ ppTotal }}</b></sc-if></div></sc-if>
+              <sc-if value="{{ ppPrecisaJustPrior }}" hint-placeholder-val="{{ false }}"><section class="lmo-bloco"><label class="lmo-campo"><span>Justificativa: algum item não tem preço do Painel de Preços nem de contratações similares, que são prioritários (IN 65/2021, art. 5º, § 1º)</span><input type="text" value="{{ ppJustPrior }}" sc-camel-on-input="{{ onPpJustPrior }}"></label></section></sc-if>
+              <sc-if value="{{ ppTemRatif }}" hint-placeholder-val="{{ false }}">
+                <section class="{{ ppRatifCls }}"><h2 class="pp-h">Ratificação da planilha</h2><div class="lmo-kpis"><sc-for list="{{ ppRatifKpis }}" as="k" hint-placeholder-count="4"><div class="pp-kpi"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div><p>{{ ppRatifTxt }}</p></section>
+              </sc-if>
+            </sc-if>
+            <sc-if value="{{ ppEhObras }}" hint-placeholder-val="{{ false }}">
+              <section class="lmo-bloco">
+                <h2 class="pp-h">Planilha de orçamento da obra</h2>
+                <p class="lmo-nota" style="margin-top: 0">Envie o orçamento sintético em Excel, com colunas como Item, Código, Fonte (SINAPI, SICRO, EMOP, SCO…), Descrição, Unidade, Quantidade, Preço unitário e Total. A análise confere a estrutura, as fontes declaradas, a aritmética, a curva ABC, o BDI, os encargos e a data-base.</p>
+                <label class="lmo-arq"><input type="file" accept=".xlsx" sc-camel-on-change="{{ ppOnObras }}">{{ ppObrasTxt }}</label>
+                <div class="lmo-campos" style="margin-top: 14px">
+                  <label class="lmo-campo"><span>Tipo de obra (referência do BDI)</span><select sc-camel-on-change="{{ onPpObTipo }}"><sc-for list="{{ ppObTipos }}" as="t" hint-placeholder-count="6"><option value="{{ t.id }}" selected="{{ t.sel }}">{{ t.nome }}</option></sc-for></select></label>
+                  <label class="lmo-campo"><span>BDI (%)</span><input type="text" inputmode="decimal" value="{{ ppObBdi }}" sc-camel-on-input="{{ onPpObBdi }}"></label>
+                  <label class="lmo-campo"><span>Encargos sociais (%)</span><input type="text" inputmode="decimal" value="{{ ppObEncargos }}" sc-camel-on-input="{{ onPpObEncargos }}"></label>
+                  <label class="lmo-campo"><span>Data-base (mês das tabelas)</span><input type="month" value="{{ ppObDataBase }}" sc-camel-on-input="{{ onPpObDataBase }}"></label>
+                  <label class="lmo-campo" style="grid-column: 1 / -1"><span>Tabelas de referência adotadas e norma do ente</span><input type="text" value="{{ ppObTabelas }}" sc-camel-on-input="{{ onPpObTabelas }}" placeholder="Ex.: EMOP (prioritária, Decreto municipal nº 000/2024), SINAPI e SCO-Rio"></label>
+                </div>
+                <div class="pp-ops pp-ops-p" style="margin-top: 10px"><sc-for list="{{ ppObDeson }}" as="o" hint-placeholder-count="2"><button type="button" class="{{ o.cls }}" sc-camel-on-click="{{ o.escolher }}">{{ o.nome }}</button></sc-for></div>
+              </section>
+              <sc-if value="{{ ppTemObras }}" hint-placeholder-val="{{ false }}">
+                <section class="lmo-bloco">
+                  <div class="lmo-kpis" style="margin-top: 0"><sc-for list="{{ ppObKpis }}" as="k" hint-placeholder-count="5"><div class="pp-kpi"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
+                  <p class="lmo-nota">{{ ppObBdiTxt }}</p>
+                  <h3 class="pp-h3">Apontamentos</h3>
+                  <sc-for list="{{ ppObAps }}" as="a" hint-placeholder-count="3"><div class="{{ a.cls }}"><small>{{ a.g }}</small><b>{{ a.t }}</b><p>{{ a.d }}</p><sc-if value="{{ a.temItens }}" hint-placeholder-val="{{ false }}"><ul><sc-for list="{{ a.itens }}" as="x" hint-placeholder-count="2"><li>{{ x.x }}</li></sc-for></ul></sc-if><p><em>Fundamento:</em> {{ a.f }}</p><p><em>Providência:</em> {{ a.p }}</p></div></sc-for>
+                  <h3 class="pp-h3">Curva ABC: itens da classe A</h3>
+                  <div class="pp-tab"><div class="pp-abc pp-pl-cab"><span>Item</span><span>Código</span><span>Fonte</span><span>Descrição</span><span>Total</span><span>% acum.</span></div>
+                    <sc-for list="{{ ppObAbc }}" as="l" hint-placeholder-count="3"><div class="pp-abc"><span>{{ l.item }}</span><span>{{ l.cod }}</span><span>{{ l.fonte }}</span><span>{{ l.desc }}</span><span>{{ l.total }}</span><span>{{ l.acum }}</span></div></sc-for></div>
+                </section>
+              </sc-if>
+            </sc-if>
+            <div class="pp-nav"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ppIrRel }}">Ver o relatório →</button></div>
+          </sc-if>
+
+          <!-- etapa 3: relatório -->
+          <sc-if value="{{ ppEtRel }}" hint-placeholder-val="{{ false }}">
+            <section class="lmo-bloco">
+              <h2 class="pp-h">Resultado</h2>
+              <div class="lmo-kpis" style="margin-top: 0"><sc-for list="{{ ppResumo }}" as="k" hint-placeholder-count="3"><div class="pp-kpi"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
+              <sc-for list="{{ ppPendencias }}" as="p" hint-placeholder-count="1"><p class="ct-av">{{ p.t }}</p></sc-for>
+              <h3 class="pp-h3">Texto para o documento de planejamento</h3>
+              <pre class="lmo-minuta">{{ ppTextoTR }}</pre>
+              <div class="pp-docs">
+                <button type="button" class="lmo-btn" sc-camel-on-click="{{ ppPdf }}">Relatório em PDF</button>
+                <button type="button" class="lve-voltar" sc-camel-on-click="{{ ppWord }}">Word</button>
+                <button type="button" class="lve-voltar" sc-camel-on-click="{{ ppExcel }}">Excel</button>
+                <button type="button" class="lmo-btn pp-btn2" sc-camel-on-click="{{ ppLevar }}">{{ ppLevarTxt }}</button>
+              </div>
+              <p class="lmo-nota">O relatório traz a identificação, o enquadramento legal, os parâmetros usados, a série completa de preços com a origem e a data, os preços desconsiderados com o motivo, o tratamento estatístico, a justificativa do método e a memória de cálculo (IN 65/2021, art. 3º). A pesquisa é ato do agente responsável: confira antes de juntar ao processo.</p>
+            </section>
+          </sc-if>
         </sc-if>
       </section>
     </sc-if>
@@ -6325,6 +6599,278 @@ function ctLinhaDoc(c, si) {
   if (si.fim) out.push({ iso: String(si.fim).slice(0, 10), c: [dBR(si.fim), "Fim do contrato", "", "", "", ""], marco: true });
   return out.sort((a, b) => a.iso.localeCompare(b.iso));
 }
+// ===================================================================== O Elaborador → Pesquisa de preços
+// Estimativa do valor da contratação na fase de planejamento. Cálculo no navegador (sem custo); coleta pela função pesquisa-precos.
+const PP_FAIXA = 0.25;   // saneamento: desconsidera preços mais de 25% abaixo ou acima da mediana (critério fundamentado, IN 65/2021, art. 6º, § 3º)
+const PP_CV = 0.25;      // coeficiente de variação: até 25%, média; acima, mediana (Manual de Licitações e Contratos do TCU, item 4.3.9.3)
+const PP_INCISOS = {
+  I: "Painel de Preços / bancos de preços oficiais (Lei 14.133/2021, art. 23, § 1º, I; IN 65/2021, art. 5º, I)",
+  II: "Contratações similares da Administração Pública no último ano (art. 23, § 1º, II; IN 65/2021, art. 5º, II)",
+  III: "Mídia especializada, tabela de referência aprovada pelo Poder Executivo federal ou sítio eletrônico, com data e hora de acesso (art. 23, § 1º, III; IN 65/2021, art. 5º, III)",
+  IV: "Pesquisa direta com fornecedores, mediante solicitação formal de cotação (art. 23, § 1º, IV; IN 65/2021, art. 5º, IV e § 2º)",
+  V: "Base nacional de notas fiscais eletrônicas (art. 23, § 1º, V; IN 65/2021, art. 5º, V)",
+};
+const PP_TIPOS_OBRA = [
+  ["edificios", "Construção de edifícios", 20.34, 22.12, 25.00],
+  ["rodovias", "Construção de rodovias e ferrovias", 19.60, 20.97, 24.23],
+  ["saneamento", "Redes de abastecimento de água, coleta de esgoto e correlatas", 20.76, 24.18, 26.44],
+  ["energia", "Estações e redes de distribuição de energia elétrica", 24.00, 25.84, 27.86],
+  ["portuarias", "Obras portuárias, marítimas e fluviais", 22.80, 27.48, 30.95],
+  ["fornecimento", "Mero fornecimento de materiais e equipamentos", 11.10, 14.02, 16.80],
+];
+const PP_PADRAO = { titulo: "", processo: "", orgao: "", agente: "", cargo: "", uf: "", municipio: "", regime: "14133", origem: "proprio", esfera13019: "federal",
+  norma: "", rilc: null, rilcNome: "", objeto: "bens", descricao: "", itens: [], moValor: "", moPostos: "1", moFonte: "",
+  ob: null, obBdi: "", obTipo: "edificios", obDeson: "nao", obDataBase: "", obEncargos: "", obTabelas: "", obNome: "", justPrioritarios: "" };
+const PP_ITEM = () => ({ id: Math.random().toString(36).slice(2, 9), desc: "", un: "", qtd: "1", tipo: "material", cod: "", codNome: "", busca: "", cands: [],
+  restrito: false, metodo: "auto", precos: [], just: "", manual: null });
+
+const ppNum = (v) => { if (v == null || v === "") return null; if (typeof v === "number") return Number.isFinite(v) ? v : null;
+  const t = String(v).replace(/R\$|\s/g, ""); const n = Number(/,\d{1,4}$/.test(t) || (t.includes(",") && !t.includes(".")) ? t.replace(/\./g, "").replace(",", ".") : t.replace(/,/g, ""));
+  return Number.isFinite(n) ? n : null; };
+const ppBRL = (v, dec = 2) => (v == null || !Number.isFinite(v) ? "—" : "R$ " + v.toLocaleString("pt-BR", { minimumFractionDigits: dec, maximumFractionDigits: dec }));
+const ppPct = (v, dec = 2) => (v == null || !Number.isFinite(v) ? "—" : (v * 100).toLocaleString("pt-BR", { minimumFractionDigits: dec, maximumFractionDigits: dec }) + "%");
+const ppData = (iso) => (iso && /^\d{4}-\d{2}-\d{2}/.test(iso) ? iso.slice(8, 10) + "/" + iso.slice(5, 7) + "/" + iso.slice(0, 4) : (iso || ""));
+const ppMediana = (v) => { const s = [...v].sort((a, b) => a - b), m = Math.floor(s.length / 2); return !s.length ? null : s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+
+// atualização monetária pelo IPCA (art. 23, § 1º, II, da Lei 14.133/2021: "observado o índice de atualização de preços correspondente")
+function ppAtualiza(preco, dataIso, indices) {
+  const serie = indices && indices.series && indices.series.ipca && indices.series.ipca.mensal;
+  if (!serie || !dataIso || !/^\d{4}-\d{2}/.test(dataIso)) return { v: preco, fator: 1, de: "", ate: "" };
+  const meses = Object.keys(serie).sort(), ultimo = meses[meses.length - 1], ini = dataIso.slice(0, 7);
+  let f = 1, n = 0;
+  meses.forEach((m) => { if (m > ini && m <= ultimo) { f *= 1 + Number(serie[m]) / 100; n++; } });
+  return { v: preco * f, fator: f, de: ini, ate: ultimo, meses: n };
+}
+
+// tratamento estatístico de um item (IN 65/2021, art. 6º): saneamento em torno da mediana, coeficiente de variação e método
+function ppEstat(item, indices, hojeIso) {
+  const precos = (item.precos || []).map((p) => {
+    const at = p.inciso === "II" || p.inciso === "I" ? ppAtualiza(p.preco, p.data, indices) : { v: p.preco, fator: 1 };
+    const idadeMeses = p.data ? (Date.parse(hojeIso) - Date.parse(p.data)) / (30.44 * 864e5) : null;
+    let alerta = "";
+    if ((p.inciso === "I" || p.inciso === "II") && idadeMeses != null && idadeMeses > 12.5) alerta = "Mais de 1 ano: fora do período do art. 23, § 1º, II.";
+    if (p.inciso === "IV" && idadeMeses != null && idadeMeses > 6.2) alerta = "Cotação com mais de 6 meses (art. 23, § 1º, IV).";
+    if (p.inciso === "III" && !p.acesso) alerta = "Falta a data e a hora de acesso (art. 23, § 1º, III).";
+    return { ...p, atual: at.v, fator: at.fator, alerta };
+  });
+  const sel = precos.filter((p) => p.incl !== false && p.atual > 0);
+  const med0 = ppMediana(sel.map((p) => p.atual));
+  const lo = med0 != null ? med0 * (1 - PP_FAIXA) : null, hi = med0 != null ? med0 * (1 + PP_FAIXA) : null;
+  precos.forEach((p) => {
+    if (p.incl === false) { p.sit = "fora"; p.motivo = p.motivoExcl || "Desmarcado pelo agente (item não semelhante ou fonte inadequada)."; return; }
+    if (!(p.atual > 0)) { p.sit = "fora"; p.motivo = "Preço inválido."; return; }
+    if (sel.length >= 3 && p.atual < lo) { p.sit = "inex"; p.motivo = "Inexequível: mais de 25% abaixo da mediana (" + ppBRL(med0) + ")."; return; }
+    if (sel.length >= 3 && p.atual > hi) { p.sit = "exc"; p.motivo = "Excessivamente elevado: mais de 25% acima da mediana (" + ppBRL(med0) + ")."; return; }
+    p.sit = "ok"; p.motivo = "";
+  });
+  const val = precos.filter((p) => p.sit === "ok").map((p) => p.atual);
+  const n = val.length, media = n ? val.reduce((a, b) => a + b, 0) / n : null;
+  const dp = n > 1 ? Math.sqrt(val.reduce((a, b) => a + (b - media) * (b - media), 0) / (n - 1)) : 0;
+  const cv = media ? dp / media : null, mediana = ppMediana(val), menor = n ? Math.min(...val) : null;
+  let metodo = item.metodo && item.metodo !== "auto" ? item.metodo : item.restrito ? "menor" : cv != null && cv <= PP_CV ? "media" : "mediana";
+  const valor = metodo === "media" ? media : metodo === "menor" ? menor : mediana;
+  const nomeMet = { media: "média", mediana: "mediana", menor: "menor preço" }[metodo];
+  let justMet;
+  if (item.metodo && item.metodo !== "auto") justMet = "Método escolhido pelo agente responsável: " + nomeMet + ".";
+  else if (item.restrito) justMet = "Mercado restrito, com poucos fornecedores: adotado o menor preço, conforme a jurisprudência do TCU (Acórdãos 1.639/2016 e 1.850/2020, ambos do Plenário), segundo a qual médias ou medianas só se aplicam em mercado competitivo.";
+  else if (cv != null && cv <= PP_CV) justMet = "Coeficiente de variação de " + ppPct(cv) + ", até 25%: amostra homogênea, adotada a média.";
+  else if (cv != null) justMet = "Coeficiente de variação de " + ppPct(cv) + ", acima de 25%: amostra dispersa, adotada a mediana, que não é afetada por valores extremos.";
+  else justMet = "";
+  const qtd = ppNum(item.qtd) || 0;
+  const incisos = [...new Set(precos.filter((p) => p.sit === "ok").map((p) => p.inciso))].sort();
+  return { precos, coletados: precos.length, selecionados: sel.length, med0, lo, hi, n, media, dp, cv, mediana, menor, metodo, nomeMet, valor, justMet,
+    total: valor != null ? valor * qtd : null, qtd, incisos, poucos: n < 3, semPrioritario: n > 0 && !incisos.some((i) => i === "I" || i === "II"),
+    excluidos: precos.filter((p) => p.sit === "inex" || p.sit === "exc").length };
+}
+
+// enquadramento legal da pesquisa conforme o regime e a origem dos recursos
+function ppFundamentos(d) {
+  const L = [];
+  if (d.regime === "13303") {
+    L.push("Contratação regida pela Lei 13.303/2016 (empresas públicas e sociedades de economia mista), que tem regime próprio de licitações e contratos. A pesquisa de preços segue o Regulamento Interno de Licitações e Contratos da estatal (art. 40 da Lei 13.303/2016)" + (d.norma ? ": " + d.norma + "." : "."));
+    L.push("Os parâmetros da Lei 14.133/2021 (art. 23) e da IN SEGES/ME 65/2021 são utilizados apenas como referência de boa prática, naquilo que não contrariar o regulamento interno. Prevalecem as regras do regulamento.");
+    if (d.rilc && d.rilc.encontrado) L.push("Regras do regulamento interno identificadas na leitura do documento enviado: " + [d.rilc.metodo && "método: " + d.rilc.metodo, d.rilc.minimo_precos && "quantidade mínima: " + d.rilc.minimo_precos, d.rilc.validade_cotacoes && "validade das cotações: " + d.rilc.validade_cotacoes, d.rilc.criterio_exclusao && "exclusão de preços: " + d.rilc.criterio_exclusao].filter(Boolean).join("; ") + ". A leitura por IA deve ser conferida pelo agente responsável no texto do regulamento.");
+  } else if (d.regime === "13019") {
+    L.push("Parceria regida pela Lei 13.019/2014 (Marco Regulatório das Organizações da Sociedade Civil), que não se submete à Lei 14.133/2021.");
+    L.push(d.esfera13019 === "federal"
+      ? "Na esfera federal, o Decreto 8.726/2016, art. 25, § 1º, exige que a previsão de receitas e despesas do plano de trabalho inclua elementos indicativos da compatibilidade dos custos com os preços praticados no mercado ou com outras parcerias da mesma natureza, como cotações, tabelas de preços de associações profissionais, publicações especializadas ou quaisquer outras fontes de informação disponíveis ao público. As compras feitas pela organização da sociedade civil com recursos da parceria seguem métodos usualmente utilizados pelo setor privado (art. 36 do mesmo decreto)."
+      : "Aplica-se o regulamento do ente para as parcerias" + (d.norma ? " (" + d.norma + ")" : "") + ". Na falta de regra específica, a demonstração da compatibilidade dos custos com os preços de mercado segue a lógica do art. 25, § 1º, do Decreto federal 8.726/2016.");
+    L.push("Os parâmetros da Lei 14.133/2021 (art. 23) e da IN SEGES/ME 65/2021 são utilizados apenas como sugestão metodológica, para dar maior segurança à demonstração.");
+  } else {
+    L.push("Contratação regida pela Lei 14.133/2021. O valor previamente estimado deve ser compatível com os valores praticados pelo mercado, considerados os preços constantes de bancos de dados públicos e as quantidades a serem contratadas, observadas a potencial economia de escala e as peculiaridades do local de execução (art. 23, caput).");
+    if (d.objeto !== "obras") {
+      if (d.origem === "uniao") L.push("Órgão ou entidade da Administração Pública federal direta, autárquica ou fundacional: aplica-se a IN SEGES/ME 65/2021 (art. 1º).");
+      else if (d.origem === "transf") L.push("Ente estadual, distrital ou municipal executando recursos da União decorrentes de transferência voluntária: aplica-se a IN SEGES/ME 65/2021, por força do seu art. 1º, § 2º.");
+      else L.push("Ente estadual, distrital ou municipal com recursos próprios: aplica-se o regulamento do ente" + (d.norma ? " (" + d.norma + ")" : "") + ". Na ausência de regulamento próprio, o ente pode aplicar os regulamentos editados pela União (art. 187 da Lei 14.133/2021); a IN SEGES/ME 65/2021 é adotada como referência metodológica.");
+    }
+  }
+  if (d.objeto === "mao_obra") L.push("Serviço com dedicação exclusiva de mão de obra: o custo é formado pela planilha de custos e formação de preços da IN SEGES/MP 5/2017 (Anexo VII-D), à qual a IN SEGES/ME 65/2021 remete (art. 9º). A pesquisa de mercado desta seção tem caráter complementar: serve para ratificar o valor consignado na planilha, sem substituí-la.");
+  if (d.objeto === "obras") {
+    L.push("Obras e serviços de engenharia: o valor estimado é obtido por composição de custos unitários, com a ordem de parâmetros do art. 23, § 2º, da Lei 14.133/2021 (SINAPI ou SICRO; tabelas de referência formalmente aprovadas pelo Poder Executivo federal e publicações especializadas; contratações similares; notas fiscais eletrônicas), acrescido do BDI de referência e dos encargos sociais cabíveis. A IN SEGES/ME 65/2021 não se aplica a obras e serviços de engenharia (art. 1º, § 1º).");
+    L.push(d.origem === "uniao" || d.origem === "transf"
+      ? "Há recursos da União: o orçamento deve observar a precedência do SINAPI e do SICRO (art. 23, § 2º, I, e § 3º). Na esfera federal, a IN SEGES/ME 91/2022 admite a aplicação do Decreto 7.983/2013, que permite outras fontes apenas quando inviável o uso do SINAPI e do SICRO (art. 6º) e a cotação de insumos com justificativa e demonstração de vantagem (art. 8º)."
+      : "Sem recursos da União, o ente pode adotar outros sistemas de custos (art. 23, § 3º), conforme a sua regulamentação" + (d.norma ? " (" + d.norma + ")" : "") + (d.obTabelas ? ". Tabelas de referência informadas: " + d.obTabelas + "." : "."));
+  }
+  return L;
+}
+
+// análise da planilha de orçamento de obras enviada pelo assinante (sem consulta às tabelas: confere estrutura, fontes, aritmética, curva ABC e BDI)
+function ppObras(d, hojeIso) {
+  const ob = d.ob; if (!ob || !ob.linhas || !ob.linhas.length) return null;
+  const tipo = PP_TIPOS_OBRA.find((t) => t[0] === d.obTipo) || PP_TIPOS_OBRA[0];
+  const bdi = ppNum(d.obBdi), uniao = d.origem === "uniao" || d.origem === "transf";
+  const ap = []; // { g: alta|media|baixa, t: título, d: descrição, f: fundamento, p: providência, itens? }
+  const linhas = ob.linhas.map((l, i) => {
+    const qtd = ppNum(l.qtd), unit = ppNum(l.unit), totInf = ppNum(l.total);
+    const calc = qtd != null && unit != null ? Math.round(qtd * unit * 100) / 100 : null;
+    const total = totInf != null ? totInf : calc;
+    return { ...l, n: i + 1, qtdN: qtd, unitN: unit, totalN: total, calc, difArit: totInf != null && calc != null && Math.abs(totInf - calc) > Math.max(0.05, Math.abs(calc) * 0.0005) };
+  });
+  const total = linhas.reduce((a, l) => a + (l.totalN || 0), 0);
+  // curva ABC
+  const ord = [...linhas].filter((l) => l.totalN > 0).sort((a, b) => b.totalN - a.totalN);
+  let acum = 0; ord.forEach((l) => { acum += l.totalN; l.acum = total ? acum / total : 0; l.part = total ? l.totalN / total : 0; l.abc = l.acum - l.part < 0.8 ? "A" : l.acum - l.part < 0.95 ? "B" : "C"; });
+  const classeA = ord.filter((l) => l.abc === "A");
+  // fontes
+  const fonteDe = (l) => String(l.fonte || "").trim().toUpperCase();
+  const fontes = {}; linhas.forEach((l) => { const f = fonteDe(l) || "SEM FONTE"; fontes[f] = fontes[f] || { n: 0, v: 0 }; fontes[f].n++; fontes[f].v += l.totalN || 0; });
+  const semFonte = linhas.filter((l) => !fonteDe(l) || /^(propria|própria|cotacao|cotação|composicao|composição|mercado|cot)/i.test(fonteDe(l)) || !String(l.cod || "").trim());
+  const arit = linhas.filter((l) => l.difArit), vazias = linhas.filter((l) => !(l.qtdN > 0) || !(l.unitN > 0));
+  const dup = {}; linhas.forEach((l) => { const k = fonteDe(l) + "|" + String(l.cod || "").trim(); if (!String(l.cod || "").trim()) return; (dup[k] = dup[k] || []).push(l); });
+  const duplicados = Object.values(dup).filter((g) => g.length > 1 && new Set(g.map((x) => x.unitN)).size > 1);
+  if (arit.length) ap.push({ g: "media", t: "Divergência aritmética em " + arit.length + (arit.length === 1 ? " item" : " itens"), d: "O total informado difere de quantidade × preço unitário.",
+    f: "Lei 14.133/2021, art. 6º, XXV, f (orçamento detalhado com quantitativos e preços unitários).", p: "Corrigir o total ou o preço unitário do item.", itens: arit.slice(0, 12).map((l) => "Item " + (l.item || l.n) + ": informado " + ppBRL(l.totalN) + ", calculado " + ppBRL(l.calc)) });
+  if (vazias.length) ap.push({ g: "media", t: vazias.length + (vazias.length === 1 ? " item sem quantidade ou preço" : " itens sem quantidade ou preço"), d: "Linhas sem quantitativo ou sem preço unitário.",
+    f: "Lei 14.133/2021, art. 6º, XXV, f.", p: "Completar ou excluir as linhas.", itens: vazias.slice(0, 12).map((l) => "Item " + (l.item || l.n) + " – " + String(l.desc || "").slice(0, 70)) });
+  if (semFonte.length) ap.push({ g: semFonte.some((l) => l.abc === "A") ? "alta" : "media", t: semFonte.length + (semFonte.length === 1 ? " item sem referência em tabela oficial" : " itens sem referência em tabela oficial"),
+    d: "Itens sem código de tabela de referência ou indicados como composição própria ou cotação" + (semFonte.some((l) => l.abc === "A") ? ", inclusive da classe A da curva ABC" : "") + ".",
+    f: "Lei 14.133/2021, art. 23, § 2º (ordem de parâmetros); Decreto 7.983/2013, arts. 6º e 8º, como referência metodológica (cotação de insumos com justificativa e demonstração de vantagem).",
+    p: "Apresentar a composição analítica de custos unitários de cada item e, se baseada em cotação, ao menos três orçamentos e a justificativa da escolha.", itens: semFonte.slice(0, 15).map((l) => "Item " + (l.item || l.n) + " – " + String(l.desc || "").slice(0, 70) + (l.abc ? " (classe " + l.abc + ")" : "")) });
+  if (uniao) {
+    const fora = linhas.filter((l) => fonteDe(l) && !/SINAPI|SICRO/.test(fonteDe(l)) && !semFonte.includes(l));
+    if (fora.length) ap.push({ g: "alta", t: fora.length + (fora.length === 1 ? " item com fonte diferente de SINAPI ou SICRO" : " itens com fonte diferente de SINAPI ou SICRO") + ", com recursos da União",
+      d: "Com recursos da União, o orçamento deve partir do SINAPI (obras em geral) ou do SICRO (infraestrutura de transportes); outras fontes só quando inviável o uso desses sistemas.",
+      f: "Lei 14.133/2021, art. 23, § 2º, I, e § 3º; Decreto 7.983/2013, art. 6º (IN SEGES/ME 91/2022).", p: "Substituir pela referência do SINAPI/SICRO ou justificar a inviabilidade de cada item.",
+      itens: fora.slice(0, 12).map((l) => "Item " + (l.item || l.n) + " – fonte " + fonteDe(l)) });
+  }
+  if (duplicados.length) ap.push({ g: "media", t: duplicados.length + (duplicados.length === 1 ? " código repetido com preços diferentes" : " códigos repetidos com preços diferentes"), d: "O mesmo código da mesma tabela aparece com preços unitários diferentes.",
+    f: "Lei 14.133/2021, art. 23, caput (compatibilidade com os valores de mercado).", p: "Uniformizar o preço ou justificar a diferença (local, data-base ou composição diferente).", itens: duplicados.slice(0, 10).map((g) => fonteDe(g[0]) + " " + g[0].cod + ": " + g.map((x) => ppBRL(x.unitN)).join(" / ")) });
+  // BDI
+  let bdiTxt = "";
+  if (bdi == null) ap.push({ g: "alta", t: "BDI não informado", d: "O orçamento deve discriminar a taxa de BDI e a sua composição.", f: "Manual de Licitações e Contratos do TCU (orçamento detalhado); Acórdão 2.622/2013-TCU-Plenário.", p: "Informar a taxa de BDI e o demonstrativo da composição." });
+  else {
+    const [, nome, q1, med, q3] = tipo;
+    bdiTxt = "BDI de " + bdi.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "% para " + nome.toLowerCase() + ": referência do Acórdão 2.622/2013-TCU-Plenário de " + String(q1).replace(".", ",") + "% (1º quartil), " + String(med).replace(".", ",") + "% (médio) e " + String(q3).replace(".", ",") + "% (3º quartil).";
+    if (bdi > q3) ap.push({ g: "media", t: "BDI acima do 3º quartil de referência", d: bdiTxt, f: "Acórdão 2.622/2013-TCU-Plenário, itens 9.1 e 9.2.", p: "Justificar cada parcela do BDI (administração central, seguro e garantia, risco, despesas financeiras, lucro e tributos) ou ajustar a taxa." });
+    else if (bdi < q1) ap.push({ g: "baixa", t: "BDI abaixo do 1º quartil de referência", d: bdiTxt, f: "Acórdão 2.622/2013-TCU-Plenário.", p: "Conferir se todas as parcelas foram consideradas, para evitar propostas inexequíveis." });
+  }
+  const forn = linhas.filter((l) => /fornecimento|aquisi[cç][aã]o de equipamento|equipamento/i.test(String(l.desc || "")));
+  if (d.obTipo !== "fornecimento" && forn.length && forn.reduce((a, l) => a + (l.totalN || 0), 0) / (total || 1) > 0.05)
+    ap.push({ g: "baixa", t: "Itens de fornecimento de materiais ou equipamentos com BDI único", d: "Há itens de fornecimento que somam mais de 5% do valor global.", f: "Súmula 253 do TCU; Acórdão 2.622/2013-TCU-Plenário (BDI de mero fornecimento: 11,10% a 16,80%).", p: "Avaliar a aplicação de BDI reduzido a esses itens, se forem de natureza específica e representarem parcela significativa da obra." });
+  if (!d.obDataBase) ap.push({ g: "media", t: "Data-base do orçamento não informada", d: "A data-base vincula o reajuste do contrato (art. 25, § 7º, e art. 92, § 3º).", f: "Lei 14.133/2021, arts. 25, § 7º, e 92, § 3º.", p: "Informar o mês de referência das tabelas utilizadas." });
+  else { const idade = (Date.parse(hojeIso) - Date.parse(d.obDataBase + "-01")) / (30.44 * 864e5); if (idade > 6) ap.push({ g: idade > 12 ? "media" : "baixa", t: "Data-base com " + Math.floor(idade) + " meses", d: "Tabelas de referência defasadas podem afastar o orçamento dos preços de mercado.", f: "Lei 14.133/2021, art. 23, caput.", p: "Atualizar o orçamento pela tabela mais recente antes da divulgação do edital." }); }
+  if (!ppNum(d.obEncargos)) ap.push({ g: "baixa", t: "Encargos sociais não informados", d: "O orçamento deve discriminar os encargos sociais e indicar se os preços são com ou sem desoneração da folha.", f: "Lei 14.133/2021, art. 23, § 2º (\"acrescido do percentual de BDI de referência e dos Encargos Sociais cabíveis\").", p: "Informar o percentual de encargos e a opção de desoneração, coerente com a tabela utilizada." });
+  if (!d.obTabelas && !uniao) ap.push({ g: "baixa", t: "Tabelas de referência e norma do ente não informadas", d: "Sem recursos da União, o ente pode usar outros sistemas de custos, conforme a sua regulamentação.", f: "Lei 14.133/2021, art. 23, § 3º.", p: "Indicar as tabelas adotadas e o decreto ou regulamento que as define." });
+  const ordemG = { alta: 0, media: 1, baixa: 2 };
+  ap.sort((a, b) => ordemG[a.g] - ordemG[b.g]);
+  return { linhas, total, totalComBdi: bdi != null ? total : null, ord, classeA, fontes, semFonte, arit, apontamentos: ap, bdiTxt, tipo, bdi, uniao };
+}
+
+// texto para a alínea i do Termo de Referência (ou a alínea f do Projeto Básico)
+function ppTextoTR(d, res) {
+  if (d.objeto === "obras") {
+    const o = res.obras; if (!o) return "";
+    return "Orçamento detalhado de " + ppBRL(o.total) + (d.obDataBase ? ", data-base " + d.obDataBase.slice(5, 7) + "/" + d.obDataBase.slice(0, 4) : "") + (d.obTabelas ? ", com referência em " + d.obTabelas : "") + (o.bdi != null ? ", BDI de " + String(o.bdi).replace(".", ",") + "%" : "") +
+      ". Análise do orçamento na Pesquisa de preços do Licitacon (" + o.apontamentos.length + " apontamento(s)), fundamentada no art. 23, §§ 2º e 3º, da Lei 14.133/2021.";
+  }
+  const linhas = res.itens.map((x, i) => (i + 1) + ") " + (x.item.desc || "Item") + ": " + ppBRL(x.st.valor) + " por " + (x.item.un || "unidade") + " × " + (x.item.qtd || 1) + " = " + ppBRL(x.st.total) + " (" + x.st.nomeMet + " de " + x.st.n + " preços válidos)");
+  return "Valor estimado: " + ppBRL(res.total) + ". Pesquisa de preços realizada conforme " + (d.regime === "14133" ? "o art. 23 da Lei 14.133/2021 e a IN SEGES/ME 65/2021" : d.regime === "13303" ? "o regulamento interno da estatal (art. 40 da Lei 13.303/2016)" : "o art. 25, § 1º, do Decreto 8.726/2016") +
+    ", com saneamento dos preços mais de 25% abaixo ou acima da mediana e escolha do método pelo coeficiente de variação.\n" + linhas.join("\n") + (d.objeto === "mao_obra" ? "\nO valor resulta da planilha de custos da IN 5/2017; a pesquisa de mercado ratifica o valor da planilha." : "");
+}
+
+// documento (PDF, Excel e Word) no formato dos geradores do site
+function ppDocumento(d, res, hoje) {
+  const blocos = [], notas = [];
+  const regimeNome = { "14133": "Lei 14.133/2021", "13303": "Lei 13.303/2016 (estatais)", "13019": "Lei 13.019/2014 (parcerias)" }[d.regime];
+  const objNome = { bens: "Bens e serviços comuns", mao_obra: "Serviço com dedicação exclusiva de mão de obra", obras: "Obras e serviços de engenharia" }[d.objeto];
+  const dest = [["Valor estimado", d.objeto === "obras" ? ppBRL(res.obras ? res.obras.total : null) : ppBRL(res.total)], ["Regime", regimeNome], ["Objeto", objNome]];
+  if (d.objeto !== "obras") dest.push(["Itens", String(res.itens.length)]);
+  blocos.push({ t: "destaques", itens: dest });
+  blocos.push({ t: "pares", titulo: "1. Identificação", pares: [["Processo", d.processo || "—"], ["Órgão ou entidade", d.orgao || "—"], ["Município/UF", [d.municipio, d.uf].filter(Boolean).join("/") || "—"],
+    ["Objeto", d.descricao || d.titulo || "—"], ["Agente responsável pela pesquisa", [d.agente, d.cargo].filter(Boolean).join(", ") || "—"], ["Data", hoje]] });
+  blocos.push({ t: "texto", titulo: "2. Enquadramento legal", paragrafos: ppFundamentos(d) });
+  if (d.objeto === "obras") {
+    const o = res.obras;
+    if (!o) { blocos.push({ t: "texto", titulo: "3. Orçamento", paragrafos: ["Nenhuma planilha de orçamento foi carregada."] }); }
+    else {
+      blocos.push({ t: "pares", titulo: "3. Dados do orçamento analisado", pares: [["Arquivo", d.obNome || "—"], ["Itens", String(o.linhas.length)], ["Valor global", ppBRL(o.total)], ["Tipo de obra (referência do BDI)", o.tipo[1]],
+        ["BDI informado", o.bdi != null ? String(o.bdi).replace(".", ",") + "%" : "não informado"], ["Encargos sociais", d.obEncargos ? d.obEncargos + "% · " + (d.obDeson === "sim" ? "com desoneração" : "sem desoneração") : "não informados"],
+        ["Data-base", d.obDataBase ? d.obDataBase.slice(5, 7) + "/" + d.obDataBase.slice(0, 4) : "não informada"], ["Tabelas de referência", d.obTabelas || "não informadas"], ["Recursos da União", o.uniao ? "Sim" : "Não"]] });
+      blocos.push({ t: "tabela", titulo: "4. Fontes dos preços", cab: ["Fonte", "Itens", "Valor", "% do total"], larg: [40, 12, 22, 14], alin: "lrrr",
+        linhas: Object.entries(o.fontes).sort((a, b) => b[1].v - a[1].v).map(([f, x]) => ({ c: [f, String(x.n), ppBRL(x.v), ppPct(o.total ? x.v / o.total : 0, 1)] })) });
+      blocos.push({ t: "tabela", titulo: "5. Curva ABC – itens da classe A (até 80% do valor)", sub: "Itens que concentram o valor da obra: a conferência dos preços unitários com a tabela da data-base deve começar por eles.",
+        cab: ["Item", "Código", "Fonte", "Descrição", "Unid.", "Quant.", "Preço unit.", "Total", "% acum."], larg: [8, 12, 10, 44, 8, 10, 14, 15, 10], alin: "llllrrrrr",
+        linhas: o.classeA.slice(0, 60).map((l) => ({ c: [String(l.item || l.n), String(l.cod || ""), String(l.fonte || ""), String(l.desc || "").slice(0, 120), String(l.un || ""), l.qtdN != null ? l.qtdN.toLocaleString("pt-BR") : "", ppBRL(l.unitN), ppBRL(l.totalN), ppPct(l.acum, 1)] })), paisagem: true });
+      blocos.push({ t: "texto", titulo: "6. BDI", paragrafos: [o.bdiTxt || "BDI não informado."] });
+      blocos.push({ t: "tabela", titulo: "7. Apontamentos", cab: ["Gravidade", "Apontamento", "Fundamento", "Providência"], larg: [12, 44, 34, 34], alin: "llll",
+        linhas: o.apontamentos.length ? o.apontamentos.map((a) => ({ c: [{ alta: "Alta", media: "Média", baixa: "Baixa" }[a.g], a.t + ". " + a.d + (a.itens && a.itens.length ? " " + a.itens.join("; ") + "." : ""), a.f, a.p] })) : [{ c: ["—", "Nenhum apontamento nas verificações automáticas.", "", ""] }] });
+      notas.push("Esta análise confere a estrutura do orçamento enviado (aritmética, fontes declaradas, curva ABC, BDI, encargos e data-base). Ela não compara os preços unitários com as tabelas de referência: essa conferência cabe ao responsável técnico pelo orçamento, que deve emitir a ART das planilhas (Decreto 7.983/2013, art. 10, como referência).");
+    }
+  } else {
+    let sec = 3;
+    blocos.push({ t: "texto", titulo: sec++ + ". Metodologia", paragrafos: [
+      "Parâmetros utilizados (IN SEGES/ME 65/2021, art. 5º): " + [...new Set(res.itens.flatMap((x) => x.st.incisos))].map((i) => "inciso " + i + " – " + PP_INCISOS[i]).join("; ") + ".",
+      "Os preços do Painel de Preços e das contratações similares foram atualizados pelo IPCA, do mês da contratação até o último índice publicado (art. 23, § 1º, II, da Lei 14.133/2021).",
+      "Saneamento da amostra (IN 65/2021, art. 6º, § 3º): foram desconsiderados como inexequíveis os preços mais de 25% abaixo da mediana dos preços selecionados e como excessivamente elevados os preços mais de 25% acima dela.",
+      "Escolha do método (IN 65/2021, art. 6º): com coeficiente de variação de até 25%, a amostra é considerada homogênea e adota-se a média; acima de 25%, adota-se a mediana, menos sensível a valores extremos (Manual de Licitações e Contratos do TCU, item 4.3.9.3; Enunciado 33 da Jornada de Direito Administrativo do CJF, de 2023). Em mercado restrito, adota-se o menor preço (Acórdãos 1.639/2016 e 1.850/2020-TCU-Plenário).",
+      "Exige-se o mínimo de três preços válidos por item; abaixo disso, o preço só é admitido excepcionalmente, com justificativa do agente responsável e aprovação da autoridade competente (IN 65/2021, art. 6º)."] });
+    if (res.itens.some((x) => x.st.semPrioritario) && d.justPrioritarios) blocos.push({ t: "texto", titulo: sec++ + ". Justificativa: parâmetros prioritários", paragrafos: ["Os parâmetros dos incisos I e II do art. 5º da IN 65/2021 são prioritários (§ 1º). " + d.justPrioritarios] });
+    res.itens.forEach((x, i) => {
+      const it = x.item, st = x.st;
+      blocos.push({ t: "secao", titulo: sec + "." + (i + 1) + ". Item " + (i + 1) + ": " + (it.desc || "sem descrição"), sub: [it.codNome ? (it.tipo === "servico" ? "CATSER " : "CATMAT/PDM ") + it.cod + " – " + it.codNome : "", "Unidade: " + (it.un || "—"), "Quantidade: " + (it.qtd || "1")].filter(Boolean).join(" · ") });
+      blocos.push({ t: "tabela", titulo: "Série de preços coletados", cab: ["#", "Inciso", "Origem", "UF", "Data", "Unid.", "Preço", "Atualizado", "Situação"], larg: [5, 7, 42, 6, 11, 8, 14, 14, 30], alin: "lllllrrrl", paisagem: true,
+        linhas: st.precos.map((p, j) => ({ c: [String(j + 1), p.inciso, [p.orgao, p.fornecedor && "fornecedor " + p.fornecedor, p.descricao && "item: " + String(p.descricao).slice(0, 90), p.acesso && "acesso em " + p.acesso, p.cnpj && "CNPJ " + p.cnpj, p.link || p.consulta || (p.fornecedor ? "" : p.fonteNome)].filter(Boolean).join(" · ").slice(0, 300),
+          p.uf || "", ppData(p.data), p.unidade || "", ppBRL(p.preco), ppBRL(p.atual), p.sit === "ok" ? "Válido" : p.motivo], fraco: p.sit !== "ok" })) });
+      blocos.push({ t: "pares", titulo: "Tratamento estatístico", pares: [["Preços coletados / selecionados", st.coletados + " / " + st.selecionados], ["Mediana dos selecionados", ppBRL(st.med0)],
+        ["Faixa de aceitação (±25% da mediana)", ppBRL(st.lo) + " a " + ppBRL(st.hi)], ["Desconsiderados no saneamento", String(st.excluidos)], ["Preços válidos", String(st.n)],
+        ["Média · desvio-padrão", ppBRL(st.media) + " · " + ppBRL(st.dp)], ["Coeficiente de variação", ppPct(st.cv)], ["Mediana · menor preço", ppBRL(st.mediana) + " · " + ppBRL(st.menor)],
+        ["Método adotado", st.nomeMet], ["Valor unitário estimado", ppBRL(st.valor)], ["Valor total do item", ppBRL(st.total)]] });
+      blocos.push({ t: "texto", titulo: "Justificativa do método" + (st.poucos ? " e da amostra" : ""), paragrafos: [st.justMet || "—"].concat(st.poucos ? ["Menos de três preços válidos. Justificativa do agente responsável: " + (it.just || "NÃO INFORMADA – obrigatória para submeter à autoridade competente (IN 65/2021, art. 6º).")] : []).concat(it.iaUsada ? ["A semelhança dos itens coletados foi avaliada com apoio de inteligência artificial e conferida pelo agente responsável, que pode incluir ou excluir preços com justificativa."] : []) });
+      if (d.objeto === "mao_obra") {
+        const v = ppNum(d.moValor), r = res.ratif;
+        blocos.push({ t: "pares", titulo: "Ratificação do valor da planilha (IN 5/2017)", pares: [["Valor mensal por posto na planilha", ppBRL(v)], ["Referência de mercado (" + st.nomeMet + ")", ppBRL(st.valor)],
+          ["Faixa de compatibilidade (±25%)", r ? ppBRL(r.lo) + " a " + ppBRL(r.hi) : "—"], ["Diferença", r ? ppPct(r.dif) : "—"], ["Conclusão", r ? r.conclusao : "Informe o valor da planilha e colete os preços."]] });
+      }
+    });
+    sec++;
+    blocos.push({ t: "tabela", titulo: sec++ + ". Resumo do valor estimado", cab: ["Item", "Descrição", "Unid.", "Quant.", "Método", "Valor unitário", "Valor total"], larg: [7, 46, 9, 10, 13, 17, 18], alin: "lllrlrr",
+      linhas: res.itens.map((x, i) => ({ c: [String(i + 1), x.item.desc || "", x.item.un || "", String(x.item.qtd || 1), x.st.nomeMet, ppBRL(x.st.valor), ppBRL(x.st.total)] })).concat([{ c: ["", "Valor total estimado", "", "", "", "", ppBRL(res.total)], total: true }]) });
+  }
+  blocos.push({ t: "texto", titulo: "Responsabilidade", paragrafos: ["Documento de apoio gerado pelo Licitacon a partir das fontes indicadas. A pesquisa de preços é ato do agente responsável, que deve conferir as fontes, os itens considerados semelhantes, as justificativas e o enquadramento legal antes de juntá-la ao processo. A decisão final e a responsabilidade são de quem assina a pesquisa."] });
+  notas.push("Fontes públicas consultadas: API de dados abertos do Compras.gov.br (Painel de Preços) e Portal Nacional de Contratações Públicas (PNCP), com a data da consulta e o link de cada preço.");
+  return { id: "pesquisa", titulo: "Pesquisa de preços", sub: (d.titulo || d.descricao || "Pesquisa de preços") + (d.orgao ? " · " + d.orgao : ""), selo: d.objeto === "obras" ? "Lei 14.133/2021, art. 23, §§ 2º e 3º" : "Lei 14.133/2021, art. 23 · IN SEGES/ME 65/2021",
+    arquivo: "Pesquisa de precos - " + String(d.titulo || d.descricao || "Licitacon").replace(/[\\/:*?"<>|]+/g, "-").slice(0, 60), blocos, notas, paisagem: true };
+}
+
+// Word (.doc em HTML, aberto pelo Word e pelo LibreOffice) a partir dos mesmos blocos do PDF
+function ppDocWord(doc0, hoje) {
+  const esc = (t) => String(t == null ? "" : t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const h = [];
+  h.push("<h1>" + esc(doc0.titulo) + "</h1><p class=sub>" + esc(doc0.sub) + "</p><p class=selo>" + esc(doc0.selo) + " · gerado no Licitacon em " + esc(hoje) + "</p>");
+  doc0.blocos.forEach((b) => {
+    if (b.t === "destaques") h.push("<table class=dest><tr>" + b.itens.map(([k, v]) => "<td><small>" + esc(k) + "</small><br><b>" + esc(v) + "</b></td>").join("") + "</tr></table>");
+    else if (b.t === "pares") h.push("<h2>" + esc(b.titulo) + "</h2><table class=pares>" + b.pares.map(([k, v]) => "<tr><th>" + esc(k) + "</th><td>" + esc(v) + "</td></tr>").join("") + "</table>");
+    else if (b.t === "texto") h.push("<h2>" + esc(b.titulo) + "</h2>" + b.paragrafos.map((p) => "<p>" + esc(p) + "</p>").join(""));
+    else if (b.t === "secao") h.push("<h2 class=secao>" + esc(b.titulo) + "</h2>" + (b.sub ? "<p class=sub2>" + esc(b.sub) + "</p>" : ""));
+    else if (b.t === "tabela") h.push("<h3>" + esc(b.titulo) + "</h3>" + (b.sub ? "<p class=sub2>" + esc(b.sub) + "</p>" : "") + "<table class=tab><tr>" + b.cab.map((c) => "<th>" + esc(c) + "</th>").join("") + "</tr>" +
+      b.linhas.map((l) => "<tr" + (l.total ? " class=tot" : "") + ">" + l.c.map((c, i) => "<td" + ((b.alin || "")[i] === "r" ? " style='text-align:right'" : "") + ">" + esc(c) + "</td>").join("") + "</tr>").join("") + "</table>");
+  });
+  if (doc0.notas && doc0.notas.length) h.push("<h3>Notas</h3>" + doc0.notas.map((n) => "<p class=nota>" + esc(n) + "</p>").join(""));
+  const css = "body{font-family:Calibri,Arial,sans-serif;font-size:10.5pt;color:#0B1F2A} h1{font-size:18pt;color:#0A1F2A;margin:0} h2{font-size:12.5pt;color:#0F6B7E;border-bottom:1px solid #0FA36B;padding-bottom:2pt;margin-top:16pt} h2.secao{color:#0A1F2A} h3{font-size:11pt;margin:10pt 0 4pt} p{margin:4pt 0;line-height:1.4;text-align:justify} .sub{font-size:11pt;color:#3D5058;margin:2pt 0} .selo,.sub2,.nota{font-size:9pt;color:#66757F} table{border-collapse:collapse;width:100%;margin:4pt 0} .tab th{background:#EEF3F2;font-size:8.5pt;text-align:left;border:1px solid #DDE5E4;padding:3pt} .tab td{font-size:8.5pt;border:1px solid #DDE5E4;padding:3pt;vertical-align:top} .tab tr.tot td{font-weight:bold;background:#E3F2EA} .pares th{width:38%;text-align:left;font-size:9.5pt;color:#55666D;border-bottom:1px solid #EEF2F1;padding:3pt} .pares td{border-bottom:1px solid #EEF2F1;padding:3pt} .dest td{background:#F6F8F7;border:1px solid #DDE5E4;padding:6pt} .dest b{font-size:13pt;color:#0F6B7E}";
+  return "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>" + esc(doc0.titulo) +
+    "</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]--><style>@page Section1{size:841.9pt 595.3pt;mso-page-orientation:landscape;margin:2cm 1.5cm 2cm 1.5cm} div.Section1{page:Section1} " + css + "</style></head><body><div class=Section1>" + h.join("\n") + "</div></body></html>";
+}
+
 function ctProrrog(c, si) {
   if (!si.fim) return null;
   const f = new Date(String(si.fim).slice(0, 10) + "T12:00:00Z"), ini = new Date(f); ini.setUTCMonth(ini.getUTCMonth() - 4);
@@ -6641,7 +7187,7 @@ const COMPRADORES = {
 // ===================== Contas, dados e pagamentos =====================
 // O site usa o Supabase (contas e banco) e o Mercado Pago (cobrança) quando
 // config.js está preenchido. Sem configuração, roda em modo demonstração.
-const PAGINAS = ["home", "forum", "cursos", "consultoria", "agente", "elaborar", "calculadora", "gestao", "contratos", "planos", "conta", "institucional", "login", "cadastro", "recuperar", "nova-senha"];
+const PAGINAS = ["home", "forum", "cursos", "consultoria", "agente", "elaborar", "calculadora", "gestao", "contratos", "precos", "planos", "conta", "institucional", "login", "cadastro", "recuperar", "nova-senha"];
 // Visitantes sem cadastro navegam por todas as páginas (como nas demais plataformas do setor): veem o que cada
 // área oferece, a vitrine do fórum e o catálogo de cursos; ler as respostas do fórum, usar as ferramentas e
 // contratar pedem conta. Só a Área do Assinante exige login para abrir.
@@ -6819,6 +7365,7 @@ class Component extends DCLogic {
     forumCarregando: false,
     forumErro: "",
     nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
+    pp: { iniciado: false, d: PP_PADRAO, etapa: "enq", lista: [], ocupado: "", erro: "", ok: "", id: "", excluir: "" },
     el: { doc: "", passo: 0, respostas: {}, aceite: false, enviando: false, erro: "", ok: "", docEsc: "etp", metodo: "pix", contratando: false, contErro: "" },
     calcAba: "indice",
     ct: { lista: [], eventos: {}, carregado: false, carregando: false, atual: "", form: null, ev: null, erro: "", ok: "", excluir: "" },
@@ -6886,6 +7433,7 @@ class Component extends DCLogic {
       this.setState({ acervoN: DOCS.length });
     }).catch(() => {});
     if (pIni === "gestao" || pIni === "contratos") this.ctCarregar();
+    if (pIni === "precos") this.ppIniciar();
     if (pIni === "calculadora") { this.carregarIndices(); const fIni = qsIni.get("f"); if (fIni && CALC_FERRAMENTAS.some((x) => x.id === fIni)) this.calcFerramenta(fIni); }
     this.timer = setInterval(() => {
       if (!this.state.pausado && this.state.page === "home") {
@@ -6973,6 +7521,7 @@ class Component extends DCLogic {
     if (this.state.page === "forum" && (!u || !this.podeLerForum())) this.carregarVitrine();
     if (this.state.page === "calculadora" && u) this.moCotaCarregar();
     if ((this.state.page === "calculadora" || this.state.page === "gestao" || this.state.page === "contratos") && u) this.ctCarregar(true);
+    if (this.state.page === "precos" && u) this.ppListar();
     this.tratarRetornoPagamento();
     this.carregarCursos();
   }
@@ -7054,6 +7603,334 @@ class Component extends DCLogic {
       return { el: { ...s.el, respostas, erro: "", triagemOk: false } };
     });
   };
+
+  // ------------------------------------------------------------ O Elaborador → Pesquisa de preços
+  ppLiberada() { const s = this.state; return !!s.admin || ["basico", "premium", "pro"].includes(s.plano) || !this.sb; }
+  ppIniciar() {
+    if (this.state.pp.iniciado) return;
+    let d = null; try { d = JSON.parse(localStorage.getItem("lv-pp-rascunho") || "null"); } catch (e) { d = null; }
+    this.setState((x) => ({ pp: { ...x.pp, iniciado: true, d: d ? { ...PP_PADRAO, ...d } : { ...PP_PADRAO, itens: [PP_ITEM()] } } }));
+    this.carregarIndices();
+    this.ppListar();
+  }
+  ppMudar(fn) {
+    this.setState((x) => {
+      const d = fn({ ...x.pp.d, itens: [...(x.pp.d.itens || [])] });
+      try { localStorage.setItem("lv-pp-rascunho", JSON.stringify(d)); } catch (e) {}
+      return { pp: { ...x.pp, d, erro: "", ok: "" } };
+    });
+  }
+  ppSet = (k) => (e) => { const v = e && e.target ? (e.target.type === "checkbox" ? !!e.target.checked : e.target.value) : e; this.ppMudar((d) => { d[k] = v; return d; }); };
+  ppItem(id, fn) { this.ppMudar((d) => { d.itens = d.itens.map((it) => (it.id === id ? fn({ ...it, precos: [...(it.precos || [])] }) : it)); return d; }); }
+  ppItemCampo = (id, k) => (e) => { const v = e && e.target ? (e.target.type === "checkbox" ? !!e.target.checked : e.target.value) : e; this.ppItem(id, (it) => { it[k] = v; return it; }); };
+  ppMsg(erro, ok) { this.setState((x) => ({ pp: { ...x.pp, erro: erro || "", ok: ok || "", ocupado: "" } })); }
+  async ppChamar(corpo) {
+    if (!this.sb || !this.u) throw new Error("Entre na sua conta para consultar as bases públicas.");
+    const { data, error } = await this.sb.functions.invoke("pesquisa-precos", { body: corpo });
+    if (error) throw new Error(await erroDaFuncao(error));
+    if (data && data.erro) throw new Error(data.erro);
+    return data || {};
+  }
+  async ppCatalogo(id) {
+    const it = this.state.pp.d.itens.find((x) => x.id === id); if (!it) return;
+    const texto = String(it.busca || it.desc || "").trim();
+    if (texto.length < 3) { this.ppMsg("Digite o nome do item (ou o código do catálogo) para buscar."); return; }
+    this.setState((x) => ({ pp: { ...x.pp, ocupado: "cat-" + id, erro: "" } }));
+    try { const r = await this.ppChamar({ acao: "catalogo", texto, tipo: it.tipo });
+      this.ppItem(id, (i) => { i.cands = (r.itens || []).slice(0, 12); return i; });
+      this.ppMsg((r.itens || []).length ? "" : "Nenhum item do catálogo encontrado. Tente outras palavras ou o código CATMAT/CATSER.");
+    } catch (e) { this.ppMsg(e.message); }
+  }
+  ppEscolherCat(id, c) { this.ppItem(id, (i) => { i.cod = String(c.codigo); i.codNome = c.nome; i.cands = []; if (!i.desc) i.desc = c.nome; return i; }); }
+  async ppColetar(id, fonte) {
+    const s = this.state, d = s.pp.d, it = d.itens.find((x) => x.id === id); if (!it) return;
+    if (fonte === "painel" && !it.cod) { this.ppMsg("Escolha o item no catálogo do Compras.gov.br antes de buscar no Painel de Preços."); return; }
+    if (fonte === "pncp" && String(it.desc || "").trim().length < 4) { this.ppMsg("Descreva o item para buscar contratações similares no PNCP."); return; }
+    this.setState((x) => ({ pp: { ...x.pp, ocupado: fonte + "-" + id, erro: "", ok: "" } }));
+    try {
+      const r = fonte === "painel" ? await this.ppChamar({ acao: "coletar", codigo: Number(it.cod), tipo: it.tipo, uf: d.uf, meses: 12 })
+        : await this.ppChamar({ acao: "pncp", descricao: it.desc, uf: d.uf, meses: 12 });
+      const em = new Date().toLocaleString("pt-BR");
+      const novos = (r.registros || []).map((p) => ({ ...p, consulta: r.consulta || "", coletadoEm: em, incl: true }));
+      let n = 0;
+      this.ppItem(id, (i) => { const ja = new Set(i.precos.map((p) => p.id)); novos.forEach((p) => { if (!ja.has(p.id)) { i.precos.push(p); n++; } }); return i; });
+      this.ppMsg(n ? "" : "Nenhum preço novo encontrado nesta fonte.", n ? n + " preço(s) incluído(s) de " + (fonte === "painel" ? "Painel de Preços (" + (r.abrangencia === "estado" ? d.uf : "todo o país") + ")" : "contratações similares do PNCP") + ". Confira se os itens são semelhantes." : "");
+    } catch (e) { this.ppMsg(e.message); }
+  }
+  ppManualAbrir(id) { this.ppItem(id, (i) => { i.manual = i.manual ? null : { inciso: "IV", fonteNome: "", cnpj: "", data: "", preco: "", link: "", acesso: "", just: "" }; return i; }); }
+  ppManualCampo = (id, k) => (e) => { const v = e && e.target ? e.target.value : e; this.ppItem(id, (i) => { i.manual = { ...(i.manual || {}), [k]: v }; return i; }); };
+  ppManualSalvar(id) {
+    const it = this.state.pp.d.itens.find((x) => x.id === id); const m = it && it.manual; if (!m) return;
+    const preco = ppNum(m.preco);
+    if (!(preco > 0)) { this.ppMsg("Informe o preço unitário."); return; }
+    if (!String(m.fonteNome).trim()) { this.ppMsg(m.inciso === "IV" ? "Informe o fornecedor que apresentou a cotação." : "Informe a fonte do preço."); return; }
+    if (!m.data) { this.ppMsg("Informe a data do preço (da cotação, da publicação ou da nota fiscal)."); return; }
+    if (m.inciso === "III" && !m.acesso) { this.ppMsg("Informe a data e a hora de acesso ao sítio ou à publicação (art. 23, § 1º, III)."); return; }
+    if (m.inciso === "IV" && !String(m.just).trim()) { this.ppMsg("Justifique a escolha do fornecedor consultado (art. 23, § 1º, IV; IN 65/2021, art. 5º, § 2º)."); return; }
+    const reg = { id: "mn-" + Date.now().toString(36), fonte: "manual", inciso: m.inciso, preco, data: m.data, unidade: it.un || "", orgao: m.inciso === "IV" ? "" : m.fonteNome, fornecedor: m.inciso === "IV" || m.inciso === "V" ? m.fonteNome : "",
+      cnpj: m.cnpj, link: m.link, acesso: m.acesso ? m.acesso.replace("T", " ") : "", fonteNome: m.fonteNome, descricao: m.just ? "Justificativa: " + m.just : "", incl: true, uf: "" };
+    this.ppItem(id, (i) => { i.precos.push(reg); i.manual = null; return i; });
+  }
+  ppPrecoIncl(id, pid, v) { this.ppItem(id, (i) => { i.precos = i.precos.map((p) => (p.id === pid ? { ...p, incl: v, motivoExcl: v ? "" : (p.ia && !p.ia.semelhante ? "Não semelhante (filtro por IA, conferido pelo agente): " + p.ia.motivo : "") } : p)); return i; }); }
+  ppPrecoDel(id, pid) { this.ppItem(id, (i) => { i.precos = i.precos.filter((p) => p.id !== pid); return i; }); }
+  ppTodos(id, v) { this.ppItem(id, (i) => { i.precos = i.precos.map((p) => ({ ...p, incl: v })); return i; }); }
+  async ppFiltrarIA(id) {
+    const it = this.state.pp.d.itens.find((x) => x.id === id); if (!it) return;
+    const regs = it.precos.filter((p) => p.fonte !== "manual").slice(0, 80).map((p) => ({ id: p.id, descricao: p.descricao, unidade: p.unidade, preco: p.preco }));
+    if (!regs.length) { this.ppMsg("Colete os preços no Painel de Preços ou no PNCP antes de filtrar com IA."); return; }
+    this.setState((x) => ({ pp: { ...x.pp, ocupado: "ia-" + id, erro: "", ok: "" } }));
+    try {
+      const r = await this.ppChamar({ acao: "ia_similares", descricao: [it.desc, it.codNome].filter(Boolean).join(" · "), unidade: it.un, registros: regs });
+      const mapa = {}; (r.avaliacao || []).forEach((a) => { mapa[a.id] = a; });
+      let fora = 0;
+      this.ppItem(id, (i) => { i.iaUsada = true; i.precos = i.precos.map((p) => { const a = mapa[p.id]; if (!a) return p; if (!a.semelhante) fora++;
+        return { ...p, ia: { semelhante: !!a.semelhante, motivo: a.motivo || "" }, incl: a.semelhante ? p.incl : false, motivoExcl: a.semelhante ? p.motivoExcl : "Não semelhante (filtro por IA, conferido pelo agente): " + (a.motivo || "") }; }); return i; });
+      this.ppMsg("", "Filtro por IA concluído: " + fora + " preço(s) marcado(s) como não semelhante(s) e desmarcado(s). Confira e, se discordar, marque de novo.");
+    } catch (e) { this.ppMsg(e.message); }
+  }
+  async ppRilc(e) {
+    const f = e && e.target && e.target.files && e.target.files[0]; if (e && e.target) try { e.target.value = ""; } catch (er) {}
+    if (!f) return;
+    if (!/\.pdf$/i.test(f.name)) { this.ppMsg("Envie o regulamento em PDF."); return; }
+    if (f.size > 20 * 1024 * 1024) { this.ppMsg("O arquivo passa de 20 MB."); return; }
+    if (!this.sb || !this.u) { this.ppMsg("Entre na sua conta para enviar o regulamento."); return; }
+    this.setState((x) => ({ pp: { ...x.pp, ocupado: "rilc", erro: "", ok: "" } }));
+    const caminho = this.u.id + "/pp/" + Date.now().toString(36) + "-regulamento.pdf";
+    const up = await this.sb.storage.from("analises").upload(caminho, f, { upsert: false, contentType: "application/pdf" });
+    if (up.error) { this.ppMsg("Não foi possível enviar o arquivo. Tente de novo."); return; }
+    try { const r = await this.ppChamar({ acao: "ia_rilc", arquivo: caminho });
+      this.ppMudar((d) => { d.rilc = r.regras || null; d.rilcNome = f.name; return d; });
+      this.ppMsg("", r.regras && r.regras.encontrado ? "Regras do regulamento identificadas. Confira no texto do regulamento." : "O regulamento não parece tratar da pesquisa de preços: aplique as regras gerais e registre isso na justificativa.");
+    } catch (er) { this.ppMsg(er.message); }
+  }
+  async ppObrasArquivo(e) {
+    const f = e && e.target && e.target.files && e.target.files[0]; if (e && e.target) try { e.target.value = ""; } catch (er) {}
+    if (!f) return;
+    if (!/\.xlsx$/i.test(f.name)) { this.ppMsg("Envie a planilha do orçamento em Excel (.xlsx)."); return; }
+    this.setState((x) => ({ pp: { ...x.pp, ocupado: "obras", erro: "", ok: "" } }));
+    try {
+      if (!window.ExcelJS) await carregarScript(baseSite() + "vendor/exceljs-4.4.0.min.js");
+      const wb = new window.ExcelJS.Workbook(); await wb.xlsx.load(await f.arrayBuffer());
+      const ws = wb.worksheets.find((w) => w.rowCount > 3) || wb.worksheets[0];
+      const val = (c) => { const v = c && c.value; if (v == null) return ""; if (typeof v === "object") return v.result != null ? v.result : v.richText ? v.richText.map((t) => t.text).join("") : v.text || ""; return v; };
+      const norm = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
+      const ALVO = { item: /^(item|n[º°o.]?|seq)/, cod: /cod|codigo/, fonte: /fonte|banco|base|referencia|tabela|origem/, desc: /descri|discrimina|servico/, un: /^(un|und|unid)/, qtd: /quant|qtd|qtde/, unit: /(unit|unitario)/, total: /total|parcial|subtotal/ };
+      let cab = null, mapa = {};
+      for (let r = 1; r <= Math.min(40, ws.rowCount); r++) {
+        const m = {}; ws.getRow(r).eachCell({ includeEmpty: false }, (c, col) => { const t = norm(val(c)); if (!t || t.length > 40) return;
+          Object.entries(ALVO).forEach(([k, re]) => { if (m[k] == null && re.test(t) && !(k === "total" && /unit/.test(t)) && !(k === "desc" && /cod/.test(t))) m[k] = col; }); });
+        if (m.desc && m.qtd && (m.unit || m.total)) { cab = r; mapa = m; break; }
+      }
+      if (!cab) { this.ppMsg("Não encontrei o cabeçalho do orçamento. A planilha precisa de colunas com títulos como Item, Código, Fonte, Descrição, Unidade, Quantidade, Preço unitário e Total."); return; }
+      const linhas = [];
+      for (let r = cab + 1; r <= ws.rowCount && linhas.length < 3000; r++) {
+        const row = ws.getRow(r), g = (k) => (mapa[k] ? val(row.getCell(mapa[k])) : "");
+        const desc = String(g("desc") || "").trim(), qtd = g("qtd"), unit = g("unit"), total = g("total");
+        if (!desc || (ppNum(qtd) == null && ppNum(unit) == null)) continue;   // títulos de etapa, subtotais e linhas vazias
+        linhas.push({ item: String(g("item") || ""), cod: String(g("cod") || "").trim(), fonte: String(g("fonte") || "").trim(), desc, un: String(g("un") || "").trim(), qtd, unit, total });
+      }
+      if (!linhas.length) { this.ppMsg("Nenhuma linha de serviço com quantidade e preço foi encontrada abaixo do cabeçalho."); return; }
+      const achou = Object.keys(mapa);
+      this.ppMudar((d) => { d.ob = { linhas, colunas: achou }; d.obNome = f.name; return d; });
+      this.ppMsg("", linhas.length + " itens lidos de " + f.name + "." + (achou.includes("fonte") ? "" : " A planilha não tem coluna de fonte: todos os itens serão tratados como sem referência declarada.") + (achou.includes("cod") ? "" : " Sem coluna de código."));
+    } catch (er) { this.ppMsg("Não foi possível ler a planilha (" + String(er.message || er).slice(0, 80) + ")."); }
+  }
+  ppUsarPlanilha() {
+    let plan = null; try { plan = this.moCarregar("planejamento"); } catch (e) { plan = null; }
+    const r = plan ? moCalcular(moDerivado(plan), "planejamento", null) : null;
+    if (!r || !r.posto) { this.ppMsg("A Planilha 1 da Calculadora está vazia. Monte a planilha de custos lá primeiro."); return; }
+    this.ppMudar((d) => { d.moValor = String(r.posto.toFixed(2)).replace(".", ","); d.moPostos = String(plan.postos || d.moPostos || "1"); d.moFonte = "Planilha 1 da Calculadora" + (plan.categoria ? " – " + plan.categoria : "");
+      if (d.itens[0] && !d.itens[0].desc) d.itens[0] = { ...d.itens[0], desc: plan.categoria || "", un: "posto/mês", tipo: "servico" }; return d; });
+  }
+  ppResultado() {
+    const d = this.state.pp.d, idx = this.state.indices, hoje = new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10);
+    const itens = d.objeto === "obras" ? [] : (d.objeto === "mao_obra" ? d.itens.slice(0, 1) : d.itens).map((item) => ({ item, st: ppEstat(item, idx, hoje) }));
+    let total = itens.reduce((a, x) => a + (x.st.total || 0), 0), ratif = null;
+    if (d.objeto === "mao_obra" && itens[0]) {
+      const v = ppNum(d.moValor), ref = itens[0].st.valor, postos = ppNum(d.moPostos) || 1;
+      if (v && ref) { const lo = ref * (1 - PP_FAIXA), hi = ref * (1 + PP_FAIXA), dif = v / ref - 1;
+        ratif = { lo, hi, dif, ok: v >= lo && v <= hi, conclusao: v >= lo && v <= hi ? "Valor da planilha compatível com o mercado (dentro de ±25% da referência). A planilha fica ratificada." : v > hi ? "Valor da planilha mais de 25% acima da referência de mercado: revisar os módulos da planilha (benefícios, insumos, custos indiretos, lucro e tributos) e justificar." : "Valor da planilha mais de 25% abaixo da referência de mercado: conferir se todos os custos legais e da convenção coletiva foram considerados, para evitar propostas inexequíveis." }; }
+      total = v ? v * postos * 12 : 0;
+      if (itens[0]) itens[0] = { ...itens[0], item: { ...itens[0].item, qtd: String(postos) } };
+    }
+    const obras = d.objeto === "obras" ? ppObras(d, hoje) : null;
+    return { itens, total, ratif, obras, hoje };
+  }
+  async ppPdf() { const res = this.ppResultado(), hoje = new Date().toLocaleDateString("pt-BR"); await this.moDocPdf(ppDocumento(this.state.pp.d, res, hoje), "Pesquisa de preços", hoje); }
+  async ppExcel() { const res = this.ppResultado(), hoje = new Date().toLocaleDateString("pt-BR"); await this.moDocExcel(ppDocumento(this.state.pp.d, res, hoje), "Pesquisa de preços", hoje); }
+  ppWord() {
+    const res = this.ppResultado(), hoje = new Date().toLocaleDateString("pt-BR"), doc0 = ppDocumento(this.state.pp.d, res, hoje);
+    const blob = new Blob(["﻿" + ppDocWord(doc0, hoje)], { type: "application/msword" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = doc0.arquivo + ".doc"; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+  }
+  async ppListar() {
+    if (!this.sb) { let l = []; try { l = JSON.parse(localStorage.getItem("lv-pp-salvas") || "[]") || []; } catch (e) { l = []; } this.setState((x) => ({ pp: { ...x.pp, lista: l } })); return; }
+    if (!this.u) return;
+    const { data } = await this.sb.from("pesquisas_preco").select("id, titulo, regime, objeto_tipo, valor_total, atualizado_em").order("atualizado_em", { ascending: false }).limit(50);
+    this.setState((x) => ({ pp: { ...x.pp, lista: data || [] } }));
+  }
+  async ppSalvar() {
+    const d = this.state.pp.d, res = this.ppResultado();
+    const titulo = String(d.titulo || d.descricao || "").trim();
+    if (!titulo) { this.ppMsg("Dê um título à pesquisa (etapa 1) antes de salvar."); return null; }
+    const valor = d.objeto === "obras" ? (res.obras ? res.obras.total : null) : res.total;
+    const linha = { titulo: titulo.slice(0, 200), regime: d.regime, objeto_tipo: d.objeto, valor_total: valor ? Math.round(valor * 100) / 100 : null, dados: d };
+    if (!this.sb) {
+      let l = []; try { l = JSON.parse(localStorage.getItem("lv-pp-salvas") || "[]") || []; } catch (e) { l = []; }
+      const id = this.state.pp.id || "demo-" + Date.now().toString(36);
+      l = [{ id, ...linha, atualizado_em: new Date().toISOString() }].concat(l.filter((x) => x.id !== id)).slice(0, 50);
+      try { localStorage.setItem("lv-pp-salvas", JSON.stringify(l)); } catch (e) {}
+      this.setState((x) => ({ pp: { ...x.pp, id, lista: l, ok: "✓ Pesquisa salva.", erro: "" } })); return id;
+    }
+    const id = this.state.pp.id;
+    const q = id ? this.sb.from("pesquisas_preco").update(linha).eq("id", id).select("id").single() : this.sb.from("pesquisas_preco").insert(linha).select("id").single();
+    const { data, error } = await q;
+    if (error) { this.ppMsg("Não foi possível salvar: " + error.message); return null; }
+    this.setState((x) => ({ pp: { ...x.pp, id: data.id, ok: "✓ Pesquisa salva na sua conta.", erro: "" } }));
+    this.ppListar(); return data.id;
+  }
+  async ppAbrir(id) {
+    let reg = null;
+    if (!this.sb) { reg = (this.state.pp.lista || []).find((x) => x.id === id); }
+    else { const { data } = await this.sb.from("pesquisas_preco").select("id, dados").eq("id", id).single(); reg = data; }
+    if (!reg) { this.ppMsg("Pesquisa não encontrada."); return; }
+    const d = { ...PP_PADRAO, ...(reg.dados || {}) };
+    try { localStorage.setItem("lv-pp-rascunho", JSON.stringify(d)); } catch (e) {}
+    this.setState((x) => ({ pp: { ...x.pp, d, id: reg.id, etapa: "enq", erro: "", ok: "Pesquisa aberta." } }));
+    try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {}
+  }
+  async ppExcluir(id) {
+    if (this.state.pp.excluir !== id) { this.setState((x) => ({ pp: { ...x.pp, excluir: id } })); return; }
+    if (!this.sb) { const l = (this.state.pp.lista || []).filter((x) => x.id !== id); try { localStorage.setItem("lv-pp-salvas", JSON.stringify(l)); } catch (e) {} this.setState((x) => ({ pp: { ...x.pp, lista: l, excluir: "" } })); return; }
+    await this.sb.from("pesquisas_preco").delete().eq("id", id);
+    this.setState((x) => ({ pp: { ...x.pp, excluir: "", id: x.pp.id === id ? "" : x.pp.id } })); this.ppListar();
+  }
+  ppNova() {
+    const d = { ...PP_PADRAO, itens: [PP_ITEM()] };
+    try { localStorage.setItem("lv-pp-rascunho", JSON.stringify(d)); } catch (e) {}
+    this.setState((x) => ({ pp: { ...x.pp, d, id: "", etapa: "enq", erro: "", ok: "" } }));
+  }
+  async ppLevar() {
+    const d = this.state.pp.d, res = this.ppResultado(), obras = d.objeto === "obras";
+    const texto = ppTextoTR(d, res);
+    if (!texto || (!obras && !res.total)) { this.ppMsg("Conclua a pesquisa (com ao menos um item com valor estimado) antes de levar ao documento."); return; }
+    const id = await this.ppSalvar();
+    const doc = obras ? "projeto_basico" : "tr", campo = obras ? "orcamento" : "valor";
+    let rasc = {}; try { rasc = JSON.parse(localStorage.getItem("lv-elab-" + doc) || "{}") || {}; } catch (e) { rasc = {}; }
+    rasc[campo] = texto; rasc.pesquisa_precos_id = id || "";
+    if (!rasc.objeto && (d.descricao || d.titulo)) rasc.objeto = d.descricao || d.titulo;
+    if (!rasc.uf && d.uf) rasc.uf = d.uf;
+    try { localStorage.setItem("lv-elab-" + doc, JSON.stringify(rasc)); } catch (e) {}
+    this.ppMsg("", "✓ Resultado levado ao " + (obras ? "Projeto Básico (alínea f, orçamento detalhado)" : "Termo de Referência (alínea i, estimativa do valor)") + ". Ao preencher o documento no Elaborador, o campo já vem preenchido com o valor e a metodologia.");
+  }
+  ppProps() {
+    const s = this.state, pp = s.pp, d = pp.d || PP_PADRAO, ocup = pp.ocupado || "";
+    const lib = this.ppLiberada();
+    const op = (lista, atual, k) => lista.map(([id, nome, sub]) => ({ nome, sub: sub || "", ativo: atual === id, cls: "pp-op" + (atual === id ? " ativo" : ""), escolher: () => this.ppSet(k)(id) }));
+    const etapas = [["enq", "1. Enquadramento"], ["dados", d.objeto === "obras" ? "2. Orçamento da obra" : d.objeto === "mao_obra" ? "2. Ratificação da planilha" : "2. Coleta e tratamento dos preços"], ["rel", "3. Relatório"]];
+    const etapa = pp.etapa || "enq";
+    const res = lib && pp.iniciado ? this.ppResultado() : { itens: [], total: 0, obras: null, ratif: null };
+    const sitRot = { ok: "Válido", inex: "Inexequível", exc: "Excessivo", fora: "Desconsiderado" };
+    const itensView = res.itens.map(({ item: it, st }, idx) => ({
+      id: it.id, n: idx + 1, desc: it.desc, un: it.un, qtd: it.qtd, busca: it.busca, cod: it.cod, codNome: it.codNome, temCod: !!it.cod,
+      tipos: [["material", "Material (CATMAT)"], ["servico", "Serviço (CATSER)"]].map(([id, nome]) => ({ nome, cls: "pp-op pp-op-p" + (it.tipo === id ? " ativo" : ""), escolher: () => this.ppItem(it.id, (i) => { i.tipo = id; i.cod = ""; i.codNome = ""; i.cands = []; return i; }) })),
+      onDesc: this.ppItemCampo(it.id, "desc"), onUn: this.ppItemCampo(it.id, "un"), onQtd: this.ppItemCampo(it.id, "qtd"), onBusca: this.ppItemCampo(it.id, "busca"),
+      buscarCat: () => this.ppCatalogo(it.id), buscandoCat: ocup === "cat-" + it.id, temCands: (it.cands || []).length > 0,
+      cands: (it.cands || []).map((c) => ({ txt: (c.tipo === "servico" ? "CATSER " : "PDM ") + c.codigo + " – " + c.nome, escolher: () => this.ppEscolherCat(it.id, c) })),
+      limparCod: () => this.ppItem(it.id, (i) => { i.cod = ""; i.codNome = ""; return i; }),
+      coletarPainel: () => this.ppColetar(it.id, "painel"), coletarPncp: () => this.ppColetar(it.id, "pncp"),
+      txtPainel: ocup === "painel-" + it.id ? "Buscando no Painel de Preços…" : "Buscar no Painel de Preços (inciso I)",
+      txtPncp: ocup === "pncp-" + it.id ? "Buscando no PNCP… (até 1 minuto)" : "Buscar contratações similares no PNCP (inciso II)",
+      filtrarIA: () => this.ppFiltrarIA(it.id), txtIA: ocup === "ia-" + it.id ? "Avaliando com IA…" : "Filtrar itens semelhantes com IA",
+      temPrecos: st.coletados > 0, semPrecos: st.coletados === 0,
+      todos: () => this.ppTodos(it.id, true), nenhum: () => this.ppTodos(it.id, false),
+      manualAberto: !!it.manual, manualAbrir: () => this.ppManualAbrir(it.id), manualSalvar: () => this.ppManualSalvar(it.id),
+      mIncisos: [["III", "III · Mídia ou sítio"], ["IV", "IV · Cotação com fornecedor"], ["V", "V · Nota fiscal"]].map(([id, nome]) => ({ nome, cls: "pp-op pp-op-p" + (it.manual && it.manual.inciso === id ? " ativo" : ""), escolher: () => this.ppManualCampo(it.id, "inciso")(id) })),
+      mFonte: it.manual ? it.manual.fonteNome : "", mCnpj: it.manual ? it.manual.cnpj : "", mData: it.manual ? it.manual.data : "", mPreco: it.manual ? it.manual.preco : "", mLink: it.manual ? it.manual.link : "", mAcesso: it.manual ? it.manual.acesso : "", mJust: it.manual ? it.manual.just : "",
+      mFonteRot: it.manual && it.manual.inciso === "IV" ? "Fornecedor consultado" : it.manual && it.manual.inciso === "V" ? "Emitente da nota fiscal" : "Fonte (publicação ou sítio)",
+      mEhIII: !!(it.manual && it.manual.inciso === "III"), mEhIV: !!(it.manual && it.manual.inciso === "IV"),
+      onMFonte: this.ppManualCampo(it.id, "fonteNome"), onMCnpj: this.ppManualCampo(it.id, "cnpj"), onMData: this.ppManualCampo(it.id, "data"), onMPreco: this.ppManualCampo(it.id, "preco"), onMLink: this.ppManualCampo(it.id, "link"), onMAcesso: this.ppManualCampo(it.id, "acesso"), onMJust: this.ppManualCampo(it.id, "just"),
+      precos: st.precos.map((p) => ({ id: p.id, incl: p.incl !== false, alternar: (e) => this.ppPrecoIncl(it.id, p.id, !!e.target.checked), remover: () => this.ppPrecoDel(it.id, p.id),
+        inciso: p.inciso, origem: [p.orgao, p.municipio && p.uf ? p.municipio + "/" + p.uf : p.uf].filter(Boolean).join(" · ") || p.fonteNome || "", forn: p.fornecedor || "", desc: String(p.descricao || "").slice(0, 160),
+        data: ppData(p.data), un: p.unidade, preco: ppBRL(p.preco), atual: p.fator && Math.abs(p.fator - 1) > 0.0005 ? ppBRL(p.atual) : "", link: p.link || "", temLink: !!p.link,
+        sit: sitRot[p.sit] || "", sitCls: "pp-sit pp-sit-" + p.sit, motivo: p.motivo || "", alerta: p.alerta || "", temAlerta: !!p.alerta,
+        ia: p.ia ? (p.ia.semelhante ? "IA: semelhante" : "IA: não semelhante") + (p.ia.motivo ? " – " + p.ia.motivo : "") : "", temIa: !!p.ia, iaCls: "pp-ia" + (p.ia && !p.ia.semelhante ? " nao" : ""),
+        cls: "pp-pl" + (p.sit === "ok" ? "" : " fora") })),
+      restrito: !!it.restrito, onRestrito: this.ppItemCampo(it.id, "restrito"),
+      metodos: [["auto", "Automático (pelo coeficiente de variação)"], ["media", "Média"], ["mediana", "Mediana"], ["menor", "Menor preço"]].map(([id, nome]) => ({ id, nome, sel: (it.metodo || "auto") === id })),
+      onMetodo: this.ppItemCampo(it.id, "metodo"),
+      kpis: [["Coletados / selecionados", st.coletados + " / " + st.selecionados], ["Mediana dos selecionados", ppBRL(st.med0)], ["Faixa de ±25%", st.lo != null ? ppBRL(st.lo) + " a " + ppBRL(st.hi) : "—"],
+        ["Válidos", String(st.n)], ["Média · desvio", ppBRL(st.media) + " · " + ppBRL(st.dp)], ["Coef. de variação", ppPct(st.cv)], ["Método", st.n ? st.nomeMet : "—"]].map(([k, v]) => ({ k, v })),
+      valor: ppBRL(st.valor), total: ppBRL(st.total), justMet: st.justMet, poucos: st.coletados > 0 && st.poucos, just: it.just, onJust: this.ppItemCampo(it.id, "just"),
+      semPrioritario: st.semPrioritario, remover: () => this.ppMudar((dd) => { dd.itens = dd.itens.filter((x) => x.id !== it.id); return dd; }), podeRemover: d.objeto !== "mao_obra" && d.itens.length > 1,
+    }));
+    const o = res.obras;
+    const fund = ppFundamentos(d);
+    return {
+      ppLiberada: lib, ppBloqueada: !lib, ppIniciado: !!pp.iniciado,
+      ppBloqTexto: s.usuario ? "A pesquisa de preços está nos planos Básico, Premium e Pro. Escolha um plano para usar." : "Entre na sua conta ou crie uma: a pesquisa de preços está nos planos Básico, Premium e Pro.",
+      ppBloqCta: s.usuario ? "Ver os planos" : "Entrar", ppBloqAcao: s.usuario ? this.nav("planos") : () => { this.setState({ volta: "precos" }); this.irPara("login"); },
+      goElaborarInicio: this.nav("elaborar"),
+      ppErro: pp.erro || "", ppOk: pp.ok || "",
+      ppEtapas: etapas.map(([id, nome]) => ({ nome, cls: "pp-et" + (etapa === id ? " ativo" : ""), ir: () => { this.setState((x) => ({ pp: { ...x.pp, etapa: id, erro: "", ok: "" } })); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} } })),
+      ppEtEnq: etapa === "enq", ppEtDados: etapa === "dados", ppEtRel: etapa === "rel",
+      ppIrDados: () => { if (!String(d.titulo || "").trim()) { this.ppMsg("Dê um título à pesquisa."); return; } this.setState((x) => ({ pp: { ...x.pp, etapa: "dados", erro: "", ok: "" } })); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} },
+      ppIrRel: () => { this.setState((x) => ({ pp: { ...x.pp, etapa: "rel", erro: "", ok: "" } })); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} },
+      // lista de pesquisas salvas
+      ppTemLista: (pp.lista || []).length > 0,
+      ppLista: (pp.lista || []).map((x) => ({ titulo: x.titulo, sub: [{ "14133": "Lei 14.133", "13303": "Lei 13.303", "13019": "Lei 13.019" }[x.regime], { bens: "bens e serviços", mao_obra: "mão de obra", obras: "obras" }[x.objeto_tipo], x.valor_total != null ? ppBRL(Number(x.valor_total)) : "", x.atualizado_em ? new Date(x.atualizado_em).toLocaleDateString("pt-BR") : ""].filter(Boolean).join(" · "),
+        atual: pp.id === x.id, abrir: () => this.ppAbrir(x.id), excluir: () => this.ppExcluir(x.id), excluirTxt: pp.excluir === x.id ? "Confirmar" : "Excluir" })),
+      ppNova: () => this.ppNova(), ppSalvar: () => this.ppSalvar(),
+      // etapa 1
+      ppTitulo: d.titulo, onPpTitulo: this.ppSet("titulo"), ppProcesso: d.processo, onPpProcesso: this.ppSet("processo"), ppOrgao: d.orgao, onPpOrgao: this.ppSet("orgao"),
+      ppAgente: d.agente, onPpAgente: this.ppSet("agente"), ppCargo: d.cargo, onPpCargo: this.ppSet("cargo"), ppMunicipio: d.municipio, onPpMunicipio: this.ppSet("municipio"),
+      ppUfs: [""].concat("AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".split(" ")).map((u) => ({ u, nome: u || "UF", sel: d.uf === u })), onPpUf: this.ppSet("uf"),
+      ppDescricao: d.descricao, onPpDescricao: this.ppSet("descricao"),
+      ppRegimes: op([["14133", "Lei 14.133/2021", "administração direta, autárquica e fundacional"], ["13303", "Lei 13.303/2016", "empresas públicas e sociedades de economia mista"], ["13019", "Lei 13.019/2014", "parcerias com organizações da sociedade civil"]], d.regime, "regime"),
+      ppEh14133: d.regime === "14133", ppEh13303: d.regime === "13303", ppEh13019: d.regime === "13019",
+      ppOrigens: op([["uniao", "Órgão ou entidade federal"], ["transf", "Estado, DF ou município com recursos de transferência voluntária da União"], ["proprio", "Estado, DF ou município com recursos próprios"]], d.origem, "origem"),
+      ppEsferas: op([["federal", "Parceria federal (Decreto 8.726/2016)"], ["outra", "Parceria estadual, distrital ou municipal"]], d.esfera13019, "esfera13019"),
+      ppNormaRot: d.regime === "13303" ? "Regulamento interno de licitações e contratos (nome e artigos sobre pesquisa de preços)" : d.regime === "13019" ? "Regulamento do ente para as parcerias (se houver)" : "Decreto ou regulamento do ente sobre pesquisa de preços e tabelas de referência",
+      ppNormaDica: d.regime === "13303" ? "Ex.: RILC da Companhia X, arts. 30 a 34." : "Ex.: Decreto municipal nº 000/2024, que adota a tabela EMOP como prioritária.",
+      ppNorma: d.norma, onPpNorma: this.ppSet("norma"),
+      ppRilcTxt: ocup === "rilc" ? "Lendo o regulamento com IA…" : d.rilcNome ? "Ler outro regulamento (PDF)" : "Enviar o regulamento em PDF e ler as regras com IA",
+      ppOnRilc: (e) => this.ppRilc(e), ppTemRilc: !!d.rilc,
+      ppRilc: d.rilc ? [["Encontrou regras de pesquisa de preços", d.rilc.encontrado ? "Sim" : "Não"], ["Método", d.rilc.metodo], ["Quantidade mínima de preços", d.rilc.minimo_precos], ["Validade das cotações", d.rilc.validade_cotacoes],
+        ["Exclusão de preços", d.rilc.criterio_exclusao], ["Obras e engenharia", d.rilc.obras], ["Sigilo do orçamento", d.rilc.sigilo]].filter(([, v]) => v).map(([k, v]) => ({ k, v }))
+        .concat((d.rilc.parametros || []).map((p) => ({ k: "Fonte: " + p.fonte, v: [p.prioridade, p.requisitos, p.dispositivo].filter(Boolean).join(" · ") })))
+        .concat((d.rilc.observacoes || []).map((t) => ({ k: "Observação", v: t }))) : [],
+      ppObjetos: op([["bens", "Bens e serviços comuns", "coleta de preços pelos parâmetros do art. 23, § 1º"], ["mao_obra", "Serviço com dedicação exclusiva de mão de obra", "ratifica a planilha da IN 5/2017"], ["obras", "Obras e serviços de engenharia", "análise da planilha de orçamento enviada"]], d.objeto, "objeto"),
+      ppFund: fund.map((t) => ({ t })),
+      // etapa 2
+      ppEhBens: d.objeto === "bens", ppEhMo: d.objeto === "mao_obra", ppEhObras: d.objeto === "obras", ppNaoObras: d.objeto !== "obras",
+      ppItens: itensView, ppNovoItem: () => this.ppMudar((dd) => { dd.itens = dd.itens.concat([PP_ITEM()]); return dd; }),
+      ppTotal: ppBRL(res.total), ppTemTotal: res.total > 0,
+      ppPrecisaJustPrior: res.itens.some((x) => x.st.semPrioritario), ppJustPrior: d.justPrioritarios, onPpJustPrior: this.ppSet("justPrioritarios"),
+      ppMoValor: d.moValor, onPpMoValor: this.ppSet("moValor"), ppMoPostos: d.moPostos, onPpMoPostos: this.ppSet("moPostos"), ppMoFonte: d.moFonte, ppUsarPlanilha: () => this.ppUsarPlanilha(),
+      ppTemRatif: !!res.ratif, ppRatifTxt: res.ratif ? res.ratif.conclusao : "", ppRatifCls: "pp-ratif" + (res.ratif && res.ratif.ok ? " ok" : " alerta"),
+      ppRatifKpis: res.ratif ? [["Planilha (por posto/mês)", ppBRL(ppNum(d.moValor))], ["Referência de mercado", ppBRL(res.itens[0] && res.itens[0].st.valor)], ["Faixa de compatibilidade", ppBRL(res.ratif.lo) + " a " + ppBRL(res.ratif.hi)], ["Diferença", ppPct(res.ratif.dif)]].map(([k, v]) => ({ k, v })) : [],
+      ppOnObras: (e) => this.ppObrasArquivo(e), ppObrasTxt: ocup === "obras" ? "Lendo a planilha…" : d.obNome ? "Trocar a planilha (" + d.obNome + ")" : "Enviar a planilha do orçamento (.xlsx)",
+      ppObBdi: d.obBdi, onPpObBdi: this.ppSet("obBdi"), ppObEncargos: d.obEncargos, onPpObEncargos: this.ppSet("obEncargos"), ppObDataBase: d.obDataBase, onPpObDataBase: this.ppSet("obDataBase"), ppObTabelas: d.obTabelas, onPpObTabelas: this.ppSet("obTabelas"),
+      ppObTipos: PP_TIPOS_OBRA.map(([id, nome]) => ({ id, nome, sel: d.obTipo === id })), onPpObTipo: this.ppSet("obTipo"),
+      ppObDeson: op([["nao", "Sem desoneração"], ["sim", "Com desoneração"]], d.obDeson, "obDeson"),
+      ppTemObras: !!o, ppObKpis: o ? [["Itens", String(o.linhas.length)], ["Valor global", ppBRL(o.total)], ["Itens da classe A", String(o.classeA.length)], ["Sem referência oficial", String(o.semFonte.length)], ["Apontamentos", String(o.apontamentos.length)]].map(([k, v]) => ({ k, v })) : [],
+      ppObAps: o ? o.apontamentos.map((a) => ({ cls: "pp-ap pp-ap-" + a.g, g: { alta: "Gravidade alta", media: "Gravidade média", baixa: "Gravidade baixa" }[a.g], t: a.t, d: a.d, f: a.f, p: a.p, itens: (a.itens || []).map((x) => ({ x })), temItens: !!(a.itens && a.itens.length) })) : [],
+      ppObAbc: o ? o.classeA.slice(0, 25).map((l) => ({ item: l.item || l.n, cod: l.cod, fonte: l.fonte, desc: String(l.desc).slice(0, 90), total: ppBRL(l.totalN), acum: ppPct(l.acum, 1) })) : [],
+      ppObBdiTxt: o ? o.bdiTxt : "",
+      // etapa 3
+      ppResumo: (d.objeto === "obras"
+        ? [["Valor global do orçamento", ppBRL(o ? o.total : null)], ["Apontamentos", o ? String(o.apontamentos.length) : "—"], ["Regime", d.regime]]
+        : [["Valor total estimado", ppBRL(res.total)], ["Itens", String(res.itens.length)], ["Preços válidos", String(res.itens.reduce((a, x) => a + x.st.n, 0))]]).map(([k, v]) => ({ k, v })),
+      ppPendencias: [].concat(res.itens.filter((x) => x.st.poucos && !String(x.item.just || "").trim()).map((x) => "Item “" + (x.item.desc || "sem descrição") + "”: menos de três preços válidos sem justificativa (IN 65/2021, art. 6º)."))
+        .concat(res.itens.some((x) => x.st.semPrioritario) && !String(d.justPrioritarios || "").trim() && d.regime === "14133" ? ["Sem preços do Painel de Preços ou de contratações similares em algum item: justifique (IN 65/2021, art. 5º, § 1º)."] : [])
+        .concat(!d.agente ? ["Informe o agente responsável pela pesquisa (IN 65/2021, art. 3º)."] : [])
+        .concat(d.objeto === "obras" && !o ? ["Envie a planilha do orçamento da obra."] : [])
+        .concat(d.objeto === "mao_obra" && !ppNum(d.moValor) ? ["Informe o valor mensal por posto da planilha de custos."] : []).map((t) => ({ t })),
+      ppPdf: () => this.ppPdf(), ppExcel: () => this.ppExcel(), ppWord: () => this.ppWord(), ppLevar: () => this.ppLevar(),
+      ppLevarTxt: d.objeto === "obras" ? "Levar ao Projeto Básico (orçamento)" : "Levar ao Termo de Referência",
+      ppTextoTR: ppTextoTR(d, res),
+    };
+  }
 
   async elSubir(e, rot, aceitos, maxMb) {
     const f = e && e.target && e.target.files && e.target.files[0];
@@ -7651,6 +8528,7 @@ class Component extends DCLogic {
     if (destino === "agente" && this.u) this.carregarDados({ leve: true });
     if (destino === "calculadora") { this.carregarIndices(); this.moCotaCarregar(); this.ctCarregar(); }
     if (destino === "gestao" || destino === "contratos") this.ctCarregar();
+    if (destino === "precos") this.ppIniciar();
   }
 
   nav = (page) => () => this.irPara(page);
@@ -8867,6 +9745,8 @@ class Component extends DCLogic {
           row.getCell(1).font = { bold: true, size: 10, color: { argb: X.fraco } }; row.getCell(meio + 1).alignment = { wrapText: true, vertical: "middle" }; row.getCell(1).border = { bottom: fino }; row.getCell(meio + 1).border = { bottom: fino };
           row.height = altura(v, totalLarg / 2, 14); }); ws.addRow([]); return; }
       if (b.t === "legenda") { const row = faixa(b.texto, { size: 9, italic: true, cor: X.fraco }); row.getCell(1).fill = fill(X.ambar); ws.addRow([]); return; }
+      if (b.t === "secao") { faixa(b.titulo, { bold: true, size: 13, cor: X.texto, fundo: X.tot, alt: 24 }); if (b.sub) faixa(b.sub, { size: 9.5, italic: true, cor: X.fraco }); return; }
+      if (b.t === "quebra" || b.t === "cascata") return;
       if (b.t === "texto") { faixa(b.titulo, { bold: true, cor: X.branco, fundo: X.navy, alt: 21 }); b.paragrafos.forEach((t) => faixa(t, { size: 10.5 })); ws.addRow([]); return; }
       // tabela
       const nc = b.cab.length, alin = b.alin || "";
@@ -9451,6 +10331,8 @@ class Component extends DCLogic {
       gcLiberada: !!s.admin || !!s.plano || !s.sb, gcBloqueada: !(!!s.admin || !!s.plano || !s.sb),
       gcBloqTag: "Exclusivo para assinantes",
       goGestaoInicio: this.nav("gestao"),
+      ...(s.page === "precos" ? this.ppProps() : {}),
+      goPrecos: this.nav("precos"),
       ...(() => {
         const lib = !!s.admin || !!s.plano || !s.sb, n = s.ct.lista.length;
         const sits = s.ct.lista.map((c) => ctSituacao(c, s.ct.eventos[c.id]));
@@ -10243,7 +11125,7 @@ class Component extends DCLogic {
     const s = this.state;
     if (!this.sb || !s.usuario) { this.setState({ lgpdMsg: "Disponível quando você estiver logado." }); return; }
     this.setState({ lgpdMsg: "Preparando o arquivo…" });
-    const tabelas = ["perfis", "assinaturas", "renovacoes", "pagamentos", "consultorias", "analises", "normas_usuario", "curso_acessos", "forum_seguindo", "biblioteca_pessoal", "solicitacoes_lgpd"];
+    const tabelas = ["perfis", "assinaturas", "renovacoes", "pagamentos", "consultorias", "analises", "normas_usuario", "curso_acessos", "pesquisas_preco", "forum_seguindo", "biblioteca_pessoal", "solicitacoes_lgpd"];
     const resultado = { gerado_em: new Date().toISOString(), conta: { id: s.usuario.id, email: s.usuario.email, criada_em: s.usuario.created_at } };
     for (const t of tabelas) {
       const { data } = await this.sb.from(t).select("*");
@@ -10531,7 +11413,7 @@ class Component extends DCLogic {
 
     const P = {
       // navegação e contas
-      navItems: navDefs.map(([label, key]) => ({ label, active: s.page === key || (key === "gestao" && s.page === "contratos"), go: this.nav(key),
+      navItems: navDefs.map(([label, key]) => ({ label, active: s.page === key || (key === "gestao" && s.page === "contratos") || (key === "elaborar" && s.page === "precos"), go: this.nav(key),
         goMenu: () => { this.setState({ menuAberto: false }); this.irPara(key); } })),
       menuAberto: s.menuAberto,
       iconeMenu: s.menuAberto ? "✕" : "☰",
@@ -10548,7 +11430,7 @@ class Component extends DCLogic {
       goHome: this.nav("home"), goBiblioteca: this.nav("biblioteca"), goForum: this.nav("forum"), goPlanos: this.nav("planos"), goConsultoria: this.nav("consultoria"), goCursos: this.nav("cursos"),
       goLogin: this.nav("login"), goCadastro: this.nav("cadastro"), goRecuperar: this.nav("recuperar"),
       isHome: p("home"), isBiblioteca: p("biblioteca"), isForum: p("forum"), isCursos: p("cursos"),
-      isConsultoria: p("consultoria"), isAgente: p("agente"), isElaborar: p("elaborar"), isCalculadora: p("calculadora"), isGestao: p("gestao"), isContratos: p("contratos"), isPlanos: p("planos"),
+      isConsultoria: p("consultoria"), isAgente: p("agente"), isElaborar: p("elaborar"), isCalculadora: p("calculadora"), isGestao: p("gestao"), isContratos: p("contratos"), isPrecos: p("precos"), isPlanos: p("planos"),
       isConta: p("conta"), goConta: this.nav("conta"),
       isLogin: p("login"), isCadastro: p("cadastro"), isRecuperar: p("recuperar"), isNovaSenha: p("nova-senha"),
       isAuth: p("login") || p("cadastro") || p("recuperar") || p("nova-senha"),
@@ -11584,7 +12466,7 @@ class Component extends DCLogic {
           cta: !s.usuario ? "Criar conta grátis" : s.plano ? "Você já tem acesso" : "Começar o teste de 7 dias", btnBg: "#F1F6F5", btnColor: "#0A1F2A",
           itens: ["Biblioteca Jurídica completa: jurisprudência de todo o país, com anotações, marcadores e dossiês salvos na sua conta", "Calculadora de reajuste por índice, com a nota técnica em PDF", "Leitura do fórum da comunidade", "Teste de 7 dias, sem cartão: perguntar e responder no fórum, usar as planilhas de mão de obra da IN 05/2017 e o reequilíbrio e cadastrar contratos na Gestão contratual"] },
         { nome: "Básico", base: 119.9, publico: "Profissionais individuais iniciantes.", preco: precoPlano(119.9), unidade: unidadePlano, nota: notaPlano(119.9), detalhePreco: detalhePlano(119.9), destaque: destaque === "Básico", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Fórum da comunidade: leitura e participação", "Calculadora: reajuste por índice com nota técnica, planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta) e reequilíbrio econômico-financeiro", "Gestão contratual: contratos com linha do tempo, painel do valor e do limite de acréscimos (art. 125), situação por cor, agenda de prazos em 12 meses, avisos por e-mail, PDF de cada contrato, relatório da carteira e agenda em Excel", "O Parecerista e O Elaborador com 10% de desconto", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto"] },
+          itens: ["Fórum da comunidade: leitura e participação", "Calculadora: reajuste por índice com nota técnica, planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta) e reequilíbrio econômico-financeiro", "Gestão contratual: contratos com linha do tempo, painel do valor e do limite de acréscimos (art. 125), situação por cor, agenda de prazos em 12 meses, avisos por e-mail, PDF de cada contrato, relatório da carteira e agenda em Excel", "Pesquisa de preços no Elaborador: Painel de Preços e contratações similares do PNCP, tratamento estatístico, ratificação da planilha de mão de obra, análise do orçamento de obras e relatório em PDF, Word e Excel", "O Parecerista e O Elaborador com 10% de desconto", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto"] },
         { nome: "Premium", base: 199.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(199.9), unidade: unidadePlano, nota: notaPlano(199.9), detalhePreco: detalhePlano(199.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
           itens: ["Tudo do Básico", "O Parecerista e O Elaborador com 15% de desconto", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Prioridade na agenda do especialista"] },
         { nome: "Pro", base: 479.9, publico: "Profissionais avançados e empresas.", preco: precoPlano(479.9), unidade: unidadePlano, nota: notaPlano(479.9), detalhePreco: detalhePlano(479.9), destaque: destaque === "Pro", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
@@ -11707,6 +12589,7 @@ class Component extends DCLogic {
         ["Como funciona o plano para equipes?", "Você contrata a quantidade de acessos e quem contrata vira o gestor. Ele inclui as pessoas pelo e-mail e troca quando alguém sai da equipe. Cada acesso é de uma pessoa, e o desconto cresce com a quantidade: 5% de 3 a 5 acessos, 10% de 6 a 10 e 15% de 11 a 25, além dos 20% do anual."],
         ["O que faz O Parecerista e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. Com O Elaborador, você também cria a minuta do ETP, do Termo de Referência ou do Projeto Básico a partir de um questionário, já conferida. O Pro inclui 2 por semana, somando análises e documentos criados; equipes Pro têm 6 por acesso por mês, somados. Nos demais planos cada análise ou documento é pago com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
         ["O que a Calculadora faz e quem pode usar?", "A Calculadora tem cinco ferramentas: reajuste por índice (IPCA, IGP-M, INCC e outros, com a nota técnica em PDF), planilha de custos da mão de obra exclusiva no formato da IN 05/2017, repactuação (com custos não renováveis, quadro comparativo, retroativo e nota técnica), análise da planilha da proposta da licitante (exequibilidade, falhas e diligência) e reequilíbrio econômico-financeiro (tributário da reforma, LC 214/2025, e por fato superveniente, art. 124, II, d, da Lei 14.133/2021). O reajuste por índice é grátis para quem tem conta; as ferramentas de mão de obra e o reequilíbrio estão em todos os planos pagos e no teste de 7 dias. O agente de IA que lê a convenção coletiva e as planilhas é do plano Pro."],
+        ["O que a Pesquisa de preços faz e quem pode usar?", "Fica no Elaborador e estima o valor da contratação na fase de planejamento. Você escolhe o regime (Lei 14.133, com a IN SEGES/ME 65/2021; Lei 13.303, pelo regulamento interno da estatal, que a IA pode ler; ou Lei 13.019) e o tipo de objeto. Para bens e serviços, o site coleta preços no Painel de Preços do Compras.gov.br e em contratações similares do PNCP, aceita cotações e outras fontes, desconsidera os preços mais de 25% abaixo ou acima da mediana e escolhe entre média e mediana pelo coeficiente de variação (menor preço em mercado restrito). Na mão de obra exclusiva, ratifica o valor da planilha da IN 5/2017; em obras, analisa a planilha de orçamento enviada (fontes, aritmética, curva ABC, BDI pelo Acórdão 2.622/2013 do TCU, encargos e data-base). O relatório sai em PDF, Word e Excel, e o resultado vai para o Termo de Referência com um clique. Está nos planos Básico, Premium e Pro; o filtro de itens semelhantes com IA tem limite diário."],
         ["O que a Gestão contratual faz e quem pode usar?", "Você cadastra cada contrato (vigência, valor, índice, data do orçamento estimado e regime legal) e registra reajustes, repactuações, reequilíbrios, aditivos e prorrogações. O site calcula o valor vigente, a próxima anualidade, o limite de acréscimos do art. 125 e a data recomendada para iniciar a prorrogação, mostra a situação de cada contrato por cor (vigente, vencendo ou vencido), monta a agenda de prazos dos próximos 12 meses e avisa por e-mail. Também gera o PDF de cada contrato, o relatório completo da carteira e a agenda em Excel. Está em todos os planos pagos e no teste de 7 dias; nos planos para equipes, cada contrato pode ser compartilhado com a equipe, para consulta."],
         ["Quantas análises de planilha pelo agente de IA eu tenho?", "No Pro, por semana: 1 elaboração de planilha de custos, 1 análise de repactuação e 1 análise de proposta, renovando na segunda-feira. A franquia é por assinatura: na equipe, é compartilhada entre os membros. Análise que falhar por problema técnico não consome a franquia, e a planilha pode sempre ser preenchida manualmente, sem limite."],
         ["O que o plano Gratuito inclui?", "Com a conta grátis, sem cartão e sem prazo, você usa a Biblioteca Jurídica completa (com anotações, marcadores e dossiês), a calculadora de reajuste por índice com a nota técnica em PDF e lê todas as perguntas e respostas do fórum. Para perguntar e responder no fórum, usar as planilhas de mão de obra e o reequilíbrio e cadastrar contratos na Gestão contratual, faça o teste de 7 dias ou assine um plano."],
