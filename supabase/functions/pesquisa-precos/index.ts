@@ -47,9 +47,12 @@ async function buscarCatalogo(texto: string, tipo: "material" | "servico") {
   if (!catalogo) catalogo = await (await fetch(CATALOGO_URL, { signal: AbortSignal.timeout(12000) })).json();
   const t = semAcento(texto).trim();
   const codigo = /^\d{3,9}$/.test(t) ? Number(t) : null;
-  const chaves = chavesDe(texto);
+  const SIN: Record<string, string[]> = { sulfite: ["impressao", "formatado"], a4: ["impressao", "formatado"], oficio: ["impressao", "formatado"], resma: ["formatado"],
+    notebook: ["computador", "portatil"], computador: ["microcomputador"], carro: ["veiculo"], automovel: ["veiculo"], cafe: ["cafe"], toner: ["toner"], detergente: ["detergente"] };
+  const chaves = [...new Set([...chavesDe(texto), ...(t.match(/\b[a-z]\d{1,2}\b/g) ?? [])])];
+  const extras = chaves.flatMap((c) => SIN[c] ?? []);
   const raiz = (w: string) => (w.length <= 4 ? w : w.slice(0, Math.max(4, w.length - 2)));
-  const raizes = chaves.map(raiz);
+  const raizes = [...new Set([...chaves, ...extras].filter((c) => !/^[a-z]\d{1,2}$/.test(c)).map(raiz))];
   const lista = tipo === "material" ? catalogo!.pdm : catalogo!.servico;
   const cand: { codigo: number; nome: string; p: number; ini: number; tam: number }[] = [];
   for (const [cod, nome] of lista) {
@@ -57,7 +60,8 @@ async function buscarCatalogo(texto: string, tipo: "material" | "servico") {
     const nm = semAcento(nome);
     if (nm.includes("inativo")) continue;
     const pal = nm.match(/[a-z0-9]+/g) ?? [];
-    const p = raizes.filter((r) => pal.some((w) => w.startsWith(r))).length;
+    // palavra inteira vale mais que prefixo (papel x papelão)
+    const p = raizes.reduce((a, r) => a + (pal.some((w) => w === r || w === r + "s" || w === r + "es" || (r.length >= 5 && w.startsWith(r) && w.length - r.length <= 2)) ? 2 : pal.some((w) => w.startsWith(r)) ? 1 : 0), 0);
     if (!p) continue;
     cand.push({ codigo: cod, nome, p, ini: pal.length && raizes.some((r) => pal[0].startsWith(r)) ? 1 : 0, tam: pal.length });
   }
@@ -170,7 +174,11 @@ async function chamarIA(chave: string, system: string, conteudo: unknown[], ferr
     body: JSON.stringify({ model: MODELO_IA, max_tokens: maxTokens, system, messages: [{ role: "user", content: conteudo }], tools: [ferramenta], tool_choice: { type: "tool", name: ferramenta.name } }),
     signal: AbortSignal.timeout(120000),
   }).catch(() => null);
-  if (!r || !r.ok) return { erro: "A IA não respondeu (" + (r ? r.status : "sem conexão") + "). Tente de novo em instantes." };
+  if (!r || !r.ok) {
+    let det = ""; try { det = r ? String(((await r.json()) ?? {}).error?.message ?? "").slice(0, 160) : ""; } catch { det = ""; }
+    console.error("IA", r ? r.status : 0, det);
+    return { erro: "A IA não respondeu (" + (r ? r.status : "sem conexão") + (det ? ": " + det : "") + "). Tente de novo em instantes." };
+  }
   const j = await r.json();
   const uso = j.usage ?? {};
   const bloco = (j.content ?? []).find((b: any) => b.type === "tool_use");
