@@ -1434,6 +1434,7 @@
   .pp-op b { font-size: 14px; } .pp-op span { font-size: 12.5px; color: #66757F; } .pp-op:hover { border-color: #0FA36B; }
   .pp-op.ativo { border-color: #0FA36B; background: #E9F7F0; box-shadow: inset 0 0 0 1px #0FA36B; } .pp-op-p { padding: 7px 12px; font-size: 13.5px; font-weight: 700; display: inline-block; }
   .pp-fund { background: #F4F9F7; border-color: #CFE7DC; } .pp-fund p { margin: 0 0 8px; font-size: 14px; line-height: 1.6; color: #22343B; }
+  .pp-regras { margin-top: 14px; padding: 12px 14px; border: 1px solid #CFE7DC; border-radius: 12px; background: #F4F9F7; }
   .pp-rilc { display: grid; gap: 10px; margin-top: 14px; padding-top: 12px; border-top: 1px dashed #DCE4E2; }
   .pp-pares { margin: 0; display: grid; gap: 6px; } .pp-pares div { display: grid; grid-template-columns: minmax(150px, 220px) minmax(0, 1fr); gap: 10px; font-size: 13.5px; border-top: 1px solid #EEF2F1; padding-top: 6px; }
   .pp-pares dt { font-weight: 700; color: #55666D; } .pp-pares dd { margin: 0; color: #0B1F2A; }
@@ -2967,11 +2968,29 @@
                 <div class="pp-ops"><sc-for list="{{ ppEsferas }}" as="o" hint-placeholder-count="2"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.escolher }}"><b>{{ o.nome }}</b></button></sc-for></div>
               </sc-if>
               <label class="lmo-campo" style="margin-top: 12px"><span>{{ ppNormaRot }}</span><input type="text" value="{{ ppNorma }}" sc-camel-on-input="{{ onPpNorma }}" placeholder="{{ ppNormaDica }}"></label>
+              <sc-if value="{{ ppOutroRegime }}" hint-placeholder-val="{{ false }}">
+                <p class="pp-rot">{{ ppBasePergunta }}</p>
+                <div class="pp-ops"><sc-for list="{{ ppBases }}" as="o" hint-placeholder-count="2"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.escolher }}"><b>{{ o.nome }}</b><span>{{ o.sub }}</span></button></sc-for></div>
+              </sc-if>
               <sc-if value="{{ ppEh13303 }}" hint-placeholder-val="{{ false }}">
                 <div class="pp-rilc">
                   <p class="lmo-nota" style="margin-top: 0">Na Lei 13.303/2016, a pesquisa segue o regulamento interno da estatal. Envie o regulamento: a IA identifica as regras de pesquisa de preços com o artigo de cada uma, para você conferir.</p>
                   <label class="lmo-arq"><input type="file" accept=".pdf,application/pdf" sc-camel-on-change="{{ ppOnRilc }}">{{ ppRilcTxt }}</label>
                   <sc-if value="{{ ppTemRilc }}" hint-placeholder-val="{{ false }}"><dl class="pp-pares"><sc-for list="{{ ppRilc }}" as="r" hint-placeholder-count="3"><div><dt>{{ r.k }}</dt><dd>{{ r.v }}</dd></div></sc-for></dl></sc-if>
+                </div>
+              </sc-if>
+              <sc-if value="{{ ppUsaRegulamento }}" hint-placeholder-val="{{ false }}">
+                <div class="pp-regras">
+                  <p class="pp-rot" style="margin-top: 0">Regras do regulamento que a pesquisa vai seguir</p>
+                  <p class="lmo-nota" style="margin-top: 0">Preencha conforme o regulamento. Nos campos em branco, a ferramenta adota a boa prática (três preços, ±25% da mediana, método pelo coeficiente de variação, cotações de até 6 meses) e o relatório registra que o regulamento é omisso.</p>
+                  <div class="lmo-campos">
+                    <label class="lmo-campo" style="grid-column: 1 / -1"><span>Dispositivos sobre pesquisa de preços</span><input type="text" value="{{ ppRegDisp }}" sc-camel-on-input="{{ onPpRegDisp }}" placeholder="Ex.: arts. 30 a 34"></label>
+                    <label class="lmo-campo" style="grid-column: 1 / -1"><span>Fontes admitidas e prioridade</span><input type="text" value="{{ ppRegFontes }}" sc-camel-on-input="{{ onPpRegFontes }}" placeholder="Ex.: preferencialmente Painel de Preços e contratações similares; cotações com fornecedores"></label>
+                    <label class="lmo-campo"><span>Quantidade mínima de preços</span><input type="text" inputmode="numeric" value="{{ ppRegMinimo }}" sc-camel-on-input="{{ onPpRegMinimo }}" placeholder="3"></label>
+                    <label class="lmo-campo"><span>Método de cálculo</span><select sc-camel-on-change="{{ onPpRegMetodo }}"><sc-for list="{{ ppRegMetodos }}" as="m" hint-placeholder-count="4"><option value="{{ m.id }}" selected="{{ m.sel }}">{{ m.nome }}</option></sc-for></select></label>
+                    <label class="lmo-campo"><span>Faixa para desconsiderar preços (± % da mediana)</span><input type="text" inputmode="decimal" value="{{ ppRegExclusao }}" sc-camel-on-input="{{ onPpRegExclusao }}" placeholder="25"></label>
+                    <label class="lmo-campo"><span>Validade das cotações (meses)</span><input type="text" inputmode="numeric" value="{{ ppRegValidade }}" sc-camel-on-input="{{ onPpRegValidade }}" placeholder="6"></label>
+                  </div>
                 </div>
               </sc-if>
             </section>
@@ -3080,7 +3099,7 @@
                     <p class="lmo-nota">{{ it.justMet }}</p>
                     <label class="lmo-campo" style="margin-top: 10px"><span>Justificativa complementar do agente (opcional: entra no relatório junto da justificativa automática)</span><input type="text" value="{{ it.justAgente }}" sc-camel-on-input="{{ it.onJustAgente }}"></label>
                     <sc-if value="{{ it.temCotacao }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo" style="margin-top: 10px"><span>Fornecedores consultados que não enviaram proposta (IN 65/2021, art. 5º, § 2º)</span><input type="text" value="{{ it.naoResp }}" sc-camel-on-input="{{ it.onNaoResp }}" placeholder="Nome, CNPJ e data da consulta; deixe vazio se todos responderam"></label></sc-if>
-                    <sc-if value="{{ it.poucos }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo pp-just"><span>Menos de três preços válidos: justificativa do agente responsável (será submetida à autoridade competente, IN 65/2021, art. 6º)</span><input type="text" value="{{ it.just }}" sc-camel-on-input="{{ it.onJust }}"></label></sc-if>
+                    <sc-if value="{{ it.poucos }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo pp-just"><span>Menos preços válidos que o mínimo exigido: justificativa do agente responsável (será submetida à autoridade competente)</span><input type="text" value="{{ it.just }}" sc-camel-on-input="{{ it.onJust }}"></label></sc-if>
                   </sc-if>
                   <sc-if value="{{ it.semPrecos }}" hint-placeholder-val="{{ true }}"><p class="ct-pb-vazio">Nenhum preço ainda. Comece pelo Painel de Preços e pelas contratações similares, que são os parâmetros prioritários (IN 65/2021, art. 5º, § 1º).</p></sc-if>
                 </section>
@@ -6661,7 +6680,7 @@ const PP_TIPOS_OBRA = [
   ["fornecimento", "Mero fornecimento de materiais e equipamentos", 11.10, 14.02, 16.80],
 ];
 const PP_PADRAO = { titulo: "", processo: "", orgao: "", agente: "", cargo: "", uf: "", municipio: "", regime: "14133", origem: "proprio", esfera13019: "federal",
-  norma: "", rilc: null, rilcNome: "", objeto: "bens", condicoes: "", equipe: "", descricao: "", itens: [], moValor: "", moPostos: "1", moFonte: "",
+  norma: "", rilc: null, rilcNome: "", objeto: "bens", condicoes: "", equipe: "", base: "", reg: {}, descricao: "", itens: [], moValor: "", moPostos: "1", moFonte: "",
   ob: null, obBdi: "", obTipo: "edificios", obDeson: "nao", obDataBase: "", obEncargos: "", obTabelas: "", obNome: "", justPrioritarios: "" };
 const PP_ITEM = () => ({ id: Math.random().toString(36).slice(2, 9), desc: "", un: "", qtd: "1", tipo: "material", cod: "", codNome: "", busca: "", cands: [],
   restrito: false, metodo: "auto", precos: [], just: "", manual: null,
@@ -6718,8 +6737,29 @@ function ppAtualiza(preco, dataIso, indices) {
   return { v: preco * f, fator: f, de: ini, ate: ultimo, meses: n };
 }
 
-// tratamento estatístico de um item (IN 65/2021, art. 6º): saneamento em torno da mediana, coeficiente de variação e método
+// regras aplicáveis: Lei 14.133/IN 65/2021, ou o regulamento próprio (Lei 13.303: regulamento interno; Lei 13.019: decreto ou regulamento do ente),
+// conforme a escolha do assinante nos regimes 13.303 e 13.019 (há órgãos que adotam a IN 65/2021 como parâmetro)
+function ppRegras(d) {
+  d = d || {};
+  const outro = d.regime === "13303" || d.regime === "13019", proprio = outro && d.base !== "in65", R = d.reg || {};
+  const normaPadrao = d.regime === "13303" ? "Regulamento Interno de Licitações e Contratos da estatal" : d.esfera13019 === "federal" ? "Decreto 8.726/2016" : "regulamento do ente para as parcerias";
+  const norma = String(d.norma || normaPadrao).trim();
+  const ref = proprio ? norma + (R.disp ? ", " + R.disp : "") : "";
+  const faixa = proprio && ppNum(R.exclusao) > 0 ? ppNum(R.exclusao) / 100 : PP_FAIXA;
+  const minimo = proprio && ppNum(R.minimo) > 0 ? Math.round(ppNum(R.minimo)) : 3;
+  const validade = proprio && ppNum(R.validade) > 0 ? ppNum(R.validade) : 6;
+  const metodoFixo = proprio && ["media", "mediana", "menor"].includes(R.metodo) ? R.metodo : "";
+  const C = proprio
+    ? { fontes: ref, metodo: R.metodo ? ref : ref + " (omisso quanto ao método: adotado o critério do Manual de Licitações e Contratos do TCU, item 4.3.9.3)", exclusao: R.exclusao ? ref : ref + " (omisso quanto ao critério: adotada a faixa de ±25% da mediana, com fundamento na orientação do TCU)",
+        minimo: R.minimo ? ref : ref + " (omisso: adotado o mínimo de três preços, como boa prática)", documento: ref, direta: ref + (R.validade ? "" : " (validade das cotações: 6 meses, como boa prática)"), condicoes: ref, prioritarios: ref }
+    : { fontes: "IN SEGES/ME 65/2021, art. 5º", metodo: "IN 65/2021, art. 6º", exclusao: "IN 65/2021, art. 6º, § 3º", minimo: "IN 65/2021, art. 6º", documento: "IN 65/2021, art. 3º", direta: "Lei 14.133/2021, art. 23, § 1º, IV; IN 65/2021, art. 5º, § 2º", condicoes: "IN 65/2021, art. 4º", prioritarios: "IN 65/2021, art. 5º, § 1º" };
+  const nomeBase = proprio ? norma : outro ? "Lei 14.133/2021 (art. 23) e IN SEGES/ME 65/2021, adotadas como parâmetro pelo órgão" : "Lei 14.133/2021 (art. 23) e IN SEGES/ME 65/2021";
+  return { proprio, outro, norma, ref, faixa, pctFaixa: Math.round(faixa * 100), minimo, validade, metodoFixo, C, nomeBase, R };
+}
+
+// tratamento estatístico de um item: saneamento em torno da mediana, coeficiente de variação e método (IN 65/2021, art. 6º, ou o regulamento próprio)
 function ppEstat(item, indices, hojeIso, d) {
+  const rg = ppRegras(d), FX = rg.faixa, PF = rg.pctFaixa;
   const it2 = { ...item, _termos: ppTermos(item.desc) };
   const precos = (item.precos || []).map((p) => {
     const flt = ppFiltrar(it2, d || {}, p, hojeIso);
@@ -6727,29 +6767,30 @@ function ppEstat(item, indices, hojeIso, d) {
     const idadeMeses = p.data ? (Date.parse(hojeIso) - Date.parse(p.data)) / (30.44 * 864e5) : null;
     let alerta = "";
     if ((p.inciso === "I" || p.inciso === "II") && idadeMeses != null && idadeMeses > 12.5) alerta = "Mais de 1 ano: fora do período do art. 23, § 1º, II.";
-    if (p.inciso === "IV" && idadeMeses != null && idadeMeses > 6.2) alerta = "Cotação com mais de 6 meses (art. 23, § 1º, IV).";
+    if (p.inciso === "IV" && idadeMeses != null && idadeMeses > rg.validade + 0.2) alerta = "Cotação com mais de " + rg.validade + " meses (" + (rg.proprio ? rg.C.direta : "art. 23, § 1º, IV") + ").";
     if (p.inciso === "III" && !p.acesso) alerta = "Falta a data e a hora de acesso (art. 23, § 1º, III).";
     return { ...p, atual: at.v, fator: at.fator, alerta, sim: flt.sim, abr: flt.abr, filtroOk: flt.ok, filtroMot: flt.motivos };
   });
   const sel = precos.filter((p) => p.incl !== false && p.atual > 0);
   const med0 = ppMediana(sel.map((p) => p.atual));
-  const lo = med0 != null ? med0 * (1 - PP_FAIXA) : null, hi = med0 != null ? med0 * (1 + PP_FAIXA) : null;
+  const lo = med0 != null ? med0 * (1 - FX) : null, hi = med0 != null ? med0 * (1 + FX) : null;
   precos.forEach((p) => {
     if (p.incl === false) { p.sit = "fora"; p.motivo = p.motivoExcl || "Desmarcado pelo agente (item não semelhante ou fonte inadequada)."; return; }
     if (!(p.atual > 0)) { p.sit = "fora"; p.motivo = "Preço inválido."; return; }
-    if (sel.length >= 3 && p.atual < lo) { p.sit = "inex"; p.motivo = "Inexequível: mais de 25% abaixo da mediana (" + ppBRL(med0) + ")."; return; }
-    if (sel.length >= 3 && p.atual > hi) { p.sit = "exc"; p.motivo = "Excessivamente elevado: mais de 25% acima da mediana (" + ppBRL(med0) + ")."; return; }
+    if (sel.length >= 3 && p.atual < lo) { p.sit = "inex"; p.motivo = "Inexequível: mais de " + PF + "% abaixo da mediana (" + ppBRL(med0) + ")."; return; }
+    if (sel.length >= 3 && p.atual > hi) { p.sit = "exc"; p.motivo = "Excessivamente elevado: mais de " + PF + "% acima da mediana (" + ppBRL(med0) + ")."; return; }
     p.sit = "ok"; p.motivo = "";
   });
   const val = precos.filter((p) => p.sit === "ok").map((p) => p.atual);
   const n = val.length, media = n ? val.reduce((a, b) => a + b, 0) / n : null;
   const dp = n > 1 ? Math.sqrt(val.reduce((a, b) => a + (b - media) * (b - media), 0) / (n - 1)) : 0;
   const cv = media ? dp / media : null, mediana = ppMediana(val), menor = n ? Math.min(...val) : null;
-  let metodo = item.metodo && item.metodo !== "auto" ? item.metodo : item.restrito ? "menor" : cv != null && cv <= PP_CV ? "media" : "mediana";
+  let metodo = item.metodo && item.metodo !== "auto" ? item.metodo : rg.metodoFixo ? rg.metodoFixo : item.restrito ? "menor" : cv != null && cv <= PP_CV ? "media" : "mediana";
   const valor = metodo === "media" ? media : metodo === "menor" ? menor : mediana;
   const nomeMet = { media: "média", mediana: "mediana", menor: "menor preço" }[metodo];
   let justMet;
   if (item.metodo && item.metodo !== "auto") justMet = "Método escolhido pelo agente responsável: " + nomeMet + ".";
+  else if (rg.metodoFixo) justMet = "Método definido pelo regulamento (" + rg.ref + "): " + nomeMet + "." + (cv != null ? " Coeficiente de variação de " + ppPct(cv) + ", registrado para análise crítica da amostra." : "");
   else if (item.restrito) justMet = "Mercado restrito, com poucos fornecedores: adotado o menor preço, conforme a jurisprudência do TCU (Acórdãos 1.639/2016 e 1.850/2020, ambos do Plenário), segundo a qual médias ou medianas só se aplicam em mercado competitivo.";
   else if (cv != null && cv <= PP_CV) justMet = "Coeficiente de variação de " + ppPct(cv) + ", até 25%: amostra homogênea, adotada a média.";
   else if (cv != null) justMet = "Coeficiente de variação de " + ppPct(cv) + ", acima de 25%: amostra dispersa, adotada a mediana, que não é afetada por valores extremos.";
@@ -6757,23 +6798,29 @@ function ppEstat(item, indices, hojeIso, d) {
   const qtd = ppNum(item.qtd) || 0;
   const incisos = [...new Set(precos.filter((p) => p.sit === "ok").map((p) => p.inciso))].sort();
   return { precos, coletados: precos.length, selecionados: sel.length, med0, lo, hi, n, media, dp, cv, mediana, menor, metodo, nomeMet, valor, justMet,
-    total: valor != null ? valor * qtd : null, qtd, incisos, poucos: n < 3, semPrioritario: n > 0 && !incisos.some((i) => i === "I" || i === "II"),
+    total: valor != null ? valor * qtd : null, qtd, incisos, poucos: n < rg.minimo, minimo: rg.minimo, pctFaixa: PF, semPrioritario: n > 0 && !incisos.some((i) => i === "I" || i === "II"),
     excluidos: precos.filter((p) => p.sit === "inex" || p.sit === "exc").length };
 }
 
 // enquadramento legal da pesquisa conforme o regime e a origem dos recursos
 function ppFundamentos(d) {
   const L = [];
+  const rg = ppRegras(d);
   if (d.regime === "13303") {
-    L.push("Contratação regida pela Lei 13.303/2016 (empresas públicas e sociedades de economia mista), que tem regime próprio de licitações e contratos. A pesquisa de preços segue o Regulamento Interno de Licitações e Contratos da estatal (art. 40 da Lei 13.303/2016)" + (d.norma ? ": " + d.norma + "." : "."));
-    L.push("Os parâmetros da Lei 14.133/2021 (art. 23) e da IN SEGES/ME 65/2021 são utilizados apenas como referência de boa prática, naquilo que não contrariar o regulamento interno. Prevalecem as regras do regulamento.");
-    if (d.rilc && d.rilc.encontrado) L.push("Regras do regulamento interno identificadas na leitura do documento enviado: " + [d.rilc.metodo && "método: " + d.rilc.metodo, d.rilc.minimo_precos && "quantidade mínima: " + d.rilc.minimo_precos, d.rilc.validade_cotacoes && "validade das cotações: " + d.rilc.validade_cotacoes, d.rilc.criterio_exclusao && "exclusão de preços: " + d.rilc.criterio_exclusao].filter(Boolean).join("; ") + ". A leitura por IA deve ser conferida pelo agente responsável no texto do regulamento.");
+    L.push("Contratação regida pela Lei 13.303/2016 (empresas públicas e sociedades de economia mista), que tem regime próprio de licitações e contratos e não se submete à Lei 14.133/2021. Cada estatal deve disciplinar seus procedimentos em regulamento interno de licitações e contratos (art. 40 da Lei 13.303/2016).");
+    if (rg.proprio) {
+      L.push("Esta pesquisa de preços e este relatório seguem as regras do " + rg.norma + (rg.R.disp ? " (" + rg.R.disp + ")" : "") + ": fontes admitidas" + (rg.R.fontes ? " (" + rg.R.fontes + ")" : "") + ", quantidade mínima de " + rg.minimo + " preços, " + (rg.metodoFixo ? "método da " + { media: "média", mediana: "mediana", menor: "menor preço" }[rg.metodoFixo] : "método definido pelo agente na omissão do regulamento") + ", desconsideração dos preços fora da faixa de ±" + rg.pctFaixa + "% da mediana e validade das cotações de " + rg.validade + " meses.");
+      L.push("Nos pontos em que o regulamento é omisso, adotam-se como boa prática, de forma subsidiária, os parâmetros da Lei 14.133/2021 (art. 23) e da IN SEGES/ME 65/2021, naquilo que não o contrariar.");
+      if (d.rilc && d.rilc.encontrado) L.push("As regras do regulamento foram identificadas com apoio de inteligência artificial a partir do documento enviado e conferidas pelo agente responsável.");
+    } else L.push("O órgão adota como parâmetro para a pesquisa de preços as regras da Lei 14.133/2021 (art. 23) e da IN SEGES/ME 65/2021" + (d.norma ? ", conforme " + d.norma : "") + ". Esta pesquisa e este relatório seguem esses fundamentos.");
   } else if (d.regime === "13019") {
     L.push("Parceria regida pela Lei 13.019/2014 (Marco Regulatório das Organizações da Sociedade Civil), que não se submete à Lei 14.133/2021.");
-    L.push(d.esfera13019 === "federal"
-      ? "Na esfera federal, o Decreto 8.726/2016, art. 25, § 1º, exige que a previsão de receitas e despesas do plano de trabalho inclua elementos indicativos da compatibilidade dos custos com os preços praticados no mercado ou com outras parcerias da mesma natureza, como cotações, tabelas de preços de associações profissionais, publicações especializadas ou quaisquer outras fontes de informação disponíveis ao público. As compras feitas pela organização da sociedade civil com recursos da parceria seguem métodos usualmente utilizados pelo setor privado (art. 36 do mesmo decreto)."
-      : "Aplica-se o regulamento do ente para as parcerias" + (d.norma ? " (" + d.norma + ")" : "") + ". Na falta de regra específica, a demonstração da compatibilidade dos custos com os preços de mercado segue a lógica do art. 25, § 1º, do Decreto federal 8.726/2016.");
-    L.push("Os parâmetros da Lei 14.133/2021 (art. 23) e da IN SEGES/ME 65/2021 são utilizados apenas como sugestão metodológica, para dar maior segurança à demonstração.");
+    if (rg.proprio) {
+      L.push(d.esfera13019 === "federal"
+        ? "Na esfera federal, o Decreto 8.726/2016, art. 25, § 1º, exige que a previsão de receitas e despesas do plano de trabalho inclua elementos indicativos da compatibilidade dos custos com os preços praticados no mercado ou com outras parcerias da mesma natureza, como cotações, tabelas de preços de associações profissionais, publicações especializadas ou quaisquer outras fontes de informação disponíveis ao público. As compras feitas pela organização da sociedade civil com recursos da parceria seguem métodos usualmente utilizados pelo setor privado (art. 36 do mesmo decreto)."
+        : "Aplica-se o " + rg.norma + (rg.R.disp ? " (" + rg.R.disp + ")" : "") + ", que disciplina a demonstração da compatibilidade dos custos com os preços de mercado.");
+      L.push("A pesquisa segue as regras dessa norma; nos pontos omissos, adotam-se como boa prática, de forma subsidiária, os parâmetros da Lei 14.133/2021 (art. 23) e da IN SEGES/ME 65/2021.");
+    } else L.push("O órgão adota como parâmetro para a demonstração da compatibilidade dos custos com os preços de mercado as regras da Lei 14.133/2021 (art. 23) e da IN SEGES/ME 65/2021" + (d.norma ? ", conforme " + d.norma : "") + ". Esta pesquisa e este relatório seguem esses fundamentos.");
   } else {
     L.push("Contratação regida pela Lei 14.133/2021. O valor previamente estimado deve ser compatível com os valores praticados pelo mercado, considerados os preços constantes de bancos de dados públicos e as quantidades a serem contratadas, observadas a potencial economia de escala e as peculiaridades do local de execução (art. 23, caput).");
     if (d.objeto !== "obras") {
@@ -6862,8 +6909,9 @@ function ppTextoTR(d, res) {
       ". Análise do orçamento na Pesquisa de preços do Licitacon (" + o.apontamentos.length + " apontamento(s)), fundamentada no art. 23, §§ 2º e 3º, da Lei 14.133/2021.";
   }
   const linhas = res.itens.map((x, i) => (i + 1) + ") " + (x.item.desc || "Item") + ": " + ppBRL(x.st.valor) + " por " + (x.item.un || "unidade") + " × " + (x.item.qtd || 1) + " = " + ppBRL(x.st.total) + " (" + x.st.nomeMet + " de " + x.st.n + " preços válidos)");
-  return "Valor estimado: " + ppBRL(res.total) + ". Pesquisa de preços realizada conforme " + (d.regime === "14133" ? "o art. 23 da Lei 14.133/2021 e a IN SEGES/ME 65/2021" : d.regime === "13303" ? "o regulamento interno da estatal (art. 40 da Lei 13.303/2016)" : "o art. 25, § 1º, do Decreto 8.726/2016") +
-    ", com saneamento dos preços mais de 25% abaixo ou acima da mediana e escolha do método pelo coeficiente de variação.\n" + linhas.join("\n") + (d.objeto === "mao_obra" ? "\nO valor resulta da planilha de custos da IN 5/2017; a pesquisa de mercado ratifica o valor da planilha." : "");
+  const rg = ppRegras(d);
+  return "Valor estimado: " + ppBRL(res.total) + ". Pesquisa de preços realizada conforme " + (rg.proprio ? rg.ref : rg.outro ? "os parâmetros da Lei 14.133/2021 (art. 23) e da IN SEGES/ME 65/2021, adotados pelo órgão" : "o art. 23 da Lei 14.133/2021 e a IN SEGES/ME 65/2021") +
+    ", com saneamento dos preços mais de " + rg.pctFaixa + "% abaixo ou acima da mediana e " + (rg.metodoFixo ? "o método definido no regulamento" : "escolha do método pelo coeficiente de variação") + ".\n" + linhas.join("\n") + (d.objeto === "mao_obra" ? "\nO valor resulta da planilha de custos da IN 5/2017; a pesquisa de mercado ratifica o valor da planilha." : "");
 }
 
 // documento (PDF, Excel e Word) no formato dos geradores do site
@@ -6893,14 +6941,16 @@ function ppPlanilha(res) {
 }
 function ppDocPlanilha(d, res, hoje) {
   const pl = ppPlanilha(res);
-  return { id: "planilha", titulo: "Planilha de orçamento estimado", sub: (d.titulo || d.descricao || "Pesquisa de preços") + (d.orgao ? " · " + d.orgao : ""), selo: "Lei 14.133/2021, art. 23 · IN SEGES/ME 65/2021",
+  const rg = ppRegras(d);
+  return { id: "planilha", titulo: "Planilha de orçamento estimado", sub: (d.titulo || d.descricao || "Pesquisa de preços") + (d.orgao ? " · " + d.orgao : ""), selo: rg.proprio ? rg.norma.slice(0, 60) : "Lei 14.133/2021, art. 23 · IN SEGES/ME 65/2021",
     arquivo: "Planilha de orcamento estimado - " + String(d.titulo || d.descricao || "Licitacon").replace(/[\\/:*?"<>|]+/g, "-").slice(0, 50), paisagem: true,
     blocos: [{ t: "tabela", titulo: "Planilha de orçamento estimado", sub: pl.um ? "Preços selecionados lado a lado, com a origem no topo de cada coluna; valores atualizados pelo IPCA. Em amarelo, os desconsiderados no saneamento de ±25% da mediana." : "Preços selecionados lado a lado; abaixo de cada valor, a origem, a fonte e a data. Valores atualizados pelo IPCA. Em amarelo, os desconsiderados no saneamento de ±25% da mediana.",
       cab: pl.cab, larg: pl.larg, alin: pl.alin, linhas: pl.linhas, fonte: pl.fonte, cabFonte: pl.cabFonte },
-      { t: "legenda", texto: "Coeficiente de variação = desvio-padrão ÷ média dos preços válidos. Método: com coeficiente de variação de até 25%, média; acima, mediana; em mercado restrito, menor preço (IN 65/2021, art. 6º; Manual de Licitações e Contratos do TCU, item 4.3.9.3)." }],
+      { t: "legenda", texto: "Coeficiente de variação = desvio-padrão ÷ média dos preços válidos. " + (rg.metodoFixo ? "Método definido em " + rg.ref + "." : "Método: com coeficiente de variação de até 25%, média; acima, mediana; em mercado restrito, menor preço (" + rg.C.metodo + "; Manual de Licitações e Contratos do TCU, item 4.3.9.3).") + " Saneamento: ±" + rg.pctFaixa + "% da mediana (" + rg.C.exclusao + ")." }],
     notas: ["Parte integrante do relatório da pesquisa de preços, onde estão os dados completos de cada contratação e a fundamentação."] };
 }
 function ppDocumento(d, res, hoje, opc) {
+  const rg = ppRegras(d);
   const blocos = [], notas = [];
   const regimeNome = { "14133": "Lei 14.133/2021", "13303": "Lei 13.303/2016 (estatais)", "13019": "Lei 13.019/2014 (parcerias)" }[d.regime];
   const objNome = { bens: "Bens e serviços comuns", mao_obra: "Serviço com dedicação exclusiva de mão de obra", obras: "Obras e serviços de engenharia" }[d.objeto];
@@ -6929,14 +6979,18 @@ function ppDocumento(d, res, hoje, opc) {
     }
   } else {
     let sec = 3;
-    blocos.push({ t: "texto", titulo: sec++ + ". Metodologia", paragrafos: [
-      "Parâmetros utilizados (IN SEGES/ME 65/2021, art. 5º): " + [...new Set(res.itens.flatMap((x) => x.st.incisos))].map((i) => "inciso " + i + " – " + PP_INCISOS[i]).join("; ") + ".",
-      "Seleção dos preços (conceito de banco de preços): os registros do Painel de Preços e das contratações similares foram buscados no mesmo estado, na mesma região e, quando escolhido, em todo o país, e selecionados pela semelhança da especificação (termos essenciais do item), pela quantidade, pela unidade, pela localidade e pelo período, observadas a economia de escala e as peculiaridades do local de execução (art. 23, caput, da Lei 14.133/2021). O agente responsável pode incluir ou excluir registros, e os não selecionados ficam listados com o motivo.",
-      "Os preços do Painel de Preços e das contratações similares foram atualizados pelo IPCA, do mês da contratação até o último índice publicado (art. 23, § 1º, II, da Lei 14.133/2021).",
-      "Saneamento da amostra (IN 65/2021, art. 6º, § 3º): foram desconsiderados como inexequíveis os preços mais de 25% abaixo da mediana dos preços selecionados e como excessivamente elevados os preços mais de 25% acima dela.",
-      "Escolha do método (IN 65/2021, art. 6º): com coeficiente de variação de até 25%, a amostra é considerada homogênea e adota-se a média; acima de 25%, adota-se a mediana, menos sensível a valores extremos (Manual de Licitações e Contratos do TCU, item 4.3.9.3; Enunciado 33 da Jornada de Direito Administrativo do CJF, de 2023). Em mercado restrito, adota-se o menor preço (Acórdãos 1.639/2016 e 1.850/2020-TCU-Plenário).",
-      "Exige-se o mínimo de três preços válidos por item; abaixo disso, o preço só é admitido excepcionalmente, com justificativa do agente responsável e aprovação da autoridade competente (IN 65/2021, art. 6º)."] });
-    if (res.itens.some((x) => x.st.semPrioritario) && d.justPrioritarios) blocos.push({ t: "texto", titulo: sec++ + ". Justificativa: parâmetros prioritários", paragrafos: ["Os parâmetros dos incisos I e II do art. 5º da IN 65/2021 são prioritários (§ 1º). " + d.justPrioritarios] });
+    const incUsados = [...new Set(res.itens.flatMap((x) => x.st.incisos))];
+    const mets = rg.proprio
+      ? ["Regras aplicadas: " + rg.ref + "." + (rg.R.fontes ? " Fontes admitidas pelo regulamento: " + rg.R.fontes + "." : "") + " Fontes efetivamente utilizadas: " + incUsados.map((i) => ({ I: "Painel de Preços do Compras.gov.br", II: "contratações similares publicadas no PNCP", III: "mídia especializada ou sítios eletrônicos, com data e hora de acesso", IV: "cotações diretas com fornecedores", V: "notas fiscais eletrônicas" }[i])).join("; ") + "."]
+      : ["Parâmetros utilizados (" + rg.C.fontes + "): " + incUsados.map((i) => "inciso " + i + " – " + PP_INCISOS[i]).join("; ") + "."];
+    mets.push("Seleção dos preços (conceito de banco de preços): os registros do Painel de Preços e das contratações similares foram buscados no mesmo estado, na mesma região e, quando escolhido, em todo o país, e selecionados pela semelhança da especificação (termos essenciais do item), pela quantidade, pela unidade, pela localidade e pelo período, observadas a economia de escala e as peculiaridades do local de execução" + (rg.proprio ? "" : " (art. 23, caput, da Lei 14.133/2021)") + ". O agente responsável pode incluir ou excluir registros, e os não selecionados ficam listados com o motivo.");
+    mets.push("Os preços do Painel de Preços e das contratações similares foram atualizados pelo IPCA, do mês da contratação até o último índice publicado" + (rg.proprio ? "." : " (art. 23, § 1º, II, da Lei 14.133/2021)."));
+    mets.push("Saneamento da amostra (" + rg.C.exclusao + "): foram desconsiderados como inexequíveis os preços mais de " + rg.pctFaixa + "% abaixo da mediana dos preços selecionados e como excessivamente elevados os preços mais de " + rg.pctFaixa + "% acima dela.");
+    mets.push(rg.metodoFixo ? "Método (" + rg.C.metodo + "): " + { media: "média", mediana: "mediana", menor: "menor preço" }[rg.metodoFixo] + " dos preços válidos, conforme o regulamento. O coeficiente de variação é informado para a análise crítica da amostra."
+      : "Escolha do método (" + rg.C.metodo + "): com coeficiente de variação de até 25%, a amostra é considerada homogênea e adota-se a média; acima de 25%, adota-se a mediana, menos sensível a valores extremos (Manual de Licitações e Contratos do TCU, item 4.3.9.3; Enunciado 33 da Jornada de Direito Administrativo do CJF, de 2023). Em mercado restrito, adota-se o menor preço (Acórdãos 1.639/2016 e 1.850/2020-TCU-Plenário).");
+    mets.push("Exige-se o mínimo de " + rg.minimo + " preços válidos por item (" + rg.C.minimo + "); abaixo disso, o preço só é admitido excepcionalmente, com justificativa do agente responsável e aprovação da autoridade competente.");
+    blocos.push({ t: "texto", titulo: sec++ + ". Metodologia", paragrafos: mets });
+    if (res.itens.some((x) => x.st.semPrioritario) && d.justPrioritarios) blocos.push({ t: "texto", titulo: sec++ + ". Justificativa: parâmetros prioritários", paragrafos: [(rg.proprio ? "Justificativa do agente quanto às fontes utilizadas (" + rg.ref + "): " : "Os parâmetros dos incisos I e II do art. 5º da IN 65/2021 são prioritários (§ 1º). ") + d.justPrioritarios] });
     res.itens.forEach((x, i) => {
       const it = x.item, st = x.st;
       blocos.push({ t: "secao", titulo: sec + "." + (i + 1) + ". Item " + (i + 1) + ": " + (it.desc || "sem descrição"), sub: [it.codNome ? (it.tipo === "servico" ? "CATSER " : "CATMAT/PDM ") + it.cod + " – " + it.codNome : "", "Unidade: " + (it.un || "—"), "Quantidade: " + (it.qtd || "1")].filter(Boolean).join(" · ") });
@@ -6969,20 +7023,20 @@ function ppDocumento(d, res, hoje, opc) {
         linhas: [...naoSel].sort((a, b) => (b.sim || 0) - (a.sim || 0)).slice(0, 150).map((p) => ({ fraco: true, c: ["Inc. " + p.inciso, [p.orgao, [p.municipio, p.uf].filter(Boolean).join("/")].filter(Boolean).join(" · "), String(p.descricao || "").slice(0, 160),
           [p.quantidade != null ? p.quantidade.toLocaleString("pt-BR") : "", p.unidade || ""].filter(Boolean).join("\n"), ppData(p.data) + "\n" + ppBRL(p.preco), p.motivo] })) });
       blocos.push({ t: "pares", titulo: "Tratamento estatístico", pares: [["Preços coletados / selecionados", st.coletados + " / " + st.selecionados], ["Mediana dos selecionados", ppBRL(st.med0)],
-        ["Faixa de aceitação (±25% da mediana)", ppBRL(st.lo) + " a " + ppBRL(st.hi)], ["Desconsiderados no saneamento", String(st.excluidos)], ["Preços válidos", String(st.n)],
+        ["Faixa de aceitação (±" + rg.pctFaixa + "% da mediana)", ppBRL(st.lo) + " a " + ppBRL(st.hi)], ["Desconsiderados no saneamento", String(st.excluidos)], ["Preços válidos", String(st.n)],
         ["Média · desvio-padrão", ppBRL(st.media) + " · " + ppBRL(st.dp)], ["Coeficiente de variação", ppPct(st.cv)], ["Mediana · menor preço", ppBRL(st.mediana) + " · " + ppBRL(st.menor)],
         ["Método adotado", st.nomeMet], ["Valor unitário estimado", ppBRL(st.valor)], ["Valor total do item", ppBRL(st.total)]] });
       const desc = st.precos.filter((p) => p.sit === "inex" || p.sit === "exc"), num = (p) => "P" + (usados.indexOf(p) + 1);
       const orig = (p) => (p.fonte === "manual" ? (p.fornecedor || p.fonteNome || "fonte manual") : [p.orgao, [p.municipio, p.uf].filter(Boolean).join("/")].filter(Boolean).join(", "));
-      const pj = ["Método estatístico (IN 65/2021, art. 6º): " + (st.justMet || "—") + (st.n ? " Valores válidos: média " + ppBRL(st.media) + ", mediana " + ppBRL(st.mediana) + " e menor preço " + ppBRL(st.menor) + "." : "")];
+      const pj = ["Método estatístico (" + rg.C.metodo + "): " + (st.justMet || "—") + (st.n ? " Valores válidos: média " + ppBRL(st.media) + ", mediana " + ppBRL(st.mediana) + " e menor preço " + ppBRL(st.menor) + "." : "")];
       pj.push(desc.length
-        ? "Desconsideração de valores (IN 65/2021, art. 6º, § 3º): a amostra selecionada tinha mediana de " + ppBRL(st.med0) + ". Foram desconsiderados " + desc.length + " preço(s) fora da faixa de " + ppBRL(st.lo) + " a " + ppBRL(st.hi) + " (±25% da mediana): " +
+        ? "Desconsideração de valores (" + rg.C.exclusao + "): a amostra selecionada tinha mediana de " + ppBRL(st.med0) + ". Foram desconsiderados " + desc.length + " preço(s) fora da faixa de " + ppBRL(st.lo) + " a " + ppBRL(st.hi) + " (±" + rg.pctFaixa + "% da mediana): " +
           desc.map((p) => num(p) + " (" + orig(p) + ", " + ppBRL(p.atual) + ", " + (p.sit === "inex" ? Math.round((1 - p.atual / st.med0) * 100) + "% abaixo" : Math.round((p.atual / st.med0 - 1) * 100) + "% acima") + " da mediana)").join("; ") +
-          ". Preços muito abaixo da mediana indicam possível inexequibilidade, erro de registro ou item de especificação inferior; preços muito acima indicam valores excessivamente elevados, que levariam a estimativa a sobrepreço. A mediana é usada como referência por não ser afetada pelos próprios valores extremos, e a faixa de 25% acompanha o parâmetro de 25% do coeficiente de variação adotado pelo TCU para considerar a amostra homogênea."
-        : "Desconsideração de valores (IN 65/2021, art. 6º, § 3º): nenhum preço selecionado ficou fora da faixa de ±25% da mediana (" + ppBRL(st.lo) + " a " + ppBRL(st.hi) + "); não houve valor inexequível nem excessivamente elevado.");
-      if (naoSel.length) pj.push("Registros não selecionados: " + naoSel.length + " registro(s) coletado(s) não foram considerados por não serem comparáveis ao objeto, tratados como inconsistentes para a formação do preço (IN 65/2021, art. 6º, § 3º). Critérios: semelhança mínima da especificação de " + f.sim + "%, quantidade " + { qualquer: "sem restrição", ordem: "de 1/10 a 10 vezes a pesquisada", proxima: "da metade ao dobro da pesquisada" }[f.qtd] + (f.un ? ", unidade " + f.un.toUpperCase() : "") + ", localidade " + { todas: "estado, região e país", regiao: "estado e região", estado: "estado" }[f.abr] + " e período de " + f.meses + " meses, em atenção à economia de escala e às peculiaridades do local de execução (art. 23, caput, da Lei 14.133/2021). Cada registro e o motivo constam da tabela de registros não selecionados.");
+          ". Preços muito abaixo da mediana indicam possível inexequibilidade, erro de registro ou item de especificação inferior; preços muito acima indicam valores excessivamente elevados, que levariam a estimativa a sobrepreço. A mediana é usada como referência por não ser afetada pelos próprios valores extremos" + (rg.proprio && rg.R.exclusao ? ", e a faixa de ±" + rg.pctFaixa + "% é a fixada no regulamento." : ", e a faixa de 25% acompanha o parâmetro de 25% do coeficiente de variação adotado pelo TCU para considerar a amostra homogênea.")
+        : "Desconsideração de valores (" + rg.C.exclusao + "): nenhum preço selecionado ficou fora da faixa de ±" + rg.pctFaixa + "% da mediana (" + ppBRL(st.lo) + " a " + ppBRL(st.hi) + "); não houve valor inexequível nem excessivamente elevado.");
+      if (naoSel.length) pj.push("Registros não selecionados: " + naoSel.length + " registro(s) coletado(s) não foram considerados por não serem comparáveis ao objeto, tratados como inconsistentes para a formação do preço (" + rg.C.exclusao + "). Critérios: semelhança mínima da especificação de " + f.sim + "%, quantidade " + { qualquer: "sem restrição", ordem: "de 1/10 a 10 vezes a pesquisada", proxima: "da metade ao dobro da pesquisada" }[f.qtd] + (f.un ? ", unidade " + f.un.toUpperCase() : "") + ", localidade " + { todas: "estado, região e país", regiao: "estado e região", estado: "estado" }[f.abr] + " e período de " + f.meses + " meses, em atenção à economia de escala e às peculiaridades do local de execução" + (rg.proprio ? "" : " (art. 23, caput, da Lei 14.133/2021)") + ". Cada registro e o motivo constam da tabela de registros não selecionados.");
       if (it.justAgente) pj.push("Justificativa complementar do agente responsável: " + it.justAgente);
-      if (st.poucos) pj.push("Menos de três preços válidos. Justificativa do agente responsável: " + (it.just || "NÃO INFORMADA – obrigatória para submeter à autoridade competente (IN 65/2021, art. 6º)."));
+      if (st.poucos) pj.push("Menos de " + rg.minimo + " preços válidos. Justificativa do agente responsável: " + (it.just || "NÃO INFORMADA – obrigatória para submeter à autoridade competente (" + rg.C.minimo + ")."));
       if (it.iaUsada) pj.push("A semelhança dos itens coletados foi avaliada com apoio de inteligência artificial e conferida pelo agente responsável, que pode incluir ou excluir preços com justificativa.");
       blocos.push({ t: "texto", titulo: "Justificativas da metodologia e da desconsideração de valores", paragrafos: pj });
       const validos = st.precos.filter((p) => p.sit === "ok"), soma = validos.reduce((a, p) => a + p.atual, 0);
@@ -6992,7 +7046,7 @@ function ppDocumento(d, res, hoje, opc) {
             { c: ["", "Coeficiente de variação = desvio-padrão ÷ média", "", "", "", ppPct(st.cv)] }, { c: ["", "Mediana", "", "", "", ppBRL(st.mediana)] }, { c: ["", "Menor preço", "", "", "", ppBRL(st.menor)] },
             { c: ["", "Valor unitário estimado (" + st.nomeMet + ")", "", "", "", ppBRL(st.valor)], forte: true }, { c: ["", "Valor total = " + ppBRL(st.valor) + " × " + (it.qtd || 1), "", "", "", ppBRL(st.total)], total: true }]) });
       const cot = usados.filter((p) => p.inciso === "IV");
-      if (cot.length) blocos.push({ t: "tabela", titulo: "Pesquisa direta com fornecedores (art. 23, § 1º, IV; IN 65/2021, art. 5º, § 2º)", sub: "Fornecedores consultados que não enviaram proposta: " + (it.naoResp || "não informado"),
+      if (cot.length) blocos.push({ t: "tabela", titulo: "Pesquisa direta com fornecedores (" + rg.C.direta + ")", sub: "Fornecedores consultados que não enviaram proposta: " + (it.naoResp || "não informado"),
         cab: ["Preço", "Fornecedor e CNPJ", "Endereço e contato", "Responsável", "Data", "Valor", "Justificativa da escolha"], larg: [8, 20, 18, 14, 10, 11, 25], alin: "lllllrl",
         linhas: cot.map((p) => ({ c: [num(p), [p.fornecedor || p.fonteNome, p.cnpj && "CNPJ " + p.cnpj].filter(Boolean).join(" · "), p.endereco || "—", p.responsavel || "—", ppData(p.data), ppBRL(p.preco), p.justForn || "—"] })) });
       if (d.objeto === "mao_obra") {
@@ -7012,21 +7066,23 @@ function ppDocumento(d, res, hoje, opc) {
   if (d.objeto !== "obras") {
     const temIV = res.itens.some((x) => x.st.precos.some((p) => p.inciso === "IV" && p.incl !== false));
     const ok = (c) => (c ? "Atendido" : "Pendente");
-    blocos.push({ t: "tabela", titulo: "Conformidade com o art. 3º da IN SEGES/ME 65/2021", cab: ["Requisito", "Onde está", "Situação"], larg: [52, 34, 14], alin: "lll",
-      linhas: [["I – descrição do objeto", "Identificação e seção de cada item", ok(res.itens.every((x) => String(x.item.desc || "").trim()))],
+    const regrasReg = rg.proprio ? [["Regras do regulamento aplicadas (" + rg.ref + ")", "Enquadramento legal e metodologia", ok(!!d.norma)], ["Quantidade mínima de " + rg.minimo + " preços", "Tratamento estatístico", ok(res.itens.every((x) => !x.st.poucos || String(x.item.just || "").trim()))],
+      ["Desconsideração fora de ±" + rg.pctFaixa + "% da mediana", "Justificativas da desconsideração", "Atendido"], ["Método" + (rg.metodoFixo ? " do regulamento" : " (omissão do regulamento: orientação do TCU)"), "Tratamento estatístico", "Atendido"]] : [];
+    blocos.push({ t: "tabela", titulo: rg.proprio ? "Conformidade com o regulamento e elementos mínimos da pesquisa" : "Conformidade com o art. 3º da IN SEGES/ME 65/2021", sub: rg.proprio ? "Elementos mínimos tomados por referência da IN 65/2021, art. 3º, como boa prática; prevalece o regulamento." : "", cab: ["Requisito", "Onde está", "Situação"], larg: [52, 34, 14], alin: "lll",
+      linhas: regrasReg.concat([["I – descrição do objeto", "Identificação e seção de cada item", ok(res.itens.every((x) => String(x.item.desc || "").trim()))],
         ["II – identificação do agente ou da equipe responsável", "Identificação", ok(!!(d.agente || d.equipe))],
         ["III – caracterização das fontes consultadas", "Fontes e critérios; dados completos das contratações", ok(res.itens.every((x) => x.st.coletados > 0))],
         ["IV – série de preços coletados", "Contratações selecionadas; registros não selecionados", ok(res.itens.every((x) => x.st.coletados > 0))],
         ["V – método estatístico aplicado", "Tratamento estatístico", ok(res.itens.every((x) => x.st.n > 0))],
         ["VI – justificativas da metodologia e da desconsideração de valores", "Justificativas da metodologia e da desconsideração", ok(res.itens.every((x) => x.st.n > 0 && (!x.st.poucos || String(x.item.just || "").trim())))],
         ["VII – memória de cálculo e documentos de suporte", "Memória de cálculo; links e consultas de cada preço", ok(res.itens.every((x) => x.st.n > 0))],
-        ["VIII – justificativa da escolha dos fornecedores (pesquisa direta)", temIV ? "Pesquisa direta com fornecedores" : "Não houve pesquisa direta", temIV ? ok(res.itens.every((x) => x.st.precos.filter((p) => p.inciso === "IV" && p.incl !== false).every((p) => p.justForn))) : "Não se aplica"]]
+        ["VIII – justificativa da escolha dos fornecedores (pesquisa direta)", temIV ? "Pesquisa direta com fornecedores" : "Não houve pesquisa direta", temIV ? ok(res.itens.every((x) => x.st.precos.filter((p) => p.inciso === "IV" && p.incl !== false).every((p) => p.justForn))) : "Não se aplica"]])
         .map((c) => ({ c, alerta: c[2] === "Pendente" ? [2] : [] })) });
     blocos.push({ t: "legenda", texto: "Juntar ao processo as propostas formais dos fornecedores (art. 5º, § 2º), as telas ou páginas das fontes do inciso III com data e hora de acesso e as notas fiscais do inciso V. Para os incisos I e II, os links e as consultas indicados permitem conferir cada preço." });
   }
   blocos.push({ t: "texto", titulo: "Responsabilidade", paragrafos: ["Documento de apoio gerado pelo Licitacon a partir das fontes indicadas. A pesquisa de preços é ato do agente responsável, que deve conferir as fontes, os itens considerados semelhantes, as justificativas e o enquadramento legal antes de juntá-la ao processo. A decisão final e a responsabilidade são de quem assina a pesquisa."] });
   notas.push("Fontes públicas consultadas: API de dados abertos do Compras.gov.br (Painel de Preços) e Portal Nacional de Contratações Públicas (PNCP), com a data da consulta e o link de cada preço.");
-  return { id: "pesquisa", titulo: "Pesquisa de preços", sub: (d.titulo || d.descricao || "Pesquisa de preços") + (d.orgao ? " · " + d.orgao : ""), selo: d.objeto === "obras" ? "Lei 14.133/2021, art. 23, §§ 2º e 3º" : "Lei 14.133/2021, art. 23 · IN SEGES/ME 65/2021",
+  return { id: "pesquisa", titulo: "Pesquisa de preços", sub: (d.titulo || d.descricao || "Pesquisa de preços") + (d.orgao ? " · " + d.orgao : ""), selo: d.objeto === "obras" ? (d.regime === "13303" ? "Lei 13.303/2016 · " + (rg.proprio ? rg.norma.slice(0, 50) : "Lei 14.133/2021, art. 23, como parâmetro") : "Lei 14.133/2021, art. 23, §§ 2º e 3º") : rg.proprio ? (d.regime === "13303" ? "Lei 13.303/2016 · " : "Lei 13.019/2014 · ") + rg.norma.slice(0, 50) : rg.outro ? (d.regime === "13303" ? "Lei 13.303/2016" : "Lei 13.019/2014") + " · parâmetros da IN 65/2021" : "Lei 14.133/2021, art. 23 · IN SEGES/ME 65/2021",
     arquivo: "Pesquisa de precos - " + String(d.titulo || d.descricao || "Licitacon").replace(/[\\/:*?"<>|]+/g, "-").slice(0, 60), blocos, notas, paisagem: false };
 }
 
@@ -7902,7 +7958,15 @@ class Component extends DCLogic {
     const up = await this.sb.storage.from("analises").upload(caminho, f, { upsert: false, contentType: "application/pdf" });
     if (up.error) { this.ppMsg("Não foi possível enviar o arquivo. Tente de novo."); return; }
     try { const r = await this.ppChamar({ acao: "ia_rilc", arquivo: caminho });
-      this.ppMudar((d) => { d.rilc = r.regras || null; d.rilcNome = f.name; return d; });
+      this.ppMudar((d) => { const g = r.regras || {}, R = { ...(d.reg || {}) }, txt = (v) => String(v || "");
+        const disp = [...new Set((g.parametros || []).map((x) => x.dispositivo).concat([g.metodo, g.minimo_precos, g.criterio_exclusao, g.validade_cotacoes].map((t) => (txt(t).match(/art(?:igo)?s?\.?\s*\d+[^;.,]*/i) || [""])[0])).filter(Boolean))].slice(0, 6).join("; ");
+        if (!R.disp && disp) R.disp = disp;
+        if (!R.fontes && (g.parametros || []).length) R.fontes = g.parametros.map((x) => x.fonte + (x.prioridade ? " (" + x.prioridade + ")" : "")).join("; ").slice(0, 300);
+        if (!R.minimo) { const m = txt(g.minimo_precos).match(/\b(\d{1,2})\b/) || (/tr[eê]s/i.test(g.minimo_precos) ? [0, "3"] : null); if (m) R.minimo = m[1]; }
+        if (!R.metodo) { const t = ppSemAc(g.metodo); R.metodo = /mediana/.test(t) ? "mediana" : /menor/.test(t) ? "menor" : /media/.test(t) ? "media" : ""; }
+        if (!R.exclusao) { const m = txt(g.criterio_exclusao).match(/(\d{1,2})\s*%/); if (m) R.exclusao = m[1]; }
+        if (!R.validade) { const m = txt(g.validade_cotacoes).match(/(\d{1,3})\s*(dias|mes|m[eê]s)/i); if (m) R.validade = /dia/i.test(m[2]) ? String(Math.round(Number(m[1]) / 30)) : m[1]; }
+        d.rilc = r.regras || null; d.rilcNome = f.name; d.reg = R; if (!d.base) d.base = "proprio"; return d; });
       this.ppMsg("", r.regras && r.regras.encontrado ? "Regras do regulamento identificadas. Confira no texto do regulamento." : "O regulamento não parece tratar da pesquisa de preços: aplique as regras gerais e registre isso na justificativa.");
     } catch (er) { this.ppMsg(er.message); }
   }
@@ -7951,8 +8015,9 @@ class Component extends DCLogic {
     let total = itens.reduce((a, x) => a + (x.st.total || 0), 0), ratif = null;
     if (d.objeto === "mao_obra" && itens[0]) {
       const v = ppNum(d.moValor), ref = itens[0].st.valor, postos = ppNum(d.moPostos) || 1;
-      if (v && ref) { const lo = ref * (1 - PP_FAIXA), hi = ref * (1 + PP_FAIXA), dif = v / ref - 1;
-        ratif = { lo, hi, dif, ok: v >= lo && v <= hi, conclusao: v >= lo && v <= hi ? "Valor da planilha compatível com o mercado (dentro de ±25% da referência). A planilha fica ratificada." : v > hi ? "Valor da planilha mais de 25% acima da referência de mercado: revisar os módulos da planilha (benefícios, insumos, custos indiretos, lucro e tributos) e justificar." : "Valor da planilha mais de 25% abaixo da referência de mercado: conferir se todos os custos legais e da convenção coletiva foram considerados, para evitar propostas inexequíveis." }; }
+      const FXr = ppRegras(d).faixa;
+      if (v && ref) { const lo = ref * (1 - FXr), hi = ref * (1 + FXr), dif = v / ref - 1;
+        ratif = { lo, hi, dif, ok: v >= lo && v <= hi, conclusao: v >= lo && v <= hi ? "Valor da planilha compatível com o mercado (dentro de ±" + Math.round(FXr * 100) + "% da referência). A planilha fica ratificada." : v > hi ? "Valor da planilha mais de " + Math.round(FXr * 100) + "% acima da referência de mercado: revisar os módulos da planilha (benefícios, insumos, custos indiretos, lucro e tributos) e justificar." : "Valor da planilha mais de " + Math.round(FXr * 100) + "% abaixo da referência de mercado: conferir se todos os custos legais e da convenção coletiva foram considerados, para evitar propostas inexequíveis." }; }
       total = v ? v * postos * 12 : 0;
       if (itens[0]) itens[0] = { ...itens[0], item: { ...itens[0].item, qtd: String(postos) } };
     }
@@ -8091,7 +8156,7 @@ class Component extends DCLogic {
       restrito: !!it.restrito, onRestrito: this.ppItemCampo(it.id, "restrito"),
       metodos: [["auto", "Automático (pelo coeficiente de variação)"], ["media", "Média"], ["mediana", "Mediana"], ["menor", "Menor preço"]].map(([id, nome]) => ({ id, nome, sel: (it.metodo || "auto") === id })),
       onMetodo: this.ppItemCampo(it.id, "metodo"),
-      kpis: [["Coletados / selecionados", st.coletados + " / " + st.selecionados], ["Mediana dos selecionados", ppBRL(st.med0)], ["Faixa de ±25%", st.lo != null ? ppBRL(st.lo) + " a " + ppBRL(st.hi) : "—"],
+      kpis: [["Coletados / selecionados", st.coletados + " / " + st.selecionados], ["Mediana dos selecionados", ppBRL(st.med0)], ["Faixa de ±" + st.pctFaixa + "%", st.lo != null ? ppBRL(st.lo) + " a " + ppBRL(st.hi) : "—"],
         ["Válidos", String(st.n)], ["Média · desvio", ppBRL(st.media) + " · " + ppBRL(st.dp)], ["Coef. de variação", ppPct(st.cv)], ["Método", st.n ? st.nomeMet : "—"]].map(([k, v]) => ({ k, v })),
       valor: ppBRL(st.valor), total: ppBRL(st.total), justMet: st.justMet, poucos: st.coletados > 0 && st.poucos, just: it.just, onJust: this.ppItemCampo(it.id, "just"),
       semPrioritario: st.semPrioritario, remover: () => this.ppMudar((dd) => { dd.itens = dd.itens.filter((x) => x.id !== it.id); return dd; }), podeRemover: d.objeto !== "mao_obra" && d.itens.length > 1,
@@ -8106,7 +8171,8 @@ class Component extends DCLogic {
       ppErro: pp.erro || "", ppOk: pp.ok || "",
       ppEtapas: etapas.map(([id, nome]) => ({ nome, cls: "pp-et" + (etapa === id ? " ativo" : ""), ir: () => { this.setState((x) => ({ pp: { ...x.pp, etapa: id, erro: "", ok: "" } })); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} } })),
       ppEtEnq: etapa === "enq", ppEtDados: etapa === "dados", ppEtRel: etapa === "rel",
-      ppIrDados: () => { if (!String(d.titulo || "").trim()) { this.ppMsg("Dê um título à pesquisa."); return; } this.setState((x) => ({ pp: { ...x.pp, etapa: "dados", erro: "", ok: "" } })); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} },
+      ppIrDados: () => { if (!String(d.titulo || "").trim()) { this.ppMsg("Dê um título à pesquisa."); return; }
+        if ((d.regime === "13303" || d.regime === "13019") && !d.base) { this.ppMsg("Responda se a pesquisa pode adotar os fundamentos da Lei 14.133/2021 e da IN 65/2021 ou se segue o regulamento próprio."); return; } this.setState((x) => ({ pp: { ...x.pp, etapa: "dados", erro: "", ok: "" } })); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} },
       ppIrRel: () => { this.setState((x) => ({ pp: { ...x.pp, etapa: "rel", erro: "", ok: "" } })); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} },
       // lista de pesquisas salvas
       ppTemLista: (pp.lista || []).length > 0,
@@ -8120,6 +8186,13 @@ class Component extends DCLogic {
       ppDescricao: d.descricao, onPpDescricao: this.ppSet("descricao"),
       ppRegimes: op([["14133", "Lei 14.133/2021", "administração direta, autárquica e fundacional"], ["13303", "Lei 13.303/2016", "empresas públicas e sociedades de economia mista"], ["13019", "Lei 13.019/2014", "parcerias com organizações da sociedade civil"]], d.regime, "regime"),
       ppEh14133: d.regime === "14133", ppEh13303: d.regime === "13303", ppEh13019: d.regime === "13019",
+      ppOutroRegime: d.regime === "13303" || d.regime === "13019", ppUsaRegulamento: (d.regime === "13303" || d.regime === "13019") && d.base === "proprio",
+      ppBasePergunta: "A pesquisa e o relatório podem adotar os fundamentos da Lei 14.133/2021 e da IN SEGES/ME 65/2021? *",
+      ppBases: op([["in65", "Sim: o órgão adota a Lei 14.133 e a IN 65/2021 como parâmetro", "o relatório cita a Lei 14.133 e a IN 65/2021, registrando que foram adotadas pelo órgão"], ["proprio", "Não: seguir o " + (d.regime === "13303" ? "regulamento interno da estatal" : "decreto ou regulamento das parcerias"), "o relatório é construído com as regras e os dispositivos do regulamento"]], d.base, "base"),
+      ...(() => { const R = d.reg || {}, set = (k) => (e) => { const v = e && e.target ? e.target.value : e; this.ppMudar((dd) => { dd.reg = { ...(dd.reg || {}), [k]: v }; return dd; }); };
+        return { ppRegDisp: R.disp || "", onPpRegDisp: set("disp"), ppRegFontes: R.fontes || "", onPpRegFontes: set("fontes"), ppRegMinimo: R.minimo || "", onPpRegMinimo: set("minimo"),
+          ppRegExclusao: R.exclusao || "", onPpRegExclusao: set("exclusao"), ppRegValidade: R.validade || "", onPpRegValidade: set("validade"), onPpRegMetodo: set("metodo"),
+          ppRegMetodos: [["", "Não definido no regulamento"], ["media", "Média"], ["mediana", "Mediana"], ["menor", "Menor preço"]].map(([id, nome]) => ({ id, nome, sel: (R.metodo || "") === id })) }; })(),
       ppOrigens: op([["uniao", "Órgão ou entidade federal"], ["transf", "Estado, DF ou município com recursos de transferência voluntária da União"], ["proprio", "Estado, DF ou município com recursos próprios"]], d.origem, "origem"),
       ppEsferas: op([["federal", "Parceria federal (Decreto 8.726/2016)"], ["outra", "Parceria estadual, distrital ou municipal"]], d.esfera13019, "esfera13019"),
       ppNormaRot: d.regime === "13303" ? "Regulamento interno de licitações e contratos (nome e artigos sobre pesquisa de preços)" : d.regime === "13019" ? "Regulamento do ente para as parcerias (se houver)" : "Decreto ou regulamento do ente sobre pesquisa de preços e tabelas de referência",
@@ -8153,9 +8226,11 @@ class Component extends DCLogic {
       ppResumo: (d.objeto === "obras"
         ? [["Valor global do orçamento", ppBRL(o ? o.total : null)], ["Apontamentos", o ? String(o.apontamentos.length) : "—"], ["Regime", d.regime]]
         : [["Valor total estimado", ppBRL(res.total)], ["Itens", String(res.itens.length)], ["Preços válidos", String(res.itens.reduce((a, x) => a + x.st.n, 0))]]).map(([k, v]) => ({ k, v })),
-      ppPendencias: [].concat(res.itens.filter((x) => x.st.poucos && !String(x.item.just || "").trim()).map((x) => "Item “" + (x.item.desc || "sem descrição") + "”: menos de três preços válidos sem justificativa (IN 65/2021, art. 6º)."))
+      ppPendencias: [].concat(res.itens.filter((x) => x.st.poucos && !String(x.item.just || "").trim()).map((x) => "Item “" + (x.item.desc || "sem descrição") + "”: menos de " + x.st.minimo + " preços válidos sem justificativa."))
         .concat(res.itens.some((x) => x.st.semPrioritario) && !String(d.justPrioritarios || "").trim() && d.regime === "14133" ? ["Sem preços do Painel de Preços ou de contratações similares em algum item: justifique (IN 65/2021, art. 5º, § 1º)."] : [])
-        .concat(!d.agente ? ["Informe o agente responsável pela pesquisa (IN 65/2021, art. 3º)."] : [])
+        .concat(!d.agente && !d.equipe ? ["Informe o agente ou a equipe responsável pela pesquisa."] : [])
+        .concat((d.regime === "13303" || d.regime === "13019") && !d.base ? ["Responda, na etapa 1, se a pesquisa adota os fundamentos da Lei 14.133/2021 e da IN 65/2021 ou segue o regulamento próprio."] : [])
+        .concat((d.regime === "13303" || d.regime === "13019") && d.base === "proprio" && !String(d.norma || "").trim() ? ["Informe o nome do regulamento aplicável na etapa 1."] : [])
         .concat(d.objeto === "obras" && !o ? ["Envie a planilha do orçamento da obra."] : [])
         .concat(d.objeto === "mao_obra" && !ppNum(d.moValor) ? ["Informe o valor mensal por posto da planilha de custos."] : []).map((t) => ({ t })),
       ppPdf: () => this.ppPdf(), ppExcel: () => this.ppExcel(), ppWord: () => this.ppWord(), ppLevar: () => this.ppLevar(),
