@@ -179,13 +179,21 @@ Deno.serve(async (req) => {
       if (agora >= dt - 15 * DIA && agora <= dt + 30 * DIA) devidos.push({ tipo: "convencao", ref: String(ano),
         texto: `<strong>Convenção coletiva:</strong> a data-base da categoria é <strong>${db[1]}/${db[2]}</strong>. Quando a nova convenção for registrada, verifique a repactuação; o pedido deve ser feito antes da prorrogação ou do fim do contrato.` });
     }
+    // próximo reajuste depois da prorrogação: a contagem dos 12 meses não reinicia
+    const proxReaj = (ate: string) => {
+      const u = evs.filter((e) => e.tipo === "reajuste" && String(e.data) <= ate).map((e) => String(e.data)).sort().pop() || null;
+      const b = mesN(u) ?? mesN(c.data_proposta); if (b == null) return "";
+      const d = b + 12, a = mesN(ate) as number;
+      return d <= a ? ` Há reajuste possível desde <strong>${mesTxt(d)}</strong> ainda não registrado: peça-o antes de assinar a prorrogação.`
+        : ` Se o contrato for prorrogado, o próximo reajuste caberá a partir de <strong>${mesTxt(d)}</strong> (12 meses ${u ? "do último reajuste" : "do orçamento estimado"}; a prorrogação não reinicia a contagem).`;
+    };
     // 3) fim da vigência: 90 e 30 dias antes
     if (fim) {
       const dias = Math.ceil((Date.parse(fim + "T00:00:00Z") - agora) / DIA);
       const txt = `<strong>Fim da vigência:</strong> o contrato termina em <strong>${dataBR(fim + "T12:00:00Z")}</strong> (${dias} dia${dias === 1 ? "" : "s"}). Se houver prorrogação, peça antes o reajuste, a repactuação ou o reequilíbrio pendente: depois dela, o direito pode se perder (Lei 14.133/2021, art. 131, parágrafo único).`;
       if (dias > 90 && dias <= 122) {
         const iniT = new Date(fim + "T12:00:00Z"); iniT.setUTCMonth(iniT.getUTCMonth() - 4);
-        devidos.push({ tipo: "fim120", ref: fim, texto: `<strong>Prorrogação:</strong> o contrato termina em <strong>${dataBR(fim + "T12:00:00Z")}</strong>. A orientação usual é começar a tramitação da prorrogação 4 meses antes, até <strong>${dataBR(iniT.toISOString())}</strong>: o termo aditivo precisa estar assinado antes do fim da vigência (contrato extinto não pode ser prorrogado). Verifique a previsão no edital, o interesse da contratada, a pesquisa de preços que demonstre a vantajosidade (art. 107), as certidões e a disponibilidade orçamentária. Peça antes o reajuste, a repactuação ou o reequilíbrio pendente (art. 131, parágrafo único).` });
+        devidos.push({ tipo: "fim120", ref: fim, texto: `<strong>Prorrogação:</strong> o contrato termina em <strong>${dataBR(fim + "T12:00:00Z")}</strong>. A orientação usual é começar a tramitação da prorrogação 4 meses antes, até <strong>${dataBR(iniT.toISOString())}</strong>: o termo aditivo precisa estar assinado antes do fim da vigência (contrato extinto não pode ser prorrogado). Verifique a previsão no edital, o interesse da contratada, a pesquisa de preços que demonstre a vantajosidade (art. 107), as certidões e a disponibilidade orçamentária. Peça antes o reajuste, a repactuação ou o reequilíbrio pendente (art. 131, parágrafo único).${proxReaj(fim)}` });
       }
       if (dias > 0 && dias <= 30) devidos.push({ tipo: "fim30", ref: fim, texto: txt });
       else if (dias > 30 && dias <= 90) devidos.push({ tipo: "fim90", ref: fim, texto: txt });

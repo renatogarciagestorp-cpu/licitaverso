@@ -1387,6 +1387,7 @@
   .ct-pr-info p { margin: 0; font-size: 13px; color: #3D5058; line-height: 1.55; } .ct-pr-info ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 5px; font-size: 12.5px; color: #3D5058; line-height: 1.5; }
   .ct-125 { display: grid; grid-template-columns: 82px minmax(0, 1fr) auto; gap: 10px; align-items: center; margin-top: 12px; font-size: 12.5px; color: #3D5058; } .ct-125 b { font-size: 12.5px; color: #0B1F2A; white-space: nowrap; }
   .ct-pb-125 .ct-pb-nota { line-height: 1.5; margin-top: 12px; } .ct-pb-125 .ct-pb-nota b { color: #3D5058; }
+  .ct-ajuda-v { background: #EAF6F0 !important; border-left-color: #0FA36B !important; } .ct-pr-data b.ct-pr-reaj { font-size: 20px; color: #0A7A51; }
   .ct-ajuda { margin: 0; font-size: 12.5px; color: #4A5D65; background: #F3EFFA; border-left: 3px solid #7D5CBF; border-radius: 6px; padding: 8px 10px; line-height: 1.5; }
   .ct-linha li::before { background: var(--mc, #0FA36B) !important; } .ct-li-marco::before { border-radius: 2px !important; transform: rotate(45deg); } .ct-li-marco b { color: var(--mc) !important; }
   @media (max-width: 860px) { .ct-pr { grid-template-columns: 1fr; } }
@@ -3507,6 +3508,7 @@
                               <p class="ct-graf-t">Prorrogação contratual <span class="ct-pr-st">{{ c.pn.prSt }}</span></p>
                               <div class="ct-pr">
                                 <div class="ct-pr-data"><small>Comece a tramitação até</small><b>{{ c.pn.prIni }}</b><em>4 meses antes do fim ({{ c.pn.prFim }})</em><p>{{ c.pn.prFalta }}</p>
+                                  <small style="margin-top: 10px">{{ c.pn.prReajRot }}</small><b class="ct-pr-reaj">{{ c.pn.prReaj }}</b><p>{{ c.pn.prReajTxt }}</p>
                                   <small style="margin-top: 10px">Vigência acumulada (limite do art. 107)</small><div class="ct-comp-t"><i style="width: {{ c.pn.prAnosW }}%; background: #0F6B7E"></i></div><em>{{ c.pn.prAnos }}</em></div>
                                 <div class="ct-pr-info">
                                   <p>A Lei 14.133/2021 não fixa um prazo para começar o processo, mas o <b>termo aditivo precisa estar assinado antes do fim da vigência</b>: contrato extinto não pode ser prorrogado. Por isso, a orientação usual é iniciar a tramitação com <b>4 meses de antecedência</b>, tempo para as etapas abaixo.</p>
@@ -3555,6 +3557,7 @@
                             <label class="lmo-campo"><span>Valor anterior (R$)</span><input type="text" inputmode="decimal" value="{{ ctEValorAnterior }}" sc-camel-on-input="{{ onCtEValorAnterior }}"></label>
                             <label class="lmo-campo"><span>Novo valor (R$)</span><input type="text" inputmode="decimal" value="{{ ctEValorNovo }}" sc-camel-on-input="{{ onCtEValorNovo }}"></label>
                             <sc-if value="{{ ctEvAditivo }}" hint-placeholder-val="{{ false }}"><p class="ct-ajuda" style="grid-column: 1 / -1">{{ ctEvAditivoTxt }}</p></sc-if>
+                            <sc-if value="{{ ctEvProrrog }}" hint-placeholder-val="{{ false }}"><p class="ct-ajuda ct-ajuda-v" style="grid-column: 1 / -1">{{ ctEvProrrogTxt }}</p></sc-if>
                             <sc-if value="{{ ctEvProrrog }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>Nova vigência até</span><input type="date" value="{{ ctENovoFim }}" sc-camel-on-input="{{ onCtENovoFim }}"></label></sc-if>
                             <label class="lmo-campo" style="grid-column: 1 / -1"><span>Descrição</span><input type="text" value="{{ ctEDescricao }}" sc-camel-on-input="{{ onCtEDescricao }}" placeholder="Ex.: 1º termo aditivo, processo nº…"></label>
                           </div>
@@ -6011,6 +6014,8 @@ function ctPainel(c, si) {
   if (c.assinatura) mk.push({ t: ts(c.assinatura), rot: "Assinatura", sub: dBR(ts(c.assinatura)), cor: "#0B3B4A", tipo: "marco" });
   if (c.inicio && c.inicio !== c.assinatura) mk.push({ t: ts(c.inicio), rot: "Início da vigência", sub: dBR(ts(c.inicio)), cor: "#0B3B4A", tipo: "marco" });
   si.eventos.forEach((e) => mk.push({ t: ts(e.data), rot: CT_CURTO[e.tipo] || e.tipo, sub: dBR(ts(e.data)), cor: CT_COR[e.tipo] || "#8A9AA0", tipo: "ev", titulo: (CT_TIPOS[e.tipo] || e.tipo) + " · " + dBR(ts(e.data)) }));
+  const rj = ctReajApos(c, si.eventos, new Date(hoje).toISOString().slice(0, 10));
+  if (rj && rj.proxN != null) { const tR = Date.UTC(Math.floor(rj.proxN / 12), rj.proxN % 12, 1); if (!si.fim || tR <= ts(si.fim)) mk.push({ t: tR, rot: rj.pendente ? "Reajuste pendente" : "Próximo reajuste", sub: "desde " + rj.prox, cor: "#0FA36B", tipo: "prazo", titulo: rj.txt }); }
   if (pr && !vencido) mk.push({ t: pr.ini.getTime(), rot: "Iniciar prorrogação", sub: "até " + dBR(pr.ini.getTime()), cor: "#D38B1A", tipo: "prazo" });
   if (si.fim) mk.push({ t: ts(si.fim), rot: "Fim do contrato", sub: dBR(ts(si.fim)), cor: "#C24A43", tipo: "marco" });
   const g0 = Math.min(inicio, ...mk.map((m) => m.t)), g1 = Math.max(fim, hoje, ...mk.map((m) => m.t)), gd = Math.max(864e5, g1 - g0);
@@ -6035,6 +6040,8 @@ function ctPainel(c, si) {
     rHoje: rx(hoje).toFixed(2), rHojeVis: hoje >= g0 && hoje <= g1, rAnos: anos, marcos, rIniTxt: dBR(inicio), rFimTxt: dBR(fim),
     temBase: a125.base != null, a125Base: a125.base != null ? brl(a125.base) : "", a125Acr: g125(a125.acr, a125.limAcr), a125Sup: g125(a125.sup, a125.limSup),
     a125Disp: a125.base != null ? brl(Math.max(0, (a125.limAcr - a125.acr) / 100 * a125.base)) : "", a125Reforma: !!c.reforma,
+    ...(() => { const r = pr ? ctReajApos(c, si.eventos, String(si.fim).slice(0, 10)) : null;
+      return { prReajRot: !r ? "" : r.futuro ? "Reajuste antes da prorrogação, a partir de" : r.pendente ? "Reajuste pendente desde" : "Se prorrogado, próximo reajuste a partir de", prReaj: r ? r.prox || "—" : "", prReajTxt: r ? r.txt : "" }; })(),
     temPr: !!pr, prSt: prSt ? prSt[0] : "", prCor: prSt ? prSt[1] : "", prIni: pr ? dBR(pr.ini.getTime()) : "", prFim: pr ? dBR(pr.fim.getTime()) : "",
     prFalta: !pr ? "" : pr.st === "encerrado" ? "O contrato terminou há " + -pr.dias + " dia(s): contrato extinto não pode ser prorrogado. Se o serviço continua necessário, é preciso nova contratação." : pr.diasIni > 0 ? "Faltam " + pr.diasIni + " dia(s) para a data recomendada de início da tramitação." : "Faltam " + pr.dias + " dia(s) para o fim da vigência: o termo aditivo precisa estar assinado antes dele.",
     prAnos: pr && pr.anos != null ? pr.anos.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " de 10 anos" : "", prAnosW: pr && pr.anos != null ? Math.min(100, (pr.anos / 10) * 100).toFixed(1) : "0"
@@ -6062,6 +6069,25 @@ function ctArt125(c, evs, opt) {
   return { base: v0 != null ? v0 * fator : null, fator, acr, sup, porEv, valor, limAcr: c.reforma ? 50 : 25, limSup: 25 };
 }
 // prazos da prorrogação: começar a tramitação 4 meses antes do fim (boa prática; a lei exige o aditivo assinado antes do fim)
+// próximo reajuste em relação a uma data (ex.: a da prorrogação). A prorrogação não reinicia a contagem: a anualidade
+// conta 12 meses da data do orçamento estimado e, depois, da data-base do último reajuste (arts. 25, § 7º, e 92, § 3º).
+function ctReajApos(c, evs, ateIso) {
+  const mes = (iso) => { const m = /^(\d{4})-(\d{2})/.exec(iso || ""); return m ? Number(m[1]) * 12 + Number(m[2]) - 1 : null; };
+  const ym = (n) => String(n % 12 + 1).padStart(2, "0") + "/" + Math.floor(n / 12);
+  const ate = mes(ateIso); if (ate == null) return null;
+  const reajs = (evs || []).filter((e) => e.tipo === "reajuste" && String(e.data) <= String(ateIso)).map((e) => String(e.data)).sort();
+  const ult = reajs.pop() || null, base = ult ? mes(ult) : mes(c.data_proposta);
+  if (base == null) return { txt: "Informe o mês do orçamento estimado para saber quando cabe o próximo reajuste.", prox: "", pendente: false };
+  const direito = base + 12, pendente = direito <= ate, origem = ult ? "do último reajuste (data-base " + ym(base) + ")" : "do orçamento estimado (" + ym(base) + ")";
+  const hj = new Date(), agora = hj.getFullYear() * 12 + hj.getMonth(), futuro = pendente && direito > agora;
+  const txt = futuro
+    ? "Antes do fim da vigência, a partir de " + ym(direito) + ", caberá o reajuste da anualidade: peça-o antes de assinar a prorrogação. Depois dele, o seguinte caberá a partir de " + ym(direito + 12) + ". A prorrogação não reinicia a contagem dos 12 meses."
+    : pendente
+    ? "Há reajuste possível desde " + ym(direito) + " ainda não registrado: peça-o antes de assinar a prorrogação, para evitar discussão sobre preclusão. O seguinte caberá a partir de " + ym(direito + 12) + "."
+    : "O próximo reajuste caberá a partir de " + ym(direito) + ", 12 meses " + origem + ". A prorrogação não reinicia a contagem dos 12 meses.";
+  const cct = c.mao_obra && c.data_base_cct ? " Na mão de obra exclusiva, a repactuação dos custos da convenção segue a data-base da categoria (" + c.data_base_cct + ")." : "";
+  return { txt: txt + cct, prox: ym(direito), proxN: direito, pendente, futuro, seguinte: ym(direito + 12) };
+}
 function ctProrrog(c, si) {
   if (!si.fim) return null;
   const f = new Date(String(si.fim).slice(0, 10) + "T12:00:00Z"), ini = new Date(f); ini.setUTCMonth(ini.getUTCMonth() - 4);
@@ -9119,7 +9145,7 @@ class Component extends DCLogic {
                 ? { data: it.data, tipo: it.tipo, pct: "", valores: "", fimTxt: "", desc: it.desc, editavel: false, cls: "ct-li-marco", cor: it.cor, editar: () => {}, excluir: () => {}, excluirTxt: "" }
                 : ((e) => ({ data: dataBR(e.data), tipo: CT_TIPOS[e.tipo] || e.tipo, editavel: meu, cls: "", cor: CT_COR[e.tipo] || "#0FA36B",
               pct: e.tipo === "aditivo_valor" && a125.porEv[e.id] ? pctT(a125.porEv[e.id].pct) + " do valor inicial atualizado" : e.percentual != null ? pctT(e.percentual) : "",
-              valores: e.valor_novo != null ? (e.valor_anterior != null ? brl(e.valor_anterior) + " → " : "") + brl(e.valor_novo) : "", fimTxt: e.novo_fim ? "Nova vigência até " + dataBR(e.novo_fim) : "",
+              valores: e.valor_novo != null ? (e.valor_anterior != null ? brl(e.valor_anterior) + " → " : "") + brl(e.valor_novo) : "", fimTxt: e.novo_fim ? "Nova vigência até " + dataBR(e.novo_fim) + (e.tipo === "prorrogacao" ? ((r) => (r && r.prox ? (r.pendente ? ". Reajuste possível desde " + r.prox + " sem registro antes desta prorrogação." : ". Próximo reajuste a partir de " + r.prox + " (a prorrogação não reinicia a contagem).") : ""))(ctReajApos(c, si.eventos, String(e.data).slice(0, 10))) : "") : "",
               desc: e.descricao || "", editar: () => this.ctEditarEv(e), excluir: () => this.ctExcluirEv(c.id, e.id),
               excluirTxt: ct.excluirEv === e.id ? "Confirmar exclusão" : "Excluir" }))(it.ev));
             })() };
@@ -9155,7 +9181,8 @@ class Component extends DCLogic {
           ctRegimes: [["14133", "Lei 14.133/2021"], ["13303", "Lei 13.303/2016 (estatais)"], ["13019", "Lei 13.019/2014 (parcerias)"]].map(([id, nome]) => ({ id, nome, sel: f.regime === id })),
           ctIndicesOp: [["ipca", "IPCA"], ["ipca_e", "IPCA-E"], ["inpc", "INPC"], ["igpm", "IGP-M"], ["igpdi", "IGP-DI"], ["incc", "INCC-DI"]].map(([id, nome]) => ({ id, nome, sel: f.indice === id })),
           ctPeriodos: [["mensal", "Valor mensal"], ["global", "Valor global"]].map(([id, nome]) => ({ id, nome, sel: f.periodicidade === id })),
-          ctEvAberto: !!ct.ev, ctTiposOp: Object.entries(CT_TIPOS).map(([id, nome]) => ({ id, nome, sel: ev.tipo === id })), ctEvProrrog: ev.tipo === "prorrogacao", ctEvAditivo: ev.tipo === "aditivo_valor",
+          ctEvAberto: !!ct.ev, ctTiposOp: Object.entries(CT_TIPOS).map(([id, nome]) => ({ id, nome, sel: ev.tipo === id })), ctEvProrrog: ev.tipo === "prorrogacao", ctEvProrrogTxt: (() => { const c = ct.lista.find((x) => x.id === ct.atual); if (!c || ev.tipo !== "prorrogacao") return "";
+            const r = ctReajApos(c, ct.eventos[c.id], ev.data || new Date().toISOString().slice(0, 10)); return r ? r.txt : ""; })(), ctEvAditivo: ev.tipo === "aditivo_valor",
           ctEvAditivoTxt: (() => { const c = ct.lista.find((x) => x.id === ct.atual); if (!c || ev.tipo !== "aditivo_valor") return "";
             const a = ctArt125(c, ct.eventos[c.id], { semId: ev.id, ate: ev.data || undefined }); if (a.base == null) return "Informe o valor inicial do contrato para calcular o aditivo pelo art. 125.";
             const f = (v) => v.toLocaleString("pt-BR", { maximumFractionDigits: 2 });
