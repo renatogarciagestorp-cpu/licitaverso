@@ -1289,6 +1289,20 @@
   .rq-reqs { display: grid; gap: 8px; } .rq-req { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 8px 0; border-bottom: 1px solid #EDF2F1; } .rq-req > span { font-size: 14px; color: #22343B; flex: 1; min-width: 240px; }
   .rq-it { grid-template-columns: minmax(0, 1.5fr) 76px 96px 96px 90px 104px 104px minmax(0, 1fr) 130px 34px; } .rq-it input { width: 100%; }
   @media (max-width: 900px) { .rq-it { grid-template-columns: 1fr 1fr; } .rq-it.lmo-cab { display: none; } }
+  .ct-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+  .ct-kpi, .ct-kpis > div { background: #fff; border: 1px solid #E3E9E8; border-radius: 12px; padding: 10px 12px; }
+  .ct-kpis small { display: block; font-size: 12px; font-weight: 700; color: #66757F; } .ct-kpis b { display: block; margin-top: 2px; font-size: 18px; color: #0B1F2A; letter-spacing: -0.01em; }
+  .ct-kpi.alerta { border-color: #F1D9A6; background: #FFF8E8; } .ct-kpi.alerta b { color: #8A5A00; }
+  .ct-painel { margin-top: 14px; display: grid; gap: 12px; } .ct-kpis-c > div { background: #F8FAF9; }
+  .ct-graf { border: 1px solid #E3E9E8; border-radius: 12px; padding: 10px 12px 8px; background: #fff; } .ct-graf-t { margin: 0 0 4px; font-size: 12.5px; font-weight: 800; color: #3D5058; text-transform: uppercase; letter-spacing: .04em; }
+  .ct-svg { position: relative; } .ct-svg i { position: absolute; display: block; }
+  .ct-gy { right: 1.9%; height: 0; border-top: 1px solid #E3E9E8; } .ct-gx { width: 0; border-left: 1px dashed #E3E9E8; }
+  .ct-area { background: rgba(15,163,107,0.10); } .ct-sh { height: 0; border-top: 2.5px solid #0FA36B; margin-top: -1px; } .ct-sv { width: 0; border-left: 2.5px solid #0FA36B; margin-left: -1px; }
+  .ct-hoje { width: 0; border-left: 1px dashed #0A1F2A; } .ct-regua { top: 9px; height: 10px; right: 1.9%; border-radius: 5px; background: #EEF2F1; } .ct-regua-v { background: #CFE3D9; } .ct-rot-y { position: absolute; left: 0; width: 42px; text-align: right; white-space: nowrap; transform: translateY(-50%); font-size: 10.5px; color: #8A9AA0; }
+  .ct-rot-x { position: absolute; bottom: 0; transform: translateX(-50%); font-size: 10.5px; color: #8A9AA0; } .ct-rot-hoje { position: absolute; top: -2px; transform: translateX(-50%); font-size: 10.5px; font-weight: 700; color: #0A1F2A; }
+  .ct-dot { position: absolute; width: 11px; height: 11px; border-radius: 50%; background: #fff; border: 2.5px solid #0FA36B; transform: translate(-50%, -50%); box-sizing: border-box; cursor: default; }
+  .ct-dot-r { width: 13px; height: 13px; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(10,31,42,0.12); }
+  .ct-leg { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: #55666D; margin-top: 2px; } .ct-leg i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
   .ct-sel { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; } .ct-sel label { display: grid; gap: 5px; font-size: 12.5px; font-weight: 700; color: #3D5058; min-width: 280px; flex: 1; max-width: 520px; }
   .ct-sel select { font: inherit; font-size: 14px; font-weight: 600; border: 1px solid #D6DEDD; border-radius: 9px; padding: 9px 10px; background: #fff; }
   .ct-lista { display: grid; gap: 12px; } .ct-card { background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 16px 18px; }
@@ -3321,6 +3335,7 @@
               <button type="button" class="lmo-btn" sc-camel-on-click="{{ ctNovo }}">+ Novo contrato</button>
               <sc-if value="{{ ctCarregando }}" hint-placeholder-val="{{ false }}"><span class="lmo-nota" style="margin: 0">Carregando…</span></sc-if>
             </div>
+            <sc-if value="{{ ctTemKpis }}" hint-placeholder-val="{{ false }}"><div class="ct-kpis"><sc-for list="{{ ctKpis }}" as="k" hint-placeholder-count="4"><div class="{{ k.cls }}"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div></sc-if>
             <sc-if value="{{ ctOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ ctOk }}</p></sc-if>
             <sc-if value="{{ ctErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ ctErro }}</p></sc-if>
             <sc-if value="{{ ctFormAberto }}" hint-placeholder-val="{{ false }}">
@@ -3357,6 +3372,38 @@
                   <div class="ct-num"><span>Valor vigente: <b>{{ c.valor }}</b></span><span>Vigência até: <b>{{ c.fim }}</b></span><span>{{ c.prox }}</span><span>{{ c.reaj }}</span></div>
                   <sc-for list="{{ c.avisos }}" as="a" hint-placeholder-count="1"><p class="ct-av">{{ a.t }}</p></sc-for>
                   <sc-if value="{{ c.aberto }}" hint-placeholder-val="{{ false }}">
+                    <sc-if value="{{ c.temPainel }}" hint-placeholder-val="{{ false }}">
+                      <div class="ct-painel">
+                        <div class="ct-kpis ct-kpis-c"><sc-for list="{{ c.kpis }}" as="k" hint-placeholder-count="5"><div class="ct-kpi"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
+                        <sc-if value="{{ c.pn.temGrafico }}" hint-placeholder-val="{{ false }}">
+                          <div class="ct-graf">
+                            <p class="ct-graf-t">Evolução do valor</p>
+                            <div class="ct-svg" style="height: 170px">
+                              <sc-for list="{{ c.pn.yTicks }}" as="t" hint-placeholder-count="2"><i class="ct-gy" style="top: {{ t.t }}%; left: {{ c.pn.plotL }}%"></i></sc-for>
+                              <sc-for list="{{ c.pn.anos }}" as="a" hint-placeholder-count="1"><i class="ct-gx" style="left: {{ a.l }}%; top: {{ c.pn.plotT }}%; bottom: {{ c.pn.plotB }}%"></i></sc-for>
+                              <sc-for list="{{ c.pn.segs }}" as="g" hint-placeholder-count="2"><i class="ct-area" style="left: {{ g.l }}%; width: {{ g.w }}%; top: {{ g.t }}%; bottom: {{ c.pn.plotB }}%"></i><i class="ct-sh" style="left: {{ g.l }}%; width: {{ g.w }}%; top: {{ g.t }}%"></i></sc-for>
+                              <sc-for list="{{ c.pn.vsegs }}" as="v" hint-placeholder-count="1"><i class="ct-sv" style="left: {{ v.l }}%; top: {{ v.t }}%; height: {{ v.h }}%"></i></sc-for>
+                              <i class="ct-hoje" style="left: {{ c.pn.lHoje }}%; top: {{ c.pn.plotT }}%; bottom: {{ c.pn.plotB }}%"></i>
+                              <sc-for list="{{ c.pn.yTicks }}" as="t" hint-placeholder-count="2"><span class="ct-rot-y" style="top: {{ t.t }}%">{{ t.rot }}</span></sc-for>
+                              <sc-for list="{{ c.pn.anos }}" as="a" hint-placeholder-count="1"><span class="ct-rot-x" style="left: {{ a.l }}%">{{ a.rot }}</span></sc-for>
+                              <span class="ct-rot-hoje" style="left: {{ c.pn.lHoje }}%">hoje</span>
+                              <sc-for list="{{ c.pn.marcas }}" as="m" hint-placeholder-count="2"><span class="ct-dot" style="left: {{ m.l }}%; top: {{ m.t }}%" title="{{ m.titulo }}" aria-label="{{ m.titulo }}"></span></sc-for>
+                            </div>
+                          </div>
+                        </sc-if>
+                        <div class="ct-graf">
+                          <p class="ct-graf-t">Vigência · {{ c.pn.rIniTxt }} a {{ c.pn.rFimTxt }}</p>
+                          <div class="ct-svg" style="height: 46px">
+                            <i class="ct-regua" style="left: {{ c.pn.plotL }}%"></i>
+                            <i class="ct-regua ct-regua-v" style="left: {{ c.pn.rIniL }}%; width: {{ c.pn.rLargL }}%; right: auto"></i>
+                            <i class="ct-hoje" style="left: {{ c.pn.lHoje }}%; top: 2px; height: 26px; border-left-style: solid"></i>
+                            <sc-for list="{{ c.pn.rMarcas }}" as="m" hint-placeholder-count="2"><span class="ct-dot ct-dot-r" style="left: {{ m.l }}%; top: 30%; background: {{ m.cor }}" title="{{ m.titulo }}" aria-label="{{ m.titulo }}"></span></sc-for>
+                            <span class="ct-rot-hoje" style="left: {{ c.pn.lHoje }}%; top: auto; bottom: -2px">hoje</span>
+                          </div>
+                          <div class="ct-leg"><sc-for list="{{ c.legenda }}" as="l" hint-placeholder-count="2"><span><i style="background: {{ l.cor }}"></i>{{ l.nome }}</span></sc-for></div>
+                        </div>
+                      </div>
+                    </sc-if>
                     <sc-if value="{{ c.temEventos }}" hint-placeholder-val="{{ false }}">
                       <ul class="ct-linha"><sc-for list="{{ c.eventos }}" as="e" hint-placeholder-count="2"><li><b>{{ e.data }} · {{ e.tipo }}</b> {{ e.pct }} {{ e.valores }}<small>{{ e.fimTxt }} {{ e.desc }}</small><sc-if value="{{ c.meu }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-x" style="margin-top: 4px" aria-label="Excluir registro" sc-camel-on-click="{{ e.excluir }}">×</button></sc-if></li></sc-for></ul>
                     </sc-if>
@@ -5769,6 +5816,48 @@ const rqN = (v) => { const t = String(v == null ? "" : v).replace(/R\$|%|\s/gi, 
 // Meus contratos: tipos de registro da linha do tempo
 const CT_TIPOS = { reajuste: "Reajuste", repactuacao: "Repactuação", reequilibrio_trib: "Reequilíbrio tributário", reequilibrio_fato: "Reequilíbrio por fato superveniente",
   aditivo_valor: "Aditivo de valor", prorrogacao: "Prorrogação", outro: "Outro registro" };
+const CT_COR = { reajuste: "#0FA36B", repactuacao: "#0F6B7E", reequilibrio_trib: "#C98A1B", reequilibrio_fato: "#B83232", aditivo_valor: "#7D5CBF", prorrogacao: "#5E747C", outro: "#8A9AA0" };
+// painel do contrato: indicadores, evolução do valor (degraus) e régua da vigência com os registros
+function ctPainel(c, si) {
+  const W = 640, H = 170, PX = 46, PY = 16, BAR = 28;
+  const ts = (iso) => (iso ? Date.parse(String(iso).slice(0, 10) + "T12:00:00Z") : null);
+  const hoje = Date.now();
+  const inicio = ts(c.inicio) || ts(c.data_proposta) || (si.eventos[0] ? ts(si.eventos[0].data) : hoje);
+  const fim = ts(si.fim) || Math.max(hoje, ...si.eventos.map((e) => ts(e.data)));
+  const t0 = Math.min(inicio, ...si.eventos.map((e) => ts(e.data))), t1 = Math.max(fim, hoje, ...si.eventos.map((e) => ts(e.data))) || t0 + 864e5;
+  const x = (t) => PX + ((t - t0) / Math.max(1, t1 - t0)) * (W - PX - 12);
+  // série de valores (degraus): valor inicial e cada registro com novo valor
+  const pts = []; if (c.valor_inicial != null) pts.push([t0, Number(c.valor_inicial)]);
+  si.eventos.forEach((e) => { if (e.valor_novo != null && e.tipo !== "reequilibrio_fato") pts.push([ts(e.data), Number(e.valor_novo)]); });
+  let linha = "", area = "", marcas = [], yTicks = [], segs = [], vsegs = [];
+  if (pts.length) {
+    const vs = pts.map((p) => p[1]), vmin = Math.min(...vs), vmax = Math.max(...vs), folga = (vmax - vmin) * 0.25 || vmax * 0.05 || 1;
+    const lo = Math.max(0, vmin - folga), hi = vmax + folga, y = (v) => PY + (1 - (v - lo) / (hi - lo)) * (H - PY - 22);
+    const tFim = Math.max(hoje, t1);
+    let d = "M" + x(pts[0][0]).toFixed(1) + " " + y(pts[0][1]).toFixed(1);
+    for (let i = 1; i < pts.length; i++) d += " H" + x(pts[i][0]).toFixed(1) + " V" + y(pts[i][1]).toFixed(1);
+    d += " H" + x(tFim).toFixed(1);
+    linha = d; area = d + " V" + (H - 22) + " H" + x(pts[0][0]).toFixed(1) + " Z";
+    const L = (v) => (v / W * 100).toFixed(2), T = (v) => (v / H * 100).toFixed(2);
+    for (let i = 0; i < pts.length; i++) {
+      const xa = x(pts[i][0]), xb = i + 1 < pts.length ? x(pts[i + 1][0]) : x(tFim), ya = y(pts[i][1]);
+      segs.push({ l: L(xa), w: L(Math.max(0, xb - xa)), t: T(ya), h: (100 - Number(T(ya)) - 22 / H * 100).toFixed(2) });
+      if (i + 1 < pts.length) { const yb = y(pts[i + 1][1]); vsegs.push({ l: L(xb), t: T(Math.min(ya, yb)), h: T(Math.abs(yb - ya)) }); }
+    }
+    const brl = (v) => "R$ " + v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    marcas = pts.map((p, i) => ({ l: (x(p[0]) / W * 100).toFixed(2), t: (y(p[1]) / H * 100).toFixed(2), titulo: (i === 0 ? "Valor inicial: " : new Date(p[0]).toLocaleDateString("pt-BR") + ": ") + brl(p[1]) }));
+    yTicks = [lo + (hi - lo) * 0.15, lo + (hi - lo) * 0.85].map((v) => ({ y: y(v).toFixed(1), t: (y(v) / H * 100).toFixed(2), rot: v >= 1e6 ? (v / 1e6).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " mi" : v >= 1e3 ? (v / 1e3).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " mil" : v.toFixed(0) }));
+  }
+  const anos = []; for (let a = new Date(t0).getUTCFullYear() + 1; a <= new Date(t1).getUTCFullYear(); a++) { const t = Date.UTC(a, 0, 1); if (t > t0 && t < t1) anos.push({ x: x(t).toFixed(1), l: (x(t) / W * 100).toFixed(2), rot: String(a) }); }
+  return {
+    temGrafico: pts.length > 0, segs, vsegs, linha, area, plotL: (PX / W * 100).toFixed(2), plotB: (22 / H * 100).toFixed(2), plotT: (PY / H * 100).toFixed(2), marcas, yTicks, anos, W, H, vb: "0 0 " + W + " " + H, eixoY: H - 22, xHoje: x(hoje).toFixed(1), lHoje: (x(hoje) / W * 100).toFixed(2),
+    // régua da vigência
+    rIni: x(inicio).toFixed(1), rLarg: Math.max(2, x(fim) - x(inicio)).toFixed(1), rIniL: (x(inicio) / W * 100).toFixed(2), rLargL: (Math.max(2, x(fim) - x(inicio)) / W * 100).toFixed(2), rVb: "0 0 " + W + " " + (BAR + 22), rH: BAR + 22,
+    rPct: Math.max(0, Math.min(100, ((hoje - inicio) / Math.max(1, fim - inicio)) * 100)),
+    rMarcas: si.eventos.map((e) => ({ l: (x(ts(e.data)) / W * 100).toFixed(2), cor: CT_COR[e.tipo] || "#8A9AA0", titulo: new Date(ts(e.data)).toLocaleDateString("pt-BR") + " · " + (CT_TIPOS[e.tipo] || e.tipo) })),
+    rIniTxt: new Date(inicio).toLocaleDateString("pt-BR"), rFimTxt: new Date(fim).toLocaleDateString("pt-BR"), rFimX: (x(fim) - 2).toFixed(1)
+  };
+}
 const CT_FORM = { id: "", numero: "", contratante: "", contratada: "", objeto: "", regime: "14133", data_proposta: "", inicio: "", fim: "", valor_inicial: "", periodicidade: "mensal",
   indice: "ipca", mao_obra: false, data_base_cct: "", alertas: true, obs: "" };
 const CT_EV = { tipo: "reajuste", data: "", percentual: "", valor_anterior: "", valor_novo: "", novo_fim: "", descricao: "" };
@@ -7562,8 +7651,14 @@ class Component extends DCLogic {
       const r = rqFatoCalcular(this.state.rq.d); if (!r.pronto) { this.aviso("Complete o reequilíbrio antes de registrar.", "erro"); return; }
       ev = { tipo: "reequilibrio_fato", data: hoje, percentual: String(r.pct * 100), descricao: "Reequilíbrio por fato superveniente" + (this.state.rq.d.fs_fato ? " (" + this.state.rq.d.fs_fato + ")" : "") + ": impacto de R$ " + r.preco.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " sobre o saldo a executar." };
     }
-    const e = await this.ctGravarEv(id, ev);
-    this.aviso(e || "Registrado na linha do tempo do contrato.", e ? "erro" : "ok");
+    // formata para o quadro (padrão brasileiro) e abre a Gestão contratual com o registro preenchido, para conferir e confirmar
+    const f2 = (v) => (v == null || v === "" ? "" : Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    const f4 = (v) => (v == null || v === "" ? "" : Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 4 }));
+    const pre = { ...CT_EV, ...ev, percentual: f4(ev.percentual), valor_anterior: f2(ev.valor_anterior), valor_novo: f2(ev.valor_novo) };
+    this.setState((x) => ({ ct: { ...x.ct, atual: id, ev: pre, form: null, ok: "", erro: "", excluir: "" } }));
+    this.irPara("gestao");
+    this.aviso("Confira os dados do registro e clique em “Incluir na linha do tempo”.", "ok");
+    setTimeout(() => { try { document.querySelector(".ct-card.aberto .ct-form").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {} }, 350);
   }
 
   // ------------------------------------------------------------ Reequilíbrio tributário (LC 214/2025)
@@ -8766,7 +8861,23 @@ class Component extends DCLogic {
               desc: e.descricao || "", excluir: () => this.ctExcluirEv(c.id, e.id) })) };
         });
         const sel = ct.lista.find((c) => c.id === ct.atual);
-        return { ...campos, ctLista: lista, ctTemLista: lista.length > 0, ctVazio: ct.carregado && !lista.length && !ct.form, ctCarregando: !!ct.carregando,
+        // indicadores da carteira
+        const sits = ct.lista.map((c) => ({ c, si: ctSituacao(c, ct.eventos[c.id]) }));
+        const mensal = sits.filter((x) => x.c.periodicidade === "mensal" && x.si.valor != null).reduce((a, x) => a + x.si.valor, 0);
+        const vence90 = sits.filter((x) => !x.si.vencido && x.si.restante != null && x.si.restante <= 3).length;
+        const pend = sits.filter((x) => !x.si.vencido && x.si.reajPendente && x.c.data_proposta).length;
+        const ctKpis = [["Contratos", String(ct.lista.length)], ["Valor mensal vigente", "R$ " + mensal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })],
+          ["Vigência acabando (até 3 meses)", String(vence90)], ["Reajustes possíveis não registrados", String(pend)]].map(([k, v], i) => ({ k, v, cls: "ct-kpi" + ((i === 2 && vence90) || (i === 3 && pend) ? " alerta" : "") }));
+        // painel do contrato aberto
+        lista.forEach((it) => {
+          if (!it.aberto) { it.temPainel = false; return; }
+          const c = ct.lista.find((x) => x.id === it.id), si = ctSituacao(c, ct.eventos[c.id]), pn = ctPainel(c, si);
+          const vi = c.valor_inicial != null ? Number(c.valor_inicial) : null, varp = vi && si.valor != null ? (si.valor / vi - 1) * 100 : null;
+          Object.assign(it, { temPainel: true, pn, legenda: Object.entries(CT_TIPOS).filter(([k]) => si.eventos.some((e) => e.tipo === k)).map(([k, nome]) => ({ nome, cor: CT_COR[k] })),
+            kpis: [["Valor inicial", brl(vi)], ["Valor vigente", brl(si.valor)], ["Variação acumulada", varp == null ? "—" : pctT(varp)],
+              ["Vigência restante", si.restante == null ? "—" : si.vencido ? "encerrada" : si.restante + (si.restante === 1 ? " mês" : " meses")], ["Próxima anualidade", si.proxAnual || "—"]].map(([k, v]) => ({ k, v })) });
+        });
+        return { ...campos, ctLista: lista, ctKpis, ctTemKpis: lista.length > 0, ctTemLista: lista.length > 0, ctVazio: ct.carregado && !lista.length && !ct.form, ctCarregando: !!ct.carregando,
           ctFormAberto: !!ct.form, ctFormTitulo: f.id ? "Editar contrato" : "Novo contrato", ctNovo: () => this.ctNovo(), ctSalvar: () => this.ctSalvar(),
           ctCancelar: () => this.setState((x) => ({ ct: { ...x.ct, form: null, erro: "" } })),
           ctRegimes: [["14133", "Lei 14.133/2021"], ["13303", "Lei 13.303/2016 (estatais)"], ["13019", "Lei 13.019/2014 (parcerias)"]].map(([id, nome]) => ({ id, nome, sel: f.regime === id })),
