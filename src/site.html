@@ -1382,6 +1382,8 @@
   .ct-ag-it:hover { background: #F8FAF9; } .ct-ag-d { font-size: 12.5px; font-weight: 800; color: #0B1F2A; } .ct-ag-t { display: grid; gap: 1px; font-size: 12.5px; color: #3D5058; } .ct-ag-t b { color: var(--mc); font-size: 13px; } .ct-ag-t em { font-style: normal; font-size: 12px; color: #7A8A90; }
   .ct-ag-st { font-size: 11px; font-weight: 800; border-radius: 999px; padding: 2px 8px; white-space: nowrap; } .ct-ag-st.breve { background: #FFF4DC; color: #8A5A00; } .ct-ag-st.atr { background: #FDECEC; color: #A23A3A; }
   @media (max-width: 600px) { .ct-ag-it { grid-template-columns: 1fr auto; } .ct-ag-d { grid-column: 1 / -1; } }
+  .lmo-lei { background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 12px 14px; } .lmo-lei-t { display: block; font-size: 12px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #0F6B7E; margin-bottom: 8px; }
+  .lmo-bloco .lmo-lei { border: 0; padding: 0 0 10px; background: none; }
   .ct-sel { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; } .ct-sel label { display: grid; gap: 5px; font-size: 12.5px; font-weight: 700; color: #3D5058; min-width: 280px; flex: 1; max-width: 520px; }
   .ct-sel select { font: inherit; font-size: 14px; font-weight: 600; border: 1px solid #D6DEDD; border-radius: 9px; padding: 9px 10px; background: #fff; }
   .ct-lista { display: grid; gap: 12px; } .ct-card { background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 16px 18px; }
@@ -2786,6 +2788,7 @@
             </div>
             <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}"><div><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCopiar }}">Trazer os dados da Planilha 1 (planejamento) para começar</button></div></sc-if>
 
+            <div class="lmo-lei"><span class="lmo-lei-t">Regime legal</span><div class="lmo-modos" role="group" aria-label="Regime legal"><sc-for list="{{ moLeis }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div><p class="lmo-nota" style="margin: 6px 0 0">{{ moLeiTxt }}</p></div>
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Dados para composição dos custos referentes à mão de obra</h2>
               <div class="lmo-campos">
@@ -3048,7 +3051,7 @@
             <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Efeitos financeiros, prazos e apostilamento</h2>
-              <p class="lmo-nota" style="margin-top: 0">Diferença retroativa mês a mês desde a data-base, conferência da anualidade e da preclusão e nota técnica da repactuação (Lei 14.133/2021, art. 135).</p>
+              <p class="lmo-nota" style="margin-top: 0">Diferença retroativa mês a mês desde a data-base, conferência da anualidade e da preclusão e nota técnica da repactuação ({{ moLeiRepac }}).</p>
               <div class="lmo-campos">
                 <sc-for list="{{ moRetroCampos }}" as="c" hint-placeholder-count="6"><label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label></sc-for>
                 <label class="lmo-campo"><span>Primeiro mês pago com o novo preço</span><input type="month" value="{{ moRpInicio }}" sc-camel-on-input="{{ onMoRpInicio }}"></label>
@@ -3168,6 +3171,7 @@
             <div class="lmo-modos" role="group" aria-label="Tipo de reequilíbrio"><sc-for list="{{ rqTipos }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
             <section class="lmo-bloco">
               <h2 class="lmo-h2">1. Contrato</h2>
+              <div class="lmo-lei"><span class="lmo-lei-t">Regime legal</span><div class="lmo-modos" role="group" aria-label="Regime legal"><sc-for list="{{ rqLeis }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div><p class="lmo-nota" style="margin: 6px 0 0">{{ rqLeiTxt }}</p></div>
               <div class="lmo-campos">
                 <label class="lmo-campo"><span>Valor mensal atual (R$) *</span><input type="text" inputmode="decimal" value="{{ rqValor }}" sc-camel-on-input="{{ onRqValor }}" placeholder="0,00"></label>
                 <label class="lmo-campo"><span>Meses de vigência restantes</span><input type="text" inputmode="numeric" value="{{ rqMeses }}" sc-camel-on-input="{{ onRqMeses }}" placeholder="Ex.: 12"></label>
@@ -3193,7 +3197,7 @@
             <section class="lmo-bloco">
               <h2 class="lmo-h2">3. Requisitos</h2>
               <div class="rq-reqs"><sc-for list="{{ rqReqs }}" as="q" hint-placeholder-count="6"><div class="rq-req"><span>{{ q.t }}</span><div class="lmo-modos"><sc-for list="{{ q.ops }}" as="o" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.ativo }}" style="border: 1px solid {{ o.borda }}; background: {{ o.fundo }}; color: {{ o.cor }}; font-size: 12.5px; padding: 6px 12px">{{ o.nome }}</button></sc-for></div></div></sc-for></div>
-              <p class="lmo-nota">Lei 14.133/2021, art. 124, II, d, e art. 103 (matriz de riscos). Marque como a análise do caso concluiu: a ferramenta organiza, mas não substitui o exame técnico e jurídico.</p>
+              <p class="lmo-nota">{{ rqLeiFato }}. Marque como a análise do caso concluiu: a ferramenta organiza, mas não substitui o exame técnico e jurídico.</p>
             </section>
             <section class="lmo-bloco">
               <h2 class="lmo-h2">4. Custos afetados</h2>
@@ -5715,7 +5719,31 @@ const AN_TERMO = [
 ];
 // ------------------------------------------------------------------ Mão de Obra Exclusiva (IN SEGES/MP nº 5/2017, Anexo VII-D)
 // Planilha de custos e formação de preços no formato da IN: módulos 1 a 6, percentuais editáveis e totais truncados.
+// regime legal das ferramentas da Calculadora: citações usadas nas telas e nos documentos
+const LEIS = {
+  "14133": { nome: "Lei 14.133/2021", selo: "",
+    ui: "Lei 14.133/2021: planilha no modelo da IN SEGES/MP nº 5/2017 (obrigatória na Administração federal e adotada como referência por estados e municípios); repactuação pelo art. 135; reequilíbrio pelo art. 124, II, d.",
+    nota: "", repacInstr: "na forma do art. 135, § 6º, da Lei nº 14.133/2021 e do art. 57 da IN SEGES/MP nº 5/2017",
+    repacForm: "Recomenda-se a formalização por apostilamento (Lei nº 14.133/2021, art. 136, I; IN SEGES/MP nº 5/2017, art. 57, § 4º), salvo se coincidir com prorrogação, caso em que se fará por termo aditivo",
+    anual: "Lei 14.133/2021, art. 135, § 3º", dilig: "no art. 59, § 2º, da Lei nº 14.133/2021", desclass: "Lei 14.133/2021, art. 59, IV e V",
+    fato: "Lei 14.133/2021, art. 124, II, d", repac: "Lei 14.133/2021, art. 135", tribForm: "Formalização por termo aditivo." },
+  "13303": { nome: "Lei 13.303/2016 (estatais)", selo: "Lei 13.303/2016 · IN 05/2017 como referência",
+    ui: "Lei 13.303/2016 (estatais): vale o regulamento interno de licitações e contratos da estatal (art. 40); a IN SEGES/MP nº 5/2017 serve de referência técnica; alterações por acordo das partes (art. 81), inclusive o reequilíbrio (art. 81, VI).",
+    nota: "Empresa estatal (Lei 13.303/2016): a contratação segue o regulamento interno de licitações e contratos (art. 40). A IN SEGES/MP nº 5/2017 é usada como referência técnica para a planilha de custos.",
+    repacInstr: "na forma do contrato e do regulamento interno de licitações e contratos da estatal (Lei nº 13.303/2016, art. 40), adotada a IN SEGES/MP nº 5/2017 como referência técnica",
+    repacForm: "Recomenda-se a formalização na forma prevista no contrato e no regulamento interno da estatal, por apostila ou por termo aditivo (Lei nº 13.303/2016, art. 81)",
+    anual: "contrato e regulamento da estatal; Lei 10.192/2001, art. 2º, § 1º", dilig: "no art. 56, § 2º, da Lei nº 13.303/2016", desclass: "Lei 13.303/2016, art. 56, III e V",
+    fato: "Lei 13.303/2016, art. 81, VI", repac: "contrato e regulamento interno da estatal (Lei 13.303/2016, arts. 40 e 81)", tribForm: "Formalização conforme o contrato e o regulamento interno da estatal (Lei 13.303/2016, art. 81)." },
+  "13019": { nome: "Lei 13.019/2014 (parcerias)", selo: "Lei 13.019/2014 · IN 05/2017 como referência",
+    ui: "Lei 13.019/2014 (parcerias com OSC): a equipe e seus custos fazem parte do plano de trabalho (arts. 22 e 46, I); a revisão de valores se faz por termo aditivo ou por apostila ao plano de trabalho (art. 57). A IN SEGES/MP nº 5/2017 serve de referência técnica.",
+    nota: "Parceria com organização da sociedade civil (Lei 13.019/2014): os custos da equipe integram o plano de trabalho (art. 22) e podem ser pagos com recursos da parceria, inclusive encargos e verbas rescisórias (art. 46, I). A IN SEGES/MP nº 5/2017 é usada como referência técnica.",
+    repacInstr: "na forma do plano de trabalho e do termo de colaboração ou de fomento (Lei nº 13.019/2014, arts. 22 e 57)",
+    repacForm: "Recomenda-se a revisão do plano de trabalho por termo aditivo ou por apostila (Lei nº 13.019/2014, art. 57)",
+    anual: "termo de colaboração ou de fomento; Lei 10.192/2001, art. 2º, § 1º", dilig: "no edital do chamamento público (Lei nº 13.019/2014, art. 24)", desclass: "edital do chamamento público",
+    fato: "Lei 13.019/2014, art. 57", repac: "plano de trabalho e Lei 13.019/2014, art. 57", tribForm: "Em parcerias, a LC 214/2025 trata dos contratos administrativos; a revisão dos valores do plano de trabalho segue o art. 57 da Lei 13.019/2014 (termo aditivo ou apostila)." } };
+const leiDe = (d) => LEIS[(d && d.lei) || "14133"] || LEIS["14133"];
 const MO_PADRAO = {
+  lei: "14133",
   data_proposta: "", municipio: "", uf: "", ano_cct: "", meses: "12", tipo_servico: "", unidade: "Posto", quantidade: "",
   cbo: "", categoria: "", salario: "", data_base: "", cct_nome: "",
   peric: "0", insal: "0", noturno: "0", hnr: "0", he_feriado: "0", outros1: "0",
@@ -6171,7 +6199,7 @@ function ctSituacao(c, evs) {
     direitoDesde: direito != null ? ym(direito) : "", reajPendente: direito != null && direito <= agora, fimN, vencido: fimN != null && fimN < agora };
 }
 const rqR2 = (x) => Math.round((x + (x >= 0 ? 1e-9 : -1e-9)) * 100) / 100; // arredondamento comercial, também para valores negativos
-const RQ_PADRAO = { contrato: "", contratada: "", objeto: "", valor: "", proposta: "", meses: "", regime: "", rbt12: "", pis: "", cofins: "", iss: "",
+const RQ_PADRAO = { lei: "14133", contrato: "", contratada: "", objeto: "", valor: "", proposta: "", meses: "", regime: "", rbt12: "", pis: "", cofins: "", iss: "",
   rf_cbs: "11,3", rf_ibs: "18,7", ins: "", ins_red: "", ano: "2027", origem: "",
   tipo: "trib", fs_fato: "", fs_data: "", fs_reaj: "", fs_bdi: "", fs_itens: [],
   fs_posterior: "", fs_imprev: "", fs_matriz: "", fs_nexo: "", fs_culpa: "", fs_relevante: "" };
@@ -8032,7 +8060,7 @@ class Component extends DCLogic {
         dataBase: c.data_proposta ? String(c.data_proposta).slice(0, 7) : x.calc.dataBase, fim: si.fim ? String(si.fim).slice(0, 7) : "",
         valor: brl(si.valor), houveReajuste: !!si.ultReaj, ultimo: si.ultReaj ? String(si.ultReaj).slice(0, 7) : "" }, ct: { ...x.ct, atual: id } }));
     } else {
-      const d = { ...this.state.rq.d, contrato: c.numero || "", contratada: c.contratada || "", objeto: c.objeto || "", valor: c.periodicidade === "mensal" ? brl(si.valor) : this.state.rq.d.valor,
+      const d = { ...this.state.rq.d, lei: c.regime || "14133", contrato: c.numero || "", contratada: c.contratada || "", objeto: c.objeto || "", valor: c.periodicidade === "mensal" ? brl(si.valor) : this.state.rq.d.valor,
         proposta: ymBR(c.data_proposta), meses: si.restante != null ? String(si.restante) : "", fs_reaj: si.reajPct > 0.0001 ? si.reajPct.toLocaleString("pt-BR", { maximumFractionDigits: 4 }) : "",
         origem: "contrato " + c.numero + " (Meus contratos)" };
       this.rqGravar(d); this.setState((x) => ({ rq: { ...x.rq, d }, ct: { ...x.ct, atual: id } }));
@@ -8109,10 +8137,10 @@ class Component extends DCLogic {
     const pct = (v) => (v * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
     const sinal = (v) => (v > 0 ? "+" : "") + brl(v), hoje = new Date().toLocaleDateString("pt-BR");
     const rot = { sim: "Sim", nao: "Não", comprovar: "A comprovar" };
-    const ident = [["Contrato", d.contrato], ["Contratada", d.contratada], ["Objeto", d.objeto], ["Data da proposta", d.proposta], ["Fato", d.fs_fato], ["Data do fato", d.fs_data],
+    const ident = [["Regime legal", leiDe(d).nome], ["Contrato", d.contrato], ["Contratada", d.contratada], ["Objeto", d.objeto], ["Data da proposta", d.proposta], ["Fato", d.fs_fato], ["Data do fato", d.fs_data],
       ["Valor do saldo afetado (custo da proposta)", brl(r.baseSaldo)], ["Reajuste já concedido sobre os itens", r.reaj ? pct(r.reaj) : "nenhum informado"], ["Custos indiretos, lucro e tributos sobre o custo (BDI)", r.bdi ? pct(r.bdi) : "não aplicado"]].filter((x) => String(x[1] || "").trim());
     const T = (titulo, cab, linhas, larg, alin) => ({ t: "tabela", titulo, cab, linhas, larg, alin });
-    const tabReq = T("REQUISITOS DO REEQUILÍBRIO (LEI 14.133/2021, ART. 124, II, D)", ["Requisito", "Situação"], r.resp.map((x) => ({ c: [x.t, rot[x.v] || "Não avaliado"], alerta: x.v === "nao" ? [1] : undefined })), [80, 20], "ll");
+    const tabReq = T("REQUISITOS DO REEQUILÍBRIO (" + leiDe(d).fato.toUpperCase() + ")", ["Requisito", "Situação"], r.resp.map((x) => ({ c: [x.t, rot[x.v] || "Não avaliado"], alerta: x.v === "nao" ? [1] : undefined })), [80, 20], "ll");
     const qf = (v) => (Number(v) || 0).toLocaleString("pt-BR", { maximumFractionDigits: 2 });
     const tabItens = T("IMPACTO SOBRE O SALDO A EXECUTAR A PARTIR DO FATO", ["Item", "Contratada", "Executada antes do fato", "Saldo afetado", "Custo na proposta" + (r.reaj ? " + reajuste" : ""), "Custo atual", "Variação", "Impacto", "Documento"],
       r.validos.map((x) => ({ c: [x.desc + (x.un ? " (" + x.un + ")" : ""), qf(x.tot), qf(x.exe), qf(x.q), brl(x.cpc), brl(x.ca), (x.var > 0 ? "+" : "") + pct(x.var), sinal(x.imp), x.prova || "falta comprovar"], alerta: x.prova ? undefined : [8] }))
@@ -8121,16 +8149,20 @@ class Component extends DCLogic {
     const conclusao = r.nao.length ? "Requisito não atendido (" + r.nao.map((x) => x.t.toLowerCase()).join("; ") + "): nessas condições, o reequilíbrio tende a não ser cabível."
       : r.pend.length ? "Há requisitos pendentes de comprovação: " + r.pend.map((x) => x.t.toLowerCase()).join("; ") + "."
       : r.preco > 0 ? "Requisitos atendidos, conforme declarado: impacto de " + sinal(r.preco) + " sobre o saldo a executar a partir do fato (" + pct(r.pct) + " do custo desse saldo), a ser recomposto por termo aditivo, com novo preço unitário para as quantidades remanescentes." : r.preco < 0 ? "Requisitos atendidos e impacto negativo: os custos caíram, e o valor do contrato deve ser revisto em favor da Administração." : "Sem impacto apurado.";
-    const fund = ["Constituição, art. 37, XXI: manutenção das condições efetivas da proposta. Lei 14.133/2021, art. 124, II, d: alteração por acordo para restabelecer o equilíbrio econômico-financeiro diante de fatos imprevisíveis, ou previsíveis de consequências incalculáveis, que inviabilizem a execução tal como pactuada, em caso de força maior, caso fortuito ou fato do príncipe, respeitada a repartição de riscos do contrato.",
+    const fund0 = ["Constituição, art. 37, XXI: manutenção das condições efetivas da proposta. Lei 14.133/2021, art. 124, II, d: alteração por acordo para restabelecer o equilíbrio econômico-financeiro diante de fatos imprevisíveis, ou previsíveis de consequências incalculáveis, que inviabilizem a execução tal como pactuada, em caso de força maior, caso fortuito ou fato do príncipe, respeitada a repartição de riscos do contrato.",
       "Matriz de riscos (Lei 14.133/2021, art. 103): o risco atribuído à contratada não gera reequilíbrio. Alteração de tributos e encargos legais após a proposta (art. 134). Pedido durante a vigência do contrato e antes de eventual prorrogação (art. 131, parágrafo único); prazo de resposta previsto no contrato (art. 92, XI).",
       "O reequilíbrio incide apenas sobre o saldo a executar a partir do fato: as quantidades executadas antes dele foram fornecidas nas condições originais e não são recompostas. O reajuste já concedido foi descontado do custo da proposta, para que o mesmo aumento não seja pago duas vezes. Itens que ficaram mais baratos compensam os que subiram. Cada valor deve estar comprovado por documento (nota fiscal, cotação, índice setorial, ato normativo).",
-      "Estatais: Lei 13.303/2016, art. 81, VI. Verifique o contrato, a matriz de riscos e o regulamento do órgão antes de juntar ao processo."];
+      "Verifique o contrato, a matriz de riscos e o regulamento do órgão antes de juntar ao processo."];
+    const fund = (d.lei || "14133") === "14133" ? fund0 : d.lei === "13303"
+      ? ["Constituição, art. 37, XXI: manutenção das condições efetivas da proposta. Lei 13.303/2016, art. 81, VI: alteração por acordo das partes para restabelecer a relação inicialmente pactuada entre os encargos do contratado e a retribuição da estatal, diante de fatos imprevisíveis, ou previsíveis porém de consequências incalculáveis, retardadores ou impeditivos da execução, ou de força maior, caso fortuito ou fato do príncipe, configurando álea econômica extraordinária e extracontratual.",
+         "Matriz de riscos (Lei 13.303/2016, art. 69, X): o risco atribuído à contratada não gera reequilíbrio. Observe o regulamento interno de licitações e contratos da estatal (art. 40) quanto ao pedido, à instrução e à formalização.", fund0[2], fund0[3]]
+      : ["Lei 13.019/2014, art. 57: o plano de trabalho da parceria pode ser revisto para alteração de valores ou de metas, por termo aditivo ou por apostila. A recomposição de custos por fato superveniente deve ser justificada com a demonstração do impacto na execução do plano de trabalho e aprovada pela administração pública.", fund0[2], fund0[3]];
     const base0 = "reequilibrio-fato-superveniente" + (d.contrato ? "-contrato-" + String(d.contrato).replace(/[^0-9a-z]+/gi, "-") : "");
     const sub = "Reequilíbrio por fato superveniente · " + (d.contratada || "Contrato") + (d.contrato ? " · contrato " + d.contrato : "");
     const destaques = { t: "destaques", itens: [["Impacto no preço do saldo" + (r.bdi ? " (com BDI)" : ""), sinal(r.preco)], ["Impacto nos custos do saldo", sinal(r.custo)], ["Custo do saldo na proposta", brl(r.baseSaldo)], ["Variação sobre o saldo", (r.pct > 0 ? "+" : "") + pct(r.pct)]] };
     const docs = {
-      memoria: { titulo: "Memória de cálculo do reequilíbrio", arquivo: base0 + "-memoria-de-calculo", paisagem: true, sub, selo: "Lei 14.133/2021 · art. 124, II, d", blocos: [destaques, { t: "pares", titulo: "Dados do contrato e do fato", pares: ident }, tabReq, tabItens], notas: fund },
-      nota: { titulo: "Nota técnica · reequilíbrio econômico-financeiro", arquivo: base0 + "-nota-tecnica", sub, selo: "Lei 14.133/2021 · art. 124, II, d", blocos: [
+      memoria: { titulo: "Memória de cálculo do reequilíbrio", arquivo: base0 + "-memoria-de-calculo", paisagem: true, sub, selo: leiDe(d).fato, blocos: [destaques, { t: "pares", titulo: "Dados do contrato e do fato", pares: ident }, tabReq, tabItens], notas: fund },
+      nota: { titulo: "Nota técnica · reequilíbrio econômico-financeiro", arquivo: base0 + "-nota-tecnica", sub, selo: leiDe(d).fato, blocos: [
         { t: "texto", titulo: "1. OBJETO", paragrafos: ["Análise do pedido de restabelecimento do equilíbrio econômico-financeiro do " + (d.contrato ? "contrato " + d.contrato : "contrato") + (d.contratada ? ", firmado com " + d.contratada : "") + (d.objeto ? ", cujo objeto é " + d.objeto : "") + ", em razão de: " + (d.fs_fato || "fato superveniente") + (d.fs_data ? " (" + d.fs_data + ")" : "") + "."] },
         destaques, tabReq, tabItens,
         { t: "texto", titulo: "2. CONCLUSÃO", paragrafos: [conclusao].concat(r.semProva.length ? ["Itens sem documento comprobatório: " + r.semProva.map((x) => x.desc).join(", ") + ". Sem comprovação, o valor correspondente não deve ser recomposto."] : [])
@@ -8151,7 +8183,7 @@ class Component extends DCLogic {
     const sinal = (v) => (v > 0 ? "+" : "") + brl(v);
     const hoje = new Date().toLocaleDateString("pt-BR"), s = r.sel;
     const regNome = { real: "Lucro Real", presumido: "Lucro Presumido", simples: "Simples Nacional" }[d.regime];
-    const ident = [["Contrato", d.contrato], ["Contratada", d.contratada], ["Objeto", d.objeto], ["Data da proposta", d.proposta], ["Regime de tributação", regNome + (r.simp ? " (alíquota efetiva " + pct(r.simp.ef) + ")" : "")],
+    const ident = [["Regime legal", leiDe(d).nome], ["Contrato", d.contrato], ["Contratada", d.contratada], ["Objeto", d.objeto], ["Data da proposta", d.proposta], ["Regime de tributação", regNome + (r.simp ? " (alíquota efetiva " + pct(r.simp.ef) + ")" : "")],
       ["Valor mensal atual", brl(r.P0)], ["PIS + COFINS na proposta", pct(r.aPis + r.aCof)], ["ISS na proposta", pct(r.aIss)], ["Carga sobre o faturamento", pct(r.a0)], ["Valor sem esses tributos", brl(r.Po)],
       ["CBS de referência", (d.rf_cbs || "") + "%"], ["IBS de referência (estimativa)", (d.rf_ibs || "") + "%"]].concat(r.red ? [["Redução dos insumos (não cumulatividade)", brl(r.red) + " por mês"]] : []).filter((x) => String(x[1] || "").trim());
     const T = (titulo, cab, linhas, larg, alin) => ({ t: "tabela", titulo, cab, linhas, larg, alin });
@@ -8168,7 +8200,7 @@ class Component extends DCLogic {
       "Valor mensal de equilíbrio = valor que mantém a mesma receita líquida de tributos da proposta. Diferença = valor de equilíbrio − valor atual."];
     const fund = ["LC 214/2025, arts. 373 a 377: reequilíbrio dos contratos administrativos pela mudança da carga tributária efetiva da CBS e do IBS, inclusive na transição, considerando a não cumulatividade, o repasse e os benefícios extintos (art. 374, § 1º); a matriz de riscos não afasta o direito (art. 374, § 2º).",
       "Pedido da contratada durante a vigência e antes da prorrogação, instruído com os cálculos (art. 376); decisão fundamentada em até 90 dias, prorrogáveis uma vez (art. 376, § 1º); recomposição provisória possível (art. 376, §§ 4º e 5º); revisão de ofício quando a carga diminuir (art. 375).",
-      "Lei 14.133/2021, arts. 124, II, d, e 134, e Lei 13.303/2016, aplicadas subsidiariamente (LC 214/2025, art. 377). Formalização por termo aditivo.",
+      "Lei 14.133/2021, arts. 124, II, d, e 134, e Lei 13.303/2016, aplicadas subsidiariamente (LC 214/2025, art. 377). " + leiDe(d).tribForm,
       "Alíquotas de referência: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa). Confira as alíquotas publicadas e o texto oficial da LC 214/2025 antes de juntar ao processo."];
     const base0 = "reequilibrio-tributario" + (d.contrato ? "-contrato-" + String(d.contrato).replace(/[^0-9a-z]+/gi, "-") : "");
     const sub = "Reequilíbrio tributário · " + (d.contratada || "Contrato") + (d.contrato ? " · contrato " + d.contrato : "");
@@ -8444,7 +8476,7 @@ class Component extends DCLogic {
     const brlTxt = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const titulo = prop ? "Análise da proposta" + (d.pr_licitante ? " – " + d.pr_licitante : "") : rep ? "Repactuação" : "Planejamento da contratação";
     const hoje = new Date().toLocaleDateString("pt-BR");
-    const ident = [["Categoria profissional", d.categoria], ["CBO", d.cbo], ["Tipo de serviço", d.tipo_servico], ["Município/UF da prestação", [d.municipio, d.uf].filter(Boolean).join("/")],
+    const ident = [["Regime legal", leiDe(d).nome], ["Categoria profissional", d.categoria], ["CBO", d.cbo], ["Tipo de serviço", d.tipo_servico], ["Município/UF da prestação", [d.municipio, d.uf].filter(Boolean).join("/")],
       ["Salário-base", d.salario ? brlTxt(moNum(d.salario)) : ""], ["Data-base da categoria", d.data_base], ["Instrumento coletivo (ano)", d.ano_cct], ["Convenção coletiva", d.cct_nome],
       ["Data da proposta", d.data_proposta], ["Meses de execução", d.meses], ["Regime de tributação", regNome], ["Tributos", tribNome]]
       .concat(rep ? [["Ano de execução após a repactuação", d.ano_exec], ["Planilha da contratação", d.plan_nome]] : [])
@@ -8619,7 +8651,7 @@ class Component extends DCLogic {
         T("DIFERENÇA RETROATIVA – MÊS A MÊS", ["Mês", "Período", "Mão de obra", "Insumos", "Diferença"], retro.linhas.map((l) => ({ c: [l.mes, l.frac, l.lab, l.ins, l.dif] })).concat([{ c: ["Total", "", "", "", P.moRetroTotal], total: true }]), { alin: "llrrr", larg: [14, 20, 20, 20, 22] })],
         notas: [P.moRetroInfo, "Os novos valores vigoram a partir do fato gerador (data-base da categoria), ou em data anterior se o instrumento coletivo tiver vigência retroativa (IN 05/2017, art. 58, I e III); a parcela dos insumos é devida a partir do aniversário do orçamento estimado (art. 54, § 2º). Diferença negativa deve ser compensada nas faturas seguintes."] };
     }
-    const doc0 = docs[docTipo]; if (doc0) doc0.id = docTipo;
+    const doc0 = docs[docTipo]; if (doc0) { doc0.id = docTipo; const LL = leiDe(d); if (LL.selo && !doc0.selo) doc0.selo = LL.selo; if (LL.nota) doc0.notas = [LL.nota].concat(doc0.notas || []); }
     if (!doc0) { this.setState((x) => ({ mo: { ...x.mo, erro: "Este documento não tem conteúdo nesta planilha." } })); return; }
     this.setState((x) => ({ mo: { ...x.mo, baixando: true, erro: "" } }));
     try {
@@ -8814,7 +8846,7 @@ class Component extends DCLogic {
     const regNome = { real: "Lucro Real", presumido: "Lucro Presumido", simples: "Simples Nacional (Anexo IV)" }[d.regime];
     const secoes = [];
     secoes.push(["1. RELATÓRIO", ["Trata-se de pedido de repactuação de preços do Contrato nº " + (d.rp_contrato || "___/____") + ", firmado entre " + (d.rp_orgao || "a Administração") + " e " + (d.rp_empresa || "a contratada") + ", formulado em " + (d.rp_pedido || "__/__/____") + ", em razão " + (d.cct_nome ? "do instrumento coletivo \u201c" + d.cct_nome + "\u201d" : "de novo acordo, convenção ou dissídio coletivo de trabalho") + (d.ano_cct ? " (" + d.ano_cct + ")" : "") + " da categoria " + (d.categoria || "______") + ", com data-base em " + (d.data_base || "__/__/____") + ".",
-      "O pedido foi instruído com a planilha de custos e formação de preços e com o instrumento coletivo, na forma do art. 135, § 6º, da Lei nº 14.133/2021 e do art. 57 da IN SEGES/MP nº 5/2017. É o relatório."]]);
+      "O pedido foi instruído com a planilha de custos e formação de preços e com o instrumento coletivo, " + leiDe(d).repacInstr + ". É o relatório."]]);
     const an = [];
     an.push(["2.1 Tempestividade e anualidade", (retro ? retro.alertas.map((a) => a.t) : ["Não foram informadas as datas necessárias à verificação da tempestividade."])]);
     const princ = comp ? comp.linhas.filter((l) => !l.tot && Math.abs(l.dv) >= 0.005).sort((a, b) => Math.abs(b.dv) - Math.abs(a.dv)).slice(0, 8) : [];
@@ -8831,7 +8863,7 @@ class Component extends DCLogic {
     const concl = bloqueios.length
       ? ["Diante do exposto, opina-se pelo indeferimento do pedido de repactuação, em razão do seguinte: " + bloqueios.map((b) => b.t).join(" ")]
       : ["Diante do exposto, opina-se pelo deferimento da repactuação, com o preço mensal por empregado de " + brl(r.total) + " e o valor mensal do contrato de " + brl(r.total * emp) + ", com efeitos a partir de " + (d.data_base || "__/__/____") + (retro && retro.linhas.length ? " e diferença retroativa de " + brl(retro.total) : "") + ".",
-         "Recomenda-se a formalização por apostilamento (Lei nº 14.133/2021, art. 136, I; IN SEGES/MP nº 5/2017, art. 57, § 4º), salvo se coincidir com prorrogação, caso em que se fará por termo aditivo, precedida da verificação da disponibilidade orçamentária."];
+         leiDe(d).repacForm + ", precedida da verificação da disponibilidade orçamentária."];
     secoes.push(["3. CONCLUSÃO", concl.concat(["É a nota técnica, que se submete à consideração superior."])]);
     try {
       if (!window.jspdf) await carregarScript(baseSite() + "vendor/jspdf-2.5.1.umd.min.js");
@@ -9083,8 +9115,8 @@ class Component extends DCLogic {
       const ant = moData(d.rp_db_ant), ped = moData(d.rp_pedido), pro = moData(d.rp_prorrog), fim = moData(d.rp_fim);
       const alertas = [];
       if (db && ant) { const meses = (db.getFullYear() - ant.getFullYear()) * 12 + db.getMonth() - ant.getMonth() - (db.getDate() < ant.getDate() ? 1 : 0);
-        alertas.push(meses >= 12 ? { ok: true, t: "Anualidade cumprida: " + meses + " meses entre a data-base anterior e a nova (Lei 14.133/2021, art. 135, § 3º; IN 05/2017, arts. 55, II, e 56)." }
-          : { ok: false, t: "Anualidade não cumprida: só " + meses + " meses entre a data-base anterior e a nova. A repactuação exige o interregno mínimo de 1 ano (Lei 14.133/2021, art. 135, § 3º)." }); }
+        alertas.push(meses >= 12 ? { ok: true, t: "Anualidade cumprida: " + meses + " meses entre a data-base anterior e a nova (" + leiDe(d).anual + "; IN 05/2017, arts. 55, II, e 56)." }
+          : { ok: false, t: "Anualidade não cumprida: só " + meses + " meses entre a data-base anterior e a nova. A repactuação exige o interregno mínimo de 1 ano (" + leiDe(d).anual + ")." }); }
       if (pro && db && pro >= db && (!ped || ped > pro)) alertas.push({ ok: false, t: "Preclusão: a prorrogação foi assinada em " + pro.toLocaleDateString("pt-BR") + " sem pedido de repactuação anterior. O direito fica precluso (IN 05/2017, art. 57, § 7º; TCU, Acórdão 1.827/2008-Plenário). Se a prorrogação ressalvou o direito, registre a ressalva no processo." });
       else if (fim && ped && ped > fim) alertas.push({ ok: false, t: "Preclusão: o pedido foi feito depois do encerramento do contrato (" + fim.toLocaleDateString("pt-BR") + "), o que extingue o direito à repactuação (IN 05/2017, art. 57, § 7º)." });
       else if (ped) alertas.push({ ok: true, t: "Pedido de " + ped.toLocaleDateString("pt-BR") + " feito durante a vigência e antes de prorrogação: não há preclusão. A decisão deve sair em até 60 dias da entrega dos comprovantes (IN 05/2017, art. 57, § 3º), preferencialmente em 1 mês (Lei 14.133/2021, art. 92, § 6º)." });
@@ -9162,9 +9194,9 @@ class Component extends DCLogic {
         else if (!of) itens.push({ ok: false, t: "Informe o preço ofertado e o valor estimado, ou analise a proposta com o agente." });
         const dil = d.diligencias || [];
         const texto = dil.length ? ["DILIGÊNCIA" + (d.pr_processo ? " – " + d.pr_processo : ""), "À licitante " + (d.pr_licitante || "______________________") + ".",
-          "Com fundamento no art. 59, § 2º, da Lei nº 14.133/2021 e nos itens 7.9 e 9.4 do Anexo VII-A da IN SEGES/MP nº 5/2017, solicita-se, no prazo de ___ (____) horas, a apresentação de justificativas e documentos que comprovem a exequibilidade da proposta e a adequação da planilha de custos e formação de preços, quanto aos seguintes pontos:"]
+          "Com fundamento " + leiDe(d).dilig + " e nos itens 7.9 e 9.4 do Anexo VII-A da IN SEGES/MP nº 5/2017, solicita-se, no prazo de ___ (____) horas, a apresentação de justificativas e documentos que comprovem a exequibilidade da proposta e a adequação da planilha de custos e formação de preços, quanto aos seguintes pontos:"]
           .concat(dil.map((q, i) => (i + 1) + ". " + q))
-          .concat(["Eventuais ajustes na planilha não poderão majorar o preço ofertado. A ausência de resposta ou de comprovação no prazo poderá ensejar a desclassificação da proposta (Lei 14.133/2021, art. 59, IV e V).", (d.municipio || "________") + ", ___ de ____________ de ______.", "______________________________________\nAgente de contratação / Pregoeiro"]) : [];
+          .concat(["Eventuais ajustes na planilha não poderão majorar o preço ofertado. A ausência de resposta ou de comprovação no prazo poderá ensejar a desclassificação da proposta (" + leiDe(d).desclass + ").", (d.municipio || "________") + ", ___ de ____________ de ______.", "______________________________________\nAgente de contratação / Pregoeiro"]) : [];
         this._moUltimo.dilig = texto; this._moUltimo.exeqItens = itens;
         return { moExeqItens: itens.map((a) => ({ t: a.t, cls: a.ok ? "lmo-ok" : "lve-aviso" })), moTemDilig: texto.length > 0, moDiligTexto: texto.join("\n\n"),
           moCopiarDilig: () => { try { navigator.clipboard.writeText(texto.join("\n\n")); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Diligência copiada." } })); } catch (e) {} } };
@@ -9228,6 +9260,8 @@ class Component extends DCLogic {
       moReformaOpcoes: [["antes", "Antes da reforma (PIS, COFINS e ISS)"], ["depois", "Depois da reforma (CBS e IBS, com a transição)"]].map(([id, nome]) => ({ nome, ativo: d.reforma === id, escolher: () => this.moSet("reforma")(id), ...corBotao(d.reforma === id) })),
       moReformaPendente: !d.reforma || !d.regime, moReformaDepois: depois,
       moAgenteTitulo: prop ? "Análise da proposta pelo agente" : rep ? "Análise da repactuação pelo agente" : "Preenchimento pelo agente",
+      moLeis: ["14133", "13303", "13019"].map((id) => [id, LEIS[id]]).map(([id, L]) => ({ nome: L.nome, ativo: (d.lei || "14133") === id, escolher: () => this.moSet("lei")(id), ...corBotao((d.lei || "14133") === id) })), moLeiTxt: leiDe(d).ui,
+      moLeiRepac: leiDe(d).repac,
       moRegimes: [["real", "Lucro Real"], ["presumido", "Lucro Presumido"], ["simples", "Simples Nacional"]].map(([id, nome]) => ({ nome, ativo: d.regime === id, escolher: () => this.moRegime(id), ...corBotao(d.regime === id) })),
       moRegimeTxt: d.regime === "presumido" ? "Lucro Presumido: PIS (0,65%) e COFINS (3%) no regime cumulativo, sem créditos (Lei 9.718/1998)."
         : d.regime === "simples" ? "Simples Nacional: só para vigilância, limpeza ou conservação, tributadas no Anexo IV, com a contribuição previdenciária patronal (20% + RAT) recolhida fora do DAS e sem as contribuições a terceiros (Salário-Educação, SESC/SESI, SENAC/SENAI, SEBRAE, INCRA), zeradas no Submódulo 2.2 (LC 123/2006, art. 13, § 3º, art. 17, XII, e art. 18, §§ 5º-C e 5º-H)."
@@ -9402,6 +9436,8 @@ class Component extends DCLogic {
             .map((t) => ({ t })),
         };
         return { ...campos, ...fatoProps,
+          rqLeis: ["14133", "13303", "13019"].map((id) => [id, LEIS[id]]).map(([id, L]) => ({ nome: L.nome, ativo: (d.lei || "14133") === id, escolher: () => this.rqSet("lei")(id), ...corBotao((d.lei || "14133") === id) })), rqLeiTxt: leiDe(d).ui,
+          rqLeiFato: (d.lei || "14133") === "14133" ? "Lei 14.133/2021, art. 124, II, d, e art. 103 (matriz de riscos)" : (d.lei === "13303" ? "Lei 13.303/2016, art. 81, VI, e art. 69, X (matriz de riscos)" : "Lei 13.019/2014, art. 57 (revisão do plano de trabalho)"),
           rqRegimes: [["real", "Lucro Real"], ["presumido", "Lucro Presumido"], ["simples", "Simples Nacional"]].map(([id, nome]) => ({ nome, ativo: d.regime === id, escolher: () => this.rqRegime(id), ...corBotao(d.regime === id) })),
           rqSimples: d.regime === "simples", rqRegular: !!d.regime && d.regime !== "simples",
           rqSimplesTxt: r.simp ? "Alíquota efetiva do Simples: " + pct(r.simp.ef) + " (faixa " + r.simp.faixa + " do Anexo IV): PIS " + pct(r.simp.pis) + ", COFINS " + pct(r.simp.cofins) + ", ISS " + pct(r.simp.iss) + (r.simp.issFora ? " (na 6ª faixa o ISS é recolhido fora do DAS: informe a alíquota abaixo)." : ".") : "",
