@@ -1289,6 +1289,7 @@
   .rq-reqs { display: grid; gap: 8px; } .rq-req { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 8px 0; border-bottom: 1px solid #EDF2F1; } .rq-req > span { font-size: 14px; color: #22343B; flex: 1; min-width: 240px; }
   .rq-it { grid-template-columns: minmax(0, 1.5fr) 76px 96px 96px 90px 104px 104px minmax(0, 1fr) 130px 34px; } .rq-it input { width: 100%; }
   @media (max-width: 900px) { .rq-it { grid-template-columns: 1fr 1fr; } .rq-it.lmo-cab { display: none; } }
+  .rq-falta { margin: 0 0 12px; background: #FFF4E5; color: #6B3D00; border: 1px solid #F1D9A6; border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.5; } .rq-falta ul { margin: 6px 0 0; padding-left: 20px; }
   .rq-al { margin: 12px 0 0; font-size: 14px; line-height: 1.5; border-radius: 10px; padding: 11px 13px; font-weight: 600; } .rq-al.sobe { background: #FFF4DC; color: #6B4A00; border: 1px solid #F1D9A6; } .rq-al.cai { background: #E7F2FB; color: #0F4B6E; border: 1px solid #C5DDF0; } .rq-al.ok, .rq-al.neutro { background: #E3F5EC; color: #0A5C3C; border: 1px solid #BFE6D2; }
   .lvc-al { margin: 12px 0 0; font-size: 13.5px; line-height: 1.5; border-radius: 10px; padding: 10px 12px; }
   .lvc-al.info { background: rgba(127,227,182,0.12); color: #D7F5E7; }
@@ -3101,6 +3102,7 @@
             </section>
             <section class="lmo-bloco">
               <h2 class="lmo-h2">5. Resultado</h2>
+              <sc-if value="{{ rqFatoTemFalta }}" hint-placeholder-val="{{ true }}"><div class="rq-falta"><b>Para calcular, complete:</b><ul><sc-for list="{{ rqFatoFalta }}" as="f" hint-placeholder-count="1"><li>{{ f.t }}</li></sc-for></ul></div></sc-if>
               <sc-if value="{{ rqFatoPronto }}" hint-placeholder-val="{{ false }}">
                 <div class="lmo-kpis" style="margin-top: 0"><sc-for list="{{ rqFatoKpis }}" as="k" hint-placeholder-count="5"><div><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
                 <p class="{{ rqFatoCls }}" style="margin-top: 12px">{{ rqFatoVeredito }}</p>
@@ -5658,7 +5660,7 @@ const MO_ANOS_REFORMA = [2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033];
 // PIS/COFINS/ISS da proposta e o valor que mantém a mesma receita líquida com a CBS, o IBS e o ISS de cada ano da transição.
 // Mesma regra das planilhas: ISS por dentro; CBS e IBS por fora, sobre o valor sem eles e sem o ISS (art. 12, § 2º).
 // número no formato brasileiro: "30.000" é trinta mil (ponto como separador de milhar quando seguido de 3 dígitos)
-const rqN = (v) => { const t = String(v == null ? "" : v).trim(); return /^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(t) ? Number(t.replace(/\./g, "").replace(",", ".")) || 0 : moNum(t); };
+const rqN = (v) => { const t = String(v == null ? "" : v).replace(/R\$|%|\s/gi, "").trim(); return /^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(t) ? Number(t.replace(/\./g, "").replace(",", ".")) || 0 : moNum(t); };
 const rqR2 = (x) => Math.round((x + (x >= 0 ? 1e-9 : -1e-9)) * 100) / 100; // arredondamento comercial, também para valores negativos
 const RQ_PADRAO = { contrato: "", contratada: "", objeto: "", valor: "", proposta: "", meses: "", regime: "", rbt12: "", pis: "", cofins: "", iss: "",
   rf_cbs: "11,3", rf_ibs: "18,7", ins: "", ins_red: "", ano: "2027", origem: "",
@@ -5692,7 +5694,19 @@ function rqFatoCalcular(d) {
   const desde = m ? Math.max(0, (hoje.getFullYear() - Number(m[2])) * 12 + (hoje.getMonth() + 1 - Number(m[1]))) : 0;
   const mp = String(d.proposta || "").match(/^(\d{1,2})\/(\d{4})$/);
   const idadeProposta = mp ? (hoje.getFullYear() - Number(mp[2])) * 12 + (hoje.getMonth() + 1 - Number(mp[1])) : 0;
-  return { P0, reaj, bdi, itens, validos, custo, preco, baseSaldo, pct: baseSaldo ? custo / baseSaldo : 0, resp, nao, pend, semProva, desde, meses: n(d.meses), idadeProposta, excede: itens.filter((x) => x.excede),
+  // o que falta para calcular (mostrado na tela em vez de deixar o resultado vazio)
+  const falta = !itens.length ? ["Clique em “+ Incluir item” e preencha ao menos um item."] : itens.filter((x) => !x.ok).map((x) => {
+    const f = [];
+    if (!x.desc) f.push("a descrição");
+    if (!(x.tot > 0)) f.push("a quantidade contratada");
+    if (!(x.cp > 0)) f.push("o custo unitário na proposta");
+    if (!(x.ca > 0)) f.push("o custo unitário atual");
+    const nome = "Item " + (x.i + 1) + (x.desc ? " (" + x.desc + ")" : "");
+    if (f.length) return nome + ": falta " + f.join(", ").replace(/, ([^,]*)$/, " e $1") + ".";
+    if (!(x.q > 0)) return nome + ": não há saldo a executar a partir do fato (a quantidade executada antes dele é igual ou maior que a contratada).";
+    return nome + ": confira os valores.";
+  });
+  return { falta, P0, reaj, bdi, itens, validos, custo, preco, baseSaldo, pct: baseSaldo ? custo / baseSaldo : 0, resp, nao, pend, semProva, desde, meses: n(d.meses), idadeProposta, excede: itens.filter((x) => x.excede),
     pronto: validos.length > 0 };
 }
 function rqCalcular(d) {
@@ -8482,7 +8496,7 @@ class Component extends DCLogic {
               imp: c && c.ok ? sinal(c.imp) + " · " + (c.var > 0 ? "+" : "") + pct(c.var) : "—", del: () => this.rqItemDel(i) };
           }),
           rqTemItens: (d.fs_itens || []).length > 0, rqItemAdd: () => this.rqItemAdd(),
-          rqFatoPronto: rf.pronto,
+          rqFatoPronto: rf.pronto, rqFatoFalta: rf.falta.map((t) => ({ t })), rqFatoTemFalta: rf.falta.length > 0,
           rqFatoKpis: !rf.pronto ? [] : [["Impacto no preço do saldo" + (rf.bdi ? " (com BDI)" : ""), sinal(rf.preco)], ["Impacto nos custos do saldo", sinal(rf.custo)], ["Custo do saldo na proposta", brl(rf.baseSaldo)], ["Variação sobre o saldo", (rf.pct > 0 ? "+" : "") + pct(rf.pct)]].map(([k, v]) => ({ k, v })),
           rqFatoVeredito: !rf.pronto ? "" : rf.nao.length ? "Requisito não atendido: " + rf.nao.map((x) => x.t.toLowerCase()).join("; ") + ". Nessas condições, o reequilíbrio tende a não ser cabível."
             : rf.pend.length ? "Faltam " + rf.pend.length + " requisito(s) a confirmar ou comprovar antes de concluir." : rf.preco > 0 ? "Requisitos atendidos, conforme marcado: o impacto pode ser recomposto por termo aditivo, com os documentos de cada item."
