@@ -62,7 +62,7 @@ button,input,select,textarea{font-family:inherit}
 <nav class="prin" aria-label="Navegação principal">
 <a href="biblioteca.html" aria-current="page">Biblioteca Jurídica</a><a href="index.html?p=forum">Fórum</a><a href="index.html?p=cursos">Cursos</a>
 <a href="index.html?p=consultoria">Consultoria</a><a href="index.html?p=agente">O Parecerista</a><a href="index.html?p=elaborar">O Elaborador</a>
-<a href="index.html?p=calculadora">Calculadora</a><a href="index.html?p=planos">Planos</a>
+<a href="index.html?p=calculadora">Calculadora</a><a href="index.html?p=gestao">Gestão contratual</a><a href="index.html?p=planos">Planos</a>
 </nav>
 <div class="dir">
 <a class="conta" id="lvEntrar" href="index.html?p=login&amp;volta=biblioteca">Entrar</a><a class="cta" id="lvCadastro" href="index.html?p=cadastro&amp;volta=biblioteca">Cadastre-se</a>
@@ -72,13 +72,13 @@ button,input,select,textarea{font-family:inherit}
 <nav class="movel" id="lvMenu" aria-label="Menu" hidden>
 <a href="biblioteca.html" aria-current="page">Biblioteca Jurídica</a><a href="index.html?p=forum">Fórum</a><a href="index.html?p=cursos">Cursos</a>
 <a href="index.html?p=consultoria">Consultoria</a><a href="index.html?p=agente">O Parecerista</a><a href="index.html?p=elaborar">O Elaborador</a>
-<a href="index.html?p=calculadora">Calculadora</a><a href="index.html?p=planos">Planos</a>
+<a href="index.html?p=calculadora">Calculadora</a><a href="index.html?p=gestao">Gestão contratual</a><a href="index.html?p=planos">Planos</a>
 </nav></div>
 """
 html = ('<!doctype html>\n<html lang="pt-BR"><head><meta charset="utf-8"><meta name="referrer" content="strict-origin-when-cross-origin"><script>/* impede que o site seja aberto dentro de outro site (clickjacking) */if(window.top!==window.self){try{window.top.location=window.self.location}catch(e){document.documentElement.style.display=\"none\"}}</script>'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
         '<meta name="theme-color" content="#0A1F2A"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><link rel="icon" type="image/png" href="icones/icone-192.png">'
-        '<script src="licitaverso-auth.js?v=7"></script><script src="chatbot.js?v=12" defer></script>\n'
+        '<script src="licitaverso-auth.js?v=7"></script><script src="chatbot.js?v=13" defer></script>\n'
         '<script>\n' + shim + '\n</script></head><body>\n' + barra + src + '\n</body></html>\n')
 out.write_text(html, encoding="utf-8")
 print("gravado", out, len(html), "bytes")

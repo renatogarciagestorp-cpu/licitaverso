@@ -1586,17 +1586,17 @@
 <div style="min-height: 100vh; display: flex; flex-direction: column">
 
   <header class="lv-topo" style="position: sticky; top: 0; z-index: 40; background: #0A1F2A; border-bottom: 1px solid rgba(255,255,255,0.09)">
-    <div style="max-width: 1240px; margin: 0 auto; padding: 0 24px; height: 68px; display: flex; align-items: center; gap: 28px">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 0 20px; height: 68px; display: flex; align-items: center; gap: 18px">
       <button sc-camel-on-click="{{ goHome }}" aria-label="Licitacon — página inicial" style="display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 0; cursor: pointer">
         <span style="width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(150deg, #0FA36B, #0F6B7E); display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 15px">L</span>
         <span style="color: #fff; font-weight: 800; font-size: 18px; letter-spacing: -0.02em">Licitacon</span>
       </button>
-      <nav aria-label="Navegação principal" style="display: flex; align-items: center; gap: 2px; margin-left: 8px; flex-wrap: wrap">
+      <nav aria-label="Navegação principal" style="display: flex; align-items: center; gap: 0; margin-left: 0; flex-wrap: wrap">
         <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="7">
-          <button sc-camel-on-click="{{ item.go }}" style="position: relative; background: none; border: 0; padding: 8px 11px; cursor: pointer; color: #C9D6DB; font-size: 14px; font-weight: 600; border-radius: 8px" style-hover="color: #fff; background: rgba(255,255,255,0.07)">
+          <button sc-camel-on-click="{{ item.go }}" style="position: relative; background: none; border: 0; padding: 8px 8px; cursor: pointer; color: #C9D6DB; font-size: 13.5px; font-weight: 600; border-radius: 8px; white-space: nowrap" style-hover="color: #fff; background: rgba(255,255,255,0.07)">
             {{ item.label }}
             <sc-if value="{{ item.active }}" hint-placeholder-val="{{ false }}">
-              <span style="position: absolute; left: 11px; right: 11px; bottom: 1px; height: 2px; background: #0FA36B; border-radius: 2px"></span>
+              <span style="position: absolute; left: 8px; right: 8px; bottom: 1px; height: 2px; background: #0FA36B; border-radius: 2px"></span>
             </sc-if>
           </button>
         </sc-for>
@@ -1604,7 +1604,7 @@
       <div style="margin-left: auto; display: flex; align-items: center; gap: 10px">
         <sc-if value="{{ deslogado }}" hint-placeholder-val="{{ true }}">
           <button sc-camel-on-click="{{ goLogin }}" style="background: none; border: 0; color: #C9D6DB; font-size: 14px; font-weight: 600; cursor: pointer; padding: 8px 4px" style-hover="color: #fff">Entrar</button>
-          <button sc-camel-on-click="{{ goCadastro }}" style="background: #0FA36B; color: #06251A; border: 0; padding: 10px 16px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: none" style-hover="background: #14B978">Cadastre-se</button>
+          <button sc-camel-on-click="{{ goCadastro }}" style="background: #0FA36B; color: #06251A; border: 0; padding: 10px 16px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: none; white-space: nowrap" style-hover="background: #14B978">Cadastre-se</button>
         </sc-if>
         <sc-if value="{{ logado }}" hint-placeholder-val="{{ false }}">
           <button sc-camel-on-click="{{ goConta }}" style="background: #0FA36B; color: #06251A; border: 0; padding: 10px 16px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: none" style-hover="background: #14B978">Minha conta</button>
@@ -3067,77 +3067,9 @@
             </section>
           </div>
           </sc-if>
-          <sc-if value="{{ calcAbaCt }}" hint-placeholder-val="{{ false }}">
-          <div class="lmo" id="ct-topo">
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center">
-              <button type="button" class="lmo-btn" sc-camel-on-click="{{ ctNovo }}">+ Novo contrato</button>
-              <sc-if value="{{ ctCarregando }}" hint-placeholder-val="{{ false }}"><span class="lmo-nota" style="margin: 0">Carregando…</span></sc-if>
-            </div>
-            <sc-if value="{{ ctOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ ctOk }}</p></sc-if>
-            <sc-if value="{{ ctErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ ctErro }}</p></sc-if>
-            <sc-if value="{{ ctFormAberto }}" hint-placeholder-val="{{ false }}">
-            <section class="lmo-bloco">
-              <h2 class="lmo-h2">{{ ctFormTitulo }}</h2>
-              <div class="lmo-campos">
-                <label class="lmo-campo"><span>Número do contrato *</span><input type="text" value="{{ ctFNumero }}" sc-camel-on-input="{{ onCtFNumero }}" placeholder="Ex.: 012/2026"></label>
-                <label class="lmo-campo"><span>Contratante (órgão)</span><input type="text" value="{{ ctFContratante }}" sc-camel-on-input="{{ onCtFContratante }}"></label>
-                <label class="lmo-campo"><span>Contratada</span><input type="text" value="{{ ctFContratada }}" sc-camel-on-input="{{ onCtFContratada }}"></label>
-                <label class="lmo-campo" style="grid-column: 1 / -1"><span>Objeto</span><input type="text" value="{{ ctFObjeto }}" sc-camel-on-input="{{ onCtFObjeto }}" placeholder="Ex.: serviços de limpeza e conservação"></label>
-                <label class="lmo-campo"><span>Regime</span><select sc-camel-on-change="{{ onCtFRegime }}"><sc-for list="{{ ctRegimes }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
-                <label class="lmo-campo"><span>Mês da proposta ou do orçamento</span><input type="month" value="{{ ctFDataProposta }}" sc-camel-on-input="{{ onCtFDataProposta }}"></label>
-                <label class="lmo-campo"><span>Início da vigência</span><input type="date" value="{{ ctFInicio }}" sc-camel-on-input="{{ onCtFInicio }}"></label>
-                <label class="lmo-campo"><span>Fim da vigência</span><input type="date" value="{{ ctFFim }}" sc-camel-on-input="{{ onCtFFim }}"></label>
-                <label class="lmo-campo"><span>Valor inicial (R$)</span><input type="text" inputmode="decimal" value="{{ ctFValorInicial }}" sc-camel-on-input="{{ onCtFValorInicial }}" placeholder="0,00"></label>
-                <label class="lmo-campo"><span>O valor informado é</span><select sc-camel-on-change="{{ onCtFPeriodicidade }}"><sc-for list="{{ ctPeriodos }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
-                <label class="lmo-campo"><span>Índice de reajuste</span><select sc-camel-on-change="{{ onCtFIndice }}"><sc-for list="{{ ctIndicesOp }}" as="o" hint-placeholder-count="6"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
-                <label class="lmo-campo"><span>Data-base da convenção (dd/mm, mão de obra)</span><input type="text" value="{{ ctFDataBaseCct }}" sc-camel-on-input="{{ onCtFDataBaseCct }}" placeholder="Ex.: 01/03"></label>
-                <label class="lmo-campo" style="grid-column: 1 / -1"><span>Observações</span><input type="text" value="{{ ctFObs }}" sc-camel-on-input="{{ onCtFObs }}"></label>
-              </div>
-              <label class="lmo-nota" style="display: flex; gap: 8px; align-items: center"><input type="checkbox" checked="{{ ctFMaoObra }}" sc-camel-on-change="{{ onCtFMaoObra }}"> Contrato com dedicação exclusiva de mão de obra (repactuação pela convenção coletiva)</label>
-              <label class="lmo-nota" style="display: flex; gap: 8px; align-items: center"><input type="checkbox" checked="{{ ctFAlertas }}" sc-camel-on-change="{{ onCtFAlertas }}"> Avisar por e-mail sobre anualidade, convenção coletiva e fim da vigência</label>
-              <div style="display: flex; gap: 8px; margin-top: 12px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ctSalvar }}">Salvar contrato</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctCancelar }}">Cancelar</button></div>
-            </section>
-            </sc-if>
-            <sc-if value="{{ ctVazio }}" hint-placeholder-val="{{ false }}"><p class="lmo-intro">Nenhum contrato cadastrado ainda. Cadastre o primeiro para acompanhar reajustes, repactuações, reequilíbrios e prazos.</p></sc-if>
-            <div class="ct-lista">
-              <sc-for list="{{ ctLista }}" as="c" hint-placeholder-count="2">
-                <article class="{{ c.cls }}">
-                  <div class="ct-cab">
-                    <div><h3>Contrato {{ c.numero }}</h3><p>{{ c.contratada }} · {{ c.objeto }}</p></div>
-                    <div class="ct-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.abrir }}">Linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarReajuste }}">Calcular reajuste</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarRq }}">Reequilíbrio</button></div>
-                  </div>
-                  <div class="ct-num"><span>Valor vigente: <b>{{ c.valor }}</b></span><span>Vigência até: <b>{{ c.fim }}</b></span><span>{{ c.prox }}</span><span>{{ c.reaj }}</span></div>
-                  <sc-for list="{{ c.avisos }}" as="a" hint-placeholder-count="1"><p class="ct-av">{{ a.t }}</p></sc-for>
-                  <sc-if value="{{ c.aberto }}" hint-placeholder-val="{{ false }}">
-                    <sc-if value="{{ c.temEventos }}" hint-placeholder-val="{{ false }}">
-                      <ul class="ct-linha"><sc-for list="{{ c.eventos }}" as="e" hint-placeholder-count="2"><li><b>{{ e.data }} · {{ e.tipo }}</b> {{ e.pct }} {{ e.valores }}<small>{{ e.fimTxt }} {{ e.desc }}</small><sc-if value="{{ c.meu }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-x" style="margin-top: 4px" aria-label="Excluir registro" sc-camel-on-click="{{ e.excluir }}">×</button></sc-if></li></sc-for></ul>
-                    </sc-if>
-                    <sc-if value="{{ c.meu }}" hint-placeholder-val="{{ true }}">
-                      <sc-if value="{{ ctEvAberto }}" hint-placeholder-val="{{ false }}">
-                        <div class="ct-form">
-                          <div class="lmo-campos">
-                            <label class="lmo-campo"><span>Tipo</span><select sc-camel-on-change="{{ onCtETipo }}"><sc-for list="{{ ctTiposOp }}" as="o" hint-placeholder-count="7"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
-                            <label class="lmo-campo"><span>Data (a partir de quando vale)</span><input type="date" value="{{ ctEData }}" sc-camel-on-input="{{ onCtEData }}"></label>
-                            <label class="lmo-campo"><span>Percentual (%)</span><input type="text" inputmode="decimal" value="{{ ctEPercentual }}" sc-camel-on-input="{{ onCtEPercentual }}"></label>
-                            <label class="lmo-campo"><span>Valor anterior (R$)</span><input type="text" inputmode="decimal" value="{{ ctEValorAnterior }}" sc-camel-on-input="{{ onCtEValorAnterior }}"></label>
-                            <label class="lmo-campo"><span>Novo valor (R$)</span><input type="text" inputmode="decimal" value="{{ ctEValorNovo }}" sc-camel-on-input="{{ onCtEValorNovo }}"></label>
-                            <sc-if value="{{ ctEvProrrog }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>Nova vigência até</span><input type="date" value="{{ ctENovoFim }}" sc-camel-on-input="{{ onCtENovoFim }}"></label></sc-if>
-                            <label class="lmo-campo" style="grid-column: 1 / -1"><span>Descrição</span><input type="text" value="{{ ctEDescricao }}" sc-camel-on-input="{{ onCtEDescricao }}" placeholder="Ex.: 1º termo aditivo, processo nº…"></label>
-                          </div>
-                          <div style="display: flex; gap: 8px; margin-top: 10px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ctSalvarEv }}">Incluir na linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctCancelarEv }}">Cancelar</button></div>
-                        </div>
-                      </sc-if>
-                      <div class="ct-acoes" style="margin-top: 12px"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.novoEv }}">+ Registro</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.editar }}">Editar contrato</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.excluir }}">{{ c.excluirTxt }}</button></div>
-                    </sc-if>
-                  </sc-if>
-                </article>
-              </sc-for>
-            </div>
-          </div>
-          </sc-if>
           <sc-if value="{{ calcAbaRq }}" hint-placeholder-val="{{ false }}">
           <div class="lmo" id="rq-topo">
-            <div class="ct-sel"><label><span>Contrato</span><select aria-label="Contrato cadastrado" sc-camel-on-change="{{ onCtSelRq }}"><sc-for list="{{ ctOpcoes }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctIrContratos }}">Meus contratos</button></div>
+            <div class="ct-sel"><label><span>Contrato</span><select aria-label="Contrato cadastrado" sc-camel-on-change="{{ onCtSelRq }}"><sc-for list="{{ ctOpcoes }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctIrContratos }}">Gestão contratual</button></div>
             <div class="lmo-modos" role="group" aria-label="Tipo de reequilíbrio"><sc-for list="{{ rqTipos }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
             <section class="lmo-bloco">
               <h2 class="lmo-h2">1. Contrato</h2>
@@ -3269,7 +3201,7 @@
           </div>
           </sc-if>
           <sc-if value="{{ calcAbaIndice }}" hint-placeholder-val="{{ true }}">
-          <div class="ct-sel" style="margin-top: 18px"><label><span>Contrato</span><select aria-label="Contrato cadastrado" sc-camel-on-change="{{ onCtSelReajuste }}"><sc-for list="{{ ctOpcoes }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctIrContratos }}">Meus contratos</button></div>
+          <div class="ct-sel" style="margin-top: 18px"><label><span>Contrato</span><select aria-label="Contrato cadastrado" sc-camel-on-change="{{ onCtSelReajuste }}"><sc-for list="{{ ctOpcoes }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctIrContratos }}">Gestão contratual</button></div>
           <div class="lvc-grid">
             <div class="lvc-form">
               <section class="lvc-passo">
@@ -3365,6 +3297,94 @@
     </sc-if>
 
     <!-- ===================== CURSOS ===================== -->
+    <sc-if value="{{ isGestao }}" hint-placeholder-val="{{ false }}">
+      <section class="lva-hero lvx-ph">
+        <div class="lvc-hero-in">
+          <span class="lvh-eyebrow">Gestão contratual</span>
+          <h1 class="lva-h1" style="max-width: 24ch">Seus contratos e tudo o que mudou neles, num só lugar.</h1>
+          <p class="lva-lead">Cadastre cada contrato uma vez e acompanhe a linha do tempo de reajustes, repactuações, reequilíbrios, aditivos e prorrogações, com o valor vigente, a próxima anualidade e avisos por e-mail dos prazos.</p>
+        </div>
+      </section>
+      <section class="lvc-corpo">
+        <sc-if value="{{ gcBloqueada }}" hint-placeholder-val="{{ false }}">
+          <div class="lvc-bloq" style="margin-top: 24px">
+            <span class="lvh-bib-tag">{{ gcBloqTag }}</span>
+            <h2 class="lva-h2" style="margin-top: 12px">O que você faz aqui</h2>
+            <ul class="lvc-benef"><sc-for list="{{ gcBenef }}" as="b" hint-placeholder-count="6"><li>{{ b.t }}</li></sc-for></ul>
+            <p class="lva-sub" style="font-size: 14.5px; margin-top: 14px">{{ gcBloqTexto }}</p>
+            <div class="lvh-ctas" style="margin-top: 16px"><button class="lvh-btn" sc-camel-on-click="{{ gcBloqAcao }}">{{ gcBloqCta }}</button><button class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ goPlanos }}">Ver os planos</button></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ gcLiberada }}" hint-placeholder-val="{{ true }}">
+          <div class="lmo" id="ct-topo">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center">
+              <button type="button" class="lmo-btn" sc-camel-on-click="{{ ctNovo }}">+ Novo contrato</button>
+              <sc-if value="{{ ctCarregando }}" hint-placeholder-val="{{ false }}"><span class="lmo-nota" style="margin: 0">Carregando…</span></sc-if>
+            </div>
+            <sc-if value="{{ ctOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ ctOk }}</p></sc-if>
+            <sc-if value="{{ ctErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ ctErro }}</p></sc-if>
+            <sc-if value="{{ ctFormAberto }}" hint-placeholder-val="{{ false }}">
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">{{ ctFormTitulo }}</h2>
+              <div class="lmo-campos">
+                <label class="lmo-campo"><span>Número do contrato *</span><input type="text" value="{{ ctFNumero }}" sc-camel-on-input="{{ onCtFNumero }}" placeholder="Ex.: 012/2026"></label>
+                <label class="lmo-campo"><span>Contratante (órgão)</span><input type="text" value="{{ ctFContratante }}" sc-camel-on-input="{{ onCtFContratante }}"></label>
+                <label class="lmo-campo"><span>Contratada</span><input type="text" value="{{ ctFContratada }}" sc-camel-on-input="{{ onCtFContratada }}"></label>
+                <label class="lmo-campo" style="grid-column: 1 / -1"><span>Objeto</span><input type="text" value="{{ ctFObjeto }}" sc-camel-on-input="{{ onCtFObjeto }}" placeholder="Ex.: serviços de limpeza e conservação"></label>
+                <label class="lmo-campo"><span>Regime</span><select sc-camel-on-change="{{ onCtFRegime }}"><sc-for list="{{ ctRegimes }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                <label class="lmo-campo"><span>Mês da proposta ou do orçamento</span><input type="month" value="{{ ctFDataProposta }}" sc-camel-on-input="{{ onCtFDataProposta }}"></label>
+                <label class="lmo-campo"><span>Início da vigência</span><input type="date" value="{{ ctFInicio }}" sc-camel-on-input="{{ onCtFInicio }}"></label>
+                <label class="lmo-campo"><span>Fim da vigência</span><input type="date" value="{{ ctFFim }}" sc-camel-on-input="{{ onCtFFim }}"></label>
+                <label class="lmo-campo"><span>Valor inicial (R$)</span><input type="text" inputmode="decimal" value="{{ ctFValorInicial }}" sc-camel-on-input="{{ onCtFValorInicial }}" placeholder="0,00"></label>
+                <label class="lmo-campo"><span>O valor informado é</span><select sc-camel-on-change="{{ onCtFPeriodicidade }}"><sc-for list="{{ ctPeriodos }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                <label class="lmo-campo"><span>Índice de reajuste</span><select sc-camel-on-change="{{ onCtFIndice }}"><sc-for list="{{ ctIndicesOp }}" as="o" hint-placeholder-count="6"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                <label class="lmo-campo"><span>Data-base da convenção (dd/mm, mão de obra)</span><input type="text" value="{{ ctFDataBaseCct }}" sc-camel-on-input="{{ onCtFDataBaseCct }}" placeholder="Ex.: 01/03"></label>
+                <label class="lmo-campo" style="grid-column: 1 / -1"><span>Observações</span><input type="text" value="{{ ctFObs }}" sc-camel-on-input="{{ onCtFObs }}"></label>
+              </div>
+              <label class="lmo-nota" style="display: flex; gap: 8px; align-items: center"><input type="checkbox" checked="{{ ctFMaoObra }}" sc-camel-on-change="{{ onCtFMaoObra }}"> Contrato com dedicação exclusiva de mão de obra (repactuação pela convenção coletiva)</label>
+              <label class="lmo-nota" style="display: flex; gap: 8px; align-items: center"><input type="checkbox" checked="{{ ctFAlertas }}" sc-camel-on-change="{{ onCtFAlertas }}"> Avisar por e-mail sobre anualidade, convenção coletiva e fim da vigência</label>
+              <div style="display: flex; gap: 8px; margin-top: 12px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ctSalvar }}">Salvar contrato</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctCancelar }}">Cancelar</button></div>
+            </section>
+            </sc-if>
+            <sc-if value="{{ ctVazio }}" hint-placeholder-val="{{ false }}"><p class="lmo-intro">Nenhum contrato cadastrado ainda. Cadastre o primeiro para acompanhar reajustes, repactuações, reequilíbrios e prazos.</p></sc-if>
+            <div class="ct-lista">
+              <sc-for list="{{ ctLista }}" as="c" hint-placeholder-count="2">
+                <article class="{{ c.cls }}">
+                  <div class="ct-cab">
+                    <div><h3>Contrato {{ c.numero }}</h3><p>{{ c.contratada }} · {{ c.objeto }}</p></div>
+                    <div class="ct-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.abrir }}">Linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarReajuste }}">Calcular reajuste</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarRq }}">Reequilíbrio</button></div>
+                  </div>
+                  <div class="ct-num"><span>Valor vigente: <b>{{ c.valor }}</b></span><span>Vigência até: <b>{{ c.fim }}</b></span><span>{{ c.prox }}</span><span>{{ c.reaj }}</span></div>
+                  <sc-for list="{{ c.avisos }}" as="a" hint-placeholder-count="1"><p class="ct-av">{{ a.t }}</p></sc-for>
+                  <sc-if value="{{ c.aberto }}" hint-placeholder-val="{{ false }}">
+                    <sc-if value="{{ c.temEventos }}" hint-placeholder-val="{{ false }}">
+                      <ul class="ct-linha"><sc-for list="{{ c.eventos }}" as="e" hint-placeholder-count="2"><li><b>{{ e.data }} · {{ e.tipo }}</b> {{ e.pct }} {{ e.valores }}<small>{{ e.fimTxt }} {{ e.desc }}</small><sc-if value="{{ c.meu }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-x" style="margin-top: 4px" aria-label="Excluir registro" sc-camel-on-click="{{ e.excluir }}">×</button></sc-if></li></sc-for></ul>
+                    </sc-if>
+                    <sc-if value="{{ c.meu }}" hint-placeholder-val="{{ true }}">
+                      <sc-if value="{{ ctEvAberto }}" hint-placeholder-val="{{ false }}">
+                        <div class="ct-form">
+                          <div class="lmo-campos">
+                            <label class="lmo-campo"><span>Tipo</span><select sc-camel-on-change="{{ onCtETipo }}"><sc-for list="{{ ctTiposOp }}" as="o" hint-placeholder-count="7"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                            <label class="lmo-campo"><span>Data (a partir de quando vale)</span><input type="date" value="{{ ctEData }}" sc-camel-on-input="{{ onCtEData }}"></label>
+                            <label class="lmo-campo"><span>Percentual (%)</span><input type="text" inputmode="decimal" value="{{ ctEPercentual }}" sc-camel-on-input="{{ onCtEPercentual }}"></label>
+                            <label class="lmo-campo"><span>Valor anterior (R$)</span><input type="text" inputmode="decimal" value="{{ ctEValorAnterior }}" sc-camel-on-input="{{ onCtEValorAnterior }}"></label>
+                            <label class="lmo-campo"><span>Novo valor (R$)</span><input type="text" inputmode="decimal" value="{{ ctEValorNovo }}" sc-camel-on-input="{{ onCtEValorNovo }}"></label>
+                            <sc-if value="{{ ctEvProrrog }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>Nova vigência até</span><input type="date" value="{{ ctENovoFim }}" sc-camel-on-input="{{ onCtENovoFim }}"></label></sc-if>
+                            <label class="lmo-campo" style="grid-column: 1 / -1"><span>Descrição</span><input type="text" value="{{ ctEDescricao }}" sc-camel-on-input="{{ onCtEDescricao }}" placeholder="Ex.: 1º termo aditivo, processo nº…"></label>
+                          </div>
+                          <div style="display: flex; gap: 8px; margin-top: 10px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ctSalvarEv }}">Incluir na linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctCancelarEv }}">Cancelar</button></div>
+                        </div>
+                      </sc-if>
+                      <div class="ct-acoes" style="margin-top: 12px"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.novoEv }}">+ Registro</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.editar }}">Editar contrato</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.excluir }}">{{ c.excluirTxt }}</button></div>
+                    </sc-if>
+                  </sc-if>
+                </article>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </section>
+    </sc-if>
     <sc-if value="{{ isCursos }}" hint-placeholder-val="{{ false }}">
       <section class="lvx-ph lvx-ph-simples">
         <div style="max-width: 1240px; margin: 0 auto">
@@ -5924,13 +5944,6 @@ function moCalcular(d, modo, rj) {
 
 // Calculadora: uma subpágina por ferramenta (reajuste por índice e as três planilhas da Mão de Obra Exclusiva)
 const CALC_FERRAMENTAS = [
-  { id: "contratos", nome: "Meus contratos", curto: "Cadastre o contrato uma vez e acompanhe a linha do tempo de reajustes, repactuações, reequilíbrios e aditivos.",
-    h1: "Seus contratos e tudo o que mudou neles, num só lugar.",
-    lead: "Cadastre cada contrato uma vez: as ferramentas da Calculadora usam os dados dele, e cada reajuste, repactuação, reequilíbrio, aditivo ou prorrogação fica registrado na linha do tempo, com o valor vigente e a próxima anualidade.",
-    beneficios: ["Cadastro do contrato com vigência, valor, índice, data da proposta e data-base da convenção", "Linha do tempo com reajustes, repactuações, reequilíbrios, aditivos e prorrogações",
-      "Valor vigente, fim da vigência e próxima anualidade calculados a partir dos registros", "Reajuste e reequilíbrio preenchidos com os dados do contrato, sem digitar de novo",
-      "Reequilíbrio já recebe o reajuste concedido, para o mesmo aumento não ser pago duas vezes", "Contratos compartilhados com a equipe nos planos para equipes"],
-    plano: "Em todos os planos pagos e no teste grátis de 7 dias." },
   { id: "reajuste", nome: "Reajuste por índice", curto: "Reajuste de contratos por IPCA, IGP-M, INCC e outros índices oficiais, com a nota técnica pronta.",
     h1: "Reajuste de contrato calculado certo, com a nota técnica pronta.",
     lead: "Índices oficiais atualizados todos os dias, conferência dos 12 meses, ciclos acumulados e memória de cálculo mês a mês. No fim, você baixa a nota técnica em PDF para juntar ao processo.",
@@ -6064,7 +6077,7 @@ const COMPRADORES = {
 // ===================== Contas, dados e pagamentos =====================
 // O site usa o Supabase (contas e banco) e o Mercado Pago (cobrança) quando
 // config.js está preenchido. Sem configuração, roda em modo demonstração.
-const PAGINAS = ["home", "forum", "cursos", "consultoria", "agente", "elaborar", "calculadora", "planos", "conta", "institucional", "login", "cadastro", "recuperar", "nova-senha"];
+const PAGINAS = ["home", "forum", "cursos", "consultoria", "agente", "elaborar", "calculadora", "gestao", "planos", "conta", "institucional", "login", "cadastro", "recuperar", "nova-senha"];
 // Visitantes sem cadastro navegam por todas as páginas (como nas demais plataformas do setor): veem o que cada
 // área oferece, a vitrine do fórum e o catálogo de cursos; ler as respostas do fórum, usar as ferramentas e
 // contratar pedem conta. Só a Área do Assinante exige login para abrir.
@@ -6089,7 +6102,7 @@ const PLANO_BENEFICIOS = {
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "12";
+const CHAT_VERSAO = "13";
 // versão da Biblioteca no endereço: força o navegador a buscar a página nova depois de cada mudança (o GitHub Pages guarda em cache por 10 minutos)
 const BIB_URL = "biblioteca.html?v=2";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
@@ -6308,6 +6321,7 @@ class Component extends DCLogic {
       ACERVO_EM = j.gerado_em || "";
       this.setState({ acervoN: DOCS.length });
     }).catch(() => {});
+    if (pIni === "gestao") this.ctCarregar();
     if (pIni === "calculadora") { this.carregarIndices(); const fIni = qsIni.get("f"); if (fIni && CALC_FERRAMENTAS.some((x) => x.id === fIni)) this.calcFerramenta(fIni); }
     this.timer = setInterval(() => {
       if (!this.state.pausado && this.state.page === "home") {
@@ -6393,7 +6407,8 @@ class Component extends DCLogic {
     this.carregarOferta();
     if (u) await this.carregarDados();
     if (this.state.page === "forum" && (!u || !this.podeLerForum())) this.carregarVitrine();
-    if (this.state.page === "calculadora" && u) { this.moCotaCarregar(); this.ctCarregar(true); }
+    if (this.state.page === "calculadora" && u) this.moCotaCarregar();
+    if ((this.state.page === "calculadora" || this.state.page === "gestao") && u) this.ctCarregar(true);
     this.tratarRetornoPagamento();
     this.carregarCursos();
   }
@@ -7070,7 +7085,8 @@ class Component extends DCLogic {
     if (destino === "forum" && this.u) this.carregarForum({ leve: true });
     if (destino === "forum" && (!this.u || !this.podeLerForum())) this.carregarVitrine();
     if (destino === "agente" && this.u) this.carregarDados({ leve: true });
-    if (destino === "calculadora") { this.carregarIndices(); this.moCotaCarregar(); }
+    if (destino === "calculadora") { this.carregarIndices(); this.moCotaCarregar(); this.ctCarregar(); }
+    if (destino === "gestao") this.ctCarregar();
   }
 
   nav = (page) => () => this.irPara(page);
@@ -7525,6 +7541,7 @@ class Component extends DCLogic {
         origem: "contrato " + c.numero + " (Meus contratos)" };
       this.rqGravar(d); this.setState((x) => ({ rq: { ...x.rq, d }, ct: { ...x.ct, atual: id } }));
     }
+    if (this.state.page !== "calculadora") this.irPara("calculadora");
     this.calcFerramenta(destino);
     this.aviso("Dados do contrato " + c.numero + " aplicados.", "ok");
   }
@@ -7808,7 +7825,7 @@ class Component extends DCLogic {
     if (!this.state.moCota) this.moCotaCarregar();
     if (id === "reajuste") { this.setState({ calcAba: "indice" }); this.ctCarregar(); }
     else if (id === "reequilibrio") { this.setState({ calcAba: "rq" }); this.ctCarregar(); }
-    else if (id === "contratos") { this.setState({ calcAba: "ct" }); this.ctCarregar(); }
+    else if (id === "contratos") { this.irPara("gestao"); return; }
     else { if (this.state.mo.modo !== id) this.moModo(id); this.setState({ calcAba: "mo" }); }
     this.carregarIndices();
     try { history.replaceState({ p: "calculadora" }, "", location.pathname + "?p=calculadora&f=" + id); } catch (e) {}
@@ -8703,18 +8720,27 @@ class Component extends DCLogic {
       onMoRfAno: this.moSet("rf_ano"), moRfCbs: d.rf_cbs || "", onMoRfCbs: this.moSet("rf_cbs"), moRfIbs: d.rf_ibs || "", onMoRfIbs: this.moSet("rf_ibs"),
       moTransicao: transicao,
       moTransicaoNota: "Clique no ano para calculá-lo na planilha. Cada linha refaz o Módulo 6 com as alíquotas do ano; os Módulos 1 a 5 e o lucro são os mesmos. A mudança de tributos em contrato vigente pede reequilíbrio econômico-financeiro (LC 214/2025, arts. 374 a 378; Lei 14.133/2021, art. 134).",
-      calcAbaIndice: s.calcAba === "indice", calcAbaMo: s.calcAba === "mo", calcAbaRq: s.calcAba === "rq", calcAbaCt: s.calcAba === "ct",
+      calcAbaIndice: s.calcAba === "indice", calcAbaMo: s.calcAba === "mo", calcAbaRq: s.calcAba === "rq",
       calcAbaIdxCls: "lvc-aba" + (s.calcAba === "indice" ? " ativo" : ""), calcAbaMoCls: "lvc-aba" + (s.calcAba === "mo" ? " ativo" : ""),
       calcIrIndice: () => this.setState({ calcAba: "indice" }), calcIrMo: () => { this.setState({ calcAba: "mo" }); this.carregarIndices(); },
       ...(() => {
-        const atual = s.calcAba === "mo" ? mo.modo : s.calcAba === "rq" ? "reequilibrio" : s.calcAba === "ct" ? "contratos" : "reajuste", f = CALC_FERRAMENTAS.find((x) => x.id === atual) || CALC_FERRAMENTAS[0];
+        const atual = s.calcAba === "mo" ? mo.modo : s.calcAba === "rq" ? "reequilibrio" : "reajuste", f = CALC_FERRAMENTAS.find((x) => x.id === atual) || CALC_FERRAMENTAS[0];
         const ir = (id) => () => this.calcFerramenta(id);
         return { calcH1: "Cálculos de contratos e planilhas de mão de obra, com a fundamentação pronta.",
-          calcLead: "Seus contratos com a linha do tempo, reajuste por índice, planilha de custos no formato da IN 05/2017, repactuação, análise da proposta da licitante e reequilíbrio econômico-financeiro: índices oficiais atualizados todos os dias, memória de cálculo, falhas apontadas com o fundamento e documentos em Excel e PDF para juntar ao processo.",
+          calcLead: "Reajuste por índice, planilha de custos no formato da IN 05/2017, repactuação, análise da proposta da licitante e reequilíbrio econômico-financeiro: índices oficiais atualizados todos os dias, memória de cálculo, falhas apontadas com o fundamento e documentos em Excel e PDF para juntar ao processo.",
           calcFerrTitulo: f.h1, calcFerrLead: f.lead, calcFerrNome: f.nome, calcFerrPlano: f.plano, calcFerrBenef: f.beneficios.map((t) => ({ t })),
           calcAbas: CALC_FERRAMENTAS.map((x) => ({ nome: x.nome, ativo: x.id === atual, cls: "lvc-aba" + (x.id === atual ? " ativo" : ""), ir: ir(x.id) })),
           calcFerrCards: CALC_FERRAMENTAS.map((x) => ({ nome: x.nome, curto: x.curto, ativo: x.id === atual, cls: "lvc-fc" + (x.id === atual ? " ativo" : ""), ir: ir(x.id) })) };
       })(),
+      // Gestão contratual: planos pagos e teste (sem contas ativas, demonstração aberta)
+      gcLiberada: !!s.admin || !!s.plano || !s.sb, gcBloqueada: !(!!s.admin || !!s.plano || !s.sb),
+      gcBloqTag: "Exclusivo para assinantes",
+      gcBloqTexto: s.usuario ? "Comece o teste grátis de 7 dias ou escolha um plano para cadastrar seus contratos e receber os avisos de prazo." : "Crie sua conta grátis e comece o teste de 7 dias, sem cartão, para cadastrar seus contratos.",
+      gcBloqCta: s.usuario ? "Começar o teste grátis" : "Criar conta grátis",
+      gcBloqAcao: s.usuario ? this.nav("planos") : () => { this.setState({ volta: "gestao" }); this.irPara("cadastro"); },
+      gcBenef: ["Cadastro do contrato com vigência, valor, índice, data da proposta e data-base da convenção coletiva", "Linha do tempo com reajustes, repactuações, reequilíbrios, aditivos e prorrogações",
+        "Valor vigente, fim da vigência e próxima anualidade calculados a partir dos registros", "Reajuste e reequilíbrio da Calculadora preenchidos com os dados do contrato, e o resultado registrado com um clique",
+        "Avisos por e-mail: anualidade do reajuste, data-base da convenção e fim da vigência (90 e 30 dias antes)", "Contratos compartilhados com a equipe nos planos para equipes"].map((t) => ({ t })),
       // Meus contratos
       ...(() => {
         const ct = s.ct, brl = (v) => (v == null || v === "" ? "—" : "R$ " + Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
@@ -8753,7 +8779,7 @@ class Component extends DCLogic {
           ctOpcoes: [{ id: "", nome: ct.lista.length ? "Escolher um contrato cadastrado…" : "Nenhum contrato cadastrado", sel: !ct.atual }].concat(ct.lista.map((c) => ({ id: c.id, nome: c.numero + (c.contratada ? " · " + c.contratada : ""), sel: ct.atual === c.id }))),
           onCtSelReajuste: (e) => { const v = e.target.value; if (v) this.ctUsar(v, "reajuste"); else this.setState((x) => ({ ct: { ...x.ct, atual: "" } })); },
           onCtSelRq: (e) => { const v = e.target.value; if (v) this.ctUsar(v, "reequilibrio"); else this.setState((x) => ({ ct: { ...x.ct, atual: "" } })); },
-          ctTemSel: !!sel, ctSelNome: sel ? sel.numero : "", ctIrContratos: () => this.calcFerramenta("contratos"),
+          ctTemSel: !!sel, ctSelNome: sel ? sel.numero : "", ctIrContratos: () => this.irPara("gestao"),
           ctRegReajuste: () => this.ctRegistrar("reajuste"), ctRegRq: () => this.ctRegistrar(s.rq.d.tipo === "fato" ? "rq_fato" : "rq_trib") };
       })(),
       // reequilíbrio tributário
@@ -9499,7 +9525,7 @@ class Component extends DCLogic {
 
     const navDefs = [
       ["Biblioteca Jurídica", "biblioteca"], ["Fórum", "forum"], ["Cursos", "cursos"],
-      ["Consultoria", "consultoria"], ["O Parecerista", "agente"], ["O Elaborador", "elaborar"], ["Calculadora", "calculadora"], ["Planos", "planos"]
+      ["Consultoria", "consultoria"], ["O Parecerista", "agente"], ["O Elaborador", "elaborar"], ["Calculadora", "calculadora"], ["Gestão contratual", "gestao"], ["Planos", "planos"]
     ];
 
     const filtradosTodos = this.filtrar();
@@ -9667,7 +9693,7 @@ class Component extends DCLogic {
       { id: "jurisprudencia-tema", titulo: "Nova jurisprudência nos meus temas", desc: "A coleta automática encontrou algo nos temas que você favorita." },
       { id: "consultoria", titulo: "Andamento de consultoria", desc: "Escopo aprovado, entrega disponível e prazo de avaliação." },
       { id: "cobranca", titulo: "Plano e cobrança", desc: "Boas-vindas, dicas do teste grátis, confirmação de pagamento e aviso de fim do período." },
-      { id: "contratos", titulo: "Prazos dos meus contratos", desc: "Anualidade do reajuste, data-base da convenção coletiva e fim da vigência dos contratos cadastrados na Calculadora." },
+      { id: "contratos", titulo: "Prazos dos meus contratos", desc: "Anualidade do reajuste, data-base da convenção coletiva e fim da vigência dos contratos cadastrados na Gestão contratual." },
       { id: "novidades", titulo: "Novidades da plataforma", desc: "Novos cursos, especialistas e liberação do agente de IA." }
     ];
 
@@ -9701,7 +9727,7 @@ class Component extends DCLogic {
       goHome: this.nav("home"), goBiblioteca: this.nav("biblioteca"), goForum: this.nav("forum"), goPlanos: this.nav("planos"), goConsultoria: this.nav("consultoria"), goCursos: this.nav("cursos"),
       goLogin: this.nav("login"), goCadastro: this.nav("cadastro"), goRecuperar: this.nav("recuperar"),
       isHome: p("home"), isBiblioteca: p("biblioteca"), isForum: p("forum"), isCursos: p("cursos"),
-      isConsultoria: p("consultoria"), isAgente: p("agente"), isElaborar: p("elaborar"), isCalculadora: p("calculadora"), isPlanos: p("planos"),
+      isConsultoria: p("consultoria"), isAgente: p("agente"), isElaborar: p("elaborar"), isCalculadora: p("calculadora"), isGestao: p("gestao"), isPlanos: p("planos"),
       isConta: p("conta"), goConta: this.nav("conta"),
       isLogin: p("login"), isCadastro: p("cadastro"), isRecuperar: p("recuperar"), isNovaSenha: p("nova-senha"),
       isAuth: p("login") || p("cadastro") || p("recuperar") || p("nova-senha"),
@@ -10734,7 +10760,7 @@ class Component extends DCLogic {
           cta: !s.usuario ? "Criar conta grátis" : s.plano ? "Você já tem acesso" : "Começar o teste de 7 dias", btnBg: "#F1F6F5", btnColor: "#0A1F2A",
           itens: ["Biblioteca Jurídica completa: jurisprudência de todo o país, com anotações, marcadores e dossiês salvos na sua conta", "Calculadora de reajuste por índice, com a nota técnica em PDF", "Leitura do fórum da comunidade", "Teste de 7 dias, sem cartão: perguntar e responder no fórum e usar as planilhas de mão de obra da IN 05/2017"] },
         { nome: "Básico", base: 119.9, publico: "Profissionais individuais iniciantes.", preco: precoPlano(119.9), unidade: unidadePlano, nota: notaPlano(119.9), detalhePreco: detalhePlano(119.9), destaque: destaque === "Básico", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Fórum da comunidade: leitura e participação", "Calculadora: reajuste por índice com nota técnica, planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta) e reequilíbrio econômico-financeiro", "O Parecerista e O Elaborador com 10% de desconto", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto"] },
+          itens: ["Fórum da comunidade: leitura e participação", "Calculadora: reajuste por índice com nota técnica, planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta) e reequilíbrio econômico-financeiro", "Gestão contratual: contratos com linha do tempo e avisos de prazo por e-mail", "O Parecerista e O Elaborador com 10% de desconto", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto"] },
         { nome: "Premium", base: 199.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(199.9), unidade: unidadePlano, nota: notaPlano(199.9), detalhePreco: detalhePlano(199.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
           itens: ["Tudo do Básico", "O Parecerista e O Elaborador com 15% de desconto", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Prioridade na agenda do especialista"] },
         { nome: "Pro", base: 479.9, publico: "Profissionais avançados e empresas.", preco: precoPlano(479.9), unidade: unidadePlano, nota: notaPlano(479.9), detalhePreco: detalhePlano(479.9), destaque: destaque === "Pro", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
