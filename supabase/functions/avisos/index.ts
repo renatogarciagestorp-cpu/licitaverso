@@ -183,6 +183,10 @@ Deno.serve(async (req) => {
     if (fim) {
       const dias = Math.ceil((Date.parse(fim + "T00:00:00Z") - agora) / DIA);
       const txt = `<strong>Fim da vigência:</strong> o contrato termina em <strong>${dataBR(fim + "T12:00:00Z")}</strong> (${dias} dia${dias === 1 ? "" : "s"}). Se houver prorrogação, peça antes o reajuste, a repactuação ou o reequilíbrio pendente: depois dela, o direito pode se perder (Lei 14.133/2021, art. 131, parágrafo único).`;
+      if (dias > 90 && dias <= 122) {
+        const iniT = new Date(fim + "T12:00:00Z"); iniT.setUTCMonth(iniT.getUTCMonth() - 4);
+        devidos.push({ tipo: "fim120", ref: fim, texto: `<strong>Prorrogação:</strong> o contrato termina em <strong>${dataBR(fim + "T12:00:00Z")}</strong>. A orientação usual é começar a tramitação da prorrogação 4 meses antes, até <strong>${dataBR(iniT.toISOString())}</strong>: o termo aditivo precisa estar assinado antes do fim da vigência (contrato extinto não pode ser prorrogado). Verifique a previsão no edital, o interesse da contratada, a pesquisa de preços que demonstre a vantajosidade (art. 107), as certidões e a disponibilidade orçamentária. Peça antes o reajuste, a repactuação ou o reequilíbrio pendente (art. 131, parágrafo único).` });
+      }
       if (dias > 0 && dias <= 30) devidos.push({ tipo: "fim30", ref: fim, texto: txt });
       else if (dias > 30 && dias <= 90) devidos.push({ tipo: "fim90", ref: fim, texto: txt });
     }
@@ -203,7 +207,7 @@ Deno.serve(async (req) => {
       { texto: "Abrir a Gestão contratual", url: `${SITE}index.html?p=gestao` },
       "Você recebe este aviso porque cadastrou o contrato na Gestão contratual do Licitacon. Para parar, desmarque os avisos no cadastro do contrato ou em Minha conta → Notificações.", "Prazos dos meus contratos");
     try {
-      await enviarEmail({ email: p.email, nome: p.nome }, `Prazos do contrato ${String(c.numero).slice(0, 40)}: ${novos.map((a) => ({ anualidade: "anualidade", convencao: "convenção coletiva", fim90: "fim da vigência", fim30: "fim da vigência" } as Record<string, string>)[a.tipo]).join(", ")}`, html);
+      await enviarEmail({ email: p.email, nome: p.nome }, `Prazos do contrato ${String(c.numero).slice(0, 40)}: ${novos.map((a) => ({ anualidade: "anualidade", convencao: "convenção coletiva", fim120: "prorrogação", fim90: "fim da vigência", fim30: "fim da vigência" } as Record<string, string>)[a.tipo]).join(", ")}`, html);
       await marcar(); prazos.enviados++;
     } catch (e) { console.error("avisos: prazos do contrato", c.id, e); prazos.falhas++; }
   }
