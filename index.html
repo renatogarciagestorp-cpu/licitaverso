@@ -1434,6 +1434,10 @@
   .pp-op b { font-size: 14px; } .pp-op span { font-size: 12.5px; color: #66757F; } .pp-op:hover { border-color: #0FA36B; }
   .pp-op.ativo { border-color: #0FA36B; background: #E9F7F0; box-shadow: inset 0 0 0 1px #0FA36B; } .pp-op-p { padding: 7px 12px; font-size: 13.5px; font-weight: 700; display: inline-block; }
   .pp-fund { background: #F4F9F7; border-color: #CFE7DC; } .pp-fund p { margin: 0 0 8px; font-size: 14px; line-height: 1.6; color: #22343B; }
+  .pp-cont { font-size: 13px; font-weight: 600; color: #66757F; margin-left: 6px; }
+  .pp-lotes { display: grid; gap: 8px; } .pp-lote { display: grid; grid-template-columns: 70px minmax(0, 1fr) 90px 30px; gap: 8px; align-items: center; } .pp-lote input { font: inherit; font-size: 14px; border: 1px solid #D6DEDD; border-radius: 9px; padding: 7px 10px; background: #FBFDF6; min-width: 0; } .pp-lote small { color: #66757F; font-size: 12.5px; }
+  .pp-lotes > .lve-voltar { justify-self: start; } .pp-ta { font: inherit; font-size: 13px; border: 1px solid #D6DEDD; border-radius: 9px; padding: 8px 10px; background: #FBFDF6; width: 100%; resize: vertical; }
+  .pp-auto { font-style: normal; font-size: 11.5px; font-weight: 700; color: #8A5A00; background: #FFF4DC; border-radius: 99px; padding: 1px 8px; }
   .pp-regras { margin-top: 14px; padding: 12px 14px; border: 1px solid #CFE7DC; border-radius: 12px; background: #F4F9F7; }
   .pp-rilc { display: grid; gap: 10px; margin-top: 14px; padding-top: 12px; border-top: 1px dashed #DCE4E2; }
   .pp-pares { margin: 0; display: grid; gap: 6px; } .pp-pares div { display: grid; grid-template-columns: minmax(150px, 220px) minmax(0, 1fr); gap: 10px; font-size: 13.5px; border-top: 1px solid #EEF2F1; padding-top: 6px; }
@@ -1477,7 +1481,7 @@
   .pp-plan { display: grid; font-size: 12.5px; }
   .pp-pc { border-bottom: 1px solid #EEF2F1; border-right: 1px solid #EEF2F1; padding: 6px 8px; text-align: right; } .pp-pc span { display: block; } .pp-pc span + span { font-size: 10.5px; color: #66757F; }
   .pp-pc.cab { background: #0A1F2A; color: #fff; font-size: 11.5px; font-weight: 700; } .pp-pc.cab span + span { font-weight: 500; color: #B9CCD2; } .pp-pc.cab.res { background: #0F6B7E; }
-  .pp-pc.fixa { text-align: left; } .pp-pc.res { background: #F1FAF5; font-weight: 800; } .pp-pc.desc { background: #FFF4DC; } .pp-pc.tot { background: #E3F2EA; font-weight: 800; }
+  .pp-pc.span { grid-column: 1 / -1; text-align: left; background: #E9F3F5; color: #0F6B7E; font-weight: 800; } .pp-pc.fixa { text-align: left; } .pp-pc.res { background: #F1FAF5; font-weight: 800; } .pp-pc.desc { background: #FFF4DC; } .pp-pc.tot { background: #E3F2EA; font-weight: 800; }
   .pp-entrada { font: inherit; text-align: left; width: 100%; display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 16px; align-items: center; margin-top: 18px; background: linear-gradient(135deg, #E6F6EE, #fff); border: 1px solid #9ED9BE; border-radius: 18px; padding: 18px 20px; cursor: pointer; }
   .pp-entrada:hover { box-shadow: 0 10px 26px rgba(11,31,42,.08); } .pp-entrada-sig { width: 54px; height: 54px; border-radius: 14px; background: #0A1F2A; color: #3FD49A; display: grid; place-items: center; font-weight: 800; font-size: 18px; }
   .pp-entrada-txt { display: grid; gap: 4px; } .pp-entrada-txt b { font-size: 17px; color: #0B1F2A; } .pp-entrada-txt span { font-size: 14px; color: #3D5058; line-height: 1.5; } .pp-entrada-txt small { font-size: 12px; color: #0A7A50; font-weight: 700; }
@@ -3018,10 +3022,31 @@
                 <div class="lmo-agente"><button type="button" class="lve-voltar" sc-camel-on-click="{{ ppUsarPlanilha }}">Usar o valor da Planilha 1 da Calculadora</button><span class="lmo-nota" style="margin: 0">{{ ppMoFonte }}</span></div>
               </section>
             </sc-if>
+            <sc-if value="{{ ppEhBens }}" hint-placeholder-val="{{ true }}">
+              <section class="lmo-bloco">
+                <h2 class="pp-h">Itens e lotes <small class="pp-cont">{{ ppQtdItens }}</small></h2>
+                <p class="lmo-nota" style="margin-top: 0">Inclua os itens um a um ou importe a relação de itens (planilha com lote, descrição, unidade e quantidade). Agrupe em lotes quando a contratação for por grupo de itens.</p>
+                <div class="pp-coleta" style="margin-top: 8px">
+                  <label class="lmo-arq"><input type="file" accept=".xlsx,.csv,.txt" sc-camel-on-change="{{ ppOnImportar }}">Importar relação de itens (.xlsx ou .csv)</label>
+                  <button type="button" class="lve-voltar" sc-camel-on-click="{{ ppAlternarColar }}">Colar da planilha</button>
+                  <button type="button" class="lve-link" sc-camel-on-click="{{ ppModelo }}">Baixar modelo</button>
+                </div>
+                <sc-if value="{{ ppColarAberto }}" hint-placeholder-val="{{ false }}">
+                  <div class="pp-manual"><label class="lmo-campo"><span>Cole aqui as linhas copiadas do Excel (com o cabeçalho: Lote, Item, Descrição, Unidade, Quantidade)</span><textarea rows="6" class="pp-ta" value="{{ ppColar }}" sc-camel-on-input="{{ onPpColar }}"></textarea></label>
+                    <div class="lmo-agente"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ppColarIncluir }}">Incluir os itens</button></div></div>
+                </sc-if>
+                <p class="pp-rot">Lotes</p>
+                <div class="pp-lotes"><sc-for list="{{ ppLotes }}" as="l" hint-placeholder-count="2"><div class="pp-lote"><b>{{ l.rot }}</b><input type="text" value="{{ l.nome }}" sc-camel-on-input="{{ l.onNome }}" placeholder="Nome do lote (opcional)"><small>{{ l.qtd }}</small><button type="button" class="lmo-x" sc-camel-on-click="{{ l.remover }}" aria-label="Remover lote">×</button></div></sc-for>
+                  <button type="button" class="lve-voltar" sc-camel-on-click="{{ ppLoteNovo }}">+ Adicionar lote</button></div>
+                <sc-if value="{{ ppTemLotes }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo" style="margin-top: 10px"><span>Justificativa do agrupamento em lotes *</span><input type="text" value="{{ ppJustLotes }}" sc-camel-on-input="{{ onPpJustLotes }}" placeholder="Ex.: itens do mesmo segmento de mercado, entregues em conjunto; o agrupamento amplia a competitividade e facilita a gestão do contrato"></label></sc-if>
+                <div class="pp-coleta"><button type="button" class="lve-voltar" sc-camel-on-click="{{ ppCatalogoTodos }}">Escolher o catálogo de todos os itens</button><button type="button" class="lmo-btn" sc-camel-on-click="{{ ppBuscarTodos }}">Buscar preços de todos os itens</button></div>
+                <sc-if value="{{ ppOcupadoTodos }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok">{{ ppProgresso }}</p></sc-if>
+              </section>
+            </sc-if>
             <sc-if value="{{ ppNaoObras }}" hint-placeholder-val="{{ true }}">
               <sc-for list="{{ ppItens }}" as="it" hint-placeholder-count="1">
                 <section class="lmo-bloco pp-item">
-                  <div class="pp-item-cab"><h2 class="pp-h">Item {{ it.n }}</h2><sc-if value="{{ it.podeRemover }}" hint-placeholder-val="{{ false }}"><button type="button" class="ct-ev-btn ct-ev-del" sc-camel-on-click="{{ it.remover }}">Remover item</button></sc-if></div>
+                  <div class="pp-item-cab"><h2 class="pp-h">{{ it.loteRot }}Item {{ it.n }}</h2><sc-if value="{{ ppTemLotes }}" hint-placeholder-val="{{ false }}"><select class="pp-sel" sc-camel-on-change="{{ it.onLote }}"><sc-for list="{{ it.loteOps }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></sc-if><sc-if value="{{ it.podeRemover }}" hint-placeholder-val="{{ false }}"><button type="button" class="ct-ev-btn ct-ev-del" sc-camel-on-click="{{ it.remover }}">Remover item</button></sc-if></div>
                   <div class="lmo-campos">
                     <label class="lmo-campo" style="grid-column: 1 / -1"><span>Descrição do item (especificação essencial)</span><input type="text" value="{{ it.desc }}" sc-camel-on-input="{{ it.onDesc }}" placeholder="Ex.: Papel sulfite A4, 75 g/m², resma com 500 folhas"></label>
                     <label class="lmo-campo"><span>Unidade</span><input type="text" value="{{ it.un }}" sc-camel-on-input="{{ it.onUn }}" placeholder="Ex.: resma"></label>
@@ -3029,7 +3054,7 @@
                   </div>
                   <p class="pp-rot">Item no catálogo do Compras.gov.br (para o Painel de Preços)</p>
                   <div class="pp-ops pp-ops-p"><sc-for list="{{ it.tipos }}" as="t" hint-placeholder-count="2"><button type="button" class="{{ t.cls }}" sc-camel-on-click="{{ t.escolher }}">{{ t.nome }}</button></sc-for></div>
-                  <sc-if value="{{ it.temCod }}" hint-placeholder-val="{{ false }}"><p class="pp-cod">✓ {{ it.cod }} – {{ it.codNome }} <button type="button" class="lve-link" sc-camel-on-click="{{ it.limparCod }}">trocar</button></p></sc-if>
+                  <sc-if value="{{ it.temCod }}" hint-placeholder-val="{{ false }}"><p class="pp-cod">✓ {{ it.cod }} – {{ it.codNome }} <sc-if value="{{ it.codAuto }}" hint-placeholder-val="{{ false }}"><em class="pp-auto">escolhido automaticamente: confira</em></sc-if> <button type="button" class="lve-link" sc-camel-on-click="{{ it.limparCod }}">trocar</button></p></sc-if>
                   <div class="pp-busca"><input type="text" value="{{ it.busca }}" sc-camel-on-input="{{ it.onBusca }}" placeholder="Palavras do item ou código CATMAT/CATSER"><button type="button" class="lve-voltar" sc-camel-on-click="{{ it.buscarCat }}">Buscar no catálogo</button></div>
                   <sc-if value="{{ it.temCands }}" hint-placeholder-val="{{ false }}"><ul class="pp-cands"><sc-for list="{{ it.cands }}" as="c" hint-placeholder-count="3"><li><button type="button" sc-camel-on-click="{{ c.escolher }}">{{ c.txt }}</button></li></sc-for></ul></sc-if>
                   <div class="pp-fontes">
@@ -6680,9 +6705,9 @@ const PP_TIPOS_OBRA = [
   ["fornecimento", "Mero fornecimento de materiais e equipamentos", 11.10, 14.02, 16.80],
 ];
 const PP_PADRAO = { titulo: "", processo: "", orgao: "", agente: "", cargo: "", uf: "", municipio: "", regime: "14133", origem: "proprio", esfera13019: "federal",
-  norma: "", rilc: null, rilcNome: "", objeto: "bens", condicoes: "", equipe: "", base: "", reg: {}, descricao: "", itens: [], moValor: "", moPostos: "1", moFonte: "",
+  norma: "", rilc: null, rilcNome: "", objeto: "bens", condicoes: "", equipe: "", base: "", reg: {}, lotes: [], justLotes: "", descricao: "", itens: [], moValor: "", moPostos: "1", moFonte: "",
   ob: null, obBdi: "", obTipo: "edificios", obDeson: "nao", obDataBase: "", obEncargos: "", obTabelas: "", obNome: "", justPrioritarios: "" };
-const PP_ITEM = () => ({ id: Math.random().toString(36).slice(2, 9), desc: "", un: "", qtd: "1", tipo: "material", cod: "", codNome: "", busca: "", cands: [],
+const PP_ITEM = () => ({ id: Math.random().toString(36).slice(2, 9), lote: "", desc: "", un: "", qtd: "1", tipo: "material", cod: "", codNome: "", busca: "", cands: [],
   restrito: false, metodo: "auto", precos: [], just: "", manual: null,
   fontes: { I: true, II: true }, abr: { estado: true, regiao: true, nacional: false }, meses: "12", f: PP_FILTRO_PADRAO(), mostrar: 100 });
 const PP_FILTRO_PADRAO = () => ({ sim: "50", qtd: "qualquer", un: "", abr: "todas", meses: "12", ord: "relev" });
@@ -6908,16 +6933,29 @@ function ppTextoTR(d, res) {
     return "Orçamento detalhado de " + ppBRL(o.total) + (d.obDataBase ? ", data-base " + d.obDataBase.slice(5, 7) + "/" + d.obDataBase.slice(0, 4) : "") + (d.obTabelas ? ", com referência em " + d.obTabelas : "") + (o.bdi != null ? ", BDI de " + String(o.bdi).replace(".", ",") + "%" : "") +
       ". Análise do orçamento na Pesquisa de preços do Licitacon (" + o.apontamentos.length + " apontamento(s)), fundamentada no art. 23, §§ 2º e 3º, da Lei 14.133/2021.";
   }
-  const linhas = res.itens.map((x, i) => (i + 1) + ") " + (x.item.desc || "Item") + ": " + ppBRL(x.st.valor) + " por " + (x.item.un || "unidade") + " × " + (x.item.qtd || 1) + " = " + ppBRL(x.st.total) + " (" + x.st.nomeMet + " de " + x.st.n + " preços válidos)");
+  const GT = ppGrupos(d, res), linhas = [];
+  GT.grupos.forEach((g) => { if (GT.comLotes) linhas.push(g.nome + ": " + ppBRL(g.total));
+    g.itens.forEach((x) => linhas.push((GT.comLotes ? "  " : "") + x.num + ") " + (x.item.desc || "Item") + ": " + ppBRL(x.st.valor) + " por " + (x.item.un || "unidade") + " × " + (x.item.qtd || 1) + " = " + ppBRL(x.st.total) + " (" + x.st.nomeMet + " de " + x.st.n + " preços válidos)")); });
   const rg = ppRegras(d);
   return "Valor estimado: " + ppBRL(res.total) + ". Pesquisa de preços realizada conforme " + (rg.proprio ? rg.ref : rg.outro ? "os parâmetros da Lei 14.133/2021 (art. 23) e da IN SEGES/ME 65/2021, adotados pelo órgão" : "o art. 23 da Lei 14.133/2021 e a IN SEGES/ME 65/2021") +
     ", com saneamento dos preços mais de " + rg.pctFaixa + "% abaixo ou acima da mediana e " + (rg.metodoFixo ? "o método definido no regulamento" : "escolha do método pelo coeficiente de variação") + ".\n" + linhas.join("\n") + (d.objeto === "mao_obra" ? "\nO valor resulta da planilha de custos da IN 5/2017; a pesquisa de mercado ratifica o valor da planilha." : "");
 }
 
+// itens agrupados por lote, na ordem dos lotes (itens sem lote ao final)
+function ppGrupos(d, res) {
+  const lotes = (d && d.lotes) || [], com = lotes.length > 0, g = [];
+  lotes.forEach((l, i) => g.push({ lote: { ...l, n: i + 1 }, itens: res.itens.filter((x) => x.item.lote === l.id) }));
+  const sem = res.itens.filter((x) => !lotes.some((l) => l.id === x.item.lote));
+  if (sem.length) g.push({ lote: null, itens: sem });
+  let n = 0;
+  g.forEach((gr) => { gr.itens = gr.itens.map((x) => ({ ...x, num: ++n })); gr.total = gr.itens.reduce((a, x) => a + (x.st.total || 0), 0); gr.nome = gr.lote ? "Lote " + gr.lote.n + (gr.lote.nome ? " – " + gr.lote.nome : "") : com ? "Itens sem lote" : ""; });
+  return { grupos: g.filter((gr) => gr.itens.length || gr.lote), comLotes: com };
+}
 // documento (PDF, Excel e Word) no formato dos geradores do site
 // planilha de orçamento estimado única: itens nas linhas, preços selecionados lado a lado nas colunas e o valor estimado
-function ppPlanilha(res) {
-  const itens = res.itens.map((x) => ({ x, sel: x.st.precos.filter((p) => p.incl !== false) }));
+function ppPlanilha(res, d) {
+  const G = ppGrupos(d || {}, res);
+  const itens = G.grupos.flatMap((g) => g.itens).map((x) => ({ x, sel: x.st.precos.filter((p) => p.incl !== false) }));
   const n = Math.max(0, ...itens.map((i) => i.sel.length)), um = itens.length === 1;
   const fonteDe = (p) => (p.inciso === "IV" ? "cotação" : p.inciso === "V" ? "nota fiscal" : p.inciso === "III" ? "mídia/sítio" : p.fonte === "pncp" ? "PNCP" : "Painel");
   const origem = (p) => (p.fonte === "manual" ? (p.fornecedor || p.fonteNome || "Fonte manual") : [p.municipio, p.uf].filter(Boolean).join("/") || p.orgao || "—");
@@ -6926,21 +6964,29 @@ function ppPlanilha(res) {
   const cab = ["Item", "Descrição", "Unid.", "Quant."];
   for (let k = 0; k < n; k++) cab.push(um ? "P" + (k + 1) + "\n" + rotulo(itens[0].sel[k]) : "Preço " + (k + 1));
   cab.push("Coeficiente de variação", "Valor unitário estimado", "Valor total estimado");
-  const linhas = itens.map(({ x, sel }, i) => {
-    const c = [String(i + 1), String(x.item.desc || "").slice(0, 200), x.item.un || "", String(x.item.qtd || 1)], alerta = [];
+  const linhaItem = ({ x, sel }) => {
+    const c = [String(x.num), String(x.item.desc || "").slice(0, 200), x.item.un || "", String(x.item.qtd || 1)], alerta = [];
     for (let k = 0; k < n; k++) { const p = sel[k];
       if (!p) { c.push("—"); continue; }
       c.push(ppBRL(p.atual) + (um ? "" : "\n" + rotulo(p)) + (p.sit === "ok" ? "" : "\n(desconsiderado)"));
       if (p.sit !== "ok") alerta.push(4 + k); }
     c.push(ppPct(x.st.cv) + "\n" + (x.st.cv == null ? "" : x.item.restrito || (x.item.metodo && x.item.metodo !== "auto") ? "" : x.st.cv <= PP_CV ? "até 25%" : "acima de 25%"), ppBRL(x.st.valor) + "\n(" + x.st.nomeMet + ")", ppBRL(x.st.total));
     return { c, alerta };
-  }).concat([{ c: ["", "Valor total estimado da contratação"].concat(Array(n + 4).fill("")).concat([ppBRL(res.total)]), total: true }]);
+  };
+  const vazio = (rot, v, tot) => ({ c: ["", rot].concat(Array(n + 4).fill("")).concat([v]), total: !!tot, forte: !tot });
+  const linhas = [];
+  G.grupos.forEach((g) => {
+    if (G.comLotes) linhas.push({ c: [g.nome], span: true });
+    g.itens.forEach((x) => linhas.push(linhaItem({ x, sel: x.st.precos.filter((p) => p.incl !== false) })));
+    if (G.comLotes && g.itens.length) linhas.push(vazio("Subtotal do " + (g.lote ? "lote " + g.lote.n : "grupo sem lote"), ppBRL(g.total)));
+  });
+  linhas.push(vazio("Valor total estimado da contratação", ppBRL(res.total), true));
   const larg = [6, n > 8 ? 24 : 30, 9, 8].concat(Array(n).fill(14)).concat([12, 16, 17]);
   const fonte = n > 11 ? 5.4 : n > 8 ? 6 : n > 5 ? 6.6 : null;
   return { cab, linhas, larg, alin: "llrr" + "r".repeat(n) + "rrr", n, um, fonte, cabFonte: fonte ? fonte - 0.2 : null };
 }
 function ppDocPlanilha(d, res, hoje) {
-  const pl = ppPlanilha(res);
+  const pl = ppPlanilha(res, d);
   const rg = ppRegras(d);
   return { id: "planilha", titulo: "Planilha de orçamento estimado", sub: (d.titulo || d.descricao || "Pesquisa de preços") + (d.orgao ? " · " + d.orgao : ""), selo: rg.proprio ? rg.norma.slice(0, 60) : "Lei 14.133/2021, art. 23 · IN SEGES/ME 65/2021",
     arquivo: "Planilha de orcamento estimado - " + String(d.titulo || d.descricao || "Licitacon").replace(/[\\/:*?"<>|]+/g, "-").slice(0, 50), paisagem: true,
@@ -6990,10 +7036,15 @@ function ppDocumento(d, res, hoje, opc) {
       : "Escolha do método (" + rg.C.metodo + "): com coeficiente de variação de até 25%, a amostra é considerada homogênea e adota-se a média; acima de 25%, adota-se a mediana, menos sensível a valores extremos (Manual de Licitações e Contratos do TCU, item 4.3.9.3; Enunciado 33 da Jornada de Direito Administrativo do CJF, de 2023). Em mercado restrito, adota-se o menor preço (Acórdãos 1.639/2016 e 1.850/2020-TCU-Plenário).");
     mets.push("Exige-se o mínimo de " + rg.minimo + " preços válidos por item (" + rg.C.minimo + "); abaixo disso, o preço só é admitido excepcionalmente, com justificativa do agente responsável e aprovação da autoridade competente.");
     blocos.push({ t: "texto", titulo: sec++ + ". Metodologia", paragrafos: mets });
+    const GL = ppGrupos(d, res);
+    if (GL.comLotes) blocos.push({ t: "texto", titulo: sec++ + ". Agrupamento em lotes", paragrafos: [
+      "A contratação foi estruturada em " + d.lotes.length + " lote(s): " + GL.grupos.map((g) => g.nome + " (" + g.itens.length + " item(ns), " + ppBRL(g.total) + ")").join("; ") + ". O valor estimado de cada lote é a soma dos valores totais estimados dos seus itens, e cada item tem a sua pesquisa e o seu tratamento estatístico.",
+      "Justificativa do agrupamento" + (rg.proprio ? " (" + rg.ref + ")" : d.regime === "14133" ? " (Lei 14.133/2021, art. 40, V, b, e §§ 2º e 3º, sobre o parcelamento do objeto; Súmula 247 do TCU, que tem a adjudicação por item como regra)" : "") + ": " + (d.justLotes || "NÃO INFORMADA – o agrupamento de itens em lote deve ser justificado (viabilidade técnica, vantagem econômica, gestão do contrato).")] });
     if (res.itens.some((x) => x.st.semPrioritario) && d.justPrioritarios) blocos.push({ t: "texto", titulo: sec++ + ". Justificativa: parâmetros prioritários", paragrafos: [(rg.proprio ? "Justificativa do agente quanto às fontes utilizadas (" + rg.ref + "): " : "Os parâmetros dos incisos I e II do art. 5º da IN 65/2021 são prioritários (§ 1º). ") + d.justPrioritarios] });
     res.itens.forEach((x, i) => {
       const it = x.item, st = x.st;
-      blocos.push({ t: "secao", titulo: sec + "." + (i + 1) + ". Item " + (i + 1) + ": " + (it.desc || "sem descrição"), sub: [it.codNome ? (it.tipo === "servico" ? "CATSER " : "CATMAT/PDM ") + it.cod + " – " + it.codNome : "", "Unidade: " + (it.un || "—"), "Quantidade: " + (it.qtd || "1")].filter(Boolean).join(" · ") });
+      const lt = (d.lotes || []).findIndex((l) => l.id === it.lote);
+      blocos.push({ t: "secao", titulo: sec + "." + (i + 1) + ". Item " + (i + 1) + (lt >= 0 ? " (Lote " + (lt + 1) + ")" : "") + ": " + (it.desc || "sem descrição"), sub: [it.codNome ? (it.tipo === "servico" ? "CATSER " : "CATMAT/PDM ") + it.cod + " – " + it.codNome : "", "Unidade: " + (it.un || "—"), "Quantidade: " + (it.qtd || "1")].filter(Boolean).join(" · ") });
       const f = { ...PP_FILTRO_PADRAO(), ...(it.f || {}) };
       const usados = st.precos.filter((p) => p.incl !== false), naoSel = st.precos.filter((p) => p.incl === false);
       const nomeAbr = { estado: "estado", regiao: "região", nacional: "outras regiões" };
@@ -7057,11 +7108,17 @@ function ppDocumento(d, res, hoje, opc) {
     });
     sec++;
     // planilha de orçamento estimado única; se não couber no retrato, vai como anexo em paisagem
-    const pl = ppPlanilha(res), cabe = pl.n <= 5 || (opc && opc.excel);
+    const pl = ppPlanilha(res, d), cabe = pl.n <= 5 || (opc && opc.excel);
     if (cabe) blocos.push({ t: "tabela", titulo: sec++ + ". Planilha de orçamento estimado", sub: "Preços selecionados lado a lado, valores atualizados pelo IPCA; em amarelo, os desconsiderados no saneamento de ±25% da mediana.", cab: pl.cab, larg: pl.larg, alin: pl.alin, linhas: pl.linhas });
     else blocos.push({ t: "texto", titulo: sec++ + ". Planilha de orçamento estimado", paragrafos: ["A planilha de orçamento estimado reúne " + pl.n + " preços lado a lado e foi gerada como anexo, em folha A4 paisagem, para caber numa única planilha (arquivo “Planilha de orçamento estimado”). A consolidação dos valores está na seção seguinte."] });
+    const G = ppGrupos(d, res), cons = [];
+    G.grupos.forEach((g) => {
+      if (G.comLotes) cons.push({ c: [g.nome], span: true });
+      g.itens.forEach((x) => cons.push({ c: [String(x.num), x.item.desc || "", x.item.un || "", String(x.item.qtd || 1), ppPct(x.st.cv), x.st.nomeMet, ppBRL(x.st.valor), ppBRL(x.st.total)] }));
+      if (G.comLotes && g.itens.length) cons.push({ c: ["", "Subtotal do " + (g.lote ? "lote " + g.lote.n : "grupo sem lote"), "", "", "", "", "", ppBRL(g.total)], forte: true });
+    });
     blocos.push({ t: "tabela", titulo: sec++ + ". Planilha de orçamento estimado – consolidação", cab: ["Item", "Descrição", "Unid.", "Quant.", "Coef. de variação", "Método", "Valor unitário estimado", "Valor total estimado"], larg: [7, 40, 9, 9, 11, 11, 16, 17], alin: "llrrrlrr",
-      linhas: res.itens.map((x, i) => ({ c: [String(i + 1), x.item.desc || "", x.item.un || "", String(x.item.qtd || 1), ppPct(x.st.cv), x.st.nomeMet, ppBRL(x.st.valor), ppBRL(x.st.total)] })).concat([{ c: ["", "Valor total estimado da contratação", "", "", "", "", "", ppBRL(res.total)], total: true }]) });
+      linhas: cons.concat([{ c: ["", "Valor total estimado da contratação", "", "", "", "", "", ppBRL(res.total)], total: true }]) });
   }
   if (d.objeto !== "obras") {
     const temIV = res.itens.some((x) => x.st.precos.some((p) => p.inciso === "IV" && p.incl !== false));
@@ -7599,7 +7656,7 @@ class Component extends DCLogic {
     forumCarregando: false,
     forumErro: "",
     nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
-    pp: { iniciado: false, d: PP_PADRAO, etapa: "enq", lista: [], ocupado: "", erro: "", ok: "", id: "", excluir: "" },
+    pp: { iniciado: false, d: PP_PADRAO, etapa: "enq", lista: [], ocupado: "", erro: "", ok: "", id: "", excluir: "", colar: "", colarAberto: false },
     el: { doc: "", passo: 0, respostas: {}, aceite: false, enviando: false, erro: "", ok: "", docEsc: "etp", metodo: "pix", contratando: false, contErro: "" },
     calcAba: "indice",
     ct: { lista: [], eventos: {}, carregado: false, carregando: false, atual: "", form: null, ev: null, erro: "", ok: "", excluir: "" },
@@ -7878,9 +7935,10 @@ class Component extends DCLogic {
   }
   ppEscolherCat(id, c) { this.ppItem(id, (i) => { i.cod = String(c.codigo); i.codNome = c.nome; i.cands = []; if (!i.desc) i.desc = c.nome; return i; }); }
   // busca nas fontes escolhidas (incisos I e II) e nas abrangências escolhidas (estado, região, país), como num banco de preços
-  async ppBuscar(id) {
+  async ppBuscar(id, lote) {
     const d = this.state.pp.d, it = d.itens.find((x) => x.id === id); if (!it) return;
-    const fontes = Object.keys(it.fontes || {}).filter((k) => it.fontes[k]), abrs = ["estado", "regiao", "nacional"].filter((k) => (it.abr || {})[k]);
+    let fontes = Object.keys(it.fontes || {}).filter((k) => it.fontes[k]); const abrs = ["estado", "regiao", "nacional"].filter((k) => (it.abr || {})[k]);
+    if (lote) { if (!it.cod) fontes = fontes.filter((f) => f !== "I"); if (ppTermos(it.desc).length < 2) fontes = fontes.filter((f) => f !== "II"); if (!fontes.length || !abrs.length || (!d.uf && abrs.some((a) => a !== "nacional"))) return { n: 0, pulado: true }; }
     if (!fontes.length) { this.ppMsg("Escolha ao menos uma fonte: Painel de Preços (inciso I) ou contratações similares (inciso II)."); return; }
     if (!abrs.length) { this.ppMsg("Escolha onde buscar: no estado, na região ou no país."); return; }
     if (fontes.includes("I") && !it.cod) { this.ppMsg("Para o Painel de Preços, escolha antes o item no catálogo do Compras.gov.br."); return; }
@@ -7889,7 +7947,7 @@ class Component extends DCLogic {
     const nomeAbr = { estado: d.uf, regiao: "região " + (PP_REGIAO_NOME[ppRegiao(d.uf)] || ""), nacional: "todo o país" };
     let total = 0; const falhas = [], resumo = [];
     for (const fonte of fontes) for (const abr of abrs) {
-      this.setState((x) => ({ pp: { ...x.pp, ocupado: "busca-" + id, progresso: "Buscando " + (fonte === "I" ? "no Painel de Preços" : "contratações similares no PNCP") + " · " + nomeAbr[abr] + "…", erro: "", ok: "" } }));
+      this.setState((x) => ({ pp: { ...x.pp, ocupado: lote ? "todos" : "busca-" + id, progresso: (lote ? lote + " · " : "") + "Buscando " + (fonte === "I" ? "no Painel de Preços" : "contratações similares no PNCP") + " · " + nomeAbr[abr] + "…", erro: "", ok: "" } }));
       try {
         const r = fonte === "I" ? await this.ppChamar({ acao: "coletar", codigo: Number(it.cod), tipo: it.tipo, uf: d.uf, abrangencia: abr, meses: Number(it.meses) || 12 })
           : await this.ppChamar({ acao: "pncp", descricao: it.desc, uf: d.uf, abrangencia: abr, meses: Math.min(12, Number(it.meses) || 12) });
@@ -7900,8 +7958,70 @@ class Component extends DCLogic {
       } catch (e) { falhas.push((fonte === "I" ? "Painel" : "PNCP") + " " + nomeAbr[abr] + " (" + e.message + ")"); }
     }
     this.ppAplicarFiltros(id, true);
+    if (lote) return { n: total, falhas };
     this.setState((x) => ({ pp: { ...x.pp, ocupado: "", progresso: "", erro: falhas.length ? "Não responderam: " + falhas.join("; ") + "." : "",
       ok: total + " registro(s) novo(s) coletado(s) · " + resumo.join(" · ") + ". Os que atendem aos critérios de semelhança foram selecionados; confira a lista." } }));
+  }
+  async ppBuscarTodos() {
+    const itens = this.state.pp.d.itens; let tot = 0, pul = 0; const falhas = [];
+    for (let i = 0; i < itens.length; i++) { const r = await this.ppBuscar(itens[i].id, "Item " + (i + 1) + " de " + itens.length) || {}; if (r.pulado) pul++; tot += r.n || 0; (r.falhas || []).forEach((f) => falhas.push("item " + (i + 1) + ": " + f)); }
+    this.setState((x) => ({ pp: { ...x.pp, ocupado: "", progresso: "", erro: falhas.length ? "Não responderam: " + falhas.slice(0, 6).join("; ") + "." : "",
+      ok: tot + " preço(s) coletado(s) para " + (itens.length - pul) + " item(ns)." + (pul ? " " + pul + " item(ns) sem catálogo ou descrição suficiente foram pulados." : "") + " Confira cada item." } }));
+  }
+  async ppCatalogoTodos() {
+    const itens = this.state.pp.d.itens.filter((i) => !i.cod && ppTermos(i.desc).length); let n = 0;
+    for (let k = 0; k < itens.length; k++) { const it = itens[k];
+      this.setState((x) => ({ pp: { ...x.pp, ocupado: "todos", progresso: "Catálogo: item " + (k + 1) + " de " + itens.length + "…" } }));
+      try { const r = await this.ppChamar({ acao: "catalogo", texto: ppTermos(it.desc).filter((w) => !/^\d/.test(w)).slice(0, 4).join(" ") || it.desc, tipo: it.tipo });
+        const c = (r.itens || [])[0]; if (c) { n++; this.ppItem(it.id, (i) => { i.cod = String(c.codigo); i.codNome = c.nome; i.codAuto = true; i.cands = (r.itens || []).slice(0, 12); return i; }); } } catch (e) { /* segue */ } }
+    this.setState((x) => ({ pp: { ...x.pp, ocupado: "", progresso: "", ok: n + " item(ns) com o catálogo escolhido automaticamente. Confira cada um: as outras opções ficam listadas no item." } }));
+  }
+  ppLoteNovo() { this.ppMudar((d) => { d.lotes = (d.lotes || []).concat([{ id: "l" + Math.random().toString(36).slice(2, 7), nome: "" }]); return d; }); }
+  ppLoteNome = (id) => (e) => { const v = e.target.value; this.ppMudar((d) => { d.lotes = d.lotes.map((l) => (l.id === id ? { ...l, nome: v } : l)); return d; }); };
+  ppLoteDel(id) { this.ppMudar((d) => { d.lotes = d.lotes.filter((l) => l.id !== id); d.itens = d.itens.map((i) => (i.lote === id ? { ...i, lote: "" } : i)); return d; }); }
+  // relação de itens: linhas com lote, item, descrição, unidade, quantidade, código e tipo (cabeçalho reconhecido pelos títulos)
+  ppItensDeLinhas(rows, origem) {
+    const norm = (t) => ppSemAc(t).trim();
+    const ALVO = { lote: /^(lote|grupo)/, item: /^(item|n[o.º°]?|seq)/, desc: /descri|especifica|objeto|material|produto|servico/, un: /^(un|und|unid|medida)/, qtd: /quant|qtd|qtde/, cod: /cod|catmat|catser/, tipo: /^tipo|natureza/ };
+    let ini = 0, mapa = null;
+    for (let r = 0; r < Math.min(30, rows.length); r++) { const m = {}; (rows[r] || []).forEach((v, c) => { const t = norm(v); if (!t || t.length > 50) return; Object.entries(ALVO).forEach(([k, re]) => { if (m[k] == null && re.test(t) && !(k === "desc" && /cod/.test(t)) && !(k === "un" && /quant/.test(t))) m[k] = c; }); });
+      if (m.desc != null && (m.qtd != null || m.un != null)) { mapa = m; ini = r + 1; break; } }
+    if (!mapa) { const nc = Math.max(...rows.slice(0, 5).map((r) => (r || []).length)); mapa = nc >= 5 ? { item: 0, lote: 1, desc: 2, un: 3, qtd: 4 } : nc === 4 ? { lote: 0, desc: 1, un: 2, qtd: 3 } : { desc: 0, un: 1, qtd: 2 }; ini = 0; }
+    const out = [];
+    rows.slice(ini).forEach((r) => { const g = (k) => (mapa[k] != null ? String(r[mapa[k]] == null ? "" : r[mapa[k]]).trim() : ""); const desc = g("desc"); if (!desc || desc.length < 3) return;
+      const q = ppNum(g("qtd")); out.push({ lote: g("lote"), desc: desc.slice(0, 400), un: g("un").slice(0, 30), qtd: q != null ? String(q).replace(".", ",") : "1", cod: g("cod").replace(/\D/g, ""), tipo: /serv/i.test(g("tipo")) ? "servico" : "material" }); });
+    if (!out.length) { this.ppMsg("Nenhum item reconhecido. Use colunas com títulos como Lote, Item, Descrição, Unidade e Quantidade (baixe o modelo)."); return; }
+    this.ppMudar((d) => {
+      const lotes = [...(d.lotes || [])];
+      const idLote = (nome) => { if (!nome) return ""; const k = ppSemAc(nome).replace(/^(lote|grupo)\s*/, "").trim(); let l = lotes.find((x) => ppSemAc(x.chave || x.nome) === k); if (!l) { l = { id: "l" + Math.random().toString(36).slice(2, 7), nome: /^\d+$/.test(k) ? "" : nome.replace(/^(lote|grupo)\s*/i, ""), chave: k }; lotes.push(l); } return l.id; };
+      const novos = out.map((o) => ({ ...PP_ITEM(), lote: idLote(o.lote), desc: o.desc, un: o.un, qtd: o.qtd, tipo: o.tipo, busca: o.cod || "", cod: "", codNome: "" }));
+      const vazios = d.itens.every((i) => !String(i.desc || "").trim() && !(i.precos || []).length);
+      d.itens = vazios ? novos : d.itens.concat(novos); d.lotes = lotes; return d; });
+    this.ppMsg("", out.length + " item(ns) incluído(s) de " + origem + (out.some((o) => o.lote) ? ", com os lotes" : "") + ". Agora escolha o catálogo de cada item (ou use “Escolher catálogo de todos”) e busque os preços.");
+  }
+  async ppImportarItens(e) {
+    const f = e && e.target && e.target.files && e.target.files[0]; if (e && e.target) try { e.target.value = ""; } catch (er) {}
+    if (!f) return;
+    try {
+      if (/\.csv$|\.txt$/i.test(f.name)) { const t = await f.text(); const sep = (t.split("\n")[0].match(/;/g) || []).length >= (t.split("\n")[0].match(/,/g) || []).length ? ";" : t.includes("\t") ? "\t" : ","; this.ppItensDeLinhas(t.split(/\r?\n/).map((l) => l.split(sep)), f.name); return; }
+      if (!/\.xlsx$/i.test(f.name)) { this.ppMsg("Envie a relação de itens em Excel (.xlsx) ou CSV."); return; }
+      if (!window.ExcelJS) await carregarScript(baseSite() + "vendor/exceljs-4.4.0.min.js");
+      const wb = new window.ExcelJS.Workbook(); await wb.xlsx.load(await f.arrayBuffer());
+      const ws = wb.worksheets.find((w) => w.rowCount > 1) || wb.worksheets[0], rows = [];
+      const val = (c) => { const v = c && c.value; if (v == null) return ""; if (typeof v === "object") return v.result != null ? v.result : v.richText ? v.richText.map((t) => t.text).join("") : v.text || ""; return v; };
+      for (let r = 1; r <= Math.min(ws.rowCount, 3000); r++) { const row = ws.getRow(r), a = []; for (let c = 1; c <= Math.min(30, ws.columnCount || 30); c++) a.push(val(row.getCell(c))); rows.push(a); }
+      this.ppItensDeLinhas(rows, f.name);
+    } catch (er) { this.ppMsg("Não foi possível ler o arquivo (" + String(er.message || er).slice(0, 80) + ")."); }
+  }
+  ppColarItens() { const t = String(this.state.pp.colar || ""); if (t.trim().length < 3) { this.ppMsg("Cole as linhas da planilha (com o cabeçalho, se tiver)."); return; }
+    this.ppItensDeLinhas(t.split(/\r?\n/).map((l) => l.split(l.includes("\t") ? "\t" : ";")), "texto colado"); this.setState((x) => ({ pp: { ...x.pp, colar: "", colarAberto: false } })); }
+  async ppModeloItens() {
+    if (!window.ExcelJS) await carregarScript(baseSite() + "vendor/exceljs-4.4.0.min.js");
+    const wb = new window.ExcelJS.Workbook(), ws = wb.addWorksheet("Itens");
+    ws.columns = [{ header: "Lote", width: 10 }, { header: "Item", width: 8 }, { header: "Descrição (especificação)", width: 60 }, { header: "Unidade", width: 12 }, { header: "Quantidade", width: 12 }, { header: "Código CATMAT/CATSER (opcional)", width: 22 }, { header: "Tipo (Material ou Serviço)", width: 20 }];
+    [["1", 1, "Papel sulfite A4, 75 g/m², branco, 210 x 297 mm, resma com 500 folhas", "resma", 200, "", "Material"], ["1", 2, "Caneta esferográfica azul, corpo transparente", "unidade", 500, "", "Material"], ["2", 3, "Toner para impressora HP LaserJet M404 (CF258A), original", "unidade", 30, "", "Material"]].forEach((r) => ws.addRow(r));
+    ws.getRow(1).font = { bold: true, color: { argb: "FFFFFFFF" } }; ws.getRow(1).fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF0A1F2A" } };
+    const buf = await wb.xlsx.writeBuffer(), a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" })); a.download = "Modelo - relacao de itens - Licitacon.xlsx"; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
   }
   // seleciona os preços que atendem aos critérios do item e desmarca os demais, registrando o motivo
   ppAplicarFiltros(id, silencioso) {
@@ -8011,7 +8131,9 @@ class Component extends DCLogic {
   }
   ppResultado() {
     const d = this.state.pp.d, idx = this.state.indices, hoje = new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10);
-    const itens = d.objeto === "obras" ? [] : (d.objeto === "mao_obra" ? d.itens.slice(0, 1) : d.itens).map((item) => ({ item, st: ppEstat(item, idx, hoje, d) }));
+    const ordemLote = (it) => { const k = (d.lotes || []).findIndex((l) => l.id === it.lote); return k < 0 ? 9999 : k; };
+    const itens = d.objeto === "obras" ? [] : (d.objeto === "mao_obra" ? d.itens.slice(0, 1) : [...d.itens].map((it, i) => ({ it, i })).sort((a, b) => ordemLote(a.it) - ordemLote(b.it) || a.i - b.i).map((x) => x.it))
+      .map((item) => ({ item, st: ppEstat(item, idx, hoje, d) }));
     let total = itens.reduce((a, x) => a + (x.st.total || 0), 0), ratif = null;
     if (d.objeto === "mao_obra" && itens[0]) {
       const v = ppNum(d.moValor), ref = itens[0].st.valor, postos = ppNum(d.moPostos) || 1;
@@ -8106,12 +8228,14 @@ class Component extends DCLogic {
     const res = lib && pp.iniciado ? this.ppResultado() : { itens: [], total: 0, obras: null, ratif: null };
     const sitRot = { ok: "Válido", inex: "Inexequível", exc: "Excessivo", fora: "Desconsiderado" };
     const itensView = res.itens.map(({ item: it, st }, idx) => ({
-      id: it.id, n: idx + 1, desc: it.desc, un: it.un, qtd: it.qtd, busca: it.busca, cod: it.cod, codNome: it.codNome, temCod: !!it.cod,
+      id: it.id, n: idx + 1, desc: it.desc, un: it.un, qtd: it.qtd, codAuto: !!it.codAuto && !!it.cod,
+      loteRot: (() => { const k = (d.lotes || []).findIndex((l) => l.id === it.lote); return k >= 0 ? "Lote " + (k + 1) + " · " : ""; })(),
+      loteOps: [{ id: "", nome: "Sem lote", sel: !it.lote }].concat((d.lotes || []).map((l, k) => ({ id: l.id, nome: "Lote " + (k + 1) + (l.nome ? " – " + l.nome : ""), sel: it.lote === l.id }))), onLote: this.ppItemCampo(it.id, "lote"), busca: it.busca, cod: it.cod, codNome: it.codNome, temCod: !!it.cod,
       tipos: [["material", "Material (CATMAT)"], ["servico", "Serviço (CATSER)"]].map(([id, nome]) => ({ nome, cls: "pp-op pp-op-p" + (it.tipo === id ? " ativo" : ""), escolher: () => this.ppItem(it.id, (i) => { i.tipo = id; i.cod = ""; i.codNome = ""; i.cands = []; return i; }) })),
       onDesc: this.ppItemCampo(it.id, "desc"), onUn: this.ppItemCampo(it.id, "un"), onQtd: this.ppItemCampo(it.id, "qtd"), onBusca: this.ppItemCampo(it.id, "busca"),
       buscarCat: () => this.ppCatalogo(it.id), buscandoCat: ocup === "cat-" + it.id, temCands: (it.cands || []).length > 0,
-      cands: (it.cands || []).map((c) => ({ txt: (c.tipo === "servico" ? "CATSER " : "PDM ") + c.codigo + " – " + c.nome, escolher: () => this.ppEscolherCat(it.id, c) })),
-      limparCod: () => this.ppItem(it.id, (i) => { i.cod = ""; i.codNome = ""; return i; }),
+      cands: (it.cands || []).map((c) => ({ txt: (c.tipo === "servico" ? "CATSER " : "PDM ") + c.codigo + " – " + c.nome, escolher: () => { this.ppEscolherCat(it.id, c); this.ppItem(it.id, (i) => { i.codAuto = false; return i; }); } })),
+      limparCod: () => this.ppItem(it.id, (i) => { i.cod = ""; i.codNome = ""; i.codAuto = false; return i; }),
       buscar: () => this.ppBuscar(it.id), buscando: ocup === "busca-" + it.id, txtBuscar: ocup === "busca-" + it.id ? (pp.progresso || "Buscando…") : "Buscar preços nas fontes escolhidas",
       fontesOp: [["I", "Inciso I · Painel de Preços (Compras.gov.br)"], ["II", "Inciso II · Contratações similares (PNCP)"]].map(([k, nome]) => ({ nome, cls: "pp-op pp-op-p pp-chk" + ((it.fontes || {})[k] ? " ativo" : ""), alternar: () => this.ppAlternar(it.id, "fontes", k) })),
       abrOp: [["estado", "Mesmo estado" + (d.uf ? " (" + d.uf + ")" : "")], ["regiao", "Mesma região" + (d.uf && ppRegiao(d.uf) ? " (" + PP_REGIAO_NOME[ppRegiao(d.uf)] + ")" : "")], ["nacional", "Todo o país"]].map(([k, nome]) => ({ nome, cls: "pp-op pp-op-p pp-chk" + ((it.abr || {})[k] ? " ativo" : ""), alternar: () => this.ppAlternar(it.id, "abr", k) })),
@@ -8208,6 +8332,14 @@ class Component extends DCLogic {
       ppFund: fund.map((t) => ({ t })),
       // etapa 2
       ppEhBens: d.objeto === "bens", ppEhMo: d.objeto === "mao_obra", ppEhObras: d.objeto === "obras", ppNaoObras: d.objeto !== "obras",
+      ppTemLotes: (d.lotes || []).length > 0, ppLoteNovo: () => this.ppLoteNovo(),
+      ppLotes: (d.lotes || []).map((l, k) => ({ rot: "Lote " + (k + 1), nome: l.nome || "", onNome: this.ppLoteNome(l.id), remover: () => this.ppLoteDel(l.id), qtd: d.itens.filter((i) => i.lote === l.id).length + " item(ns)" })),
+      ppJustLotes: d.justLotes || "", onPpJustLotes: this.ppSet("justLotes"),
+      ppOnImportar: (e) => this.ppImportarItens(e), ppModelo: () => this.ppModeloItens(),
+      ppColarAberto: !!pp.colarAberto, ppAlternarColar: () => this.setState((x) => ({ pp: { ...x.pp, colarAberto: !x.pp.colarAberto } })), ppColar: pp.colar || "",
+      onPpColar: (e) => { const v = e.target.value; this.setState((x) => ({ pp: { ...x.pp, colar: v } })); }, ppColarIncluir: () => this.ppColarItens(),
+      ppCatalogoTodos: () => this.ppCatalogoTodos(), ppBuscarTodos: () => this.ppBuscarTodos(), ppOcupadoTodos: ocup === "todos", ppProgresso: pp.progresso || "",
+      ppQtdItens: d.itens.length + (d.itens.length === 1 ? " item" : " itens"),
       ppItens: itensView, ppNovoItem: () => this.ppMudar((dd) => { dd.itens = dd.itens.concat([PP_ITEM()]); return dd; }),
       ppTotal: ppBRL(res.total), ppTemTotal: res.total > 0,
       ppPrecisaJustPrior: res.itens.some((x) => x.st.semPrioritario), ppJustPrior: d.justPrioritarios, onPpJustPrior: this.ppSet("justPrioritarios"),
@@ -8229,6 +8361,7 @@ class Component extends DCLogic {
       ppPendencias: [].concat(res.itens.filter((x) => x.st.poucos && !String(x.item.just || "").trim()).map((x) => "Item “" + (x.item.desc || "sem descrição") + "”: menos de " + x.st.minimo + " preços válidos sem justificativa."))
         .concat(res.itens.some((x) => x.st.semPrioritario) && !String(d.justPrioritarios || "").trim() && d.regime === "14133" ? ["Sem preços do Painel de Preços ou de contratações similares em algum item: justifique (IN 65/2021, art. 5º, § 1º)."] : [])
         .concat(!d.agente && !d.equipe ? ["Informe o agente ou a equipe responsável pela pesquisa."] : [])
+        .concat((d.lotes || []).length && !String(d.justLotes || "").trim() ? ["Justifique o agrupamento dos itens em lotes (etapa 2)."] : [])
         .concat((d.regime === "13303" || d.regime === "13019") && !d.base ? ["Responda, na etapa 1, se a pesquisa adota os fundamentos da Lei 14.133/2021 e da IN 65/2021 ou segue o regulamento próprio."] : [])
         .concat((d.regime === "13303" || d.regime === "13019") && d.base === "proprio" && !String(d.norma || "").trim() ? ["Informe o nome do regulamento aplicável na etapa 1."] : [])
         .concat(d.objeto === "obras" && !o ? ["Envie a planilha do orçamento da obra."] : [])
@@ -8238,11 +8371,11 @@ class Component extends DCLogic {
       ppTextoTR: ppTextoTR(d, res),
       ppTemPlan: d.objeto !== "obras" && res.itens.length > 0,
       ppPlanilhaPdf: () => this.ppPlanilhaPdf(),
-      ...(() => { if (d.objeto === "obras" || !res.itens.length) return { ppPlanCel: [], ppPlanCols: "1fr", ppPlanMin: "0", ppPlanNota: "" }; const pl = ppPlanilha(res);
+      ...(() => { if (d.objeto === "obras" || !res.itens.length) return { ppPlanCel: [], ppPlanCols: "1fr", ppPlanMin: "0", ppPlanNota: "" }; const pl = ppPlanilha(res, d);
         const nc = pl.cab.length;
         return { ppPlanCols: "44px minmax(180px, 2.2fr) 64px 64px repeat(" + pl.n + ", minmax(96px, 1fr)) 100px 120px 120px", ppPlanMin: (420 + pl.n * 100 + 340) + "px",
           ppPlanCel: pl.cab.map((t, i) => ({ l: String(t).split("\n").map((x) => ({ x })), cls: "pp-pc cab" + (i < 4 ? " fixa" : i >= nc - 3 ? " res" : "") }))
-            .concat(pl.linhas.flatMap((l) => l.c.map((t, i) => ({ l: String(t).split("\n").map((x) => ({ x })), cls: "pp-pc" + (l.total ? " tot" : "") + (i < 4 ? " fixa" : i >= nc - 3 ? " res" : "") + ((l.alerta || []).includes(i) ? " desc" : "") })))),
+            .concat(pl.linhas.flatMap((l) => l.span ? [{ l: [{ x: l.c[0] }], cls: "pp-pc span" }] : l.c.map((t, i) => ({ l: String(t).split("\n").map((x) => ({ x })), cls: "pp-pc" + (l.total ? " tot" : "") + (i < 4 ? " fixa" : i >= nc - 3 ? " res" : "") + ((l.alerta || []).includes(i) ? " desc" : "") })))),
           ppPlanNota: pl.n > 5 ? "Com " + pl.n + " preços lado a lado, a planilha sai como anexo em A4 paisagem, numa folha única, junto com o relatório em PDF." : "A planilha cabe no relatório em A4 retrato." }; })(),
     };
   }
