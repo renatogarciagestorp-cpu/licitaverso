@@ -1214,6 +1214,7 @@
   .lmo-retro.lmo-cab span:nth-child(5), .lmo-lin4.lmo-cab span { text-align: right; } .lmo-lin4.lmo-cab span:first-child { text-align: left; }
   .lmo-minuta { white-space: pre-wrap; font: inherit; font-size: 13.5px; line-height: 1.6; background: #FBFDF6; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px; margin: 8px 0 0; color: #172B33; }
   @media (max-width: 900px) { .lmo-retro { grid-template-columns: 80px 1fr 110px; } .lmo-retro > span:nth-child(2), .lmo-retro > span:nth-child(4) { display: none; } .lmo-lin4 { grid-template-columns: 1fr 110px; } .lmo-lin4 > span:nth-child(2) { display: none; } }
+  .lmo-ref { font-size: 12px; color: #0A7A50; font-weight: 600; }
   .lmo-aceite { display: grid; gap: 10px; margin-top: 12px; padding: 14px 16px; border: 1px solid #F1D9A6; background: #FFF8E8; border-radius: 12px; }
   .lmo-aceite span { font-size: 14px; font-weight: 700; line-height: 1.5; color: #172B33; }
   .lmo-aceite .lmo-btn { justify-self: start; }
@@ -3587,6 +3588,17 @@
               </section>
             </sc-for>
 
+            <sc-if value="{{ moTemM3Inf }}" hint-placeholder-val="{{ false }}">
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Conferência do Módulo 3 com a planilha da empresa</h2>
+              <p class="lmo-nota" style="margin-top: 0">Digite os percentuais que constam na planilha elaborada pela empresa (deixe em branco o que não quiser conferir). B, C, E e F são fórmulas: só mudam quando mudam A, D ou os encargos do Submódulo 2.2. Cada divergência entra na lista de falhas e no relatório da planilha, com o correto e o fundamento.</p>
+              <div class="lmo-campos">
+                <sc-for list="{{ moM3Inf }}" as="c" hint-placeholder-count="6">
+                  <label class="lmo-campo"><span>{{ c.rot }} (%)</span><input type="text" inputmode="decimal" data-mo-campo="{{ c.k }}" value="{{ c.valor }}" placeholder="{{ c.ref }}" sc-camel-on-input="{{ c.on }}"><small class="lmo-ref">{{ c.ref }}</small></label>
+                </sc-for>
+              </div>
+            </section>
+            </sc-if>
             <sc-if value="{{ moTemFalhas }}" hint-placeholder-val="{{ false }}">
             <section class="lmo-bloco">
               <h2 class="lmo-h2">{{ moFalhasTitulo }}</h2>
@@ -6429,6 +6441,7 @@ const MO_PADRAO = {
   emp_posto: "1", postos: "1",
   ano_exec: "2", vigente: "",
   vg_calc: "", vg_an: "20", vg_hnot: "9", vg_div: "220", vg_ffix: "9", vg_fmov: "1", vg_fer: "100", vg_intra: "", vg_ih: "1", vg_ia: "50", mem_cf: "",
+  inf_api: "", inf_fgts_api: "", inf_multa_api: "", inf_apt: "", inf_inc_apt: "", inf_multa_apt: "",
   gt_tipo: "", gt_multa: "5", rp_db_ant: "", rp_pedido: "", rp_prorrog: "", rp_fim: "", rp_inicio: "", rp_contrato: "", rp_orgao: "", rp_empresa: "",
   regime: "", rbt12: "", reforma: "", rf_ano: "", rf_cbs: "11,3", rf_ibs: "18,7",
   rj_ativo: "", rj_indice: "ipca", rj_orcamento: "", rj_ref: "", rj_unif: "sim", rj_materiais: "sim", rj_equip: "sim", rj_outros5: "sim"
@@ -6571,11 +6584,32 @@ function moAtencao(dX) {
   return { ...d, aus: meio("aus"), pat: meio("pat"), acid: meio("acid"), mat: meio("mat"), vt_tarifa: meio("vt_tarifa"), unif: meio("unif"), materiais: meio("materiais"), he_feriado: meio("he_feriado") };
 }
 // Planilha 1: conferência automática da planilha (sem inteligência artificial), com o fundamento e o caminho correto
-function moConferir(d, r) {
+// Módulo 3: confere os percentuais da planilha da empresa (contratação ou proposta) com as fórmulas do modelo da IN 05/2017
+function moConferirM3(d, r, modo) {
+  const out = [], tem = (k) => String(d[k] == null ? "" : d[k]).trim() !== "", v = (k) => moNum(d[k]);
+  const p4 = (x) => (Math.round(x * 10000) / 10000).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
+  const F = (rubrica, problema, fundamento, correcao, gravidade) => out.push({ rubrica, problema, fundamento, correcao, gravidade, impacto: "", m3: true });
+  const fg = moNum(d.fgts) || 8, api = tem("inf_api") ? v("inf_api") : moNum(d.api), apt = tem("inf_apt") ? v("inf_apt") : (r && r.apt_p != null ? r.apt_p * 100 : moNum(d.apt));
+  const m22 = r && r.M22p ? r.M22p * 100 : null, dif = (a, b) => Math.abs(a - b) > 0.00051;
+  const multaOk = (inf, base) => !dif(inf, 0.4 * fg / 100 * base) || !dif(inf, 0.5 * fg / 100 * base);
+  const fundMulta = "Lei 8.036/1990, art. 18, § 1º (multa de 40% do FGTS); a contribuição social de 10% da LC 110/2001 foi extinta pela Lei 13.932/2019 a partir de 2020; IN 05/2017, Anexo VII-D";
+  if (tem("inf_api") && v("inf_api") > 0.42 + 0.0005) F("Módulo 3, A – Aviso prévio indenizado", "A planilha da empresa usa " + p4(v("inf_api")) + ".", "IN 05/2017, Anexo VII-D; CLT, art. 487, § 1º.", "O percentual usual é de 0,42% (1/12 da remuneração × 5% dos empregados dispensados com aviso indenizado). Percentual maior só se demonstrado pela rotatividade real da empresa ou do contrato.", "media");
+  if (tem("inf_fgts_api") && dif(v("inf_fgts_api"), fg / 100 * api)) F("Módulo 3, B – FGTS sobre o aviso prévio indenizado", "A planilha da empresa usa " + p4(v("inf_fgts_api")) + ".", "Lei 8.036/1990, art. 15; IN 05/2017, Anexo VII-D.", "É o FGTS (" + p4(fg) + ") sobre o aviso prévio indenizado (" + p4(api) + "): " + p4(fg / 100 * api) + ".", "media");
+  if (tem("inf_multa_api") && !multaOk(v("inf_multa_api"), api)) F("Módulo 3, C – Multa do FGTS sobre o aviso prévio indenizado", "A planilha da empresa usa " + p4(v("inf_multa_api")) + ".", fundMulta + ".", "40% do FGTS sobre o aviso prévio indenizado: " + p4(0.4 * fg / 100 * api) + " (ou " + p4(0.5 * fg / 100 * api) + ", se o modelo ainda somar a contribuição social extinta).", "media");
+  if (tem("inf_apt")) {
+    if (modo === "repactuacao" && v("inf_apt") > 0.194 + 0.0005) F("Módulo 3, D – Aviso prévio trabalhado", "A planilha mantém " + p4(v("inf_apt")) + " de aviso prévio trabalhado depois do primeiro ano.", "TCU, Acórdão 1.186/2017-Plenário (aviso prévio trabalhado como custo não renovável).", "O aviso prévio trabalhado é custo não renovável: o percentual cheio (1,94%) cabe só no primeiro ano. Na prorrogação ou repactuação, no máximo 0,194% por ano, e o valor pago a maior deve ser suprimido.", "alta");
+    else if (modo !== "repactuacao" && v("inf_apt") > 1.94 + 0.0005) F("Módulo 3, D – Aviso prévio trabalhado", "A planilha da empresa usa " + p4(v("inf_apt")) + ".", "TCU, Acórdão 1.186/2017-Plenário; CLT, art. 488.", "No máximo 1,94% no primeiro ano (7 dias de redução da jornada ÷ 30 ÷ 12).", "alta");
+  }
+  if (tem("inf_inc_apt") && m22 != null && dif(v("inf_inc_apt"), m22 / 100 * apt)) F("Módulo 3, E – Encargos sobre o aviso prévio trabalhado", "A planilha da empresa usa " + p4(v("inf_inc_apt")) + ".", "IN 05/2017, Anexo VII-D.", "São os encargos do Submódulo 2.2 (" + p4(m22) + ") sobre o aviso prévio trabalhado (" + p4(apt) + "): " + p4(m22 / 100 * apt) + ". Se o Submódulo 2.2 da empresa também estiver diferente, corrija-o primeiro.", "media");
+  if (tem("inf_multa_apt") && !multaOk(v("inf_multa_apt"), apt)) F("Módulo 3, F – Multa do FGTS sobre o aviso prévio trabalhado", "A planilha da empresa usa " + p4(v("inf_multa_apt")) + ".", fundMulta + ".", "40% do FGTS sobre o aviso prévio trabalhado: " + p4(0.4 * fg / 100 * apt) + " (ou " + p4(0.5 * fg / 100 * apt) + ", se o modelo ainda somar a contribuição social extinta).", "media");
+  return out;
+}
+function moConferir(d, r, modo) {
   const n = (k) => moNum(d[k]), out = [], simples = d.regime === "simples";
   if (!(n("salario") > 0)) return out;
   const F = (rubrica, problema, fundamento, correcao, gravidade, impacto) => out.push({ rubrica, problema, fundamento, correcao, gravidade, impacto: impacto || "" });
   const pctB = (v) => String(v).replace(".", ",") + "%";
+  if (modo && modo !== "planejamento") moConferirM3(d, r, modo).forEach((x) => out.push(x));
   if (n("inss") !== 20) F("Submódulo 2.2, A – INSS", "INSS de " + pctB(n("inss")) + ".", "Lei 8.212/1991, art. 22, I.", "Contribuição patronal de 20% sobre a remuneração (também no Simples, Anexo IV).", "alta");
   if (n("fgts") !== 8) F("Submódulo 2.2, H – FGTS", "FGTS de " + pctB(n("fgts")) + ".", "Lei 8.036/1990, art. 15.", "Depósito de 8% sobre a remuneração.", "alta");
   if (![1, 2, 3].includes(n("rat"))) F("Submódulo 2.2, C – SAT/RAT", "RAT de " + pctB(n("rat")) + ".", "Lei 8.212/1991, art. 22, II.", "Alíquota de 1%, 2% ou 3%, conforme o grau de risco do CNAE preponderante da empresa, multiplicada pelo FAP.", "alta");
@@ -6587,7 +6621,7 @@ function moConferir(d, r) {
   else [["saled", "Salário-Educação", 2.5, "Lei 9.424/1996, art. 15"], ["sesc", "SESC ou SESI", 1.5, "Decreto-Lei 9.853/1946 e 9.403/1946"], ["senac", "SENAC ou SENAI", 1, "Decreto-Lei 8.621/1946 e 4.048/1942"], ["sebrae", "SEBRAE", 0.6, "Lei 8.029/1990, art. 8º, § 3º"], ["incra", "INCRA", 0.2, "Decreto-Lei 1.146/1970"]]
     .forEach(([k, rot, v, fund]) => { if (Math.abs(n(k) - v) > 0.005) F("Submódulo 2.2 – " + rot, rot + " de " + pctB(n(k)) + ".", fund + ".", String(v).replace(".", ",") + "% sobre a base do Submódulo 2.2.", "media"); });
   if (!(n("iss") >= 2 && n("iss") <= 5) && !(r && r.simp && !r.simp.issFora)) F("Módulo 6, C.3 – ISS", "ISS de " + pctB(n("iss")) + ".", "LC 116/2003, arts. 8º e 8º-A.", "Alíquota do município da prestação, entre 2% e 5%.", "alta");
-  if (n("apt") > 1.94) F("Módulo 3, D – Aviso prévio trabalhado", "Aviso prévio trabalhado de " + pctB(n("apt")) + ".", "TCU, Acórdão 1.186/2017-Plenário.", "No máximo 1,94% no 1º ano (custo não renovável).", "alta");
+  if (modo !== "repactuacao" && !String(d.inf_apt || "").trim() && n("apt") > 1.94) F("Módulo 3, D – Aviso prévio trabalhado", "Aviso prévio trabalhado de " + pctB(n("apt")) + ".", "TCU, Acórdão 1.186/2017-Plenário.", "No máximo 1,94% no 1º ano (custo não renovável).", "alta");
   if (![0, 10, 20, 40].includes(n("insal"))) F("Módulo 1, C – Insalubridade", "Adicional de " + pctB(n("insal")) + ".", "CLT, art. 192; NR-15.", "10%, 20% ou 40%, conforme o grau, salvo regra mais favorável da convenção.", "media");
   if (![0, 30].includes(n("peric"))) F("Módulo 1, B – Periculosidade", "Adicional de " + pctB(n("peric")) + ".", "CLT, art. 193, § 1º.", "30% sobre o salário-base, salvo regra mais favorável da convenção.", "media");
   if (n("insal") > 0 && n("peric") > 0) F("Módulo 1, B e C – Adicionais", "Periculosidade e insalubridade somadas.", "CLT, art. 193, § 2º.", "O empregado opta por um dos adicionais; mantenha só o mais vantajoso, salvo previsão da convenção.", "media");
@@ -10332,9 +10366,9 @@ class Component extends DCLogic {
   async moBaixar(formato, docTipo = "planilha", opc) {
     const s = this.state, mo = s.mo, d = mo.d, fontesD = d.fontes || {}, rep = mo.modo === "repactuacao", prop = mo.modo === "proposta";
     const P = this.moProps(), { r, rj } = this._moUltimo || {};
-    const falhas = rep || prop ? (d.falhas || []) : ((this._moUltimo && this._moUltimo.falhasAuto) || []);
+    const falhas = (rep || prop ? (d.falhas || []) : []).concat((this._moUltimo && this._moUltimo.falhasAuto) || []);
     const dilig = (prop && this._moUltimo && this._moUltimo.dilig) || [], exeqItens = (prop && this._moUltimo && this._moUltimo.exeqItens) || [];
-    if (rep && falhas.length && !d.falhas_aceite) {
+    if (rep && (d.falhas || []).length && !d.falhas_aceite) {
       this.setState((x) => ({ mo: { ...x.mo, erro: "Antes de baixar, leia as falhas apontadas na planilha da contratação e confirme se concorda com o prosseguimento da análise." } }));
       try { document.querySelector(".lmo-aceite").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {}
       return;
@@ -10447,6 +10481,10 @@ class Component extends DCLogic {
       if (falhas.length) n.push(falhas.length + " falha(s) apontada(s) na planilha " + (prop ? "da proposta" : "da contratação") + ": ver o documento Falhas e inconsistências.");
       if (gtTxt) n.push(gtTxt);
       n.push("Confira cada valor e fonte antes de juntar ao processo.");
+      blocos.push({ t: "tabela", titulo: "DIVERGÊNCIAS E INCONSISTÊNCIAS NA ELABORAÇÃO DA PLANILHA", sub: falhas.length ? "Conferência com a legislação e com o modelo da IN 05/2017. Gravidade: alta, média ou baixa." : "",
+        cab: ["Rubrica", "Como está", "O correto", "Fundamento"], larg: [20, 22, 34, 24], alin: "llll",
+        linhas: falhas.length ? falhas.map((f) => ({ c: [f.rubrica + (f.gravidade ? " (" + f.gravidade.replace("media", "média") + ")" : ""), f.problema || "", f.correcao || "", f.fundamento || ""], alerta: f.gravidade === "alta" ? [0] : [] }))
+          : [{ c: ["—", "Nenhuma divergência identificada na conferência automática.", "", ""] }] });
       docs.planilha = { titulo: "Planilha de custos e formação de preços", arquivo: base0 + "-planilha", blocos, notas: n };
     }
     // 2) falhas e inconsistências (e, na Planilha 3, a exequibilidade e a diligência)
@@ -10562,7 +10600,7 @@ class Component extends DCLogic {
     const mo = this.state.mo, d = mo.d, U = this._moUltimo || {}, rep = mo.modo === "repactuacao", prop = mo.modo === "proposta";
     const plan = mo.modo === "planejamento";
     return [["planilha", "Planilha de custos (IN 05/2017)", "Módulos 1 a 6, quadro-resumo e valores do contrato"]]
-      .concat(((rep || prop) && ((d.falhas || []).length || (prop && (d.exeq || (d.diligencias || []).length)))) || (plan && (U.falhasAuto || []).length) ? [["falhas", prop ? "Falhas, exequibilidade e diligência" : "Falhas e inconsistências", plan ? "Conferência automática, com fundamento e caminho correto" : "Cada falha com fundamento e caminho correto"]] : [])
+      .concat(((rep || prop) && ((d.falhas || []).length || (U.falhasAuto || []).length || (prop && (d.exeq || (d.diligencias || []).length)))) || (plan && (U.falhasAuto || []).length) ? [["falhas", prop ? "Falhas, exequibilidade e diligência" : "Falhas e inconsistências", plan ? "Conferência automática, com fundamento e caminho correto" : "Cada falha com fundamento e caminho correto"]] : [])
       .concat((rep && U.comp) || (prop && this.moListaLer("proposta").length) ? [["comparativo", prop ? "Comparativo das propostas" : "Quadro comparativo", prop ? "Licitantes lado a lado, módulo a módulo" : "Contratação × repactuada, rubrica a rubrica"]] : [])
       .concat([["memoria", "Memória de cálculo", "Bases dos encargos e benefícios, tributos, dimensionamento, insumos" + (rep ? ", reajuste" : "") + " e garantia trabalhista"]])
       .concat(rep && U.retro && U.retro.linhas.length ? [["retroativo", "Diferença retroativa", "Mês a mês, com a tempestividade"]] : []);
@@ -11045,9 +11083,9 @@ class Component extends DCLogic {
     }
     const reaisExtenso = (v) => brl(v);
     this._moUltimo.comp = comp;
-    const falhasAuto = mo.modo === "planejamento" ? moConferir(d, r) : [];
+    const falhasAuto = moConferir(d, r, mo.modo);
     this._moUltimo.falhasAuto = falhasAuto;
-    const fsV = mo.modo === "planejamento" ? falhasAuto : (d.falhas || []);
+    const fsV = mo.modo === "planejamento" ? falhasAuto : (d.falhas || []).concat(falhasAuto);
     // quadro consolidado / comparativo de propostas
     const lista = mo.listaModo === mo.modo && mo.lista ? mo.lista : this.moListaLer(mo.modo);
     const ref = prop ? d0.pr_ref || null : null;
@@ -11446,6 +11484,12 @@ class Component extends DCLogic {
         });
       },
       moTemFalhas: fsV.length > 0,
+      moTemM3Inf: mo.modo !== "planejamento",
+      moM3Inf: (() => { const fg = moNum(d.fgts) || 8, api = String(d.inf_api || "").trim() ? moNum(d.inf_api) : moNum(d.api), apt = String(d.inf_apt || "").trim() ? moNum(d.inf_apt) : (r.apt_p || 0) * 100, m22 = (r.M22p || 0) * 100;
+        const p4 = (x) => (Math.round(x * 10000) / 10000).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
+        return [["inf_api", "A – Aviso prévio indenizado", "usual: 0,42%"], ["inf_fgts_api", "B – FGTS sobre o aviso prévio indenizado", "correto: " + p4(fg / 100 * api)], ["inf_multa_api", "C – Multa do FGTS sobre o aviso prévio indenizado", "correto: " + p4(0.4 * fg / 100 * api) + " (40%)"],
+          ["inf_apt", "D – Aviso prévio trabalhado", rep ? "máximo depois do 1º ano: 0,194%" : "máximo no 1º ano: 1,94%"], ["inf_inc_apt", "E – Encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", "correto: " + p4(m22 / 100 * apt)], ["inf_multa_apt", "F – Multa do FGTS sobre o aviso prévio trabalhado", "correto: " + p4(0.4 * fg / 100 * apt) + " (40%)"]]
+          .map(([k, rot, ref]) => ({ k, rot, ref, valor: d[k] == null ? "" : d[k], on: this.moSet(k) })); })(),
       moFalhasTitulo: mo.modo === "planejamento" ? "Falhas e inconsistências da planilha" : prop ? "Falhas e inconsistências da planilha da proposta" : "Falhas e inconsistências da planilha da contratação",
       moFalhasNota: mo.modo === "planejamento" ? "Conferência automática da planilha com a legislação e o modelo da IN, feita pelo sistema a cada alteração. Cada item traz o fundamento e o caminho correto." : prop ? "Cada item traz o fundamento, o caminho correto e se a correção cabe no preço ofertado. A planilha acima reproduz a proposta sem correções." : "Cada item traz o fundamento e o caminho correto. A planilha repactuada acima já considera as correções indicadas pelo agente; confira antes de concluir.",
       moFalhasAviso: mo.modo === "planejamento" ? "a estimativa com falhas distorce o valor estimado da contratação e pode levar a propostas inexequíveis ou a sobrepreço. Corrija cada item ou justifique no processo (Lei 14.133/2021, art. 23)." : prop ? "falha que exija majorar o preço ofertado ou que contrarie exigência legal (salário abaixo do piso, encargo legal a menor, benefício obrigatório da convenção) pode levar à desclassificação; as demais devem ser corrigidas pela licitante sem aumento do preço (IN 05/2017, Anexo VII-A, itens 7.9, 9.1 e 9.3)." : "manter qualquer uma dessas falhas na planilha impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores. Corrija cada item antes de concluir a repactuação.",
