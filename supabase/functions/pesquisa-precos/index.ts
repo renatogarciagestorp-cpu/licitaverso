@@ -15,7 +15,7 @@ const COMPRAS = "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco";
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36";
 const MODELO_IA = Deno.env.get("PP_MODELO") || "claude-haiku-5-5";
 const PLANOS = new Set(["teste", "basico", "premium", "pro"]);
-const LIMITE_DIA: Record<string, number> = { coleta: 150, ia_similares: 25, ia_rilc: 5 };
+const LIMITE_DIA: Record<string, number> = { coleta: 300, ia_similares: 25, ia_rilc: 5 };
 const UFS = "AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".split(" ");
 const MODALIDADE: Record<string, string> = { "1": "Convite", "2": "Tomada de preços", "3": "Concorrência", "5": "Pregão", "6": "Dispensa", "7": "Inexigibilidade", "20": "Concurso" };
 
@@ -69,100 +69,133 @@ async function buscarCatalogo(texto: string, tipo: "material" | "servico") {
   return cand.slice(0, 15).map((c) => ({ codigo: c.codigo, nome: c.nome, tipo }));
 }
 
-// ---------------------------------------------------------------- Painel de Preços (API de dados abertos do Compras.gov.br)
-async function coletarCompras(codigo: number, tipo: "material" | "servico", uf: string, meses: number) {
-  const fim = new Date(), ini = new Date(fim.getTime() - meses * 30.44 * 864e5);
+// ---------------------------------------------------------------- abrangência: estado, região ou país
+const REGIOES: Record<string, string[]> = { N: ["AC", "AP", "AM", "PA", "RO", "RR", "TO"], NE: ["AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE"],
+  CO: ["DF", "GO", "MT", "MS"], SE: ["ES", "MG", "RJ", "SP"], S: ["PR", "RS", "SC"] };
+const regiaoDe = (uf: string) => Object.keys(REGIOES).find((r) => REGIOES[r].includes(uf)) ?? "";
+const ufsDa = (uf: string, abr: string) => abr === "estado" ? (uf ? [uf] : []) : abr === "regiao" ? (REGIOES[regiaoDe(uf)] ?? []).filter((u) => u !== uf) : [];
+const CRITERIO: Record<string, string> = { "1": "Menor preço", "2": "Maior desconto", "4": "Técnica e preço", "5": "Maior lance", "6": "Maior retorno econômico", "7": "Não se aplica", "8": "Melhor técnica", "9": "Conteúdo artístico" };
+const ESFERA: Record<string, string> = { F: "Federal", E: "Estadual", M: "Municipal", D: "Distrital" };
+const PODER: Record<string, string> = { E: "Executivo", L: "Legislativo", J: "Judiciário" };
+const txt = (v: unknown, n = 400) => String(v ?? "").replace(/\s+/g, " ").trim().slice(0, n);
+
+// ---------------------------------------------------------------- Painel de Preços (API de dados abertos do Compras.gov.br): todos os registros do período
+async function coletarCompras(codigo: number, tipo: "material" | "servico", uf: string, abr: string, meses: number, limiteMs: number) {
+  const inicio = Date.now(), fim = new Date(), ini = new Date(fim.getTime() - meses * 30.44 * 864e5);
   const d = (x: Date) => x.toISOString().slice(0, 10);
   const consulta = (est: string, pagina: number) => {
-    const p = new URLSearchParams({ pagina: String(pagina), tamanhoPagina: "100", dataCompraInicio: d(ini), dataCompraFim: d(fim) });
+    const p = new URLSearchParams({ pagina: String(pagina), tamanhoPagina: "500", dataCompraInicio: d(ini), dataCompraFim: d(fim) });
     if (est) p.set("estado", est);
     if (tipo === "material") { p.set("tipo", "codigoPdm"); p.set("codigo", String(codigo)); return `${COMPRAS}/1_consultarMaterial?${p}`; }
     p.set("codigoItemCatalogo", String(codigo)); return `${COMPRAS}/3_consultarServico?${p}`;
   };
-  let linhas: any[] = [], abrangencia = "nacional", url = "";
-  for (const est of uf ? [uf, ""] : [""]) {
-    linhas = []; url = consulta(est, 1);
-    for (let pg = 1; pg <= 3; pg++) {
-      const j = (await obter(consulta(est, pg), 20000)) ?? {};
+  const ufs = ufsDa(uf, abr), alvos = abr === "nacional" ? [""] : ufs;
+  const linhas: any[] = [], urls: string[] = [];
+  for (const est of alvos) {
+    const maxPag = abr === "nacional" ? 6 : abr === "regiao" ? 3 : 6;
+    for (let pg = 1; pg <= maxPag; pg++) {
+      if (Date.now() - inicio > limiteMs) break;
+      const url = consulta(est, pg); if (pg === 1) urls.push(url);
+      let j: any = null;
+      try { j = (await obter(url, 25000)) ?? {}; } catch { break; }
       const res = j.resultado ?? [];
       linhas.push(...res);
       if (!res.length || pg >= Number(j.totalPaginas ?? 1)) break;
     }
-    abrangencia = est ? "estado" : "nacional";
-    if (linhas.filter((r) => (num(r.precoUnitario) ?? 0) > 0).length >= 5 || !est) break;
   }
-  const limite = d(ini);
+  const limite = d(ini), vistos = new Set<string>();
   const registros = linhas.filter((r) => (num(r.precoUnitario) ?? 0) > 0 && String(r.dataCompra ?? r.dataResultado ?? "9").slice(0, 10) >= limite)
-    .slice(0, 300).map((r) => ({
-      id: "cg-" + String(r.idItemCompra ?? r.idCompra ?? crypto.randomUUID()),
-      fonte: "painel", inciso: "I",
-      preco: num(r.precoUnitario), quantidade: num(r.quantidade),
-      unidade: String(r.siglaUnidadeFornecimento ?? r.nomeUnidadeFornecimento ?? r.siglaUnidadeMedida ?? r.nomeUnidadeMedida ?? "").trim(),
-      data: String(r.dataCompra ?? r.dataResultado ?? "").slice(0, 10),
-      orgao: String(r.nomeOrgao ?? r.nomeUasg ?? "").trim(), uasg: String(r.codigoUasg ?? ""), nomeUasg: String(r.nomeUasg ?? ""),
-      uf: String(r.estado ?? r.siglaUf ?? ""), municipio: String(r.municipio ?? r.nomeMunicipio ?? ""),
-      modalidade: MODALIDADE[String(r.modalidade ?? "")] ?? (r.modalidade ? "Modalidade " + r.modalidade : ""), forma: String(r.forma ?? ""),
-      fornecedor: String(r.nomeFornecedor ?? ""), cnpj: String(r.niFornecedor ?? ""), marca: String(r.marca ?? ""),
-      descricao: String(r.descricaoItem ?? r.descricaoDetalhadaItem ?? "").replace(/\s+/g, " ").slice(0, 400),
-      codigoItem: r.codigoItemCatalogo ?? codigo, idCompra: String(r.idCompra ?? ""), numeroItem: r.numeroItemCompra ?? null,
-    }));
-  return { registros, consulta: url, abrangencia };
+    .filter((r) => { const k = String(r.idItemCompra ?? r.idCompraItem ?? ""); if (!k || vistos.has(k)) return !k; vistos.add(k); return true; })
+    .slice(0, 1500).map((r) => {
+      const preco = num(r.precoUnitario), qtd = num(r.quantidade);
+      return {
+        id: "cg-" + String(r.idItemCompra ?? r.idCompraItem ?? crypto.randomUUID()), fonte: "painel", inciso: "I",
+        preco, quantidade: qtd, valorTotal: preco != null && qtd != null ? Math.round(preco * qtd * 100) / 100 : null,
+        unidade: txt(r.siglaUnidadeFornecimento ?? r.nomeUnidadeFornecimento ?? r.siglaUnidadeMedida ?? r.nomeUnidadeMedida, 30),
+        unidadeMedida: txt(r.siglaUnidadeMedida ?? r.nomeUnidadeMedida, 30), capacidade: num(r.capacidadeUnidadeFornecimento),
+        data: String(r.dataResultado ?? r.dataCompra ?? "").slice(0, 10), dataCompra: String(r.dataCompra ?? "").slice(0, 10),
+        orgao: txt(r.nomeOrgao, 160), orgaoDoc: r.codigoOrgao ? "Órgão SIASG " + r.codigoOrgao : "", unidadeCompradora: txt(r.nomeUasg, 160), uasg: txt(r.codigoUasg, 12),
+        esfera: ESFERA[String(r.esfera ?? "")] ?? txt(r.esfera, 20), poder: PODER[String(r.poder ?? "")] ?? txt(r.poder, 20),
+        uf: txt(r.estado ?? r.siglaUf, 2), municipio: txt(r.municipio ?? r.nomeMunicipio, 80),
+        modalidade: MODALIDADE[String(r.modalidade ?? "")] ?? (r.modalidade ? "Modalidade " + r.modalidade : ""), criterio: CRITERIO[String(r.criterioJulgamento ?? "")] ?? txt(r.criterioJulgamento, 40),
+        srp: String(r.forma ?? "") === "SISRP" ? "Sim" : String(r.forma ?? "") === "SISPP" ? "Não" : "", forma: txt(r.forma, 10),
+        fornecedor: txt(r.nomeFornecedor, 160), cnpj: txt(r.niFornecedor, 20), marca: txt(r.marca, 80),
+        descricao: txt(r.descricaoItem, 500), espec: txt(r.descricaoDetalhadaItem, 600), objeto: txt(r.objetoCompra, 600),
+        catalogo: (tipo === "material" ? "CATMAT " : "CATSER ") + String(r.codigoItemCatalogo ?? codigo) + (r.nomePdm ? " · PDM " + r.codigoPdm + " " + txt(r.nomePdm, 80) : ""),
+        idCompra: String(r.idCompra ?? ""), numeroItem: r.numeroItemCompra ?? null,
+        numeroCompra: r.idCompra ? "UASG " + txt(r.codigoUasg, 12) + " · compra " + String(r.idCompra).slice(6, 8) + "/" + String(r.idCompra).slice(8, 13) + "/" + String(r.idCompra).slice(13, 17) : "",
+        percentualDesconto: num(r.percentualMaiorDesconto),
+      };
+    });
+  return { registros, consultas: urls, total: registros.length };
 }
 
-// ---------------------------------------------------------------- contratações similares no PNCP (preço homologado do item)
-async function coletarPncp(descricao: string, uf: string, meses: number, limiteMs: number) {
-  const chaves = chavesDe(descricao);
+// ---------------------------------------------------------------- contratações similares no PNCP (preço homologado do item), com os dados da compra
+function semelhanca(base: string[], texto: string) {
+  if (!base.length) return 0; const s = semAcento(texto);
+  return base.filter((c) => s.includes(c.length > 5 ? c.slice(0, c.length - 1) : c)).length / base.length;
+}
+async function coletarPncp(descricao: string, uf: string, abr: string, meses: number, limiteMs: number) {
+  const chaves = chavesDe(descricao), base = [...chaves, ...((semAcento(descricao).match(/\b\d{2,4}\b|\b[a-z]\d{1,2}\b/g) ?? []))];
   if (!chaves.length) return [];
-  const minimo = Math.min(2, chaves.length), inicio = Date.now();
+  const inicio = Date.now();
   const desde = new Date(Date.now() - meses * 30.44 * 864e5).toISOString().slice(0, 10);
-  const pontos = (t: string) => { const s = semAcento(t); return chaves.filter((c) => s.includes(c.slice(0, Math.max(4, c.length - 2)))).length; };
+  const ufs = abr === "nacional" ? [""] : ufsDa(uf, abr);
   const compras: any[] = [], vistos = new Set<string>();
-  for (const u of uf ? [uf, ""] : [""]) {
-    for (const n of [Math.min(3, chaves.length), 2, 1]) {
-      if (Date.now() - inicio > limiteMs * 0.35) break;
-      const p = new URLSearchParams({ q: chaves.slice(0, n).join(" "), tipos_documento: "edital", ordenacao: "-data", pagina: "1", tam_pagina: "30", status: "todos" });
-      if (u) p.set("ufs", u);
-      try {
-        for (const h of ((await obter(`${PNCP}/api/search/?${p}`, 12000)) ?? {}).items ?? []) {
+  for (const u of ufs) {
+    for (const n of [Math.min(3, chaves.length), 2, 1].filter((x, i, a) => x > 0 && a.indexOf(x) === i)) {
+      for (const pagina of [1, 2, 3]) {
+        if (Date.now() - inicio > limiteMs * 0.3) break;
+        const p = new URLSearchParams({ q: chaves.slice(0, n).join(" "), tipos_documento: "edital", ordenacao: "-data", pagina: String(pagina), tam_pagina: "50", status: "todos" });
+        if (u) p.set("ufs", u);
+        let itens: any[] = [];
+        try { itens = ((await obter(`${PNCP}/api/search/?${p}`, 12000)) ?? {}).items ?? []; } catch { itens = []; }
+        for (const h of itens) {
           const url = String(h.item_url ?? ""), m = url.match(/\/(\d{14})\/(\d{4})\/(\d+)/);
           if (!m || vistos.has(url)) continue;
-          if (String(h.data_publicacao_pncp ?? "").slice(0, 10) < desde) continue;
+          if (String(h.data_publicacao_pncp ?? "").slice(0, 10) < desde || h.tem_resultado === false || h.cancelado) continue;
           if (/revogad|anulad|cancelad|desert|fracassad/.test(semAcento(h.situacao_nome))) continue;
           vistos.add(url); compras.push({ h, cnpj: m[1], ano: m[2], seq: m[3], url });
         }
-      } catch { /* PNCP fora do ar: segue */ }
-      if (compras.length >= 12) break;
+        if (itens.length < 50) break;
+      }
+      if (compras.length >= 60) break;
     }
-    if (compras.length >= 6) break;
   }
   const registros: any[] = [];
-  for (const c of compras.slice(0, 12)) {
-    if (Date.now() - inicio > limiteMs) break;
-    let itens: any[] = [];
-    try { itens = (await obter(`${PNCP}/api/pncp/v1/orgaos/${c.cnpj}/compras/${c.ano}/${c.seq}/itens?pagina=1&tamanhoPagina=100`, 10000)) ?? []; } catch { itens = []; }
-    const bons = (Array.isArray(itens) ? itens : []).map((it) => [pontos(it.descricao ?? ""), it] as [number, any]).filter(([p]) => p >= minimo)
-      .sort((a, b) => b[0] - a[0]).slice(0, 3);
-    for (const [, it] of bons) {
-      if (Date.now() - inicio > limiteMs) break;
-      let res: any[] = [];
-      if (it.temResultado !== false) {
-        try { res = (await obter(`${PNCP}/api/pncp/v1/orgaos/${c.cnpj}/compras/${c.ano}/${c.seq}/itens/${it.numeroItem}/resultados`, 8000)) ?? []; } catch { res = []; }
-      }
-      for (const r of (Array.isArray(res) ? res : []).slice(0, 2)) {
-        const preco = num(r.valorUnitarioHomologado);
-        if (!preco || preco <= 0) continue;
-        registros.push({
-          id: `pn-${c.cnpj}-${c.ano}-${c.seq}-${it.numeroItem}-${r.sequencialResultado ?? 1}`,
-          fonte: "pncp", inciso: "II", preco, quantidade: num(r.quantidadeHomologada ?? it.quantidade),
-          unidade: String(it.unidadeMedida ?? "").trim(), data: String(r.dataResultado ?? r.dataInclusao ?? c.h.data_publicacao_pncp ?? "").slice(0, 10),
-          orgao: String(c.h.orgao_nome ?? ""), uf: String(c.h.uf ?? ""), municipio: String(c.h.municipio_nome ?? ""),
-          modalidade: String(c.h.modalidade_licitacao_nome ?? ""), fornecedor: String(r.nomeRazaoSocialFornecedor ?? ""), cnpj: String(r.niFornecedor ?? ""),
-          descricao: String(it.descricao ?? "").replace(/\s+/g, " ").slice(0, 400), numero: String(c.h.title ?? "").slice(0, 120),
-          link: PNCP + "/app" + c.url.replace("/compras/", "/editais/"),
-        });
+  const fila = [...compras];
+  const trabalhar = async () => {
+    while (fila.length && Date.now() - inicio < limiteMs) {
+      const c = fila.shift()!;
+      let itens: any[] = [];
+      try { itens = (await obter(`${PNCP}/api/pncp/v1/orgaos/${c.cnpj}/compras/${c.ano}/${c.seq}/itens?pagina=1&tamanhoPagina=500`, 12000)) ?? []; } catch { itens = []; }
+      const bons = (Array.isArray(itens) ? itens : []).map((it) => [semelhanca(base, it.descricao ?? ""), it] as [number, any])
+        .filter(([sc]) => sc >= 0.4).sort((a, b) => b[0] - a[0]).slice(0, 6);
+      for (const [, it] of bons) {
+        if (Date.now() - inicio > limiteMs) break;
+        let res: any[] = [];
+        if (it.temResultado !== false) { try { res = (await obter(`${PNCP}/api/pncp/v1/orgaos/${c.cnpj}/compras/${c.ano}/${c.seq}/itens/${it.numeroItem}/resultados`, 9000)) ?? []; } catch { res = []; } }
+        for (const r of (Array.isArray(res) ? res : []).slice(0, 3)) {
+          const preco = num(r.valorUnitarioHomologado);
+          if (!preco || preco <= 0 || r.dataCancelamento) continue;
+          const h = c.h;
+          registros.push({
+            id: `pn-${c.cnpj}-${c.ano}-${c.seq}-${it.numeroItem}-${r.sequencialResultado ?? 1}`, fonte: "pncp", inciso: "II",
+            preco, quantidade: num(r.quantidadeHomologada ?? it.quantidade), valorTotal: num(r.valorTotalHomologado), quantidadeEdital: num(it.quantidade), valorEstimado: num(it.valorUnitarioEstimado),
+            unidade: txt(it.unidadeMedida, 30), data: String(r.dataResultado ?? r.dataInclusao ?? h.data_publicacao_pncp ?? "").slice(0, 10),
+            orgao: txt(h.orgao_nome, 160), orgaoDoc: h.orgao_cnpj ? "CNPJ " + h.orgao_cnpj : "", unidadeCompradora: txt(h.unidade_nome, 160),
+            esfera: txt(h.esfera_nome, 20), poder: txt(h.poder_nome, 20), uf: txt(h.uf, 2), municipio: txt(h.municipio_nome, 80),
+            modalidade: txt(h.modalidade_licitacao_nome, 60), criterio: txt(it.criterioJulgamentoNome, 40), srp: h.srp === true ? "Sim" : h.srp === false ? "Não" : "",
+            fornecedor: txt(r.nomeRazaoSocialFornecedor, 160), cnpj: txt(r.niFornecedor, 20), porte: txt(r.porteFornecedorNome, 40), meEpp: r.aplicacaoBeneficioMeEpp ? "Sim" : "",
+            descricao: txt(it.descricao, 600), espec: txt(it.informacaoComplementar, 400), objeto: txt(h.description, 600), marca: "",
+            numeroCompra: txt(h.title, 120), controle: txt(h.numero_controle_pncp, 60), amparo: Array.isArray(h.amparo_legal_nome) ? txt(h.amparo_legal_nome.join("; "), 200) : "",
+            catalogo: it.catalogoCodigoItem ? "Catálogo " + it.catalogoCodigoItem : "", link: PNCP + "/app" + c.url.replace("/compras/", "/editais/"),
+          });
+        }
       }
     }
-  }
+  };
+  await Promise.all([trabalhar(), trabalhar(), trabalhar(), trabalhar()]);
   return registros;
 }
 
@@ -239,9 +272,9 @@ Deno.serve(async (req) => {
     ];
     const fontes = await Promise.all(urls.map(testar));
     let amostra: any = null;
-    try { const c = await coletarCompras(4813, "material", "RJ", 12); amostra = { n: c.registros.length, primeiro: c.registros[0] ?? null }; } catch (e) { amostra = { erro: String(e) }; }
+    try { const c = await coletarCompras(19746, "material", "RJ", "estado", 12, 40000); amostra = { n: c.registros.length, primeiro: c.registros[0] ?? null }; } catch (e) { amostra = { erro: String(e) }; }
     let pncp: any = null;
-    try { const r = await coletarPncp("papel sulfite A4 resma", "RJ", 12, 30000); pncp = { n: r.length, primeiro: r[0] ?? null }; } catch (e) { pncp = { erro: String(e) }; }
+    try { const r = await coletarPncp("papel sulfite A4 resma", "RJ", "estado", 12, 40000); pncp = { n: r.length, primeiro: r[0] ?? null }; } catch (e) { pncp = { erro: String(e) }; }
     return resposta({ fontes, amostra, pncp });
   }
 
@@ -278,11 +311,14 @@ Deno.serve(async (req) => {
     try { return resposta({ itens: await buscarCatalogo(texto, tipo) }); } catch { return erro("O catálogo não respondeu. Tente de novo.", 502); }
   }
 
+  const abr = ["estado", "regiao", "nacional"].includes(String(corpo.abrangencia)) ? String(corpo.abrangencia) : (ufOk ? "estado" : "nacional");
+  if (abr !== "nacional" && !ufOk) return erro("Informe a UF na etapa 1 para buscar no estado ou na região.");
+
   if (acao === "coletar") {
     const codigo = Number(corpo.codigo), tipo = corpo.tipo === "servico" ? "servico" : "material";
     if (!Number.isFinite(codigo) || codigo <= 0) return erro("Escolha o item do catálogo antes de buscar os preços.");
     await registrarUso("coleta");
-    try { return resposta(await coletarCompras(codigo, tipo, ufOk, meses)); }
+    try { return resposta({ ...(await coletarCompras(codigo, tipo, ufOk, abr, meses, 100000)), abrangencia: abr }); }
     catch (e) { return erro("O Compras.gov.br não respondeu (" + String((e as Error).message ?? e).slice(0, 60) + "). Tente de novo em instantes.", 502); }
   }
 
@@ -290,7 +326,7 @@ Deno.serve(async (req) => {
     const descricao = String(corpo.descricao ?? "").slice(0, 300);
     if (chavesDe(descricao).length < 1) return erro("Descreva o item para buscar contratações similares.");
     await registrarUso("coleta");
-    try { return resposta({ registros: await coletarPncp(descricao, ufOk, meses, 45000) }); }
+    try { return resposta({ registros: await coletarPncp(descricao, ufOk, abr, Math.min(12, meses), 105000), abrangencia: abr }); }
     catch (e) { return erro("O PNCP não respondeu (" + String((e as Error).message ?? e).slice(0, 60) + ").", 502); }
   }
 

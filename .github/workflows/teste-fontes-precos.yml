@@ -55,8 +55,8 @@ jobs:
           chamar() { c=$(curl -s -m 150 -o /tmp/r -w '%{http_code}' -X POST "$U" -H "Content-Type: application/json" -H "x-avisos: $AVISOS_SECRET" -d "$2" || echo falhou); echo "::notice title=$1::HTTP $c · $(head -c 900 /tmp/r | tr -d '\n\r')"; }
           chamar "Catalogo" '{"acao":"catalogo","texto":"papel a4","tipo":"material"}'
           COD=$(python3 -c "import json;print(json.load(open('/tmp/r'))['itens'][0]['codigo'])" 2>/dev/null || echo 0)
-          chamar "Coleta Painel" "{\"acao\":\"coletar\",\"codigo\":$COD,\"tipo\":\"material\",\"uf\":\"RJ\",\"meses\":12}"
+          for A in regiao estado; do chamar "Coleta Painel $A" "{\"acao\":\"coletar\",\"codigo\":$COD,\"tipo\":\"material\",\"uf\":\"RJ\",\"meses\":12,\"abrangencia\":\"$A\"}"; python3 -c "import json;j=json.load(open('/tmp/r'));r=j.get('registros',[]);print('::notice title=Total Painel '+'$A'+'::',len(r),'registros')" || true; done
           python3 -c "import json;j=json.load(open('/tmp/r'));r=j.get('registros',[]);print('::notice title=Painel resumo::',len(r),'registros ·',j.get('abrangencia'),'·',[ (x['preco'],x['unidade'],x['descricao'][:40]) for x in r[:5]])" || true
           python3 -c "import json;r=json.load(open('/tmp/r')).get('registros',[])[:12];json.dump({'acao':'ia_similares','descricao':'Papel sulfite A4 75 g/m2, resma com 500 folhas','unidade':'resma','registros':[{'id':x['id'],'descricao':x['descricao'],'unidade':x['unidade'],'preco':x['preco']} for x in r]},open('/tmp/ia.json','w'))" || true
-          chamar "Coleta PNCP" '{"acao":"pncp","descricao":"papel sulfite A4 resma 500 folhas","uf":"RJ","meses":12}'
+          for A in estado regiao; do chamar "Coleta PNCP $A" "{\"acao\":\"pncp\",\"descricao\":\"papel sulfite A4 75 g/m2 resma 500 folhas\",\"uf\":\"RJ\",\"meses\":12,\"abrangencia\":\"$A\"}"; python3 -c "import json;j=json.load(open('/tmp/r'));r=j.get('registros',[]);print('::notice title=Total PNCP '+'$A'+'::',len(r),'registros', sorted(set(x['uf'] for x in r)))" || true; done
           if [ "$IA" = "sim" ] && [ -s /tmp/ia.json ]; then chamar "IA similares" "$(cat /tmp/ia.json)"; fi

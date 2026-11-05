@@ -1423,7 +1423,14 @@
   .pp-tab-acoes { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin: 16px 0 8px; font-size: 13px; color: #55666D; } .pp-tab-acoes div { display: flex; gap: 6px; flex-wrap: wrap; }
   .pp-ia-btn { border-color: #9ED9BE; color: #0A7A50; }
   .pp-tab { border: 1px solid #DDE5E4; border-radius: 12px; overflow: auto; max-height: 560px; }
-  .pp-pl { display: grid; grid-template-columns: 30px 40px minmax(220px, 1fr) 86px 64px 110px 170px 34px; gap: 8px; align-items: start; padding: 8px 10px; border-top: 1px solid #EEF2F1; font-size: 13px; min-width: 820px; }
+  .pp-fontes { margin-top: 12px; padding: 12px 14px; border: 1px solid #E3E9E8; border-radius: 12px; background: #FBFDFC; }
+  .pp-chk::before { content: "☐ "; } .pp-chk.ativo::before { content: "☑ "; }
+  .pp-sel { font: inherit; font-size: 13.5px; font-weight: 700; border: 1px solid #DCE4E2; border-radius: 12px; padding: 7px 10px; background: #fff; }
+  .pp-filtros { margin-top: 16px; padding: 12px 14px; border: 1px solid #CFE7DC; border-radius: 12px; background: #F4F9F7; }
+  .pp-filtros-g { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px 12px; }
+  .pp-simb { font-style: normal; font-size: 12px; font-weight: 800; border-radius: 99px; padding: 2px 7px; background: #EEF2F1; color: #55666D; } .pp-simb.alta { background: #E3F5EC; color: #0A7A50; } .pp-simb.media { background: #FFF4DC; color: #8A5A00; } .pp-simb.baixa { background: #FBE7E5; color: #9A2F29; }
+  .pp-mais { display: flex; justify-content: center; margin-top: 10px; }
+  .pp-pl { display: grid; grid-template-columns: 30px 40px minmax(240px, 1fr) 70px 86px 96px 110px 170px 34px; gap: 8px; align-items: start; padding: 8px 10px; border-top: 1px solid #EEF2F1; font-size: 13px; min-width: 900px; }
   .pp-pl-cab { position: sticky; top: 0; background: #F4F7F6; font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: #55666D; border-top: 0; z-index: 1; }
   .pp-pl.fora { background: #FAFBFB; color: #7A8A90; } .pp-pl.fora .pp-pr b { text-decoration: line-through; }
   .pp-inc { font-weight: 800; color: #0F6B7E; } .pp-org { display: grid; gap: 2px; min-width: 0; } .pp-org b { font-size: 13px; overflow-wrap: anywhere; } .pp-org small, .pp-pl small { display: block; font-size: 11.5px; color: #66757F; line-height: 1.35; overflow-wrap: anywhere; }
@@ -2974,10 +2981,16 @@
                   <sc-if value="{{ it.temCod }}" hint-placeholder-val="{{ false }}"><p class="pp-cod">✓ {{ it.cod }} – {{ it.codNome }} <button type="button" class="lve-link" sc-camel-on-click="{{ it.limparCod }}">trocar</button></p></sc-if>
                   <div class="pp-busca"><input type="text" value="{{ it.busca }}" sc-camel-on-input="{{ it.onBusca }}" placeholder="Palavras do item ou código CATMAT/CATSER"><button type="button" class="lve-voltar" sc-camel-on-click="{{ it.buscarCat }}">Buscar no catálogo</button></div>
                   <sc-if value="{{ it.temCands }}" hint-placeholder-val="{{ false }}"><ul class="pp-cands"><sc-for list="{{ it.cands }}" as="c" hint-placeholder-count="3"><li><button type="button" sc-camel-on-click="{{ c.escolher }}">{{ c.txt }}</button></li></sc-for></ul></sc-if>
-                  <div class="pp-coleta">
-                    <button type="button" class="lmo-btn" sc-camel-on-click="{{ it.coletarPainel }}">{{ it.txtPainel }}</button>
-                    <button type="button" class="lmo-btn pp-btn2" sc-camel-on-click="{{ it.coletarPncp }}">{{ it.txtPncp }}</button>
-                    <button type="button" class="lve-voltar" sc-camel-on-click="{{ it.manualAbrir }}">+ Preço manual (incisos III, IV ou V)</button>
+                  <div class="pp-fontes">
+                    <p class="pp-rot" style="margin-top: 4px">Fontes da busca automática (combine com os preços manuais dos incisos III, IV e V)</p>
+                    <div class="pp-ops pp-ops-p"><sc-for list="{{ it.fontesOp }}" as="o" hint-placeholder-count="2"><button type="button" class="{{ o.cls }}" sc-camel-on-click="{{ o.alternar }}">{{ o.nome }}</button></sc-for></div>
+                    <p class="pp-rot">Onde buscar</p>
+                    <div class="pp-ops pp-ops-p"><sc-for list="{{ it.abrOp }}" as="o" hint-placeholder-count="3"><button type="button" class="{{ o.cls }}" sc-camel-on-click="{{ o.alternar }}">{{ o.nome }}</button></sc-for>
+                      <select class="pp-sel" sc-camel-on-change="{{ it.onMeses }}"><sc-for list="{{ it.mesesOp }}" as="m" hint-placeholder-count="2"><option value="{{ m.id }}" selected="{{ m.sel }}">{{ m.nome }}</option></sc-for></select></div>
+                    <div class="pp-coleta">
+                      <button type="button" class="lmo-btn" sc-camel-on-click="{{ it.buscar }}">{{ it.txtBuscar }}</button>
+                      <button type="button" class="lve-voltar" sc-camel-on-click="{{ it.manualAbrir }}">+ Preço manual (incisos III, IV ou V)</button>
+                    </div>
                   </div>
                   <sc-if value="{{ it.manualAberto }}" hint-placeholder-val="{{ false }}">
                     <div class="pp-manual">
@@ -2995,22 +3008,35 @@
                     </div>
                   </sc-if>
                   <sc-if value="{{ it.temPrecos }}" hint-placeholder-val="{{ false }}">
-                    <div class="pp-tab-acoes"><span>Marque os preços que correspondem ao item. Os desmarcados ficam no relatório com o motivo.</span>
-                      <div><button type="button" class="ct-ev-btn" sc-camel-on-click="{{ it.todos }}">Marcar todos</button><button type="button" class="ct-ev-btn" sc-camel-on-click="{{ it.nenhum }}">Desmarcar todos</button><button type="button" class="ct-ev-btn pp-ia-btn" sc-camel-on-click="{{ it.filtrarIA }}">{{ it.txtIA }}</button></div></div>
+                    <div class="pp-filtros">
+                      <p class="pp-rot" style="margin: 0 0 8px">Critérios de semelhança (banco de preços)</p>
+                      <div class="pp-filtros-g">
+                        <label class="lmo-campo"><span>Semelhança da especificação</span><select sc-camel-on-change="{{ it.onFSim }}"><sc-for list="{{ it.fSim }}" as="o" hint-placeholder-count="5"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                        <label class="lmo-campo"><span>Quantidade</span><select sc-camel-on-change="{{ it.onFQtd }}"><sc-for list="{{ it.fQtd }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                        <label class="lmo-campo"><span>Unidade</span><select sc-camel-on-change="{{ it.onFUn }}"><sc-for list="{{ it.fUn }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                        <label class="lmo-campo"><span>Localidade</span><select sc-camel-on-change="{{ it.onFAbr }}"><sc-for list="{{ it.fAbr }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                        <label class="lmo-campo"><span>Período</span><select sc-camel-on-change="{{ it.onFMeses }}"><sc-for list="{{ it.fMeses }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                        <label class="lmo-campo"><span>Ordenar</span><select sc-camel-on-change="{{ it.onFOrd }}"><sc-for list="{{ it.fOrd }}" as="o" hint-placeholder-count="4"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                      </div>
+                      <div class="pp-tab-acoes" style="margin: 10px 0 0"><span>{{ it.contagem }}<br>{{ it.porAbr }}</span>
+                        <div><button type="button" class="ct-ev-btn pp-ia-btn" sc-camel-on-click="{{ it.aplicarFiltros }}">Selecionar os que atendem aos critérios</button><button type="button" class="ct-ev-btn" sc-camel-on-click="{{ it.todos }}">Marcar todos</button><button type="button" class="ct-ev-btn" sc-camel-on-click="{{ it.nenhum }}">Desmarcar todos</button><button type="button" class="ct-ev-btn pp-ia-btn" sc-camel-on-click="{{ it.filtrarIA }}">{{ it.txtIA }}</button></div></div>
+                    </div>
                     <div class="pp-tab">
-                      <div class="pp-pl pp-pl-cab"><span></span><span>Inc.</span><span>Origem e item</span><span>Data</span><span>Unid.</span><span>Preço</span><span>Situação</span><span></span></div>
+                      <div class="pp-pl pp-pl-cab"><span></span><span>Inc.</span><span>Contratante, contratada e item</span><span>Semelh.</span><span>Data</span><span>Quant. · unid.</span><span>Preço</span><span>Situação</span><span></span></div>
                       <sc-for list="{{ it.precos }}" as="p" hint-placeholder-count="3">
                         <div class="{{ p.cls }}">
                           <span><input type="checkbox" checked="{{ p.incl }}" sc-camel-on-change="{{ p.alternar }}" aria-label="Considerar este preço"></span>
                           <span class="pp-inc">{{ p.inciso }}</span>
-                          <span class="pp-org"><b>{{ p.origem }}</b><small>{{ p.desc }}</small><small>{{ p.forn }}</small><sc-if value="{{ p.temIa }}" hint-placeholder-val="{{ false }}"><small class="{{ p.iaCls }}">{{ p.ia }}</small></sc-if><sc-if value="{{ p.temAlerta }}" hint-placeholder-val="{{ false }}"><small class="pp-alerta">{{ p.alerta }}</small></sc-if><sc-if value="{{ p.temLink }}" hint-placeholder-val="{{ false }}"><a href="{{ p.link }}" target="_blank" rel="noopener">abrir no PNCP</a></sc-if></span>
-                          <span>{{ p.data }}</span><span>{{ p.un }}</span>
+                          <span class="pp-org"><b>{{ p.origem }}</b><small>{{ p.desc }}</small><small>Contratada: {{ p.contratada }}</small><small>{{ p.compra }}</small><sc-if value="{{ p.temObjeto }}" hint-placeholder-val="{{ false }}"><small>Objeto: {{ p.objeto }}</small></sc-if><sc-if value="{{ p.temIa }}" hint-placeholder-val="{{ false }}"><small class="{{ p.iaCls }}">{{ p.ia }}</small></sc-if><sc-if value="{{ p.temAlerta }}" hint-placeholder-val="{{ false }}"><small class="pp-alerta">{{ p.alerta }}</small></sc-if><sc-if value="{{ p.temLink }}" hint-placeholder-val="{{ false }}"><a href="{{ p.link }}" target="_blank" rel="noopener">abrir no PNCP</a></sc-if></span>
+                          <span><em class="{{ p.simCls }}">{{ p.simTxt }}</em><small>{{ p.abrTxt }}</small></span>
+                          <span>{{ p.data }}</span><span>{{ p.qtd }}<small>{{ p.un }}</small></span>
                           <span class="pp-pr"><b>{{ p.preco }}</b><small>{{ p.atual }}</small></span>
                           <span><em class="{{ p.sitCls }}">{{ p.sit }}</em><small>{{ p.motivo }}</small></span>
                           <span><button type="button" class="lmo-x" sc-camel-on-click="{{ p.remover }}" aria-label="Remover">×</button></span>
                         </div>
                       </sc-for>
                     </div>
+                    <sc-if value="{{ it.temMais }}" hint-placeholder-val="{{ false }}"><div class="pp-mais"><button type="button" class="lve-voltar" sc-camel-on-click="{{ it.mostrarMais }}">{{ it.mostrarTxt }}</button></div></sc-if>
                     <div class="pp-opcoes">
                       <label class="lmo-nota" style="display: flex; gap: 8px; align-items: center; margin: 0"><input type="checkbox" checked="{{ it.restrito }}" sc-camel-on-change="{{ it.onRestrito }}"> Mercado restrito, com poucos fornecedores (adota o menor preço)</label>
                       <label class="lmo-campo" style="min-width: 260px"><span>Método</span><select sc-camel-on-change="{{ it.onMetodo }}"><sc-for list="{{ it.metodos }}" as="m" hint-placeholder-count="4"><option value="{{ m.id }}" selected="{{ m.sel }}">{{ m.nome }}</option></sc-for></select></label>
@@ -6597,7 +6623,41 @@ const PP_PADRAO = { titulo: "", processo: "", orgao: "", agente: "", cargo: "", 
   norma: "", rilc: null, rilcNome: "", objeto: "bens", descricao: "", itens: [], moValor: "", moPostos: "1", moFonte: "",
   ob: null, obBdi: "", obTipo: "edificios", obDeson: "nao", obDataBase: "", obEncargos: "", obTabelas: "", obNome: "", justPrioritarios: "" };
 const PP_ITEM = () => ({ id: Math.random().toString(36).slice(2, 9), desc: "", un: "", qtd: "1", tipo: "material", cod: "", codNome: "", busca: "", cands: [],
-  restrito: false, metodo: "auto", precos: [], just: "", manual: null });
+  restrito: false, metodo: "auto", precos: [], just: "", manual: null,
+  fontes: { I: true, II: true }, abr: { estado: true, regiao: true, nacional: false }, meses: "12", f: PP_FILTRO_PADRAO(), mostrar: 100 });
+const PP_FILTRO_PADRAO = () => ({ sim: "50", qtd: "qualquer", un: "", abr: "todas", meses: "12", ord: "relev" });
+const PP_REGIOES = { N: ["AC", "AP", "AM", "PA", "RO", "RR", "TO"], NE: ["AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE"], CO: ["DF", "GO", "MT", "MS"], SE: ["ES", "MG", "RJ", "SP"], S: ["PR", "RS", "SC"] };
+const PP_REGIAO_NOME = { N: "Norte", NE: "Nordeste", CO: "Centro-Oeste", SE: "Sudeste", S: "Sul" };
+const ppRegiao = (uf) => Object.keys(PP_REGIOES).find((r) => PP_REGIOES[r].includes(uf)) || "";
+const ppSemAc = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+const PP_PARADAS = new Set("a o as os de da do das dos e em no na nos nas para por com sem ao aos um uma que se tipo cor uso material conforme especificacao minimo maximo aproximadamente".split(" "));
+// termos essenciais da especificação: palavras de 3+ letras e medidas (75, 500, a4)
+const ppTermos = (t) => [...new Set((ppSemAc(t).match(/[a-z]{3,}|\b\d+[.,]?\d*\b|\b[a-z]\d{1,2}\b/g) || []).filter((w) => !PP_PARADAS.has(w)))].slice(0, 14);
+// grau de semelhança da especificação do item coletado com a do item pesquisado (proporção dos termos essenciais presentes)
+function ppSemelhanca(termos, p) {
+  if (!termos.length) return null;
+  const s = ppSemAc([p.descricao, p.espec].join(" ")), pal = s.match(/[a-z0-9]+/g) || [];
+  const tem = (w) => /^\d/.test(w) ? pal.includes(w.replace(",", ".")) || pal.includes(w.split(/[.,]/)[0]) : pal.some((x) => x === w || (w.length >= 5 && x.startsWith(w.slice(0, w.length - 1))));
+  return termos.filter(tem).length / termos.length;
+}
+const ppAbrDe = (p, uf) => (!uf ? "nacional" : p.uf === uf ? "estado" : ppRegiao(p.uf) && ppRegiao(p.uf) === ppRegiao(uf) ? "regiao" : "nacional");
+const ppUnNorm = (u) => ppSemAc(u).replace(/[^a-z0-9]/g, "").replace(/^(unidade|und|unid)$/, "un");
+// critérios de seleção (banco de preços): semelhança, quantidade, unidade, abrangência e período
+function ppFiltrar(item, d, p, hojeIso) {
+  const f = { ...PP_FILTRO_PADRAO(), ...(item.f || {}) }, mot = [];
+  const termos = item._termos || ppTermos(item.desc);
+  const sim = p.fonte === "manual" ? null : ppSemelhanca(termos, p);
+  if (sim != null && sim < Number(f.sim) / 100) mot.push("semelhança da especificação de " + Math.round(sim * 100) + "% (mínimo " + f.sim + "%)");
+  const q = ppNum(item.qtd);
+  if (f.qtd !== "qualquer" && q && p.quantidade) { const r = p.quantidade / q; const [lo, hi] = f.qtd === "proxima" ? [0.5, 2] : [0.1, 10]; if (r < lo || r > hi) mot.push("quantidade de " + p.quantidade.toLocaleString("pt-BR") + " fora da faixa (" + (f.qtd === "proxima" ? "metade ao dobro" : "1/10 a 10 vezes") + " de " + q.toLocaleString("pt-BR") + ")"); }
+  if (f.un && p.fonte !== "manual" && ppUnNorm(p.unidade) !== f.un) mot.push("unidade " + (p.unidade || "não informada") + " diferente de " + f.un.toUpperCase());
+  const abr = ppAbrDe(p, d.uf);
+  if (f.abr === "estado" && abr !== "estado") mot.push("fora do estado (" + (p.uf || "—") + ")");
+  if (f.abr === "regiao" && abr === "nacional") mot.push("fora da região (" + (p.uf || "—") + ")");
+  const meses = Number(f.meses) || 12;
+  if (p.data && (Date.parse(hojeIso) - Date.parse(p.data)) / (30.44 * 864e5) > meses + 0.5) mot.push("data anterior a " + meses + " meses");
+  return { ok: !mot.length, sim, abr, motivos: mot };
+}
 
 const ppNum = (v) => { if (v == null || v === "") return null; if (typeof v === "number") return Number.isFinite(v) ? v : null;
   const t = String(v).replace(/R\$|\s/g, ""); const n = Number(/,\d{1,4}$/.test(t) || (t.includes(",") && !t.includes(".")) ? t.replace(/\./g, "").replace(",", ".") : t.replace(/,/g, ""));
@@ -6618,15 +6678,17 @@ function ppAtualiza(preco, dataIso, indices) {
 }
 
 // tratamento estatístico de um item (IN 65/2021, art. 6º): saneamento em torno da mediana, coeficiente de variação e método
-function ppEstat(item, indices, hojeIso) {
+function ppEstat(item, indices, hojeIso, d) {
+  const it2 = { ...item, _termos: ppTermos(item.desc) };
   const precos = (item.precos || []).map((p) => {
+    const flt = ppFiltrar(it2, d || {}, p, hojeIso);
     const at = p.inciso === "II" || p.inciso === "I" ? ppAtualiza(p.preco, p.data, indices) : { v: p.preco, fator: 1 };
     const idadeMeses = p.data ? (Date.parse(hojeIso) - Date.parse(p.data)) / (30.44 * 864e5) : null;
     let alerta = "";
     if ((p.inciso === "I" || p.inciso === "II") && idadeMeses != null && idadeMeses > 12.5) alerta = "Mais de 1 ano: fora do período do art. 23, § 1º, II.";
     if (p.inciso === "IV" && idadeMeses != null && idadeMeses > 6.2) alerta = "Cotação com mais de 6 meses (art. 23, § 1º, IV).";
     if (p.inciso === "III" && !p.acesso) alerta = "Falta a data e a hora de acesso (art. 23, § 1º, III).";
-    return { ...p, atual: at.v, fator: at.fator, alerta };
+    return { ...p, atual: at.v, fator: at.fator, alerta, sim: flt.sim, abr: flt.abr, filtroOk: flt.ok, filtroMot: flt.motivos };
   });
   const sel = precos.filter((p) => p.incl !== false && p.atual > 0);
   const med0 = ppMediana(sel.map((p) => p.atual));
@@ -6795,6 +6857,7 @@ function ppDocumento(d, res, hoje) {
     let sec = 3;
     blocos.push({ t: "texto", titulo: sec++ + ". Metodologia", paragrafos: [
       "Parâmetros utilizados (IN SEGES/ME 65/2021, art. 5º): " + [...new Set(res.itens.flatMap((x) => x.st.incisos))].map((i) => "inciso " + i + " – " + PP_INCISOS[i]).join("; ") + ".",
+      "Seleção dos preços (conceito de banco de preços): os registros do Painel de Preços e das contratações similares foram buscados no mesmo estado, na mesma região e, quando escolhido, em todo o país, e selecionados pela semelhança da especificação (termos essenciais do item), pela quantidade, pela unidade, pela localidade e pelo período, observadas a economia de escala e as peculiaridades do local de execução (art. 23, caput, da Lei 14.133/2021). O agente responsável pode incluir ou excluir registros, e os não selecionados ficam listados com o motivo.",
       "Os preços do Painel de Preços e das contratações similares foram atualizados pelo IPCA, do mês da contratação até o último índice publicado (art. 23, § 1º, II, da Lei 14.133/2021).",
       "Saneamento da amostra (IN 65/2021, art. 6º, § 3º): foram desconsiderados como inexequíveis os preços mais de 25% abaixo da mediana dos preços selecionados e como excessivamente elevados os preços mais de 25% acima dela.",
       "Escolha do método (IN 65/2021, art. 6º): com coeficiente de variação de até 25%, a amostra é considerada homogênea e adota-se a média; acima de 25%, adota-se a mediana, menos sensível a valores extremos (Manual de Licitações e Contratos do TCU, item 4.3.9.3; Enunciado 33 da Jornada de Direito Administrativo do CJF, de 2023). Em mercado restrito, adota-se o menor preço (Acórdãos 1.639/2016 e 1.850/2020-TCU-Plenário).",
@@ -6803,9 +6866,31 @@ function ppDocumento(d, res, hoje) {
     res.itens.forEach((x, i) => {
       const it = x.item, st = x.st;
       blocos.push({ t: "secao", titulo: sec + "." + (i + 1) + ". Item " + (i + 1) + ": " + (it.desc || "sem descrição"), sub: [it.codNome ? (it.tipo === "servico" ? "CATSER " : "CATMAT/PDM ") + it.cod + " – " + it.codNome : "", "Unidade: " + (it.un || "—"), "Quantidade: " + (it.qtd || "1")].filter(Boolean).join(" · ") });
-      blocos.push({ t: "tabela", titulo: "Série de preços coletados", cab: ["#", "Inciso", "Origem", "UF", "Data", "Unid.", "Preço", "Atualizado", "Situação"], larg: [5, 7, 42, 6, 11, 8, 14, 14, 30], alin: "lllllrrrl", paisagem: true,
-        linhas: st.precos.map((p, j) => ({ c: [String(j + 1), p.inciso, [p.orgao, p.fornecedor && "fornecedor " + p.fornecedor, p.descricao && "item: " + String(p.descricao).slice(0, 90), p.acesso && "acesso em " + p.acesso, p.cnpj && "CNPJ " + p.cnpj, p.link || p.consulta || (p.fornecedor ? "" : p.fonteNome)].filter(Boolean).join(" · ").slice(0, 300),
-          p.uf || "", ppData(p.data), p.unidade || "", ppBRL(p.preco), ppBRL(p.atual), p.sit === "ok" ? "Válido" : p.motivo], fraco: p.sit !== "ok" })) });
+      const f = { ...PP_FILTRO_PADRAO(), ...(it.f || {}) };
+      const usados = st.precos.filter((p) => p.incl !== false), naoSel = st.precos.filter((p) => p.incl === false);
+      const nomeAbr = { estado: "estado", regiao: "região", nacional: "outras regiões" };
+      blocos.push({ t: "pares", titulo: "Fontes e critérios de seleção (banco de preços)", pares: [
+        ["Fontes consultadas", [...new Set(st.precos.map((p) => "inciso " + p.inciso))].sort().join(", ") || "—"],
+        ["Abrangência da busca", ["estado", "regiao", "nacional"].filter((k) => (it.abr || {})[k]).map((k) => ({ estado: "estado (" + (d.uf || "—") + ")", regiao: "região " + (PP_REGIAO_NOME[ppRegiao(d.uf)] || ""), nacional: "todo o país" }[k])).join(", ") || "—"],
+        ["Registros coletados", st.coletados + " (" + ["estado", "regiao", "nacional"].map((k) => nomeAbr[k] + ": " + st.precos.filter((p) => p.abr === k).length).join("; ") + ")"],
+        ["Semelhança mínima da especificação", f.sim === "0" ? "sem mínimo" : f.sim + "% dos termos essenciais (" + ppTermos(it.desc).join(", ") + ")"],
+        ["Quantidade", { qualquer: "qualquer quantidade", ordem: "de 1/10 a 10 vezes a quantidade pesquisada", proxima: "da metade ao dobro da quantidade pesquisada" }[f.qtd]],
+        ["Unidade", f.un ? f.un.toUpperCase() : "todas"], ["Localidade", { todas: "estado, região e país", regiao: "estado e região", estado: "só o estado" }[f.abr]], ["Período", "últimos " + f.meses + " meses"],
+        ["Selecionados pelo agente", String(usados.length)], ["Não selecionados", String(naoSel.length)]] });
+      blocos.push({ t: "tabela", titulo: "Contratações e preços selecionados – dados completos", sub: "Contratante, contratada, objeto, especificação, quantidade, unidade, valores, modalidade e critério de julgamento de cada preço considerado. Situação após o saneamento de ±25% da mediana.",
+        cab: ["#", "Fonte", "Contratante", "Contratada", "Compra", "Objeto da contratação", "Item e especificação", "Quant.", "Unid.", "Valor unit.", "Atualizado", "Valor total", "Situação"],
+        larg: [5, 10, 20, 17, 18, 20, 28, 7, 6, 10, 10, 11, 15], alin: "lllllllrlrrrl", paisagem: true,
+        linhas: usados.map((p, j) => ({ fraco: p.sit !== "ok", c: [String(j + 1),
+          p.inciso + " · " + (p.fonte === "painel" ? "Painel" : p.fonte === "pncp" ? "PNCP" : p.inciso === "IV" ? "cotação" : p.inciso === "V" ? "nota fiscal" : "mídia/sítio") + (p.sim != null ? "\nsemelh. " + Math.round(p.sim * 100) + "%" : ""),
+          [p.orgao, p.unidadeCompradora && p.unidadeCompradora !== p.orgao ? p.unidadeCompradora : "", p.uasg && "UASG " + p.uasg, p.orgaoDoc, [p.municipio, p.uf].filter(Boolean).join("/"), [p.esfera, p.poder].filter(Boolean).join(" · ")].filter(Boolean).join(" · ") || (p.fonteNome || "—"),
+          [p.fornecedor || (p.fonte === "manual" ? p.fonteNome : ""), p.cnpj && "CNPJ " + p.cnpj, p.porte && "porte: " + p.porte, p.marca && "marca: " + p.marca].filter(Boolean).join(" · ") || "—",
+          [p.numeroCompra, p.modalidade, p.criterio && "critério: " + p.criterio, p.srp && "SRP: " + p.srp, p.amparo, p.data && "resultado em " + ppData(p.data), p.link || p.consulta || "", p.acesso && "acesso em " + p.acesso].filter(Boolean).join(" · "),
+          String(p.objeto || "").slice(0, 260), [p.descricao, p.espec && p.espec !== p.descricao ? p.espec : "", p.catalogo].filter(Boolean).join(" · ").slice(0, 420),
+          p.quantidade != null ? p.quantidade.toLocaleString("pt-BR") : "", p.unidade || "", ppBRL(p.preco), ppBRL(p.atual), p.valorTotal != null ? ppBRL(p.valorTotal) : (p.quantidade != null ? ppBRL(p.preco * p.quantidade) : ""), p.sit === "ok" ? "Válido" : p.motivo] })) });
+      if (naoSel.length) blocos.push({ t: "tabela", titulo: "Registros coletados e não selecionados (" + naoSel.length + ")", sub: "Mantidos para transparência da pesquisa, com o motivo de não terem sido considerados" + (naoSel.length > 150 ? "; listados os 150 de maior semelhança." : "."),
+        cab: ["Fonte", "Contratante", "Item", "Quant.", "Unid.", "Data", "Preço", "Motivo"], larg: [7, 26, 40, 8, 7, 10, 11, 40], alin: "lllrllrl", paisagem: true,
+        linhas: [...naoSel].sort((a, b) => (b.sim || 0) - (a.sim || 0)).slice(0, 150).map((p) => ({ fraco: true, c: ["Inc. " + p.inciso, [p.orgao, [p.municipio, p.uf].filter(Boolean).join("/")].filter(Boolean).join(" · "), String(p.descricao || "").slice(0, 160),
+          p.quantidade != null ? p.quantidade.toLocaleString("pt-BR") : "", p.unidade || "", ppData(p.data), ppBRL(p.preco), p.motivo] })) });
       blocos.push({ t: "pares", titulo: "Tratamento estatístico", pares: [["Preços coletados / selecionados", st.coletados + " / " + st.selecionados], ["Mediana dos selecionados", ppBRL(st.med0)],
         ["Faixa de aceitação (±25% da mediana)", ppBRL(st.lo) + " a " + ppBRL(st.hi)], ["Desconsiderados no saneamento", String(st.excluidos)], ["Preços válidos", String(st.n)],
         ["Média · desvio-padrão", ppBRL(st.media) + " · " + ppBRL(st.dp)], ["Coeficiente de variação", ppPct(st.cv)], ["Mediana · menor preço", ppBRL(st.mediana) + " · " + ppBRL(st.menor)],
@@ -7591,7 +7676,8 @@ class Component extends DCLogic {
   ppMudar(fn) {
     this.setState((x) => {
       const d = fn({ ...x.pp.d, itens: [...(x.pp.d.itens || [])] });
-      try { localStorage.setItem("lv-pp-rascunho", JSON.stringify(d)); } catch (e) {}
+      try { localStorage.setItem("lv-pp-rascunho", JSON.stringify(d)); }
+      catch (e) { try { localStorage.setItem("lv-pp-rascunho", JSON.stringify({ ...d, itens: d.itens.map((i) => ({ ...i, precos: i.precos.filter((p) => p.incl !== false) })) })); } catch (e2) {} }
       return { pp: { ...x.pp, d, erro: "", ok: "" } };
     });
   }
@@ -7617,21 +7703,42 @@ class Component extends DCLogic {
     } catch (e) { this.ppMsg(e.message); }
   }
   ppEscolherCat(id, c) { this.ppItem(id, (i) => { i.cod = String(c.codigo); i.codNome = c.nome; i.cands = []; if (!i.desc) i.desc = c.nome; return i; }); }
-  async ppColetar(id, fonte) {
-    const s = this.state, d = s.pp.d, it = d.itens.find((x) => x.id === id); if (!it) return;
-    if (fonte === "painel" && !it.cod) { this.ppMsg("Escolha o item no catálogo do Compras.gov.br antes de buscar no Painel de Preços."); return; }
-    if (fonte === "pncp" && String(it.desc || "").trim().length < 4) { this.ppMsg("Descreva o item para buscar contratações similares no PNCP."); return; }
-    this.setState((x) => ({ pp: { ...x.pp, ocupado: fonte + "-" + id, erro: "", ok: "" } }));
-    try {
-      const r = fonte === "painel" ? await this.ppChamar({ acao: "coletar", codigo: Number(it.cod), tipo: it.tipo, uf: d.uf, meses: 12 })
-        : await this.ppChamar({ acao: "pncp", descricao: it.desc, uf: d.uf, meses: 12 });
-      const em = new Date().toLocaleString("pt-BR");
-      const novos = (r.registros || []).map((p) => ({ ...p, consulta: r.consulta || "", coletadoEm: em, incl: true }));
-      let n = 0;
-      this.ppItem(id, (i) => { const ja = new Set(i.precos.map((p) => p.id)); novos.forEach((p) => { if (!ja.has(p.id)) { i.precos.push(p); n++; } }); return i; });
-      this.ppMsg(n ? "" : "Nenhum preço novo encontrado nesta fonte.", n ? n + " preço(s) incluído(s) de " + (fonte === "painel" ? "Painel de Preços (" + (r.abrangencia === "estado" ? d.uf : "todo o país") + ")" : "contratações similares do PNCP") + ". Confira se os itens são semelhantes." : "");
-    } catch (e) { this.ppMsg(e.message); }
+  // busca nas fontes escolhidas (incisos I e II) e nas abrangências escolhidas (estado, região, país), como num banco de preços
+  async ppBuscar(id) {
+    const d = this.state.pp.d, it = d.itens.find((x) => x.id === id); if (!it) return;
+    const fontes = Object.keys(it.fontes || {}).filter((k) => it.fontes[k]), abrs = ["estado", "regiao", "nacional"].filter((k) => (it.abr || {})[k]);
+    if (!fontes.length) { this.ppMsg("Escolha ao menos uma fonte: Painel de Preços (inciso I) ou contratações similares (inciso II)."); return; }
+    if (!abrs.length) { this.ppMsg("Escolha onde buscar: no estado, na região ou no país."); return; }
+    if (fontes.includes("I") && !it.cod) { this.ppMsg("Para o Painel de Preços, escolha antes o item no catálogo do Compras.gov.br."); return; }
+    if (fontes.includes("II") && ppTermos(it.desc).length < 2) { this.ppMsg("Descreva melhor o item (especificação essencial) para buscar contratações similares."); return; }
+    if (!d.uf && abrs.some((a) => a !== "nacional")) { this.ppMsg("Informe a UF na etapa 1 para buscar no estado e na região."); return; }
+    const nomeAbr = { estado: d.uf, regiao: "região " + (PP_REGIAO_NOME[ppRegiao(d.uf)] || ""), nacional: "todo o país" };
+    let total = 0; const falhas = [], resumo = [];
+    for (const fonte of fontes) for (const abr of abrs) {
+      this.setState((x) => ({ pp: { ...x.pp, ocupado: "busca-" + id, progresso: "Buscando " + (fonte === "I" ? "no Painel de Preços" : "contratações similares no PNCP") + " · " + nomeAbr[abr] + "…", erro: "", ok: "" } }));
+      try {
+        const r = fonte === "I" ? await this.ppChamar({ acao: "coletar", codigo: Number(it.cod), tipo: it.tipo, uf: d.uf, abrangencia: abr, meses: Number(it.meses) || 12 })
+          : await this.ppChamar({ acao: "pncp", descricao: it.desc, uf: d.uf, abrangencia: abr, meses: Math.min(12, Number(it.meses) || 12) });
+        const em = new Date().toLocaleString("pt-BR"), cons = (r.consultas || [])[0] || "";
+        let n = 0;
+        this.ppItem(id, (i) => { const ja = new Set(i.precos.map((p) => p.id)); (r.registros || []).forEach((p) => { if (!ja.has(p.id) && i.precos.length < 3000) { i.precos.push({ ...p, consulta: cons, coletadoEm: em, incl: true }); ja.add(p.id); n++; } }); return i; });
+        total += n; resumo.push((fonte === "I" ? "Painel" : "PNCP") + " " + nomeAbr[abr] + ": " + n);
+      } catch (e) { falhas.push((fonte === "I" ? "Painel" : "PNCP") + " " + nomeAbr[abr] + " (" + e.message + ")"); }
+    }
+    this.ppAplicarFiltros(id, true);
+    this.setState((x) => ({ pp: { ...x.pp, ocupado: "", progresso: "", erro: falhas.length ? "Não responderam: " + falhas.join("; ") + "." : "",
+      ok: total + " registro(s) novo(s) coletado(s) · " + resumo.join(" · ") + ". Os que atendem aos critérios de semelhança foram selecionados; confira a lista." } }));
   }
+  // seleciona os preços que atendem aos critérios do item e desmarca os demais, registrando o motivo
+  ppAplicarFiltros(id, silencioso) {
+    const s = this.state, d = s.pp.d, hoje = new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10);
+    this.ppItem(id, (i) => { const it2 = { ...i, _termos: ppTermos(i.desc) };
+      i.precos = i.precos.map((p) => { if (p.fonte === "manual") return p; const f = ppFiltrar(it2, d, p, hoje);
+        return { ...p, incl: f.ok, motivoExcl: f.ok ? "" : "Fora dos critérios de semelhança adotados: " + f.motivos.join("; ") + "." }; }); i.mostrar = 100; return i; });
+    if (!silencioso) this.ppMsg("", "Seleção refeita pelos critérios escolhidos.");
+  }
+  ppFiltroSet = (id, k) => (e) => { const v = e && e.target ? e.target.value : e; this.ppItem(id, (i) => { i.f = { ...PP_FILTRO_PADRAO(), ...(i.f || {}), [k]: v }; i.mostrar = 100; return i; }); };
+  ppAlternar(id, grupo, k) { this.ppItem(id, (i) => { i[grupo] = { ...(i[grupo] || {}), [k]: !(i[grupo] || {})[k] }; return i; }); }
   ppManualAbrir(id) { this.ppItem(id, (i) => { i.manual = i.manual ? null : { inciso: "IV", fonteNome: "", cnpj: "", data: "", preco: "", link: "", acesso: "", just: "" }; return i; }); }
   ppManualCampo = (id, k) => (e) => { const v = e && e.target ? e.target.value : e; this.ppItem(id, (i) => { i.manual = { ...(i.manual || {}), [k]: v }; return i; }); };
   ppManualSalvar(id) {
@@ -7651,7 +7758,9 @@ class Component extends DCLogic {
   ppTodos(id, v) { this.ppItem(id, (i) => { i.precos = i.precos.map((p) => ({ ...p, incl: v })); return i; }); }
   async ppFiltrarIA(id) {
     const it = this.state.pp.d.itens.find((x) => x.id === id); if (!it) return;
-    const regs = it.precos.filter((p) => p.fonte !== "manual").slice(0, 80).map((p) => ({ id: p.id, descricao: p.descricao, unidade: p.unidade, preco: p.preco }));
+    const tm = ppTermos(it.desc);
+    const regs = it.precos.filter((p) => p.fonte !== "manual").map((p) => ({ p, sc: (p.incl !== false ? 1 : 0) + (ppSemelhanca(tm, p) || 0) })).sort((a, b) => b.sc - a.sc).slice(0, 80)
+      .map(({ p }) => ({ id: p.id, descricao: [p.descricao, p.espec].filter(Boolean).join(" · ").slice(0, 300), unidade: p.unidade, preco: p.preco }));
     if (!regs.length) { this.ppMsg("Colete os preços no Painel de Preços ou no PNCP antes de filtrar com IA."); return; }
     this.setState((x) => ({ pp: { ...x.pp, ocupado: "ia-" + id, erro: "", ok: "" } }));
     try {
@@ -7719,7 +7828,7 @@ class Component extends DCLogic {
   }
   ppResultado() {
     const d = this.state.pp.d, idx = this.state.indices, hoje = new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10);
-    const itens = d.objeto === "obras" ? [] : (d.objeto === "mao_obra" ? d.itens.slice(0, 1) : d.itens).map((item) => ({ item, st: ppEstat(item, idx, hoje) }));
+    const itens = d.objeto === "obras" ? [] : (d.objeto === "mao_obra" ? d.itens.slice(0, 1) : d.itens).map((item) => ({ item, st: ppEstat(item, idx, hoje, d) }));
     let total = itens.reduce((a, x) => a + (x.st.total || 0), 0), ratif = null;
     if (d.objeto === "mao_obra" && itens[0]) {
       const v = ppNum(d.moValor), ref = itens[0].st.valor, postos = ppNum(d.moPostos) || 1;
@@ -7749,7 +7858,10 @@ class Component extends DCLogic {
     const titulo = String(d.titulo || d.descricao || "").trim();
     if (!titulo) { this.ppMsg("Dê um título à pesquisa (etapa 1) antes de salvar."); return null; }
     const valor = d.objeto === "obras" ? (res.obras ? res.obras.total : null) : res.total;
-    const linha = { titulo: titulo.slice(0, 200), regime: d.regime, objeto_tipo: d.objeto, valor_total: valor ? Math.round(valor * 100) / 100 : null, dados: d };
+    // na conta ficam os preços selecionados e os 300 não selecionados de maior semelhança (limite de tamanho do registro)
+    const dSalvo = { ...d, itens: (d.itens || []).map((i) => { const tm = ppTermos(i.desc), sel = i.precos.filter((p) => p.incl !== false), ns = i.precos.filter((p) => p.incl === false).sort((a, b) => (ppSemelhanca(tm, b) || 0) - (ppSemelhanca(tm, a) || 0));
+      return { ...i, cands: [], precos: sel.concat(ns.slice(0, 300)), naoSalvos: Math.max(0, ns.length - 300) }; }) };
+    const linha = { titulo: titulo.slice(0, 200), regime: d.regime, objeto_tipo: d.objeto, valor_total: valor ? Math.round(valor * 100) / 100 : null, dados: dSalvo };
     if (!this.sb) {
       let l = []; try { l = JSON.parse(localStorage.getItem("lv-pp-salvas") || "[]") || []; } catch (e) { l = []; }
       const id = this.state.pp.id || "demo-" + Date.now().toString(36);
@@ -7813,9 +7925,22 @@ class Component extends DCLogic {
       buscarCat: () => this.ppCatalogo(it.id), buscandoCat: ocup === "cat-" + it.id, temCands: (it.cands || []).length > 0,
       cands: (it.cands || []).map((c) => ({ txt: (c.tipo === "servico" ? "CATSER " : "PDM ") + c.codigo + " – " + c.nome, escolher: () => this.ppEscolherCat(it.id, c) })),
       limparCod: () => this.ppItem(it.id, (i) => { i.cod = ""; i.codNome = ""; return i; }),
-      coletarPainel: () => this.ppColetar(it.id, "painel"), coletarPncp: () => this.ppColetar(it.id, "pncp"),
-      txtPainel: ocup === "painel-" + it.id ? "Buscando no Painel de Preços…" : "Buscar no Painel de Preços (inciso I)",
-      txtPncp: ocup === "pncp-" + it.id ? "Buscando no PNCP… (até 1 minuto)" : "Buscar contratações similares no PNCP (inciso II)",
+      buscar: () => this.ppBuscar(it.id), buscando: ocup === "busca-" + it.id, txtBuscar: ocup === "busca-" + it.id ? (pp.progresso || "Buscando…") : "Buscar preços nas fontes escolhidas",
+      fontesOp: [["I", "Inciso I · Painel de Preços (Compras.gov.br)"], ["II", "Inciso II · Contratações similares (PNCP)"]].map(([k, nome]) => ({ nome, cls: "pp-op pp-op-p pp-chk" + ((it.fontes || {})[k] ? " ativo" : ""), alternar: () => this.ppAlternar(it.id, "fontes", k) })),
+      abrOp: [["estado", "Mesmo estado" + (d.uf ? " (" + d.uf + ")" : "")], ["regiao", "Mesma região" + (d.uf && ppRegiao(d.uf) ? " (" + PP_REGIAO_NOME[ppRegiao(d.uf)] + ")" : "")], ["nacional", "Todo o país"]].map(([k, nome]) => ({ nome, cls: "pp-op pp-op-p pp-chk" + ((it.abr || {})[k] ? " ativo" : ""), alternar: () => this.ppAlternar(it.id, "abr", k) })),
+      mesesOp: [["6", "Últimos 6 meses"], ["12", "Últimos 12 meses"]].map(([id, nome]) => ({ id, nome, sel: String(it.meses || "12") === id })), onMeses: this.ppItemCampo(it.id, "meses"),
+      fSim: [["0", "Qualquer"], ["30", "30% ou mais"], ["50", "50% ou mais"], ["70", "70% ou mais"], ["90", "90% ou mais"]].map(([id, nome]) => ({ id, nome, sel: String((it.f || {}).sim ?? "50") === id })),
+      fQtd: [["qualquer", "Qualquer quantidade"], ["ordem", "De 1/10 a 10 vezes a minha"], ["proxima", "Da metade ao dobro da minha"]].map(([id, nome]) => ({ id, nome, sel: ((it.f || {}).qtd || "qualquer") === id })),
+      fUn: [{ id: "", nome: "Todas as unidades", sel: !(it.f || {}).un }].concat(Object.entries(st.precos.reduce((a, p) => { const u = ppUnNorm(p.unidade); if (u) a[u] = (a[u] || 0) + 1; return a; }, {})).sort((a, b) => b[1] - a[1]).slice(0, 20).map(([u, n]) => ({ id: u, nome: u.toUpperCase() + " (" + n + ")", sel: (it.f || {}).un === u }))),
+      fAbr: [["todas", "Estado, região e país"], ["regiao", "Estado e região"], ["estado", "Só o estado"]].map(([id, nome]) => ({ id, nome, sel: ((it.f || {}).abr || "todas") === id })),
+      fMeses: [["12", "12 meses"], ["6", "6 meses"], ["3", "3 meses"]].map(([id, nome]) => ({ id, nome, sel: String((it.f || {}).meses || "12") === id })),
+      fOrd: [["relev", "Mais semelhantes primeiro"], ["preco", "Menor preço primeiro"], ["data", "Mais recentes primeiro"], ["sel", "Selecionados primeiro"]].map(([id, nome]) => ({ id, nome, sel: ((it.f || {}).ord || "relev") === id })),
+      onFSim: this.ppFiltroSet(it.id, "sim"), onFQtd: this.ppFiltroSet(it.id, "qtd"), onFUn: this.ppFiltroSet(it.id, "un"), onFAbr: this.ppFiltroSet(it.id, "abr"), onFMeses: this.ppFiltroSet(it.id, "meses"), onFOrd: this.ppFiltroSet(it.id, "ord"),
+      aplicarFiltros: () => this.ppAplicarFiltros(it.id),
+      contagem: st.coletados + " coletados · " + st.precos.filter((p) => p.filtroOk).length + " atendem aos critérios · " + st.selecionados + " selecionados · " + st.n + " válidos após o saneamento",
+      porAbr: ["estado", "regiao", "nacional"].map((a) => ({ estado: "Estado", regiao: "Região", nacional: "Outras regiões" }[a] + ": " + st.precos.filter((p) => p.abr === a).length)).join(" · "),
+      temMais: st.precos.length > (it.mostrar || 100), mostrarMais: () => this.ppItem(it.id, (i) => { i.mostrar = (i.mostrar || 100) + 150; return i; }),
+      mostrarTxt: "Mostrar mais (" + Math.max(0, st.precos.length - (it.mostrar || 100)) + " restantes)",
       filtrarIA: () => this.ppFiltrarIA(it.id), txtIA: ocup === "ia-" + it.id ? "Avaliando com IA…" : "Filtrar itens semelhantes com IA",
       temPrecos: st.coletados > 0, semPrecos: st.coletados === 0,
       todos: () => this.ppTodos(it.id, true), nenhum: () => this.ppTodos(it.id, false),
@@ -7825,7 +7950,15 @@ class Component extends DCLogic {
       mFonteRot: it.manual && it.manual.inciso === "IV" ? "Fornecedor consultado" : it.manual && it.manual.inciso === "V" ? "Emitente da nota fiscal" : "Fonte (publicação ou sítio)",
       mEhIII: !!(it.manual && it.manual.inciso === "III"), mEhIV: !!(it.manual && it.manual.inciso === "IV"),
       onMFonte: this.ppManualCampo(it.id, "fonteNome"), onMCnpj: this.ppManualCampo(it.id, "cnpj"), onMData: this.ppManualCampo(it.id, "data"), onMPreco: this.ppManualCampo(it.id, "preco"), onMLink: this.ppManualCampo(it.id, "link"), onMAcesso: this.ppManualCampo(it.id, "acesso"), onMJust: this.ppManualCampo(it.id, "just"),
-      precos: st.precos.map((p) => ({ id: p.id, incl: p.incl !== false, alternar: (e) => this.ppPrecoIncl(it.id, p.id, !!e.target.checked), remover: () => this.ppPrecoDel(it.id, p.id),
+      precos: [...st.precos].sort((a, b) => { const o = (it.f || {}).ord || "relev";
+          if (o === "preco") return (a.atual || 0) - (b.atual || 0); if (o === "data") return String(b.data).localeCompare(String(a.data));
+          if (o === "sel") return (b.incl !== false) - (a.incl !== false) || (b.sim || 0) - (a.sim || 0);
+          return (b.sim == null ? 2 : b.sim) - (a.sim == null ? 2 : a.sim) || ({ estado: 0, regiao: 1, nacional: 2 }[a.abr] - { estado: 0, regiao: 1, nacional: 2 }[b.abr]); })
+        .slice(0, it.mostrar || 100).map((p) => ({ id: p.id, incl: p.incl !== false,
+        simTxt: p.sim == null ? "—" : Math.round(p.sim * 100) + "%", simCls: "pp-simb" + (p.sim == null ? "" : p.sim >= 0.7 ? " alta" : p.sim >= 0.5 ? " media" : " baixa"),
+        abrTxt: { estado: "Estado", regiao: "Região", nacional: "Brasil" }[p.abr] || "", qtd: p.quantidade != null ? p.quantidade.toLocaleString("pt-BR") : "",
+        objeto: String(p.objeto || "").slice(0, 160), temObjeto: !!p.objeto, contratada: [p.fornecedor, p.cnpj && "CNPJ " + p.cnpj].filter(Boolean).join(" · "),
+        compra: [p.modalidade, p.criterio, p.srp === "Sim" ? "registro de preços" : "", p.numeroCompra].filter(Boolean).join(" · "), alternar: (e) => this.ppPrecoIncl(it.id, p.id, !!e.target.checked), remover: () => this.ppPrecoDel(it.id, p.id),
         inciso: p.inciso, origem: [p.orgao, p.municipio && p.uf ? p.municipio + "/" + p.uf : p.uf].filter(Boolean).join(" · ") || p.fonteNome || "", forn: p.fornecedor || "", desc: String(p.descricao || "").slice(0, 160),
         data: ppData(p.data), un: p.unidade, preco: ppBRL(p.preco), atual: p.fator && Math.abs(p.fator - 1) > 0.0005 ? ppBRL(p.atual) : "", link: p.link || "", temLink: !!p.link,
         sit: sitRot[p.sit] || "", sitCls: "pp-sit pp-sit-" + p.sit, motivo: p.motivo || "", alerta: p.alerta || "", temAlerta: !!p.alerta,
