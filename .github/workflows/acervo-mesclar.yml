@@ -1,0 +1,32 @@
+name: Acervo — juntar documentos novos ao site
+# As coletas do Acervo gravam cada documento novo também em acervo-novos/<id>.json.
+# Esta automação junta esses arquivos ao acervo.json e ao acervo-completo.json e limpa a pasta.
+on:
+  push:
+    branches: [main]
+    paths: ["acervo-novos/**"]
+  workflow_dispatch:
+concurrency:
+  group: acervo-mesclar
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  mesclar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Juntar ao acervo
+        run: node scripts/mesclar-acervo.mjs
+      - name: Publicar
+        run: |
+          git config user.name "Licitacon — acervo"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A acervo.json acervo-completo.json acervo-novos acervo-recusados 2>/dev/null || true
+          git diff --cached --quiet && { echo "Sem mudanças."; exit 0; }
+          git commit -q -m "Atualiza acervo: $(cat /tmp/acervo-resumo.txt 2>/dev/null || echo 'documentos novos')"
+          for i in 1 2 3; do git pull -q --rebase origin main && git push -q origin main && exit 0; sleep 5; done
+          exit 1
