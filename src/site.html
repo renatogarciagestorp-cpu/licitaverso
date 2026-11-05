@@ -7359,6 +7359,7 @@ function ppDocumento(d, res, hoje, opc) {
         const v = ppNum(d.moValor), r = res.ratif;
         blocos.push({ t: "pares", titulo: "Ratificação do valor da planilha (IN 5/2017)", pares: [["Valor mensal por posto na planilha", ppBRL(v)], ["Referência de mercado (" + st.nomeMet + ")", ppBRL(st.valor)],
           ["Faixa de compatibilidade (±25%)", r ? ppBRL(r.lo) + " a " + ppBRL(r.hi) : "—"], ["Diferença", r ? ppPct(r.dif) : "—"], ["Conclusão", r ? r.conclusao : "Informe o valor da planilha e colete os preços."]] });
+        blocos.push({ t: "legenda", texto: "Valores-limite da SEGES para limpeza e vigilância: não são mais publicados desde a IN SEGES/ME 49/2020, que alterou a IN 5/2017, e os divulgados até então servem apenas como histórico, sem fundamentar contratações, repactuações ou prorrogações. Por isso, a referência é a planilha de custos da IN 5/2017, ratificada pela pesquisa de mercado." });
       }
     });
     sec++;

@@ -36,6 +36,11 @@ jobs:
           t "Compras servico" "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/3_consultarServico?pagina=1&tamanhoPagina=10&codigoItemCatalogo=5380"
           t "PNCP busca" "https://pncp.gov.br/api/search/?q=papel%20a4&tipos_documento=edital&pagina=1&tam_pagina=5&status=todos"
           t "PNCP consulta" "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20261001&dataFinal=20261002&codigoModalidadeContratacao=6&pagina=1&tamanhoPagina=10"
+          t "Mercado Livre API busca" "https://api.mercadolibre.com/sites/MLB/search?q=papel%20sulfite%20a4&limit=3"
+          t "Mercado Livre API produtos" "https://api.mercadolibre.com/products/search?status=active&site_id=MLB&q=papel%20sulfite%20a4"
+          t "Mercado Livre site" "https://lista.mercadolivre.com.br/papel-sulfite-a4"
+          t "Buscape site" "https://www.buscape.com.br/search?q=papel%20sulfite%20a4"
+          t "Zoom site" "https://www.zoom.com.br/search?q=papel%20sulfite%20a4"
           t "SINAPI pagina" "https://www.caixa.gov.br/poder-publico/modernizacao-gestao/sinapi/Paginas/default.aspx"
           t "SICRO pagina" "https://www.gov.br/dnit/pt-br/assuntos/planejamento-e-pesquisa/custos-e-pagamentos/custos-e-pagamentos-dnit/sistemas-de-custos/sicro"
       - uses: actions/checkout@v4
