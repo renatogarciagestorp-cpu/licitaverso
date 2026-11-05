@@ -511,6 +511,13 @@
 .lvh-art-secoes li.ativo span { background: #0A1F2A; }
 .lvh-art-esc { position: absolute; left: 0; bottom: 0; height: 2px; width: 40%; background: #0FA36B; animation: lvhEsc 2.4s ease-in-out infinite; }
 @keyframes lvhEsc { 0% { transform: translateX(-100%); } 100% { transform: translateX(260%); } }
+.lvh-gc-c { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 10px; margin-top: 10px; padding: 10px 12px 14px 16px; border-radius: 10px; background: #F6F8F7; overflow: hidden; }
+.lvh-gc-c::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--c); }
+.lvh-gc-c::after { content: ""; position: absolute; left: 16px; right: 12px; bottom: 6px; height: 3px; border-radius: 3px; background: #E2E9E7; }
+.lvh-gc-c i { position: absolute; left: 16px; bottom: 6px; height: 3px; border-radius: 3px; width: calc((100% - 28px) * var(--p) / 100%); max-width: calc(100% - 28px); background: var(--c); z-index: 1; }
+.lvh-gc-c small { display: block; font-size: 10.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--c); } .lvh-gc-c b { font-size: 13.5px; color: #0B1F2A; } .lvh-gc-c > span { font-size: 12px; color: #6A7B82; }
+.lvh-gc-c.v { --c: #0FA36B; } .lvh-gc-c.a { --c: #D3940F; } .lvh-gc-c.x { --c: #C24A43; }
+.lvh-gc-ag { display: grid; gap: 6px; margin-top: 12px; padding: 10px 12px; border-radius: 12px; border: 1px dashed #9ED9BE; font-size: 12.5px; color: #3D5058; } .lvh-gc-ag b { color: #0A7A50; margin-right: 6px; }
 .lvh-art-preco { display: flex; justify-content: space-between; gap: 10px; margin-top: 12px; padding: 12px; border-radius: 12px; border: 1px dashed #9ED9BE; }
 .lvh-art-preco small, .lvh-art-res small { display: block; font-size: 11px; color: #6A7B82; font-weight: 600; }
 .lvh-art-preco b, .lvh-art-res b { font-size: 14.5px; color: #0B1F2A; }
@@ -1869,7 +1876,7 @@
         <div class="lvh-top-in">
           <span class="lvh-eyebrow">Licitações, contratos de estatais e parcerias · Leis 14.133, 13.303 e 13.019</span>
           <h1 class="lvh-top-h1">Tudo sobre licitações e contratos. <em>Em um só lugar.</em></h1>
-          <p class="lvh-top-lead">Agentes de IA que analisam e elaboram documentos, calculadora de reajuste e planilhas de mão de obra, jurisprudência de todo o país, fórum, consultoria e cursos – para quem conduz, disputa, assessora ou controla contratações.</p>
+          <p class="lvh-top-lead">Agentes de IA que analisam e elaboram documentos, calculadora de reajuste e planilhas de mão de obra, gestão dos contratos com os prazos e avisos, jurisprudência de todo o país, fórum, consultoria e cursos – para quem conduz, disputa, assessora ou controla contratações.</p>
           <div class="lvh-ctas">
             <button class="{{ ctaClasse }}" sc-camel-on-click="{{ topCta }}">{{ topCtaTxt }}</button>
             <button class="lvh-btn-sec lvh-btn-sec-claro" sc-camel-on-click="{{ topSec }}">{{ topSecTxt }}</button>
@@ -2000,6 +2007,31 @@
               </div>
               <div class="lvh-art-tags"><span>Lucro Presumido</span><span>Reforma: 2027</span><span>Reajuste IPCA +4,87%</span><span class="alerta">1 falha encontrada</span></div>
               <div class="lvh-doc-pe"><span>Exemplo ilustrativo</span><span class="lvh-pdf">Excel · PDF</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="lvh-ban" id="h-gestao">
+        <div class="lvh-ban-in lvh-ban-claro lvh-ban-inv">
+          <div class="lvh-ban-txt">
+            <span class="lvh-ban-eye">▦ Gestão contratual</span>
+            <h2 class="lvh-ban-h">Cada contrato com a sua <em>linha do tempo</em> e nenhum prazo perdido.</h2>
+            <p class="lvh-ban-lead">Cadastre o contrato uma vez e registre reajustes, repactuações, reequilíbrios, aditivos e prorrogações. O valor vigente, a próxima anualidade, o limite de acréscimos do art. 125 e a hora de iniciar a prorrogação são calculados para você.</p>
+            <ul class="lvh-ban-lista">
+              <li>Situação de cada contrato por cor</li><li>Agenda da carteira em 12 meses</li><li>Avisos de prazo por e-mail</li><li>PDF do contrato e relatório</li>
+            </ul>
+            <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goGestaoInicio }}">Conhecer a Gestão contratual</button></div>
+            <p class="lvh-ban-micro">Em todos os planos pagos e no teste de 7 dias · nos planos para equipes, contratos compartilhados para consulta · reajuste e reequilíbrio da Calculadora registrados com um clique.</p>
+          </div>
+          <div class="lvh-art" aria-hidden="true">
+            <div class="lvh-art-doc lvh-gc">
+              <div class="lvh-art-top"><span class="lvh-dot"></span><b>Meus contratos</b><span class="lvh-art-sel">3 contratos</span></div>
+              <div class="lvh-gc-c v"><div><small>Vigente</small><b>Contrato 025/2025 · Limpeza</b></div><span>até 12/12/2027</span><i style="--p: 56%"></i></div>
+              <div class="lvh-gc-c a"><div><small>Vencendo</small><b>Contrato 031/2024 · Vigilância</b></div><span>faltam 2 meses</span><i style="--p: 93%"></i></div>
+              <div class="lvh-gc-c x"><div><small>Vencido</small><b>Contrato 007/2023 · Impressão</b></div><span>encerrado</span><i style="--p: 100%"></i></div>
+              <div class="lvh-gc-ag"><span><b>01/05</b> Reajuste (anualidade)</span><span><b>20/09</b> Iniciar a prorrogação</span></div>
+              <div class="lvh-doc-pe"><span>Exemplo ilustrativo</span><span class="lvh-pdf">PDF · Excel</span></div>
             </div>
           </div>
         </div>
@@ -4191,7 +4223,7 @@
         <section class="lvp-equipes" aria-labelledby="lvp-eq-t">
           <div class="lvp-equipes-txt">
             <h2 id="lvp-eq-t" class="lvp-h2" style="margin: 0">Para empresas e órgãos: preço por acesso</h2>
-            <p>Contrate de 3 a 25 acessos, um por pessoa, com desconto por quantidade. Um gestor da sua equipe inclui e troca as pessoas. Órgãos públicos recebem proposta para empenho.</p>
+            <p>Contrate de 3 a 25 acessos, um por pessoa, com desconto por quantidade. Um gestor da sua equipe inclui e troca as pessoas, e os contratos da Gestão contratual podem ser compartilhados com a equipe, para consulta. Órgãos públicos recebem proposta para empenho.</p>
             <button class="lvp-cta lvp-cta-verde" sc-camel-on-click="{{ verEquipes }}">Ver preços para equipes</button>
           </div>
           <div class="lvp-equipes-tab" role="table" aria-label="Preço do Pro por acesso">
@@ -10105,7 +10137,7 @@ class Component extends DCLogic {
       const { error } = await this.sb.rpc("iniciar_teste");
       if (error) { this.setState({ pagando: false, pagamentoErro: error.message || "Não foi possível iniciar o teste." }); return; }
       await this.carregarDados();
-      this.setState({ pagando: false, pagamentoFeito: true, pagamentoMsg: "✓ Teste de 7 dias ativado. Aproveite para perguntar e responder no fórum e usar as planilhas de mão de obra." });
+      this.setState({ pagando: false, pagamentoFeito: true, pagamentoMsg: "✓ Teste de 7 dias ativado. Aproveite para perguntar e responder no fórum, usar as planilhas de mão de obra e cadastrar seus contratos na Gestão contratual." });
       return;
     }
 
@@ -10441,7 +10473,7 @@ class Component extends DCLogic {
         ? {
             nome: PLANO_NOME[vig.plano],
             detalhe: vig.plano === "teste"
-              ? "Teste gratuito de 7 dias: perguntar e responder no fórum e usar as planilhas de mão de obra da IN 05/2017. Depois do teste você continua no plano Gratuito (Biblioteca Jurídica, calculadora de reajuste e leitura do fórum). Nada é cobrado ao final."
+              ? "Teste gratuito de 7 dias: perguntar e responder no fórum, usar as planilhas de mão de obra da IN 05/2017 e o reequilíbrio e cadastrar contratos na Gestão contratual. Depois do teste você continua no plano Gratuito (Biblioteca Jurídica, calculadora de reajuste e leitura do fórum). Nada é cobrado ao final."
               : "Ciclo de " + (vig.ciclo === "anual" ? "12 meses" : "1 mês") + " contratado em " + dataBR(vig.inicio) + (vig.metodo ? " · " + vig.metodo : "") + (vig.parcelas > 1 ? " em " + vig.parcelas + "x" : "") + ". Sem renovação automática: avisamos antes do fim do período.",
             preco: vig.plano === "teste" ? "Grátis" : brl(Number(vig.valor || 0)),
             rotulo: "acesso até", proxima: dataBR(vig.fim)
@@ -11000,8 +11032,8 @@ class Component extends DCLogic {
       homeTopo: [
         ["✦", "Agente de IA", "O Parecerista", "Parecer técnico sobre edital, ETP, TR e planilhas, com a lei e a jurisprudência.", "h-parecerista"],
         ["✎", "Agente de IA", "O Elaborador", "ETP, TR e Projeto Básico em Word e PDF, com pesquisa de preços no PNCP.", "h-elaborador"],
-        ["%", "Calculadora", "Reajuste por índice", "IPCA, IGP-M, INCC e outros, com memória mês a mês e nota técnica.", "h-calculadora"],
-        ["▦", "Calculadora", "Planilhas IN 05/2017", "Custos de mão de obra, repactuação e análise da proposta da licitante.", "h-calculadora"],
+        ["%", "Calculadora", "Reajuste e planilhas", "Reajuste por índice, planilhas da IN 05/2017, repactuação e reequilíbrio.", "h-calculadora"],
+        ["▦", "Gestão contratual", "Seus contratos", "Linha do tempo, prazos de reajuste e prorrogação e avisos por e-mail.", "h-gestao"],
         ["⌕", "Grátis", "Biblioteca Jurídica", "TCU, Tribunais de Contas, PGEs e TJs de todo o país, com link oficial.", "h-biblioteca"],
         ["◍", "Comunidade", "Fórum por tema", "Dúvidas respondidas pelo especialista, setor público e privado.", "h-comunidade"],
         ["◈", "Especialista", "Consultoria", "Por escrito, em vídeo ou ao vivo, com desconto de assinante.", "h-comunidade"],
@@ -11023,7 +11055,7 @@ class Component extends DCLogic {
         { icon: "#", titulo: "Classificação por tema, não por data", desc: "Reajuste vai para reajuste, adesão a ata vai para adesão a ata: jurisprudência e fórum organizados pelo vocabulário de licitações." },
         { icon: "⎘", titulo: "Fonte oficial em cada item", desc: "Toda decisão traz o link para o inteiro teor no portal de origem, para você conferir antes de citar." },
         { icon: "✦", titulo: "IA que cita a lei e a decisão", desc: "O agente confere o texto legal e usa a jurisprudência da Biblioteca em cada apontamento. O parecer é opinativo: a decisão é sempre sua." },
-        { icon: "→", titulo: "Do planejamento à execução", desc: "Parecer sobre o edital, minuta do ETP e do TR, planilha de custos, análise da proposta, reajuste e repactuação: o ciclo inteiro do contrato no mesmo lugar." },
+        { icon: "→", titulo: "Do planejamento à execução", desc: "Parecer sobre o edital, minuta do ETP e do TR, planilha de custos, análise da proposta, reajuste, repactuação e a gestão dos prazos do contrato: o ciclo inteiro no mesmo lugar." },
         { icon: "▤", titulo: "Documentos prontos para o processo", desc: "Pareceres, minutas, notas técnicas, memórias de cálculo e planilhas em Word, Excel e PDF, com a fundamentação em cada item." },
         { icon: "⇄", titulo: "Os dois lados do balcão", desc: "Agentes de contratação, pregoeiros e controle interno ao lado de fornecedores e consultores." }
       ],
@@ -11055,7 +11087,7 @@ class Component extends DCLogic {
         this.cortesiaAnalise()
           ? { icon: "✦", selo: "1 por CPF", t: "Primeira análise grátis", d: "Envie até 3 documentos da contratação ao Parecerista e receba o parecer técnico em PDF e Word, sem pagar.", cta: "Fazer minha análise grátis", go: this.nav("agente") }
           : { icon: "%", selo: "Grátis com conta", t: "Calculadora de reajuste", d: "Reajuste por índice com conferência da anualidade, memória de cálculo mês a mês e nota técnica em PDF. Com a conta grátis você também lê o fórum.", cta: "Conhecer a Calculadora", go: this.nav("calculadora") },
-        { icon: "◍", selo: "Sem cartão", t: "Teste de 7 dias", d: "Pergunte e responda no fórum e use as planilhas de mão de obra da IN 05/2017 antes de escolher um plano.", cta: "Começar o teste", go: this.nav("planos") }
+        { icon: "◍", selo: "Sem cartão", t: "Teste de 7 dias", d: "Pergunte e responda no fórum, use as planilhas de mão de obra da IN 05/2017 e cadastre seus contratos na Gestão contratual antes de escolher um plano.", cta: "Começar o teste", go: this.nav("planos") }
       ],
       fundTextoCurto: s.oferta && s.oferta.sou_fundador ? "Seu desconto está garantido enquanto a assinatura continuar ativa." : "Para os primeiros " + ((s.oferta && s.oferta.limite) || 100) + " assinantes, travado enquanto a assinatura continuar ativa. Vale no Básico, no Premium e no Pro.",
       fundTicketTitulo: s.oferta && s.oferta.sou_fundador ? "Você é fundador do Licitacon" : "Assine agora e trave 30% de desconto",
@@ -11525,9 +11557,9 @@ class Component extends DCLogic {
       })) : this.comPlanos([
         { nome: "Gratuito", base: 0, publico: "Para pesquisar, calcular e acompanhar a comunidade sem pagar nada.", preco: "R$ 0", unidade: "para sempre", nota: "", detalhePreco: "Basta criar a conta, sem cartão. O teste de 7 dias também não pede cartão e não cobra nada ao final.", destaque: false,
           cta: !s.usuario ? "Criar conta grátis" : s.plano ? "Você já tem acesso" : "Começar o teste de 7 dias", btnBg: "#F1F6F5", btnColor: "#0A1F2A",
-          itens: ["Biblioteca Jurídica completa: jurisprudência de todo o país, com anotações, marcadores e dossiês salvos na sua conta", "Calculadora de reajuste por índice, com a nota técnica em PDF", "Leitura do fórum da comunidade", "Teste de 7 dias, sem cartão: perguntar e responder no fórum e usar as planilhas de mão de obra da IN 05/2017"] },
+          itens: ["Biblioteca Jurídica completa: jurisprudência de todo o país, com anotações, marcadores e dossiês salvos na sua conta", "Calculadora de reajuste por índice, com a nota técnica em PDF", "Leitura do fórum da comunidade", "Teste de 7 dias, sem cartão: perguntar e responder no fórum, usar as planilhas de mão de obra da IN 05/2017 e o reequilíbrio e cadastrar contratos na Gestão contratual"] },
         { nome: "Básico", base: 119.9, publico: "Profissionais individuais iniciantes.", preco: precoPlano(119.9), unidade: unidadePlano, nota: notaPlano(119.9), detalhePreco: detalhePlano(119.9), destaque: destaque === "Básico", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Fórum da comunidade: leitura e participação", "Calculadora: reajuste por índice com nota técnica, planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta) e reequilíbrio econômico-financeiro", "Gestão contratual: contratos com linha do tempo e avisos de prazo por e-mail", "O Parecerista e O Elaborador com 10% de desconto", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto"] },
+          itens: ["Fórum da comunidade: leitura e participação", "Calculadora: reajuste por índice com nota técnica, planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta) e reequilíbrio econômico-financeiro", "Gestão contratual: contratos com linha do tempo, painel do valor e do limite de acréscimos (art. 125), situação por cor, agenda de prazos em 12 meses, avisos por e-mail, PDF de cada contrato, relatório da carteira e agenda em Excel", "O Parecerista e O Elaborador com 10% de desconto", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto"] },
         { nome: "Premium", base: 199.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(199.9), unidade: unidadePlano, nota: notaPlano(199.9), detalhePreco: detalhePlano(199.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
           itens: ["Tudo do Básico", "O Parecerista e O Elaborador com 15% de desconto", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Prioridade na agenda do especialista"] },
         { nome: "Pro", base: 479.9, publico: "Profissionais avançados e empresas.", preco: precoPlano(479.9), unidade: unidadePlano, nota: notaPlano(479.9), detalhePreco: detalhePlano(479.9), destaque: destaque === "Pro", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
@@ -11650,8 +11682,9 @@ class Component extends DCLogic {
         ["Como funciona o plano para equipes?", "Você contrata a quantidade de acessos e quem contrata vira o gestor. Ele inclui as pessoas pelo e-mail e troca quando alguém sai da equipe. Cada acesso é de uma pessoa, e o desconto cresce com a quantidade: 5% de 3 a 5 acessos, 10% de 6 a 10 e 15% de 11 a 25, além dos 20% do anual."],
         ["O que faz O Parecerista e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. Com O Elaborador, você também cria a minuta do ETP, do Termo de Referência ou do Projeto Básico a partir de um questionário, já conferida. O Pro inclui 2 por semana, somando análises e documentos criados; equipes Pro têm 6 por acesso por mês, somados. Nos demais planos cada análise ou documento é pago com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
         ["O que a Calculadora faz e quem pode usar?", "A Calculadora tem cinco ferramentas: reajuste por índice (IPCA, IGP-M, INCC e outros, com a nota técnica em PDF), planilha de custos da mão de obra exclusiva no formato da IN 05/2017, repactuação (com custos não renováveis, quadro comparativo, retroativo e nota técnica), análise da planilha da proposta da licitante (exequibilidade, falhas e diligência) e reequilíbrio econômico-financeiro (tributário da reforma, LC 214/2025, e por fato superveniente, art. 124, II, d, da Lei 14.133/2021). O reajuste por índice é grátis para quem tem conta; as ferramentas de mão de obra e o reequilíbrio estão em todos os planos pagos e no teste de 7 dias. O agente de IA que lê a convenção coletiva e as planilhas é do plano Pro."],
+        ["O que a Gestão contratual faz e quem pode usar?", "Você cadastra cada contrato (vigência, valor, índice, data do orçamento estimado e regime legal) e registra reajustes, repactuações, reequilíbrios, aditivos e prorrogações. O site calcula o valor vigente, a próxima anualidade, o limite de acréscimos do art. 125 e a data recomendada para iniciar a prorrogação, mostra a situação de cada contrato por cor (vigente, vencendo ou vencido), monta a agenda de prazos dos próximos 12 meses e avisa por e-mail. Também gera o PDF de cada contrato, o relatório completo da carteira e a agenda em Excel. Está em todos os planos pagos e no teste de 7 dias; nos planos para equipes, cada contrato pode ser compartilhado com a equipe, para consulta."],
         ["Quantas análises de planilha pelo agente de IA eu tenho?", "No Pro, por semana: 1 elaboração de planilha de custos, 1 análise de repactuação e 1 análise de proposta, renovando na segunda-feira. A franquia é por assinatura: na equipe, é compartilhada entre os membros. Análise que falhar por problema técnico não consome a franquia, e a planilha pode sempre ser preenchida manualmente, sem limite."],
-        ["O que o plano Gratuito inclui?", "Com a conta grátis, sem cartão e sem prazo, você usa a Biblioteca Jurídica completa (com anotações, marcadores e dossiês), a calculadora de reajuste por índice com a nota técnica em PDF e lê todas as perguntas e respostas do fórum. Para perguntar e responder no fórum e usar as planilhas de mão de obra, faça o teste de 7 dias ou assine um plano."],
+        ["O que o plano Gratuito inclui?", "Com a conta grátis, sem cartão e sem prazo, você usa a Biblioteca Jurídica completa (com anotações, marcadores e dossiês), a calculadora de reajuste por índice com a nota técnica em PDF e lê todas as perguntas e respostas do fórum. Para perguntar e responder no fórum, usar as planilhas de mão de obra e o reequilíbrio e cadastrar contratos na Gestão contratual, faça o teste de 7 dias ou assine um plano."],
         ["A primeira análise do Parecerista é grátis mesmo?", "Sim. Cada CPF tem direito a uma análise grátis, com até 3 documentos, assinante ou não: basta informar o CPF no perfil e confirmar o e-mail. Se a análise não puder ser concluída por falha técnica, a cortesia continua disponível. Quando o limite diário de análises grátis é atingido, a sua entra na fila e é processada no dia seguinte, com prioridade."],
         ["Posso mudar de plano depois?", "Sim. Basta contratar o novo plano; se for o mesmo plano, o tempo que ainda falta é somado ao novo período."]
       ].map(([q, a], i) => ({ q, a, aberta: s.faqAberta === i, sinal: s.faqAberta === i ? "−" : "+", alternar: () => this.setState((x) => ({ faqAberta: x.faqAberta === i ? -1 : i })) })),
