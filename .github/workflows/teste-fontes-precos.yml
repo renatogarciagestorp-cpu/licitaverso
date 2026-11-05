@@ -1,0 +1,29 @@
+name: Teste — acesso às fontes de preços
+# Confere se as bases públicas de preços respondem a partir do GitHub e do servidor do site (função do Supabase).
+# Sem custo: só consultas a APIs públicas.
+on:
+  workflow_dispatch:
+permissions: { contents: read }
+jobs:
+  testar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: A partir do GitHub
+        run: |
+          H='User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/130'
+          t() { c=$(curl -s -m 40 -o /tmp/r -w '%{http_code}' -H "$H" -L "$2"); echo "::notice title=$1::HTTP $c · $(head -c 160 /tmp/r | tr -d '\n\r' | tr -c '[:print:]' ' ')"; }
+          t "Compras material" "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=10&codigoItemCatalogo=461871"
+          t "Compras servico" "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/3_consultarServico?pagina=1&tamanhoPagina=10&codigoItemCatalogo=5380"
+          t "PNCP busca" "https://pncp.gov.br/api/search/?q=papel%20a4&tipos_documento=edital&pagina=1&tam_pagina=5&status=todos"
+          t "PNCP consulta" "https://pncp.gov.br/api/consulta/v1/contratacoes/publicacao?dataInicial=20261001&dataFinal=20261002&codigoModalidadeContratacao=6&pagina=1&tamanhoPagina=10"
+          t "SINAPI pagina" "https://www.caixa.gov.br/poder-publico/modernizacao-gestao/sinapi/Paginas/default.aspx"
+          t "SICRO pagina" "https://www.gov.br/dnit/pt-br/assuntos/planejamento-e-pesquisa/custos-e-pagamentos/custos-e-pagamentos-dnit/sistemas-de-custos/sicro"
+      - name: A partir do servidor do site (função do Supabase)
+        env: { AVISOS_SECRET: "${{ secrets.AVISOS_SECRET }}" }
+        run: |
+          for corpo in '{"objeto":"papel A4 sulfite","uf":"RJ","so_precos":true}' '{"acao":"teste_fontes"}'; do
+            for f in pesquisa-mercado pesquisa-precos; do
+              c=$(curl -s -m 90 -o /tmp/r -w '%{http_code}' -X POST "https://umnhhztdqersjfrzqcea.supabase.co/functions/v1/$f" -H "Content-Type: application/json" -H "x-avisos: $AVISOS_SECRET" -d "$corpo")
+              echo "::notice title=Servidor $f::HTTP $c · $(head -c 700 /tmp/r | tr -d '\n\r')"
+            done
+          done
