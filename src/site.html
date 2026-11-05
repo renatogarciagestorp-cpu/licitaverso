@@ -1447,6 +1447,11 @@
   .pp-ap-alta { border-left-color: #C24A43; } .pp-ap-media { border-left-color: #E0A21B; } .pp-ap-baixa { border-left-color: #0F6B7E; }
   .pp-abc { display: grid; grid-template-columns: 60px 90px 80px minmax(200px, 1fr) 120px 70px; gap: 8px; padding: 7px 10px; border-top: 1px solid #EEF2F1; font-size: 13px; min-width: 640px; }
   .pp-docs { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .pp-plan-wrap { overflow-x: auto; border: 1px solid #DDE5E4; border-radius: 12px; }
+  .pp-plan { display: grid; font-size: 12.5px; }
+  .pp-pc { border-bottom: 1px solid #EEF2F1; border-right: 1px solid #EEF2F1; padding: 6px 8px; text-align: right; } .pp-pc span { display: block; } .pp-pc span + span { font-size: 10.5px; color: #66757F; }
+  .pp-pc.cab { background: #0A1F2A; color: #fff; font-size: 11.5px; font-weight: 700; } .pp-pc.cab span + span { font-weight: 500; color: #B9CCD2; } .pp-pc.cab.res { background: #0F6B7E; }
+  .pp-pc.fixa { text-align: left; } .pp-pc.res { background: #F1FAF5; font-weight: 800; } .pp-pc.desc { background: #FFF4DC; } .pp-pc.tot { background: #E3F2EA; font-weight: 800; }
   .pp-entrada { font: inherit; text-align: left; width: 100%; display: grid; grid-template-columns: 54px minmax(0, 1fr) auto; gap: 16px; align-items: center; margin-top: 18px; background: linear-gradient(135deg, #E6F6EE, #fff); border: 1px solid #9ED9BE; border-radius: 18px; padding: 18px 20px; cursor: pointer; }
   .pp-entrada:hover { box-shadow: 0 10px 26px rgba(11,31,42,.08); } .pp-entrada-sig { width: 54px; height: 54px; border-radius: 14px; background: #0A1F2A; color: #3FD49A; display: grid; place-items: center; font-weight: 800; font-size: 18px; }
   .pp-entrada-txt { display: grid; gap: 4px; } .pp-entrada-txt b { font-size: 17px; color: #0B1F2A; } .pp-entrada-txt span { font-size: 14px; color: #3D5058; line-height: 1.5; } .pp-entrada-txt small { font-size: 12px; color: #0A7A50; font-weight: 700; }
@@ -3090,6 +3095,11 @@
               <h2 class="pp-h">Resultado</h2>
               <div class="lmo-kpis" style="margin-top: 0"><sc-for list="{{ ppResumo }}" as="k" hint-placeholder-count="3"><div class="pp-kpi"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
               <sc-for list="{{ ppPendencias }}" as="p" hint-placeholder-count="1"><p class="ct-av">{{ p.t }}</p></sc-for>
+              <sc-if value="{{ ppTemPlan }}" hint-placeholder-val="{{ false }}">
+                <h3 class="pp-h3">Planilha de orçamento estimado</h3>
+                <div class="pp-plan-wrap"><div class="pp-plan" style="grid-template-columns: {{ ppPlanCols }}; min-width: {{ ppPlanMin }}"><sc-for list="{{ ppPlanCel }}" as="c" hint-placeholder-count="8"><div class="{{ c.cls }}"><sc-for list="{{ c.l }}" as="z" hint-placeholder-count="1"><span>{{ z.x }}</span></sc-for></div></sc-for></div></div>
+                <p class="lmo-nota">{{ ppPlanNota }} <button type="button" class="lve-link" sc-camel-on-click="{{ ppPlanilhaPdf }}">Baixar só a planilha (PDF paisagem)</button></p>
+              </sc-if>
               <h3 class="pp-h3">Texto para o documento de planejamento</h3>
               <pre class="lmo-minuta">{{ ppTextoTR }}</pre>
               <div class="pp-docs">
@@ -6826,7 +6836,40 @@ function ppTextoTR(d, res) {
 }
 
 // documento (PDF, Excel e Word) no formato dos geradores do site
-function ppDocumento(d, res, hoje) {
+// planilha de orçamento estimado única: itens nas linhas, preços selecionados lado a lado nas colunas e o valor estimado
+function ppPlanilha(res) {
+  const itens = res.itens.map((x) => ({ x, sel: x.st.precos.filter((p) => p.incl !== false) }));
+  const n = Math.max(0, ...itens.map((i) => i.sel.length)), um = itens.length === 1;
+  const fonteDe = (p) => (p.inciso === "IV" ? "cotação" : p.inciso === "V" ? "nota fiscal" : p.inciso === "III" ? "mídia/sítio" : p.fonte === "pncp" ? "PNCP" : "Painel");
+  const origem = (p) => (p.fonte === "manual" ? (p.fornecedor || p.fonteNome || "Fonte manual") : [p.municipio, p.uf].filter(Boolean).join("/") || p.orgao || "—");
+  const dCurta = (iso) => (iso && /^\d{4}-\d{2}-\d{2}/.test(iso) ? iso.slice(8, 10) + "/" + iso.slice(5, 7) + "/" + iso.slice(2, 4) : "");
+  const rotulo = (p) => origem(p) + "\n" + fonteDe(p) + (p.data ? " " + dCurta(p.data) : "");
+  const cab = ["Item", "Descrição", "Unid.", "Quant."];
+  for (let k = 0; k < n; k++) cab.push(um ? "P" + (k + 1) + "\n" + rotulo(itens[0].sel[k]) : "Preço " + (k + 1));
+  cab.push("Valor unitário estimado", "Valor total estimado");
+  const linhas = itens.map(({ x, sel }, i) => {
+    const c = [String(i + 1), String(x.item.desc || "").slice(0, 200), x.item.un || "", String(x.item.qtd || 1)], alerta = [];
+    for (let k = 0; k < n; k++) { const p = sel[k];
+      if (!p) { c.push("—"); continue; }
+      c.push(ppBRL(p.atual) + (um ? "" : "\n" + rotulo(p)) + (p.sit === "ok" ? "" : "\n(desconsiderado)"));
+      if (p.sit !== "ok") alerta.push(4 + k); }
+    c.push(ppBRL(x.st.valor) + "\n(" + x.st.nomeMet + ")", ppBRL(x.st.total));
+    return { c, alerta };
+  }).concat([{ c: ["", "Valor total estimado da contratação"].concat(Array(n + 3).fill("")).concat([ppBRL(res.total)]), total: true }]);
+  const larg = [6, n > 8 ? 24 : 30, 9, 8].concat(Array(n).fill(14)).concat([16, 17]);
+  const fonte = n > 11 ? 5.4 : n > 8 ? 6 : n > 5 ? 6.6 : null;
+  return { cab, linhas, larg, alin: "llrr" + "r".repeat(n) + "rr", n, um, fonte, cabFonte: fonte ? fonte - 0.2 : null };
+}
+function ppDocPlanilha(d, res, hoje) {
+  const pl = ppPlanilha(res);
+  return { id: "planilha", titulo: "Planilha de orçamento estimado", sub: (d.titulo || d.descricao || "Pesquisa de preços") + (d.orgao ? " · " + d.orgao : ""), selo: "Lei 14.133/2021, art. 23 · IN SEGES/ME 65/2021",
+    arquivo: "Planilha de orcamento estimado - " + String(d.titulo || d.descricao || "Licitacon").replace(/[\\/:*?"<>|]+/g, "-").slice(0, 50), paisagem: true,
+    blocos: [{ t: "tabela", titulo: "Planilha de orçamento estimado", sub: pl.um ? "Preços selecionados lado a lado, com a origem no topo de cada coluna; valores atualizados pelo IPCA. Em amarelo, os desconsiderados no saneamento de ±25% da mediana." : "Preços selecionados lado a lado; abaixo de cada valor, a origem, a fonte e a data. Valores atualizados pelo IPCA. Em amarelo, os desconsiderados no saneamento de ±25% da mediana.",
+      cab: pl.cab, larg: pl.larg, alin: pl.alin, linhas: pl.linhas, fonte: pl.fonte, cabFonte: pl.cabFonte },
+      { t: "legenda", texto: "Método: com coeficiente de variação de até 25%, média; acima, mediana; em mercado restrito, menor preço (IN 65/2021, art. 6º; Manual de Licitações e Contratos do TCU, item 4.3.9.3)." }],
+    notas: ["Parte integrante do relatório da pesquisa de preços, onde estão os dados completos de cada contratação e a fundamentação."] };
+}
+function ppDocumento(d, res, hoje, opc) {
   const blocos = [], notas = [];
   const regimeNome = { "14133": "Lei 14.133/2021", "13303": "Lei 13.303/2016 (estatais)", "13019": "Lei 13.019/2014 (parcerias)" }[d.regime];
   const objNome = { bens: "Bens e serviços comuns", mao_obra: "Serviço com dedicação exclusiva de mão de obra", obras: "Obras e serviços de engenharia" }[d.objeto];
@@ -6906,25 +6949,10 @@ function ppDocumento(d, res, hoje) {
       }
     });
     sec++;
-    // planilha de orçamento estimado: preços selecionados lado a lado, com a origem no topo de cada coluna, e o valor estimado pela metodologia
-    const POR = 5, secPlan = sec++;
-    blocos.push({ t: "secao", titulo: secPlan + ". Planilha de orçamento estimado", sub: "Preços selecionados lado a lado, com a origem no topo de cada coluna." });
-    blocos.push({ t: "legenda", texto: "Valores atualizados pelo IPCA. Em amarelo, os preços desconsiderados no saneamento de ±25% da mediana. O valor unitário estimado segue a metodologia da seção 3." });
-    res.itens.forEach((x, i) => {
-      const it = x.item, st = x.st, sel = st.precos.filter((p) => p.incl !== false);
-      const origem = (p) => (p.fonte === "manual" ? (p.fornecedor || p.fonteNome || "Fonte manual") : [p.municipio, p.uf].filter(Boolean).join("/") || p.orgao || "—");
-      const grupos = []; for (let g = 0; g < Math.max(1, sel.length); g += POR) grupos.push(sel.slice(g, g + POR));
-      grupos.forEach((gp, gi) => {
-        const ini = gi * POR;
-        const cab = ["Item", "Descrição", "Unid.", "Quant."].concat(gp.map((p, k) => "P" + (ini + k + 1) + "\n" + origem(p) + "\n" + (p.inciso === "IV" ? "cotação" : p.inciso === "V" ? "nota fiscal" : p.inciso === "III" ? "mídia/sítio" : p.fonte === "pncp" ? "PNCP" : "Painel") + (p.data ? " · " + ppData(p.data) : ""))).concat(["Valor unitário estimado\n(" + st.nomeMet + ")", "Valor total estimado"]);
-        const vals = gp.map((p) => ppBRL(p.atual) + (p.sit === "ok" ? "" : "\n(desconsiderado)"));
-        const alerta = gp.map((p, k) => (p.sit === "ok" ? -1 : 4 + k)).filter((k) => k >= 0);
-        blocos.push({ t: "tabela", titulo: "Item " + (i + 1) + (grupos.length > 1 ? " – preços " + (ini + 1) + " a " + (ini + gp.length) + " de " + sel.length : "") + (gp.length ? "" : " – sem preços selecionados"),
-          cab, larg: [8, 21, 10, 9].concat(gp.map(() => 13)).concat([14, 15]), alin: "llrr" + gp.map(() => "r").join("") + "rr",
-          linhas: [{ c: [String(i + 1), String(it.desc || "").slice(0, 160), it.un || "", String(it.qtd || 1)].concat(vals).concat([ppBRL(st.valor), ppBRL(st.total)]), alerta }] });
-      });
-      blocos.push({ t: "legenda", texto: "Item " + (i + 1) + ": " + st.n + " preço(s) válido(s) de " + sel.length + " selecionado(s) · média " + ppBRL(st.media) + " · mediana " + ppBRL(st.mediana) + " · menor " + ppBRL(st.menor) + " · coeficiente de variação " + ppPct(st.cv) + " · método: " + st.nomeMet + "." });
-    });
+    // planilha de orçamento estimado única; se não couber no retrato, vai como anexo em paisagem
+    const pl = ppPlanilha(res), cabe = pl.n <= 5 || (opc && opc.excel);
+    if (cabe) blocos.push({ t: "tabela", titulo: sec++ + ". Planilha de orçamento estimado", sub: "Preços selecionados lado a lado, valores atualizados pelo IPCA; em amarelo, os desconsiderados no saneamento de ±25% da mediana.", cab: pl.cab, larg: pl.larg, alin: pl.alin, linhas: pl.linhas });
+    else blocos.push({ t: "texto", titulo: sec++ + ". Planilha de orçamento estimado", paragrafos: ["A planilha de orçamento estimado reúne " + pl.n + " preços lado a lado e foi gerada como anexo, em folha A4 paisagem, para caber numa única planilha (arquivo “Planilha de orçamento estimado”). A consolidação dos valores está na seção seguinte."] });
     blocos.push({ t: "tabela", titulo: sec++ + ". Planilha de orçamento estimado – consolidação", cab: ["Item", "Descrição", "Unid.", "Quant.", "Valor unitário estimado", "Valor total estimado"], larg: [7, 52, 10, 10, 18, 18], alin: "llrrrr",
       linhas: res.itens.map((x, i) => ({ c: [String(i + 1), x.item.desc || "", x.item.un || "", String(x.item.qtd || 1), ppBRL(x.st.valor), ppBRL(x.st.total)] })).concat([{ c: ["", "Valor total estimado da contratação", "", "", "", ppBRL(res.total)], total: true }]) });
   }
@@ -7862,10 +7890,13 @@ class Component extends DCLogic {
     const obras = d.objeto === "obras" ? ppObras(d, hoje) : null;
     return { itens, total, ratif, obras, hoje };
   }
-  async ppPdf() { const res = this.ppResultado(), hoje = new Date().toLocaleDateString("pt-BR"); await this.moDocPdf(ppDocumento(this.state.pp.d, res, hoje), "Pesquisa de preços", hoje); }
-  async ppExcel() { const res = this.ppResultado(), hoje = new Date().toLocaleDateString("pt-BR"); await this.moDocExcel(ppDocumento(this.state.pp.d, res, hoje), "Pesquisa de preços", hoje); }
+  async ppPdf() { const res = this.ppResultado(), hoje = new Date().toLocaleDateString("pt-BR"), d = this.state.pp.d;
+    await this.moDocPdf(ppDocumento(d, res, hoje), "Pesquisa de preços", hoje);
+    if (d.objeto !== "obras" && ppPlanilha(res).n > 5) await this.moDocPdf(ppDocPlanilha(d, res, hoje), "Planilha de orçamento estimado", hoje); }
+  async ppPlanilhaPdf() { const res = this.ppResultado(), hoje = new Date().toLocaleDateString("pt-BR"); await this.moDocPdf(ppDocPlanilha(this.state.pp.d, res, hoje), "Planilha de orçamento estimado", hoje); }
+  async ppExcel() { const res = this.ppResultado(), hoje = new Date().toLocaleDateString("pt-BR"); await this.moDocExcel(ppDocumento(this.state.pp.d, res, hoje, { excel: true }), "Pesquisa de preços", hoje); }
   ppWord() {
-    const res = this.ppResultado(), hoje = new Date().toLocaleDateString("pt-BR"), doc0 = ppDocumento(this.state.pp.d, res, hoje);
+    const res = this.ppResultado(), hoje = new Date().toLocaleDateString("pt-BR"), doc0 = ppDocumento(this.state.pp.d, res, hoje, { excel: true });
     const blob = new Blob(["﻿" + ppDocWord(doc0, hoje)], { type: "application/msword" });
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = doc0.arquivo + ".doc"; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
   }
@@ -8059,6 +8090,14 @@ class Component extends DCLogic {
       ppPdf: () => this.ppPdf(), ppExcel: () => this.ppExcel(), ppWord: () => this.ppWord(), ppLevar: () => this.ppLevar(),
       ppLevarTxt: d.objeto === "obras" ? "Levar ao Projeto Básico (orçamento)" : "Levar ao Termo de Referência",
       ppTextoTR: ppTextoTR(d, res),
+      ppTemPlan: d.objeto !== "obras" && res.itens.length > 0,
+      ppPlanilhaPdf: () => this.ppPlanilhaPdf(),
+      ...(() => { if (d.objeto === "obras" || !res.itens.length) return { ppPlanCel: [], ppPlanCols: "1fr", ppPlanMin: "0", ppPlanNota: "" }; const pl = ppPlanilha(res);
+        const nc = pl.cab.length;
+        return { ppPlanCols: "44px minmax(180px, 2.2fr) 64px 64px repeat(" + pl.n + ", minmax(96px, 1fr)) 120px 120px", ppPlanMin: (420 + pl.n * 100 + 240) + "px",
+          ppPlanCel: pl.cab.map((t, i) => ({ l: String(t).split("\n").map((x) => ({ x })), cls: "pp-pc cab" + (i < 4 ? " fixa" : i >= nc - 2 ? " res" : "") }))
+            .concat(pl.linhas.flatMap((l) => l.c.map((t, i) => ({ l: String(t).split("\n").map((x) => ({ x })), cls: "pp-pc" + (l.total ? " tot" : "") + (i < 4 ? " fixa" : i >= nc - 2 ? " res" : "") + ((l.alerta || []).includes(i) ? " desc" : "") })))),
+          ppPlanNota: pl.n > 5 ? "Com " + pl.n + " preços lado a lado, a planilha sai como anexo em A4 paisagem, numa folha única, junto com o relatório em PDF." : "A planilha cabe no relatório em A4 retrato." }; })(),
     };
   }
 
@@ -9987,8 +10026,8 @@ class Component extends DCLogic {
       if (y + est > H - 15 && est < H - 60) { doc.addPage(); cab(); y = 28; }
       doc.autoTable({ ...base, startY: y, theme: "plain", rowPageBreak: "avoid",
         head: [[{ content: b.titulo + (b.sub ? "  ·  " + b.sub : ""), colSpan: nc, styles: { fillColor: C.navy, textColor: 255, fontSize: 8.2, fontStyle: "bold" } }], b.cab.map((c, i) => ({ content: c, styles: { halign: alin[i] === "r" ? "right" : "left" } }))],
-        headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: 6.8, fontStyle: "bold", cellPadding: 1.6 },
-        body, styles: { ...base.styles, fontSize: nc > 6 ? 7 : 7.8, cellPadding: { top: 1.5, bottom: 1.5, left: 2, right: 2 }, valign: "top" }, columnStyles: colStyles });
+        headStyles: { fillColor: C.cinza, textColor: C.fraco, fontSize: b.cabFonte || 6.8, fontStyle: "bold", cellPadding: b.fonte ? 1 : 1.6 },
+        body, styles: { ...base.styles, fontSize: b.fonte || (nc > 6 ? 7 : 7.8), cellPadding: b.fonte ? { top: 1.2, bottom: 1.2, left: 1.1, right: 1.1 } : { top: 1.5, bottom: 1.5, left: 2, right: 2 }, valign: "top" }, columnStyles: colStyles });
       y = fimY() + 5;
     });
     // notas e fundamentação ao final do documento
