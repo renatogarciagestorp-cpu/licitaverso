@@ -1314,6 +1314,18 @@
   .rq-reqs { display: grid; gap: 8px; } .rq-req { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 8px 0; border-bottom: 1px solid #EDF2F1; } .rq-req > span { font-size: 14px; color: #22343B; flex: 1; min-width: 240px; }
   .rq-it { grid-template-columns: minmax(0, 1.5fr) 76px 96px 96px 90px 104px 104px minmax(0, 1fr) 130px 34px; } .rq-it input { width: 100%; }
   @media (max-width: 900px) { .rq-it { grid-template-columns: 1fr 1fr; } .rq-it.lmo-cab { display: none; } }
+  .ct-sel { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; } .ct-sel label { display: grid; gap: 5px; font-size: 12.5px; font-weight: 700; color: #3D5058; min-width: 280px; flex: 1; max-width: 520px; }
+  .ct-sel select { font: inherit; font-size: 14px; font-weight: 600; border: 1px solid #D6DEDD; border-radius: 9px; padding: 9px 10px; background: #fff; }
+  .ct-lista { display: grid; gap: 12px; } .ct-card { background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 16px 18px; }
+  .ct-card.aberto { border-color: #0FA36B; } .ct-cab { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
+  .ct-cab h3 { margin: 0; font-size: 17px; color: #0B1F2A; } .ct-cab p { margin: 3px 0 0; font-size: 13.5px; color: #55666D; }
+  .ct-num { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 10px; font-size: 13.5px; color: #3D5058; } .ct-num b { color: #0B1F2A; }
+  .ct-acoes { display: flex; gap: 8px; flex-wrap: wrap; } .ct-acoes button { padding: 7px 12px; font-size: 13px; }
+  .ct-av { margin: 10px 0 0; font-size: 13.5px; background: #FFF4DC; color: #6B4A00; border-radius: 10px; padding: 8px 12px; }
+  .ct-linha { list-style: none; margin: 14px 0 0; padding: 0 0 0 18px; border-left: 2px solid #CFE3D9; display: grid; gap: 12px; }
+  .ct-linha li { position: relative; font-size: 13.5px; color: #3D5058; } .ct-linha li::before { content: ""; position: absolute; left: -24px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: #0FA36B; }
+  .ct-linha b { color: #0B1F2A; } .ct-linha small { display: block; color: #66757F; }
+  .ct-form { background: #F8FAF9; border: 1px solid #E3E9E8; border-radius: 14px; padding: 14px 16px; margin-top: 12px; }
   .rq-falta { margin: 0 0 12px; background: #FFF4E5; color: #6B3D00; border: 1px solid #F1D9A6; border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.5; } .rq-falta ul { margin: 6px 0 0; padding-left: 20px; }
   .rq-al { margin: 12px 0 0; font-size: 14px; line-height: 1.5; border-radius: 10px; padding: 11px 13px; font-weight: 600; } .rq-al.sobe { background: #FFF4DC; color: #6B4A00; border: 1px solid #F1D9A6; } .rq-al.cai { background: #E7F2FB; color: #0F4B6E; border: 1px solid #C5DDF0; } .rq-al.ok, .rq-al.neutro { background: #E3F5EC; color: #0A5C3C; border: 1px solid #BFE6D2; }
   .lvc-al { margin: 12px 0 0; font-size: 13.5px; line-height: 1.5; border-radius: 10px; padding: 10px 12px; }
@@ -3080,8 +3092,77 @@
             </section>
           </div>
           </sc-if>
+          <sc-if value="{{ calcAbaCt }}" hint-placeholder-val="{{ false }}">
+          <div class="lmo" id="ct-topo">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center">
+              <button type="button" class="lmo-btn" sc-camel-on-click="{{ ctNovo }}">+ Novo contrato</button>
+              <sc-if value="{{ ctCarregando }}" hint-placeholder-val="{{ false }}"><span class="lmo-nota" style="margin: 0">Carregando…</span></sc-if>
+            </div>
+            <sc-if value="{{ ctOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ ctOk }}</p></sc-if>
+            <sc-if value="{{ ctErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ ctErro }}</p></sc-if>
+            <sc-if value="{{ ctFormAberto }}" hint-placeholder-val="{{ false }}">
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">{{ ctFormTitulo }}</h2>
+              <div class="lmo-campos">
+                <label class="lmo-campo"><span>Número do contrato *</span><input type="text" value="{{ ctFNumero }}" sc-camel-on-input="{{ onCtFNumero }}" placeholder="Ex.: 012/2026"></label>
+                <label class="lmo-campo"><span>Contratante (órgão)</span><input type="text" value="{{ ctFContratante }}" sc-camel-on-input="{{ onCtFContratante }}"></label>
+                <label class="lmo-campo"><span>Contratada</span><input type="text" value="{{ ctFContratada }}" sc-camel-on-input="{{ onCtFContratada }}"></label>
+                <label class="lmo-campo" style="grid-column: 1 / -1"><span>Objeto</span><input type="text" value="{{ ctFObjeto }}" sc-camel-on-input="{{ onCtFObjeto }}" placeholder="Ex.: serviços de limpeza e conservação"></label>
+                <label class="lmo-campo"><span>Regime</span><select sc-camel-on-change="{{ onCtFRegime }}"><sc-for list="{{ ctRegimes }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                <label class="lmo-campo"><span>Mês da proposta ou do orçamento</span><input type="month" value="{{ ctFDataProposta }}" sc-camel-on-input="{{ onCtFDataProposta }}"></label>
+                <label class="lmo-campo"><span>Início da vigência</span><input type="date" value="{{ ctFInicio }}" sc-camel-on-input="{{ onCtFInicio }}"></label>
+                <label class="lmo-campo"><span>Fim da vigência</span><input type="date" value="{{ ctFFim }}" sc-camel-on-input="{{ onCtFFim }}"></label>
+                <label class="lmo-campo"><span>Valor inicial (R$)</span><input type="text" inputmode="decimal" value="{{ ctFValorInicial }}" sc-camel-on-input="{{ onCtFValorInicial }}" placeholder="0,00"></label>
+                <label class="lmo-campo"><span>O valor informado é</span><select sc-camel-on-change="{{ onCtFPeriodicidade }}"><sc-for list="{{ ctPeriodos }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                <label class="lmo-campo"><span>Índice de reajuste</span><select sc-camel-on-change="{{ onCtFIndice }}"><sc-for list="{{ ctIndicesOp }}" as="o" hint-placeholder-count="6"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                <label class="lmo-campo"><span>Data-base da convenção (dd/mm, mão de obra)</span><input type="text" value="{{ ctFDataBaseCct }}" sc-camel-on-input="{{ onCtFDataBaseCct }}" placeholder="Ex.: 01/03"></label>
+                <label class="lmo-campo" style="grid-column: 1 / -1"><span>Observações</span><input type="text" value="{{ ctFObs }}" sc-camel-on-input="{{ onCtFObs }}"></label>
+              </div>
+              <label class="lmo-nota" style="display: flex; gap: 8px; align-items: center"><input type="checkbox" checked="{{ ctFMaoObra }}" sc-camel-on-change="{{ onCtFMaoObra }}"> Contrato com dedicação exclusiva de mão de obra (repactuação pela convenção coletiva)</label>
+              <label class="lmo-nota" style="display: flex; gap: 8px; align-items: center"><input type="checkbox" checked="{{ ctFAlertas }}" sc-camel-on-change="{{ onCtFAlertas }}"> Avisar por e-mail sobre anualidade, convenção coletiva e fim da vigência</label>
+              <div style="display: flex; gap: 8px; margin-top: 12px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ctSalvar }}">Salvar contrato</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctCancelar }}">Cancelar</button></div>
+            </section>
+            </sc-if>
+            <sc-if value="{{ ctVazio }}" hint-placeholder-val="{{ false }}"><p class="lmo-intro">Nenhum contrato cadastrado ainda. Cadastre o primeiro para acompanhar reajustes, repactuações, reequilíbrios e prazos.</p></sc-if>
+            <div class="ct-lista">
+              <sc-for list="{{ ctLista }}" as="c" hint-placeholder-count="2">
+                <article class="{{ c.cls }}">
+                  <div class="ct-cab">
+                    <div><h3>Contrato {{ c.numero }}</h3><p>{{ c.contratada }} · {{ c.objeto }}</p></div>
+                    <div class="ct-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.abrir }}">Linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarReajuste }}">Calcular reajuste</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarRq }}">Reequilíbrio</button></div>
+                  </div>
+                  <div class="ct-num"><span>Valor vigente: <b>{{ c.valor }}</b></span><span>Vigência até: <b>{{ c.fim }}</b></span><span>{{ c.prox }}</span><span>{{ c.reaj }}</span></div>
+                  <sc-for list="{{ c.avisos }}" as="a" hint-placeholder-count="1"><p class="ct-av">{{ a.t }}</p></sc-for>
+                  <sc-if value="{{ c.aberto }}" hint-placeholder-val="{{ false }}">
+                    <sc-if value="{{ c.temEventos }}" hint-placeholder-val="{{ false }}">
+                      <ul class="ct-linha"><sc-for list="{{ c.eventos }}" as="e" hint-placeholder-count="2"><li><b>{{ e.data }} · {{ e.tipo }}</b> {{ e.pct }} {{ e.valores }}<small>{{ e.fimTxt }} {{ e.desc }}</small><sc-if value="{{ c.meu }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-x" style="margin-top: 4px" aria-label="Excluir registro" sc-camel-on-click="{{ e.excluir }}">×</button></sc-if></li></sc-for></ul>
+                    </sc-if>
+                    <sc-if value="{{ c.meu }}" hint-placeholder-val="{{ true }}">
+                      <sc-if value="{{ ctEvAberto }}" hint-placeholder-val="{{ false }}">
+                        <div class="ct-form">
+                          <div class="lmo-campos">
+                            <label class="lmo-campo"><span>Tipo</span><select sc-camel-on-change="{{ onCtETipo }}"><sc-for list="{{ ctTiposOp }}" as="o" hint-placeholder-count="7"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                            <label class="lmo-campo"><span>Data (a partir de quando vale)</span><input type="date" value="{{ ctEData }}" sc-camel-on-input="{{ onCtEData }}"></label>
+                            <label class="lmo-campo"><span>Percentual (%)</span><input type="text" inputmode="decimal" value="{{ ctEPercentual }}" sc-camel-on-input="{{ onCtEPercentual }}"></label>
+                            <label class="lmo-campo"><span>Valor anterior (R$)</span><input type="text" inputmode="decimal" value="{{ ctEValorAnterior }}" sc-camel-on-input="{{ onCtEValorAnterior }}"></label>
+                            <label class="lmo-campo"><span>Novo valor (R$)</span><input type="text" inputmode="decimal" value="{{ ctEValorNovo }}" sc-camel-on-input="{{ onCtEValorNovo }}"></label>
+                            <sc-if value="{{ ctEvProrrog }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>Nova vigência até</span><input type="date" value="{{ ctENovoFim }}" sc-camel-on-input="{{ onCtENovoFim }}"></label></sc-if>
+                            <label class="lmo-campo" style="grid-column: 1 / -1"><span>Descrição</span><input type="text" value="{{ ctEDescricao }}" sc-camel-on-input="{{ onCtEDescricao }}" placeholder="Ex.: 1º termo aditivo, processo nº…"></label>
+                          </div>
+                          <div style="display: flex; gap: 8px; margin-top: 10px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ctSalvarEv }}">Incluir na linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctCancelarEv }}">Cancelar</button></div>
+                        </div>
+                      </sc-if>
+                      <div class="ct-acoes" style="margin-top: 12px"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.novoEv }}">+ Registro</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.editar }}">Editar contrato</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.excluir }}">{{ c.excluirTxt }}</button></div>
+                    </sc-if>
+                  </sc-if>
+                </article>
+              </sc-for>
+            </div>
+          </div>
+          </sc-if>
           <sc-if value="{{ calcAbaRq }}" hint-placeholder-val="{{ false }}">
           <div class="lmo" id="rq-topo">
+            <div class="ct-sel"><label><span>Contrato</span><select aria-label="Contrato cadastrado" sc-camel-on-change="{{ onCtSelRq }}"><sc-for list="{{ ctOpcoes }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctIrContratos }}">Meus contratos</button></div>
             <div class="lmo-modos" role="group" aria-label="Tipo de reequilíbrio"><sc-for list="{{ rqTipos }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
             <section class="lmo-bloco">
               <h2 class="lmo-h2">1. Contrato</h2>
@@ -3132,6 +3213,8 @@
                 <div class="lmo-kpis" style="margin-top: 0"><sc-for list="{{ rqFatoKpis }}" as="k" hint-placeholder-count="5"><div><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
                 <p class="{{ rqFatoCls }}" style="margin-top: 12px">{{ rqFatoVeredito }}</p>
                 <sc-for list="{{ rqFatoAlertas }}" as="a" hint-placeholder-count="1"><p class="lve-aviso" style="margin-top: 8px">{{ a.t }}</p></sc-for>
+                <sc-if value="{{ ctTemSel }}" hint-placeholder-val="{{ false }}"><div style="margin-top: 12px"><button type="button" class="lve-voltar" style="padding: 9px 14px; font-size: 13.5px" sc-camel-on-click="{{ ctRegRq }}">Registrar na linha do tempo do contrato {{ ctSelNome }}</button></div></sc-if>
+                <sc-if value="{{ ctTemSel }}" hint-placeholder-val="{{ false }}"><div style="margin-top: 12px"><button type="button" class="lve-voltar" style="padding: 9px 14px; font-size: 13.5px" sc-camel-on-click="{{ ctRegRq }}">Registrar na linha do tempo do contrato {{ ctSelNome }}</button></div></sc-if>
                 <div class="lmo-docs" role="list" aria-label="Documentos para download">
                   <p class="lmo-nota" style="margin: 0"><b>Documentos para download</b> · em Excel ou PDF, com a fundamentação no final.</p>
                   <sc-for list="{{ rqDocs }}" as="dc" hint-placeholder-count="2">
@@ -3211,6 +3294,7 @@
           </div>
           </sc-if>
           <sc-if value="{{ calcAbaIndice }}" hint-placeholder-val="{{ true }}">
+          <div class="ct-sel" style="margin-top: 18px"><label><span>Contrato</span><select aria-label="Contrato cadastrado" sc-camel-on-change="{{ onCtSelReajuste }}"><sc-for list="{{ ctOpcoes }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctIrContratos }}">Meus contratos</button></div>
           <div class="lvc-grid">
             <div class="lvc-form">
               <section class="lvc-passo">
@@ -3294,6 +3378,7 @@
                 </div>
                 <sc-if value="{{ calcTemCiclos }}" hint-placeholder-val="{{ false }}">
                   <button class="lvh-btn" style="margin-top: 16px; width: 100%" sc-camel-on-click="{{ calcBaixarNota }}">{{ calcBotaoPdf }}</button>
+                  <sc-if value="{{ ctTemSel }}" hint-placeholder-val="{{ false }}"><button type="button" class="lvh-btn-sec" style="margin-top: 10px; width: 100%" sc-camel-on-click="{{ ctRegReajuste }}">Registrar na linha do tempo do contrato {{ ctSelNome }}</button></sc-if>
                 </sc-if>
                 <p class="lvc-fonte">{{ calcFonte }}</p>
               </sc-if>
@@ -5686,6 +5771,34 @@ const MO_ANOS_REFORMA = [2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033];
 // Mesma regra das planilhas: ISS por dentro; CBS e IBS por fora, sobre o valor sem eles e sem o ISS (art. 12, § 2º).
 // número no formato brasileiro: "30.000" é trinta mil (ponto como separador de milhar quando seguido de 3 dígitos)
 const rqN = (v) => { const t = String(v == null ? "" : v).replace(/R\$|%|\s/gi, "").trim(); return /^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(t) ? Number(t.replace(/\./g, "").replace(",", ".")) || 0 : moNum(t); };
+// Meus contratos: tipos de registro da linha do tempo
+const CT_TIPOS = { reajuste: "Reajuste", repactuacao: "Repactuação", reequilibrio_trib: "Reequilíbrio tributário", reequilibrio_fato: "Reequilíbrio por fato superveniente",
+  aditivo_valor: "Aditivo de valor", prorrogacao: "Prorrogação", outro: "Outro registro" };
+const CT_FORM = { id: "", numero: "", contratante: "", contratada: "", objeto: "", regime: "14133", data_proposta: "", inicio: "", fim: "", valor_inicial: "", periodicidade: "mensal",
+  indice: "ipca", mao_obra: false, data_base_cct: "", alertas: true, obs: "" };
+const CT_EV = { tipo: "reajuste", data: "", percentual: "", valor_anterior: "", valor_novo: "", novo_fim: "", descricao: "" };
+// situação atual do contrato a partir da linha do tempo: valor vigente, fim da vigência, reajustes concedidos e próxima anualidade
+function ctSituacao(c, evs) {
+  const lista = (evs || []).slice().sort((a, b) => String(a.data).localeCompare(String(b.data)));
+  let valor = c.valor_inicial != null ? Number(c.valor_inicial) : null, fim = c.fim || null, fatorReaj = 1, ultReaj = null, ultRepac = null;
+  lista.forEach((e) => {
+    if (e.valor_novo != null && e.tipo !== "reequilibrio_fato") valor = Number(e.valor_novo);
+    if (e.novo_fim && (!fim || e.novo_fim > fim)) fim = e.novo_fim;
+    if (e.tipo === "reajuste") { if (e.percentual != null) fatorReaj *= 1 + Number(e.percentual) / 100; ultReaj = e.data; }
+    if (e.tipo === "repactuacao") ultRepac = e.data;
+  });
+  const mes = (iso) => { const m = /^(\d{4})-(\d{2})/.exec(iso || ""); return m ? Number(m[1]) * 12 + Number(m[2]) - 1 : null; };
+  const ym = (n) => String(n % 12 + 1).padStart(2, "0") + "/" + Math.floor(n / 12);
+  const hoje = new Date(), agora = hoje.getFullYear() * 12 + hoje.getMonth();
+  // anualidade: 12 meses da proposta (ou do último reajuste concedido)
+  const base = mes(ultReaj) != null ? mes(ultReaj) : mes(c.data_proposta);
+  let prox = base != null ? base + 12 : null;
+  while (prox != null && prox < agora) prox += 12;   // próxima anualidade a partir do mês atual
+  const fimN = mes(fim), restante = fimN != null ? Math.max(0, fimN - agora + 1) : null;
+  const direito = base != null ? base + 12 : null;   // 1º mês com direito a reajuste ainda não concedido
+  return { valor, fim, fatorReaj, reajPct: (fatorReaj - 1) * 100, ultReaj, ultRepac, proxAnual: prox != null ? ym(prox) : "", proxAnualN: prox, restante, eventos: lista,
+    direitoDesde: direito != null ? ym(direito) : "", reajPendente: direito != null && direito <= agora, fimN, vencido: fimN != null && fimN < agora };
+}
 const rqR2 = (x) => Math.round((x + (x >= 0 ? 1e-9 : -1e-9)) * 100) / 100; // arredondamento comercial, também para valores negativos
 const RQ_PADRAO = { contrato: "", contratada: "", objeto: "", valor: "", proposta: "", meses: "", regime: "", rbt12: "", pis: "", cofins: "", iss: "",
   rf_cbs: "11,3", rf_ibs: "18,7", ins: "", ins_red: "", ano: "2027", origem: "",
@@ -5836,6 +5949,13 @@ function moCalcular(d, modo, rj) {
 
 // Calculadora: uma subpágina por ferramenta (reajuste por índice e as três planilhas da Mão de Obra Exclusiva)
 const CALC_FERRAMENTAS = [
+  { id: "contratos", nome: "Meus contratos", curto: "Cadastre o contrato uma vez e acompanhe a linha do tempo de reajustes, repactuações, reequilíbrios e aditivos.",
+    h1: "Seus contratos e tudo o que mudou neles, num só lugar.",
+    lead: "Cadastre cada contrato uma vez: as ferramentas da Calculadora usam os dados dele, e cada reajuste, repactuação, reequilíbrio, aditivo ou prorrogação fica registrado na linha do tempo, com o valor vigente e a próxima anualidade.",
+    beneficios: ["Cadastro do contrato com vigência, valor, índice, data da proposta e data-base da convenção", "Linha do tempo com reajustes, repactuações, reequilíbrios, aditivos e prorrogações",
+      "Valor vigente, fim da vigência e próxima anualidade calculados a partir dos registros", "Reajuste e reequilíbrio preenchidos com os dados do contrato, sem digitar de novo",
+      "Reequilíbrio já recebe o reajuste concedido, para o mesmo aumento não ser pago duas vezes", "Contratos compartilhados com a equipe nos planos para equipes"],
+    plano: "Em todos os planos pagos e no teste grátis de 7 dias." },
   { id: "reajuste", nome: "Reajuste por índice", curto: "Reajuste de contratos por IPCA, IGP-M, INCC e outros índices oficiais, com a nota técnica pronta.",
     h1: "Reajuste de contrato calculado certo, com a nota técnica pronta.",
     lead: "Índices oficiais atualizados todos os dias, conferência dos 12 meses, ciclos acumulados e memória de cálculo mês a mês. No fim, você baixa a nota técnica em PDF para juntar ao processo.",
@@ -5994,7 +6114,7 @@ const PLANO_BENEFICIOS = {
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "11";
+const CHAT_VERSAO = "12";
 // versão da Biblioteca no endereço: força o navegador a buscar a página nova depois de cada mudança (o GitHub Pages guarda em cache por 10 minutos)
 const BIB_URL = "biblioteca.html?v=2";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
@@ -6148,6 +6268,7 @@ class Component extends DCLogic {
     nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
     el: { doc: "", passo: 0, respostas: {}, aceite: false, enviando: false, erro: "", ok: "", docEsc: "etp", metodo: "pix", contratando: false, contErro: "" },
     calcAba: "indice",
+    ct: { lista: [], eventos: {}, carregado: false, carregando: false, atual: "", form: null, ev: null, erro: "", ok: "", excluir: "" },
     rq: { d: (() => { try { return { ...RQ_PADRAO, ...(JSON.parse(localStorage.getItem("lv-rq") || "{}") || {}) }; } catch (e) { return { ...RQ_PADRAO }; } })(), erro: "", baixando: false },
     mo: { modo: "planejamento", d: (() => { try { return { ...MO_PADRAO, ...(JSON.parse(localStorage.getItem("lv-mo-planejamento") || "{}") || {}) }; } catch (e) { return { ...MO_PADRAO }; } })(), enviando: false, agente: false, erro: "", ok: "", obs: [] },
     indices: null, indicesErro: false, mpAberto: "", mpAno: 0, mpMes: 0, mpVista: "dias",
@@ -6296,7 +6417,7 @@ class Component extends DCLogic {
     this.carregarOferta();
     if (u) await this.carregarDados();
     if (this.state.page === "forum" && (!u || !this.podeLerForum())) this.carregarVitrine();
-    if (this.state.page === "calculadora" && u) this.moCotaCarregar();
+    if (this.state.page === "calculadora" && u) { this.moCotaCarregar(); this.ctCarregar(true); }
     this.tratarRetornoPagamento();
     this.carregarCursos();
   }
@@ -7330,6 +7451,128 @@ class Component extends DCLogic {
     try { d = JSON.parse(localStorage.getItem("lv-mo-" + modo) || "{}") || {}; } catch (e) { d = {}; }
     return { ...MO_PADRAO, ...d };
   }
+  // ------------------------------------------------------------ Meus contratos (cadastro e linha do tempo)
+  // com contas ativas, no Supabase (tabelas contratos e contrato_eventos); em demonstração, neste navegador
+  ctLocal() { try { return JSON.parse(localStorage.getItem("lv-contratos-demo") || "{}") || {}; } catch (e) { return {}; } }
+  ctLocalGravar(lista, eventos) { try { localStorage.setItem("lv-contratos-demo", JSON.stringify({ lista, eventos })); } catch (e) {} }
+  async ctCarregar(forcar) {
+    if (this.state.ct.carregando || (this.state.ct.carregado && !forcar)) return;
+    if (!this.sb) { const l = this.ctLocal(); this.setState((x) => ({ ct: { ...x.ct, lista: l.lista || [], eventos: l.eventos || {}, carregado: true } })); return; }
+    if (!this.u) return;
+    this.setState((x) => ({ ct: { ...x.ct, carregando: true } }));
+    const { data: lista, error } = await this.sb.from("contratos").select("*").order("criado_em", { ascending: false }).limit(500);
+    let eventos = {};
+    if (!error && lista && lista.length) {
+      const { data: evs } = await this.sb.from("contrato_eventos").select("*").in("contrato_id", lista.map((c) => c.id)).order("data").limit(5000);
+      (evs || []).forEach((e) => { (eventos[e.contrato_id] = eventos[e.contrato_id] || []).push(e); });
+    }
+    this.setState((x) => ({ ct: { ...x.ct, lista: error ? [] : (lista || []), eventos, carregado: !error, carregando: false, erro: error ? "Não foi possível carregar os contratos." : "" } }));
+  }
+  ctMsg(ok, erro) { this.setState((x) => ({ ct: { ...x.ct, ok: ok || "", erro: erro || "" } })); }
+  ctNovo() { this.setState((x) => ({ ct: { ...x.ct, form: { ...CT_FORM }, ev: null, ok: "", erro: "" } })); }
+  ctEditar(c) {
+    const f = { ...CT_FORM };
+    Object.keys(f).forEach((k) => { if (c[k] != null) f[k] = c[k]; });
+    f.data_proposta = c.data_proposta ? String(c.data_proposta).slice(0, 7) : "";
+    f.valor_inicial = c.valor_inicial != null ? Number(c.valor_inicial).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "";
+    this.setState((x) => ({ ct: { ...x.ct, form: f, ev: null, ok: "", erro: "" } }));
+  }
+  ctCampo = (k) => (e) => { const v = e && e.target ? (e.target.type === "checkbox" ? e.target.checked : e.target.value) : e; this.setState((x) => ({ ct: { ...x.ct, form: { ...x.ct.form, [k]: v } } })); };
+  async ctSalvar() {
+    const f = this.state.ct.form; if (!f) return;
+    if (!String(f.numero || "").trim()) { this.ctMsg("", "Informe o número do contrato."); return; }
+    if (f.data_base_cct && !/^\d{2}\/\d{2}$/.test(f.data_base_cct)) { this.ctMsg("", "Data-base da convenção no formato dd/mm (ex.: 01/03)."); return; }
+    const reg = { numero: String(f.numero).trim().slice(0, 60), contratante: f.contratante || null, contratada: f.contratada || null, objeto: f.objeto || null, regime: f.regime || "14133",
+      data_proposta: /^\d{4}-\d{2}$/.test(f.data_proposta || "") ? f.data_proposta + "-01" : null, inicio: f.inicio || null, fim: f.fim || null,
+      valor_inicial: String(f.valor_inicial || "").trim() ? rqN(f.valor_inicial) : null, periodicidade: f.periodicidade || "mensal", indice: f.indice || null,
+      mao_obra: !!f.mao_obra, data_base_cct: f.data_base_cct || null, alertas: f.alertas !== false, obs: f.obs || null };
+    if (!this.sb) {
+      const lista = this.state.ct.lista.slice(), id = f.id || ("demo-" + Date.now());
+      const i = lista.findIndex((c) => c.id === id), novo = { ...(i >= 0 ? lista[i] : {}), ...reg, id, criado_em: i >= 0 ? lista[i].criado_em : new Date().toISOString() };
+      if (i >= 0) lista[i] = novo; else lista.unshift(novo);
+      this.ctLocalGravar(lista, this.state.ct.eventos);
+      this.setState((x) => ({ ct: { ...x.ct, lista, form: null, atual: id, ok: "Contrato salvo.", erro: "" } })); return;
+    }
+    const q = f.id ? this.sb.from("contratos").update(reg).eq("id", f.id).select().single() : this.sb.from("contratos").insert(reg).select().single();
+    const { data, error } = await q;
+    if (error) { this.ctMsg("", "Não foi possível salvar: " + (error.message || "tente de novo.")); return; }
+    this.setState((x) => ({ ct: { ...x.ct, lista: f.id ? x.ct.lista.map((c) => (c.id === data.id ? data : c)) : [data].concat(x.ct.lista), form: null, atual: data.id, ok: "Contrato salvo.", erro: "" } }));
+  }
+  async ctExcluir(id) {
+    if (this.state.ct.excluir !== id) { this.setState((x) => ({ ct: { ...x.ct, excluir: id } })); return; }
+    if (this.sb) { const { error } = await this.sb.from("contratos").delete().eq("id", id); if (error) { this.ctMsg("", "Não foi possível excluir."); return; } }
+    const lista = this.state.ct.lista.filter((c) => c.id !== id), eventos = { ...this.state.ct.eventos }; delete eventos[id];
+    if (!this.sb) this.ctLocalGravar(lista, eventos);
+    this.setState((x) => ({ ct: { ...x.ct, lista, eventos, excluir: "", atual: x.ct.atual === id ? "" : x.ct.atual, ok: "Contrato excluído.", erro: "" } }));
+  }
+  ctAbrir(id) { this.setState((x) => ({ ct: { ...x.ct, atual: x.ct.atual === id ? "" : id, form: null, ev: null, ok: "", erro: "", excluir: "" } })); }
+  ctNovoEv(pre) { this.setState((x) => ({ ct: { ...x.ct, ev: { ...CT_EV, data: new Date().toISOString().slice(0, 10), ...(pre || {}) }, ok: "", erro: "" } })); }
+  ctEvCampo = (k) => (e) => { const v = e && e.target ? e.target.value : e; this.setState((x) => ({ ct: { ...x.ct, ev: { ...x.ct.ev, [k]: v } } })); };
+  async ctGravarEv(contratoId, ev) {
+    const num = (v) => (String(v == null ? "" : v).trim() ? rqN(v) : null);
+    const reg = { contrato_id: contratoId, tipo: ev.tipo, data: ev.data, percentual: num(ev.percentual), valor_anterior: num(ev.valor_anterior), valor_novo: num(ev.valor_novo),
+      novo_fim: ev.novo_fim || null, descricao: String(ev.descricao || "").slice(0, 600) || null };
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(reg.data || "")) return "Informe a data do registro.";
+    if (!this.sb) {
+      const eventos = { ...this.state.ct.eventos }; eventos[contratoId] = (eventos[contratoId] || []).concat([{ ...reg, id: "ev-" + Date.now() }]);
+      this.ctLocalGravar(this.state.ct.lista, eventos); this.setState((x) => ({ ct: { ...x.ct, eventos } })); return "";
+    }
+    const { data, error } = await this.sb.from("contrato_eventos").insert(reg).select().single();
+    if (error) return "Não foi possível registrar: " + (error.message || "tente de novo.");
+    this.setState((x) => { const eventos = { ...x.ct.eventos }; eventos[contratoId] = (eventos[contratoId] || []).concat([data]); return { ct: { ...x.ct, eventos } }; });
+    return "";
+  }
+  async ctSalvarEv() {
+    const ev = this.state.ct.ev, id = this.state.ct.atual; if (!ev || !id) return;
+    const e = await this.ctGravarEv(id, ev);
+    if (e) this.ctMsg("", e); else this.setState((x) => ({ ct: { ...x.ct, ev: null, ok: "Registro incluído na linha do tempo.", erro: "" } }));
+  }
+  async ctExcluirEv(contratoId, evId) {
+    if (this.sb) { const { error } = await this.sb.from("contrato_eventos").delete().eq("id", evId); if (error) { this.ctMsg("", "Não foi possível excluir o registro."); return; } }
+    const eventos = { ...this.state.ct.eventos }; eventos[contratoId] = (eventos[contratoId] || []).filter((e) => e.id !== evId);
+    if (!this.sb) this.ctLocalGravar(this.state.ct.lista, eventos);
+    this.setState((x) => ({ ct: { ...x.ct, eventos } }));
+  }
+  // preenche o reajuste ou o reequilíbrio com os dados do contrato
+  ctUsar(id, destino) {
+    const c = this.state.ct.lista.find((x) => x.id === id); if (!c) return;
+    const si = ctSituacao(c, this.state.ct.eventos[id]);
+    const brl = (v) => (v == null ? "" : Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    const ymBR = (iso) => (iso ? String(iso).slice(5, 7) + "/" + String(iso).slice(0, 4) : "");
+    if (destino === "reajuste") {
+      this.setState((x) => ({ calc: { ...x.calc, contrato: c.numero || "", contratada: c.contratada || "", objeto: c.objeto || "", regime: c.regime || "14133", indice: c.indice || x.calc.indice,
+        dataBase: c.data_proposta ? String(c.data_proposta).slice(0, 7) : x.calc.dataBase, fim: si.fim ? String(si.fim).slice(0, 7) : "",
+        valor: brl(si.valor), houveReajuste: !!si.ultReaj, ultimo: si.ultReaj ? String(si.ultReaj).slice(0, 7) : "" }, ct: { ...x.ct, atual: id } }));
+    } else {
+      const d = { ...this.state.rq.d, contrato: c.numero || "", contratada: c.contratada || "", objeto: c.objeto || "", valor: c.periodicidade === "mensal" ? brl(si.valor) : this.state.rq.d.valor,
+        proposta: ymBR(c.data_proposta), meses: si.restante != null ? String(si.restante) : "", fs_reaj: si.reajPct > 0.0001 ? si.reajPct.toLocaleString("pt-BR", { maximumFractionDigits: 4 }) : "",
+        origem: "contrato " + c.numero + " (Meus contratos)" };
+      this.rqGravar(d); this.setState((x) => ({ rq: { ...x.rq, d }, ct: { ...x.ct, atual: id } }));
+    }
+    this.calcFerramenta(destino);
+    this.aviso("Dados do contrato " + c.numero + " aplicados.", "ok");
+  }
+  // registra o resultado da ferramenta na linha do tempo do contrato escolhido
+  async ctRegistrar(origem) {
+    const id = this.state.ct.atual; if (!id) { this.aviso("Escolha o contrato no topo da ferramenta para registrar.", "erro"); return; }
+    const hoje = new Date().toISOString().slice(0, 10);
+    let ev = null;
+    if (origem === "reajuste") {
+      const r = this.calcularReajuste(), c = this.state.calc;
+      if (!r.pronto || !r.ciclos.length) { this.aviso("Ainda não há reajuste calculado para registrar.", "erro"); return; }
+      ev = { tipo: "reajuste", data: r.ciclos[r.ciclos.length - 1].aniversario + "-01", percentual: String((r.fatorTot - 1) * 100), valor_anterior: String(r.valor), valor_novo: String(Math.round(r.novo * 100) / 100),
+        descricao: "Reajuste pelo " + (r.serie && r.serie.nome ? r.serie.nome : String(c.indice).toUpperCase()) + ", " + r.ciclos.length + " ciclo(s) anual(is), calculado na Calculadora." };
+    } else if (origem === "rq_trib") {
+      const r = rqCalcular(this.state.rq.d); if (!r.pronto) { this.aviso("Complete o reequilíbrio antes de registrar.", "erro"); return; }
+      ev = { tipo: "reequilibrio_trib", data: hoje, percentual: String(r.sel.pct * 100), valor_anterior: String(r.P0), valor_novo: String(r.sel.P1), descricao: "Reequilíbrio tributário da reforma (LC 214/2025), referência " + r.sel.ano + "." };
+    } else {
+      const r = rqFatoCalcular(this.state.rq.d); if (!r.pronto) { this.aviso("Complete o reequilíbrio antes de registrar.", "erro"); return; }
+      ev = { tipo: "reequilibrio_fato", data: hoje, percentual: String(r.pct * 100), descricao: "Reequilíbrio por fato superveniente" + (this.state.rq.d.fs_fato ? " (" + this.state.rq.d.fs_fato + ")" : "") + ": impacto de R$ " + r.preco.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " sobre o saldo a executar." };
+    }
+    const e = await this.ctGravarEv(id, ev);
+    this.aviso(e || "Registrado na linha do tempo do contrato.", e ? "erro" : "ok");
+  }
+
   // ------------------------------------------------------------ Reequilíbrio tributário (LC 214/2025)
   rqGravar(d) { try { localStorage.setItem("lv-rq", JSON.stringify(d)); } catch (e) {} }
   rqSet = (k) => (e) => { const v = e && e.target ? e.target.value : e; this.setState((x) => { const d = { ...x.rq.d, [k]: v }; this.rqGravar(d); return { rq: { ...x.rq, d, erro: "" } }; }); };
@@ -7587,8 +7830,9 @@ class Component extends DCLogic {
   // troca de ferramenta da calculadora (subpágina com endereço próprio: ?p=calculadora&f=…)
   calcFerramenta(id) {
     if (!this.state.moCota) this.moCotaCarregar();
-    if (id === "reajuste") this.setState({ calcAba: "indice" });
-    else if (id === "reequilibrio") this.setState({ calcAba: "rq" });
+    if (id === "reajuste") { this.setState({ calcAba: "indice" }); this.ctCarregar(); }
+    else if (id === "reequilibrio") { this.setState({ calcAba: "rq" }); this.ctCarregar(); }
+    else if (id === "contratos") { this.setState({ calcAba: "ct" }); this.ctCarregar(); }
     else { if (this.state.mo.modo !== id) this.moModo(id); this.setState({ calcAba: "mo" }); }
     this.carregarIndices();
     try { history.replaceState({ p: "calculadora" }, "", location.pathname + "?p=calculadora&f=" + id); } catch (e) {}
@@ -8483,17 +8727,58 @@ class Component extends DCLogic {
       onMoRfAno: this.moSet("rf_ano"), moRfCbs: d.rf_cbs || "", onMoRfCbs: this.moSet("rf_cbs"), moRfIbs: d.rf_ibs || "", onMoRfIbs: this.moSet("rf_ibs"),
       moTransicao: transicao,
       moTransicaoNota: "Clique no ano para calculá-lo na planilha. Cada linha refaz o Módulo 6 com as alíquotas do ano; os Módulos 1 a 5 e o lucro são os mesmos. A mudança de tributos em contrato vigente pede reequilíbrio econômico-financeiro (LC 214/2025, arts. 374 a 378; Lei 14.133/2021, art. 134).",
-      calcAbaIndice: s.calcAba === "indice", calcAbaMo: s.calcAba === "mo", calcAbaRq: s.calcAba === "rq",
+      calcAbaIndice: s.calcAba === "indice", calcAbaMo: s.calcAba === "mo", calcAbaRq: s.calcAba === "rq", calcAbaCt: s.calcAba === "ct",
       calcAbaIdxCls: "lvc-aba" + (s.calcAba === "indice" ? " ativo" : ""), calcAbaMoCls: "lvc-aba" + (s.calcAba === "mo" ? " ativo" : ""),
       calcIrIndice: () => this.setState({ calcAba: "indice" }), calcIrMo: () => { this.setState({ calcAba: "mo" }); this.carregarIndices(); },
       ...(() => {
-        const atual = s.calcAba === "mo" ? mo.modo : s.calcAba === "rq" ? "reequilibrio" : "reajuste", f = CALC_FERRAMENTAS.find((x) => x.id === atual) || CALC_FERRAMENTAS[0];
+        const atual = s.calcAba === "mo" ? mo.modo : s.calcAba === "rq" ? "reequilibrio" : s.calcAba === "ct" ? "contratos" : "reajuste", f = CALC_FERRAMENTAS.find((x) => x.id === atual) || CALC_FERRAMENTAS[0];
         const ir = (id) => () => this.calcFerramenta(id);
         return { calcH1: "Cálculos de contratos e planilhas de mão de obra, com a fundamentação pronta.",
-          calcLead: "Reajuste por índice, planilha de custos no formato da IN 05/2017, repactuação, análise da proposta da licitante e reequilíbrio tributário da reforma: índices oficiais atualizados todos os dias, memória de cálculo, falhas apontadas com o fundamento e documentos em Excel e PDF para juntar ao processo.",
+          calcLead: "Seus contratos com a linha do tempo, reajuste por índice, planilha de custos no formato da IN 05/2017, repactuação, análise da proposta da licitante e reequilíbrio econômico-financeiro: índices oficiais atualizados todos os dias, memória de cálculo, falhas apontadas com o fundamento e documentos em Excel e PDF para juntar ao processo.",
           calcFerrTitulo: f.h1, calcFerrLead: f.lead, calcFerrNome: f.nome, calcFerrPlano: f.plano, calcFerrBenef: f.beneficios.map((t) => ({ t })),
           calcAbas: CALC_FERRAMENTAS.map((x) => ({ nome: x.nome, ativo: x.id === atual, cls: "lvc-aba" + (x.id === atual ? " ativo" : ""), ir: ir(x.id) })),
           calcFerrCards: CALC_FERRAMENTAS.map((x) => ({ nome: x.nome, curto: x.curto, ativo: x.id === atual, cls: "lvc-fc" + (x.id === atual ? " ativo" : ""), ir: ir(x.id) })) };
+      })(),
+      // Meus contratos
+      ...(() => {
+        const ct = s.ct, brl = (v) => (v == null || v === "" ? "—" : "R$ " + Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+        const dataBR = (iso) => (iso ? String(iso).slice(8, 10) + "/" + String(iso).slice(5, 7) + "/" + String(iso).slice(0, 4) : "");
+        const pctT = (v) => (v == null ? "" : (Number(v) > 0 ? "+" : "") + Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%");
+        const f = ct.form || {}, ev = ct.ev || {};
+        const campos = {};
+        Object.keys(CT_FORM).forEach((k) => { if (k === "id") return; const nome = "ctF" + k.split("_").map((x) => x[0].toUpperCase() + x.slice(1)).join(""); campos[nome] = f[k] == null ? "" : f[k]; campos["on" + nome[0].toUpperCase() + nome.slice(1)] = this.ctCampo(k); });
+        Object.keys(CT_EV).forEach((k) => { const nome = "ctE" + k.split("_").map((x) => x[0].toUpperCase() + x.slice(1)).join(""); campos[nome] = ev[k] == null ? "" : ev[k]; campos["on" + nome[0].toUpperCase() + nome.slice(1)] = this.ctEvCampo(k); });
+        const lista = ct.lista.map((c) => {
+          const si = ctSituacao(c, ct.eventos[c.id]), aberto = ct.atual === c.id, meu = !s.usuario || c.usuario_id === (s.usuario && s.usuario.id) || !this.sb;
+          const avisos = [].concat(si.vencido ? ["Vigência encerrada em " + dataBR(si.fim) + "."] : [])
+            .concat(!si.vencido && si.reajPendente && c.data_proposta ? ["Reajuste possível desde " + si.direitoDesde + " e ainda não registrado."] : [])
+            .concat(!si.vencido && si.restante != null && si.restante <= 3 ? ["Vigência termina em " + dataBR(si.fim) + ": peça reajuste ou reequilíbrio antes da prorrogação."] : []);
+          return { id: c.id, numero: c.numero, contratada: c.contratada || "", objeto: c.objeto || "", valor: brl(si.valor) + (c.periodicidade === "mensal" ? " por mês" : ""),
+            fim: si.fim ? dataBR(si.fim) : "não informado", prox: si.proxAnual ? "Próxima anualidade: " + si.proxAnual : "Informe a data da proposta para calcular a anualidade",
+            reaj: si.reajPct > 0.0001 ? "Reajustes concedidos: " + pctT(si.reajPct) : "", avisos: avisos.map((t) => ({ t })), temAvisos: avisos.length > 0, compart: !meu,
+            aberto, cls: "ct-card" + (aberto ? " aberto" : ""), abrir: () => this.ctAbrir(c.id), editar: () => this.ctEditar(c), excluir: () => this.ctExcluir(c.id),
+            excluirTxt: ct.excluir === c.id ? "Confirmar exclusão" : "Excluir", meu, usarReajuste: () => this.ctUsar(c.id, "reajuste"), usarRq: () => this.ctUsar(c.id, "reequilibrio"),
+            novoEv: () => this.ctNovoEv(), temEventos: si.eventos.length > 0,
+            eventos: si.eventos.slice().reverse().map((e) => ({ data: dataBR(e.data), tipo: CT_TIPOS[e.tipo] || e.tipo, pct: e.percentual != null ? pctT(e.percentual) : "",
+              valores: e.valor_novo != null ? (e.valor_anterior != null ? brl(e.valor_anterior) + " → " : "") + brl(e.valor_novo) : "", fimTxt: e.novo_fim ? "Nova vigência até " + dataBR(e.novo_fim) : "",
+              desc: e.descricao || "", excluir: () => this.ctExcluirEv(c.id, e.id) })) };
+        });
+        const sel = ct.lista.find((c) => c.id === ct.atual);
+        return { ...campos, ctLista: lista, ctTemLista: lista.length > 0, ctVazio: ct.carregado && !lista.length && !ct.form, ctCarregando: !!ct.carregando,
+          ctFormAberto: !!ct.form, ctFormTitulo: f.id ? "Editar contrato" : "Novo contrato", ctNovo: () => this.ctNovo(), ctSalvar: () => this.ctSalvar(),
+          ctCancelar: () => this.setState((x) => ({ ct: { ...x.ct, form: null, erro: "" } })),
+          ctRegimes: [["14133", "Lei 14.133/2021"], ["13303", "Lei 13.303/2016 (estatais)"], ["13019", "Lei 13.019/2014 (parcerias)"]].map(([id, nome]) => ({ id, nome, sel: f.regime === id })),
+          ctIndicesOp: [["ipca", "IPCA"], ["ipca_e", "IPCA-E"], ["inpc", "INPC"], ["igpm", "IGP-M"], ["igpdi", "IGP-DI"], ["incc", "INCC-DI"]].map(([id, nome]) => ({ id, nome, sel: f.indice === id })),
+          ctPeriodos: [["mensal", "Valor mensal"], ["global", "Valor global"]].map(([id, nome]) => ({ id, nome, sel: f.periodicidade === id })),
+          ctEvAberto: !!ct.ev, ctTiposOp: Object.entries(CT_TIPOS).map(([id, nome]) => ({ id, nome, sel: ev.tipo === id })), ctEvProrrog: ev.tipo === "prorrogacao",
+          ctSalvarEv: () => this.ctSalvarEv(), ctCancelarEv: () => this.setState((x) => ({ ct: { ...x.ct, ev: null, erro: "" } })),
+          ctOk: ct.ok, ctErro: ct.erro,
+          // seletor nas ferramentas
+          ctOpcoes: [{ id: "", nome: ct.lista.length ? "Escolher um contrato cadastrado…" : "Nenhum contrato cadastrado", sel: !ct.atual }].concat(ct.lista.map((c) => ({ id: c.id, nome: c.numero + (c.contratada ? " · " + c.contratada : ""), sel: ct.atual === c.id }))),
+          onCtSelReajuste: (e) => { const v = e.target.value; if (v) this.ctUsar(v, "reajuste"); else this.setState((x) => ({ ct: { ...x.ct, atual: "" } })); },
+          onCtSelRq: (e) => { const v = e.target.value; if (v) this.ctUsar(v, "reequilibrio"); else this.setState((x) => ({ ct: { ...x.ct, atual: "" } })); },
+          ctTemSel: !!sel, ctSelNome: sel ? sel.numero : "", ctIrContratos: () => this.calcFerramenta("contratos"),
+          ctRegReajuste: () => this.ctRegistrar("reajuste"), ctRegRq: () => this.ctRegistrar(s.rq.d.tipo === "fato" ? "rq_fato" : "rq_trib") };
       })(),
       // reequilíbrio tributário
       ...(() => {
