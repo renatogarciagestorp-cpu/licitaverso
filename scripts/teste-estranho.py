@@ -50,6 +50,8 @@ for t, corpo in [("perfis", {"id": str(uuid.uuid4()), "admin": True}), ("assinat
     checar(f"inserir em {t}", st >= 400, f"HTTP {st}")
 st, _ = req("PATCH", "/rest/v1/perfis?id=not.is.null", {"admin": True}, {"Prefer": "return=minimal"})
 checar("tornar-se administrador (perfis.admin)", st >= 400 or st == 204, f"HTTP {st}")
+st, txt = req("PATCH", "/rest/v1/contrato_eventos?id=not.is.null", {"descricao": "x"}, {"Prefer": "return=representation"})
+checar("alterar registros de contratos", st >= 400 or txt.strip() in ("[]", ""), f"HTTP {st}")
 st, txt = req("GET", "/rest/v1/perfis?admin=eq.true&select=id")
 checar("perfis continuam invisíveis após a tentativa", st != 200 or txt.strip() in ("[]", ""), f"HTTP {st}")
 

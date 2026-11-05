@@ -1313,6 +1313,8 @@
   .ct-av { margin: 10px 0 0; font-size: 13.5px; background: #FFF4DC; color: #6B4A00; border-radius: 10px; padding: 8px 12px; }
   .ct-linha { list-style: none; margin: 14px 0 0; padding: 0 0 0 18px; border-left: 2px solid #CFE3D9; display: grid; gap: 12px; }
   .ct-linha li { position: relative; font-size: 13.5px; color: #3D5058; } .ct-linha li::before { content: ""; position: absolute; left: -24px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: #0FA36B; }
+  .ct-ev-acoes { display: flex; gap: 6px; margin-top: 6px; } .ct-ev-btn { font: inherit; font-size: 12.5px; font-weight: 600; color: #0B1F2A; background: #fff; border: 1px solid #DCE4E2; border-radius: 8px; padding: 3px 10px; cursor: pointer; }
+  .ct-ev-btn:hover { border-color: #0FA36B; color: #0A7A51; } .ct-ev-del { color: #A23A3A; } .ct-ev-del:hover { border-color: #C9817E; color: #8A2626; }
   .ct-linha b { color: #0B1F2A; } .ct-linha small { display: block; color: #66757F; }
   .ct-form { background: #F8FAF9; border: 1px solid #E3E9E8; border-radius: 14px; padding: 14px 16px; margin-top: 12px; }
   .rq-falta { margin: 0 0 12px; background: #FFF4E5; color: #6B3D00; border: 1px solid #F1D9A6; border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.5; } .rq-falta ul { margin: 6px 0 0; padding-left: 20px; }
@@ -3405,7 +3407,7 @@
                       </div>
                     </sc-if>
                     <sc-if value="{{ c.temEventos }}" hint-placeholder-val="{{ false }}">
-                      <ul class="ct-linha"><sc-for list="{{ c.eventos }}" as="e" hint-placeholder-count="2"><li><b>{{ e.data }} · {{ e.tipo }}</b> {{ e.pct }} {{ e.valores }}<small>{{ e.fimTxt }} {{ e.desc }}</small><sc-if value="{{ c.meu }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-x" style="margin-top: 4px" aria-label="Excluir registro" sc-camel-on-click="{{ e.excluir }}">×</button></sc-if></li></sc-for></ul>
+                      <ul class="ct-linha"><sc-for list="{{ c.eventos }}" as="e" hint-placeholder-count="2"><li><b>{{ e.data }} · {{ e.tipo }}</b> {{ e.pct }} {{ e.valores }}<small>{{ e.fimTxt }} {{ e.desc }}</small><sc-if value="{{ c.meu }}" hint-placeholder-val="{{ true }}"><span class="ct-ev-acoes"><button type="button" class="ct-ev-btn" sc-camel-on-click="{{ e.editar }}">Editar</button><button type="button" class="ct-ev-btn ct-ev-del" sc-camel-on-click="{{ e.excluir }}">{{ e.excluirTxt }}</button></span></sc-if></li></sc-for></ul>
                     </sc-if>
                     <sc-if value="{{ c.meu }}" hint-placeholder-val="{{ true }}">
                       <sc-if value="{{ ctEvAberto }}" hint-placeholder-val="{{ false }}">
@@ -3419,7 +3421,7 @@
                             <sc-if value="{{ ctEvProrrog }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>Nova vigência até</span><input type="date" value="{{ ctENovoFim }}" sc-camel-on-input="{{ onCtENovoFim }}"></label></sc-if>
                             <label class="lmo-campo" style="grid-column: 1 / -1"><span>Descrição</span><input type="text" value="{{ ctEDescricao }}" sc-camel-on-input="{{ onCtEDescricao }}" placeholder="Ex.: 1º termo aditivo, processo nº…"></label>
                           </div>
-                          <div style="display: flex; gap: 8px; margin-top: 10px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ctSalvarEv }}">Incluir na linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctCancelarEv }}">Cancelar</button></div>
+                          <div style="display: flex; gap: 8px; margin-top: 10px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ctSalvarEv }}">{{ ctEvBotao }}</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctCancelarEv }}">Cancelar</button></div>
                         </div>
                       </sc-if>
                       <div class="ct-acoes" style="margin-top: 12px"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.novoEv }}">+ Registro</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.editar }}">Editar contrato</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.excluir }}">{{ c.excluirTxt }}</button></div>
@@ -7587,6 +7589,13 @@ class Component extends DCLogic {
     this.setState((x) => ({ ct: { ...x.ct, lista, eventos, excluir: "", atual: x.ct.atual === id ? "" : x.ct.atual, ok: "Contrato excluído.", erro: "" } }));
   }
   ctAbrir(id) { this.setState((x) => ({ ct: { ...x.ct, atual: x.ct.atual === id ? "" : id, form: null, ev: null, ok: "", erro: "", excluir: "" } })); }
+  ctEditarEv(e) {
+    const f = (v, n) => (v == null || v === "" ? "" : Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: n }));
+    const ev = { ...CT_EV, id: e.id, tipo: e.tipo, data: String(e.data || "").slice(0, 10), percentual: f(e.percentual, 4), valor_anterior: f(e.valor_anterior, 2),
+      valor_novo: f(e.valor_novo, 2), novo_fim: e.novo_fim ? String(e.novo_fim).slice(0, 10) : "", descricao: e.descricao || "" };
+    this.setState((x) => ({ ct: { ...x.ct, ev, ok: "", erro: "", excluirEv: "" } }));
+    setTimeout(() => { try { document.querySelector(".ct-card.aberto .ct-form").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (er) {} }, 150);
+  }
   ctNovoEv(pre) { this.setState((x) => ({ ct: { ...x.ct, ev: { ...CT_EV, data: new Date().toISOString().slice(0, 10), ...(pre || {}) }, ok: "", erro: "" } })); }
   ctEvCampo = (k) => (e) => { const v = e && e.target ? e.target.value : e; this.setState((x) => ({ ct: { ...x.ct, ev: { ...x.ct.ev, [k]: v } } })); };
   async ctGravarEv(contratoId, ev) {
@@ -7594,6 +7603,18 @@ class Component extends DCLogic {
     const reg = { contrato_id: contratoId, tipo: ev.tipo, data: ev.data, percentual: num(ev.percentual), valor_anterior: num(ev.valor_anterior), valor_novo: num(ev.valor_novo),
       novo_fim: ev.novo_fim || null, descricao: String(ev.descricao || "").slice(0, 600) || null };
     if (!/^\d{4}-\d{2}-\d{2}$/.test(reg.data || "")) return "Informe a data do registro.";
+    if (ev.id) {
+      let novo = { ...reg, id: ev.id };
+      if (this.sb) {
+        const { contrato_id, ...alt } = reg;
+        const { data, error } = await this.sb.from("contrato_eventos").update(alt).eq("id", ev.id).select().single();
+        if (error) return "Não foi possível salvar a alteração: " + (error.message || "tente de novo.");
+        novo = data;
+      }
+      const eventos = { ...this.state.ct.eventos }; eventos[contratoId] = (eventos[contratoId] || []).map((x) => (x.id === ev.id ? { ...x, ...novo } : x));
+      if (!this.sb) this.ctLocalGravar(this.state.ct.lista, eventos);
+      this.setState((x) => ({ ct: { ...x.ct, eventos } })); return "";
+    }
     if (!this.sb) {
       const eventos = { ...this.state.ct.eventos }; eventos[contratoId] = (eventos[contratoId] || []).concat([{ ...reg, id: "ev-" + Date.now() }]);
       this.ctLocalGravar(this.state.ct.lista, eventos); this.setState((x) => ({ ct: { ...x.ct, eventos } })); return "";
@@ -7606,9 +7627,11 @@ class Component extends DCLogic {
   async ctSalvarEv() {
     const ev = this.state.ct.ev, id = this.state.ct.atual; if (!ev || !id) return;
     const e = await this.ctGravarEv(id, ev);
-    if (e) this.ctMsg("", e); else this.setState((x) => ({ ct: { ...x.ct, ev: null, ok: "Registro incluído na linha do tempo.", erro: "" } }));
+    if (e) this.ctMsg("", e); else this.setState((x) => ({ ct: { ...x.ct, ev: null, ok: ev.id ? "Registro alterado." : "Registro incluído na linha do tempo.", erro: "" } }));
   }
   async ctExcluirEv(contratoId, evId) {
+    if (this.state.ct.excluirEv !== evId) { this.setState((x) => ({ ct: { ...x.ct, excluirEv: evId } })); return; }
+    this.setState((x) => ({ ct: { ...x.ct, excluirEv: "", ev: x.ct.ev && x.ct.ev.id === evId ? null : x.ct.ev } }));
     if (this.sb) { const { error } = await this.sb.from("contrato_eventos").delete().eq("id", evId); if (error) { this.ctMsg("", "Não foi possível excluir o registro."); return; } }
     const eventos = { ...this.state.ct.eventos }; eventos[contratoId] = (eventos[contratoId] || []).filter((e) => e.id !== evId);
     if (!this.sb) this.ctLocalGravar(this.state.ct.lista, eventos);
@@ -8858,7 +8881,8 @@ class Component extends DCLogic {
             novoEv: () => this.ctNovoEv(), temEventos: si.eventos.length > 0,
             eventos: si.eventos.slice().reverse().map((e) => ({ data: dataBR(e.data), tipo: CT_TIPOS[e.tipo] || e.tipo, pct: e.percentual != null ? pctT(e.percentual) : "",
               valores: e.valor_novo != null ? (e.valor_anterior != null ? brl(e.valor_anterior) + " → " : "") + brl(e.valor_novo) : "", fimTxt: e.novo_fim ? "Nova vigência até " + dataBR(e.novo_fim) : "",
-              desc: e.descricao || "", excluir: () => this.ctExcluirEv(c.id, e.id) })) };
+              desc: e.descricao || "", editar: () => this.ctEditarEv(e), excluir: () => this.ctExcluirEv(c.id, e.id),
+              excluirTxt: ct.excluirEv === e.id ? "Confirmar exclusão" : "Excluir" })) };
         });
         const sel = ct.lista.find((c) => c.id === ct.atual);
         // indicadores da carteira
@@ -8884,7 +8908,7 @@ class Component extends DCLogic {
           ctIndicesOp: [["ipca", "IPCA"], ["ipca_e", "IPCA-E"], ["inpc", "INPC"], ["igpm", "IGP-M"], ["igpdi", "IGP-DI"], ["incc", "INCC-DI"]].map(([id, nome]) => ({ id, nome, sel: f.indice === id })),
           ctPeriodos: [["mensal", "Valor mensal"], ["global", "Valor global"]].map(([id, nome]) => ({ id, nome, sel: f.periodicidade === id })),
           ctEvAberto: !!ct.ev, ctTiposOp: Object.entries(CT_TIPOS).map(([id, nome]) => ({ id, nome, sel: ev.tipo === id })), ctEvProrrog: ev.tipo === "prorrogacao",
-          ctSalvarEv: () => this.ctSalvarEv(), ctCancelarEv: () => this.setState((x) => ({ ct: { ...x.ct, ev: null, erro: "" } })),
+          ctSalvarEv: () => this.ctSalvarEv(), ctEvBotao: ct.ev && ct.ev.id ? "Salvar alteração" : "Incluir na linha do tempo", ctCancelarEv: () => this.setState((x) => ({ ct: { ...x.ct, ev: null, erro: "" } })),
           ctOk: ct.ok, ctErro: ct.erro,
           // seletor nas ferramentas
           ctOpcoes: [{ id: "", nome: ct.lista.length ? "Escolher um contrato cadastrado…" : "Nenhum contrato cadastrado", sel: !ct.atual }].concat(ct.lista.map((c) => ({ id: c.id, nome: c.numero + (c.contratada ? " · " + c.contratada : ""), sel: ct.atual === c.id }))),
