@@ -1411,8 +1411,26 @@
   .lmo-bloco .lmo-lei { border: 0; padding: 0 0 10px; background: none; }
   .ct-sel { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; } .ct-sel label { display: grid; gap: 5px; font-size: 12.5px; font-weight: 700; color: #3D5058; min-width: 280px; flex: 1; max-width: 520px; }
   .ct-sel select { font: inherit; font-size: 14px; font-weight: 600; border: 1px solid #D6DEDD; border-radius: 9px; padding: 9px 10px; background: #fff; }
-  .ct-lista { display: grid; gap: 12px; } .ct-card { background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 16px 18px; }
-  .ct-card.aberto { border-color: #0FA36B; } .ct-cab { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
+  .ct-lista { display: grid; gap: 12px; }
+  .ct-card { --st: #8A9A9F; --stb: #EEF2F1; --stt: #4A5A60; position: relative; background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 18px 20px 16px 26px; overflow: hidden; box-shadow: 0 1px 2px rgba(11,31,42,.04); transition: box-shadow .15s, border-color .15s; }
+  .ct-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--st); }
+  .ct-card:hover { box-shadow: 0 6px 18px rgba(11,31,42,.07); }
+  .ct-card.st-vig { --st: #0FA36B; --stb: #E3F5EC; --stt: #0A7A51; } .ct-card.st-ven { --st: #E0A21B; --stb: #FFF4DC; --stt: #8A5A00; } .ct-card.st-exp { --st: #C24A43; --stb: #FBE7E5; --stt: #9A2F29; }
+  .ct-card.aberto { border-color: var(--st); box-shadow: 0 0 0 1px var(--st), 0 6px 18px rgba(11,31,42,.07); }
+  .ct-st { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: var(--stt); background: var(--stb); border-radius: 999px; padding: 3px 10px 3px 8px; margin-bottom: 6px; }
+  .ct-st::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--st); }
+  .ct-tit { min-width: 0; } .ct-tit p { overflow-wrap: anywhere; }
+  .ct-dados { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-top: 14px; border: 1px solid #EDF1F0; border-radius: 12px; background: #FAFCFB; }
+  .ct-dados > div { padding: 10px 14px; display: grid; gap: 2px; align-content: start; min-width: 0; } .ct-dados > div + div { border-left: 1px solid #EDF1F0; }
+  .ct-dados small { font-size: 11.5px; font-weight: 700; color: #66757F; text-transform: uppercase; letter-spacing: .04em; } .ct-dados b { font-size: 15.5px; color: #0B1F2A; overflow-wrap: anywhere; } .ct-dados em { font-style: normal; font-size: 12.5px; color: #66757F; }
+  .ct-prog { margin-top: 12px; } .ct-prog-r { display: block; height: 6px; border-radius: 99px; background: #E6EEEC; overflow: hidden; } .ct-prog-r i { display: block; height: 100%; border-radius: 99px; background: var(--st); }
+  .ct-prog-t { display: flex; justify-content: space-between; gap: 8px; margin-top: 5px; font-size: 12px; color: #7A8A90; } .ct-prog-t b { font-weight: 700; color: var(--stt); }
+  .ct-filtro { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 12px; }
+  .ct-fb { --fc: #0B3B4A; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 13.5px; font-weight: 700; color: #3D5058; background: #fff; border: 1px solid #DCE4E2; border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+  .ct-fb i { width: 8px; height: 8px; border-radius: 50%; background: var(--fc); } .ct-fb b { font-size: 12px; background: #EEF2F1; color: #3D5058; border-radius: 99px; padding: 1px 8px; }
+  .ct-fb:hover { border-color: var(--fc); } .ct-fb.ativo { background: var(--fc); border-color: var(--fc); color: #fff; } .ct-fb.ativo i { background: #fff; } .ct-fb.ativo b { background: rgba(255,255,255,.22); color: #fff; }
+  .ct-fb.f-vig { --fc: #0FA36B; } .ct-fb.f-ven { --fc: #D3940F; } .ct-fb.f-exp { --fc: #C24A43; }
+  @media (max-width: 760px) { .ct-dados { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ct-dados > div:nth-child(3) { border-left: 0; } .ct-dados > div:nth-child(n+3) { border-top: 1px solid #EDF1F0; } .ct-card { padding-left: 22px; } } .ct-cab { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: flex-start; }
   .ct-cab h3 { margin: 0; font-size: 17px; color: #0B1F2A; } .ct-cab p { margin: 3px 0 0; font-size: 13.5px; color: #55666D; }
   .ct-num { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 10px; font-size: 13.5px; color: #3D5058; } .ct-num b { color: #0B1F2A; }
   .ct-acoes { display: flex; gap: 8px; flex-wrap: wrap; } .ct-acoes button { padding: 7px 12px; font-size: 13px; }
@@ -3487,14 +3505,28 @@
             </section>
             </sc-if>
             <sc-if value="{{ ctVazio }}" hint-placeholder-val="{{ false }}"><p class="lmo-intro">Nenhum contrato cadastrado ainda. Cadastre o primeiro para acompanhar reajustes, repactuações, reequilíbrios e prazos.</p></sc-if>
+            <sc-if value="{{ ctTemLista }}" hint-placeholder-val="{{ true }}">
+              <div class="ct-filtro" role="group" aria-label="Filtrar contratos por situação">
+                <sc-for list="{{ ctFiltros }}" as="fl" hint-placeholder-count="4"><button type="button" class="{{ fl.cls }}" aria-pressed="{{ fl.ativo }}" sc-camel-on-click="{{ fl.sel }}"><i></i>{{ fl.nome }}<b>{{ fl.n }}</b></button></sc-for>
+              </div>
+              <sc-if value="{{ ctFiltroVazio }}" hint-placeholder-val="{{ false }}"><p class="ct-pb-vazio">{{ ctFiltroVazioTxt }}</p></sc-if>
+            </sc-if>
             <div class="ct-lista">
               <sc-for list="{{ ctLista }}" as="c" hint-placeholder-count="2">
                 <article class="{{ c.cls }}">
                   <div class="ct-cab">
-                    <div><h3>Contrato {{ c.numero }}</h3><p>{{ c.contratada }} · {{ c.objeto }}</p></div>
+                    <div class="ct-tit"><span class="{{ c.stCls }}">{{ c.st }}</span><h3>Contrato {{ c.numero }}</h3><p>{{ c.contratada }}<sc-if value="{{ c.temObjeto }}" hint-placeholder-val="{{ true }}"> · {{ c.objeto }}</sc-if></p></div>
                     <div class="ct-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.abrir }}">Linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarReajuste }}">Calcular reajuste</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarRq }}">Reequilíbrio</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.pdf }}">PDF</button></div>
                   </div>
-                  <div class="ct-num"><span>Valor vigente: <b>{{ c.valor }}</b></span><span>Vigência até: <b>{{ c.fim }}</b></span><span>{{ c.prox }}</span><span>{{ c.reaj }}</span></div>
+                  <div class="ct-dados">
+                    <div><small>Valor vigente</small><b>{{ c.valorV }}</b><em>{{ c.valorSub }}</em></div>
+                    <div><small>Vigência até</small><b>{{ c.fim }}</b><em>{{ c.restTxt }}</em></div>
+                    <div><small>Próxima anualidade</small><b>{{ c.proxV }}</b><em>{{ c.proxSub }}</em></div>
+                    <div><small>Reajustes concedidos</small><b>{{ c.reajV }}</b><em>{{ c.reajSub }}</em></div>
+                  </div>
+                  <sc-if value="{{ c.temProg }}" hint-placeholder-val="{{ true }}">
+                    <div class="ct-prog" title="{{ c.progTit }}"><span class="ct-prog-r"><i style="width: {{ c.prog }}%"></i></span><span class="ct-prog-t">{{ c.progIni }}<b>{{ c.progTxt }}</b>{{ c.progFim }}</span></div>
+                  </sc-if>
                   <sc-for list="{{ c.avisos }}" as="a" hint-placeholder-count="1"><p class="ct-av">{{ a.t }}</p></sc-for>
                   <sc-if value="{{ c.aberto }}" hint-placeholder-val="{{ false }}">
                     <sc-if value="{{ c.temPainel }}" hint-placeholder-val="{{ false }}">
@@ -9335,10 +9367,21 @@ class Component extends DCLogic {
           const avisos = [].concat(si.vencido ? ["Vigência encerrada em " + dataBR(si.fim) + "."] : [])
             .concat(!si.vencido && si.reajPendente && c.data_proposta ? ["Reajuste possível desde " + si.direitoDesde + " e ainda não registrado."] : [])
             .concat(!si.vencido && si.restante != null && si.restante <= 4 ? ["Vigência termina em " + dataBR(si.fim) + ": inicie a tramitação da prorrogação (recomendado 4 meses antes) e peça o reajuste ou reequilíbrio pendente antes dela."] : []);
-          return { id: c.id, numero: c.numero, contratada: c.contratada || "", objeto: c.objeto || "", valor: brl(si.valor) + (c.periodicidade === "mensal" ? " por mês" : ""),
+          const stK = !si.fim ? "sem" : si.vencido ? "exp" : si.restante != null && si.restante <= 4 ? "ven" : "vig";
+          const ini0 = c.inicio || c.assinatura, msD = 864e5, tIni = ini0 ? Date.parse(String(ini0).slice(0, 10) + "T12:00:00Z") : NaN, tFim = si.fim ? Date.parse(String(si.fim).slice(0, 10) + "T12:00:00Z") : NaN;
+          const hojeT = Date.now(), temProg = !isNaN(tIni) && !isNaN(tFim) && tFim > tIni, prog = temProg ? Math.min(100, Math.max(0, ((hojeT - tIni) / (tFim - tIni)) * 100)) : 0;
+          const diasR = !isNaN(tFim) ? Math.ceil((tFim - hojeT) / msD) : null;
+          const restTxt = diasR == null ? "" : diasR < 0 ? "encerrada há " + (-diasR > 60 ? Math.round(-diasR / 30.44) + " meses" : -diasR + (diasR === -1 ? " dia" : " dias")) : diasR === 0 ? "termina hoje" : "faltam " + (diasR > 60 ? Math.round(diasR / 30.44) + " meses" : diasR + (diasR === 1 ? " dia" : " dias"));
+          return { id: c.id, numero: c.numero, contratada: c.contratada || "", objeto: c.objeto || "", temObjeto: !!c.objeto, valor: brl(si.valor) + (c.periodicidade === "mensal" ? " por mês" : ""),
+            stK, st: { vig: "Vigente", ven: "Vencendo", exp: "Vencido", sem: "Vigência não informada" }[stK], stCls: "ct-st",
+            valorV: brl(si.valor), valorSub: c.periodicidade === "mensal" ? "por mês" : "valor global",
+            restTxt, proxV: stK === "exp" ? "—" : si.proxAnual || "—", proxSub: stK === "exp" ? "contrato encerrado" : si.reajPendente && c.data_proposta ? "reajuste possível desde " + si.direitoDesde : c.data_proposta ? "12 meses do orçamento" : "informe o orçamento",
+            reajV: si.reajPct > 0.0001 ? pctT(si.reajPct) : "Nenhum", reajSub: si.reajPct > 0.0001 ? "acumulado sobre o inicial" : "ainda sem reajuste",
+            temProg, prog: prog.toFixed(1), progIni: ini0 ? dataBR(ini0) : "", progFim: si.fim ? dataBR(si.fim) : "", progTxt: stK === "exp" ? "vigência encerrada" : Math.round(prog) + "% da vigência decorrida",
+            progTit: "Vigência de " + (ini0 ? dataBR(ini0) : "") + " a " + (si.fim ? dataBR(si.fim) : ""),
             fim: si.fim ? dataBR(si.fim) : "não informado", prox: si.proxAnual ? "Próxima anualidade: " + si.proxAnual : "Informe a data da proposta para calcular a anualidade",
             reaj: si.reajPct > 0.0001 ? "Reajustes concedidos: " + pctT(si.reajPct) : "", avisos: avisos.map((t) => ({ t })), temAvisos: avisos.length > 0, compart: !meu,
-            aberto, cls: "ct-card" + (aberto ? " aberto" : ""), abrir: () => this.ctAbrir(c.id), editar: () => this.ctEditar(c), excluir: () => this.ctExcluir(c.id),
+            aberto, cls: "ct-card st-" + stK + (aberto ? " aberto" : ""), abrir: () => this.ctAbrir(c.id), editar: () => this.ctEditar(c), excluir: () => this.ctExcluir(c.id),
             excluirTxt: ct.excluir === c.id ? "Confirmar exclusão" : "Excluir", meu, usarReajuste: () => this.ctUsar(c.id, "reajuste"), pdf: () => this.ctPdf(c.id), usarRq: () => this.ctUsar(c.id, "reequilibrio"),
             novoEv: () => this.ctNovoEv(), temEventos: true,
             eventos: (() => {
@@ -9397,7 +9440,12 @@ class Component extends DCLogic {
         const ctAgGrupos = meses.filter((m) => m.n && (!agSel || agSel === m.k)).map((m) => ({ rot: m.k === "atr" ? "Atrasados" : ((t) => t.charAt(0).toUpperCase() + t.slice(1))(new Date(m.k + "-15T12:00:00Z").toLocaleDateString("pt-BR", { month: "long", year: "numeric", timeZone: "UTC" })),
           itens: m.itens.map((it) => ({ data: it.data, tipo: it.tipo, contrato: it.nome, desc: it.desc, cor: it.cor, st: it.st, stCls: "ct-ag-st" + (it.dias < 0 ? " atr" : it.dias <= 30 ? " breve" : ""),
             abrir: () => { this.setState((x) => ({ ct: { ...x.ct, atual: it.c.id, form: null, ev: null } })); setTimeout(() => { try { document.querySelector(".ct-card.aberto").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }, 200); } })) }));
-        return { ...campos, ctLista: lista, ctKpis, ctAgMeses, ctAgGrupos, ctAgVazio: !agenda.length, ctAgFiltro: agSel ? "Mostrando só o mês escolhido · clique de novo para ver todos" : "",
+        const ctFil = ct.filtro || "todos", nSt = (k) => lista.filter((x) => x.stK === k).length;
+        const listaF = ctFil === "todos" ? lista : lista.filter((x) => x.stK === ctFil);
+        const ctFiltros = [["todos", "Todos", lista.length], ["vig", "Vigentes", nSt("vig")], ["ven", "Vencendo", nSt("ven")], ["exp", "Vencidos", nSt("exp")]]
+          .map(([k, nome, n]) => ({ nome, n: String(n), ativo: ctFil === k, cls: "ct-fb f-" + k + (ctFil === k ? " ativo" : ""), sel: () => this.setState((x) => ({ ct: { ...x.ct, filtro: k } })) }));
+        return { ...campos, ctLista: listaF, ctFiltros, ctFiltroVazio: lista.length > 0 && !listaF.length,
+          ctFiltroVazioTxt: "Nenhum contrato " + ({ vig: "vigente", ven: "vencendo nos próximos 4 meses", exp: "vencido" }[ctFil] || "") + ".", ctKpis, ctAgMeses, ctAgGrupos, ctAgVazio: !agenda.length, ctAgFiltro: agSel ? "Mostrando só o mês escolhido · clique de novo para ver todos" : "",
           ctAgExcel: () => this.ctAgendaExcel(), ctRelatorio: () => this.ctRelatorio(), ctTemKpis: lista.length > 0, ctTemLista: lista.length > 0, ctVazio: ct.carregado && !lista.length && !ct.form, ctCarregando: !!ct.carregando,
           ctFormAberto: !!ct.form, ctFormTitulo: f.id ? "Editar contrato" : "Novo contrato", ctNovo: () => this.ctNovo(), ctSalvar: () => this.ctSalvar(),
           ctCancelar: () => this.setState((x) => ({ ct: { ...x.ct, form: null, erro: "" } })),
