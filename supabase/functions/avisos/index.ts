@@ -212,7 +212,7 @@ Deno.serve(async (req) => {
     const ident = `contrato <strong>${esc(c.numero)}</strong>${c.contratada ? " (" + esc(c.contratada) + ")" : ""}`;
     const html = moldura(`Prazos do contrato ${esc(c.numero)}`,
       [`${primeiro}, há ${novos.length === 1 ? "um prazo" : "prazos"} para acompanhar no ${ident}:`].concat(novos.map((a) => a.texto)),
-      { texto: "Abrir a Gestão contratual", url: `${SITE}index.html?p=gestao` },
+      { texto: "Ver meus contratos", url: `${SITE}index.html?p=contratos` },
       "Você recebe este aviso porque cadastrou o contrato na Gestão contratual do Licitacon. Para parar, desmarque os avisos no cadastro do contrato ou em Minha conta → Notificações.", "Prazos dos meus contratos");
     try {
       await enviarEmail({ email: p.email, nome: p.nome }, `Prazos do contrato ${String(c.numero).slice(0, 40)}: ${novos.map((a) => ({ anualidade: "anualidade", convencao: "convenção coletiva", fim120: "prorrogação", fim90: "fim da vigência", fim30: "fim da vigência" } as Record<string, string>)[a.tipo]).join(", ")}`, html);

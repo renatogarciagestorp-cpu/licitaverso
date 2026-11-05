@@ -1387,6 +1387,28 @@
   .ct-sel { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; } .ct-sel label { display: grid; gap: 5px; font-size: 12.5px; font-weight: 700; color: #3D5058; min-width: 280px; flex: 1; max-width: 520px; }
   .ct-sel select { font: inherit; font-size: 14px; font-weight: 600; border: 1px solid #D6DEDD; border-radius: 9px; padding: 9px 10px; background: #fff; }
   .ct-lista { display: grid; gap: 12px; }
+  .gcl-resumo { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .gcl-rb { --fc: #0B3B4A; display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: 13.5px; font-weight: 600; color: #3D5058; background: #fff; border: 1px solid #DCE4E2; border-radius: 999px; padding: 6px 13px; cursor: pointer; }
+  .gcl-rb:hover { border-color: var(--fc); } .gcl-rb i { width: 8px; height: 8px; border-radius: 50%; background: var(--fc); } .gcl-rb b { font-weight: 800; }
+  .gcl-rb.f-vig { --fc: #0FA36B; } .gcl-rb.f-ven { --fc: #E0A21B; } .gcl-rb.f-exp { --fc: #C24A43; } .gcl-rb b { color: #0B1F2A; }
+  .gcl { display: grid; gap: 34px; padding-top: 34px; padding-bottom: 50px; } .gcl-sec .lva-h2 { margin: 0 0 14px; }
+  .gcl-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  .gcl-card { background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 18px; } .gcl-card h3 { margin: 10px 0 6px; font-size: 16px; color: #0B1F2A; } .gcl-card p { margin: 0; font-size: 14px; color: #55666D; line-height: 1.5; }
+  .gcl-ic { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: #E3F5EC; font-size: 19px; }
+  .gcl-passos { list-style: none; counter-reset: p; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .gcl-passos li { counter-increment: p; position: relative; background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 46px 16px 16px; display: grid; gap: 5px; font-size: 14px; color: #55666D; line-height: 1.5; }
+  .gcl-passos li::before { content: counter(p); position: absolute; left: 16px; top: 14px; width: 24px; height: 24px; border-radius: 50%; background: #0B3B4A; color: #fff; font-size: 13px; font-weight: 800; display: grid; place-items: center; } .gcl-passos b { color: #0B1F2A; font-size: 15px; }
+  .gcl-leg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+  .gcl-l { position: relative; background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 14px 16px 14px 22px; display: grid; gap: 3px; font-size: 13.5px; color: #55666D; overflow: hidden; }
+  .gcl-l i { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; } .gcl-l b { color: #0B1F2A; font-size: 15px; }
+  .gcl-l.v i { background: #0FA36B; } .gcl-l.a i { background: #E0A21B; } .gcl-l.x i { background: #C24A43; }
+  .gcl-fim { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; background: #0B3B4A; color: #fff; border-radius: 18px; padding: 22px 24px; }
+  .gcl-fim div { display: grid; gap: 4px; } .gcl-fim b { font-size: 18px; } .gcl-fim span { font-size: 14px; color: #C9DDE2; }
+  .gcm-topo { background: #0B1F2A; color: #fff; } .gcm-in { max-width: 1240px; margin: 0 auto; padding: 26px 24px 24px; }
+  .gcm-in h1 { margin: 8px 0 4px; font-size: 28px; } .gcm-in p { margin: 0; color: #B9CCD2; font-size: 14.5px; }
+  .gcm-volta { font: inherit; font-size: 13.5px; font-weight: 600; color: #9FE3C5; background: none; border: 0; padding: 0; cursor: pointer; } .gcm-volta:hover { text-decoration: underline; }
+  @media (max-width: 900px) { .gcl-cards, .gcl-leg { grid-template-columns: 1fr; } .gcl-passos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .gcl-passos { grid-template-columns: 1fr; } .gcm-in h1 { font-size: 24px; } }
   .ct-card { --st: #8A9A9F; --stb: #EEF2F1; --stt: #4A5A60; position: relative; background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 18px 20px 16px 26px; overflow: hidden; box-shadow: 0 1px 2px rgba(11,31,42,.04); transition: box-shadow .15s, border-color .15s; }
   .ct-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--st); }
   .ct-card:hover { box-shadow: 0 6px 18px rgba(11,31,42,.07); }
@@ -3420,6 +3442,48 @@
           <span class="lvh-eyebrow">Gestão contratual</span>
           <h1 class="lva-h1" style="max-width: 24ch">Seus contratos e tudo o que mudou neles, num só lugar.</h1>
           <p class="lva-lead">Cadastre cada contrato uma vez e acompanhe a linha do tempo de reajustes, repactuações, reequilíbrios, aditivos e prorrogações, com o valor vigente, a próxima anualidade e avisos por e-mail dos prazos.</p>
+          <div class="lvh-ctas" style="margin-top: 22px">
+            <button type="button" class="lvh-btn" sc-camel-on-click="{{ gcCtaAcao }}">{{ gcCtaTxt }}</button>
+            <sc-if value="{{ gcCtaNovo }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ gcCtaNovoAcao }}">+ Novo contrato</button></sc-if>
+            <sc-if value="{{ gcBloqueada }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ goPlanos }}">Ver os planos</button></sc-if>
+          </div>
+          <sc-if value="{{ gcTemResumo }}" hint-placeholder-val="{{ false }}">
+            <div class="gcl-resumo"><sc-for list="{{ gcResumo }}" as="r" hint-placeholder-count="3"><button type="button" class="{{ r.cls }}" sc-camel-on-click="{{ r.ir }}"><i></i><b>{{ r.n }}</b>{{ r.rot }}</button></sc-for></div>
+          </sc-if>
+        </div>
+      </section>
+      <section class="lvc-corpo gcl">
+        <div class="gcl-sec">
+          <h2 class="lva-h2">O que a gestão contratual faz por você</h2>
+          <div class="gcl-cards"><sc-for list="{{ gcRecursos }}" as="r" hint-placeholder-count="6"><article class="gcl-card"><span class="gcl-ic">{{ r.ic }}</span><h3>{{ r.t }}</h3><p>{{ r.d }}</p></article></sc-for></div>
+        </div>
+        <div class="gcl-sec">
+          <h2 class="lva-h2">Como funciona</h2>
+          <ol class="gcl-passos"><sc-for list="{{ gcPassos }}" as="ps" hint-placeholder-count="4"><li><b>{{ ps.t }}</b><span>{{ ps.d }}</span></li></sc-for></ol>
+        </div>
+        <div class="gcl-sec gcl-status">
+          <h2 class="lva-h2">Situação de cada contrato, de relance</h2>
+          <p class="lva-sub">Cada contrato recebe uma faixa colorida e pode ser filtrado pela situação.</p>
+          <div class="gcl-leg"><span class="gcl-l v"><i></i><b>Vigente</b>mais de 4 meses de vigência</span><span class="gcl-l a"><i></i><b>Vencendo</b>4 meses ou menos: hora de tramitar a prorrogação</span><span class="gcl-l x"><i></i><b>Vencido</b>vigência encerrada</span></div>
+        </div>
+        <sc-if value="{{ gcBloqueada }}" hint-placeholder-val="{{ false }}">
+          <div class="lvc-bloq" style="margin-top: 8px">
+            <span class="lvh-bib-tag">{{ gcBloqTag }}</span>
+            <p class="lva-sub" style="font-size: 14.5px; margin-top: 12px">{{ gcBloqTexto }}</p>
+            <div class="lvh-ctas" style="margin-top: 16px"><button class="lvh-btn" sc-camel-on-click="{{ gcBloqAcao }}">{{ gcBloqCta }}</button><button class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ goPlanos }}">Ver os planos</button></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ gcLiberada }}" hint-placeholder-val="{{ true }}">
+          <div class="gcl-fim"><div><b>{{ gcFimTit }}</b><span>{{ gcFimTxt }}</span></div><button type="button" class="lvh-btn" sc-camel-on-click="{{ gcCtaAcao }}">{{ gcCtaTxt }}</button></div>
+        </sc-if>
+      </section>
+    </sc-if>
+    <sc-if value="{{ isContratos }}" hint-placeholder-val="{{ false }}">
+      <section class="gcm-topo">
+        <div class="gcm-in">
+          <button type="button" class="gcm-volta" sc-camel-on-click="{{ goGestaoInicio }}">← Gestão contratual</button>
+          <h1>Meus contratos</h1>
+          <p>Carteira de contratos, agenda de prazos, linha do tempo e registros de cada contrato.</p>
         </div>
       </section>
       <section class="lvc-corpo">
@@ -6513,7 +6577,7 @@ const COMPRADORES = {
 // ===================== Contas, dados e pagamentos =====================
 // O site usa o Supabase (contas e banco) e o Mercado Pago (cobrança) quando
 // config.js está preenchido. Sem configuração, roda em modo demonstração.
-const PAGINAS = ["home", "forum", "cursos", "consultoria", "agente", "elaborar", "calculadora", "gestao", "planos", "conta", "institucional", "login", "cadastro", "recuperar", "nova-senha"];
+const PAGINAS = ["home", "forum", "cursos", "consultoria", "agente", "elaborar", "calculadora", "gestao", "contratos", "planos", "conta", "institucional", "login", "cadastro", "recuperar", "nova-senha"];
 // Visitantes sem cadastro navegam por todas as páginas (como nas demais plataformas do setor): veem o que cada
 // área oferece, a vitrine do fórum e o catálogo de cursos; ler as respostas do fórum, usar as ferramentas e
 // contratar pedem conta. Só a Área do Assinante exige login para abrir.
@@ -6757,7 +6821,7 @@ class Component extends DCLogic {
       ACERVO_EM = j.gerado_em || "";
       this.setState({ acervoN: DOCS.length });
     }).catch(() => {});
-    if (pIni === "gestao") this.ctCarregar();
+    if (pIni === "gestao" || pIni === "contratos") this.ctCarregar();
     if (pIni === "calculadora") { this.carregarIndices(); const fIni = qsIni.get("f"); if (fIni && CALC_FERRAMENTAS.some((x) => x.id === fIni)) this.calcFerramenta(fIni); }
     this.timer = setInterval(() => {
       if (!this.state.pausado && this.state.page === "home") {
@@ -6844,7 +6908,7 @@ class Component extends DCLogic {
     if (u) await this.carregarDados();
     if (this.state.page === "forum" && (!u || !this.podeLerForum())) this.carregarVitrine();
     if (this.state.page === "calculadora" && u) this.moCotaCarregar();
-    if ((this.state.page === "calculadora" || this.state.page === "gestao") && u) this.ctCarregar(true);
+    if ((this.state.page === "calculadora" || this.state.page === "gestao" || this.state.page === "contratos") && u) this.ctCarregar(true);
     this.tratarRetornoPagamento();
     this.carregarCursos();
   }
@@ -7522,7 +7586,7 @@ class Component extends DCLogic {
     if (destino === "forum" && (!this.u || !this.podeLerForum())) this.carregarVitrine();
     if (destino === "agente" && this.u) this.carregarDados({ leve: true });
     if (destino === "calculadora") { this.carregarIndices(); this.moCotaCarregar(); this.ctCarregar(); }
-    if (destino === "gestao") this.ctCarregar();
+    if (destino === "gestao" || destino === "contratos") this.ctCarregar();
   }
 
   nav = (page) => () => this.irPara(page);
@@ -8124,7 +8188,7 @@ class Component extends DCLogic {
     const cSel = this.state.ct.lista.find((x) => x.id === id), obraR = origem === "reajuste" && cSel && cSel.obra;
     const pre = { ...CT_EV, ...ev, percentual: f4(ev.percentual), valor_anterior: f2(ev.valor_anterior), valor_novo: obraR ? "" : f2(ev.valor_novo) };
     this.setState((x) => ({ ct: { ...x.ct, atual: id, ev: pre, form: null, ok: "", erro: "", excluir: "" } }));
-    this.irPara("gestao");
+    this.irPara("contratos");
     this.aviso(obraR ? "Obra ou serviço de engenharia: informe o saldo a executar na data-base. O novo valor é calculado só sobre ele." : "Confira os dados do registro e clique em “Incluir na linha do tempo”.", "ok");
     setTimeout(() => { try { document.querySelector(".ct-card.aberto .ct-form").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {} }, 350);
   }
@@ -8392,7 +8456,7 @@ class Component extends DCLogic {
     if (!this.state.moCota) this.moCotaCarregar();
     if (id === "reajuste") { this.setState({ calcAba: "indice" }); this.ctCarregar(); }
     else if (id === "reequilibrio") { this.setState({ calcAba: "rq" }); this.ctCarregar(); }
-    else if (id === "contratos") { this.irPara("gestao"); return; }
+    else if (id === "contratos") { this.irPara("contratos"); return; }
     else { if (this.state.mo.modo !== id) this.moModo(id); this.setState({ calcAba: "mo" }); }
     this.carregarIndices();
     try { history.replaceState({ p: "calculadora" }, "", location.pathname + "?p=calculadora&f=" + id); } catch (e) {}
@@ -9322,6 +9386,32 @@ class Component extends DCLogic {
       // Gestão contratual: planos pagos e teste (sem contas ativas, demonstração aberta)
       gcLiberada: !!s.admin || !!s.plano || !s.sb, gcBloqueada: !(!!s.admin || !!s.plano || !s.sb),
       gcBloqTag: "Exclusivo para assinantes",
+      goGestaoInicio: this.nav("gestao"),
+      ...(() => {
+        const lib = !!s.admin || !!s.plano || !s.sb, n = s.ct.lista.length;
+        const sits = s.ct.lista.map((c) => ctSituacao(c, s.ct.eventos[c.id]));
+        const cnt = { vig: 0, ven: 0, exp: 0 }; sits.forEach((si) => { if (!si.fim) return; cnt[si.vencido ? "exp" : si.restante != null && si.restante <= 4 ? "ven" : "vig"]++; });
+        const ir = (k) => () => { this.setState((x) => ({ ct: { ...x.ct, filtro: k } })); this.irPara("contratos");
+          if (k !== "todos") setTimeout(() => { try { document.querySelector(".ct-filtro").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }, 400); };
+        const novo = () => { this.irPara("contratos"); setTimeout(() => this.ctNovo(), 60); };
+        return {
+          gcCtaTxt: !lib ? (s.usuario ? "Começar o teste grátis" : "Criar conta grátis") : n ? "Ver meus contratos (" + n + ")" : "Cadastrar meu primeiro contrato",
+          gcCtaAcao: !lib ? (s.usuario ? this.nav("planos") : () => { this.setState({ volta: "gestao" }); this.irPara("cadastro"); }) : n ? ir("todos") : novo,
+          gcCtaNovo: lib && n > 0, gcCtaNovoAcao: novo,
+          gcTemResumo: lib && n > 0,
+          gcResumo: [["vig", "vigentes"], ["ven", "vencendo"], ["exp", "vencidos"]].filter(([k]) => cnt[k]).map(([k, rot]) => ({ n: String(cnt[k]), rot, cls: "gcl-rb f-" + k, ir: ir(k) })),
+          gcFimTit: n ? "Sua carteira tem " + n + (n === 1 ? " contrato" : " contratos") : "Comece pela sua carteira",
+          gcFimTxt: n ? (cnt.ven ? cnt.ven + (cnt.ven === 1 ? " contrato vence" : " contratos vencem") + " em até 4 meses. Confira a agenda de prazos." : "Veja a agenda de prazos, a linha do tempo e os registros de cada contrato.") : "Cadastre um contrato com as datas e o valor inicial: o restante é calculado a partir dos registros.",
+          gcRecursos: [["📄", "Cadastro completo", "Vigência, valor, índice, data do orçamento estimado, data-base da convenção coletiva e regime legal (Leis 14.133, 13.303 e 13.019)."],
+            ["🕒", "Linha do tempo", "Reajustes, repactuações, reequilíbrios, aditivos e prorrogações registrados em ordem, com o valor vigente recalculado a cada passo."],
+            ["📊", "Painel do contrato", "Evolução do valor em cascata, prazo da vigência, limite de acréscimos do art. 125 e composição dos ajustes."],
+            ["📅", "Agenda da carteira", "Anualidades, datas-base, início da prorrogação (4 meses antes) e fim da vigência dos próximos 12 meses, com exportação em Excel."],
+            ["🧮", "Integração com a Calculadora", "Reajuste e reequilíbrio preenchidos com os dados do contrato, e o resultado registrado na linha do tempo com um clique."],
+            ["✉️", "Avisos e relatórios", "E-mails antes da anualidade, da data-base e do fim da vigência; PDF de cada contrato e relatório completo da carteira."]].map(([ic, t, d]) => ({ ic, t, d })),
+          gcPassos: [["Cadastre o contrato", "Número, contratada, objeto, datas, valor inicial e índice."], ["Registre as alterações", "Cada reajuste, aditivo ou prorrogação entra na linha do tempo."],
+            ["Acompanhe os prazos", "A agenda e os avisos por e-mail mostram o que vence e quando."], ["Gere os documentos", "PDF do contrato, relatório da carteira e planilha da agenda."]].map(([t, d]) => ({ t, d })),
+        };
+      })(),
       gcBloqTexto: s.usuario ? "Comece o teste grátis de 7 dias ou escolha um plano para cadastrar seus contratos e receber os avisos de prazo." : "Crie sua conta grátis e comece o teste de 7 dias, sem cartão, para cadastrar seus contratos.",
       gcBloqCta: s.usuario ? "Começar o teste grátis" : "Criar conta grátis",
       gcBloqAcao: s.usuario ? this.nav("planos") : () => { this.setState({ volta: "gestao" }); this.irPara("cadastro"); },
@@ -9444,7 +9534,7 @@ class Component extends DCLogic {
           ctOpcoes: [{ id: "", nome: ct.lista.length ? "Escolher um contrato cadastrado…" : "Nenhum contrato cadastrado", sel: !ct.atual }].concat(ct.lista.map((c) => ({ id: c.id, nome: c.numero + (c.contratada ? " · " + c.contratada : ""), sel: ct.atual === c.id }))),
           onCtSelReajuste: (e) => { const v = e.target.value; if (v) this.ctUsar(v, "reajuste"); else this.setState((x) => ({ ct: { ...x.ct, atual: "" } })); },
           onCtSelRq: (e) => { const v = e.target.value; if (v) this.ctUsar(v, "reequilibrio"); else this.setState((x) => ({ ct: { ...x.ct, atual: "" } })); },
-          ctTemSel: !!sel, ctSelNome: sel ? sel.numero : "", ctIrContratos: () => this.irPara("gestao"),
+          ctTemSel: !!sel, ctSelNome: sel ? sel.numero : "", ctIrContratos: () => this.irPara("contratos"),
           ctRegReajuste: () => this.ctRegistrar("reajuste"), ctRegRq: () => this.ctRegistrar(s.rq.d.tipo === "fato" ? "rq_fato" : "rq_trib") };
       })(),
       // reequilíbrio tributário
@@ -10377,7 +10467,7 @@ class Component extends DCLogic {
 
     const P = {
       // navegação e contas
-      navItems: navDefs.map(([label, key]) => ({ label, active: s.page === key, go: this.nav(key),
+      navItems: navDefs.map(([label, key]) => ({ label, active: s.page === key || (key === "gestao" && s.page === "contratos"), go: this.nav(key),
         goMenu: () => { this.setState({ menuAberto: false }); this.irPara(key); } })),
       menuAberto: s.menuAberto,
       iconeMenu: s.menuAberto ? "✕" : "☰",
@@ -10394,7 +10484,7 @@ class Component extends DCLogic {
       goHome: this.nav("home"), goBiblioteca: this.nav("biblioteca"), goForum: this.nav("forum"), goPlanos: this.nav("planos"), goConsultoria: this.nav("consultoria"), goCursos: this.nav("cursos"),
       goLogin: this.nav("login"), goCadastro: this.nav("cadastro"), goRecuperar: this.nav("recuperar"),
       isHome: p("home"), isBiblioteca: p("biblioteca"), isForum: p("forum"), isCursos: p("cursos"),
-      isConsultoria: p("consultoria"), isAgente: p("agente"), isElaborar: p("elaborar"), isCalculadora: p("calculadora"), isGestao: p("gestao"), isPlanos: p("planos"),
+      isConsultoria: p("consultoria"), isAgente: p("agente"), isElaborar: p("elaborar"), isCalculadora: p("calculadora"), isGestao: p("gestao"), isContratos: p("contratos"), isPlanos: p("planos"),
       isConta: p("conta"), goConta: this.nav("conta"),
       isLogin: p("login"), isCadastro: p("cadastro"), isRecuperar: p("recuperar"), isNovaSenha: p("nova-senha"),
       isAuth: p("login") || p("cadastro") || p("recuperar") || p("nova-senha"),
