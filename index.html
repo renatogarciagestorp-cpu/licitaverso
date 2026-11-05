@@ -3179,6 +3179,7 @@
               <pre class="lmo-minuta">{{ ppTextoTR }}</pre>
               <div class="pp-docs">
                 <button type="button" class="lmo-btn" sc-camel-on-click="{{ ppPdf }}">Relatório em PDF</button>
+                <sc-if value="{{ ppTemPlan }}" hint-placeholder-val="{{ false }}"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ppPlanilhaPdf }}">Planilha em PDF</button></sc-if>
                 <button type="button" class="lve-voltar" sc-camel-on-click="{{ ppWord }}">Word</button>
                 <button type="button" class="lve-voltar" sc-camel-on-click="{{ ppExcel }}">Excel</button>
                 <button type="button" class="lmo-btn pp-btn2" sc-camel-on-click="{{ ppLevar }}">{{ ppLevarTxt }}</button>
@@ -6985,6 +6986,12 @@ function ppPlanilha(res, d) {
   const fonte = n > 11 ? 5.4 : n > 8 ? 6 : n > 5 ? 6.6 : null;
   return { cab, linhas, larg, alin: "llrr" + "r".repeat(n) + "rrr", n, um, fonte, cabFonte: fonte ? fonte - 0.2 : null };
 }
+// nota de fundamentação e metodologia do fator IPCA (atualização monetária dos preços)
+function ppNotaIpca(d, res) {
+  const rg = ppRegras(d), ate = res.ipcaAte ? res.ipcaAte.slice(5, 7) + "/" + res.ipcaAte.slice(0, 4) : "último mês publicado";
+  return "Fator IPCA – fundamento: " + (rg.proprio ? "atualização monetária dos preços coletados em datas anteriores, para que a estimativa reflita o valor atual de mercado (" + rg.ref + "; na omissão do regulamento, adota-se como boa prática o art. 23, § 1º, II, da Lei 14.133/2021)" : "art. 23, § 1º, II, da Lei 14.133/2021, que admite contratações similares realizadas no ano anterior \"observado o índice de atualização de preços correspondente\", de modo que a estimativa reflita o valor atual de mercado (art. 23, caput)") +
+    ". Índice: IPCA (Índice Nacional de Preços ao Consumidor Amplo), apurado pelo IBGE, índice oficial de inflação do país, com as variações mensais publicadas pelo instituto. Metodologia: fator = produto de (1 + variação mensal ÷ 100) de cada mês posterior ao mês da data do preço até " + ate + ", último índice disponível na data do relatório; valor atualizado = valor original × fator. Preços do próprio mês ou sem data ficam com fator 1,0000. Atualizam-se os preços do Painel de Preços e das contratações similares (incisos I e II); cotações, sítios e notas fiscais (incisos III, IV e V), contemporâneos à pesquisa, não são atualizados.";
+}
 function ppDocPlanilha(d, res, hoje) {
   const pl = ppPlanilha(res, d);
   const rg = ppRegras(d);
@@ -6993,7 +7000,7 @@ function ppDocPlanilha(d, res, hoje) {
     blocos: [{ t: "tabela", titulo: "Planilha de orçamento estimado", sub: pl.um ? "Preços selecionados lado a lado, com a origem no topo de cada coluna; valores atualizados pelo IPCA. Em amarelo, os desconsiderados no saneamento de ±25% da mediana." : "Preços selecionados lado a lado; abaixo de cada valor, a origem, a fonte e a data. Valores atualizados pelo IPCA. Em amarelo, os desconsiderados no saneamento de ±25% da mediana.",
       cab: pl.cab, larg: pl.larg, alin: pl.alin, linhas: pl.linhas, fonte: pl.fonte, cabFonte: pl.cabFonte },
       { t: "legenda", texto: "Coeficiente de variação = desvio-padrão ÷ média dos preços válidos. " + (rg.metodoFixo ? "Método definido em " + rg.ref + "." : "Método: com coeficiente de variação de até 25%, média; acima, mediana; em mercado restrito, menor preço (" + rg.C.metodo + "; Manual de Licitações e Contratos do TCU, item 4.3.9.3).") + " Saneamento: ±" + rg.pctFaixa + "% da mediana (" + rg.C.exclusao + ")." }],
-    notas: ["Parte integrante do relatório da pesquisa de preços, onde estão os dados completos de cada contratação e a fundamentação."] };
+    notas: ["Parte integrante do relatório da pesquisa de preços, onde estão os dados completos de cada contratação e a fundamentação.", ppNotaIpca(d, res)] };
 }
 function ppDocumento(d, res, hoje, opc) {
   const rg = ppRegras(d);
@@ -7139,6 +7146,7 @@ function ppDocumento(d, res, hoje, opc) {
   }
   blocos.push({ t: "texto", titulo: "Responsabilidade", paragrafos: ["Documento de apoio gerado pelo Licitacon a partir das fontes indicadas. A pesquisa de preços é ato do agente responsável, que deve conferir as fontes, os itens considerados semelhantes, as justificativas e o enquadramento legal antes de juntá-la ao processo. A decisão final e a responsabilidade são de quem assina a pesquisa."] });
   notas.push("Fontes públicas consultadas: API de dados abertos do Compras.gov.br (Painel de Preços) e Portal Nacional de Contratações Públicas (PNCP), com a data da consulta e o link de cada preço.");
+  if (d.objeto !== "obras") notas.push(ppNotaIpca(d, res));
   return { id: "pesquisa", titulo: "Pesquisa de preços", sub: (d.titulo || d.descricao || "Pesquisa de preços") + (d.orgao ? " · " + d.orgao : ""), selo: d.objeto === "obras" ? (d.regime === "13303" ? "Lei 13.303/2016 · " + (rg.proprio ? rg.norma.slice(0, 50) : "Lei 14.133/2021, art. 23, como parâmetro") : "Lei 14.133/2021, art. 23, §§ 2º e 3º") : rg.proprio ? (d.regime === "13303" ? "Lei 13.303/2016 · " : "Lei 13.019/2014 · ") + rg.norma.slice(0, 50) : rg.outro ? (d.regime === "13303" ? "Lei 13.303/2016" : "Lei 13.019/2014") + " · parâmetros da IN 65/2021" : "Lei 14.133/2021, art. 23 · IN SEGES/ME 65/2021",
     arquivo: "Pesquisa de precos - " + String(d.titulo || d.descricao || "Licitacon").replace(/[\\/:*?"<>|]+/g, "-").slice(0, 60), blocos, notas, paisagem: false };
 }
@@ -8144,7 +8152,8 @@ class Component extends DCLogic {
       if (itens[0]) itens[0] = { ...itens[0], item: { ...itens[0].item, qtd: String(postos) } };
     }
     const obras = d.objeto === "obras" ? ppObras(d, hoje) : null;
-    return { itens, total, ratif, obras, hoje };
+    const serie = idx && idx.series && idx.series.ipca && idx.series.ipca.mensal, ipcaAte = serie ? Object.keys(serie).sort().pop() : "";
+    return { itens, total, ratif, obras, hoje, ipcaAte };
   }
   async ppPdf() { const res = this.ppResultado(), hoje = new Date().toLocaleDateString("pt-BR"), d = this.state.pp.d;
     await this.moDocPdf(ppDocumento(d, res, hoje), "Pesquisa de preços", hoje);
