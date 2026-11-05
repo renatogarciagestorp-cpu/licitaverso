@@ -1311,6 +1311,9 @@
   .lvc-kpi { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 12px; display: grid; gap: 3px; }
   .lvc-kpi > b { font-size: 16px; }
   .lvc-kpi > span { font-size: 12px; color: #A9BEC6; line-height: 1.35; }
+  .rq-reqs { display: grid; gap: 8px; } .rq-req { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 8px 0; border-bottom: 1px solid #EDF2F1; } .rq-req > span { font-size: 14px; color: #22343B; flex: 1; min-width: 240px; }
+  .rq-it { grid-template-columns: minmax(0, 1.6fr) 90px 90px 120px 120px minmax(0, 1fr) 150px 36px; } .rq-it input { width: 100%; }
+  @media (max-width: 900px) { .rq-it { grid-template-columns: 1fr 1fr; } .rq-it.lmo-cab { display: none; } }
   .rq-al { margin: 12px 0 0; font-size: 14px; line-height: 1.5; border-radius: 10px; padding: 11px 13px; font-weight: 600; } .rq-al.sobe { background: #FFF4DC; color: #6B4A00; border: 1px solid #F1D9A6; } .rq-al.cai { background: #E7F2FB; color: #0F4B6E; border: 1px solid #C5DDF0; } .rq-al.ok, .rq-al.neutro { background: #E3F5EC; color: #0A5C3C; border: 1px solid #BFE6D2; }
   .lvc-al { margin: 12px 0 0; font-size: 13.5px; line-height: 1.5; border-radius: 10px; padding: 10px 12px; }
   .lvc-al.info { background: rgba(127,227,182,0.12); color: #D7F5E7; }
@@ -3078,10 +3081,7 @@
           </sc-if>
           <sc-if value="{{ calcAbaRq }}" hint-placeholder-val="{{ false }}">
           <div class="lmo" id="rq-topo">
-            <div class="lmo-modos" role="group" aria-label="Tipo de reequilíbrio">
-              <button type="button" aria-pressed="true" style="border: 1px solid #0A1F2A; background: #0A1F2A; color: #fff; font-size: 13.5px; padding: 8px 14px">Tributário · reforma (LC 214/2025)</button>
-              <button type="button" disabled style="border: 1px solid #DDE4E3; background: #FBFCFC; color: #8A9AA0; font-size: 13.5px; padding: 8px 14px; cursor: default">Fato superveniente · em breve</button>
-            </div>
+            <div class="lmo-modos" role="group" aria-label="Tipo de reequilíbrio"><sc-for list="{{ rqTipos }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
             <section class="lmo-bloco">
               <h2 class="lmo-h2">1. Contrato</h2>
               <div class="lmo-campos">
@@ -3093,8 +3093,56 @@
                 <label class="lmo-campo"><span>Objeto</span><input type="text" value="{{ rqObjeto }}" sc-camel-on-input="{{ onRqObjeto }}" placeholder="Ex.: serviços de limpeza"></label>
               </div>
               <sc-if value="{{ rqOrigem }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ rqOrigem }}</p></sc-if>
-              <p class="lmo-nota">Tem uma planilha de mão de obra na Calculadora? Abra a planilha e use o botão "Verificar reequilíbrio tributário desta planilha" para trazer os valores.</p>
+              <sc-if value="{{ rqTrib }}" hint-placeholder-val="{{ true }}"><p class="lmo-nota">Tem uma planilha de mão de obra na Calculadora? Abra a planilha e use o botão "Verificar reequilíbrio tributário desta planilha" para trazer os valores.</p></sc-if>
             </section>
+            <sc-if value="{{ rqFatoAtivo }}" hint-placeholder-val="{{ false }}">
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">2. Fato superveniente</h2>
+              <div class="lmo-campos">
+                <label class="lmo-campo" style="grid-column: 1 / -1"><span>O que aconteceu</span><input type="text" value="{{ rqFsFato }}" sc-camel-on-input="{{ onRqFsFato }}" placeholder="Ex.: alta extraordinária do diesel após a proposta"></label>
+                <label class="lmo-campo"><span>Data do fato</span><input type="text" value="{{ rqFsData }}" sc-camel-on-input="{{ onRqFsData }}" placeholder="mm/aaaa"></label>
+                <label class="lmo-campo"><span>Reajuste já concedido sobre esses itens (%)</span><input type="text" inputmode="decimal" value="{{ rqFsReaj }}" sc-camel-on-input="{{ onRqFsReaj }}" placeholder="Ex.: 4,8"></label>
+                <label class="lmo-campo"><span>BDI ou custos indiretos, lucro e tributos (%)</span><input type="text" inputmode="decimal" value="{{ rqFsBdi }}" sc-camel-on-input="{{ onRqFsBdi }}" placeholder="Ex.: 25"></label>
+              </div>
+              <p class="lmo-nota">O reajuste já concedido é descontado do custo da proposta, para que o mesmo aumento não seja pago duas vezes. O BDI converte o impacto nos custos em impacto no preço; deixe em branco se os custos informados já forem preços finais.</p>
+            </section>
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">3. Requisitos</h2>
+              <div class="rq-reqs"><sc-for list="{{ rqReqs }}" as="q" hint-placeholder-count="6"><div class="rq-req"><span>{{ q.t }}</span><div class="lmo-modos"><sc-for list="{{ q.ops }}" as="o" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.ativo }}" style="border: 1px solid {{ o.borda }}; background: {{ o.fundo }}; color: {{ o.cor }}; font-size: 12.5px; padding: 6px 12px">{{ o.nome }}</button></sc-for></div></div></sc-for></div>
+              <p class="lmo-nota">Lei 14.133/2021, art. 124, II, d, e art. 103 (matriz de riscos). Marque como a análise do caso concluiu: a ferramenta organiza, mas não substitui o exame técnico e jurídico.</p>
+            </section>
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">4. Custos afetados</h2>
+              <p class="lmo-nota" style="margin-top: 0">Inclua cada item que mudou de custo, com a quantidade por mês, o custo unitário na proposta, o custo unitário atual e o documento que comprova (nota fiscal, cotação, índice do setor, ato normativo). Itens que ficaram mais baratos também entram.</p>
+              <sc-if value="{{ rqTemItens }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-tabela" style="margin-top: 10px" role="table" aria-label="Custos afetados">
+                  <div class="lmo-lin rq-it lmo-cab" role="row"><span>Item</span><span>Unidade</span><span>Qtd./mês</span><span>Custo na proposta</span><span>Custo atual</span><span>Documento</span><span>Impacto mensal</span><span></span></div>
+                  <sc-for list="{{ rqItens }}" as="it" hint-placeholder-count="2">
+                    <div class="lmo-lin rq-it" role="row"><span><input type="text" aria-label="Item" value="{{ it.desc }}" sc-camel-on-input="{{ it.onDesc }}" placeholder="Ex.: óleo diesel S10"></span><span><input type="text" aria-label="Unidade" value="{{ it.un }}" sc-camel-on-input="{{ it.onUn }}" placeholder="litro"></span><span><input type="text" inputmode="decimal" aria-label="Quantidade por mês" value="{{ it.qtd }}" sc-camel-on-input="{{ it.onQtd }}"></span><span><input type="text" inputmode="decimal" aria-label="Custo unitário na proposta" value="{{ it.prop }}" sc-camel-on-input="{{ it.onProp }}" placeholder="0,00"></span><span><input type="text" inputmode="decimal" aria-label="Custo unitário atual" value="{{ it.atual }}" sc-camel-on-input="{{ it.onAtual }}" placeholder="0,00"></span><span><input type="text" aria-label="Documento comprobatório" value="{{ it.prova }}" sc-camel-on-input="{{ it.onProva }}" placeholder="NF 123, cotação…"></span><span class="lmo-pct">{{ it.imp }}</span><span><button type="button" class="lmo-x" aria-label="Retirar item" sc-camel-on-click="{{ it.del }}">×</button></span></div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <div style="margin-top: 10px"><button type="button" class="lve-voltar" style="padding: 9px 14px; font-size: 13.5px" sc-camel-on-click="{{ rqItemAdd }}">+ Incluir item</button></div>
+            </section>
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">5. Resultado</h2>
+              <sc-if value="{{ rqFatoPronto }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-kpis" style="margin-top: 0"><sc-for list="{{ rqFatoKpis }}" as="k" hint-placeholder-count="5"><div><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
+                <p class="{{ rqFatoCls }}" style="margin-top: 12px">{{ rqFatoVeredito }}</p>
+                <sc-for list="{{ rqFatoAlertas }}" as="a" hint-placeholder-count="1"><p class="lve-aviso" style="margin-top: 8px">{{ a.t }}</p></sc-for>
+                <div class="lmo-docs" role="list" aria-label="Documentos para download">
+                  <p class="lmo-nota" style="margin: 0"><b>Documentos para download</b> · em Excel ou PDF, com a fundamentação no final.</p>
+                  <sc-for list="{{ rqDocs }}" as="dc" hint-placeholder-count="2">
+                    <div class="lmo-doc" role="listitem"><div><b>{{ dc.nome }}</b><small>{{ dc.desc }}</small></div>
+                      <div class="lmo-doc-btns"><button type="button" class="lmo-btn" aria-label="{{ dc.nome }} em Excel" sc-camel-on-click="{{ dc.xlsx }}">Excel</button><button type="button" class="lmo-btn lmo-btn2" aria-label="{{ dc.nome }} em PDF" sc-camel-on-click="{{ dc.pdf }}">PDF</button></div></div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ rqErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ rqErro }}</p></sc-if>
+              <p class="lmo-nota">Ferramenta de apoio: o direito ao reequilíbrio depende da análise do caso, do contrato e da matriz de riscos. <button type="button" class="lve-voltar" style="padding: 4px 10px; font-size: 12.5px" sc-camel-on-click="{{ rqLimpar }}">Limpar dados</button></p>
+            </section>
+            </sc-if>
+            <sc-if value="{{ rqTrib }}" hint-placeholder-val="{{ true }}">
             <section class="lmo-bloco">
               <h2 class="lmo-h2">2. Tributos da proposta</h2>
               <p class="lmo-nota" style="margin-top: 0"><b>Regime de tributação da contratada *</b></p>
@@ -3157,6 +3205,7 @@
               <sc-if value="{{ rqErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ rqErro }}</p></sc-if>
               <p class="lmo-nota">Estimativa para instruir o processo: confira as alíquotas publicadas, a regulamentação da metodologia e o texto oficial da LC 214/2025. <button type="button" class="lve-voltar" style="padding: 4px 10px; font-size: 12.5px" sc-camel-on-click="{{ rqLimpar }}">Limpar dados</button></p>
             </section>
+            </sc-if>
           </div>
           </sc-if>
           <sc-if value="{{ calcAbaIndice }}" hint-placeholder-val="{{ true }}">
@@ -5633,8 +5682,40 @@ const MO_ANOS_REFORMA = [2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033];
 // Reequilíbrio tributário da reforma (LC 214/2025, arts. 373 a 377): compara o valor do contrato com a carga de
 // PIS/COFINS/ISS da proposta e o valor que mantém a mesma receita líquida com a CBS, o IBS e o ISS de cada ano da transição.
 // Mesma regra das planilhas: ISS por dentro; CBS e IBS por fora, sobre o valor sem eles e sem o ISS (art. 12, § 2º).
+const rqR2 = (x) => Math.round((x + (x >= 0 ? 1e-9 : -1e-9)) * 100) / 100; // arredondamento comercial, também para valores negativos
 const RQ_PADRAO = { contrato: "", contratada: "", objeto: "", valor: "", proposta: "", meses: "", regime: "", rbt12: "", pis: "", cofins: "", iss: "",
-  rf_cbs: "11,3", rf_ibs: "18,7", ins: "", ins_red: "", ano: "2027", origem: "" };
+  rf_cbs: "11,3", rf_ibs: "18,7", ins: "", ins_red: "", ano: "2027", origem: "",
+  tipo: "trib", fs_fato: "", fs_data: "", fs_reaj: "", fs_bdi: "", fs_itens: [],
+  fs_posterior: "", fs_imprev: "", fs_matriz: "", fs_nexo: "", fs_culpa: "", fs_relevante: "" };
+// Reequilíbrio por fato superveniente (Lei 14.133/2021, art. 124, II, d): requisitos e impacto item a item, descontado o reajuste
+const RQ_REQUISITOS = [
+  ["fs_posterior", "O fato ocorreu depois da apresentação da proposta"],
+  ["fs_imprev", "O fato era imprevisível, ou previsível de consequências incalculáveis (força maior, caso fortuito ou fato do príncipe)"],
+  ["fs_matriz", "O risco não foi atribuído à contratada na matriz de riscos nem é álea ordinária do negócio"],
+  ["fs_nexo", "Há relação direta entre o fato e o aumento (ou a redução) dos custos do contrato"],
+  ["fs_culpa", "O desequilíbrio não decorre de culpa, atraso ou má gestão da contratada"],
+  ["fs_relevante", "O impacto é relevante e está comprovado por documentos"]];
+function rqFatoCalcular(d) {
+  const n = (v) => moNum(v);
+  const P0 = n(d.valor), reaj = n(d.fs_reaj) / 100, bdi = n(d.fs_bdi) / 100;
+  const itens = (d.fs_itens || []).map((it, i) => {
+    const q = n(it.qtd) || 0, cp = n(it.prop), ca = n(it.atual);
+    const cpc = cp * (1 + reaj), du = ca - cpc, imp = rqR2(du * q);
+    return { i, desc: it.desc || "", un: it.un || "", q, cp, cpc, ca, du, imp, var: cpc ? ca / cpc - 1 : 0, prova: it.prova || "", ok: !!(it.desc && q && cp && ca) };
+  });
+  const validos = itens.filter((x) => x.ok);
+  const custo = rqR2(validos.reduce((a, x) => a + x.imp, 0)), preco = rqR2(custo * (1 + bdi));
+  const resp = RQ_REQUISITOS.map(([k, t]) => ({ k, t, v: d[k] || "" }));
+  const nao = resp.filter((r) => r.v === "nao"), pend = resp.filter((r) => r.v !== "sim" && r.v !== "nao");
+  const semProva = validos.filter((x) => !String(x.prova).trim());
+  // meses desde o fato (data mm/aaaa) até o mês atual
+  const m = String(d.fs_data || "").match(/^(\d{1,2})\/(\d{4})$/), hoje = new Date();
+  const desde = m ? Math.max(0, (hoje.getFullYear() - Number(m[2])) * 12 + (hoje.getMonth() + 1 - Number(m[1]))) : 0;
+  const mp = String(d.proposta || "").match(/^(\d{1,2})\/(\d{4})$/);
+  const idadeProposta = mp ? (hoje.getFullYear() - Number(mp[2])) * 12 + (hoje.getMonth() + 1 - Number(mp[1])) : 0;
+  return { P0, reaj, bdi, itens, validos, custo, preco, pct: P0 ? preco / P0 : 0, resp, nao, pend, semProva, desde, meses: n(d.meses), idadeProposta,
+    pronto: validos.length > 0 };
+}
 function rqCalcular(d) {
   const n = (k) => moNum(d[k]), pc = (k) => moNum(d[k]) / 100;
   const P0 = n("valor");
@@ -5656,8 +5737,8 @@ function rqCalcular(d) {
     if (tr.antigos) { P1 = P0; pis = (aPis + aCof) * P0; iss = aIss * P0; }
     else if (simp) { const aCbs = aPis + aCof, aIssT = aIss * tr.issF, aIbs = aIss - aIssT; P1 = Po / (1 - (aCbs + aIssT + aIbs)); cbs = aCbs * P1; ibs = aIbs * P1; iss = aIssT * P1; }
     else { PoY = Po - red; const aIssT = aIss * tr.issF; iss = PoY / (1 - aIssT) - PoY; cbs = tr.cbs * PoY; ibs = tr.ibs * PoY; P1 = PoY + iss + cbs + ibs; }
-    P1 = moT2(P1);
-    const dif = moT2(P1 - P0);
+    P1 = rqR2(P1);
+    const dif = rqR2(P1 - P0);
     return { ano, tr, P1, dif, pct: dif / P0, carga: P1 ? (P1 - PoY) / P1 : 0, cbs, ibs, iss, pis, PoY };
   });
   const sel = anos.find((x) => String(x.ano) === String(d.ano)) || anos[1];
@@ -5895,7 +5976,7 @@ const PLANO_BENEFICIOS = {
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "10";
+const CHAT_VERSAO = "11";
 // versão da Biblioteca no endereço: força o navegador a buscar a página nova depois de cada mudança (o GitHub Pages guarda em cache por 10 minutos)
 const BIB_URL = "biblioteca.html?v=2";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
@@ -7258,7 +7339,53 @@ class Component extends DCLogic {
     this.aviso(antes ? "Valores da planilha levados ao reequilíbrio." : "Valor e ISS levados ao reequilíbrio. A planilha está calculada depois da reforma: informe o PIS e a COFINS da proposta original.", "ok");
     setTimeout(() => { try { document.getElementById("rq-topo").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }, 80);
   }
+  rqMudar(fn) { this.setState((x) => { const d = fn({ ...x.rq.d }); this.rqGravar(d); return { rq: { ...x.rq, d, erro: "" } }; }); }
+  rqTipo(t) { this.rqMudar((d) => ({ ...d, tipo: t })); }
+  rqReq(k, v) { this.rqMudar((d) => ({ ...d, [k]: d[k] === v ? "" : v })); }
+  rqItemAdd() { this.rqMudar((d) => ({ ...d, fs_itens: (d.fs_itens || []).concat([{ desc: "", un: "", qtd: "", prop: "", atual: "", prova: "" }]).slice(0, 40) })); }
+  rqItemSet = (i, k) => (e) => { const v = e && e.target ? e.target.value : e; this.rqMudar((d) => ({ ...d, fs_itens: (d.fs_itens || []).map((it, j) => (j === i ? { ...it, [k]: v } : it)) })); };
+  rqItemDel(i) { this.rqMudar((d) => ({ ...d, fs_itens: (d.fs_itens || []).filter((_, j) => j !== i) })); }
+  async rqBaixarFato(formato, tipo) {
+    const d = this.state.rq.d, r = rqFatoCalcular(d);
+    if (!r.pronto) { this.setState((x) => ({ rq: { ...x.rq, erro: "Inclua ao menos um item com descrição, quantidade, custo na proposta e custo atual." } })); return; }
+    const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const pct = (v) => (v * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
+    const sinal = (v) => (v > 0 ? "+" : "") + brl(v), hoje = new Date().toLocaleDateString("pt-BR");
+    const rot = { sim: "Sim", nao: "Não", comprovar: "A comprovar" };
+    const ident = [["Contrato", d.contrato], ["Contratada", d.contratada], ["Objeto", d.objeto], ["Data da proposta", d.proposta], ["Fato", d.fs_fato], ["Data do fato", d.fs_data],
+      ["Valor mensal atual", r.P0 ? brl(r.P0) : ""], ["Reajuste já concedido sobre os itens", r.reaj ? pct(r.reaj) : "nenhum informado"], ["Custos indiretos, lucro e tributos sobre o custo (BDI)", r.bdi ? pct(r.bdi) : "não aplicado"]].filter((x) => String(x[1] || "").trim());
+    const T = (titulo, cab, linhas, larg, alin) => ({ t: "tabela", titulo, cab, linhas, larg, alin });
+    const tabReq = T("REQUISITOS DO REEQUILÍBRIO (LEI 14.133/2021, ART. 124, II, D)", ["Requisito", "Situação"], r.resp.map((x) => ({ c: [x.t, rot[x.v] || "Não avaliado"], alerta: x.v === "nao" ? [1] : undefined })), [80, 20], "ll");
+    const tabItens = T("IMPACTO ITEM A ITEM – CUSTO NA PROPOSTA (CORRIGIDO PELO REAJUSTE) × CUSTO ATUAL", ["Item", "Qtd./mês", "Proposta", "Proposta + reajuste", "Atual", "Variação", "Impacto mensal", "Documento"],
+      r.validos.map((x) => ({ c: [x.desc + (x.un ? " (" + x.un + ")" : ""), x.q.toLocaleString("pt-BR"), brl(x.cp), brl(x.cpc), brl(x.ca), (x.var > 0 ? "+" : "") + pct(x.var), sinal(x.imp), x.prova || "falta comprovar"], alerta: x.prova ? undefined : [7] }))
+        .concat([{ c: ["Impacto nos custos", "", "", "", "", "", sinal(r.custo), ""], total: true }]).concat(r.bdi ? [{ c: ["Impacto no preço (com BDI de " + pct(r.bdi) + ")", "", "", "", "", "", sinal(r.preco), ""], total: true }] : []),
+      [26, 8, 11, 12, 11, 8, 12, 20], "lrrrrrrl");
+    const conclusao = r.nao.length ? "Requisito não atendido (" + r.nao.map((x) => x.t.toLowerCase()).join("; ") + "): nessas condições, o reequilíbrio tende a não ser cabível."
+      : r.pend.length ? "Há requisitos pendentes de comprovação: " + r.pend.map((x) => x.t.toLowerCase()).join("; ") + "."
+      : r.preco > 0 ? "Requisitos atendidos, conforme declarado: impacto de " + sinal(r.preco) + " por mês (" + pct(r.pct) + " do valor mensal), a ser recomposto por termo aditivo." : r.preco < 0 ? "Requisitos atendidos e impacto negativo: os custos caíram, e o valor do contrato deve ser revisto em favor da Administração." : "Sem impacto apurado.";
+    const fund = ["Constituição, art. 37, XXI: manutenção das condições efetivas da proposta. Lei 14.133/2021, art. 124, II, d: alteração por acordo para restabelecer o equilíbrio econômico-financeiro diante de fatos imprevisíveis, ou previsíveis de consequências incalculáveis, que inviabilizem a execução tal como pactuada, em caso de força maior, caso fortuito ou fato do príncipe, respeitada a repartição de riscos do contrato.",
+      "Matriz de riscos (Lei 14.133/2021, art. 103): o risco atribuído à contratada não gera reequilíbrio. Alteração de tributos e encargos legais após a proposta (art. 134). Pedido durante a vigência do contrato e antes de eventual prorrogação (art. 131, parágrafo único); prazo de resposta previsto no contrato (art. 92, XI).",
+      "O reajuste já concedido foi descontado do custo da proposta, para que o mesmo aumento não seja pago duas vezes. Itens que ficaram mais baratos compensam os que subiram. Cada valor deve estar comprovado por documento (nota fiscal, cotação, índice setorial, ato normativo).",
+      "Estatais: Lei 13.303/2016, art. 81, VI. Verifique o contrato, a matriz de riscos e o regulamento do órgão antes de juntar ao processo."];
+    const base0 = "reequilibrio-fato-superveniente" + (d.contrato ? "-contrato-" + String(d.contrato).replace(/[^0-9a-z]+/gi, "-") : "");
+    const sub = "Reequilíbrio por fato superveniente · " + (d.contratada || "Contrato") + (d.contrato ? " · contrato " + d.contrato : "");
+    const destaques = { t: "destaques", itens: [["Impacto mensal no preço", sinal(r.preco)], ["% do valor mensal", r.P0 ? pct(r.pct) : "—"], [r.meses ? "Até o fim da vigência (" + r.meses + " meses)" : "Em 12 meses", sinal(r.preco * (r.meses || 12))], ["Desde o fato (" + r.desde + " meses)", sinal(r.preco * r.desde)]] };
+    const docs = {
+      memoria: { titulo: "Memória de cálculo do reequilíbrio", arquivo: base0 + "-memoria-de-calculo", paisagem: true, sub, selo: "Lei 14.133/2021 · art. 124, II, d", blocos: [destaques, { t: "pares", titulo: "Dados do contrato e do fato", pares: ident }, tabReq, tabItens], notas: fund },
+      nota: { titulo: "Nota técnica · reequilíbrio econômico-financeiro", arquivo: base0 + "-nota-tecnica", sub, selo: "Lei 14.133/2021 · art. 124, II, d", blocos: [
+        { t: "texto", titulo: "1. OBJETO", paragrafos: ["Análise do pedido de restabelecimento do equilíbrio econômico-financeiro do " + (d.contrato ? "contrato " + d.contrato : "contrato") + (d.contratada ? ", firmado com " + d.contratada : "") + (d.objeto ? ", cujo objeto é " + d.objeto : "") + ", em razão de: " + (d.fs_fato || "fato superveniente") + (d.fs_data ? " (" + d.fs_data + ")" : "") + "."] },
+        destaques, tabReq, tabItens,
+        { t: "texto", titulo: "2. CONCLUSÃO", paragrafos: [conclusao].concat(r.semProva.length ? ["Itens sem documento comprobatório: " + r.semProva.map((x) => x.desc).join(", ") + ". Sem comprovação, o valor correspondente não deve ser recomposto."] : [])
+          .concat(["A recomposição, se cabível, deve ser formalizada por termo aditivo, após análise da área técnica e manifestação jurídica."]) }], notas: fund }
+    };
+    const doc0 = docs[tipo]; doc0.id = tipo;
+    this.setState((x) => ({ rq: { ...x.rq, baixando: true, erro: "" } }));
+    try { if (formato === "xlsx") await this.moDocExcel(doc0, doc0.titulo, hoje); else await this.moDocPdf(doc0, doc0.titulo, hoje); }
+    catch (e) { console.error(e); this.setState((x) => ({ rq: { ...x.rq, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
+    this.setState((x) => ({ rq: { ...x.rq, baixando: false } }));
+  }
   async rqBaixar(formato, tipo) {
+    if (this.state.rq.d.tipo === "fato") return this.rqBaixarFato(formato, tipo);
     const d = this.state.rq.d, r = rqCalcular(d);
     if (!r.pronto) { this.setState((x) => ({ rq: { ...x.rq, erro: r.falta } })); return; }
     const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -8356,13 +8483,36 @@ class Component extends DCLogic {
         const pct = (v) => (v * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
         const sinal = (v) => (v > 0 ? "+" : "") + brl(v);
         const campos = {};
-        ["contrato", "contratada", "objeto", "valor", "proposta", "meses", "rbt12", "pis", "cofins", "iss", "rf_cbs", "rf_ibs", "ins", "ins_red"].forEach((k) => {
+        ["contrato", "contratada", "objeto", "valor", "proposta", "meses", "rbt12", "pis", "cofins", "iss", "rf_cbs", "rf_ibs", "ins", "ins_red", "fs_fato", "fs_data", "fs_reaj", "fs_bdi"].forEach((k) => {
           const nome = "rq" + k.split("_").map((x) => x[0].toUpperCase() + x.slice(1)).join("");
           campos[nome] = d[k] || ""; campos["on" + nome[0].toUpperCase() + nome.slice(1)] = this.rqSet(k);
         });
         const sel = r.pronto ? r.sel : null;
         const tipo = !sel ? "" : sel.dif > 0.004 ? "sobe" : sel.dif < -0.004 ? "cai" : "neutro";
-        return { ...campos,
+        const fato = d.tipo === "fato", rf = rqFatoCalcular(d);
+        const fatoProps = {
+          rqTrib: !fato, rqFatoAtivo: fato,
+          rqTipos: [["trib", "Tributário · reforma (LC 214/2025)"], ["fato", "Fato superveniente (art. 124, II, d)"]].map(([id, nome]) => ({ nome, ativo: (d.tipo || "trib") === id, escolher: () => this.rqTipo(id), ...corBotao((d.tipo || "trib") === id) })),
+          rqReqs: rf.resp.map((x) => ({ t: x.t, ops: [["sim", "Sim"], ["nao", "Não"], ["comprovar", "A comprovar"]].map(([v, nome]) => ({ nome, ativo: x.v === v, escolher: () => this.rqReq(x.k, v), ...corBotao(x.v === v) })) })),
+          rqItens: (d.fs_itens || []).map((it, i) => {
+            const c = rf.itens[i];
+            return { desc: it.desc || "", un: it.un || "", qtd: it.qtd || "", prop: it.prop || "", atual: it.atual || "", prova: it.prova || "",
+              onDesc: this.rqItemSet(i, "desc"), onUn: this.rqItemSet(i, "un"), onQtd: this.rqItemSet(i, "qtd"), onProp: this.rqItemSet(i, "prop"), onAtual: this.rqItemSet(i, "atual"), onProva: this.rqItemSet(i, "prova"),
+              imp: c && c.ok ? sinal(c.imp) + " · " + (c.var > 0 ? "+" : "") + pct(c.var) : "—", del: () => this.rqItemDel(i) };
+          }),
+          rqTemItens: (d.fs_itens || []).length > 0, rqItemAdd: () => this.rqItemAdd(),
+          rqFatoPronto: rf.pronto,
+          rqFatoKpis: !rf.pronto ? [] : [["Impacto nos custos", sinal(rf.custo)], ["Impacto mensal no preço" + (rf.bdi ? " (com BDI)" : ""), sinal(rf.preco)], ["% do valor mensal", rf.P0 ? pct(rf.pct) : "informe o valor mensal"],
+            [rf.meses ? "Até o fim da vigência (" + rf.meses + " meses)" : "Em 12 meses", sinal(rf.preco * (rf.meses || 12))], ["Desde o fato (" + rf.desde + " meses)", sinal(rf.preco * rf.desde)]].map(([k, v]) => ({ k, v })),
+          rqFatoVeredito: !rf.pronto ? "" : rf.nao.length ? "Requisito não atendido: " + rf.nao.map((x) => x.t.toLowerCase()).join("; ") + ". Nessas condições, o reequilíbrio tende a não ser cabível."
+            : rf.pend.length ? "Faltam " + rf.pend.length + " requisito(s) a confirmar ou comprovar antes de concluir." : rf.preco > 0 ? "Requisitos atendidos, conforme marcado: o impacto pode ser recomposto por termo aditivo, com os documentos de cada item."
+            : rf.preco < 0 ? "Os custos caíram: o valor do contrato deve ser revisto em favor da Administração." : "Sem impacto apurado.",
+          rqFatoCls: "rq-al " + (!rf.pronto ? "ok" : rf.nao.length ? "sobe" : rf.pend.length ? "cai" : "ok"),
+          rqFatoAlertas: [].concat(rf.semProva.length ? ["Itens sem documento comprobatório: " + rf.semProva.map((x) => x.desc).join(", ") + ". Sem prova, o valor não deve ser recomposto."] : [])
+            .concat(!rf.reaj && rf.idadeProposta >= 12 ? ["A proposta tem mais de 12 meses e nenhum reajuste foi informado. Se o contrato já foi reajustado, informe o percentual: sem isso, o mesmo aumento pode ser pago duas vezes."] : [])
+            .map((t) => ({ t })),
+        };
+        return { ...campos, ...fatoProps,
           rqRegimes: [["real", "Lucro Real"], ["presumido", "Lucro Presumido"], ["simples", "Simples Nacional"]].map(([id, nome]) => ({ nome, ativo: d.regime === id, escolher: () => this.rqRegime(id), ...corBotao(d.regime === id) })),
           rqSimples: d.regime === "simples", rqRegular: !!d.regime && d.regime !== "simples",
           rqSimplesTxt: r.simp ? "Alíquota efetiva do Simples: " + pct(r.simp.ef) + " (faixa " + r.simp.faixa + " do Anexo IV): PIS " + pct(r.simp.pis) + ", COFINS " + pct(r.simp.cofins) + ", ISS " + pct(r.simp.iss) + (r.simp.issFora ? " (na 6ª faixa o ISS é recolhido fora do DAS: informe a alíquota abaixo)." : ".") : "",
@@ -8385,10 +8535,11 @@ class Component extends DCLogic {
             "Decisão: fundamentada, em até 90 dias, prorrogáveis uma vez; a Administração pode conceder recomposição provisória (art. 376, §§ 1º, 4º e 5º).",
             "Matriz de riscos: não afasta o reequilíbrio da reforma (art. 374, § 2º). Formalização por termo aditivo, com aplicação subsidiária da Lei 14.133/2021 ou da Lei 13.303/2016 (art. 377)."].map((t) => ({ t })),
           rqOrigem: d.origem ? "Valores importados da " + d.origem + "." : "",
-          rqDocs: [["memoria", "Memória de cálculo", "Premissas, transição ano a ano e metodologia"], ["nota", "Nota técnica", "Objeto, premissas, cálculo, conclusão e fundamentação"]]
+          rqDocs: (d.tipo === "fato" ? [["memoria", "Memória de cálculo", "Dados do fato, requisitos e impacto item a item"], ["nota", "Nota técnica", "Objeto, requisitos, cálculo, conclusão e fundamentação"]]
+            : [["memoria", "Memória de cálculo", "Premissas, transição ano a ano e metodologia"], ["nota", "Nota técnica", "Objeto, premissas, cálculo, conclusão e fundamentação"]])
             .map(([id, nome, desc]) => ({ nome, desc, xlsx: () => this.rqBaixar("xlsx", id), pdf: () => this.rqBaixar("pdf", id) })),
           rqBaixando: !!s.rq.baixando, rqErro: s.rq.erro,
-          rqLimpar: () => { const dd = { ...RQ_PADRAO }; this.rqGravar(dd); this.setState((x) => ({ rq: { ...x.rq, d: dd, erro: "" } })); },
+          rqLimpar: () => { const dd = { ...RQ_PADRAO, tipo: d.tipo || "trib" }; this.rqGravar(dd); this.setState((x) => ({ rq: { ...x.rq, d: dd, erro: "" } })); },
           moLevarRq: () => this.rqDaPlanilha() };
       })(),
       moPlan: mo.modo === "planejamento", moRep: rep, moProp: prop, moTemPlanArq: rep || prop,
