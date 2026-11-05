@@ -1462,6 +1462,80 @@
   .pp-entrada-txt { display: grid; gap: 4px; } .pp-entrada-txt b { font-size: 17px; color: #0B1F2A; } .pp-entrada-txt span { font-size: 14px; color: #3D5058; line-height: 1.5; } .pp-entrada-txt small { font-size: 12px; color: #0A7A50; font-weight: 700; }
   .pp-entrada-cta { font-weight: 800; color: #0A7A50; white-space: nowrap; }
   @media (max-width: 700px) { .pp-entrada { grid-template-columns: 1fr; } .pp-pares div { grid-template-columns: 1fr; } }
+  /* ===== Pesquisa de preços: camada visual (neurodesign) ===== */
+  .pp-fundo { background: radial-gradient(1100px 380px at 50% -120px, rgba(15,163,107,.10), transparent 70%), linear-gradient(#F3F7F5, #F6F8F7 420px); }
+  .pp-selos { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .pp-selos li { font-size: 12px; font-weight: 700; color: #BFEBD6; border: 1px solid rgba(159,227,197,.28); background: rgba(15,163,107,.10); border-radius: 99px; padding: 4px 10px; }
+  .pp-selos li::before { content: "✓ "; color: #3FD49A; }
+  .pp { gap: 18px; }
+  .pp .pp-barra { position: sticky; top: 0; z-index: 5; background: rgba(243,247,245,.92); backdrop-filter: saturate(1.4) blur(8px); -webkit-backdrop-filter: saturate(1.4) blur(8px); padding: 10px 0; margin: -10px 0 0; border-bottom: 1px solid transparent; }
+  .pp-ets { flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; max-width: 760px; counter-reset: none; }
+  .pp-et { position: relative; display: flex; align-items: center; gap: 10px; text-align: left; background: none; border: 0; border-radius: 12px; padding: 8px 12px 8px 8px; color: #55666D; transition: background .15s ease; }
+  .pp-et:hover { background: rgba(11,31,42,.04); }
+  .pp-et + .pp-et::before { content: ""; position: absolute; left: -14px; top: 50%; width: 22px; height: 2px; background: #D3DEDB; border-radius: 2px; }
+  .pp-et.feito + .pp-et::before, .pp-et.feito + .pp-et.ativo::before { background: #0FA36B; }
+  .pp-et-n { flex: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 14px; background: #fff; color: #55666D; border: 2px solid #D3DEDB; transition: all .2s ease; }
+  .pp-et-t { display: grid; gap: 1px; min-width: 0; } .pp-et-t b { font-size: 14px; color: inherit; line-height: 1.2; } .pp-et-t small { font-size: 11.5px; font-weight: 600; color: #7A898F; line-height: 1.25; }
+  .pp-et.ativo { background: #fff; color: #0B1F2A; box-shadow: 0 6px 18px rgba(11,31,42,.08), inset 0 0 0 1px #DCE4E2; }
+  .pp-et.ativo .pp-et-n { background: #0A1F2A; border-color: #0A1F2A; color: #3FD49A; box-shadow: 0 0 0 4px rgba(15,163,107,.16); }
+  .pp-et.feito { color: #0A7A50; } .pp-et.feito .pp-et-n { background: #0FA36B; border-color: #0FA36B; color: transparent; position: relative; }
+  .pp-et.feito .pp-et-n::after { content: "✓"; position: absolute; inset: 0; display: grid; place-items: center; color: #fff; font-size: 15px; }
+  .pp-barra-acoes { align-items: center; }
+  .pp-btn-q, .pp-btn-s { font: inherit; font-size: 14px; font-weight: 800; border-radius: 12px; padding: 10px 16px; cursor: pointer; transition: background .15s ease, border-color .15s ease; }
+  .pp-btn-q { background: transparent; border: 1px solid transparent; color: #3D5058; } .pp-btn-q:hover { background: rgba(11,31,42,.05); }
+  .pp-btn-s { background: #fff; border: 1px solid #BFE3D2; color: #0A7A50; } .pp-btn-s:hover { background: #F1FAF5; border-color: #0FA36B; }
+  .pp .lmo-bloco { border-color: #E1E8E6; border-radius: 18px; padding: 22px 24px; box-shadow: 0 1px 2px rgba(11,31,42,.04), 0 12px 32px rgba(11,31,42,.05); }
+  .pp .pp-h { display: flex; align-items: center; gap: 10px; font-size: 18px; letter-spacing: -.01em; margin-bottom: 14px; }
+  .pp .pp-h::before { content: ""; flex: none; width: 4px; height: 20px; border-radius: 4px; background: linear-gradient(#0FA36B, #0F6B7E); }
+  .pp .pp-h3 { font-size: 15.5px; margin-top: 22px; }
+  .pp .pp-rot { color: #4C5F66; }
+  .pp .lmo-campo > span { color: #3D5058; }
+  .pp .lmo-campo input, .pp .lmo-campo select, .pp .pp-busca input, .pp .pp-ta { background: #fff; border-color: #D3DEDB; border-radius: 10px; padding: 10px 12px; transition: border-color .15s ease, box-shadow .15s ease; }
+  .pp .lmo-campo input:hover, .pp .lmo-campo select:hover { border-color: #B5C5C1; }
+  .pp .lmo-campo input:focus, .pp .lmo-campo select:focus, .pp .pp-busca input:focus, .pp .pp-ta:focus { outline: none; border-color: #0FA36B; box-shadow: 0 0 0 4px rgba(15,163,107,.15); }
+  .pp .pp-op { position: relative; padding: 12px 14px 12px 40px; border-radius: 14px; border-color: #DCE4E2; transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease; }
+  .pp .pp-op::before { content: ""; position: absolute; left: 14px; top: 14px; width: 16px; height: 16px; border-radius: 50%; border: 2px solid #B5C5C1; background: #fff; box-sizing: border-box; }
+  .pp .pp-op:hover { border-color: #9ED9BE; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(11,31,42,.06); }
+  .pp .pp-op.ativo::before { border-color: #0FA36B; background: radial-gradient(circle, #0FA36B 0 4px, #fff 5px); }
+  .pp .pp-op span { color: #66757F; font-size: 12.5px; line-height: 1.4; }
+  .pp .pp-op-p { padding: 8px 14px 8px 34px; } .pp .pp-op-p::before { left: 11px; top: 50%; margin-top: -8px; }
+  .pp .pp-chk::before { border-radius: 5px; } .pp .pp-chk.ativo::before { background: #0FA36B; border-color: #0FA36B; }
+  .pp .pp-chk.ativo::after { content: "✓"; position: absolute; left: 11px; top: 50%; width: 16px; margin-top: -9px; text-align: center; color: #fff; font-size: 11px; font-weight: 900; line-height: 18px; }
+  .pp .pp-fund { background: linear-gradient(135deg, #F1FAF5, #FBFDFC); border-color: #CFE7DC; }
+  .pp .pp-fund p { font-size: 14.5px; line-height: 1.7; max-width: 78ch; }
+  .pp .pp-nav { align-items: center; }
+  .pp-cta { padding: 14px 24px; font-size: 15px; background: linear-gradient(180deg, #14B577, #0FA36B); color: #04241A; box-shadow: 0 8px 20px rgba(15,163,107,.28); transition: transform .15s ease, box-shadow .15s ease; }
+  .pp-cta:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(15,163,107,.34); }
+  .pp-fixa { position: sticky; bottom: 12px; z-index: 4; justify-content: space-between !important; background: rgba(10,31,42,.96); color: #fff; border-radius: 16px; padding: 10px 10px 10px 20px; box-shadow: 0 16px 40px rgba(11,31,42,.25); }
+  .pp-fixa-t { display: grid; gap: 1px; } .pp-fixa-t small { font-size: 11.5px; font-weight: 700; color: #9FE3C5; letter-spacing: .02em; } .pp-fixa-t b { font-size: 19px; font-variant-numeric: tabular-nums; }
+  .pp-fixa .pp-cta { margin-left: auto; }
+  .pp .pp-item { border-left: 4px solid #0FA36B; }
+  .pp .pp-tab { border-color: #E1E8E6; }
+  .pp .pp-pl:not(.pp-pl-cab):nth-child(even) { background: #FAFCFB; }
+  .pp .pp-pl:not(.pp-pl-cab):hover { background: #F1FAF5; }
+  .pp .pp-kpi { background: #fff; border-color: #E1E8E6; border-radius: 12px; padding: 10px 14px; } .pp .pp-kpi b { font-variant-numeric: tabular-nums; font-size: 15.5px; }
+  .pp .pp-valor div { background: linear-gradient(135deg, #0A1F2A, #0F3A44); border-radius: 14px; padding: 14px 18px; } .pp .pp-valor b { font-size: 22px; font-variant-numeric: tabular-nums; } .pp .pp-valor small { color: #9FE3C5; font-weight: 700; }
+  .pp-resumo { grid-template-columns: minmax(240px, 1.6fr) repeat(auto-fit, minmax(140px, 1fr)); }
+  .pp-resumo .pp-kpi:first-child { background: linear-gradient(135deg, #0A1F2A, #0F3A44); border: 0; padding: 16px 20px; }
+  .pp-resumo .pp-kpi:first-child small { color: #9FE3C5; font-size: 12px; } .pp-resumo .pp-kpi:first-child b { color: #fff; font-size: 28px; letter-spacing: -.01em; }
+  .pp-saida { display: grid; gap: 12px; margin-top: 16px; }
+  .pp-saida .pp-docs { margin-top: 0; align-items: center; }
+  .pp-prox { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; border: 1px dashed #9ED9BE; background: #F6FCF9; border-radius: 14px; padding: 12px 12px 12px 18px; }
+  .pp-prox span { display: grid; gap: 1px; } .pp-prox small { font-size: 11.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: #0A7A50; } .pp-prox b { font-size: 15px; color: #0B1F2A; }
+  .pp .lmo-minuta { border-radius: 12px; }
+  .pp button:focus-visible, .pp a:focus-visible, .pp summary:focus-visible { outline: 3px solid rgba(15,163,107,.55); outline-offset: 2px; }
+  @media (max-width: 760px) {
+    .pp .pp-barra { position: static; background: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .pp-ets { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: none; }
+    .pp-et { flex-direction: column; text-align: center; gap: 6px; padding: 8px 4px; } .pp-et-t small { display: none; } .pp-et-t b { font-size: 12.5px; }
+    .pp-et + .pp-et::before { top: 23px; left: -12%; width: 24%; }
+    .pp-barra-acoes { width: 100%; justify-content: flex-end; }
+    .pp .lmo-bloco { padding: 18px 16px; }
+    .pp-resumo { grid-template-columns: 1fr 1fr; } .pp-resumo .pp-kpi:first-child { grid-column: 1 / -1; }
+    .pp-fixa { bottom: 8px; padding-left: 14px; } .pp-fixa-t b { font-size: 16px; } .pp-fixa .pp-cta { padding: 12px 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .pp *, .pp *::before, .pp *::after { transition: none !important; } }
+
   .gcl-resumo { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
   .gcl-rb { --fc: #0B3B4A; display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: 13.5px; font-weight: 600; color: #3D5058; background: #fff; border: 1px solid #DCE4E2; border-radius: 999px; padding: 6px 13px; cursor: pointer; }
   .gcl-rb:hover { border-color: var(--fc); } .gcl-rb i { width: 8px; height: 8px; border-radius: 50%; background: var(--fc); } .gcl-rb b { font-weight: 800; }
@@ -2887,8 +2961,10 @@
           <button type="button" class="gcm-volta" sc-camel-on-click="{{ goElaborarInicio }}">← O Elaborador</button>
           <h1>Pesquisa de preços</h1>
           <p>Estimativa do valor da contratação na fase de planejamento, com as fontes, o tratamento estatístico e a fundamentação de cada decisão.</p>
+          <ul class="pp-selos" aria-label="Fundamentos aplicados"><li>Lei 14.133/2021, art. 23</li><li>IN SEGES/ME 65/2021</li><li>Saneamento de 25% (TCU)</li><li>Leis 13.303 e 13.019</li></ul>
         </div>
       </section>
+      <div class="pp-fundo">
       <section class="lvc-corpo pp">
         <sc-if value="{{ ppBloqueada }}" hint-placeholder-val="{{ false }}">
           <div class="lvc-bloq" style="margin-top: 24px">
@@ -2907,8 +2983,8 @@
         </sc-if>
         <sc-if value="{{ ppLiberada }}" hint-placeholder-val="{{ true }}">
           <div class="pp-barra">
-            <div class="pp-ets"><sc-for list="{{ ppEtapas }}" as="e" hint-placeholder-count="3"><button type="button" class="{{ e.cls }}" sc-camel-on-click="{{ e.ir }}">{{ e.nome }}</button></sc-for></div>
-            <div class="pp-barra-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ ppNova }}">Nova pesquisa</button><button type="button" class="lmo-btn" sc-camel-on-click="{{ ppSalvar }}">Salvar</button></div>
+            <nav class="pp-ets" aria-label="Etapas da pesquisa"><sc-for list="{{ ppEtapas }}" as="e" hint-placeholder-count="3"><button type="button" class="{{ e.cls }}" aria-current="{{ e.atual }}" sc-camel-on-click="{{ e.ir }}"><span class="pp-et-n" aria-hidden="true">{{ e.num }}</span><span class="pp-et-t"><b>{{ e.nome }}</b><small>{{ e.sub }}</small></span></button></sc-for></nav>
+            <div class="pp-barra-acoes"><button type="button" class="pp-btn-q" sc-camel-on-click="{{ ppNova }}">Nova pesquisa</button><button type="button" class="pp-btn-s" sc-camel-on-click="{{ ppSalvar }}">Salvar</button></div>
           </div>
           <sc-if value="{{ ppTemLista }}" hint-placeholder-val="{{ false }}">
             <details class="pp-salvas"><summary>Minhas pesquisas salvas</summary>
@@ -2981,7 +3057,7 @@
               <h2 class="pp-h">Enquadramento legal desta pesquisa</h2>
               <sc-for list="{{ ppFund }}" as="f" hint-placeholder-count="3"><p>{{ f.t }}</p></sc-for>
             </section>
-            <div class="pp-nav"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ppIrDados }}">Continuar →</button></div>
+            <div class="pp-nav"><button type="button" class="lmo-btn pp-cta" sc-camel-on-click="{{ ppIrDados }}">Continuar →</button></div>
           </sc-if>
 
           <!-- etapa 2: dados -->
@@ -3104,7 +3180,7 @@
                   <sc-if value="{{ it.semPrecos }}" hint-placeholder-val="{{ true }}"><p class="ct-pb-vazio">Nenhum preço ainda. Comece pelo Painel de Preços e pelas contratações similares, que são os parâmetros prioritários (IN 65/2021, art. 5º, § 1º).</p></sc-if>
                 </section>
               </sc-for>
-              <sc-if value="{{ ppEhBens }}" hint-placeholder-val="{{ true }}"><div class="pp-nav pp-nav-e"><button type="button" class="lve-voltar" sc-camel-on-click="{{ ppNovoItem }}">+ Adicionar item</button><sc-if value="{{ ppTemTotal }}" hint-placeholder-val="{{ false }}"><b class="pp-total">Total estimado: {{ ppTotal }}</b></sc-if></div></sc-if>
+              <sc-if value="{{ ppEhBens }}" hint-placeholder-val="{{ true }}"><div class="pp-nav pp-nav-e"><button type="button" class="lve-voltar" sc-camel-on-click="{{ ppNovoItem }}">+ Adicionar item</button></div></sc-if>
               <sc-if value="{{ ppPrecisaJustPrior }}" hint-placeholder-val="{{ false }}"><section class="lmo-bloco"><label class="lmo-campo"><span>Justificativa: algum item não tem preço do Painel de Preços nem de contratações similares, que são prioritários (IN 65/2021, art. 5º, § 1º)</span><input type="text" value="{{ ppJustPrior }}" sc-camel-on-input="{{ onPpJustPrior }}"></label></section></sc-if>
               <sc-if value="{{ ppTemRatif }}" hint-placeholder-val="{{ false }}">
                 <section class="{{ ppRatifCls }}"><h2 class="pp-h">Ratificação da planilha</h2><div class="lmo-kpis"><sc-for list="{{ ppRatifKpis }}" as="k" hint-placeholder-count="4"><div class="pp-kpi"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div><p>{{ ppRatifTxt }}</p></section>
@@ -3136,14 +3212,14 @@
                 </section>
               </sc-if>
             </sc-if>
-            <div class="pp-nav"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ppIrRel }}">Ver o relatório →</button></div>
+            <div class="pp-nav pp-fixa"><sc-if value="{{ ppTemTotal }}" hint-placeholder-val="{{ false }}"><span class="pp-fixa-t"><small>Total estimado até agora</small><b>{{ ppTotal }}</b></span></sc-if><button type="button" class="lmo-btn pp-cta" sc-camel-on-click="{{ ppIrRel }}">Ver o relatório →</button></div>
           </sc-if>
 
           <!-- etapa 3: relatório -->
           <sc-if value="{{ ppEtRel }}" hint-placeholder-val="{{ false }}">
             <section class="lmo-bloco">
               <h2 class="pp-h">Resultado</h2>
-              <div class="lmo-kpis" style="margin-top: 0"><sc-for list="{{ ppResumo }}" as="k" hint-placeholder-count="3"><div class="pp-kpi"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
+              <div class="lmo-kpis pp-resumo" style="margin-top: 0"><sc-for list="{{ ppResumo }}" as="k" hint-placeholder-count="3"><div class="pp-kpi"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
               <sc-for list="{{ ppPendencias }}" as="p" hint-placeholder-count="1"><p class="ct-av">{{ p.t }}</p></sc-for>
               <sc-if value="{{ ppTemPlan }}" hint-placeholder-val="{{ false }}">
                 <h3 class="pp-h3">Planilha de orçamento estimado</h3>
@@ -3152,18 +3228,21 @@
               </sc-if>
               <h3 class="pp-h3">Texto para o documento de planejamento</h3>
               <pre class="lmo-minuta">{{ ppTextoTR }}</pre>
-              <div class="pp-docs">
-                <button type="button" class="lmo-btn" sc-camel-on-click="{{ ppPdf }}">Relatório em PDF</button>
-                <sc-if value="{{ ppTemPlan }}" hint-placeholder-val="{{ false }}"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ppPlanilhaPdf }}">Planilha em PDF</button></sc-if>
-                <button type="button" class="lve-voltar" sc-camel-on-click="{{ ppWord }}">Word</button>
-                <button type="button" class="lve-voltar" sc-camel-on-click="{{ ppExcel }}">Excel</button>
-                <button type="button" class="lmo-btn pp-btn2" sc-camel-on-click="{{ ppLevar }}">{{ ppLevarTxt }}</button>
+              <div class="pp-saida">
+                <div class="pp-docs" role="group" aria-label="Baixar">
+                  <button type="button" class="lmo-btn pp-cta" sc-camel-on-click="{{ ppPdf }}">Relatório em PDF</button>
+                  <sc-if value="{{ ppTemPlan }}" hint-placeholder-val="{{ false }}"><button type="button" class="pp-btn-s" sc-camel-on-click="{{ ppPlanilhaPdf }}">Planilha em PDF</button></sc-if>
+                  <button type="button" class="pp-btn-q" sc-camel-on-click="{{ ppWord }}">Word</button>
+                  <button type="button" class="pp-btn-q" sc-camel-on-click="{{ ppExcel }}">Excel</button>
+                </div>
+                <div class="pp-prox"><span><small>Próximo passo</small><b>Usar este valor no planejamento</b></span><button type="button" class="lmo-btn pp-btn2" sc-camel-on-click="{{ ppLevar }}">{{ ppLevarTxt }}</button></div>
               </div>
               <p class="lmo-nota">O relatório traz a identificação, o enquadramento legal, os parâmetros usados, a série completa de preços com a origem e a data, os preços desconsiderados com o motivo, o tratamento estatístico, a justificativa do método e a memória de cálculo (IN 65/2021, art. 3º). A pesquisa é ato do agente responsável: confira antes de juntar ao processo.</p>
             </section>
           </sc-if>
         </sc-if>
       </section>
+      </div>
     </sc-if>
 
     <!-- ===================== CALCULADORA ===================== -->
@@ -8277,7 +8356,8 @@ class Component extends DCLogic {
       ppBloqCta: s.usuario ? "Ver os planos" : "Entrar", ppBloqAcao: s.usuario ? this.nav("planos") : () => { this.setState({ volta: "precos" }); this.irPara("login"); },
       goElaborarInicio: this.nav("elaborar"),
       ppErro: pp.erro || "", ppOk: pp.ok || "",
-      ppEtapas: etapas.map(([id, nome]) => ({ nome, cls: "pp-et" + (etapa === id ? " ativo" : ""), ir: () => { this.setState((x) => ({ pp: { ...x.pp, etapa: id, erro: "", ok: "" } })); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} } })),
+      ppEtapas: etapas.map(([id, nome], i) => ({ num: String(i + 1), nome: nome.replace(/^\d\.\s*/, ""), sub: { enq: "Regime, objeto e fundamentos", dados: d.objeto === "obras" ? "Análise da planilha enviada" : d.objeto === "mao_obra" ? "Confronto com o mercado" : "Fontes, filtros e estatística", rel: "Planilha, relatório e TR" }[id], atual: etapa === id ? "step" : "false",
+        cls: "pp-et" + (etapa === id ? " ativo" : etapas.findIndex((x) => x[0] === etapa) > i ? " feito" : ""), ir: () => { this.setState((x) => ({ pp: { ...x.pp, etapa: id, erro: "", ok: "" } })); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} } })),
       ppEtEnq: etapa === "enq", ppEtDados: etapa === "dados", ppEtRel: etapa === "rel",
       ppIrDados: () => { if (!String(d.titulo || "").trim()) { this.ppMsg("Dê um título à pesquisa."); return; }
         if ((d.regime === "13303" || d.regime === "13019") && !d.base) { this.ppMsg("Responda se a pesquisa pode adotar os fundamentos da Lei 14.133/2021 e da IN 65/2021 ou se segue o regulamento próprio."); return; } this.setState((x) => ({ pp: { ...x.pp, etapa: "dados", erro: "", ok: "" } })); try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {} },
