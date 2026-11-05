@@ -36,11 +36,11 @@ barra = """<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family
 body{margin:0}
 button,input,select,textarea{font-family:inherit}
 .lvbar{margin-left:calc(-1*max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1*max(16px,env(safe-area-inset-right,0px)));position:sticky;top:0;z-index:40;background:#0A1F2A;border-bottom:1px solid rgba(255,255,255,.09);font-family:Manrope,-apple-system,"Segoe UI",sans-serif}
-.lvbar .in{max-width:1240px;margin:0 auto;padding:0 24px;height:68px;display:flex;align-items:center;gap:28px}
+.lvbar .in{max-width:1280px;margin:0 auto;padding:0 20px;height:68px;display:flex;align-items:center;gap:18px}
 .lvbar .marca{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-weight:800;font-size:18px;letter-spacing:-.02em}
 .lvbar .marca span{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:linear-gradient(150deg,#0FA36B,#0F6B7E);color:#fff;font-weight:800;font-size:15px;letter-spacing:0}
 .lvbar nav.prin{display:flex;align-items:center;gap:2px;margin-left:8px;white-space:nowrap}
-.lvbar nav a{position:relative;color:#C9D6DB;text-decoration:none;font-size:14px;font-weight:600;padding:8px 11px;border-radius:8px}
+.lvbar nav a{position:relative;color:#C9D6DB;text-decoration:none;font-size:13.5px;font-weight:600;padding:8px 8px;border-radius:8px;white-space:nowrap}
 .lvbar nav a:hover{color:#fff;background:rgba(255,255,255,.07)}
 .lvbar nav.prin a[aria-current]{color:#fff}
 .lvbar nav.prin a[aria-current]::after{content:"";position:absolute;left:11px;right:11px;bottom:1px;height:2px;background:#0FA36B;border-radius:2px}
