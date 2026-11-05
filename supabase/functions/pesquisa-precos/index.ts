@@ -6,7 +6,7 @@
 //   POST { acao: "ia_similares", descricao, unidade, registros: [{ id, descricao, unidade, preco }] } -> { avaliacao: [{ id, semelhante, motivo }] }
 //   POST { acao: "ia_rilc", arquivo: "<uid>/pp/<nome>.pdf" | texto }           -> { regras: {...} }
 //   POST { acao: "teste_fontes" }  (teste interno do GitHub, com o segredo)    -> { fontes: [...] }
-// Acesso: planos Básico, Premium e Pro (e administradores com verificação em duas etapas).
+// Acesso: planos Básico, Premium e Pro, teste de 7 dias e administradores com verificação em duas etapas.
 
 import { clienteServico, CORS, erro, nivelDoToken, resposta, segredoConfere, usuarioDaRequisicao } from "../_shared/comum.ts";
 
@@ -14,7 +14,7 @@ const PNCP = "https://pncp.gov.br";
 const COMPRAS = "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco";
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36";
 const MODELO_IA = Deno.env.get("PP_MODELO") || "claude-haiku-5-5";
-const PLANOS = new Set(["basico", "premium", "pro"]);
+const PLANOS = new Set(["teste", "basico", "premium", "pro"]);
 const LIMITE_DIA: Record<string, number> = { coleta: 150, ia_similares: 25, ia_rilc: 5 };
 const UFS = "AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".split(" ");
 const MODALIDADE: Record<string, string> = { "1": "Convite", "2": "Tomada de preços", "3": "Concorrência", "5": "Pregão", "6": "Dispensa", "7": "Inexigibilidade", "20": "Concurso" };
@@ -255,7 +255,7 @@ Deno.serve(async (req) => {
     const { data: perfil } = await admin.from("perfis").select("admin").eq("id", usuario.id).maybeSingle();
     const ehAdmin = !!perfil?.admin && nivelDoToken(req) === "aal2";
     const { data: vigente } = await admin.rpc("plano_vigente", { uid: usuario.id });
-    if (!ehAdmin && !PLANOS.has(String(vigente ?? ""))) return erro("A pesquisa de preços está nos planos Básico, Premium e Pro.", 403);
+    if (!ehAdmin && !PLANOS.has(String(vigente ?? ""))) return erro("A pesquisa de preços está nos planos Básico, Premium e Pro e no teste grátis de 7 dias.", 403);
     const tipoUso = acao === "ia_similares" ? "ia_similares" : acao === "ia_rilc" ? "ia_rilc" : "coleta";
     if (!ehAdmin) {
       const desde = new Date(Date.now() - 24 * 3600e3).toISOString();
