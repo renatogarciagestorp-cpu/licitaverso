@@ -20,10 +20,10 @@ jobs:
             x=r[0] if r else j
             print('::notice title=$1::'+json.dumps(x,ensure_ascii=False)[:3000])
           except Exception as e: print('::notice title=$1::erro',e)"; }
-          c "Campos material" "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=5&tipo=codigoPdm&codigo=19746&estado=RJ"
-          ID=$(python3 -c "import json;print(json.load(open('/tmp/c.json'))['resultado'][0]['idCompra'])" 2>/dev/null || echo 0)
-          c "Campos detalhe" "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/2_consultarMaterialDetalhe?pagina=1&idCompra=$ID&codigoItemCatalogo=0"
-          c "Campos detalhe2" "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/2_consultarMaterialDetalhe?pagina=1&idCompra=$ID"
+          c "Campos material" "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/1_consultarMaterial?pagina=1&tamanhoPagina=10&tipo=codigoPdm&codigo=19746&estado=RJ"
+          ID=$(python3 -c "import json;print(json.load(open('/tmp/c.json'))['resultado'][0]['idCompra'])" 2>/dev/null || echo 0); CI=$(python3 -c "import json;print(json.load(open('/tmp/c.json'))['resultado'][0]['codigoItemCatalogo'])" 2>/dev/null || echo 0)
+          c "Campos detalhe" "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/2_consultarMaterialDetalhe?pagina=1&tamanhoPagina=10&idCompra=$ID&codigoItemCatalogo=$CI"
+          c "Campos detalhe2" "https://dadosabertos.compras.gov.br/modulo-pesquisa-preco/2_consultarMaterialDetalhe?pagina=1&tamanhoPagina=10&idCompra=$ID"
           c "Campos PNCP busca" "https://pncp.gov.br/api/search/?q=papel%20sulfite&tipos_documento=edital&pagina=1&tam_pagina=3&status=todos&ufs=RJ"
           c "Campos PNCP item" "https://pncp.gov.br/api/pncp/v1/orgaos/11855524000180/compras/2026/15/itens?pagina=1&tamanhoPagina=1"
           c "Campos PNCP resultado" "https://pncp.gov.br/api/pncp/v1/orgaos/11855524000180/compras/2026/15/itens/31/resultados"
