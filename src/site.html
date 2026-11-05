@@ -2926,6 +2926,8 @@
                 <label class="lmo-campo"><span>UF (prioriza os preços do estado)</span><select sc-camel-on-change="{{ onPpUf }}"><sc-for list="{{ ppUfs }}" as="u" hint-placeholder-count="3"><option value="{{ u.u }}" selected="{{ u.sel }}">{{ u.nome }}</option></sc-for></select></label>
                 <label class="lmo-campo"><span>Agente responsável pela pesquisa</span><input type="text" value="{{ ppAgente }}" sc-camel-on-input="{{ onPpAgente }}"></label>
                 <label class="lmo-campo"><span>Cargo ou função</span><input type="text" value="{{ ppCargo }}" sc-camel-on-input="{{ onPpCargo }}"></label>
+                <label class="lmo-campo" style="grid-column: 1 / -1"><span>Equipe de planejamento (se houver)</span><input type="text" value="{{ ppEquipe }}" sc-camel-on-input="{{ onPpEquipe }}" placeholder="Nomes e cargos"></label>
+                <label class="lmo-campo" style="grid-column: 1 / -1"><span>Condições comerciais consideradas (IN 65/2021, art. 4º)</span><input type="text" value="{{ ppCondicoes }}" sc-camel-on-input="{{ onPpCondicoes }}" placeholder="Ex.: entrega em até 15 dias no almoxarifado central, frete incluso, garantia de 12 meses, pagamento em 30 dias"></label>
               </div>
             </section>
             <section class="lmo-bloco">
@@ -3007,6 +3009,8 @@
                         <label class="lmo-campo"><span>Preço unitário (R$)</span><input type="text" inputmode="decimal" value="{{ it.mPreco }}" sc-camel-on-input="{{ it.onMPreco }}"></label>
                         <label class="lmo-campo"><span>Link ou referência do documento</span><input type="text" value="{{ it.mLink }}" sc-camel-on-input="{{ it.onMLink }}"></label>
                         <sc-if value="{{ it.mEhIII }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>Data e hora de acesso *</span><input type="datetime-local" value="{{ it.mAcesso }}" sc-camel-on-input="{{ it.onMAcesso }}"></label></sc-if>
+                        <sc-if value="{{ it.mEhIV }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>Endereço e telefone de contato *</span><input type="text" value="{{ it.mEndereco }}" sc-camel-on-input="{{ it.onMEndereco }}"></label></sc-if>
+                        <sc-if value="{{ it.mEhIV }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>Responsável pela proposta *</span><input type="text" value="{{ it.mResp }}" sc-camel-on-input="{{ it.onMResp }}" placeholder="Nome completo e identificação"></label></sc-if>
                         <sc-if value="{{ it.mEhIV }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo" style="grid-column: 1 / -1"><span>Justificativa da escolha do fornecedor *</span><input type="text" value="{{ it.mJust }}" sc-camel-on-input="{{ it.onMJust }}" placeholder="Ex.: fornecedor do ramo, localizado na região, cadastrado no SICAF"></label></sc-if>
                       </div>
                       <div class="lmo-agente"><button type="button" class="lmo-btn" sc-camel-on-click="{{ it.manualSalvar }}">Incluir preço</button></div>
@@ -3049,6 +3053,8 @@
                     <div class="lmo-kpis"><sc-for list="{{ it.kpis }}" as="k" hint-placeholder-count="7"><div class="pp-kpi"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
                     <div class="pp-valor"><div><small>Valor unitário estimado</small><b>{{ it.valor }}</b></div><div><small>Valor total do item</small><b>{{ it.total }}</b></div></div>
                     <p class="lmo-nota">{{ it.justMet }}</p>
+                    <label class="lmo-campo" style="margin-top: 10px"><span>Justificativa complementar do agente (opcional: entra no relatório junto da justificativa automática)</span><input type="text" value="{{ it.justAgente }}" sc-camel-on-input="{{ it.onJustAgente }}"></label>
+                    <sc-if value="{{ it.temCotacao }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo" style="margin-top: 10px"><span>Fornecedores consultados que não enviaram proposta (IN 65/2021, art. 5º, § 2º)</span><input type="text" value="{{ it.naoResp }}" sc-camel-on-input="{{ it.onNaoResp }}" placeholder="Nome, CNPJ e data da consulta; deixe vazio se todos responderam"></label></sc-if>
                     <sc-if value="{{ it.poucos }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo pp-just"><span>Menos de três preços válidos: justificativa do agente responsável (será submetida à autoridade competente, IN 65/2021, art. 6º)</span><input type="text" value="{{ it.just }}" sc-camel-on-input="{{ it.onJust }}"></label></sc-if>
                   </sc-if>
                   <sc-if value="{{ it.semPrecos }}" hint-placeholder-val="{{ true }}"><p class="ct-pb-vazio">Nenhum preço ainda. Comece pelo Painel de Preços e pelas contratações similares, que são os parâmetros prioritários (IN 65/2021, art. 5º, § 1º).</p></sc-if>
@@ -6630,7 +6636,7 @@ const PP_TIPOS_OBRA = [
   ["fornecimento", "Mero fornecimento de materiais e equipamentos", 11.10, 14.02, 16.80],
 ];
 const PP_PADRAO = { titulo: "", processo: "", orgao: "", agente: "", cargo: "", uf: "", municipio: "", regime: "14133", origem: "proprio", esfera13019: "federal",
-  norma: "", rilc: null, rilcNome: "", objeto: "bens", descricao: "", itens: [], moValor: "", moPostos: "1", moFonte: "",
+  norma: "", rilc: null, rilcNome: "", objeto: "bens", condicoes: "", equipe: "", descricao: "", itens: [], moValor: "", moPostos: "1", moFonte: "",
   ob: null, obBdi: "", obTipo: "edificios", obDeson: "nao", obDataBase: "", obEncargos: "", obTabelas: "", obNome: "", justPrioritarios: "" };
 const PP_ITEM = () => ({ id: Math.random().toString(36).slice(2, 9), desc: "", un: "", qtd: "1", tipo: "material", cod: "", codNome: "", busca: "", cands: [],
   restrito: false, metodo: "auto", precos: [], just: "", manual: null,
@@ -6846,19 +6852,19 @@ function ppPlanilha(res) {
   const rotulo = (p) => origem(p) + "\n" + fonteDe(p) + (p.data ? " " + dCurta(p.data) : "");
   const cab = ["Item", "Descrição", "Unid.", "Quant."];
   for (let k = 0; k < n; k++) cab.push(um ? "P" + (k + 1) + "\n" + rotulo(itens[0].sel[k]) : "Preço " + (k + 1));
-  cab.push("Valor unitário estimado", "Valor total estimado");
+  cab.push("Coeficiente de variação", "Valor unitário estimado", "Valor total estimado");
   const linhas = itens.map(({ x, sel }, i) => {
     const c = [String(i + 1), String(x.item.desc || "").slice(0, 200), x.item.un || "", String(x.item.qtd || 1)], alerta = [];
     for (let k = 0; k < n; k++) { const p = sel[k];
       if (!p) { c.push("—"); continue; }
       c.push(ppBRL(p.atual) + (um ? "" : "\n" + rotulo(p)) + (p.sit === "ok" ? "" : "\n(desconsiderado)"));
       if (p.sit !== "ok") alerta.push(4 + k); }
-    c.push(ppBRL(x.st.valor) + "\n(" + x.st.nomeMet + ")", ppBRL(x.st.total));
+    c.push(ppPct(x.st.cv) + "\n" + (x.st.cv == null ? "" : x.item.restrito || (x.item.metodo && x.item.metodo !== "auto") ? "" : x.st.cv <= PP_CV ? "até 25%" : "acima de 25%"), ppBRL(x.st.valor) + "\n(" + x.st.nomeMet + ")", ppBRL(x.st.total));
     return { c, alerta };
-  }).concat([{ c: ["", "Valor total estimado da contratação"].concat(Array(n + 3).fill("")).concat([ppBRL(res.total)]), total: true }]);
-  const larg = [6, n > 8 ? 24 : 30, 9, 8].concat(Array(n).fill(14)).concat([16, 17]);
+  }).concat([{ c: ["", "Valor total estimado da contratação"].concat(Array(n + 4).fill("")).concat([ppBRL(res.total)]), total: true }]);
+  const larg = [6, n > 8 ? 24 : 30, 9, 8].concat(Array(n).fill(14)).concat([12, 16, 17]);
   const fonte = n > 11 ? 5.4 : n > 8 ? 6 : n > 5 ? 6.6 : null;
-  return { cab, linhas, larg, alin: "llrr" + "r".repeat(n) + "rr", n, um, fonte, cabFonte: fonte ? fonte - 0.2 : null };
+  return { cab, linhas, larg, alin: "llrr" + "r".repeat(n) + "rrr", n, um, fonte, cabFonte: fonte ? fonte - 0.2 : null };
 }
 function ppDocPlanilha(d, res, hoje) {
   const pl = ppPlanilha(res);
@@ -6866,7 +6872,7 @@ function ppDocPlanilha(d, res, hoje) {
     arquivo: "Planilha de orcamento estimado - " + String(d.titulo || d.descricao || "Licitacon").replace(/[\\/:*?"<>|]+/g, "-").slice(0, 50), paisagem: true,
     blocos: [{ t: "tabela", titulo: "Planilha de orçamento estimado", sub: pl.um ? "Preços selecionados lado a lado, com a origem no topo de cada coluna; valores atualizados pelo IPCA. Em amarelo, os desconsiderados no saneamento de ±25% da mediana." : "Preços selecionados lado a lado; abaixo de cada valor, a origem, a fonte e a data. Valores atualizados pelo IPCA. Em amarelo, os desconsiderados no saneamento de ±25% da mediana.",
       cab: pl.cab, larg: pl.larg, alin: pl.alin, linhas: pl.linhas, fonte: pl.fonte, cabFonte: pl.cabFonte },
-      { t: "legenda", texto: "Método: com coeficiente de variação de até 25%, média; acima, mediana; em mercado restrito, menor preço (IN 65/2021, art. 6º; Manual de Licitações e Contratos do TCU, item 4.3.9.3)." }],
+      { t: "legenda", texto: "Coeficiente de variação = desvio-padrão ÷ média dos preços válidos. Método: com coeficiente de variação de até 25%, média; acima, mediana; em mercado restrito, menor preço (IN 65/2021, art. 6º; Manual de Licitações e Contratos do TCU, item 4.3.9.3)." }],
     notas: ["Parte integrante do relatório da pesquisa de preços, onde estão os dados completos de cada contratação e a fundamentação."] };
 }
 function ppDocumento(d, res, hoje, opc) {
@@ -6877,7 +6883,7 @@ function ppDocumento(d, res, hoje, opc) {
   if (d.objeto !== "obras") dest.push(["Itens", String(res.itens.length)]);
   blocos.push({ t: "destaques", itens: dest });
   blocos.push({ t: "pares", titulo: "1. Identificação", pares: [["Processo", d.processo || "—"], ["Órgão ou entidade", d.orgao || "—"], ["Município/UF", [d.municipio, d.uf].filter(Boolean).join("/") || "—"],
-    ["Objeto", d.descricao || d.titulo || "—"], ["Agente responsável pela pesquisa", [d.agente, d.cargo].filter(Boolean).join(", ") || "—"], ["Data", hoje]] });
+    ["Objeto", d.descricao || d.titulo || "—"], ["Agente responsável pela pesquisa", [d.agente, d.cargo].filter(Boolean).join(", ") || "—"], ["Equipe de planejamento", d.equipe || "—"], ["Condições comerciais consideradas", d.condicoes || "não informadas"], ["Data", hoje]] });
   blocos.push({ t: "texto", titulo: "2. Enquadramento legal", paragrafos: ppFundamentos(d) });
   if (d.objeto === "obras") {
     const o = res.obras;
@@ -6941,7 +6947,29 @@ function ppDocumento(d, res, hoje, opc) {
         ["Faixa de aceitação (±25% da mediana)", ppBRL(st.lo) + " a " + ppBRL(st.hi)], ["Desconsiderados no saneamento", String(st.excluidos)], ["Preços válidos", String(st.n)],
         ["Média · desvio-padrão", ppBRL(st.media) + " · " + ppBRL(st.dp)], ["Coeficiente de variação", ppPct(st.cv)], ["Mediana · menor preço", ppBRL(st.mediana) + " · " + ppBRL(st.menor)],
         ["Método adotado", st.nomeMet], ["Valor unitário estimado", ppBRL(st.valor)], ["Valor total do item", ppBRL(st.total)]] });
-      blocos.push({ t: "texto", titulo: "Justificativa do método" + (st.poucos ? " e da amostra" : ""), paragrafos: [st.justMet || "—"].concat(st.poucos ? ["Menos de três preços válidos. Justificativa do agente responsável: " + (it.just || "NÃO INFORMADA – obrigatória para submeter à autoridade competente (IN 65/2021, art. 6º).")] : []).concat(it.iaUsada ? ["A semelhança dos itens coletados foi avaliada com apoio de inteligência artificial e conferida pelo agente responsável, que pode incluir ou excluir preços com justificativa."] : []) });
+      const desc = st.precos.filter((p) => p.sit === "inex" || p.sit === "exc"), num = (p) => "P" + (usados.indexOf(p) + 1);
+      const orig = (p) => (p.fonte === "manual" ? (p.fornecedor || p.fonteNome || "fonte manual") : [p.orgao, [p.municipio, p.uf].filter(Boolean).join("/")].filter(Boolean).join(", "));
+      const pj = ["Método estatístico (IN 65/2021, art. 6º): " + (st.justMet || "—") + (st.n ? " Valores válidos: média " + ppBRL(st.media) + ", mediana " + ppBRL(st.mediana) + " e menor preço " + ppBRL(st.menor) + "." : "")];
+      pj.push(desc.length
+        ? "Desconsideração de valores (IN 65/2021, art. 6º, § 3º): a amostra selecionada tinha mediana de " + ppBRL(st.med0) + ". Foram desconsiderados " + desc.length + " preço(s) fora da faixa de " + ppBRL(st.lo) + " a " + ppBRL(st.hi) + " (±25% da mediana): " +
+          desc.map((p) => num(p) + " (" + orig(p) + ", " + ppBRL(p.atual) + ", " + (p.sit === "inex" ? Math.round((1 - p.atual / st.med0) * 100) + "% abaixo" : Math.round((p.atual / st.med0 - 1) * 100) + "% acima") + " da mediana)").join("; ") +
+          ". Preços muito abaixo da mediana indicam possível inexequibilidade, erro de registro ou item de especificação inferior; preços muito acima indicam valores excessivamente elevados, que levariam a estimativa a sobrepreço. A mediana é usada como referência por não ser afetada pelos próprios valores extremos, e a faixa de 25% acompanha o parâmetro de 25% do coeficiente de variação adotado pelo TCU para considerar a amostra homogênea."
+        : "Desconsideração de valores (IN 65/2021, art. 6º, § 3º): nenhum preço selecionado ficou fora da faixa de ±25% da mediana (" + ppBRL(st.lo) + " a " + ppBRL(st.hi) + "); não houve valor inexequível nem excessivamente elevado.");
+      if (naoSel.length) pj.push("Registros não selecionados: " + naoSel.length + " registro(s) coletado(s) não foram considerados por não serem comparáveis ao objeto, tratados como inconsistentes para a formação do preço (IN 65/2021, art. 6º, § 3º). Critérios: semelhança mínima da especificação de " + f.sim + "%, quantidade " + { qualquer: "sem restrição", ordem: "de 1/10 a 10 vezes a pesquisada", proxima: "da metade ao dobro da pesquisada" }[f.qtd] + (f.un ? ", unidade " + f.un.toUpperCase() : "") + ", localidade " + { todas: "estado, região e país", regiao: "estado e região", estado: "estado" }[f.abr] + " e período de " + f.meses + " meses, em atenção à economia de escala e às peculiaridades do local de execução (art. 23, caput, da Lei 14.133/2021). Cada registro e o motivo constam da tabela de registros não selecionados.");
+      if (it.justAgente) pj.push("Justificativa complementar do agente responsável: " + it.justAgente);
+      if (st.poucos) pj.push("Menos de três preços válidos. Justificativa do agente responsável: " + (it.just || "NÃO INFORMADA – obrigatória para submeter à autoridade competente (IN 65/2021, art. 6º)."));
+      if (it.iaUsada) pj.push("A semelhança dos itens coletados foi avaliada com apoio de inteligência artificial e conferida pelo agente responsável, que pode incluir ou excluir preços com justificativa.");
+      blocos.push({ t: "texto", titulo: "Justificativas da metodologia e da desconsideração de valores", paragrafos: pj });
+      const validos = st.precos.filter((p) => p.sit === "ok"), soma = validos.reduce((a, p) => a + p.atual, 0);
+      blocos.push({ t: "tabela", titulo: "Memória de cálculo", sub: "Atualização pelo IPCA do mês do preço ao último índice publicado; estatísticas sobre os preços válidos.", cab: ["Preço", "Origem", "Data", "Valor original", "Fator IPCA", "Valor atualizado"], larg: [9, 44, 12, 15, 11, 15], alin: "lllrrr",
+        linhas: validos.map((p) => ({ c: [num(p), orig(p).slice(0, 120), ppData(p.data), ppBRL(p.preco), (p.fator || 1).toLocaleString("pt-BR", { minimumFractionDigits: 4, maximumFractionDigits: 4 }), ppBRL(p.atual)] }))
+          .concat([{ c: ["", "Soma dos " + st.n + " preços válidos", "", "", "", ppBRL(soma)], forte: true }, { c: ["", "Média = soma ÷ " + st.n, "", "", "", ppBRL(st.media)] }, { c: ["", "Desvio-padrão amostral", "", "", "", ppBRL(st.dp)] },
+            { c: ["", "Coeficiente de variação = desvio-padrão ÷ média", "", "", "", ppPct(st.cv)] }, { c: ["", "Mediana", "", "", "", ppBRL(st.mediana)] }, { c: ["", "Menor preço", "", "", "", ppBRL(st.menor)] },
+            { c: ["", "Valor unitário estimado (" + st.nomeMet + ")", "", "", "", ppBRL(st.valor)], forte: true }, { c: ["", "Valor total = " + ppBRL(st.valor) + " × " + (it.qtd || 1), "", "", "", ppBRL(st.total)], total: true }]) });
+      const cot = usados.filter((p) => p.inciso === "IV");
+      if (cot.length) blocos.push({ t: "tabela", titulo: "Pesquisa direta com fornecedores (art. 23, § 1º, IV; IN 65/2021, art. 5º, § 2º)", sub: "Fornecedores consultados que não enviaram proposta: " + (it.naoResp || "não informado"),
+        cab: ["Preço", "Fornecedor e CNPJ", "Endereço e contato", "Responsável", "Data", "Valor", "Justificativa da escolha"], larg: [8, 20, 18, 14, 10, 11, 25], alin: "lllllrl",
+        linhas: cot.map((p) => ({ c: [num(p), [p.fornecedor || p.fonteNome, p.cnpj && "CNPJ " + p.cnpj].filter(Boolean).join(" · "), p.endereco || "—", p.responsavel || "—", ppData(p.data), ppBRL(p.preco), p.justForn || "—"] })) });
       if (d.objeto === "mao_obra") {
         const v = ppNum(d.moValor), r = res.ratif;
         blocos.push({ t: "pares", titulo: "Ratificação do valor da planilha (IN 5/2017)", pares: [["Valor mensal por posto na planilha", ppBRL(v)], ["Referência de mercado (" + st.nomeMet + ")", ppBRL(st.valor)],
@@ -6953,8 +6981,23 @@ function ppDocumento(d, res, hoje, opc) {
     const pl = ppPlanilha(res), cabe = pl.n <= 5 || (opc && opc.excel);
     if (cabe) blocos.push({ t: "tabela", titulo: sec++ + ". Planilha de orçamento estimado", sub: "Preços selecionados lado a lado, valores atualizados pelo IPCA; em amarelo, os desconsiderados no saneamento de ±25% da mediana.", cab: pl.cab, larg: pl.larg, alin: pl.alin, linhas: pl.linhas });
     else blocos.push({ t: "texto", titulo: sec++ + ". Planilha de orçamento estimado", paragrafos: ["A planilha de orçamento estimado reúne " + pl.n + " preços lado a lado e foi gerada como anexo, em folha A4 paisagem, para caber numa única planilha (arquivo “Planilha de orçamento estimado”). A consolidação dos valores está na seção seguinte."] });
-    blocos.push({ t: "tabela", titulo: sec++ + ". Planilha de orçamento estimado – consolidação", cab: ["Item", "Descrição", "Unid.", "Quant.", "Valor unitário estimado", "Valor total estimado"], larg: [7, 52, 10, 10, 18, 18], alin: "llrrrr",
-      linhas: res.itens.map((x, i) => ({ c: [String(i + 1), x.item.desc || "", x.item.un || "", String(x.item.qtd || 1), ppBRL(x.st.valor), ppBRL(x.st.total)] })).concat([{ c: ["", "Valor total estimado da contratação", "", "", "", ppBRL(res.total)], total: true }]) });
+    blocos.push({ t: "tabela", titulo: sec++ + ". Planilha de orçamento estimado – consolidação", cab: ["Item", "Descrição", "Unid.", "Quant.", "Coef. de variação", "Método", "Valor unitário estimado", "Valor total estimado"], larg: [7, 40, 9, 9, 11, 11, 16, 17], alin: "llrrrlrr",
+      linhas: res.itens.map((x, i) => ({ c: [String(i + 1), x.item.desc || "", x.item.un || "", String(x.item.qtd || 1), ppPct(x.st.cv), x.st.nomeMet, ppBRL(x.st.valor), ppBRL(x.st.total)] })).concat([{ c: ["", "Valor total estimado da contratação", "", "", "", "", "", ppBRL(res.total)], total: true }]) });
+  }
+  if (d.objeto !== "obras") {
+    const temIV = res.itens.some((x) => x.st.precos.some((p) => p.inciso === "IV" && p.incl !== false));
+    const ok = (c) => (c ? "Atendido" : "Pendente");
+    blocos.push({ t: "tabela", titulo: "Conformidade com o art. 3º da IN SEGES/ME 65/2021", cab: ["Requisito", "Onde está", "Situação"], larg: [52, 34, 14], alin: "lll",
+      linhas: [["I – descrição do objeto", "Identificação e seção de cada item", ok(res.itens.every((x) => String(x.item.desc || "").trim()))],
+        ["II – identificação do agente ou da equipe responsável", "Identificação", ok(!!(d.agente || d.equipe))],
+        ["III – caracterização das fontes consultadas", "Fontes e critérios; dados completos das contratações", ok(res.itens.every((x) => x.st.coletados > 0))],
+        ["IV – série de preços coletados", "Contratações selecionadas; registros não selecionados", ok(res.itens.every((x) => x.st.coletados > 0))],
+        ["V – método estatístico aplicado", "Tratamento estatístico", ok(res.itens.every((x) => x.st.n > 0))],
+        ["VI – justificativas da metodologia e da desconsideração de valores", "Justificativas da metodologia e da desconsideração", ok(res.itens.every((x) => x.st.n > 0 && (!x.st.poucos || String(x.item.just || "").trim())))],
+        ["VII – memória de cálculo e documentos de suporte", "Memória de cálculo; links e consultas de cada preço", ok(res.itens.every((x) => x.st.n > 0))],
+        ["VIII – justificativa da escolha dos fornecedores (pesquisa direta)", temIV ? "Pesquisa direta com fornecedores" : "Não houve pesquisa direta", temIV ? ok(res.itens.every((x) => x.st.precos.filter((p) => p.inciso === "IV" && p.incl !== false).every((p) => p.justForn))) : "Não se aplica"]]
+        .map((c) => ({ c, alerta: c[2] === "Pendente" ? [2] : [] })) });
+    blocos.push({ t: "legenda", texto: "Juntar ao processo as propostas formais dos fornecedores (art. 5º, § 2º), as telas ou páginas das fontes do inciso III com data e hora de acesso e as notas fiscais do inciso V. Para os incisos I e II, os links e as consultas indicados permitem conferir cada preço." });
   }
   blocos.push({ t: "texto", titulo: "Responsabilidade", paragrafos: ["Documento de apoio gerado pelo Licitacon a partir das fontes indicadas. A pesquisa de preços é ato do agente responsável, que deve conferir as fontes, os itens considerados semelhantes, as justificativas e o enquadramento legal antes de juntá-la ao processo. A decisão final e a responsabilidade são de quem assina a pesquisa."] });
   notas.push("Fontes públicas consultadas: API de dados abertos do Compras.gov.br (Painel de Preços) e Portal Nacional de Contratações Públicas (PNCP), com a data da consulta e o link de cada preço.");
@@ -7799,8 +7842,9 @@ class Component extends DCLogic {
     if (!m.data) { this.ppMsg("Informe a data do preço (da cotação, da publicação ou da nota fiscal)."); return; }
     if (m.inciso === "III" && !m.acesso) { this.ppMsg("Informe a data e a hora de acesso ao sítio ou à publicação (art. 23, § 1º, III)."); return; }
     if (m.inciso === "IV" && !String(m.just).trim()) { this.ppMsg("Justifique a escolha do fornecedor consultado (art. 23, § 1º, IV; IN 65/2021, art. 5º, § 2º)."); return; }
+    if (m.inciso === "IV" && (!String(m.endereco || "").trim() || !String(m.responsavel || "").trim())) { this.ppMsg("Informe o endereço e telefone de contato e o responsável pela proposta (IN 65/2021, art. 5º, § 2º)."); return; }
     const reg = { id: "mn-" + Date.now().toString(36), fonte: "manual", inciso: m.inciso, preco, data: m.data, unidade: it.un || "", orgao: m.inciso === "IV" ? "" : m.fonteNome, fornecedor: m.inciso === "IV" || m.inciso === "V" ? m.fonteNome : "",
-      cnpj: m.cnpj, link: m.link, acesso: m.acesso ? m.acesso.replace("T", " ") : "", fonteNome: m.fonteNome, descricao: m.just ? "Justificativa: " + m.just : "", incl: true, uf: "" };
+      cnpj: m.cnpj, link: m.link, acesso: m.acesso ? m.acesso.replace("T", " ") : "", fonteNome: m.fonteNome, descricao: it.desc || "", justForn: m.just || "", endereco: m.endereco || "", responsavel: m.responsavel || "", incl: true, uf: "" };
     this.ppItem(id, (i) => { i.precos.push(reg); i.manual = null; return i; });
   }
   ppPrecoIncl(id, pid, v) { this.ppItem(id, (i) => { i.precos = i.precos.map((p) => (p.id === pid ? { ...p, incl: v, motivoExcl: v ? "" : (p.ia && !p.ia.semelhante ? "Não semelhante (filtro por IA, conferido pelo agente): " + p.ia.motivo : "") } : p)); return i; }); }
@@ -7999,6 +8043,8 @@ class Component extends DCLogic {
       todos: () => this.ppTodos(it.id, true), nenhum: () => this.ppTodos(it.id, false),
       manualAberto: !!it.manual, manualAbrir: () => this.ppManualAbrir(it.id), manualSalvar: () => this.ppManualSalvar(it.id),
       mIncisos: [["III", "III · Mídia ou sítio"], ["IV", "IV · Cotação com fornecedor"], ["V", "V · Nota fiscal"]].map(([id, nome]) => ({ nome, cls: "pp-op pp-op-p" + (it.manual && it.manual.inciso === id ? " ativo" : ""), escolher: () => this.ppManualCampo(it.id, "inciso")(id) })),
+      mEndereco: it.manual ? it.manual.endereco || "" : "", mResp: it.manual ? it.manual.responsavel || "" : "", onMEndereco: this.ppManualCampo(it.id, "endereco"), onMResp: this.ppManualCampo(it.id, "responsavel"),
+      temCotacao: st.precos.some((p) => p.inciso === "IV"), naoResp: it.naoResp || "", onNaoResp: this.ppItemCampo(it.id, "naoResp"), justAgente: it.justAgente || "", onJustAgente: this.ppItemCampo(it.id, "justAgente"),
       mFonte: it.manual ? it.manual.fonteNome : "", mCnpj: it.manual ? it.manual.cnpj : "", mData: it.manual ? it.manual.data : "", mPreco: it.manual ? it.manual.preco : "", mLink: it.manual ? it.manual.link : "", mAcesso: it.manual ? it.manual.acesso : "", mJust: it.manual ? it.manual.just : "",
       mFonteRot: it.manual && it.manual.inciso === "IV" ? "Fornecedor consultado" : it.manual && it.manual.inciso === "V" ? "Emitente da nota fiscal" : "Fonte (publicação ou sítio)",
       mEhIII: !!(it.manual && it.manual.inciso === "III"), mEhIV: !!(it.manual && it.manual.inciso === "IV"),
@@ -8044,7 +8090,7 @@ class Component extends DCLogic {
       ppNova: () => this.ppNova(), ppSalvar: () => this.ppSalvar(),
       // etapa 1
       ppTitulo: d.titulo, onPpTitulo: this.ppSet("titulo"), ppProcesso: d.processo, onPpProcesso: this.ppSet("processo"), ppOrgao: d.orgao, onPpOrgao: this.ppSet("orgao"),
-      ppAgente: d.agente, onPpAgente: this.ppSet("agente"), ppCargo: d.cargo, onPpCargo: this.ppSet("cargo"), ppMunicipio: d.municipio, onPpMunicipio: this.ppSet("municipio"),
+      ppAgente: d.agente, onPpAgente: this.ppSet("agente"), ppEquipe: d.equipe, onPpEquipe: this.ppSet("equipe"), ppCondicoes: d.condicoes, onPpCondicoes: this.ppSet("condicoes"), ppCargo: d.cargo, onPpCargo: this.ppSet("cargo"), ppMunicipio: d.municipio, onPpMunicipio: this.ppSet("municipio"),
       ppUfs: [""].concat("AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".split(" ")).map((u) => ({ u, nome: u || "UF", sel: d.uf === u })), onPpUf: this.ppSet("uf"),
       ppDescricao: d.descricao, onPpDescricao: this.ppSet("descricao"),
       ppRegimes: op([["14133", "Lei 14.133/2021", "administração direta, autárquica e fundacional"], ["13303", "Lei 13.303/2016", "empresas públicas e sociedades de economia mista"], ["13019", "Lei 13.019/2014", "parcerias com organizações da sociedade civil"]], d.regime, "regime"),
@@ -8094,9 +8140,9 @@ class Component extends DCLogic {
       ppPlanilhaPdf: () => this.ppPlanilhaPdf(),
       ...(() => { if (d.objeto === "obras" || !res.itens.length) return { ppPlanCel: [], ppPlanCols: "1fr", ppPlanMin: "0", ppPlanNota: "" }; const pl = ppPlanilha(res);
         const nc = pl.cab.length;
-        return { ppPlanCols: "44px minmax(180px, 2.2fr) 64px 64px repeat(" + pl.n + ", minmax(96px, 1fr)) 120px 120px", ppPlanMin: (420 + pl.n * 100 + 240) + "px",
-          ppPlanCel: pl.cab.map((t, i) => ({ l: String(t).split("\n").map((x) => ({ x })), cls: "pp-pc cab" + (i < 4 ? " fixa" : i >= nc - 2 ? " res" : "") }))
-            .concat(pl.linhas.flatMap((l) => l.c.map((t, i) => ({ l: String(t).split("\n").map((x) => ({ x })), cls: "pp-pc" + (l.total ? " tot" : "") + (i < 4 ? " fixa" : i >= nc - 2 ? " res" : "") + ((l.alerta || []).includes(i) ? " desc" : "") })))),
+        return { ppPlanCols: "44px minmax(180px, 2.2fr) 64px 64px repeat(" + pl.n + ", minmax(96px, 1fr)) 100px 120px 120px", ppPlanMin: (420 + pl.n * 100 + 340) + "px",
+          ppPlanCel: pl.cab.map((t, i) => ({ l: String(t).split("\n").map((x) => ({ x })), cls: "pp-pc cab" + (i < 4 ? " fixa" : i >= nc - 3 ? " res" : "") }))
+            .concat(pl.linhas.flatMap((l) => l.c.map((t, i) => ({ l: String(t).split("\n").map((x) => ({ x })), cls: "pp-pc" + (l.total ? " tot" : "") + (i < 4 ? " fixa" : i >= nc - 3 ? " res" : "") + ((l.alerta || []).includes(i) ? " desc" : "") })))),
           ppPlanNota: pl.n > 5 ? "Com " + pl.n + " preços lado a lado, a planilha sai como anexo em A4 paisagem, numa folha única, junto com o relatório em PDF." : "A planilha cabe no relatório em A4 retrato." }; })(),
     };
   }
