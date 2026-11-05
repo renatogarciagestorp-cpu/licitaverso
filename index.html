@@ -1561,6 +1561,16 @@
   }
   .pp-enqs { display: grid; gap: 8px; } .pp-enq { border: 1px solid #DCE4E2; border-left: 4px solid #0F6B7E; border-radius: 12px; padding: 10px 14px; background: #fff; }
   .pp-enq b { font-size: 14.5px; color: #0B1F2A; } .pp-enq p { margin: 4px 0; font-size: 13.5px; line-height: 1.55; color: #22343B; } .pp-enq small { font-size: 12px; color: #0A7A50; font-weight: 700; }
+  .ct-modal { display: inline-block; margin-top: 6px; font-size: 11.5px; font-weight: 800; color: #0F6B7E; background: #E8F3F5; border-radius: 99px; padding: 2px 9px; }
+  .ct-frac { background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 10px 16px; margin-bottom: 12px; } .ct-frac summary { cursor: pointer; font-weight: 800; color: #0B1F2A; font-size: 14.5px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .ct-frac-res { font-size: 12px; border-radius: 99px; padding: 2px 9px; } .ct-frac-res.ok { background: #E3F5EC; color: #0A7A50; } .ct-frac-res.perto { background: #FFF4DC; color: #8A5A00; } .ct-frac-res.excede { background: #FBE7E5; color: #9A2F29; }
+  .ct-frac-g { border-top: 1px solid #EEF2F1; padding: 10px 0; display: grid; gap: 5px; } .ct-frac-cab { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; } .ct-frac-cab span { font-size: 12.5px; color: #66757F; }
+  .ct-frac-g p { margin: 0; font-size: 13.5px; } .ct-frac-g small { font-size: 12px; color: #66757F; }
+  .ct-frac-barra { height: 6px; border-radius: 99px; background: #EEF2F1; overflow: hidden; } .ct-frac-barra i { display: block; height: 100%; background: #0FA36B; border-radius: 99px; }
+  .ct-frac-g.perto .ct-frac-barra i { background: #E0A21B; } .ct-frac-g.excede .ct-frac-barra i { background: #C24A43; }
+  .pp-ref { margin-top: 12px; padding: 12px 14px; border: 1px solid #CFE7DC; border-radius: 12px; background: #F6FCF9; display: grid; gap: 8px; } .pp-ref .pp-btn-s { justify-self: start; }
+  .pp-nf { display: grid; grid-template-columns: 110px 140px minmax(0, 1fr) 80px 110px 30px; gap: 6px; } .pp-nf input { font: inherit; font-size: 13.5px; border: 1px solid #D3DEDB; border-radius: 9px; padding: 7px 9px; min-width: 0; background: #fff; }
+  @media (max-width: 760px) { .pp-nf { grid-template-columns: 1fr 1fr; } .pp-nf input:nth-child(3) { grid-column: 1 / -1; } }
   .pp-enq-alerta { border-left-color: #E0A21B; background: #FFFBF1; }
   .pp-codigo { margin: 0; font-size: 13px; color: #55666D; } .pp-codigo b { font-family: ui-monospace, Menlo, monospace; color: #0B1F2A; letter-spacing: .04em; } .pp-codigo span { display: block; font-size: 12px; }
   @media (prefers-reduced-motion: reduce) { .pp *, .pp *::before, .pp *::after { transition: none !important; } }
@@ -3087,6 +3097,38 @@
               </sc-if>
             </section>
             <section class="lmo-bloco">
+              <h2 class="pp-h">Finalidade da pesquisa</h2>
+              <div class="pp-ops"><sc-for list="{{ ppFins }}" as="o" hint-placeholder-count="4"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.escolher }}"><b>{{ o.nome }}</b><span>{{ o.sub }}</span></button></sc-for></div>
+              <sc-if value="{{ ppFinDireta }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-campos" style="margin-top: 12px">
+                  <label class="lmo-campo"><span>Hipótese legal</span><input type="text" value="{{ ppHipotese }}" sc-camel-on-input="{{ onPpHipotese }}" placeholder="Ex.: art. 75, II, da Lei 14.133/2021"></label>
+                  <label class="lmo-campo"><span>Futuro contratado</span><input type="text" value="{{ ppFornNome }}" sc-camel-on-input="{{ onPpFornNome }}" placeholder="Razão social"></label>
+                  <label class="lmo-campo"><span>CNPJ do contratado</span><input type="text" value="{{ ppFornCnpj }}" sc-camel-on-input="{{ onPpFornCnpj }}"></label>
+                  <label class="lmo-campo" style="grid-column: 1 / -1"><span>Razão da escolha do contratado *</span><input type="text" value="{{ ppRazao }}" sc-camel-on-input="{{ onPpRazao }}" placeholder="Ex.: menor preço entre as propostas recebidas no aviso de dispensa eletrônica, com habilitação comprovada"></label>
+                </div>
+                <p class="lmo-nota">Na etapa 2, informe em cada item o preço proposto. Sem preços de mercado, registre as notas fiscais que o contratado emitiu a outros contratantes no último ano (art. 23, § 4º).</p>
+              </sc-if>
+              <sc-if value="{{ ppFinAdesao }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-campos" style="margin-top: 12px">
+                  <label class="lmo-campo"><span>Órgão gerenciador</span><input type="text" value="{{ ppAtaOrgao }}" sc-camel-on-input="{{ onPpAtaOrgao }}"></label>
+                  <label class="lmo-campo"><span>Número da ata</span><input type="text" value="{{ ppAtaNumero }}" sc-camel-on-input="{{ onPpAtaNumero }}"></label>
+                  <label class="lmo-campo"><span>Vigência da ata até</span><input type="date" value="{{ ppAtaVigencia }}" sc-camel-on-input="{{ onPpAtaVigencia }}"></label>
+                  <label class="lmo-campo" style="grid-column: 1 / -1"><span>Justificativa da vantagem da adesão (art. 86, § 2º, I) *</span><input type="text" value="{{ ppAtaJust }}" sc-camel-on-input="{{ onPpAtaJust }}" placeholder="Ex.: ganho de eficiência e economia processual; risco de desabastecimento do item"></label>
+                </div>
+                <p class="pp-rot">Consulta e aceitação do órgão gerenciador e do fornecedor (art. 86, § 2º, III)</p>
+                <div class="pp-ops"><sc-for list="{{ ppAtaAceites }}" as="o" hint-placeholder-count="2"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.escolher }}"><b>{{ o.nome }}</b><span>{{ o.sub }}</span></button></sc-for></div>
+              </sc-if>
+              <sc-if value="{{ ppFinProrrog }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-campos" style="margin-top: 12px">
+                  <label class="lmo-campo"><span>Número do contrato</span><input type="text" value="{{ ppCtNumero }}" sc-camel-on-input="{{ onPpCtNumero }}"></label>
+                  <label class="lmo-campo"><span>Contratada</span><input type="text" value="{{ ppCtContratada }}" sc-camel-on-input="{{ onPpCtContratada }}"></label>
+                  <label class="lmo-campo"><span>Fim da vigência atual</span><input type="date" value="{{ ppCtFim }}" sc-camel-on-input="{{ onPpCtFim }}"></label>
+                </div>
+                <p class="pp-rot">Previsão de prorrogação no edital e no contrato</p>
+                <div class="pp-ops"><sc-for list="{{ ppCtPrevisoes }}" as="o" hint-placeholder-count="2"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.escolher }}"><b>{{ o.nome }}</b><span>{{ o.sub }}</span></button></sc-for></div>
+              </sc-if>
+            </section>
+            <section class="lmo-bloco">
               <h2 class="pp-h">Sigilo e aprovação</h2>
               <sc-if value="{{ ppNao13019 }}" hint-placeholder-val="{{ true }}">
                 <div class="pp-ops"><sc-for list="{{ ppSigilos }}" as="o" hint-placeholder-count="2"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.escolher }}"><b>{{ o.nome }}</b><span>{{ o.sub }}</span></button></sc-for></div>
@@ -3180,6 +3222,19 @@
                       <div class="lmo-agente"><button type="button" class="lmo-btn" sc-camel-on-click="{{ it.manualSalvar }}">Incluir preço</button></div>
                     </div>
                   </sc-if>
+                  <sc-if value="{{ it.temRef }}" hint-placeholder-val="{{ false }}">
+                    <div class="pp-ref">
+                      <div class="lmo-campos">
+                        <label class="lmo-campo"><span>{{ it.refRot }}</span><input type="text" inputmode="decimal" value="{{ it.pRef }}" sc-camel-on-input="{{ it.onPRef }}" placeholder="0,00"></label>
+                        <sc-if value="{{ it.ehAdesao }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>Quantidade registrada na ata</span><input type="text" inputmode="decimal" value="{{ it.qtdAta }}" sc-camel-on-input="{{ it.onQtdAta }}"></label></sc-if>
+                      </div>
+                      <sc-if value="{{ it.ehDireta }}" hint-placeholder-val="{{ false }}">
+                        <p class="pp-rot">Notas fiscais do contratado emitidas a outros contratantes no último ano (art. 23, § 4º)</p>
+                        <sc-for list="{{ it.nfs }}" as="n" hint-placeholder-count="1"><div class="pp-nf"><input type="text" value="{{ n.num }}" sc-camel-on-input="{{ n.onNum }}" placeholder="Nº da NF" aria-label="Número da nota fiscal"><input type="date" value="{{ n.data }}" sc-camel-on-input="{{ n.onData }}" aria-label="Data de emissão"><input type="text" value="{{ n.dest }}" sc-camel-on-input="{{ n.onDest }}" placeholder="Contratante (destinatário)" aria-label="Destinatário"><input type="text" inputmode="decimal" value="{{ n.qtd }}" sc-camel-on-input="{{ n.onQtd }}" placeholder="Quant." aria-label="Quantidade"><input type="text" inputmode="decimal" value="{{ n.valor }}" sc-camel-on-input="{{ n.onValor }}" placeholder="Valor unit." aria-label="Valor unitário"><button type="button" class="ct-ev-btn ct-ev-del" sc-camel-on-click="{{ n.remover }}" aria-label="Remover nota">×</button></div></sc-for>
+                        <button type="button" class="pp-btn-s" sc-camel-on-click="{{ it.nfNova }}">+ Nota fiscal</button>
+                      </sc-if>
+                    </div>
+                  </sc-if>
                   <sc-if value="{{ it.temPrecos }}" hint-placeholder-val="{{ false }}">
                     <div class="pp-filtros">
                       <p class="pp-rot" style="margin: 0 0 8px">Critérios de semelhança (banco de preços)</p>
@@ -3265,6 +3320,11 @@
               <h2 class="pp-h">Resultado</h2>
               <div class="lmo-kpis pp-resumo" style="margin-top: 0"><sc-for list="{{ ppResumo }}" as="k" hint-placeholder-count="3"><div class="pp-kpi"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
               <sc-for list="{{ ppPendencias }}" as="p" hint-placeholder-count="1"><p class="ct-av">{{ p.t }}</p></sc-for>
+              <sc-if value="{{ ppTemCmp }}" hint-placeholder-val="{{ false }}">
+                <section class="{{ ppCmpCls }}" style="margin-top: 14px"><h3 class="pp-h3" style="margin-top: 0">{{ ppCmpTit }}</h3>
+                  <sc-for list="{{ ppCmpItens }}" as="c" hint-placeholder-count="1"><p style="font-weight: 500; margin-top: 6px"><b>{{ c.t }}:</b> {{ c.x }}</p></sc-for>
+                  <p>{{ ppCmpConcl }}</p></section>
+              </sc-if>
               <sc-if value="{{ ppTemEnqs }}" hint-placeholder-val="{{ false }}">
                 <h3 class="pp-h3">Enquadramentos pelo valor estimado</h3>
                 <div class="pp-enqs"><sc-for list="{{ ppEnqs }}" as="e" hint-placeholder-count="2"><div class="{{ e.cls }}"><b>{{ e.t }}</b><p>{{ e.x }}</p><small>{{ e.f }}</small></div></sc-for></div>
@@ -4054,6 +4114,8 @@
                 <label class="lmo-campo"><span>Contratada</span><input type="text" value="{{ ctFContratada }}" sc-camel-on-input="{{ onCtFContratada }}"></label>
                 <label class="lmo-campo" style="grid-column: 1 / -1"><span>Objeto</span><input type="text" value="{{ ctFObjeto }}" sc-camel-on-input="{{ onCtFObjeto }}" placeholder="Ex.: serviços de limpeza e conservação"></label>
                 <label class="lmo-campo"><span>Regime</span><select sc-camel-on-change="{{ onCtFRegime }}"><sc-for list="{{ ctRegimes }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                <label class="lmo-campo"><span>Modalidade ou forma de contratação</span><select sc-camel-on-change="{{ onCtFModalidade }}"><sc-for list="{{ ctModalidades }}" as="o" hint-placeholder-count="4"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                <label class="lmo-campo"><span>Natureza do objeto (controle de fracionamento)</span><input type="text" list="ct-naturezas" value="{{ ctFNatureza }}" sc-camel-on-input="{{ onCtFNatureza }}" placeholder="Ex.: material de expediente"><datalist id="ct-naturezas"><sc-for list="{{ ctNaturezas }}" as="n" hint-placeholder-count="2"><option value="{{ n.v }}"></option></sc-for></datalist></label>
                 <label class="lmo-campo"><span>Mês do orçamento estimado (data-base do reajuste)</span><input type="month" value="{{ ctFDataProposta }}" sc-camel-on-input="{{ onCtFDataProposta }}"></label>
                 <label class="lmo-campo"><span>Data da assinatura</span><input type="date" value="{{ ctFAssinatura }}" sc-camel-on-input="{{ onCtFAssinatura }}"></label>
                 <label class="lmo-campo"><span>Início da vigência</span><input type="date" value="{{ ctFInicio }}" sc-camel-on-input="{{ onCtFInicio }}"></label>
@@ -4078,12 +4140,20 @@
               </div>
               <sc-if value="{{ ctFiltroVazio }}" hint-placeholder-val="{{ false }}"><p class="ct-pb-vazio">{{ ctFiltroVazioTxt }}</p></sc-if>
             </sc-if>
+            <sc-if value="{{ ctTemFrac }}" hint-placeholder-val="{{ false }}">
+              <details class="ct-frac" open="{{ ctFracAberto }}"><summary>Controle de fracionamento – dispensas em razão do valor <b class="{{ ctFracResumoCls }}">{{ ctFracResumo }}</b></summary>
+                <p class="lmo-nota">Soma, por exercício, contratante e natureza do objeto, dos contratos cadastrados com a modalidade "Dispensa em razão do valor". Contratos mensais entram pelo valor mensal vezes os meses de vigência no ano. A soma considera só o que está cadastrado aqui: inclua as demais despesas da unidade gestora com objetos da mesma natureza.</p>
+                <sc-for list="{{ ctFrac }}" as="g" hint-placeholder-count="2"><div class="{{ g.cls }}"><div class="ct-frac-cab"><b>{{ g.natureza }}</b><span>{{ g.ano }} · {{ g.contratante }}</span></div>
+                  <div class="ct-frac-barra" aria-hidden="true"><i style="width: {{ g.larg }}"></i></div>
+                  <p>{{ g.txt }}</p><small>{{ g.fund }} · contratos: {{ g.lista }}</small></div></sc-for>
+              </details>
+            </sc-if>
             <div class="ct-lista">
               <sc-for list="{{ ctLista }}" as="c" hint-placeholder-count="2">
                 <article class="{{ c.cls }}">
                   <div class="ct-cab">
-                    <div class="ct-tit"><span class="{{ c.stCls }}">{{ c.st }}</span><h3>Contrato {{ c.numero }}</h3><p>{{ c.contratada }}<sc-if value="{{ c.temObjeto }}" hint-placeholder-val="{{ true }}"> · {{ c.objeto }}</sc-if></p></div>
-                    <div class="ct-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.abrir }}">Linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarReajuste }}">Calcular reajuste</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarRq }}">Reequilíbrio</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.pdf }}">PDF</button></div>
+                    <div class="ct-tit"><span class="{{ c.stCls }}">{{ c.st }}</span><h3>Contrato {{ c.numero }}</h3><p>{{ c.contratada }}<sc-if value="{{ c.temObjeto }}" hint-placeholder-val="{{ true }}"> · {{ c.objeto }}</sc-if></p><sc-if value="{{ c.temModal }}" hint-placeholder-val="{{ false }}"><span class="ct-modal">{{ c.modal }}</span></sc-if></div>
+                    <div class="ct-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.abrir }}">Linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarReajuste }}">Calcular reajuste</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarRq }}">Reequilíbrio</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.vantajosidade }}">Vantajosidade</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.pdf }}">PDF</button></div>
                   </div>
                   <div class="ct-dados">
                     <div><small>Valor vigente</small><b>{{ c.valorV }}</b><em>{{ c.valorSub }}</em></div>
@@ -6826,7 +6896,7 @@ function ppLimites(hojeIso) { const ano = Number(String(hojeIso || "").slice(0, 
 function ppSigiloso(d) { return d.regime === "13019" ? false : (d.sigilo || (d.regime === "13303" ? "sigiloso" : "publico")) === "sigiloso"; }
 // código de verificação: resumo do conteúdo da pesquisa; qualquer alteração de dados, preços ou valores muda o código
 function ppCodigo(d, res) {
-  const base = JSON.stringify([d.titulo, d.processo, d.orgao, d.regime, d.objeto, d.agente, d.uf, d.san, ppSigiloso(d), (d.itens || []).map((i) => [i.desc, i.un, i.qtd, i.lote, i.metodo, i.restrito, (i.precos || []).filter((p) => p.incl !== false).map((p) => [p.id, p.preco, p.data, p.inciso])]),
+  const base = JSON.stringify([d.titulo, d.processo, d.orgao, d.regime, d.objeto, d.agente, d.uf, d.san, ppSigiloso(d), ppFin(d), (d.itens || []).map((i) => [i.desc, i.un, i.qtd, i.lote, i.metodo, i.restrito, i.pRef, i.qtdAta, (i.nfs || []).map((n) => [n.data, n.valor]), (i.precos || []).filter((p) => p.incl !== false).map((p) => [p.id, p.preco, p.data, p.inciso])]),
     (res.itens || []).map((x) => x.st && x.st.valor != null ? x.st.valor.toFixed(2) : ""), res.total != null ? Number(res.total).toFixed(2) : "", res.obras ? res.obras.total : ""]);
   let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
   for (let i = 0; i < base.length; i++) { const c = base.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); }
@@ -6861,6 +6931,37 @@ function ppEnquadramentos(d, res, hojeIso) {
   if (obras && total > PP_EPP_RECEITA && d.regime === "14133") semBenef.push("obra (" + ppBRL(total) + ")");
   if (semBenef.length) out.push({ nivel: "alerta", t: "Sem os benefícios da LC 123/2006", x: "O valor estimado supera a receita bruta máxima de empresa de pequeno porte (" + ppBRL(PP_EPP_RECEITA) + "), e os benefícios da LC 123/2006 não se aplicam: " + semBenef.join("; ") + ".", f: "Lei 14.133/2021, art. 4º, § 1º, I e II" });
   return out;
+}
+// finalidade da pesquisa: estimativa (planejamento), contratação direta, adesão a ata ou prorrogação
+const PP_FINS = { planejamento: "Estimativa para licitação", direta: "Contratação direta", adesao: "Adesão a ata de registro de preços", prorrogacao: "Prorrogação de contrato" };
+function ppFin(d) { const f = d.finalidade || "planejamento"; if (d.regime === "13019") return "planejamento"; if (f === "adesao" && d.regime !== "14133") return "planejamento"; return PP_FINS[f] ? f : "planejamento"; }
+// confronto do preço a contratar (proposta, ata ou contrato) com a referência de mercado
+function ppComparar(d, res, hojeIso) {
+  const fin = ppFin(d); if (fin === "planejamento" || d.objeto === "obras") return { aplica: false, itens: [] };
+  const rot = { direta: "Preço proposto", adesao: "Preço registrado na ata", prorrogacao: "Preço atual do contrato" }[fin];
+  const t0 = Date.parse(hojeIso || new Date().toISOString().slice(0, 10));
+  const itens = res.itens.map((x, k) => {
+    const it = x.item, st = x.st, ref = ppNum(it.pRef), qtd = ppNum(it.qtd) || 0;
+    const nfs = (it.nfs || []).map((n) => ({ ...n, v: ppNum(n.valor), idade: n.data ? (t0 - Date.parse(n.data)) / 864e5 : null })), nfOk = nfs.filter((n) => n.v > 0 && n.idade != null && n.idade >= 0 && n.idade <= 366);
+    const nfMed = nfOk.length ? nfOk.reduce((a, n) => a + n.v, 0) / nfOk.length : null;
+    const usaNf = fin === "direta" && !(st.valor > 0) && nfMed != null, base = st.valor > 0 ? st.valor : usaNf ? nfMed : null;
+    const dif = ref > 0 && base > 0 ? ref / base - 1 : null, ok = dif != null && dif <= 0.00005;
+    const alertas = [];
+    if (fin === "adesao" && ppNum(it.qtdAta) > 0 && qtd > ppNum(it.qtdAta) * 0.5 + 1e-9) alertas.push("Quantidade (" + qtd.toLocaleString("pt-BR") + ") acima de 50% da registrada na ata (" + ppNum(it.qtdAta).toLocaleString("pt-BR") + "): vedado (art. 86, § 4º).");
+    if (fin === "direta" && nfs.some((n) => n.v > 0 && n.idade != null && n.idade > 366)) alertas.push("Há nota fiscal com mais de 1 ano, desconsiderada (art. 23, § 4º).");
+    const nomeBase = usaNf ? "média das notas fiscais emitidas a outros contratantes" : "valor estimado pela pesquisa de mercado";
+    const txt = !(ref > 0) ? "Informe o " + rot.toLowerCase() + "." : !(base > 0) ? "Sem referência: colete preços de mercado" + (fin === "direta" ? " ou informe as notas fiscais do contratado." : ".")
+      : ok ? rot + " de " + ppBRL(ref) + " igual ou inferior " + (usaNf ? "à " : "ao ") + nomeBase + " (" + ppBRL(base) + ")" + (dif < -0.00005 ? ", " + ppPct(-dif) + " abaixo." : ".")
+      : rot + " de " + ppBRL(ref) + " " + ppPct(dif) + " acima " + (usaNf ? "da " : "do ") + nomeBase + " (" + ppBRL(base) + ").";
+    return { k: k + 1, bloq: fin === "adesao" && alertas.length > 0, it, st, ref, base, usaNf, nfs, nfOk, nfMed, dif, ok, alertas, txt, qtd, totRef: ref > 0 ? ref * qtd : null };
+  });
+  const comp = itens.filter((i) => i.ref > 0 && i.base > 0), todos = itens.length > 0 && comp.length === itens.length, okTodos = todos && comp.every((i) => i.ok) && !itens.some((i) => i.alertas.length && fin === "adesao");
+  const totRef = itens.reduce((a, i) => a + (i.totRef || 0), 0), totBase = comp.reduce((a, i) => a + i.base * i.qtd, 0);
+  const tit = { direta: "Justificativa do preço", adesao: "Vantajosidade da adesão à ata", prorrogacao: "Vantajosidade da prorrogação" }[fin];
+  const concl = !todos ? "Conclusão pendente: informe o " + rot.toLowerCase() + " e a referência de mercado de todos os itens."
+    : okTodos ? { direta: "O preço proposto é compatível com o praticado no mercado e pode ser aceito.", adesao: "Os preços registrados na ata são compatíveis com o mercado e a adesão é vantajosa quanto ao preço.", prorrogacao: "Os preços do contrato permanecem vantajosos: a prorrogação pode ser atestada quanto ao preço." }[fin]
+    : { direta: "Há item com preço proposto acima da referência de mercado: negocie a redução ou justifique a diferença antes de contratar.", adesao: "Há item com preço acima do mercado ou quantidade acima do limite: a adesão não se mostra vantajosa nesses itens.", prorrogacao: "Há item com preço acima do mercado: negocie a redução com o contratado antes de prorrogar ou avalie a extinção sem ônus (art. 107)." }[fin];
+  return { aplica: true, fin, rot, tit, itens, todos, ok: okTodos, totRef, totBase, concl };
 }
 // versão para publicação de orçamento sigiloso: só quantitativos e informações necessárias às propostas
 function ppDocPublico(d, res, hoje) {
@@ -7316,6 +7417,33 @@ function ppDocumento(d, res, hoje, opc) {
         .map((c) => ({ c, alerta: c[2] === "Pendente" ? [2] : [] })) });
     blocos.push({ t: "legenda", texto: "Juntar ao processo as propostas formais dos fornecedores (art. 5º, § 2º), as telas ou páginas das fontes do inciso III com data e hora de acesso e as notas fiscais do inciso V. Para os incisos I e II, os links e as consultas indicados permitem conferir cada preço." });
   }
+  const cmp = ppComparar(d, res, new Date().toISOString().slice(0, 10));
+  if (cmp.aplica) {
+    const pr = d.regime === "13303";
+    const fund = { direta: pr ? "Lei 13.303/2016, art. 30, § 3º, II e III" + (d.norma ? ", e " + d.norma : "") : "Lei 14.133/2021, art. 72, VI e VII, e art. 23, § 4º; IN SEGES/ME 65/2021, art. 7º",
+      adesao: "Lei 14.133/2021, art. 86, § 2º, I a III, e §§ 4º e 5º", prorrogacao: pr ? "Lei 13.303/2016, art. 71" + (d.norma ? ", e " + d.norma : "") : "Lei 14.133/2021, arts. 106 e 107" }[cmp.fin];
+    const ps = [];
+    if (cmp.fin === "direta") {
+      ps.push("Contratação direta" + (d.hipotese ? " com fundamento em " + d.hipotese : "") + (d.fornNome ? ", com " + d.fornNome + (d.fornCnpj ? " (CNPJ " + d.fornCnpj + ")" : "") : "") + ". " + (pr ? "O processo deve conter a razão da escolha do fornecedor e a justificativa do preço (" + fund + ")." : "O processo deve conter a razão da escolha do contratado e a justificativa do preço (art. 72, VI e VII, da Lei 14.133/2021)."));
+      ps.push("Razão da escolha do contratado: " + (d.razaoEscolha || "[não informada]") + ".");
+      ps.push(pr ? "Justificativa do preço: o preço proposto foi confrontado com os preços de mercado obtidos nesta pesquisa." : "Justificativa do preço: o preço proposto foi confrontado com a estimativa obtida pelos parâmetros do art. 23, § 1º (IN 65/2021, art. 7º)." + (cmp.itens.some((i) => i.usaNf) ? " Nos itens em que não foi possível estimar por esses parâmetros, o contratado comprovou que seus preços estão em conformidade com os praticados em contratações semelhantes, por meio de notas fiscais emitidas a outros contratantes no período de até 1 ano anterior (art. 23, § 4º)." : ""));
+    } else if (cmp.fin === "adesao") {
+      ps.push("Adesão à ata de registro de preços " + (d.ataNumero || "[número]") + ", gerenciada por " + (d.ataOrgao || "[órgão gerenciador]") + (d.ataVigencia ? ", vigente até " + ppData(d.ataVigencia) : "") + ".");
+      ps.push("I – Justificativa da vantagem da adesão, inclusive em situações de provável desabastecimento ou descontinuidade de serviço público: " + (d.ataJust || "[não informada]") + ".");
+      ps.push("II – Demonstração de que os valores registrados estão compatíveis com os praticados no mercado, na forma do art. 23: confronto abaixo, com a pesquisa de mercado deste relatório.");
+      ps.push("III – Prévia consulta e aceitação do órgão gerenciador e do fornecedor: " + (d.ataAceite === "sim" ? "obtidas e juntadas ao processo." : "pendentes; providenciar antes da adesão.") + " As aquisições por adesão não podem exceder, por órgão, 50% dos quantitativos registrados na ata (art. 86, § 4º), nem, no total, o dobro deles (art. 86, § 5º).");
+    } else {
+      ps.push("Prorrogação do contrato " + (d.ctNumero || "[número]") + (d.ctContratada ? ", com " + d.ctContratada : "") + (d.ctFim ? ", com vigência atual até " + ppData(d.ctFim) : "") + ".");
+      ps.push(pr ? "A prorrogação observa o prazo do art. 71 da Lei 13.303/2016 e as condições do regulamento da estatal, demonstrada a vantajosidade dos preços pelo confronto abaixo." : "Contratos de serviços e fornecimentos contínuos podem ser prorrogados sucessivamente, respeitada a vigência máxima de 10 anos, desde que haja previsão no edital e que a autoridade competente ateste que as condições e os preços permanecem vantajosos, permitida a negociação com o contratado ou a extinção contratual sem ônus (art. 107). Previsão de prorrogação no edital e no contrato: " + (d.ctPrevisao === "sim" ? "sim." : d.ctPrevisao === "nao" ? "não – a prorrogação não é possível sem essa previsão." : "[não informada]."));
+    }
+    ps.push("Conclusão: " + cmp.concl);
+    blocos.push({ t: "texto", titulo: cmp.tit, paragrafos: ps });
+    blocos.push({ t: "tabela", titulo: "Confronto com o mercado", sub: "Fundamento: " + fund + ".", cab: ["Item", "Descrição", "Quant.", cmp.rot, "Referência de mercado", "Diferença", "Situação"], larg: [7, 33, 9, 14, 15, 10, 12], alin: "llrrrrl",
+      linhas: cmp.itens.map((i) => ({ c: [String(i.k), (i.it.desc || "—") + (i.usaNf ? "\n(referência: notas fiscais)" : "") + (i.alertas.length ? "\n" + i.alertas.join(" ") : ""), String(i.it.qtd || ""), ppBRL(i.ref || null), ppBRL(i.base), i.dif != null ? (i.dif > 0 ? "+" : "") + ppPct(i.dif) : "—", !(i.ref > 0 && i.base > 0) ? "Pendente" : i.ok && !i.bloq ? "Compatível" : i.ok ? "Acima do limite" : "Acima"], alerta: i.ok && !i.bloq ? [] : [6] }))
+        .concat([{ c: ["", "Totais", "", ppBRL(cmp.totRef || null), ppBRL(cmp.totBase || null), "", ""], total: true }]) });
+    cmp.itens.filter((i) => i.nfs.length).forEach((i) => blocos.push({ t: "tabela", titulo: "Notas fiscais do contratado – item " + i.k, sub: "Emitidas a outros contratantes (art. 23, § 4º). Média das válidas: " + ppBRL(i.nfMed) + ".", cab: ["Nota fiscal", "Data", "Contratante (destinatário)", "Quant.", "Valor unitário", "Situação"], larg: [14, 12, 36, 10, 14, 14], alin: "lllrrl",
+      linhas: i.nfs.map((n) => ({ c: [n.num || "—", ppData(n.data), n.dest || "—", n.qtd || "", ppBRL(n.v || null), n.v > 0 && n.idade != null && n.idade >= 0 && n.idade <= 366 ? "Válida" : "Fora do período"], alerta: n.idade != null && n.idade <= 366 ? [] : [5] })) }));
+  }
   const enqs = ppEnquadramentos(d, res, opc && opc.hojeIso ? opc.hojeIso : new Date().toISOString().slice(0, 10));
   if (enqs.length) blocos.push({ t: "tabela", titulo: "Enquadramentos decorrentes do valor estimado", sub: "Indicações para o planejamento da contratação; confirme-as conforme o caso concreto.", cab: ["Enquadramento", "Análise", "Fundamento"], larg: [20, 55, 25], alin: "lll",
     linhas: enqs.map((e) => ({ c: [e.t, e.x, e.f], alerta: e.nivel === "alerta" ? [0] : [] })) });
@@ -7363,7 +7491,29 @@ function ctProrrog(c, si) {
   return { fim: f, ini, iniIso: ini.toISOString().slice(0, 10), dias, diasIni, anos, st };
 }
 const CT_FORM = { id: "", numero: "", contratante: "", contratada: "", objeto: "", regime: "14133", data_proposta: "", assinatura: "", inicio: "", fim: "", reforma: false, valor_inicial: "", periodicidade: "mensal", obra: false,
-  indice: "ipca", mao_obra: false, data_base_cct: "", alertas: true, obs: "" };
+  indice: "ipca", mao_obra: false, data_base_cct: "", alertas: true, obs: "", modalidade: "", natureza: "" };
+const CT_MODALIDADES = [["", "Não informada"], ["pregao", "Pregão"], ["concorrencia", "Concorrência"], ["concurso", "Concurso"], ["leilao", "Leilão"], ["dialogo", "Diálogo competitivo"], ["licitacao_13303", "Licitação (Lei 13.303/2016)"],
+  ["dispensa_valor", "Dispensa em razão do valor"], ["dispensa_outra", "Dispensa – outras hipóteses"], ["inexigibilidade", "Inexigibilidade"], ["adesao", "Adesão a ata de registro de preços"], ["chamamento", "Chamamento público (Lei 13.019/2014)"], ["outra", "Outra"]];
+// controle de fracionamento: soma, por exercício, contratante e natureza do objeto, das dispensas em razão do valor (Lei 14.133/2021, art. 75, § 1º; Lei 13.303/2016, art. 29)
+function ctFracionamento(lista, eventos) {
+  const norm = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ").trim();
+  const g = {};
+  (lista || []).filter((c) => c.modalidade === "dispensa_valor").forEach((c) => {
+    const ini = String(c.assinatura || c.inicio || "").slice(0, 10); if (!/^\d{4}/.test(ini)) return;
+    const ano = Number(ini.slice(0, 4)), v0 = Number(c.valor_inicial) || 0; if (!v0) return;
+    let v = v0;
+    if (c.periodicidade === "mensal") { const fim = String(c.fim || "").slice(0, 10), mi = Number(ini.slice(5, 7)), fimAno = /^\d{4}/.test(fim) && Number(fim.slice(0, 4)) === ano ? Number(fim.slice(5, 7)) : 12; v = v0 * Math.max(1, fimAno - mi + 1); }
+    const reg = c.regime === "13303" ? "13303" : "14133", tipo = c.obra ? "obras" : "outros";
+    const k = [ano, norm(c.contratante), norm(c.natureza || c.objeto), reg, tipo].join("|");
+    (g[k] = g[k] || { ano, contratante: c.contratante || "contratante não informado", natureza: c.natureza || c.objeto || "natureza não informada", reg, tipo, soma: 0, contratos: [] });
+    g[k].soma += v; g[k].contratos.push({ numero: c.numero, v });
+  });
+  return Object.values(g).map((x) => {
+    const L = ppLimites(x.ano + "-06-30"), lim = x.reg === "13303" ? (x.tipo === "obras" ? 100000 : 50000) : x.tipo === "obras" ? L.obras : L.outros;
+    const pct = x.soma / lim, st = pct > 1 ? "excede" : pct >= 0.8 ? "perto" : "ok";
+    return { ...x, lim, pct, st, fund: x.reg === "13303" ? "Lei 13.303/2016, art. 29, " + (x.tipo === "obras" ? "I" : "II") + " (confira o valor no regulamento)" : "Lei 14.133/2021, art. 75, " + (x.tipo === "obras" ? "I" : "II") + ", e § 1º; " + L.decreto };
+  }).sort((a, b) => b.pct - a.pct);
+}
 const CT_EV = { tipo: "reajuste", data: "", percentual: "", valor_anterior: "", valor_novo: "", saldo: "", novo_fim: "", descricao: "" };
 // situação atual do contrato a partir da linha do tempo: valor vigente, fim da vigência, reajustes concedidos e próxima anualidade
 function ctSituacao(c, evs) {
@@ -8421,6 +8571,7 @@ class Component extends DCLogic {
     const etapa = pp.etapa || "enq";
     const res = lib && pp.iniciado ? this.ppResultado() : { itens: [], total: 0, obras: null, ratif: null };
     const sitRot = { ok: "Válido", inex: "Inexequível", exc: "Excessivo", fora: "Desconsiderado" };
+    const fin = ppFin(d), cmpV = lib && pp.iniciado ? ppComparar(d, res, new Date().toISOString().slice(0, 10)) : { aplica: false, itens: [] };
     const itensView = res.itens.map(({ item: it, st }, idx) => ({
       id: it.id, n: idx + 1, desc: it.desc, un: it.un, qtd: it.qtd, codAuto: !!it.codAuto && !!it.cod,
       loteRot: (() => { const k = (d.lotes || []).findIndex((l) => l.id === it.lote); return k >= 0 ? "Lote " + (k + 1) + " · " : ""; })(),
@@ -8477,6 +8628,12 @@ class Component extends DCLogic {
       kpis: [["Coletados / selecionados", st.coletados + " / " + st.selecionados], ["Mediana dos selecionados", ppBRL(st.med0)], [st.san === "quartis" ? "Faixa pelos quartis" : "Faixa de ±" + st.pctFaixa + "%", st.lo != null ? ppBRL(st.lo) + " a " + ppBRL(st.hi) : "—"],
         ["Válidos", String(st.n)], ["Média · desvio", ppBRL(st.media) + " · " + ppBRL(st.dp)], ["Coef. de variação", ppPct(st.cv)], ["Método", st.n ? st.nomeMet : "—"]].map(([k, v]) => ({ k, v })),
       valor: ppBRL(st.valor), total: ppBRL(st.total), justMet: st.justMet, poucos: st.coletados > 0 && st.poucos, just: it.just, onJust: this.ppItemCampo(it.id, "just"),
+      temRef: fin !== "planejamento" && d.objeto !== "obras", refRot: { direta: "Preço unitário proposto pelo futuro contratado (R$)", adesao: "Preço unitário registrado na ata (R$)", prorrogacao: "Preço unitário atual do contrato, com reajustes (R$)" }[fin] || "",
+      pRef: it.pRef || "", onPRef: this.ppItemCampo(it.id, "pRef"), ehAdesao: fin === "adesao", qtdAta: it.qtdAta || "", onQtdAta: this.ppItemCampo(it.id, "qtdAta"),
+      ehDireta: fin === "direta", nfNova: () => this.ppItem(it.id, (i) => { i.nfs = (i.nfs || []).concat([{ id: Math.random().toString(36).slice(2, 8), num: "", data: "", dest: "", qtd: "", valor: "" }]); return i; }),
+      nfs: (it.nfs || []).map((n) => { const campo = (k) => (e) => { const v = e && e.target ? e.target.value : e; this.ppItem(it.id, (i) => { i.nfs = (i.nfs || []).map((m) => (m.id === n.id ? { ...m, [k]: v } : m)); return i; }); };
+        return { num: n.num, data: n.data, dest: n.dest, qtd: n.qtd, valor: n.valor, onNum: campo("num"), onData: campo("data"), onDest: campo("dest"), onQtd: campo("qtd"), onValor: campo("valor"), remover: () => this.ppItem(it.id, (i) => { i.nfs = (i.nfs || []).filter((m) => m.id !== n.id); return i; }) }; }),
+      temNfs: (it.nfs || []).length > 0,
       semPrioritario: st.semPrioritario, remover: () => this.ppMudar((dd) => { dd.itens = dd.itens.filter((x) => x.id !== it.id); return dd; }), podeRemover: d.objeto !== "mao_obra" && d.itens.length > 1,
     }));
     const o = res.obras;
@@ -8526,6 +8683,13 @@ class Component extends DCLogic {
       ppObjetos: op([["bens", "Bens e serviços comuns", "coleta de preços pelos parâmetros do art. 23, § 1º"], ["mao_obra", "Serviço com dedicação exclusiva de mão de obra", "ratifica a planilha da IN 5/2017"], ["obras", "Obras e serviços de engenharia", "análise da planilha de orçamento enviada"]], d.objeto, "objeto"),
       ppFund: fund.map((t) => ({ t })),
       ppNao13019: d.regime !== "13019",
+      ppFins: op(Object.entries(PP_FINS).filter(([k]) => k === "planejamento" || (d.regime !== "13019" && (k !== "adesao" || d.regime === "14133"))).map(([k, v]) => [k, v, { planejamento: "valor estimado para o edital", direta: d.regime === "13303" ? "justificativa do preço (art. 30, § 3º)" : "justificativa do preço (art. 72, VII)", adesao: "vantajosidade (art. 86, § 2º)", prorrogacao: d.regime === "13303" ? "vantajosidade (art. 71 e regulamento)" : "preços vantajosos (art. 107)" }[k]]), fin, "finalidade"),
+      ppFinDireta: fin === "direta", ppFinAdesao: fin === "adesao", ppFinProrrog: fin === "prorrogacao",
+      ppHipotese: d.hipotese || "", onPpHipotese: this.ppSet("hipotese"), ppFornNome: d.fornNome || "", onPpFornNome: this.ppSet("fornNome"), ppFornCnpj: d.fornCnpj || "", onPpFornCnpj: this.ppSet("fornCnpj"), ppRazao: d.razaoEscolha || "", onPpRazao: this.ppSet("razaoEscolha"),
+      ppAtaOrgao: d.ataOrgao || "", onPpAtaOrgao: this.ppSet("ataOrgao"), ppAtaNumero: d.ataNumero || "", onPpAtaNumero: this.ppSet("ataNumero"), ppAtaVigencia: d.ataVigencia || "", onPpAtaVigencia: this.ppSet("ataVigencia"), ppAtaJust: d.ataJust || "", onPpAtaJust: this.ppSet("ataJust"),
+      ppAtaAceites: op([["sim", "Aceites obtidos", "gerenciador e fornecedor"], ["nao", "Ainda não", "pendente"]], d.ataAceite === "sim" ? "sim" : "nao", "ataAceite"),
+      ppCtNumero: d.ctNumero || "", onPpCtNumero: this.ppSet("ctNumero"), ppCtContratada: d.ctContratada || "", onPpCtContratada: this.ppSet("ctContratada"), ppCtFim: d.ctFim || "", onPpCtFim: this.ppSet("ctFim"),
+      ppCtPrevisoes: op([["sim", "Há previsão de prorrogação", "no edital e no contrato"], ["nao", "Não há previsão", "prorrogação inviável"]], d.ctPrevisao || "", "ctPrevisao"),
       ppSigilos: op([["publico", "Orçamento público", "divulgado com o edital"], ["sigiloso", "Orçamento sigiloso", d.regime === "13303" ? "regra da Lei 13.303/2016 (art. 34)" : "exige justificativa (art. 24 da Lei 14.133/2021)"]], ppSigiloso(d) ? "sigiloso" : "publico", "sigilo"),
       ppEhSigiloso: ppSigiloso(d), ppJustSigilo: d.justSigilo || "", onPpJustSigilo: this.ppSet("justSigilo"),
       ppAutoridade: d.autoridade || "", onPpAutoridade: this.ppSet("autoridade"), ppAutCargo: d.autCargo || "", onPpAutCargo: this.ppSet("autCargo"),
@@ -8559,7 +8723,7 @@ class Component extends DCLogic {
       ppResumo: (d.objeto === "obras"
         ? [["Valor global do orçamento", ppBRL(o ? o.total : null)], ["Apontamentos", o ? String(o.apontamentos.length) : "—"], ["Regime", d.regime]]
         : [["Valor total estimado", ppBRL(res.total)], ["Itens", String(res.itens.length)], ["Preços válidos", String(res.itens.reduce((a, x) => a + x.st.n, 0))]]).map(([k, v]) => ({ k, v })),
-      ppPendencias: [].concat(ppSigiloso(d) && d.regime === "14133" && !String(d.justSigilo || "").trim() ? ["Orçamento sigiloso sem justificativa (art. 24 da Lei 14.133/2021): informe-a na etapa 1."] : [], res.itens.filter((x) => x.st.poucos && !String(x.item.just || "").trim()).map((x) => "Item “" + (x.item.desc || "sem descrição") + "”: menos de " + x.st.minimo + " preços válidos sem justificativa."))
+      ppPendencias: [].concat(fin === "direta" && !String(d.razaoEscolha || "").trim() ? ["Contratação direta sem a razão da escolha do contratado (etapa 1)."] : [], fin === "adesao" && !String(d.ataJust || "").trim() ? ["Adesão sem a justificativa da vantagem (art. 86, § 2º, I)."] : [], fin === "adesao" && d.ataAceite !== "sim" ? ["Adesão sem a consulta e a aceitação do órgão gerenciador e do fornecedor (art. 86, § 2º, III)."] : [], ppSigiloso(d) && d.regime === "14133" && !String(d.justSigilo || "").trim() ? ["Orçamento sigiloso sem justificativa (art. 24 da Lei 14.133/2021): informe-a na etapa 1."] : [], res.itens.filter((x) => x.st.poucos && !String(x.item.just || "").trim() && !(fin === "direta" && !(x.st.valor > 0) && (x.item.nfs || []).length)).map((x) => "Item “" + (x.item.desc || "sem descrição") + "”: menos de " + x.st.minimo + " preços válidos sem justificativa."))
         .concat(res.itens.some((x) => x.st.semPrioritario) && !String(d.justPrioritarios || "").trim() && d.regime === "14133" ? ["Sem preços do Painel de Preços ou de contratações similares em algum item: justifique (IN 65/2021, art. 5º, § 1º)."] : [])
         .concat(!d.agente && !d.equipe ? ["Informe o agente ou a equipe responsável pela pesquisa."] : [])
         .concat((d.lotes || []).length && !String(d.justLotes || "").trim() ? ["Justifique o agrupamento dos itens em lotes (etapa 2)."] : [])
@@ -8569,7 +8733,9 @@ class Component extends DCLogic {
         .concat(d.objeto === "mao_obra" && !ppNum(d.moValor) ? ["Informe o valor mensal por posto da planilha de custos."] : []).map((t) => ({ t })),
       ppPdf: () => this.ppPdf(), ppExcel: () => this.ppExcel(), ppWord: () => this.ppWord(), ppLevar: () => this.ppLevar(),
       ppLevarTxt: d.objeto === "obras" ? "Levar ao Projeto Básico (orçamento)" : "Levar ao Termo de Referência",
-      ppTextoTR: (ppSigiloso(d) ? "[ORÇAMENTO SIGILOSO – USO INTERNO]\n" : "") + ppTextoTR(d, res),
+      ppTextoTR: (ppSigiloso(d) ? "[ORÇAMENTO SIGILOSO – USO INTERNO]\n" : "") + ppTextoTR(d, res) + (cmpV.aplica ? "\n" + cmpV.tit + ": " + cmpV.concl : ""),
+      ppTemCmp: cmpV.aplica, ppCmpTit: cmpV.tit || "", ppCmpConcl: cmpV.concl || "", ppCmpCls: "pp-ratif " + (cmpV.ok ? "ok" : "alerta"),
+      ppCmpItens: (cmpV.itens || []).map((i) => ({ t: "Item " + i.k + " – " + String(i.it.desc || "").slice(0, 60), x: i.txt + (i.alertas.length ? " " + i.alertas.join(" ") : "") })),
       ppEnqs: ppEnquadramentos(d, res, new Date().toISOString().slice(0, 10)).map((e) => ({ ...e, cls: "pp-enq pp-enq-" + e.nivel })), ppTemEnqs: ppEnquadramentos(d, res, new Date().toISOString().slice(0, 10)).length > 0,
       ppCodigo: ppCodigo(d, res), ppPublicoPdf: () => this.ppPublicoPdf(),
       ppTemPlan: d.objeto !== "obras" && res.itens.length > 0,
@@ -9570,7 +9736,7 @@ class Component extends DCLogic {
     const reg = { numero: String(f.numero).trim().slice(0, 60), contratante: f.contratante || null, contratada: f.contratada || null, objeto: f.objeto || null, regime: f.regime || "14133",
       data_proposta: /^\d{4}-\d{2}$/.test(f.data_proposta || "") ? f.data_proposta + "-01" : null, assinatura: f.assinatura || null, inicio: f.inicio || null, fim: f.fim || null, reforma: !!f.reforma, obra: !!f.obra,
       valor_inicial: String(f.valor_inicial || "").trim() ? rqN(f.valor_inicial) : null, periodicidade: f.periodicidade || "mensal", indice: f.indice || null,
-      mao_obra: !!f.mao_obra, data_base_cct: f.data_base_cct || null, alertas: f.alertas !== false, obs: f.obs || null };
+      mao_obra: !!f.mao_obra, data_base_cct: f.data_base_cct || null, alertas: f.alertas !== false, obs: f.obs || null, modalidade: f.modalidade || null, natureza: String(f.natureza || "").trim().slice(0, 120) || null };
     if (!this.sb) {
       const lista = this.state.ct.lista.slice(), id = f.id || ("demo-" + Date.now());
       const i = lista.findIndex((c) => c.id === id), novo = { ...(i >= 0 ? lista[i] : {}), ...reg, id, criado_em: i >= 0 ? lista[i].criado_em : new Date().toISOString() };
@@ -9582,6 +9748,15 @@ class Component extends DCLogic {
     const { data, error } = await q;
     if (error) { this.ctMsg("", "Não foi possível salvar: " + (error.message || "tente de novo.")); return; }
     this.setState((x) => ({ ct: { ...x.ct, lista: f.id ? x.ct.lista.map((c) => (c.id === data.id ? data : c)) : [data].concat(x.ct.lista), form: null, atual: data.id, ok: "Contrato salvo.", erro: "" } }));
+  }
+  ctVantajosidade(c, si) {
+    const v = si && si.valor != null ? si.valor : c.valor_inicial, mensal = c.periodicidade === "mensal";
+    const it = { ...PP_ITEM(), desc: c.objeto || "Objeto do contrato " + c.numero, un: mensal ? "mês" : "contrato", qtd: mensal ? "12" : "1", tipo: "servico", pRef: v != null ? Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "" };
+    const d = { ...PP_PADRAO, titulo: "Vantajosidade da prorrogação – contrato " + c.numero, descricao: c.objeto || "", orgao: c.contratante || "", regime: c.regime === "13303" ? "13303" : c.regime === "13019" ? "14133" : "14133",
+      finalidade: "prorrogacao", ctNumero: c.numero, ctContratada: c.contratada || "", ctFim: si && si.fim ? String(si.fim).slice(0, 10) : c.fim || "", objeto: c.mao_obra ? "mao_obra" : "bens", itens: [it] };
+    try { localStorage.setItem("lv-pp-rascunho", JSON.stringify(d)); } catch (e) {}
+    this.setState((x) => ({ pp: { ...x.pp, d, id: "", etapa: "enq", iniciado: true, erro: "", ok: "Pesquisa de vantajosidade iniciada com os dados do contrato " + c.numero + ". Confira a etapa 1 e colete os preços de mercado na etapa 2." } }));
+    this.irPara("precos");
   }
   async ctExcluir(id) {
     if (this.state.ct.excluir !== id) { this.setState((x) => ({ ct: { ...x.ct, excluir: id } })); return; }
@@ -11045,7 +11220,8 @@ class Component extends DCLogic {
             reaj: si.reajPct > 0.0001 ? "Reajustes concedidos: " + pctT(si.reajPct) : "", avisos: avisos.map((t) => ({ t })), temAvisos: avisos.length > 0, compart: !meu,
             aberto, cls: "ct-card st-" + stK + (aberto ? " aberto" : ""), abrir: () => this.ctAbrir(c.id), editar: () => this.ctEditar(c), excluir: () => this.ctExcluir(c.id),
             excluirTxt: ct.excluir === c.id ? "Confirmar exclusão" : "Excluir", meu, usarReajuste: () => this.ctUsar(c.id, "reajuste"), pdf: () => this.ctPdf(c.id), usarRq: () => this.ctUsar(c.id, "reequilibrio"),
-            novoEv: () => this.ctNovoEv(), temEventos: true,
+            novoEv: () => this.ctNovoEv(), temEventos: true, vantajosidade: () => this.ctVantajosidade(c, si),
+            temModal: !!c.modalidade, modal: (CT_MODALIDADES.find((m) => m[0] === c.modalidade) || ["", ""])[1] + (c.natureza ? " · " + c.natureza : ""),
             eventos: (() => {
               const pr = ctProrrog(c, si), fx = [];
               if (c.data_proposta) fx.push({ iso: String(c.data_proposta).slice(0, 10), data: String(c.data_proposta).slice(5, 7) + "/" + String(c.data_proposta).slice(0, 4), tipo: "Orçamento estimado", desc: "Data-base para a contagem da anualidade do reajuste (art. 25, § 7º, e art. 92, § 3º).", cor: "#5E8C99" });
@@ -11106,7 +11282,13 @@ class Component extends DCLogic {
         const listaF = ctFil === "todos" ? lista : lista.filter((x) => x.stK === ctFil);
         const ctFiltros = [["todos", "Todos", lista.length], ["vig", "Vigentes", nSt("vig")], ["ven", "Vencendo", nSt("ven")], ["exp", "Vencidos", nSt("exp")]]
           .map(([k, nome, n]) => ({ nome, n: String(n), ativo: ctFil === k, cls: "ct-fb f-" + k + (ctFil === k ? " ativo" : ""), sel: () => this.setState((x) => ({ ct: { ...x.ct, filtro: k } })) }));
-        return { ...campos, ctLista: listaF, ctFiltros, ctFiltroVazio: lista.length > 0 && !listaF.length,
+        const frac = ctFracionamento(ct.lista, ct.eventos), nEx = frac.filter((g) => g.st === "excede").length, nPe = frac.filter((g) => g.st === "perto").length;
+        const fracP = { ctTemFrac: frac.length > 0, ctFracAberto: nEx + nPe > 0, ctFracResumo: nEx ? nEx + " acima do limite" : nPe ? nPe + " perto do limite" : "dentro dos limites", ctFracResumoCls: "ct-frac-res " + (nEx ? "excede" : nPe ? "perto" : "ok"),
+          ctFrac: frac.map((g) => ({ cls: "ct-frac-g " + g.st, natureza: g.natureza, ano: g.ano, contratante: g.contratante, larg: Math.min(100, g.pct * 100).toFixed(1) + "%", fund: g.fund, lista: g.contratos.map((x) => x.numero).join(", "),
+            txt: "Soma de " + brl(g.soma) + " para o limite de " + brl(g.lim) + " (" + Math.round(g.pct * 100) + "%). " + (g.st === "excede" ? "Acima do limite: indício de fracionamento de despesa. A próxima contratação dessa natureza no exercício exige licitação, e as já feitas devem ser revistas." : g.st === "perto" ? "Perto do limite: planeje as próximas contratações dessa natureza no exercício." : "Dentro do limite.") })),
+          ctModalidades: CT_MODALIDADES.map(([id, nome]) => ({ id, nome, sel: (f.modalidade || "") === id })),
+          ctNaturezas: [...new Set(ct.lista.map((c) => c.natureza).filter(Boolean))].map((v) => ({ v })) };
+        return { ...campos, ...fracP, ctLista: listaF, ctFiltros, ctFiltroVazio: lista.length > 0 && !listaF.length,
           ctFiltroVazioTxt: "Nenhum contrato " + ({ vig: "vigente", ven: "vencendo nos próximos 4 meses", exp: "vencido" }[ctFil] || "") + ".", ctKpis, ctAgMeses, ctAgGrupos, ctAgVazio: !agenda.length, ctAgFiltro: agSel ? "Mostrando só o mês escolhido · clique de novo para ver todos" : "",
           ctAgExcel: () => this.ctAgendaExcel(), ctRelatorio: () => this.ctRelatorio(), ctTemKpis: lista.length > 0, ctTemLista: lista.length > 0, ctVazio: ct.carregado && !lista.length && !ct.form, ctCarregando: !!ct.carregando,
           ctFormAberto: !!ct.form, ctFormTitulo: f.id ? "Editar contrato" : "Novo contrato", ctNovo: () => this.ctNovo(), ctSalvar: () => this.ctSalvar(),
