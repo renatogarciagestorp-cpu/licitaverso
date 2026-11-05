@@ -24,6 +24,11 @@ jobs:
           for corpo in '{"objeto":"papel A4 sulfite","uf":"RJ","so_precos":true}' '{"acao":"teste_fontes"}'; do
             for f in pesquisa-mercado pesquisa-precos; do
               c=$(curl -s -m 120 -o /tmp/r -w '%{http_code}' -X POST "https://umnhhztdqersjfrzqcea.supabase.co/functions/v1/$f" -H "Content-Type: application/json" -H "x-avisos: $AVISOS_SECRET" -d "$corpo" || echo falhou)
-              echo "::notice title=Servidor $f::HTTP $c · $(head -c 700 /tmp/r | tr -d '\n\r')"
+              echo "::notice title=Servidor $f::HTTP $c · $(python3 -c "import json,sys
+try:
+  j=json.load(open('/tmp/r'))
+  if 'fontes' in j: print(' | '.join(str(x['status'])+' '+str(x['ms'])+'ms '+x['url'].split('?')[0][-60:] for x in j['fontes']) + ' || AMOSTRA ' + json.dumps(j.get('amostra'),ensure_ascii=False)[:900] + ' || PNCP ' + json.dumps(j.get('pncp'),ensure_ascii=False)[:900])
+  else: print(json.dumps(j,ensure_ascii=False)[:600])
+except Exception as e: print(open('/tmp/r').read()[:300])")"
             done
           done
