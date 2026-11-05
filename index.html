@@ -1328,6 +1328,38 @@
   .ct-dot { position: absolute; width: 11px; height: 11px; border-radius: 50%; background: #fff; border: 2.5px solid #0FA36B; transform: translate(-50%, -50%); box-sizing: border-box; cursor: default; }
   .ct-dot-r { width: 13px; height: 13px; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(10,31,42,0.12); }
   .ct-leg { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: #55666D; margin-top: 2px; } .ct-leg i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+  .ct-pb-kpi { position: relative; overflow: hidden; padding: 12px 14px 11px 16px !important; background: #fff !important; box-shadow: 0 1px 2px rgba(10,31,42,0.04); }
+  .ct-pb-kpi::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--ac, #0FA36B); }
+  .ct-pb-kpi b { font-size: 21px !important; margin-top: 4px !important; } .ct-pb-kpi em { display: block; margin-top: 3px; font-style: normal; font-size: 11.5px; color: #7A8A90; line-height: 1.35; }
+  .ct-pb-grade { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 12px; }
+  .ct-pb-grade .ct-graf { padding: 12px 14px; box-shadow: 0 1px 2px rgba(10,31,42,0.04); } .ct-pb-regua { grid-column: 2 / -1; } .ct-pb-comp { grid-column: 1 / 2; grid-row: 2; }
+  .ct-graf-t span { float: right; text-transform: none; letter-spacing: 0; font-weight: 700; color: #8A9AA0; font-size: 12px; }
+  .ct-wf { margin-top: 8px; } .ct-wf-area { position: relative; height: 210px; margin: 18px 0 0 46px; display: flex; border-bottom: 1px solid #C9D4D2; }
+  .ct-wf-gy { position: absolute; left: 0; right: 0; border-top: 1px dashed #E6ECEB; } .ct-wf-ry { position: absolute; left: -46px; width: 40px; text-align: right; transform: translateY(-50%); font-size: 10.5px; color: #8A9AA0; white-space: nowrap; }
+  .ct-wf-col { position: relative; flex: 1; min-width: 0; } .ct-wf-bar { position: absolute; left: 20%; right: 20%; border-radius: 4px 4px 0 0; display: block; transition: filter .15s; }
+  .ct-wf-col:hover .ct-wf-bar { filter: brightness(1.12); } .ct-wf-con { position: absolute; left: 80%; width: 40%; border-top: 1px dashed #93A5AA; display: block; }
+  .ct-wf-val { position: absolute; left: 0; right: 0; text-align: center; transform: translateY(-4px); line-height: 1.15; white-space: nowrap; }
+  .ct-wf-val b { display: block; font-size: 12px; color: #0B1F2A; } .ct-wf-val em { display: block; font-style: normal; font-size: 10.5px; font-weight: 700; color: #0A7A51; }
+  .ct-wf-eixo { display: flex; margin-left: 46px; padding-top: 6px; } .ct-wf-eixo span { flex: 1; min-width: 0; text-align: center; font-size: 10.5px; color: #8A9AA0; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; }
+  .ct-wf-eixo b { display: block; font-size: 11.5px; color: #3D5058; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ct-pb-nota { margin: 8px 0 0; font-size: 11px; color: #9AA8AD; } .ct-pb-vazio { margin: 10px 0 4px; font-size: 13px; color: #66757F; }
+  .ct-pb-rosca { display: flex; flex-direction: column; align-items: center; text-align: center; } .ct-pb-rosca .ct-graf-t { align-self: stretch; text-align: left; }
+  .ct-rosca { width: 170px; height: 170px; border-radius: 50%; margin: 16px auto 10px; display: grid; place-items: center; }
+  .ct-rosca > div { width: 122px; height: 122px; border-radius: 50%; background: #fff; display: grid; place-content: center; box-shadow: inset 0 0 0 1px #EEF2F1; }
+  .ct-rosca b { font-size: 30px; color: #0B1F2A; letter-spacing: -0.02em; line-height: 1; } .ct-rosca small { font-size: 11.5px; color: #7A8A90; margin-top: 4px; max-width: 100px; }
+  .ct-rosca-txt { margin: 0; display: grid; gap: 2px; } .ct-rosca-txt b { font-size: 15px; color: #0B1F2A; } .ct-rosca-txt span { font-size: 12px; color: #7A8A90; }
+  .ct-comp { display: grid; gap: 12px; margin-top: 12px; } .ct-comp-l { display: grid; grid-template-columns: minmax(110px, 160px) minmax(0, 1fr) auto 42px; align-items: center; gap: 10px; font-size: 12.5px; color: #3D5058; }
+  .ct-comp-t { height: 14px; background: #EEF2F1; border-radius: 7px; overflow: hidden; } .ct-comp-t i { display: block; height: 100%; border-radius: 7px; }
+  .ct-comp-l b { font-size: 12.5px; color: #0B1F2A; white-space: nowrap; } .ct-comp-l em { font-style: normal; font-size: 12px; font-weight: 700; color: #7A8A90; text-align: right; }
+  .ct-rg { position: relative; height: 62px; margin: 18px 6px 0; } .ct-rg i, .ct-rg span { position: absolute; display: block; }
+  .ct-rg-trilho { position: absolute; left: 0; right: 0; top: 20px; height: 12px; border-radius: 6px; background: #E6EEEC; overflow: hidden; }
+  .ct-rg-dec { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, #A9DCC6, #0FA36B); border-radius: 6px; }
+  .ct-rg-ano { top: 14px; height: 24px; border-left: 1px dashed #B9C6C4; } .ct-rg-anot { top: 42px; transform: translateX(-50%); font-size: 10.5px; color: #8A9AA0; }
+  .ct-rg-hoje { top: 6px; height: 40px; border-left: 2px solid #0A1F2A; } .ct-rg-hoje span { top: -15px; left: -14px; font-size: 10.5px; font-weight: 800; color: #0A1F2A; position: absolute; }
+  .ct-rg-m { top: 26px; width: 16px; height: 16px; border-radius: 50%; border: 2.5px solid #fff; box-shadow: 0 1px 3px rgba(10,31,42,0.25); transform: translate(-50%, -50%); cursor: default; }
+  .ct-rg-pontas { display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; color: #55666D; margin: 0 0 8px; }
+  @media (max-width: 600px) { .ct-kpis-c { grid-template-columns: 1fr 1fr; } .ct-kpis-c .ct-pb-kpi b { font-size: 17px !important; } .ct-kpis-c .ct-pb-kpi:first-child { grid-column: 1 / -1; } }
+  @media (max-width: 860px) { .ct-pb-grade { grid-template-columns: 1fr; } .ct-pb-regua, .ct-pb-comp { grid-column: auto; grid-row: auto; } .ct-wf-val em { display: none; } .ct-wf-val b { font-size: 10.5px; } .ct-comp-l { grid-template-columns: 1fr auto 36px; } .ct-comp-l .ct-comp-t { grid-column: 1 / -1; grid-row: 2; } }
   .ct-sel { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; } .ct-sel label { display: grid; gap: 5px; font-size: 12.5px; font-weight: 700; color: #3D5058; min-width: 280px; flex: 1; max-width: 520px; }
   .ct-sel select { font: inherit; font-size: 14px; font-weight: 600; border: 1px solid #D6DEDD; border-radius: 9px; padding: 9px 10px; background: #fff; }
   .ct-lista { display: grid; gap: 12px; } .ct-card { background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 16px 18px; }
@@ -3401,33 +3433,51 @@
                   <sc-if value="{{ c.aberto }}" hint-placeholder-val="{{ false }}">
                     <sc-if value="{{ c.temPainel }}" hint-placeholder-val="{{ false }}">
                       <div class="ct-painel">
-                        <div class="ct-kpis ct-kpis-c"><sc-for list="{{ c.kpis }}" as="k" hint-placeholder-count="5"><div class="ct-kpi"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
-                        <sc-if value="{{ c.pn.temGrafico }}" hint-placeholder-val="{{ false }}">
-                          <div class="ct-graf">
-                            <p class="ct-graf-t">Evolução do valor</p>
-                            <div class="ct-svg" style="height: 170px">
-                              <sc-for list="{{ c.pn.yTicks }}" as="t" hint-placeholder-count="2"><i class="ct-gy" style="top: {{ t.t }}%; left: {{ c.pn.plotL }}%"></i></sc-for>
-                              <sc-for list="{{ c.pn.anos }}" as="a" hint-placeholder-count="1"><i class="ct-gx" style="left: {{ a.l }}%; top: {{ c.pn.plotT }}%; bottom: {{ c.pn.plotB }}%"></i></sc-for>
-                              <sc-for list="{{ c.pn.segs }}" as="g" hint-placeholder-count="2"><i class="ct-area" style="left: {{ g.l }}%; width: {{ g.w }}%; top: {{ g.t }}%; bottom: {{ c.pn.plotB }}%"></i><i class="ct-sh" style="left: {{ g.l }}%; width: {{ g.w }}%; top: {{ g.t }}%"></i></sc-for>
-                              <sc-for list="{{ c.pn.vsegs }}" as="v" hint-placeholder-count="1"><i class="ct-sv" style="left: {{ v.l }}%; top: {{ v.t }}%; height: {{ v.h }}%"></i></sc-for>
-                              <i class="ct-hoje" style="left: {{ c.pn.lHoje }}%; top: {{ c.pn.plotT }}%; bottom: {{ c.pn.plotB }}%"></i>
-                              <sc-for list="{{ c.pn.yTicks }}" as="t" hint-placeholder-count="2"><span class="ct-rot-y" style="top: {{ t.t }}%">{{ t.rot }}</span></sc-for>
-                              <sc-for list="{{ c.pn.anos }}" as="a" hint-placeholder-count="1"><span class="ct-rot-x" style="left: {{ a.l }}%">{{ a.rot }}</span></sc-for>
-                              <span class="ct-rot-hoje" style="left: {{ c.pn.lHoje }}%">hoje</span>
-                              <sc-for list="{{ c.pn.marcas }}" as="m" hint-placeholder-count="2"><span class="ct-dot" style="left: {{ m.l }}%; top: {{ m.t }}%" title="{{ m.titulo }}" aria-label="{{ m.titulo }}"></span></sc-for>
+                        <div class="ct-kpis ct-kpis-c"><sc-for list="{{ c.kpis }}" as="k" hint-placeholder-count="5"><div class="ct-kpi ct-pb-kpi" style="--ac: {{ k.cor }}"><small>{{ k.k }}</small><b>{{ k.v }}</b><em>{{ k.sub }}</em></div></sc-for></div>
+                        <div class="ct-pb-grade">
+                          <div class="ct-graf ct-pb-wf">
+                            <p class="ct-graf-t">Evolução do valor <span>cascata dos ajustes</span></p>
+                            <sc-if value="{{ c.pn.temWf }}" hint-placeholder-val="{{ false }}">
+                              <div class="ct-wf">
+                                <div class="ct-wf-area">
+                                  <sc-for list="{{ c.pn.wfTicks }}" as="t" hint-placeholder-count="3"><i class="ct-wf-gy" style="top: {{ t.t }}%"></i><span class="ct-wf-ry" style="top: {{ t.t }}%">{{ t.rot }}</span></sc-for>
+                                  <sc-for list="{{ c.pn.wf }}" as="w" hint-placeholder-count="3"><div class="ct-wf-col" title="{{ w.titulo }}">
+                                    <i class="ct-wf-bar" style="bottom: {{ w.b }}%; height: {{ w.h }}%; background: {{ w.cor }}"></i>
+                                    <span class="ct-wf-val" style="bottom: {{ w.topo }}%"><b>{{ w.val }}</b><sc-if value="{{ w.temPct }}" hint-placeholder-val="{{ false }}"><em>{{ w.pct }}</em></sc-if></span>
+                                    <sc-if value="{{ w.temCon }}" hint-placeholder-val="{{ true }}"><i class="ct-wf-con" style="bottom: {{ w.con }}%"></i></sc-if>
+                                  </div></sc-for>
+                                </div>
+                                <div class="ct-wf-eixo"><sc-for list="{{ c.pn.wf }}" as="w" hint-placeholder-count="3"><span><b>{{ w.rot }}</b>{{ w.sub }}</span></sc-for></div>
+                              </div>
+                              <p class="ct-pb-nota">Escala ajustada para destacar as variações. Passe o mouse sobre as barras para ver os valores exatos.</p>
+                            </sc-if>
+                            <sc-if value="{{ c.pn.semWf }}" hint-placeholder-val="{{ false }}"><p class="ct-pb-vazio">Informe o valor inicial do contrato (em “Editar contrato”) para ver a evolução do valor.</p></sc-if>
+                          </div>
+                          <div class="ct-graf ct-pb-rosca">
+                            <p class="ct-graf-t">Prazo da vigência</p>
+                            <div class="ct-rosca" style="background: conic-gradient({{ c.pn.roscaCor }} 0 {{ c.pn.rosca }}%, #E6EEEC {{ c.pn.rosca }}% 100%)"><div><b>{{ c.pn.roscaPct }}</b><small>{{ c.pn.roscaSub }}</small></div></div>
+                            <p class="ct-rosca-txt"><b>{{ c.pn.roscaTxt }}</b><span>{{ c.pn.roscaIni }} → {{ c.pn.roscaFim }}</span></p>
+                          </div>
+                          <div class="ct-graf ct-pb-comp">
+                            <p class="ct-graf-t">Composição dos ajustes <span>{{ c.pn.compTotal }}</span></p>
+                            <sc-if value="{{ c.pn.temComp }}" hint-placeholder-val="{{ false }}">
+                              <div class="ct-comp"><sc-for list="{{ c.pn.composicao }}" as="q" hint-placeholder-count="2"><div class="ct-comp-l"><span>{{ q.nome }}</span><div class="ct-comp-t"><i style="width: {{ q.w }}%; background: {{ q.cor }}"></i></div><b>{{ q.val }}</b><em>{{ q.part }}</em></div></sc-for></div>
+                            </sc-if>
+                            <sc-if value="{{ c.pn.semComp }}" hint-placeholder-val="{{ false }}">
+                              <p class="ct-pb-vazio">Nenhum ajuste de valor registrado ainda. Calcule um reajuste e registre na linha do tempo.</p>
+                            </sc-if>
+                          </div>
+                          <div class="ct-graf ct-pb-regua">
+                            <p class="ct-graf-t">Linha do tempo da vigência</p>
+                            <div class="ct-rg">
+                              <div class="ct-rg-trilho"><i class="ct-rg-dec" style="width: {{ c.pn.rDec }}%"></i></div>
+                              <sc-for list="{{ c.pn.rAnos }}" as="a" hint-placeholder-count="1"><i class="ct-rg-ano" style="left: {{ a.l }}%"></i><span class="ct-rg-anot" style="left: {{ a.l }}%">{{ a.rot }}</span></sc-for>
+                              <sc-if value="{{ c.pn.rHojeVis }}" hint-placeholder-val="{{ true }}"><i class="ct-rg-hoje" style="left: {{ c.pn.rHoje }}%"><span>hoje</span></i></sc-if>
+                              <sc-for list="{{ c.pn.rMarcas }}" as="m" hint-placeholder-count="2"><span class="ct-rg-m" style="left: {{ m.l }}%; background: {{ m.cor }}" title="{{ m.titulo }}" aria-label="{{ m.titulo }}"></span></sc-for>
                             </div>
+                            <div class="ct-rg-pontas"><span>Início · {{ c.pn.rIniTxt }}</span><span>Fim · {{ c.pn.rFimTxt }}</span></div>
+                            <div class="ct-leg"><sc-for list="{{ c.legenda }}" as="l" hint-placeholder-count="2"><span><i style="background: {{ l.cor }}"></i>{{ l.nome }}</span></sc-for></div>
                           </div>
-                        </sc-if>
-                        <div class="ct-graf">
-                          <p class="ct-graf-t">Vigência · {{ c.pn.rIniTxt }} a {{ c.pn.rFimTxt }}</p>
-                          <div class="ct-svg" style="height: 46px">
-                            <i class="ct-regua" style="left: {{ c.pn.plotL }}%"></i>
-                            <i class="ct-regua ct-regua-v" style="left: {{ c.pn.rIniL }}%; width: {{ c.pn.rLargL }}%; right: auto"></i>
-                            <i class="ct-hoje" style="left: {{ c.pn.lHoje }}%; top: 2px; height: 26px; border-left-style: solid"></i>
-                            <sc-for list="{{ c.pn.rMarcas }}" as="m" hint-placeholder-count="2"><span class="ct-dot ct-dot-r" style="left: {{ m.l }}%; top: 30%; background: {{ m.cor }}" title="{{ m.titulo }}" aria-label="{{ m.titulo }}"></span></sc-for>
-                            <span class="ct-rot-hoje" style="left: {{ c.pn.lHoje }}%; top: auto; bottom: -2px">hoje</span>
-                          </div>
-                          <div class="ct-leg"><sc-for list="{{ c.legenda }}" as="l" hint-placeholder-count="2"><span><i style="background: {{ l.cor }}"></i>{{ l.nome }}</span></sc-for></div>
                         </div>
                       </div>
                     </sc-if>
@@ -5844,45 +5894,63 @@ const rqN = (v) => { const t = String(v == null ? "" : v).replace(/R\$|%|\s/gi, 
 const CT_TIPOS = { reajuste: "Reajuste", repactuacao: "Repactuação", reequilibrio_trib: "Reequilíbrio tributário", reequilibrio_fato: "Reequilíbrio por fato superveniente",
   aditivo_valor: "Aditivo de valor", prorrogacao: "Prorrogação", outro: "Outro registro" };
 const CT_COR = { reajuste: "#0FA36B", repactuacao: "#0F6B7E", reequilibrio_trib: "#C98A1B", reequilibrio_fato: "#B83232", aditivo_valor: "#7D5CBF", prorrogacao: "#5E747C", outro: "#8A9AA0" };
-// painel do contrato: indicadores, evolução do valor (degraus) e régua da vigência com os registros
+// painel do contrato (estilo Power BI): cascata da evolução do valor, rosca do prazo, composição dos ajustes e régua da vigência.
+// Tudo em HTML/CSS com posições em %: atributos SVG com {{ }} geram erros antes da renderização.
+const CT_CURTO = { reajuste: "Reajuste", repactuacao: "Repactuação", reequilibrio_trib: "Reeq. tributário", reequilibrio_fato: "Reeq. fato", aditivo_valor: "Aditivo", prorrogacao: "Prorrogação", outro: "Outro" };
 function ctPainel(c, si) {
-  const W = 640, H = 170, PX = 46, PY = 16, BAR = 28;
   const ts = (iso) => (iso ? Date.parse(String(iso).slice(0, 10) + "T12:00:00Z") : null);
+  const dBR = (t) => new Date(t).toLocaleDateString("pt-BR", { timeZone: "UTC" });
+  const mBR = (iso) => String(iso).slice(5, 7) + "/" + String(iso).slice(0, 4);
+  const brl = (v) => "R$ " + Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const curto = (v) => { const a = Math.abs(v), sg = v < 0 ? "−" : ""; return sg + (a >= 1e6 ? (a / 1e6).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " mi" : a >= 1e3 ? (a / 1e3).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " mil" : a.toLocaleString("pt-BR", { maximumFractionDigits: 0 })); };
+  const pct = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%";
   const hoje = Date.now();
-  const inicio = ts(c.inicio) || ts(c.data_proposta) || (si.eventos[0] ? ts(si.eventos[0].data) : hoje);
-  const fim = ts(si.fim) || Math.max(hoje, ...si.eventos.map((e) => ts(e.data)));
-  const t0 = Math.min(inicio, ...si.eventos.map((e) => ts(e.data))), t1 = Math.max(fim, hoje, ...si.eventos.map((e) => ts(e.data))) || t0 + 864e5;
-  const x = (t) => PX + ((t - t0) / Math.max(1, t1 - t0)) * (W - PX - 12);
-  // série de valores (degraus): valor inicial e cada registro com novo valor
-  const pts = []; if (c.valor_inicial != null) pts.push([t0, Number(c.valor_inicial)]);
-  si.eventos.forEach((e) => { if (e.valor_novo != null && e.tipo !== "reequilibrio_fato") pts.push([ts(e.data), Number(e.valor_novo)]); });
-  let linha = "", area = "", marcas = [], yTicks = [], segs = [], vsegs = [];
-  if (pts.length) {
-    const vs = pts.map((p) => p[1]), vmin = Math.min(...vs), vmax = Math.max(...vs), folga = (vmax - vmin) * 0.25 || vmax * 0.05 || 1;
-    const lo = Math.max(0, vmin - folga), hi = vmax + folga, y = (v) => PY + (1 - (v - lo) / (hi - lo)) * (H - PY - 22);
-    const tFim = Math.max(hoje, t1);
-    let d = "M" + x(pts[0][0]).toFixed(1) + " " + y(pts[0][1]).toFixed(1);
-    for (let i = 1; i < pts.length; i++) d += " H" + x(pts[i][0]).toFixed(1) + " V" + y(pts[i][1]).toFixed(1);
-    d += " H" + x(tFim).toFixed(1);
-    linha = d; area = d + " V" + (H - 22) + " H" + x(pts[0][0]).toFixed(1) + " Z";
-    const L = (v) => (v / W * 100).toFixed(2), T = (v) => (v / H * 100).toFixed(2);
-    for (let i = 0; i < pts.length; i++) {
-      const xa = x(pts[i][0]), xb = i + 1 < pts.length ? x(pts[i + 1][0]) : x(tFim), ya = y(pts[i][1]);
-      segs.push({ l: L(xa), w: L(Math.max(0, xb - xa)), t: T(ya), h: (100 - Number(T(ya)) - 22 / H * 100).toFixed(2) });
-      if (i + 1 < pts.length) { const yb = y(pts[i + 1][1]); vsegs.push({ l: L(xb), t: T(Math.min(ya, yb)), h: T(Math.abs(yb - ya)) }); }
-    }
-    const brl = (v) => "R$ " + v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    marcas = pts.map((p, i) => ({ l: (x(p[0]) / W * 100).toFixed(2), t: (y(p[1]) / H * 100).toFixed(2), titulo: (i === 0 ? "Valor inicial: " : new Date(p[0]).toLocaleDateString("pt-BR") + ": ") + brl(p[1]) }));
-    yTicks = [lo + (hi - lo) * 0.15, lo + (hi - lo) * 0.85].map((v) => ({ y: y(v).toFixed(1), t: (y(v) / H * 100).toFixed(2), rot: v >= 1e6 ? (v / 1e6).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " mi" : v >= 1e3 ? (v / 1e3).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " mil" : v.toFixed(0) }));
+  // ---- cascata: valor inicial → cada ajuste de valor → valor vigente
+  const passos = []; let atual = c.valor_inicial != null && c.valor_inicial !== "" ? Number(c.valor_inicial) : null;
+  const ajustes = si.eventos.filter((e) => e.valor_novo != null && e.tipo !== "reequilibrio_fato");
+  if (atual == null && ajustes.length && ajustes[0].valor_anterior != null) atual = Number(ajustes[0].valor_anterior);
+  const comp = {};
+  if (atual != null) {
+    const ini = atual; passos.push({ tot: true, de: 0, ate: ini, rot: "Inicial", sub: c.inicio ? mBR(c.inicio) : "", val: curto(ini), titulo: "Valor inicial: " + brl(ini) });
+    ajustes.forEach((e) => {
+      const nv = Number(e.valor_novo), d = nv - atual, p0 = atual ? (d / atual) * 100 : 0;
+      passos.push({ tot: false, de: atual, ate: nv, cor: d < 0 ? "#C24A43" : CT_COR[e.tipo] || "#0FA36B", rot: CT_CURTO[e.tipo] || e.tipo, sub: mBR(e.data),
+        val: (d >= 0 ? "+" : "") + curto(d), pct: pct(p0), titulo: (CT_TIPOS[e.tipo] || e.tipo) + " · " + dBR(ts(e.data)) + ": " + brl(atual) + " → " + brl(nv) + " (" + pct(p0) + ")" });
+      comp[e.tipo] = (comp[e.tipo] || 0) + d; atual = nv;
+    });
+    passos.push({ tot: true, de: 0, ate: atual, rot: "Vigente", sub: "hoje", val: curto(atual), vig: true, titulo: "Valor vigente: " + brl(atual) });
   }
-  const anos = []; for (let a = new Date(t0).getUTCFullYear() + 1; a <= new Date(t1).getUTCFullYear(); a++) { const t = Date.UTC(a, 0, 1); if (t > t0 && t < t1) anos.push({ x: x(t).toFixed(1), l: (x(t) / W * 100).toFixed(2), rot: String(a) }); }
+  let wf = [], wfTicks = [];
+  if (passos.length) {
+    const vs = passos.flatMap((x) => (x.tot ? [x.ate] : [x.de, x.ate])), vmin = Math.min(...vs), vmax = Math.max(...vs);
+    const amp = vmax - vmin || vmax * 0.04 || 1, lo = Math.max(0, vmin - amp * 1.2), hi = vmax + amp * 0.45;
+    const y = (v) => Math.max(0, Math.min(100, ((v - lo) / (hi - lo)) * 100));
+    wf = passos.map((x, k) => {
+      const a = x.tot ? 0 : y(Math.min(x.de, x.ate)), b = y(x.tot ? x.ate : Math.max(x.de, x.ate));
+      return { ...x, b: a.toFixed(2), h: Math.max(1.2, b - a).toFixed(2), topo: b.toFixed(2), cor: x.tot ? (x.vig ? "#0B3B4A" : "#5E8C99") : x.cor,
+        temCon: k < passos.length - 1, con: y(x.ate).toFixed(2), temPct: !!x.pct };
+    });
+    wfTicks = [0.25, 0.6, 0.95].map((f) => { const v = lo + (hi - lo) * f; return { t: (100 - f * 100).toFixed(2), rot: curto(v) }; });
+  }
+  // ---- composição do aumento por tipo de registro
+  const compArr = Object.entries(comp).filter(([, v]) => Math.abs(v) > 0.004);
+  const compMax = Math.max(1e-9, ...compArr.map(([, v]) => Math.abs(v))), compTot = compArr.reduce((a, [, v]) => a + v, 0);
+  const composicao = compArr.sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).map(([k, v]) => ({ nome: CT_TIPOS[k] || k, cor: v < 0 ? "#C24A43" : CT_COR[k] || "#0FA36B",
+    w: ((Math.abs(v) / compMax) * 100).toFixed(1), val: (v >= 0 ? "+" : "−") + brl(Math.abs(v)).replace("R$ ", "R$ "), part: compTot ? Math.round((v / compTot) * 100) + "%" : "" }));
+  // ---- prazo (rosca) e régua da vigência
+  const inicio = ts(c.inicio) || ts(c.data_proposta) || (si.eventos[0] ? ts(si.eventos[0].data) : hoje);
+  const fim = ts(si.fim) || Math.max(hoje, inicio + 864e5, ...si.eventos.map((e) => ts(e.data)));
+  const dur = Math.max(864e5, fim - inicio), decorrido = Math.max(0, Math.min(100, ((hoje - inicio) / dur) * 100));
+  const rx = (t) => Math.max(0, Math.min(100, ((t - inicio) / dur) * 100)).toFixed(2);
+  const anos = []; for (let a = new Date(inicio).getUTCFullYear() + 1; a <= new Date(fim).getUTCFullYear(); a++) { const t = Date.UTC(a, 0, 1); if (t > inicio && t < fim) anos.push({ l: rx(t), rot: String(a) }); }
+  const vencido = hoje > fim;
   return {
-    temGrafico: pts.length > 0, segs, vsegs, linha, area, plotL: (PX / W * 100).toFixed(2), plotB: (22 / H * 100).toFixed(2), plotT: (PY / H * 100).toFixed(2), marcas, yTicks, anos, W, H, vb: "0 0 " + W + " " + H, eixoY: H - 22, xHoje: x(hoje).toFixed(1), lHoje: (x(hoje) / W * 100).toFixed(2),
-    // régua da vigência
-    rIni: x(inicio).toFixed(1), rLarg: Math.max(2, x(fim) - x(inicio)).toFixed(1), rIniL: (x(inicio) / W * 100).toFixed(2), rLargL: (Math.max(2, x(fim) - x(inicio)) / W * 100).toFixed(2), rVb: "0 0 " + W + " " + (BAR + 22), rH: BAR + 22,
-    rPct: Math.max(0, Math.min(100, ((hoje - inicio) / Math.max(1, fim - inicio)) * 100)),
-    rMarcas: si.eventos.map((e) => ({ l: (x(ts(e.data)) / W * 100).toFixed(2), cor: CT_COR[e.tipo] || "#8A9AA0", titulo: new Date(ts(e.data)).toLocaleDateString("pt-BR") + " · " + (CT_TIPOS[e.tipo] || e.tipo) })),
-    rIniTxt: new Date(inicio).toLocaleDateString("pt-BR"), rFimTxt: new Date(fim).toLocaleDateString("pt-BR"), rFimX: (x(fim) - 2).toFixed(1)
+    temWf: wf.length > 1, semWf: wf.length <= 1, wf, wfTicks, temComp: composicao.length > 0, semComp: !composicao.length, composicao, compTotal: compArr.length ? (compTot >= 0 ? "+" : "−") + brl(Math.abs(compTot)) : "",
+    rosca: decorrido.toFixed(1), roscaCor: vencido ? "#C24A43" : decorrido >= 75 ? "#D38B1A" : "#0FA36B", roscaPct: Math.round(decorrido) + "%",
+    roscaSub: vencido ? "vigência encerrada" : "do prazo decorrido", roscaTxt: si.restante == null ? "" : vencido ? "Encerrada em " + dBR(fim) : si.restante + (si.restante === 1 ? " mês restante" : " meses restantes"),
+    roscaIni: dBR(inicio), roscaFim: dBR(fim),
+    rDec: decorrido.toFixed(2), rHoje: rx(hoje), rHojeVis: hoje >= inicio && hoje <= fim, rAnos: anos, rIniTxt: dBR(inicio), rFimTxt: dBR(fim),
+    rMarcas: si.eventos.map((e) => ({ l: rx(ts(e.data)), cor: CT_COR[e.tipo] || "#8A9AA0", titulo: dBR(ts(e.data)) + " · " + (CT_TIPOS[e.tipo] || e.tipo) }))
   };
 }
 const CT_FORM = { id: "", numero: "", contratante: "", contratada: "", objeto: "", regime: "14133", data_proposta: "", inicio: "", fim: "", valor_inicial: "", periodicidade: "mensal",
@@ -8923,8 +8991,16 @@ class Component extends DCLogic {
           const c = ct.lista.find((x) => x.id === it.id), si = ctSituacao(c, ct.eventos[c.id]), pn = ctPainel(c, si);
           const vi = c.valor_inicial != null ? Number(c.valor_inicial) : null, varp = vi && si.valor != null ? (si.valor / vi - 1) * 100 : null;
           Object.assign(it, { temPainel: true, pn, legenda: Object.entries(CT_TIPOS).filter(([k]) => si.eventos.some((e) => e.tipo === k)).map(([k, nome]) => ({ nome, cor: CT_COR[k] })),
-            kpis: [["Valor inicial", brl(vi)], ["Valor vigente", brl(si.valor)], ["Variação acumulada", varp == null ? "—" : pctT(varp)],
-              ["Vigência restante", si.restante == null ? "—" : si.vencido ? "encerrada" : si.restante + (si.restante === 1 ? " mês" : " meses")], ["Próxima anualidade", si.proxAnual || "—"]].map(([k, v]) => ({ k, v })) });
+            kpis: (() => {
+              const per = c.periodicidade === "mensal" ? "por mês" : "valor global", nAj = si.eventos.filter((e) => e.valor_novo != null && e.tipo !== "reequilibrio_fato").length;
+              const dif = vi != null && si.valor != null ? si.valor - vi : null;
+              return [["Valor inicial", brl(vi), per + (c.data_proposta ? " · proposta " + String(c.data_proposta).slice(5, 7) + "/" + String(c.data_proposta).slice(0, 4) : ""), "#5E8C99"],
+                ["Valor vigente", brl(si.valor), dif == null ? per : (dif >= 0 ? "+" : "−") + brl(Math.abs(dif)) + " desde o início", "#0B3B4A"],
+                ["Variação acumulada", varp == null ? "—" : pctT(varp), nAj ? "em " + nAj + (nAj === 1 ? " ajuste de valor" : " ajustes de valor") : "nenhum ajuste ainda", varp != null && varp < 0 ? "#C24A43" : "#0FA36B"],
+                ["Vigência restante", si.restante == null ? "—" : si.vencido ? "encerrada" : si.restante + (si.restante === 1 ? " mês" : " meses"), si.fim ? "até " + dataBR(si.fim) : "informe o fim da vigência", si.vencido ? "#C24A43" : si.restante != null && si.restante <= 3 ? "#D38B1A" : "#0F6B7E"],
+                ["Próxima anualidade", si.proxAnual || "—", si.reajPendente && c.data_proposta ? "reajuste possível desde " + si.direitoDesde : c.data_proposta ? "conta 12 meses da proposta" : "informe a data da proposta", si.reajPendente && c.data_proposta ? "#D38B1A" : "#7D5CBF"]]
+                .map(([k, v, sub, cor]) => ({ k, v, sub, cor }));
+            })() });
         });
         return { ...campos, ctLista: lista, ctKpis, ctTemKpis: lista.length > 0, ctTemLista: lista.length > 0, ctVazio: ct.carregado && !lista.length && !ct.form, ctCarregando: !!ct.carregando,
           ctFormAberto: !!ct.form, ctFormTitulo: f.id ? "Editar contrato" : "Novo contrato", ctNovo: () => this.ctNovo(), ctSalvar: () => this.ctSalvar(),
