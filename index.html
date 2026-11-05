@@ -1388,6 +1388,7 @@
   .ct-125 { display: grid; grid-template-columns: 82px minmax(0, 1fr) auto; gap: 10px; align-items: center; margin-top: 12px; font-size: 12.5px; color: #3D5058; } .ct-125 b { font-size: 12.5px; color: #0B1F2A; white-space: nowrap; }
   .ct-pb-125 .ct-pb-nota { line-height: 1.5; margin-top: 12px; } .ct-pb-125 .ct-pb-nota b { color: #3D5058; }
   .ct-ajuda-v { background: #EAF6F0 !important; border-left-color: #0FA36B !important; } .ct-pr-data b.ct-pr-reaj { font-size: 20px; color: #0A7A51; }
+  .ct-ajuda-o { background: #E8F3F5 !important; border-left-color: #0F6B7E !important; }
   .ct-ajuda { margin: 0; font-size: 12.5px; color: #4A5D65; background: #F3EFFA; border-left: 3px solid #7D5CBF; border-radius: 6px; padding: 8px 10px; line-height: 1.5; }
   .ct-linha li::before { background: var(--mc, #0FA36B) !important; } .ct-li-marco::before { border-radius: 2px !important; transform: rotate(45deg); } .ct-li-marco b { color: var(--mc) !important; }
   @media (max-width: 860px) { .ct-pr { grid-template-columns: 1fr; } }
@@ -3475,6 +3476,7 @@
                 <label class="lmo-campo" style="grid-column: 1 / -1"><span>Observações</span><input type="text" value="{{ ctFObs }}" sc-camel-on-input="{{ onCtFObs }}"></label>
               </div>
               <label class="lmo-nota" style="display: flex; gap: 8px; align-items: center"><input type="checkbox" checked="{{ ctFMaoObra }}" sc-camel-on-change="{{ onCtFMaoObra }}"> Contrato com dedicação exclusiva de mão de obra (repactuação pela convenção coletiva)</label>
+              <label class="lmo-nota" style="display: flex; gap: 8px; align-items: center"><input type="checkbox" checked="{{ ctFObra }}" sc-camel-on-change="{{ onCtFObra }}"> Obra ou serviço de engenharia (o reajuste incide só sobre o saldo a executar)</label>
               <label class="lmo-nota" style="display: flex; gap: 8px; align-items: center"><input type="checkbox" checked="{{ ctFReforma }}" sc-camel-on-change="{{ onCtFReforma }}"> Reforma de edifício ou de equipamento (limite de 50% para acréscimos, art. 125 da Lei 14.133/2021)</label>
               <label class="lmo-nota" style="display: flex; gap: 8px; align-items: center"><input type="checkbox" checked="{{ ctFAlertas }}" sc-camel-on-change="{{ onCtFAlertas }}"> Avisar por e-mail sobre anualidade, convenção coletiva e fim da vigência</label>
               <div style="display: flex; gap: 8px; margin-top: 12px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ctSalvar }}">Salvar contrato</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctCancelar }}">Cancelar</button></div>
@@ -3564,7 +3566,7 @@
                             <sc-if value="{{ c.pn.temBase }}" hint-placeholder-val="{{ false }}">
                               <div class="ct-125"><span>Acréscimos</span><div class="ct-comp-t"><i style="width: {{ c.pn.a125Acr.w }}%; background: {{ c.pn.a125Acr.cor }}"></i></div><b>{{ c.pn.a125Acr.txt }}</b></div>
                               <div class="ct-125"><span>Supressões</span><div class="ct-comp-t"><i style="width: {{ c.pn.a125Sup.w }}%; background: {{ c.pn.a125Sup.cor }}"></i></div><b>{{ c.pn.a125Sup.txt }}</b></div>
-                              <p class="ct-pb-nota">Base: valor inicial atualizado de <b>{{ c.pn.a125Base }}</b> (valor inicial corrigido pelos reajustes, sem somar aditivos anteriores). Ainda cabe acréscimo de até <b>{{ c.pn.a125Disp }}</b>. Acréscimos e supressões são contados separadamente, sem compensação.</p>
+                              <p class="ct-pb-nota">Base: valor inicial atualizado de <b>{{ c.pn.a125Base }}</b> ({{ c.pn.a125Como }}). Ainda cabe acréscimo de até <b>{{ c.pn.a125Disp }}</b>. Acréscimos e supressões são contados separadamente, sem compensação.</p>
                             </sc-if>
                           </div>
                         </div>
@@ -3582,6 +3584,7 @@
                             <label class="lmo-campo"><span>Percentual (%)</span><input type="text" inputmode="decimal" value="{{ ctEPercentual }}" sc-camel-on-input="{{ onCtEPercentual }}"></label>
                             <label class="lmo-campo"><span>Valor anterior (R$)</span><input type="text" inputmode="decimal" value="{{ ctEValorAnterior }}" sc-camel-on-input="{{ onCtEValorAnterior }}"></label>
                             <label class="lmo-campo"><span>Novo valor (R$)</span><input type="text" inputmode="decimal" value="{{ ctEValorNovo }}" sc-camel-on-input="{{ onCtEValorNovo }}"></label>
+                            <sc-if value="{{ ctEvObra }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>Saldo a executar na data-base (R$) *</span><input type="text" inputmode="decimal" value="{{ ctESaldo }}" sc-camel-on-input="{{ onCtESaldo }}" placeholder="valor ainda não executado"></label><p class="ct-ajuda ct-ajuda-o" style="grid-column: 1 / -1">{{ ctEvObraTxt }}</p></sc-if>
                             <sc-if value="{{ ctEvAditivo }}" hint-placeholder-val="{{ false }}"><p class="ct-ajuda" style="grid-column: 1 / -1">{{ ctEvAditivoTxt }}</p></sc-if>
                             <sc-if value="{{ ctEvProrrog }}" hint-placeholder-val="{{ false }}"><p class="ct-ajuda ct-ajuda-v" style="grid-column: 1 / -1">{{ ctEvProrrogTxt }}</p></sc-if>
                             <sc-if value="{{ ctEvProrrog }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>Nova vigência até</span><input type="date" value="{{ ctENovoFim }}" sc-camel-on-input="{{ onCtENovoFim }}"></label></sc-if>
@@ -6004,9 +6007,9 @@ function ctPainel(c, si) {
   if (atual != null) {
     const ini = atual; passos.push({ tot: true, de: 0, ate: ini, rot: "Inicial", sub: c.inicio ? mBR(c.inicio) : "", val: curto(ini), titulo: "Valor inicial: " + brl(ini) });
     ajustes.forEach((e) => {
-      const nv = Number(e.valor_novo), d = nv - atual, adt = e.tipo === "aditivo_valor" && a125.porEv[e.id], p0 = adt ? adt.pct : atual ? (d / atual) * 100 : 0;
+      const nv = Number(e.valor_novo), d = nv - atual, adt = e.tipo === "aditivo_valor" && a125.porEv[e.id], sObra = e.tipo === "reajuste" && e.saldo != null && e.percentual != null, p0 = adt ? adt.pct : sObra ? Number(e.percentual) : atual ? (d / atual) * 100 : 0;
       passos.push({ tot: false, de: atual, ate: nv, cor: d < 0 ? "#C24A43" : CT_COR[e.tipo] || "#0FA36B", rot: CT_CURTO[e.tipo] || e.tipo, sub: mBR(e.data),
-        val: (d >= 0 ? "+" : "") + curto(d), pct: pct(p0) + (adt ? " do inicial at." : ""), titulo: (CT_TIPOS[e.tipo] || e.tipo) + " · " + dBR(ts(e.data)) + ": " + brl(atual) + " → " + brl(nv) + " (" + pct(p0) + (adt ? " do valor inicial atualizado, " + brl(adt.base) + ", art. 125" : "") + ")" });
+        val: (d >= 0 ? "+" : "") + curto(d), pct: pct(p0) + (adt ? " do inicial at." : sObra ? " s/ saldo" : ""), titulo: (CT_TIPOS[e.tipo] || e.tipo) + " · " + dBR(ts(e.data)) + ": " + brl(atual) + " → " + brl(nv) + " (" + pct(p0) + (adt ? " do valor inicial atualizado, " + brl(adt.base) + ", art. 125" : sObra ? " sobre o saldo a executar de " + brl(e.saldo) : "") + ")" });
       comp[e.tipo] = (comp[e.tipo] || 0) + d; atual = nv;
     });
     passos.push({ tot: true, de: 0, ate: atual, rot: "Vigente", sub: "hoje", val: curto(atual), vig: true, titulo: "Valor vigente: " + brl(atual) });
@@ -6065,7 +6068,7 @@ function ctPainel(c, si) {
     rIniL: rx(inicio).toFixed(2), rVigL: Math.max(0.5, rx(fim) - rx(inicio)).toFixed(2), rDecL: Math.max(0, rx(Math.min(hoje, fim)) - rx(inicio)).toFixed(2),
     rHoje: rx(hoje).toFixed(2), rHojeVis: hoje >= g0 && hoje <= g1, rAnos: anos, marcos, rIniTxt: dBR(inicio), rFimTxt: dBR(fim),
     temBase: a125.base != null, a125Base: a125.base != null ? brl(a125.base) : "", a125Acr: g125(a125.acr, a125.limAcr), a125Sup: g125(a125.sup, a125.limSup),
-    a125Disp: a125.base != null ? brl(Math.max(0, (a125.limAcr - a125.acr) / 100 * a125.base)) : "", a125Reforma: !!c.reforma,
+    a125Disp: a125.base != null ? brl(Math.max(0, (a125.limAcr - a125.acr) / 100 * a125.base)) : "", a125Reforma: !!c.reforma, a125Como: c.obra ? "valor inicial somado aos reajustes concedidos sobre o saldo a executar, sem somar aditivos anteriores" : "valor inicial corrigido pelos reajustes, sem somar aditivos anteriores",
     ...(() => { const r = pr ? ctReajApos(c, si.eventos, String(si.fim).slice(0, 10)) : null;
       return { prReajRot: !r ? "" : r.futuro ? "Reajuste antes da prorrogação, a partir de" : r.pendente ? "Reajuste pendente desde" : "Se prorrogado, próximo reajuste a partir de", prReaj: r ? r.prox || "—" : "", prReajTxt: r ? r.txt : "" }; })(),
     temPr: !!pr, prSt: prSt ? prSt[0] : "", prCor: prSt ? prSt[1] : "", prIni: pr ? dBR(pr.ini.getTime()) : "", prFim: pr ? dBR(pr.fim.getTime()) : "",
@@ -6080,19 +6083,20 @@ const CT_ATUALIZA = { reajuste: 1, repactuacao: 1, reequilibrio_trib: 1 };
 function ctArt125(c, evs, opt) {
   const o = opt || {}, lista = (evs || []).filter((e) => e.id !== o.semId).slice().sort((a, b) => String(a.data).localeCompare(String(b.data)));
   const v0 = c.valor_inicial != null && c.valor_inicial !== "" ? Number(c.valor_inicial) : null;
-  let fator = 1, valor = v0, acr = 0, sup = 0; const porEv = {};
+  let fator = 1, valor = v0, acr = 0, sup = 0, somaObra = 0; const porEv = {};
   for (const e of lista) {
     if (o.ate && String(e.data) > o.ate) break;
     const va = e.valor_anterior != null ? Number(e.valor_anterior) : valor, vn = e.valor_novo != null ? Number(e.valor_novo) : null;
     if (CT_ATUALIZA[e.tipo]) {
-      if (va && vn) fator *= vn / va; else if (e.percentual != null) fator *= 1 + Number(e.percentual) / 100;
+      if (c.obra && e.tipo === "reajuste") { if (va != null && vn != null) somaObra += vn - va; }   // obra: soma o valor do reajuste concedido sobre o saldo
+      else if (va && vn) fator *= vn / va; else if (e.percentual != null) fator *= 1 + Number(e.percentual) / 100;
     } else if (e.tipo === "aditivo_valor" && vn != null && v0) {
-      const base = v0 * fator, d = vn - (va != null ? va : vn), pct = base ? (d / base) * 100 : 0;
+      const base = v0 * fator + somaObra, d = vn - (va != null ? va : vn), pct = base ? (d / base) * 100 : 0;
       porEv[e.id] = { pct, base, d }; if (d >= 0) acr += pct; else sup += -pct;
     }
     if (vn != null && e.tipo !== "reequilibrio_fato") valor = vn;
   }
-  return { base: v0 != null ? v0 * fator : null, fator, acr, sup, porEv, valor, limAcr: c.reforma ? 50 : 25, limSup: 25 };
+  return { base: v0 != null ? v0 * fator + somaObra : null, fator, acr, sup, porEv, valor, limAcr: c.reforma ? 50 : 25, limSup: 25 };
 }
 // prazos da prorrogação: começar a tramitação 4 meses antes do fim (boa prática; a lei exige o aditivo assinado antes do fim)
 // próximo reajuste em relação a uma data (ex.: a da prorrogação). A prorrogação não reinicia a contagem: a anualidade
@@ -6151,7 +6155,7 @@ function ctLinhaDoc(c, si) {
   if (c.inicio) out.push({ iso: String(c.inicio).slice(0, 10), c: [dBR(c.inicio), "Início da vigência", "", "", brl(c.valor_inicial), "Valor inicial"], marco: true });
   si.eventos.forEach((e) => {
     const adt = e.tipo === "aditivo_valor" && a125.porEv[e.id];
-    const obs = [e.descricao || "", e.novo_fim ? "Nova vigência até " + dBR(e.novo_fim) : ""].concat(e.tipo === "prorrogacao" ? [((r) => (r && r.prox ? (r.pendente ? "Reajuste possível desde " + r.prox + " sem registro antes desta prorrogação" : "Próximo reajuste a partir de " + r.prox) : ""))(ctReajApos(c, si.eventos, String(e.data).slice(0, 10)))] : []).filter(Boolean).join(". ");
+    const obs = [e.tipo === "reajuste" && e.saldo != null ? "Reajuste sobre o saldo a executar de " + brl(e.saldo) : "", e.descricao || "", e.novo_fim ? "Nova vigência até " + dBR(e.novo_fim) : ""].concat(e.tipo === "prorrogacao" ? [((r) => (r && r.prox ? (r.pendente ? "Reajuste possível desde " + r.prox + " sem registro antes desta prorrogação" : "Próximo reajuste a partir de " + r.prox) : ""))(ctReajApos(c, si.eventos, String(e.data).slice(0, 10)))] : []).filter(Boolean).join(". ");
     out.push({ iso: String(e.data).slice(0, 10), c: [dBR(e.data), CT_TIPOS[e.tipo] || e.tipo, adt ? pctT(Math.round(adt.pct * 100) / 100) + " (s/ inicial atualizado)" : pctT(e.percentual), brl(e.valor_anterior), brl(e.valor_novo), obs] });
   });
   if (pr && pr.st !== "encerrado") out.push({ iso: pr.iniIso, c: [dBR(pr.iniIso), "Iniciar a prorrogação", "", "", "", "Recomendado 4 meses antes do fim"], marco: true, prazo: true });
@@ -6166,9 +6170,9 @@ function ctProrrog(c, si) {
   const st = dias < 0 ? "encerrado" : diasIni > 0 ? "ok" : dias <= 60 ? "urgente" : "agora";
   return { fim: f, ini, iniIso: ini.toISOString().slice(0, 10), dias, diasIni, anos, st };
 }
-const CT_FORM = { id: "", numero: "", contratante: "", contratada: "", objeto: "", regime: "14133", data_proposta: "", assinatura: "", inicio: "", fim: "", reforma: false, valor_inicial: "", periodicidade: "mensal",
+const CT_FORM = { id: "", numero: "", contratante: "", contratada: "", objeto: "", regime: "14133", data_proposta: "", assinatura: "", inicio: "", fim: "", reforma: false, valor_inicial: "", periodicidade: "mensal", obra: false,
   indice: "ipca", mao_obra: false, data_base_cct: "", alertas: true, obs: "" };
-const CT_EV = { tipo: "reajuste", data: "", percentual: "", valor_anterior: "", valor_novo: "", novo_fim: "", descricao: "" };
+const CT_EV = { tipo: "reajuste", data: "", percentual: "", valor_anterior: "", valor_novo: "", saldo: "", novo_fim: "", descricao: "" };
 // situação atual do contrato a partir da linha do tempo: valor vigente, fim da vigência, reajustes concedidos e próxima anualidade
 function ctSituacao(c, evs) {
   const lista = (evs || []).slice().sort((a, b) => String(a.data).localeCompare(String(b.data)));
@@ -7872,7 +7876,7 @@ class Component extends DCLogic {
     if (!String(f.numero || "").trim()) { this.ctMsg("", "Informe o número do contrato."); return; }
     if (f.data_base_cct && !/^\d{2}\/\d{2}$/.test(f.data_base_cct)) { this.ctMsg("", "Data-base da convenção no formato dd/mm (ex.: 01/03)."); return; }
     const reg = { numero: String(f.numero).trim().slice(0, 60), contratante: f.contratante || null, contratada: f.contratada || null, objeto: f.objeto || null, regime: f.regime || "14133",
-      data_proposta: /^\d{4}-\d{2}$/.test(f.data_proposta || "") ? f.data_proposta + "-01" : null, assinatura: f.assinatura || null, inicio: f.inicio || null, fim: f.fim || null, reforma: !!f.reforma,
+      data_proposta: /^\d{4}-\d{2}$/.test(f.data_proposta || "") ? f.data_proposta + "-01" : null, assinatura: f.assinatura || null, inicio: f.inicio || null, fim: f.fim || null, reforma: !!f.reforma, obra: !!f.obra,
       valor_inicial: String(f.valor_inicial || "").trim() ? rqN(f.valor_inicial) : null, periodicidade: f.periodicidade || "mensal", indice: f.indice || null,
       mao_obra: !!f.mao_obra, data_base_cct: f.data_base_cct || null, alertas: f.alertas !== false, obs: f.obs || null };
     if (!this.sb) {
@@ -7898,7 +7902,7 @@ class Component extends DCLogic {
   ctEditarEv(e) {
     const f = (v, n) => (v == null || v === "" ? "" : Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: n }));
     const ev = { ...CT_EV, id: e.id, tipo: e.tipo, data: String(e.data || "").slice(0, 10), percentual: f(e.percentual, 4), valor_anterior: f(e.valor_anterior, 2),
-      valor_novo: f(e.valor_novo, 2), novo_fim: e.novo_fim ? String(e.novo_fim).slice(0, 10) : "", descricao: e.descricao || "" };
+      valor_novo: f(e.valor_novo, 2), saldo: f(e.saldo, 2), novo_fim: e.novo_fim ? String(e.novo_fim).slice(0, 10) : "", descricao: e.descricao || "" };
     this.setState((x) => ({ ct: { ...x.ct, ev, ok: "", erro: "", excluirEv: "" } }));
     setTimeout(() => { try { document.querySelector(".ct-card.aberto .ct-form").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (er) {} }, 150);
   }
@@ -7910,6 +7914,16 @@ class Component extends DCLogic {
       novo_fim: ev.novo_fim || null, descricao: String(ev.descricao || "").slice(0, 600) || null };
     if (!/^\d{4}-\d{2}-\d{2}$/.test(reg.data || "")) return "Informe a data do registro.";
     this.ctAviso125 = "";
+    reg.saldo = num(ev.saldo);
+    const cObra = this.state.ct.lista.find((x) => x.id === contratoId);
+    if (reg.tipo === "reajuste" && cObra && cObra.obra) {
+      if (reg.saldo == null) return "Obra ou serviço de engenharia: informe o saldo a executar na data-base do reajuste. O reajuste incide só sobre ele.";
+      if (reg.percentual == null) return "Informe o percentual do reajuste (variação do índice).";
+      if (reg.valor_anterior == null) { const st = ctSituacao(cObra, (this.state.ct.eventos[contratoId] || []).filter((x) => x.id !== ev.id && String(x.data) <= reg.data)); if (st.valor != null) reg.valor_anterior = rqR2(st.valor); }
+      if (reg.valor_anterior == null) return "Informe o valor do contrato antes do reajuste.";
+      if (reg.saldo > reg.valor_anterior + 0.005) return "O saldo a executar não pode ser maior que o valor do contrato antes do reajuste.";
+      reg.valor_novo = rqR2(reg.valor_anterior + reg.saldo * reg.percentual / 100);
+    } else reg.saldo = null;
     if (reg.tipo === "aditivo_valor") {
       const c = this.state.ct.lista.find((x) => x.id === contratoId);
       if (c) {
@@ -7975,7 +7989,7 @@ class Component extends DCLogic {
       { t: "destaques", itens: [["Valor vigente" + (c.periodicidade === "mensal" ? " (mensal)" : ""), brl(si.valor)], ["Valor inicial", brl(vi)], ["Variação acumulada", varp == null ? "—" : (varp > 0 ? "+" : "") + f2(varp) + "%"], ["Vigência até", si.fim ? dBR(si.fim) : "—"]] },
       { t: "pares", titulo: "Dados do contrato", pares: [["Contratante", c.contratante || "—"], ["Contratada", c.contratada || "—"], ["Objeto", c.objeto || "—"], ["Regime", regime],
         ["Orçamento estimado (data-base)", c.data_proposta ? String(c.data_proposta).slice(5, 7) + "/" + String(c.data_proposta).slice(0, 4) : "—"], ["Assinatura", dBR(c.assinatura)], ["Início da vigência", dBR(c.inicio)], ["Fim da vigência atual", si.fim ? dBR(si.fim) : "—"],
-        ["Valor informado", c.periodicidade === "mensal" ? "Mensal" : "Global"], ["Índice de reajuste", indice], ["Mão de obra exclusiva", c.mao_obra ? "Sim" + (c.data_base_cct ? " · convenção em " + c.data_base_cct : "") : "Não"], ["Reforma (limite de 50%)", c.reforma ? "Sim" : "Não"]].concat(c.obs ? [["Observações", c.obs]] : []) }];
+        ["Valor informado", c.periodicidade === "mensal" ? "Mensal" : "Global"], ["Índice de reajuste", indice], ["Mão de obra exclusiva", c.mao_obra ? "Sim" + (c.data_base_cct ? " · convenção em " + c.data_base_cct : "") : "Não"], ["Obra ou serviço de engenharia", c.obra ? "Sim (reajuste sobre o saldo a executar)" : "Não"], ["Reforma (limite de 50%)", c.reforma ? "Sim" : "Não"]].concat(c.obs ? [["Observações", c.obs]] : []) }];
     if (pn.temWf) bl.push({ t: "cascata", passos: pn.wf });
     bl.push({ t: "tabela", titulo: "Linha do tempo do contrato", cab: ["Data", "Registro", "Percentual", "Valor anterior", "Novo valor", "Observação"], larg: [11, 17, 13, 13, 13, 33], alin: "llrrrl",
       linhas: ctLinhaDoc(c, si).map((l) => ({ c: l.c, fraco: l.marco && !l.prazo, forte: !!l.prazo })) });
@@ -8072,10 +8086,11 @@ class Component extends DCLogic {
     // formata para o quadro (padrão brasileiro) e abre a Gestão contratual com o registro preenchido, para conferir e confirmar
     const f2 = (v) => (v == null || v === "" ? "" : Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     const f4 = (v) => (v == null || v === "" ? "" : Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 4 }));
-    const pre = { ...CT_EV, ...ev, percentual: f4(ev.percentual), valor_anterior: f2(ev.valor_anterior), valor_novo: f2(ev.valor_novo) };
+    const cSel = this.state.ct.lista.find((x) => x.id === id), obraR = origem === "reajuste" && cSel && cSel.obra;
+    const pre = { ...CT_EV, ...ev, percentual: f4(ev.percentual), valor_anterior: f2(ev.valor_anterior), valor_novo: obraR ? "" : f2(ev.valor_novo) };
     this.setState((x) => ({ ct: { ...x.ct, atual: id, ev: pre, form: null, ok: "", erro: "", excluir: "" } }));
     this.irPara("gestao");
-    this.aviso("Confira os dados do registro e clique em “Incluir na linha do tempo”.", "ok");
+    this.aviso(obraR ? "Obra ou serviço de engenharia: informe o saldo a executar na data-base. O novo valor é calculado só sobre ele." : "Confira os dados do registro e clique em “Incluir na linha do tempo”.", "ok");
     setTimeout(() => { try { document.querySelector(".ct-card.aberto .ct-form").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {} }, 350);
   }
 
@@ -9304,7 +9319,7 @@ class Component extends DCLogic {
               return fx.map((m) => ({ ...m, marco: true })).concat(evs).sort((a, b) => b.iso.localeCompare(a.iso) || (a.fim ? -1 : 0)).map((it) => it.marco
                 ? { data: it.data, tipo: it.tipo, pct: "", valores: "", fimTxt: "", desc: it.desc, editavel: false, cls: "ct-li-marco", cor: it.cor, editar: () => {}, excluir: () => {}, excluirTxt: "" }
                 : ((e) => ({ data: dataBR(e.data), tipo: CT_TIPOS[e.tipo] || e.tipo, editavel: meu, cls: "", cor: CT_COR[e.tipo] || "#0FA36B",
-              pct: e.tipo === "aditivo_valor" && a125.porEv[e.id] ? pctT(a125.porEv[e.id].pct) + " do valor inicial atualizado" : e.percentual != null ? pctT(e.percentual) : "",
+              pct: e.tipo === "aditivo_valor" && a125.porEv[e.id] ? pctT(a125.porEv[e.id].pct) + " do valor inicial atualizado" : e.percentual != null ? pctT(e.percentual) + (e.tipo === "reajuste" && e.saldo != null ? " sobre o saldo de " + brl(e.saldo) : "") : "",
               valores: e.valor_novo != null ? (e.valor_anterior != null ? brl(e.valor_anterior) + " → " : "") + brl(e.valor_novo) : "", fimTxt: e.novo_fim ? "Nova vigência até " + dataBR(e.novo_fim) + (e.tipo === "prorrogacao" ? ((r) => (r && r.prox ? (r.pendente ? ". Reajuste possível desde " + r.prox + " sem registro antes desta prorrogação." : ". Próximo reajuste a partir de " + r.prox + " (a prorrogação não reinicia a contagem).") : ""))(ctReajApos(c, si.eventos, String(e.data).slice(0, 10))) : "") : "",
               desc: e.descricao || "", editar: () => this.ctEditarEv(e), excluir: () => this.ctExcluirEv(c.id, e.id),
               excluirTxt: ct.excluirEv === e.id ? "Confirmar exclusão" : "Excluir" }))(it.ev));
@@ -9355,12 +9370,17 @@ class Component extends DCLogic {
           ctRegimes: [["14133", "Lei 14.133/2021"], ["13303", "Lei 13.303/2016 (estatais)"], ["13019", "Lei 13.019/2014 (parcerias)"]].map(([id, nome]) => ({ id, nome, sel: f.regime === id })),
           ctIndicesOp: [["ipca", "IPCA"], ["ipca_e", "IPCA-E"], ["inpc", "INPC"], ["igpm", "IGP-M"], ["igpdi", "IGP-DI"], ["incc", "INCC-DI"]].map(([id, nome]) => ({ id, nome, sel: f.indice === id })),
           ctPeriodos: [["mensal", "Valor mensal"], ["global", "Valor global"]].map(([id, nome]) => ({ id, nome, sel: f.periodicidade === id })),
-          ctEvAberto: !!ct.ev, ctTiposOp: Object.entries(CT_TIPOS).map(([id, nome]) => ({ id, nome, sel: ev.tipo === id })), ctEvProrrog: ev.tipo === "prorrogacao", ctEvProrrogTxt: (() => { const c = ct.lista.find((x) => x.id === ct.atual); if (!c || ev.tipo !== "prorrogacao") return "";
+          ctEvAberto: !!ct.ev, ctTiposOp: Object.entries(CT_TIPOS).map(([id, nome]) => ({ id, nome, sel: ev.tipo === id })), ctEvObra: ev.tipo === "reajuste" && !!(ct.lista.find((x) => x.id === ct.atual) || {}).obra,
+          ctEvObraTxt: (() => { const c = ct.lista.find((x) => x.id === ct.atual); if (!c || !c.obra || ev.tipo !== "reajuste") return "";
+            const pc = rqN(ev.percentual), sd = rqN(ev.saldo), va = rqN(ev.valor_anterior), f = (v) => "R$ " + v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const conta = String(ev.saldo || "").trim() && String(ev.percentual || "").trim() ? " Com os dados informados: " + f(sd) + " × " + pc.toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + "% = " + f(sd * pc / 100) + (va ? "; novo valor do contrato: " + f(va + sd * pc / 100) + "." : ".") : "";
+            return "Em obras e serviços de engenharia, o reajuste incide só sobre a parcela ainda não executada na data-base: o que já foi medido fica com o preço da época. O novo valor do contrato = valor anterior + saldo × percentual, calculado ao salvar." + conta; })(),
+          ctEvProrrog: ev.tipo === "prorrogacao", ctEvProrrogTxt: (() => { const c = ct.lista.find((x) => x.id === ct.atual); if (!c || ev.tipo !== "prorrogacao") return "";
             const r = ctReajApos(c, ct.eventos[c.id], ev.data || new Date().toISOString().slice(0, 10)); return r ? r.txt : ""; })(), ctEvAditivo: ev.tipo === "aditivo_valor",
           ctEvAditivoTxt: (() => { const c = ct.lista.find((x) => x.id === ct.atual); if (!c || ev.tipo !== "aditivo_valor") return "";
             const a = ctArt125(c, ct.eventos[c.id], { semId: ev.id, ate: ev.data || undefined }); if (a.base == null) return "Informe o valor inicial do contrato para calcular o aditivo pelo art. 125.";
             const f = (v) => v.toLocaleString("pt-BR", { maximumFractionDigits: 2 });
-            return "Base de cálculo (art. 125): valor inicial atualizado de " + brl(a.base) + ", ou seja, o valor inicial corrigido pelos reajustes, sem somar aditivos anteriores. Já usados: acréscimos " + f(a.acr) + "% de " + a.limAcr + "%, supressões " + f(a.sup) + "% de 25%. Informe o percentual (negativo para supressão) ou o novo valor: o outro é calculado ao salvar."; })(),
+            return "Base de cálculo (art. 125): valor inicial atualizado de " + brl(a.base) + (c.obra ? ", ou seja, o valor inicial somado aos reajustes concedidos sobre o saldo, sem somar aditivos anteriores." : ", ou seja, o valor inicial corrigido pelos reajustes, sem somar aditivos anteriores.") + " Já usados: acréscimos " + f(a.acr) + "% de " + a.limAcr + "%, supressões " + f(a.sup) + "% de 25%. Informe o percentual (negativo para supressão) ou o novo valor: o outro é calculado ao salvar."; })(),
           ctSalvarEv: () => this.ctSalvarEv(), ctEvBotao: ct.ev && ct.ev.id ? "Salvar alteração" : "Incluir na linha do tempo", ctCancelarEv: () => this.setState((x) => ({ ct: { ...x.ct, ev: null, erro: "" } })),
           ctOk: ct.ok, ctErro: ct.erro,
           // seletor nas ferramentas
