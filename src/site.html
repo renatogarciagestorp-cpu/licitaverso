@@ -3741,9 +3741,11 @@
               <h2 class="lmo-h2">{{ moListaTitulo }}</h2>
               <p class="lmo-nota" style="margin-top: 0">{{ moListaNota }}</p>
               <div class="lmo-agente"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moListaAdd }}">{{ moListaBotao }}</button></div>
+              <sc-if value="{{ moListaEditando }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ moListaEditando }}</p></sc-if>
               <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
               <sc-if value="{{ moTemLista }}" hint-placeholder-val="{{ false }}">
                 <sc-if value="{{ moListaCons }}" hint-placeholder-val="{{ true }}">
+                <div class="lmo-agente" style="margin-top: 10px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moQuadroPdf }}">Relatório com todas as planilhas (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moQuadroExcel }}">Excel</button></div>
                 <div class="lmo-tabela" style="margin-top: 12px" role="table">
                   <div class="lmo-lin lmo-cons lmo-cab" role="row"><span>Categoria</span><span>Preço por empregado</span><span>Empregados por posto</span><span>Postos</span><span>Empregados</span><span>Valor mensal</span><span>Valor global</span><span></span></div>
                   <sc-for list="{{ moLista }}" as="l" hint-placeholder-count="2">
@@ -10064,7 +10066,7 @@ class Component extends DCLogic {
     this.setState((x) => ({ rq: { ...x.rq, baixando: false } }));
   }
 
-  moModo(modo) { const ab = this.state.mo && this.state.mo.salvasAbertas; this.setState({ mo: { modo, d: this.moCarregar(modo), enviando: false, agente: false, erro: "", ok: "", obs: [], salvasAbertas: ab } }, () => { if (ab) this.moSalvasCarregar(); }); }
+  moModo(modo) { const ab = this.state.mo && this.state.mo.salvasAbertas; this.setState({ mo: { modo, d: this.moCarregar(modo), enviando: false, agente: false, erro: "", ok: "", obs: [], salvasAbertas: ab, listaEditId: "" } }, () => { if (ab) this.moSalvasCarregar(); }); }
 
   // planilhas salvas na conta (com versões e compartilhamento com a equipe)
   async moSalvasCarregar() {
@@ -10099,9 +10101,12 @@ class Component extends DCLogic {
     if (error || !data) { this.setState((x) => ({ mo: { ...x.mo, salvasErro: "Não foi possível abrir a planilha." } })); return; }
     const dados = { ...(data.dados || {}) }, lista = Array.isArray(dados._lista) ? dados._lista : null; delete dados._lista;
     const d = { ...MO_PADRAO, ...dados };
-    try { localStorage.setItem("lv-mo-" + data.modo, JSON.stringify(d)); if (lista) localStorage.setItem("lv-mo-lista-" + data.modo, JSON.stringify(lista)); } catch (e) {}
+    // o quadro consolidado não é substituído: as categorias da planilha salva que ainda não estão nele são acrescentadas
+    const atual = this.moListaLer(data.modo), chave = (x) => x.id || x.nome + "|" + x.em, tem = new Set(atual.map(chave));
+    const novas = (lista || []).filter((x) => !tem.has(chave(x))), mesclada = atual.concat(novas);
+    try { localStorage.setItem("lv-mo-" + data.modo, JSON.stringify(d)); localStorage.setItem("lv-mo-lista-" + data.modo, JSON.stringify(mesclada)); } catch (e) {}
     this._moPlanTexto = "";
-    this.setState((x) => ({ mo: { ...x.mo, d, lista: lista || x.mo.lista, listaModo: lista ? data.modo : x.mo.listaModo, salvarNome: data.nome, salvasOk: "✓ \u201c" + data.nome + "\u201d (versão " + data.versao + ") aberta. Os arquivos enviados (convenção e planilha) precisam ser escolhidos de novo para usar o agente.", salvasErro: "" } }));
+    this.setState((x) => ({ mo: { ...x.mo, d, lista: mesclada, listaModo: data.modo, listaEditId: "", salvarNome: data.nome, salvasOk: "✓ \u201c" + data.nome + "\u201d (versão " + data.versao + ") aberta" + (novas.length ? "; " + novas.length + " item(ns) do quadro salvo acrescentado(s) ao quadro atual" : "") + ". Os arquivos enviados (convenção e planilha) precisam ser escolhidos de novo para usar o agente.", salvasErro: "" } }));
   }
   async moSalvaCompartilhar(nome, sim) {
     const org = this.state.organizacao; if (!this.sb || !this.u || !org) return;
@@ -10123,22 +10128,73 @@ class Component extends DCLogic {
     const mo = this.state.mo, d = mo.d, U = this._moUltimo || {}, r = U.r;
     if (!r || !r.total) { this.setState((x) => ({ mo: { ...x.mo, erro: "Preencha a planilha antes de incluí-la no quadro." } })); return; }
     const prop = mo.modo === "proposta";
-    const nome = prop ? (String(d.pr_licitante || "").trim() || "Licitante sem nome") : ((d.categoria || "Categoria sem nome") + (d.dim === "vigilancia" && d.vg_escala ? " – " + ((MO_VIGILANCIA.find((e) => e[0] === d.vg_escala) || [])[1] || "") : ""));
+    if (!prop && !String(d.categoria || "").trim()) { this.setState((x) => ({ mo: { ...x.mo, erro: "Informe a Categoria profissional (bloco Dados para composição dos custos) antes de incluir a planilha no quadro." } }));
+      try { document.querySelector('[data-mo-campo="categoria"]').focus(); } catch (e) {} return; }
+    let nome = prop ? (String(d.pr_licitante || "").trim() || "Licitante sem nome") : ((d.categoria || "Categoria sem nome") + (d.dim === "vigilancia" && d.vg_escala ? " – " + ((MO_VIGILANCIA.find((e) => e[0] === d.vg_escala) || [])[1] || "") : ""));
     const fs = d.falhas || [], c = (g) => fs.filter((f) => f.gravidade === g).length;
     const item = { nome, em: new Date().toISOString(), d: moSnap(d), res: { total: r.total, emp: Math.max(0, moNum(U.dUsado ? U.dUsado.emp_posto : d.emp_posto) * moNum(U.dUsado ? U.dUsado.postos : d.postos)), empPosto: U.dUsado ? U.dUsado.emp_posto : d.emp_posto, postos: U.dUsado ? U.dUsado.postos : d.postos,
       mensal: r.mensal, global: r.global, meses: d.meses || "12", mods: Object.fromEntries(MO_MODS.map(([k]) => [k, r[k]])), ofertado: r.vigente || 0, estimado: moNum(d.pr_estimado), falhas: [c("alta"), c("media"), c("baixa")],
       exeq: d.exeq ? d.exeq.conclusao : "", regime: d.regime || "", reforma: d.reforma || "" } };
-    const lista = this.moListaLer(mo.modo), i = lista.findIndex((x) => x.nome === nome);
-    if (i >= 0) lista[i] = item; else lista.push(item);
+    const lista = this.moListaLer(mo.modo);
+    // atualiza só o item que foi aberto do quadro para edição (e mantido com o mesmo nome); nos demais casos inclui um novo
+    const iEd = mo.listaEditId ? lista.findIndex((x) => x.id === mo.listaEditId) : -1, atualiza = iEd >= 0 && lista[iEd].nome.replace(/ \(\d+\)$/, "") === nome;
+    let aviso = "";
+    if (atualiza) { item.id = lista[iEd].id; item.nome = lista[iEd].nome; lista[iEd] = item; }
+    else {
+      if (lista.some((x) => x.nome === nome)) { let k = 2; while (lista.some((x) => x.nome === nome + " (" + k + ")")) k++; aviso = " Já havia \u201c" + nome + "\u201d no quadro: a nova foi incluída como \u201c" + nome + " (" + k + ")\u201d. Para corrigir uma já incluída, use Abrir no quadro."; nome = nome + " (" + k + ")"; }
+      item.id = Math.random().toString(36).slice(2, 10); item.nome = nome; lista.push(item);
+    }
     this.moListaGravar(mo.modo, lista);
-    this.setState((x) => ({ mo: { ...x.mo, erro: "", ok: "✓ " + nome + (i >= 0 ? " atualizada no " : " incluída no ") + (prop ? "comparativo das propostas." : "quadro consolidado.") } }));
+    this.setState((x) => ({ mo: { ...x.mo, erro: "", listaEditId: item.id, ok: "✓ " + item.nome + (atualiza ? " atualizada no " : " incluída no ") + (prop ? "comparativo das propostas." : "quadro consolidado (" + lista.length + " categoria(s)).") + aviso } }));
   }
   moListaAbrir(i) {
-    const modo = this.state.mo.modo, it = this.moListaLer(modo)[i]; if (!it) return;
+    const modo = this.state.mo.modo, l = this.moListaLer(modo), it = l[i]; if (!it) return;
+    if (!it.id) { it.id = Math.random().toString(36).slice(2, 10); this.moListaGravar(modo, l); }
     const d = { ...MO_PADRAO, ...it.d };
     try { localStorage.setItem("lv-mo-" + modo, JSON.stringify(d)); } catch (e) {}
-    this.setState((x) => ({ mo: { ...x.mo, d, erro: "", ok: "✓ " + it.nome + " aberta para edição. Depois de alterar, inclua de novo no quadro para atualizar." } }));
+    this.setState((x) => ({ mo: { ...x.mo, d, erro: "", listaEditId: it.id, ok: "✓ " + it.nome + " aberta para edição. Depois de alterar, inclua de novo no quadro para atualizar." } }));
     try { window.scrollTo({ top: document.querySelector(".lmo").offsetTop - 80, behavior: "smooth" }); } catch (e) {}
+  }
+  // relatório único com o quadro consolidado e a planilha completa de cada categoria (e o retroativo, na repactuação)
+  async moQuadroRelatorio(formato) {
+    const mo = this.state.mo, modo = mo.modo, lista = this.moListaLer(modo), rep = modo === "repactuacao";
+    if (!lista.length || mo.baixando) return;
+    const orig = mo.d, set = (d) => new Promise((ok) => this.setState((x) => ({ mo: { ...x.mo, d } }), ok));
+    this.setState((x) => ({ mo: { ...x.mo, baixando: true, erro: "", ok: "Montando o relatório com " + lista.length + " planilha(s)…" } }));
+    const partes = [], falhas = [];
+    try {
+      for (const it of lista) {
+        await set({ ...MO_PADRAO, ...it.d });
+        const m = await this.moBaixar(formato, "planilha", { montar: true });
+        if (!m) { falhas.push(it.nome); continue; }
+        const ret = rep ? await this.moBaixar(formato, "retroativo", { montar: true }) : null;
+        partes.push({ it, m, ret });
+      }
+    } catch (e) { console.error(e); }
+    await set(orig);
+    if (!partes.length) { this.setState((x) => ({ mo: { ...x.mo, baixando: false, ok: "", erro: "Não foi possível montar o relatório: abra cada categoria do quadro e confira se a planilha está completa (tributação escolhida e falhas aceitas)." } })); return; }
+    const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const tm = lista.reduce((a, x) => a + (Number(x.res.mensal) || 0), 0), tg = lista.reduce((a, x) => a + (Number(x.res.global) || 0), 0), te = lista.reduce((a, x) => a + (Number(x.res.emp) || 0), 0);
+    const d0 = partes[0].it.d || {}, hoje = new Date().toLocaleDateString("pt-BR");
+    const blocos = [
+      { t: "pares", titulo: "Contratação", pares: [["Contrato", d0.rp_contrato || "—"], ["Contratante", d0.rp_orgao || "—"], ["Contratada", d0.rp_empresa || "—"], ["Município / UF", [d0.municipio, d0.uf].filter(Boolean).join(" / ") || "—"]].filter((x) => rep || x[0] === "Município / UF") },
+      { t: "tabela", titulo: "Quadro consolidado da contratação", cab: ["Categoria", "Preço por empregado", "Empregados", "Valor mensal", "Valor global"], larg: [36, 16, 12, 18, 18], alin: "lrrrr",
+        linhas: lista.map((x) => ({ c: [x.nome, brl(x.res.total), String(x.res.emp || ""), brl(x.res.mensal), brl(x.res.global)] })).concat([{ c: ["Total (" + lista.length + " categoria(s))", "", String(te), brl(tm), brl(tg)], total: true }]) },
+    ];
+    if (falhas.length) blocos.push({ t: "legenda", texto: "Não entraram no relatório, por estarem incompletas: " + falhas.join(", ") + "." });
+    let notas = [];
+    partes.forEach((pt, k) => {
+      blocos.push({ t: "quebra" }, { t: "secao", titulo: "Categoria " + (k + 1) + " – " + pt.it.nome, sub: pt.m.doc0.titulo });
+      pt.m.doc0.blocos.forEach((b) => blocos.push(b));
+      if (pt.ret) { blocos.push({ t: "secao", titulo: "Diferença retroativa – " + pt.it.nome }); pt.ret.doc0.blocos.forEach((b) => blocos.push(b)); }
+      notas = notas.concat(pt.m.doc0.notas || [], pt.ret ? pt.ret.doc0.notas || [] : []);
+    });
+    const titulo = (rep ? "Repactuação" : "Planejamento da contratação") + " – todas as categorias";
+    const doc0 = { id: "planilha", titulo, sub: (rep && d0.rp_contrato ? "Contrato " + d0.rp_contrato + " · " : "") + lista.length + " categoria(s)", selo: partes[0].m.doc0.selo, paisagem: !!partes[0].m.doc0.paisagem,
+      arquivo: (rep ? "repactuacao" : "planejamento") + "-todas-as-categorias" + (d0.rp_contrato ? "-contrato-" + String(d0.rp_contrato).replace(/[^\w-]+/g, "-") : ""), blocos, notas: [...new Set(notas)] };
+    try { if (formato === "xlsx") await this.moDocExcel(doc0, titulo, hoje); else await this.moDocPdf(doc0, titulo, hoje); }
+    catch (e) { console.error(e); this.setState((x) => ({ mo: { ...x.mo, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
+    this.setState((x) => ({ mo: { ...x.mo, baixando: false, ok: "✓ Relatório com " + partes.length + " planilha(s) gerado." + (falhas.length ? " Ficaram de fora (incompletas): " + falhas.join(", ") + "." : "") } }));
   }
   moListaDel(i) { const modo = this.state.mo.modo, l = this.moListaLer(modo); l.splice(i, 1); this.moListaGravar(modo, l); }
   // Planilha 3: a estimativa do órgão (Planilha 1) como referência – valor estimado (cenário máximo) e valor de atenção
@@ -10273,7 +10329,7 @@ class Component extends DCLogic {
   // Layout pensado para leitura rápida: resumo com os números principais primeiro, composição do preço em barra,
   // módulos em blocos com cabeçalho de cor, notas e fontes em letra menor sob cada rubrica, totais destacados
   // e linhas preenchidas pelo agente marcadas em âmbar (com legenda).
-  async moBaixar(formato, docTipo = "planilha") {
+  async moBaixar(formato, docTipo = "planilha", opc) {
     const s = this.state, mo = s.mo, d = mo.d, fontesD = d.fontes || {}, rep = mo.modo === "repactuacao", prop = mo.modo === "proposta";
     const P = this.moProps(), { r, rj } = this._moUltimo || {};
     const falhas = rep || prop ? (d.falhas || []) : ((this._moUltimo && this._moUltimo.falhasAuto) || []);
@@ -10492,6 +10548,7 @@ class Component extends DCLogic {
         notas: [P.moRetroInfo, "Os novos valores vigoram a partir do fato gerador (data-base da categoria), ou em data anterior se o instrumento coletivo tiver vigência retroativa (IN 05/2017, art. 58, I e III); a parcela dos insumos é devida a partir do aniversário do orçamento estimado (art. 54, § 2º). Diferença negativa deve ser compensada nas faturas seguintes."] };
     }
     const doc0 = docs[docTipo]; if (doc0) { doc0.id = docTipo; const LL = leiDe(d); if (LL.selo && !doc0.selo) doc0.selo = LL.selo; if (LL.nota) doc0.notas = [LL.nota].concat(doc0.notas || []); }
+    if (opc && opc.montar) return doc0 ? { doc0, titulo, hoje } : null;
     if (!doc0) { this.setState((x) => ({ mo: { ...x.mo, erro: "Este documento não tem conteúdo nesta planilha." } })); return; }
     this.setState((x) => ({ mo: { ...x.mo, baixando: true, erro: "" } }));
     try {
@@ -11065,9 +11122,10 @@ class Component extends DCLogic {
       })(),
       moTemLista: lista.length > 0, moListaTitulo: prop ? "Comparativo das propostas" : "Quadro consolidado da contratação (várias categorias)",
       moListaNota: prop ? "Inclua cada proposta analisada para vê-las lado a lado. Em amarelo, módulos mais de 15% abaixo da mediana das propostas ou da estimativa do órgão e preços abaixo do valor de atenção: pontos para a diligência, não motivo automático de desclassificação (IN 05/2017, Anexo VII-A, item 9.3)."
-        : "Monte uma planilha por categoria (servente, encarregado, vigilante, supervisor…) e inclua cada uma aqui: o quadro soma empregados, valor mensal e global da contratação. A categoria com o mesmo nome é atualizada.",
+        : "Monte uma planilha por categoria (servente, encarregado, vigilante, supervisor…) e inclua cada uma aqui: as planilhas ficam guardadas neste navegador e o quadro soma empregados, valor mensal e global. Para a próxima categoria, troque a Categoria profissional e os valores e inclua de novo. Ao final, baixe o relatório com todas as planilhas.",
       moListaBotao: prop ? "Incluir esta proposta no comparativo" : "Incluir esta categoria no quadro",
-      moListaAdd: () => this.moListaAdd(),
+      moListaAdd: () => this.moListaAdd(), moQuadroPdf: () => this.moQuadroRelatorio("pdf"), moQuadroExcel: () => this.moQuadroRelatorio("xlsx"),
+      moListaEditando: !prop && !!mo.listaEditId && lista.some((x) => x.id === mo.listaEditId) ? "Editando: " + (lista.find((x) => x.id === mo.listaEditId) || {}).nome + ". Ao incluir de novo com o mesmo nome, ela é atualizada; com outro nome, entra como nova categoria." : "",
       moLista: lista.map((it, i) => ({ nome: it.nome, preco: brl(it.res.total), empPosto: String(it.res.empPosto || ""), postos: String(it.res.postos || ""), emp: String(it.res.emp), mensal: brl(it.res.mensal), global: brl(it.res.global),
         abrir: () => this.moListaAbrir(i), remover: () => this.moListaDel(i), atual: (it.nome === (prop ? (String(d0.pr_licitante || "").trim() || "Licitante sem nome") : null)) })),
       moListaTot: (() => { const m = lista.reduce((a, it) => a + (Number(it.res.mensal) || 0), 0), g = lista.reduce((a, it) => a + (Number(it.res.global) || 0), 0), e = lista.reduce((a, it) => a + (Number(it.res.emp) || 0), 0);
