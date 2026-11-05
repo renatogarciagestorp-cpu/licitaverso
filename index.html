@@ -1311,6 +1311,7 @@
   .lvc-kpi { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 12px; display: grid; gap: 3px; }
   .lvc-kpi > b { font-size: 16px; }
   .lvc-kpi > span { font-size: 12px; color: #A9BEC6; line-height: 1.35; }
+  .rq-al { margin: 12px 0 0; font-size: 14px; line-height: 1.5; border-radius: 10px; padding: 11px 13px; font-weight: 600; } .rq-al.sobe { background: #FFF4DC; color: #6B4A00; border: 1px solid #F1D9A6; } .rq-al.cai { background: #E7F2FB; color: #0F4B6E; border: 1px solid #C5DDF0; } .rq-al.ok, .rq-al.neutro { background: #E3F5EC; color: #0A5C3C; border: 1px solid #BFE6D2; }
   .lvc-al { margin: 12px 0 0; font-size: 13.5px; line-height: 1.5; border-radius: 10px; padding: 10px 12px; }
   .lvc-al.info { background: rgba(127,227,182,0.12); color: #D7F5E7; }
   .lvc-al.aviso { background: rgba(242,181,68,0.16); color: #F7DFA8; }
@@ -1844,12 +1845,13 @@
           <div class="lvh-ban-txt">
             <span class="lvh-ban-eye">% Calculadora</span>
             <h2 class="lvh-ban-h">Reajuste e planilhas de mão de obra, com os <em>documentos prontos</em>.</h2>
-            <p class="lvh-ban-lead">Quatro ferramentas para o contrato inteiro, com índices oficiais atualizados, o regime tributário e a transição da reforma tributária já considerados. Tudo sai em Excel e PDF para juntar ao processo.</p>
+            <p class="lvh-ban-lead">Cinco ferramentas para o contrato inteiro, com índices oficiais atualizados, o regime tributário e a transição da reforma tributária já considerados. Tudo sai em Excel e PDF para juntar ao processo.</p>
             <div class="lvh-calc4">
               <button type="button" sc-camel-on-click="{{ goCalcReajuste }}"><b>Reajuste por índice</b><span>IPCA, IGP-M, INCC e outros, anualidade conferida e nota técnica.</span></button>
               <button type="button" sc-camel-on-click="{{ goCalcPlanilha }}"><b>Planilha de custos</b><span>Módulos 1 a 6 da IN 05/2017, memória dos insumos e conferência.</span></button>
               <button type="button" sc-camel-on-click="{{ goCalcRepac }}"><b>Repactuação</b><span>Nova convenção, quadro comparativo e diferença retroativa.</span></button>
               <button type="button" sc-camel-on-click="{{ goCalcProposta }}"><b>Análise da proposta</b><span>Exequibilidade, falhas da licitante e roteiro de diligência.</span></button>
+              <button type="button" style="grid-column: 1 / -1" sc-camel-on-click="{{ goCalcRq }}"><b>Reequilíbrio tributário</b><span>Impacto da CBS e do IBS no valor do contrato, ano a ano da transição, com a nota técnica (LC 214/2025).</span></button>
             </div>
             <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goCalcReajuste }}">Abrir a Calculadora</button></div>
             <p class="lvh-ban-micro">Reajuste grátis com a sua conta · planilhas nos planos pagos e no teste de 7 dias · no Pro, o agente de IA lê a convenção coletiva e preenche as planilhas.</p>
@@ -2649,7 +2651,6 @@
       <section class="lvc-corpo">
         <div class="lvc-abas" role="tablist" aria-label="Ferramentas da calculadora">
           <sc-for list="{{ calcAbas }}" as="a" hint-placeholder-count="4"><button class="{{ a.cls }}" role="tab" aria-selected="{{ a.ativo }}" sc-camel-on-click="{{ a.ir }}">{{ a.nome }}</button></sc-for>
-          <button class="lvc-aba" role="tab" aria-selected="false" disabled>Reequilíbrio <small>em breve</small></button>
         </div>
         <div class="lvc-ferr-int"><h2>{{ calcFerrTitulo }}</h2><p>{{ calcFerrLead }}</p></div>
         <sc-if value="{{ calcBloqueada }}" hint-placeholder-val="{{ false }}">
@@ -2747,6 +2748,7 @@
                 </div>
                 <p class="lmo-nota">{{ moTransicaoNota }}</p>
               </sc-if>
+              <div style="margin-top: 12px"><button type="button" class="lve-voltar" style="padding: 9px 14px; font-size: 13.5px" sc-camel-on-click="{{ moLevarRq }}">Verificar reequilíbrio tributário desta planilha →</button></div>
             </section>
 
 
@@ -3071,6 +3073,89 @@
                 <div class="lmo-agente" style="margin-top: 8px"><sc-for list="{{ moCmpAbrir }}" as="a" hint-placeholder-count="2"><span class="lmo-chip-acao"><button type="button" class="lmo-ano" sc-camel-on-click="{{ a.abrir }}">Abrir {{ a.nome }}</button><button type="button" class="lmo-x" aria-label="Remover" sc-camel-on-click="{{ a.remover }}">×</button></span></sc-for></div>
                 </sc-if>
               </sc-if>
+            </section>
+          </div>
+          </sc-if>
+          <sc-if value="{{ calcAbaRq }}" hint-placeholder-val="{{ false }}">
+          <div class="lmo" id="rq-topo">
+            <div class="lmo-modos" role="group" aria-label="Tipo de reequilíbrio">
+              <button type="button" aria-pressed="true" style="border: 1px solid #0A1F2A; background: #0A1F2A; color: #fff; font-size: 13.5px; padding: 8px 14px">Tributário · reforma (LC 214/2025)</button>
+              <button type="button" disabled style="border: 1px solid #DDE4E3; background: #FBFCFC; color: #8A9AA0; font-size: 13.5px; padding: 8px 14px; cursor: default">Fato superveniente · em breve</button>
+            </div>
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">1. Contrato</h2>
+              <div class="lmo-campos">
+                <label class="lmo-campo"><span>Valor mensal atual (R$) *</span><input type="text" inputmode="decimal" value="{{ rqValor }}" sc-camel-on-input="{{ onRqValor }}" placeholder="0,00"></label>
+                <label class="lmo-campo"><span>Meses de vigência restantes</span><input type="text" inputmode="numeric" value="{{ rqMeses }}" sc-camel-on-input="{{ onRqMeses }}" placeholder="Ex.: 12"></label>
+                <label class="lmo-campo"><span>Data da proposta</span><input type="text" value="{{ rqProposta }}" sc-camel-on-input="{{ onRqProposta }}" placeholder="mm/aaaa"></label>
+                <label class="lmo-campo"><span>Número do contrato</span><input type="text" value="{{ rqContrato }}" sc-camel-on-input="{{ onRqContrato }}" placeholder="Ex.: 012/2025"></label>
+                <label class="lmo-campo"><span>Contratada</span><input type="text" value="{{ rqContratada }}" sc-camel-on-input="{{ onRqContratada }}" placeholder="Razão social"></label>
+                <label class="lmo-campo"><span>Objeto</span><input type="text" value="{{ rqObjeto }}" sc-camel-on-input="{{ onRqObjeto }}" placeholder="Ex.: serviços de limpeza"></label>
+              </div>
+              <sc-if value="{{ rqOrigem }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ rqOrigem }}</p></sc-if>
+              <p class="lmo-nota">Tem uma planilha de mão de obra na Calculadora? Abra a planilha e use o botão "Verificar reequilíbrio tributário desta planilha" para trazer os valores.</p>
+            </section>
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">2. Tributos da proposta</h2>
+              <p class="lmo-nota" style="margin-top: 0"><b>Regime de tributação da contratada *</b></p>
+              <div class="lmo-modos" role="group" aria-label="Regime de tributação"><sc-for list="{{ rqRegimes }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
+              <sc-if value="{{ rqRegimeTxt }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ rqRegimeTxt }}</p></sc-if>
+              <sc-if value="{{ rqSimples }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-campos" style="margin-top: 10px">
+                  <label class="lmo-campo"><span>Receita bruta dos últimos 12 meses (RBT12, R$)</span><input type="text" inputmode="decimal" value="{{ rqRbt12 }}" sc-camel-on-input="{{ onRqRbt12 }}" placeholder="Ex.: 2.500.000,00"></label>
+                  <label class="lmo-campo"><span>ISS fora do DAS (%, só na 6ª faixa)</span><input type="text" inputmode="decimal" value="{{ rqIss }}" sc-camel-on-input="{{ onRqIss }}" placeholder="Ex.: 5"></label>
+                </div>
+                <sc-if value="{{ rqSimplesTxt }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ rqSimplesTxt }}</p></sc-if>
+              </sc-if>
+              <sc-if value="{{ rqRegular }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-campos" style="margin-top: 10px">
+                  <label class="lmo-campo"><span>PIS na proposta (%)</span><input type="text" inputmode="decimal" value="{{ rqPis }}" sc-camel-on-input="{{ onRqPis }}"></label>
+                  <label class="lmo-campo"><span>COFINS na proposta (%)</span><input type="text" inputmode="decimal" value="{{ rqCofins }}" sc-camel-on-input="{{ onRqCofins }}"></label>
+                  <label class="lmo-campo"><span>ISS na proposta (%) *</span><input type="text" inputmode="decimal" value="{{ rqIss }}" sc-camel-on-input="{{ onRqIss }}" placeholder="De 2 a 5"></label>
+                </div>
+              </sc-if>
+            </section>
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">3. Reforma tributária</h2>
+              <div class="lmo-campos">
+                <label class="lmo-campo"><span>Ano analisado</span><select sc-camel-on-change="{{ onRqAno }}"><sc-for list="{{ rqAnos }}" as="o" hint-placeholder-count="8"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                <label class="lmo-campo"><span>Alíquota de referência da CBS (%)</span><input type="text" inputmode="decimal" value="{{ rqRfCbs }}" sc-camel-on-input="{{ onRqRfCbs }}"></label>
+                <label class="lmo-campo"><span>Alíquota de referência do IBS (%, estimativa)</span><input type="text" inputmode="decimal" value="{{ rqRfIbs }}" sc-camel-on-input="{{ onRqRfIbs }}"></label>
+              </div>
+              <p class="lmo-nota">CBS: 11,3% é a referência calculada pelo TCU para 2027. IBS: 18,7% é estimativa. Atualize os dois campos quando as alíquotas forem publicadas.</p>
+              <sc-if value="{{ rqRegular }}" hint-placeholder-val="{{ false }}">
+                <p class="lmo-nota"><b>Não cumulatividade (opcional).</b> Com o crédito da CBS e do IBS, os tributos embutidos nos insumos comprados de fornecedores deixam de ser custo. Informe quanto do preço são insumos com crédito e quanto o custo deles deve cair. Mão de obra não gera crédito; deixe em branco se não souber.</p>
+                <div class="lmo-campos" style="margin-top: 8px">
+                  <label class="lmo-campo"><span>Insumos com crédito (% do preço)</span><input type="text" inputmode="decimal" value="{{ rqIns }}" sc-camel-on-input="{{ onRqIns }}" placeholder="Ex.: 10"></label>
+                  <label class="lmo-campo"><span>Redução estimada do custo desses insumos (%)</span><input type="text" inputmode="decimal" value="{{ rqInsRed }}" sc-camel-on-input="{{ onRqInsRed }}" placeholder="Ex.: 3,65"></label>
+                </div>
+              </sc-if>
+            </section>
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">4. Resultado</h2>
+              <sc-if value="{{ rqFalta }}" hint-placeholder-val="{{ true }}"><p class="lmo-nota" style="margin-top: 0">{{ rqFalta }}</p></sc-if>
+              <sc-if value="{{ rqPronto }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-kpis" style="margin-top: 0"><sc-for list="{{ rqKpis }}" as="k" hint-placeholder-count="6"><div><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
+                <p class="{{ rqVereditoCls }}" style="margin-top: 12px">{{ rqVeredito }}</p>
+                <div class="lmo-tabela" style="margin-top: 12px" role="table" aria-label="Transição da reforma">
+                  <div class="lmo-lin lmo-trans lmo-cab" role="row"><span>Ano</span><span>PIS e COFINS</span><span>CBS</span><span>IBS</span><span>ISS</span><span>Carga no preço</span><span>Valor mensal</span><span>Diferença</span></div>
+                  <sc-for list="{{ rqAnosTab }}" as="t" hint-placeholder-count="8">
+                    <div class="lmo-lin lmo-trans" role="row" data-forte="{{ t.atual }}"><span><button type="button" class="lmo-ano" aria-pressed="{{ t.atual }}" sc-camel-on-click="{{ t.usar }}">{{ t.ano }}</button></span><span class="lmo-pct">{{ t.pis }}</span><span class="lmo-pct">{{ t.cbs }}</span><span class="lmo-pct">{{ t.ibs }}</span><span class="lmo-pct">{{ t.iss }}</span><span class="lmo-pct">{{ t.carga }}</span><span class="lmo-pct"><b>{{ t.p1 }}</b></span><span class="lmo-pct">{{ t.dif }}</span></div>
+                  </sc-for>
+                </div>
+                <p class="lmo-nota">Clique no ano para analisá-lo. O valor mensal é o que mantém a mesma receita líquida de tributos da proposta: ISS por dentro, CBS e IBS por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º).</p>
+                <h3 class="lmo-h3" style="margin: 16px 0 6px; font-size: 14px">Roteiro do pedido (LC 214/2025, arts. 373 a 377)</h3>
+                <ul class="lvc-benef" style="margin-top: 4px"><sc-for list="{{ rqRoteiro }}" as="b" hint-placeholder-count="5"><li>{{ b.t }}</li></sc-for></ul>
+                <div class="lmo-docs" role="list" aria-label="Documentos para download">
+                  <p class="lmo-nota" style="margin: 0"><b>Documentos para download</b> · em Excel ou PDF, com a fundamentação no final.</p>
+                  <sc-for list="{{ rqDocs }}" as="dc" hint-placeholder-count="2">
+                    <div class="lmo-doc" role="listitem"><div><b>{{ dc.nome }}</b><small>{{ dc.desc }}</small></div>
+                      <div class="lmo-doc-btns"><button type="button" class="lmo-btn" aria-label="{{ dc.nome }} em Excel" sc-camel-on-click="{{ dc.xlsx }}">Excel</button><button type="button" class="lmo-btn lmo-btn2" aria-label="{{ dc.nome }} em PDF" sc-camel-on-click="{{ dc.pdf }}">PDF</button></div></div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ rqErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ rqErro }}</p></sc-if>
+              <p class="lmo-nota">Estimativa para instruir o processo: confira as alíquotas publicadas, a regulamentação da metodologia e o texto oficial da LC 214/2025. <button type="button" class="lve-voltar" style="padding: 4px 10px; font-size: 12.5px" sc-camel-on-click="{{ rqLimpar }}">Limpar dados</button></p>
             </section>
           </div>
           </sc-if>
@@ -5544,6 +5629,40 @@ function moTransicao(ano, cbsRef, ibsRef) {
   return { ano, antigos: false, cbs: cbsRef, ibs: ibsRef * (1 - issF), issF };
 }
 const MO_ANOS_REFORMA = [2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033];
+
+// Reequilíbrio tributário da reforma (LC 214/2025, arts. 373 a 377): compara o valor do contrato com a carga de
+// PIS/COFINS/ISS da proposta e o valor que mantém a mesma receita líquida com a CBS, o IBS e o ISS de cada ano da transição.
+// Mesma regra das planilhas: ISS por dentro; CBS e IBS por fora, sobre o valor sem eles e sem o ISS (art. 12, § 2º).
+const RQ_PADRAO = { contrato: "", contratada: "", objeto: "", valor: "", proposta: "", meses: "", regime: "", rbt12: "", pis: "", cofins: "", iss: "",
+  rf_cbs: "11,3", rf_ibs: "18,7", ins: "", ins_red: "", ano: "2027", origem: "" };
+function rqCalcular(d) {
+  const n = (k) => moNum(d[k]), pc = (k) => moNum(d[k]) / 100;
+  const P0 = n("valor");
+  if (!(P0 > 0)) return { pronto: false, falta: "Informe o valor mensal atual do contrato." };
+  if (!d.regime) return { pronto: false, falta: "Escolha o regime de tributação da contratada." };
+  const simp = d.regime === "simples" ? moSimples(moNum(/^\s*[1-9]\d{0,2}(\.\d{3})+\s*$/.test(String(d.rbt12 || "")) ? String(d.rbt12).replace(/\./g, "") : d.rbt12)) : null;
+  if (d.regime === "simples" && !simp) return { pronto: false, falta: "Informe a receita bruta dos últimos 12 meses (RBT12) para calcular a alíquota efetiva do Simples Nacional." };
+  let aPis = pc("pis"), aCof = pc("cofins"), aIss = pc("iss");
+  if (simp) { aPis = simp.pis; aCof = simp.cofins; aIss = simp.issFora ? pc("iss") : simp.iss; }
+  if (!simp && !(aIss > 0)) return { pronto: false, falta: "Informe a alíquota do ISS da proposta (de 2% a 5%)." };
+  const a0 = aPis + aCof + aIss;
+  if (!(a0 < 0.5)) return { pronto: false, falta: "Confira as alíquotas da proposta." };
+  const Po = P0 * (1 - a0);                                   // receita líquida de tributos sobre o faturamento
+  const red = simp ? 0 : P0 * pc("ins") * pc("ins_red");      // insumos que ficam mais baratos com a não cumulatividade
+  const cbsRef = pc("rf_cbs"), ibsRef = pc("rf_ibs");
+  const anos = MO_ANOS_REFORMA.map((ano) => {
+    const tr = moTransicao(ano, cbsRef, ibsRef);
+    let P1, cbs = 0, ibs = 0, iss = 0, pis = 0, PoY = Po;
+    if (tr.antigos) { P1 = P0; pis = (aPis + aCof) * P0; iss = aIss * P0; }
+    else if (simp) { const aCbs = aPis + aCof, aIssT = aIss * tr.issF, aIbs = aIss - aIssT; P1 = Po / (1 - (aCbs + aIssT + aIbs)); cbs = aCbs * P1; ibs = aIbs * P1; iss = aIssT * P1; }
+    else { PoY = Po - red; const aIssT = aIss * tr.issF; iss = PoY / (1 - aIssT) - PoY; cbs = tr.cbs * PoY; ibs = tr.ibs * PoY; P1 = PoY + iss + cbs + ibs; }
+    P1 = moT2(P1);
+    const dif = moT2(P1 - P0);
+    return { ano, tr, P1, dif, pct: dif / P0, carga: P1 ? (P1 - PoY) / P1 : 0, cbs, ibs, iss, pis, PoY };
+  });
+  const sel = anos.find((x) => String(x.ano) === String(d.ano)) || anos[1];
+  return { pronto: true, P0, a0, Po, red, simp, aPis, aCof, aIss, anos, sel, meses: n("meses") };
+}
 // APT nas repactuações e prorrogações: o aviso prévio trabalhado é custo não renovável (1,94% só no 1º ano);
 // a partir do 2º ano, no máximo 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário)
 const MO_APT_PRORROGACAO = 0.194;
@@ -5646,7 +5765,14 @@ const CALC_FERRAMENTAS = [
     beneficios: ["O agente reproduz a planilha da proposta e confere cada rubrica com a convenção, a lei, os cadernos técnicos e o TCU", "Falhas apontadas com o fundamento e se a correção cabe no preço ofertado (IN 05/2017, Anexo VII-A, item 7.9)",
       "Conferência do preço ofertado com o valor estimado (IN 73/2022, art. 34) e com o valor de atenção da estimativa do órgão", "Minuta de diligência à licitante com as perguntas para comprovar os custos (Lei 14.133/2021, art. 59, § 2º)",
       "Comparativo das propostas lado a lado, com os módulos fora da curva destacados", "Downloads separados em Excel e PDF"],
-    plano: "Comparativo e conferência em todos os planos; análise pelo agente de IA no plano Pro (1 por semana por assinatura)." }
+    plano: "Comparativo e conferência em todos os planos; análise pelo agente de IA no plano Pro (1 por semana por assinatura)." },
+  { id: "reequilibrio", nome: "Reequilíbrio", curto: "Reequilíbrio tributário da reforma (LC 214/2025): impacto da CBS e do IBS no valor do contrato, ano a ano, com a nota técnica.",
+    h1: "Reequilíbrio tributário da reforma, calculado ano a ano.",
+    lead: "Compare a carga de PIS, COFINS e ISS da proposta com a CBS, o IBS e o ISS de cada ano da transição (2026 a 2033), veja quem deve pedir a revisão e baixe a memória de cálculo e a nota técnica para instruir o processo.",
+    beneficios: ["Carga tributária efetiva da proposta e de cada ano da transição, no Lucro Real, Presumido ou Simples Nacional", "Valor mensal que mantém o equilíbrio do contrato e a diferença em reais e em percentual",
+      "Indica se a contratada pode pedir o reequilíbrio (LC 214/2025, art. 376) ou se a Administração deve revisar de ofício (art. 375)", "Considera a não cumulatividade: insumos que ficam mais baratos com o crédito da CBS e do IBS",
+      "Roteiro do pedido: prazo, decisão em até 90 dias, recomposição provisória e termo aditivo", "Importa os valores de uma planilha de mão de obra da Calculadora", "Memória de cálculo e nota técnica em Excel e PDF"],
+    plano: "Em todos os planos pagos e no teste grátis de 7 dias." }
 ];
 const ELAB_TERMO_VERSAO = "elab-2";
 const ELAB_TERMO = [
@@ -5769,7 +5895,7 @@ const PLANO_BENEFICIOS = {
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "9";
+const CHAT_VERSAO = "10";
 // versão da Biblioteca no endereço: força o navegador a buscar a página nova depois de cada mudança (o GitHub Pages guarda em cache por 10 minutos)
 const BIB_URL = "biblioteca.html?v=2";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
@@ -5923,6 +6049,7 @@ class Component extends DCLogic {
     nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
     el: { doc: "", passo: 0, respostas: {}, aceite: false, enviando: false, erro: "", ok: "", docEsc: "etp", metodo: "pix", contratando: false, contErro: "" },
     calcAba: "indice",
+    rq: { d: (() => { try { return { ...RQ_PADRAO, ...(JSON.parse(localStorage.getItem("lv-rq") || "{}") || {}) }; } catch (e) { return { ...RQ_PADRAO }; } })(), erro: "", baixando: false },
     mo: { modo: "planejamento", d: (() => { try { return { ...MO_PADRAO, ...(JSON.parse(localStorage.getItem("lv-mo-planejamento") || "{}") || {}) }; } catch (e) { return { ...MO_PADRAO }; } })(), enviando: false, agente: false, erro: "", ok: "", obs: [] },
     indices: null, indicesErro: false, mpAberto: "", mpAno: 0, mpMes: 0, mpVista: "dias",
     calc: { regime: "14133", indice: "ipca", valor: "", dataBase: "", houveReajuste: false, ultimo: "", referencia: "", fim: "", metodo: "a", contagem: "base", contrato: "", contratada: "", cnpj: "", objeto: "" },
@@ -7104,6 +7231,82 @@ class Component extends DCLogic {
     try { d = JSON.parse(localStorage.getItem("lv-mo-" + modo) || "{}") || {}; } catch (e) { d = {}; }
     return { ...MO_PADRAO, ...d };
   }
+  // ------------------------------------------------------------ Reequilíbrio tributário (LC 214/2025)
+  rqGravar(d) { try { localStorage.setItem("lv-rq", JSON.stringify(d)); } catch (e) {} }
+  rqSet = (k) => (e) => { const v = e && e.target ? e.target.value : e; this.setState((x) => { const d = { ...x.rq.d, [k]: v }; this.rqGravar(d); return { rq: { ...x.rq, d, erro: "" } }; }); };
+  rqRegime(id) {
+    this.setState((x) => {
+      const pad = id === "presumido" ? { pis: "0,65", cofins: "3" } : id === "real" ? { pis: "1,65", cofins: "7,6" } : {};
+      const d = { ...x.rq.d, regime: id, ...pad }; this.rqGravar(d); return { rq: { ...x.rq, d, erro: "" } };
+    });
+  }
+  // traz os valores da planilha de mão de obra aberta (valor mensal, regime e alíquotas da proposta)
+  rqDaPlanilha() {
+    const md = this.state.mo.d, r = (this._moUltimo || {}).r;
+    if (!r || !(r.mensal > 0 || r.total > 0)) { this.aviso("Preencha a planilha de mão de obra antes de levar os valores ao reequilíbrio.", "erro"); return; }
+    const pct = (x) => (Math.round(x * 10000) / 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 });
+    const antes = !r.tr || r.tr.antigos;
+    const d = { ...this.state.rq.d, valor: (r.mensal > 0 ? r.mensal : r.total).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      regime: md.regime || this.state.rq.d.regime, rbt12: md.rbt12 || "", rf_cbs: md.rf_cbs || "11,3", rf_ibs: md.rf_ibs || "18,7",
+      objeto: md.categoria ? "Serviços com dedicação exclusiva de mão de obra · " + md.categoria : this.state.rq.d.objeto,
+      origem: "Planilha " + (this.state.mo.modo === "repactuacao" ? "2 (repactuação)" : this.state.mo.modo === "proposta" ? "3 (proposta)" : "1 (planejamento)") + " da Calculadora" };
+    if (antes) Object.assign(d, { pis: pct(r.aPis), cofins: pct(r.aCof), iss: pct(r.aIss) });
+    else Object.assign(d, { iss: pct(r.aIss) });
+    this.rqGravar(d);
+    this.setState((x) => ({ rq: { ...x.rq, d, erro: "" }, calcAba: "rq" }));
+    try { history.replaceState({ p: "calculadora" }, "", location.pathname + "?p=calculadora&f=reequilibrio"); } catch (e) {}
+    this.aviso(antes ? "Valores da planilha levados ao reequilíbrio." : "Valor e ISS levados ao reequilíbrio. A planilha está calculada depois da reforma: informe o PIS e a COFINS da proposta original.", "ok");
+    setTimeout(() => { try { document.getElementById("rq-topo").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }, 80);
+  }
+  async rqBaixar(formato, tipo) {
+    const d = this.state.rq.d, r = rqCalcular(d);
+    if (!r.pronto) { this.setState((x) => ({ rq: { ...x.rq, erro: r.falta } })); return; }
+    const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const pct = (v, c = 2) => (v * 100).toLocaleString("pt-BR", { minimumFractionDigits: c, maximumFractionDigits: c }) + "%";
+    const sinal = (v) => (v > 0 ? "+" : "") + brl(v);
+    const hoje = new Date().toLocaleDateString("pt-BR"), s = r.sel;
+    const regNome = { real: "Lucro Real", presumido: "Lucro Presumido", simples: "Simples Nacional" }[d.regime];
+    const ident = [["Contrato", d.contrato], ["Contratada", d.contratada], ["Objeto", d.objeto], ["Data da proposta", d.proposta], ["Regime de tributação", regNome + (r.simp ? " (alíquota efetiva " + pct(r.simp.ef) + ")" : "")],
+      ["Valor mensal atual", brl(r.P0)], ["PIS + COFINS na proposta", pct(r.aPis + r.aCof)], ["ISS na proposta", pct(r.aIss)], ["Carga sobre o faturamento", pct(r.a0)], ["Valor sem esses tributos", brl(r.Po)],
+      ["CBS de referência", (d.rf_cbs || "") + "%"], ["IBS de referência (estimativa)", (d.rf_ibs || "") + "%"]].concat(r.red ? [["Redução dos insumos (não cumulatividade)", brl(r.red) + " por mês"]] : []).filter((x) => String(x[1] || "").trim());
+    const T = (titulo, cab, linhas, larg, alin) => ({ t: "tabela", titulo, cab, linhas, larg, alin });
+    const tab = T("TRANSIÇÃO DA REFORMA – VALOR MENSAL QUE MANTÉM O EQUILÍBRIO", ["Ano", "PIS + COFINS", "CBS", "IBS", "ISS", "Carga no preço", "Valor mensal", "Diferença", "%"],
+      r.anos.map((a) => ({ c: [String(a.ano) + (a.tr.teste ? " (teste)" : ""), brl(a.pis), brl(a.cbs), brl(a.ibs), brl(a.iss), pct(a.carga), brl(a.P1), sinal(a.dif), (a.dif > 0 ? "+" : "") + pct(a.pct)], total: a.ano === s.ano })),
+      [12, 13, 12, 12, 12, 12, 14, 13, 9], "lrrrrrrrr");
+    const quem = s.dif > 0.004 ? "A carga efetiva sobe: a contratada pode pedir o reequilíbrio, durante a vigência do contrato e antes de eventual prorrogação, com os cálculos que comprovem o desequilíbrio (LC 214/2025, art. 376)."
+      : s.dif < -0.004 ? "A carga efetiva cai: a Administração deve revisar o valor de ofício, a seu favor, com fundamento técnico e oportunidade de manifestação da contratada (LC 214/2025, art. 375)."
+      : "Não há desequilíbrio relevante neste ano.";
+    const metodo = ["Valor sem os tributos sobre o faturamento = valor mensal atual × (1 − PIS − COFINS − ISS da proposta)" + (r.red ? ", menos a redução estimada do custo dos insumos com o crédito da CBS e do IBS" : "") + ".",
+      r.simp ? "Simples Nacional: a CBS e o IBS ficam dentro do DAS; a parcela de PIS e COFINS passa à CBS e a parcela do ISS migra ao IBS na transição, sem alterar a alíquota efetiva. Se a contratada optar pelo regime regular da CBS e do IBS (LC 214/2025, art. 41), refaça o cálculo pelo Lucro Presumido ou Real."
+        : "Em cada ano: ISS por dentro, a " + "100%, 90%, 80%, 70% e 60% da alíquota até 2032 e extinto em 2033; CBS e IBS por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º); PIS e COFINS extintos a partir de 2027.",
+      "2026 é ano de teste: CBS de 0,9% e IBS de 0,1% compensáveis com PIS e COFINS, sem efeito no preço. 2027 e 2028: CBS pela referência reduzida em 0,1 ponto e IBS de 0,1%. 2029 a 2032: IBS cresce à medida que o ISS diminui (ADCT, arts. 125 a 133).",
+      "Valor mensal de equilíbrio = valor que mantém a mesma receita líquida de tributos da proposta. Diferença = valor de equilíbrio − valor atual."];
+    const fund = ["LC 214/2025, arts. 373 a 377: reequilíbrio dos contratos administrativos pela mudança da carga tributária efetiva da CBS e do IBS, inclusive na transição, considerando a não cumulatividade, o repasse e os benefícios extintos (art. 374, § 1º); a matriz de riscos não afasta o direito (art. 374, § 2º).",
+      "Pedido da contratada durante a vigência e antes da prorrogação, instruído com os cálculos (art. 376); decisão fundamentada em até 90 dias, prorrogáveis uma vez (art. 376, § 1º); recomposição provisória possível (art. 376, §§ 4º e 5º); revisão de ofício quando a carga diminuir (art. 375).",
+      "Lei 14.133/2021, arts. 124, II, d, e 134, e Lei 13.303/2016, aplicadas subsidiariamente (LC 214/2025, art. 377). Formalização por termo aditivo.",
+      "Alíquotas de referência: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa). Confira as alíquotas publicadas e o texto oficial da LC 214/2025 antes de juntar ao processo."];
+    const base0 = "reequilibrio-tributario" + (d.contrato ? "-contrato-" + String(d.contrato).replace(/[^0-9a-z]+/gi, "-") : "");
+    const sub = "Reequilíbrio tributário · " + (d.contratada || "Contrato") + (d.contrato ? " · contrato " + d.contrato : "");
+    const destaques = { t: "destaques", itens: [["Valor de equilíbrio em " + s.ano, brl(s.P1)], ["Valor atual", brl(r.P0)], ["Diferença mensal", sinal(s.dif)], [r.meses ? "Até o fim da vigência (" + r.meses + " meses)" : "Em 12 meses", sinal(s.dif * (r.meses || 12))]] };
+    const docs = {
+      memoria: { titulo: "Memória de cálculo do reequilíbrio tributário", arquivo: base0 + "-memoria-de-calculo", paisagem: true, sub, selo: "LC 214/2025 · arts. 373 a 377", blocos: [
+        destaques, { t: "pares", titulo: "Dados do contrato e da proposta", pares: ident }, tab, { t: "texto", titulo: "METODOLOGIA", paragrafos: metodo }], notas: fund },
+      nota: { titulo: "Nota técnica · reequilíbrio tributário", arquivo: base0 + "-nota-tecnica", sub, selo: "LC 214/2025 · arts. 373 a 377", blocos: [
+        { t: "texto", titulo: "1. OBJETO", paragrafos: ["Análise do impacto da reforma tributária do consumo (EC 132/2023 e LC 214/2025) no valor do " + (d.contrato ? "contrato " + d.contrato : "contrato") + (d.contratada ? ", firmado com " + d.contratada : "") + (d.objeto ? ", cujo objeto é " + d.objeto : "") + ", para fins de reequilíbrio econômico-financeiro, com referência ao ano de " + s.ano + "."] },
+        destaques,
+        { t: "texto", titulo: "2. PREMISSAS", paragrafos: ["Valor mensal atual: " + brl(r.P0) + ". Regime da contratada: " + regNome + ". Tributos sobre o faturamento considerados na proposta: PIS e COFINS de " + pct(r.aPis + r.aCof) + " e ISS de " + pct(r.aIss) + ", carga de " + pct(r.a0) + "." + (d.proposta ? " Data da proposta: " + d.proposta + "." : "") + (d.origem ? " Valores extraídos da " + d.origem + "." : "")].concat(metodo) },
+        tab,
+        { t: "texto", titulo: "3. CONCLUSÃO", paragrafos: ["Em " + s.ano + ", a carga sobre o preço passa de " + pct(r.a0) + " para " + pct(s.carga) + ", e o valor mensal que mantém o equilíbrio é de " + brl(s.P1) + " (" + sinal(s.dif) + " por mês, " + (s.dif > 0 ? "+" : "") + pct(s.pct) + ").", quem,
+          "A recomposição deve ser formalizada por termo aditivo, após análise da área técnica e manifestação jurídica, e pode ser revista quando forem publicadas as alíquotas definitivas e a regulamentação da metodologia (LC 214/2025, art. 376, § 3º)."] }],
+        notas: fund }
+    };
+    const doc0 = docs[tipo]; doc0.id = tipo;
+    this.setState((x) => ({ rq: { ...x.rq, baixando: true, erro: "" } }));
+    try { if (formato === "xlsx") await this.moDocExcel(doc0, doc0.titulo, hoje); else await this.moDocPdf(doc0, doc0.titulo, hoje); }
+    catch (e) { console.error(e); this.setState((x) => ({ rq: { ...x.rq, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
+    this.setState((x) => ({ rq: { ...x.rq, baixando: false } }));
+  }
+
   moModo(modo) { const ab = this.state.mo && this.state.mo.salvasAbertas; this.setState({ mo: { modo, d: this.moCarregar(modo), enviando: false, agente: false, erro: "", ok: "", obs: [], salvasAbertas: ab } }, () => { if (ab) this.moSalvasCarregar(); }); }
 
   // planilhas salvas na conta (com versões e compartilhamento com a equipe)
@@ -7239,6 +7442,7 @@ class Component extends DCLogic {
   calcFerramenta(id) {
     if (!this.state.moCota) this.moCotaCarregar();
     if (id === "reajuste") this.setState({ calcAba: "indice" });
+    else if (id === "reequilibrio") this.setState({ calcAba: "rq" });
     else { if (this.state.mo.modo !== id) this.moModo(id); this.setState({ calcAba: "mo" }); }
     this.carregarIndices();
     try { history.replaceState({ p: "calculadora" }, "", location.pathname + "?p=calculadora&f=" + id); } catch (e) {}
@@ -7568,8 +7772,8 @@ class Component extends DCLogic {
       c.font = { name: "Calibri", size: o.size || 10, bold: !!o.bold, italic: !!o.italic, color: { argb: o.cor || X.texto } }; c.alignment = { wrapText: true, vertical: "middle" }; if (o.fundo) c.fill = fill(o.fundo);
       row.height = o.alt || altura(txt, totalLarg * (o.size && o.size > 11 ? 0.8 : 1.05), (o.size || 10) * 1.35); return row; };
     faixa(doc0.titulo, { size: 16, bold: true, cor: X.branco, fundo: X.navy, alt: 30 });
-    faixa(titulo + "  ·  " + (this.state.mo.d.categoria || "Profissional") + (this.state.mo.d.municipio ? "  ·  " + this.state.mo.d.municipio + "/" + (this.state.mo.d.uf || "") : ""), { size: 11, cor: "FFB9CBD2", fundo: X.navy, alt: 20 });
-    faixa("IN SEGES/MP nº 5/2017, Anexo VII-D · gerado no Licitacon em " + hoje, { size: 9, cor: "FF7FE3B6", fundo: X.navy, alt: 16 });
+    faixa(doc0.sub || (titulo + "  ·  " + (this.state.mo.d.categoria || "Profissional") + (this.state.mo.d.municipio ? "  ·  " + this.state.mo.d.municipio + "/" + (this.state.mo.d.uf || "") : "")), { size: 11, cor: "FFB9CBD2", fundo: X.navy, alt: 20 });
+    faixa((doc0.selo || "IN SEGES/MP nº 5/2017, Anexo VII-D") + " · gerado no Licitacon em " + hoje, { size: 9, cor: "FF7FE3B6", fundo: X.navy, alt: 16 });
     ws.addRow([]);
     const num = (t) => { const m = String(t == null ? "" : t).replace("R$", "").replace("%", "").replace("+", "").trim().replace(/\./g, "").replace(",", "."); const n = Number(m); return m !== "" && /^-?[\d.]+$/.test(m) && isFinite(n) ? n : null; };
     doc0.blocos.forEach((b) => {
@@ -7634,8 +7838,8 @@ class Component extends DCLogic {
     const d = this.state.mo.d;
     const cab = () => { doc.setFillColor(...C.navy); doc.rect(0, 0, W, 22, "F");
       doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text(doc0.titulo, ML, 10);
-      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(185, 203, 210); doc.text(moPdfTxt(titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + "/" + (d.uf || "") : "")), ML, 16);
-      doc.setTextColor(127, 227, 182); doc.setFontSize(7.5); doc.text("IN SEGES/MP nº 5/2017 · Anexo VII-D", W - MR, 10, { align: "right" }); doc.text("Gerado em " + hoje, W - MR, 16, { align: "right" }); doc.setTextColor(...C.texto); };
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(185, 203, 210); doc.text(moPdfTxt(doc0.sub || (titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + "/" + (d.uf || "") : ""))), ML, 16);
+      doc.setTextColor(127, 227, 182); doc.setFontSize(7.5); doc.text(moPdfTxt(doc0.selo || "IN SEGES/MP nº 5/2017 · Anexo VII-D"), W - MR, 10, { align: "right" }); doc.text("Gerado em " + hoje, W - MR, 16, { align: "right" }); doc.setTextColor(...C.texto); };
     const limpo = moPdfTxt;
     const base = { margin: { left: ML, right: MR, top: 28, bottom: 14 }, didDrawPage: () => { cab(); }, styles: { font: "helvetica", textColor: C.texto, lineColor: C.linha, overflow: "linebreak" },
       didParseCell: (dt) => { dt.cell.text = (dt.cell.text || []).map(limpo); } };
@@ -8133,17 +8337,59 @@ class Component extends DCLogic {
       onMoRfAno: this.moSet("rf_ano"), moRfCbs: d.rf_cbs || "", onMoRfCbs: this.moSet("rf_cbs"), moRfIbs: d.rf_ibs || "", onMoRfIbs: this.moSet("rf_ibs"),
       moTransicao: transicao,
       moTransicaoNota: "Clique no ano para calculá-lo na planilha. Cada linha refaz o Módulo 6 com as alíquotas do ano; os Módulos 1 a 5 e o lucro são os mesmos. A mudança de tributos em contrato vigente pede reequilíbrio econômico-financeiro (LC 214/2025, arts. 374 a 378; Lei 14.133/2021, art. 134).",
-      calcAbaIndice: s.calcAba !== "mo", calcAbaMo: s.calcAba === "mo",
-      calcAbaIdxCls: "lvc-aba" + (s.calcAba !== "mo" ? " ativo" : ""), calcAbaMoCls: "lvc-aba" + (s.calcAba === "mo" ? " ativo" : ""),
+      calcAbaIndice: s.calcAba === "indice", calcAbaMo: s.calcAba === "mo", calcAbaRq: s.calcAba === "rq",
+      calcAbaIdxCls: "lvc-aba" + (s.calcAba === "indice" ? " ativo" : ""), calcAbaMoCls: "lvc-aba" + (s.calcAba === "mo" ? " ativo" : ""),
       calcIrIndice: () => this.setState({ calcAba: "indice" }), calcIrMo: () => { this.setState({ calcAba: "mo" }); this.carregarIndices(); },
       ...(() => {
-        const atual = s.calcAba === "mo" ? mo.modo : "reajuste", f = CALC_FERRAMENTAS.find((x) => x.id === atual) || CALC_FERRAMENTAS[0];
+        const atual = s.calcAba === "mo" ? mo.modo : s.calcAba === "rq" ? "reequilibrio" : "reajuste", f = CALC_FERRAMENTAS.find((x) => x.id === atual) || CALC_FERRAMENTAS[0];
         const ir = (id) => () => this.calcFerramenta(id);
         return { calcH1: "Cálculos de contratos e planilhas de mão de obra, com a fundamentação pronta.",
-          calcLead: "Reajuste por índice, planilha de custos no formato da IN 05/2017, repactuação e análise da proposta da licitante: índices oficiais atualizados todos os dias, memória de cálculo, falhas apontadas com o fundamento e documentos em Excel e PDF para juntar ao processo.",
+          calcLead: "Reajuste por índice, planilha de custos no formato da IN 05/2017, repactuação, análise da proposta da licitante e reequilíbrio tributário da reforma: índices oficiais atualizados todos os dias, memória de cálculo, falhas apontadas com o fundamento e documentos em Excel e PDF para juntar ao processo.",
           calcFerrTitulo: f.h1, calcFerrLead: f.lead, calcFerrNome: f.nome, calcFerrPlano: f.plano, calcFerrBenef: f.beneficios.map((t) => ({ t })),
           calcAbas: CALC_FERRAMENTAS.map((x) => ({ nome: x.nome, ativo: x.id === atual, cls: "lvc-aba" + (x.id === atual ? " ativo" : ""), ir: ir(x.id) })),
           calcFerrCards: CALC_FERRAMENTAS.map((x) => ({ nome: x.nome, curto: x.curto, ativo: x.id === atual, cls: "lvc-fc" + (x.id === atual ? " ativo" : ""), ir: ir(x.id) })) };
+      })(),
+      // reequilíbrio tributário
+      ...(() => {
+        const d = s.rq.d, r = rqCalcular(d);
+        const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const pct = (v) => (v * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
+        const sinal = (v) => (v > 0 ? "+" : "") + brl(v);
+        const campos = {};
+        ["contrato", "contratada", "objeto", "valor", "proposta", "meses", "rbt12", "pis", "cofins", "iss", "rf_cbs", "rf_ibs", "ins", "ins_red"].forEach((k) => {
+          const nome = "rq" + k.split("_").map((x) => x[0].toUpperCase() + x.slice(1)).join("");
+          campos[nome] = d[k] || ""; campos["on" + nome[0].toUpperCase() + nome.slice(1)] = this.rqSet(k);
+        });
+        const sel = r.pronto ? r.sel : null;
+        const tipo = !sel ? "" : sel.dif > 0.004 ? "sobe" : sel.dif < -0.004 ? "cai" : "neutro";
+        return { ...campos,
+          rqRegimes: [["real", "Lucro Real"], ["presumido", "Lucro Presumido"], ["simples", "Simples Nacional"]].map(([id, nome]) => ({ nome, ativo: d.regime === id, escolher: () => this.rqRegime(id), ...corBotao(d.regime === id) })),
+          rqSimples: d.regime === "simples", rqRegular: !!d.regime && d.regime !== "simples",
+          rqSimplesTxt: r.simp ? "Alíquota efetiva do Simples: " + pct(r.simp.ef) + " (faixa " + r.simp.faixa + " do Anexo IV): PIS " + pct(r.simp.pis) + ", COFINS " + pct(r.simp.cofins) + ", ISS " + pct(r.simp.iss) + (r.simp.issFora ? " (na 6ª faixa o ISS é recolhido fora do DAS: informe a alíquota abaixo)." : ".") : "",
+          rqRegimeTxt: d.regime === "presumido" ? "Lucro Presumido: PIS 0,65% e COFINS 3% (cumulativos). Ajuste se a proposta usou outros percentuais."
+            : d.regime === "real" ? "Lucro Real: informe o PIS e a COFINS efetivos usados na proposta (depois dos créditos), não as alíquotas nominais de 1,65% e 7,6%."
+            : d.regime === "simples" ? "Simples Nacional: a CBS e o IBS ficam dentro do DAS e a alíquota efetiva não muda na transição. Se a contratada optar pelo regime regular da CBS e do IBS (LC 214/2025, art. 41), calcule pelo Lucro Presumido ou Real." : "",
+          rqAnos: MO_ANOS_REFORMA.map((ano) => ({ id: String(ano), nome: String(ano), sel: String(d.ano) === String(ano) })), onRqAno: this.rqSet("ano"),
+          rqPronto: r.pronto, rqFalta: r.pronto ? "" : r.falta,
+          rqKpis: !r.pronto ? [] : [["Valor atual", brl(r.P0)], ["Valor de equilíbrio em " + sel.ano, brl(sel.P1)], ["Diferença mensal", sinal(sel.dif) + " (" + (sel.dif > 0 ? "+" : "") + pct(sel.pct) + ")"],
+            [r.meses ? "Até o fim da vigência (" + r.meses + " meses)" : "Em 12 meses", sinal(sel.dif * (r.meses || 12))], ["Carga no preço: proposta", pct(r.a0)], ["Carga no preço em " + sel.ano, pct(sel.carga)]].map(([k, v]) => ({ k, v })),
+          rqAnosTab: !r.pronto ? [] : r.anos.map((a) => ({ ano: String(a.ano) + (a.tr.teste ? " · teste" : ""), pis: brl(a.pis), cbs: brl(a.cbs), ibs: brl(a.ibs), iss: brl(a.iss), carga: pct(a.carga), p1: brl(a.P1), dif: sinal(a.dif),
+            atual: String(a.ano) === String(d.ano), usar: () => this.rqSet("ano")(String(a.ano)) })),
+          rqVeredito: tipo === "sobe" ? "A carga efetiva sobe em " + sel.ano + ": a contratada pode pedir o reequilíbrio, durante a vigência e antes de eventual prorrogação, com os cálculos que comprovem o desequilíbrio (LC 214/2025, art. 376)."
+            : tipo === "cai" ? "A carga efetiva cai em " + sel.ano + ": a Administração deve revisar o valor de ofício, a seu favor, com fundamento técnico e oportunidade de manifestação da contratada (LC 214/2025, art. 375)."
+            : tipo === "neutro" ? "Não há desequilíbrio relevante em " + (sel ? sel.ano : "") + "." + (sel && sel.tr.teste ? " Em 2026 a CBS e o IBS são de teste e compensáveis com PIS e COFINS." : "") : "",
+          rqVereditoCls: "rq-al " + (tipo || "ok"),
+          rqRoteiro: ["Quem pede: a contratada, se a carga subir (art. 376); a Administração, de ofício, se a carga cair (art. 375).",
+            "Quando: durante a vigência do contrato e antes da prorrogação; pode tratar de um ano específico ou de toda a transição (art. 376).",
+            "Prova: cálculos que demonstrem a mudança da carga efetiva, considerando a não cumulatividade, o repasse e os benefícios extintos (arts. 374, § 1º, e 376, IV).",
+            "Decisão: fundamentada, em até 90 dias, prorrogáveis uma vez; a Administração pode conceder recomposição provisória (art. 376, §§ 1º, 4º e 5º).",
+            "Matriz de riscos: não afasta o reequilíbrio da reforma (art. 374, § 2º). Formalização por termo aditivo, com aplicação subsidiária da Lei 14.133/2021 ou da Lei 13.303/2016 (art. 377)."].map((t) => ({ t })),
+          rqOrigem: d.origem ? "Valores importados da " + d.origem + "." : "",
+          rqDocs: [["memoria", "Memória de cálculo", "Premissas, transição ano a ano e metodologia"], ["nota", "Nota técnica", "Objeto, premissas, cálculo, conclusão e fundamentação"]]
+            .map(([id, nome, desc]) => ({ nome, desc, xlsx: () => this.rqBaixar("xlsx", id), pdf: () => this.rqBaixar("pdf", id) })),
+          rqBaixando: !!s.rq.baixando, rqErro: s.rq.erro,
+          rqLimpar: () => { const dd = { ...RQ_PADRAO }; this.rqGravar(dd); this.setState((x) => ({ rq: { ...x.rq, d: dd, erro: "" } })); },
+          moLevarRq: () => this.rqDaPlanilha() };
       })(),
       moPlan: mo.modo === "planejamento", moRep: rep, moProp: prop, moTemPlanArq: rep || prop,
       moPlanRot: prop ? "Planilha de custos da proposta" : "Planilha utilizada na contratação",
@@ -9382,7 +9628,7 @@ class Component extends DCLogic {
       })(),
       // calculadora de reajuste
       ...(() => {
-        const c = s.calc, liberada = !!s.admin || !!s.plano || !s.sb || (!!s.usuario && s.calcAba !== "mo"); // reajuste: grátis com conta; planilhas: plano ou teste
+        const c = s.calc, liberada = !!s.admin || !!s.plano || !s.sb || (!!s.usuario && s.calcAba === "indice"); // reajuste: grátis com conta; planilhas e reequilíbrio: plano ou teste
         const r = liberada ? this.calcularReajuste() : { pronto: false };
         const brlN = (v) => "R$ " + v.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         const pct = (f) => ((f - 1) * 100).toFixed(2).replace(".", ",") + "%";
@@ -9402,8 +9648,8 @@ class Component extends DCLogic {
         const ultimoCiclo = r.pronto && r.ciclos.length ? r.ciclos[r.ciclos.length - 1] : null;
         return {
           calcLiberada: liberada, calcBloqueada: !liberada,
-          calcBloqTexto: s.calcAba !== "mo" ? "Crie sua conta grátis para calcular e baixar a nota técnica. É de graça e sem cartão." : s.usuario ? "Comece o teste grátis de 7 dias ou escolha um plano para usar as planilhas de mão de obra." : "Entre na sua conta para usar. Se ainda não assina, o teste de 7 dias é grátis e sem cartão.",
-          calcBloqTag: s.calcAba !== "mo" ? "Grátis com a sua conta" : "Exclusivo para assinantes",
+          calcBloqTexto: s.calcAba === "indice" ? "Crie sua conta grátis para calcular e baixar a nota técnica. É de graça e sem cartão." : s.usuario ? "Comece o teste grátis de 7 dias ou escolha um plano para usar " + (s.calcAba === "rq" ? "o reequilíbrio tributário." : "as planilhas de mão de obra.") : "Entre na sua conta para usar. Se ainda não assina, o teste de 7 dias é grátis e sem cartão.",
+          calcBloqTag: s.calcAba === "indice" ? "Grátis com a sua conta" : "Exclusivo para assinantes",
           calcBloqCta: s.usuario ? "Começar o teste grátis" : "Criar conta grátis", calcVerPlanos: this.nav("planos"), calcBloqAcao: s.usuario ? this.nav("planos") : () => { this.setState({ volta: "calculadora" }); this.irPara("cadastro"); },
           calcRegimes: opt([["14133", "Lei 14.133/2021"], ["13303", "Lei 13.303/2016 (estatais)"], ["13019", "Lei 13.019/2014 (parcerias)"]], c.regime, "regime"),
           calcIndices: opt(idxNomes, c.indice, "indice"),
@@ -9542,6 +9788,7 @@ class Component extends DCLogic {
       goCalcPlanilha: () => { this.irPara("calculadora"); this.calcFerramenta("planejamento"); },
       goCalcRepac: () => { this.irPara("calculadora"); this.calcFerramenta("repactuacao"); },
       goCalcProposta: () => { this.irPara("calculadora"); this.calcFerramenta("proposta"); },
+      goCalcRq: () => { this.irPara("calculadora"); this.calcFerramenta("reequilibrio"); },
       ferramentas: [
         { icon: "◍", tag: "Comunidade", titulo: "Fórum por tema", desc: "Perguntas organizadas por tema, com resposta oficial do especialista. Setor público e privado no mesmo lugar.", cta: "Ver as discussões", go: this.nav("forum") },
         { icon: "◈", tag: "Especialista", titulo: "Consultoria técnica", desc: "Por escrito, em vídeo ou ao vivo, com desconto de assinante. O Pro inclui 1 consultoria por escrito por mês.", cta: "Ver consultoria", go: this.nav("consultoria") },
@@ -10055,7 +10302,7 @@ class Component extends DCLogic {
           cta: !s.usuario ? "Criar conta grátis" : s.plano ? "Você já tem acesso" : "Começar o teste de 7 dias", btnBg: "#F1F6F5", btnColor: "#0A1F2A",
           itens: ["Biblioteca Jurídica completa: jurisprudência de todo o país, com anotações, marcadores e dossiês salvos na sua conta", "Calculadora de reajuste por índice, com a nota técnica em PDF", "Leitura do fórum da comunidade", "Teste de 7 dias, sem cartão: perguntar e responder no fórum e usar as planilhas de mão de obra da IN 05/2017"] },
         { nome: "Básico", base: 119.9, publico: "Profissionais individuais iniciantes.", preco: precoPlano(119.9), unidade: unidadePlano, nota: notaPlano(119.9), detalhePreco: detalhePlano(119.9), destaque: destaque === "Básico", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Fórum da comunidade: leitura e participação", "Calculadora: reajuste por índice com nota técnica e planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta)", "O Parecerista e O Elaborador com 10% de desconto", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto"] },
+          itens: ["Fórum da comunidade: leitura e participação", "Calculadora: reajuste por índice com nota técnica, planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta) e reequilíbrio tributário da reforma", "O Parecerista e O Elaborador com 10% de desconto", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto"] },
         { nome: "Premium", base: 199.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(199.9), unidade: unidadePlano, nota: notaPlano(199.9), detalhePreco: detalhePlano(199.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
           itens: ["Tudo do Básico", "O Parecerista e O Elaborador com 15% de desconto", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Prioridade na agenda do especialista"] },
         { nome: "Pro", base: 479.9, publico: "Profissionais avançados e empresas.", preco: precoPlano(479.9), unidade: unidadePlano, nota: notaPlano(479.9), detalhePreco: detalhePlano(479.9), destaque: destaque === "Pro", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
@@ -10177,7 +10424,7 @@ class Component extends DCLogic {
         ["Órgão público pode contratar? Como funciona?", "Pode. Escolha “órgão público”, monte o plano e peça a proposta para empenho — ou baixe a proposta preliminar para instruir o processo. O enquadramento (por exemplo, dispensa por valor, art. 75, II, da Lei nº 14.133/2021) cabe ao órgão. Os acessos são liberados após a nota de empenho. Quem preferir também pode assinar como pessoa física."],
         ["Como funciona o plano para equipes?", "Você contrata a quantidade de acessos e quem contrata vira o gestor. Ele inclui as pessoas pelo e-mail e troca quando alguém sai da equipe. Cada acesso é de uma pessoa, e o desconto cresce com a quantidade: 5% de 3 a 5 acessos, 10% de 6 a 10 e 15% de 11 a 25, além dos 20% do anual."],
         ["O que faz O Parecerista e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. Com O Elaborador, você também cria a minuta do ETP, do Termo de Referência ou do Projeto Básico a partir de um questionário, já conferida. O Pro inclui 2 por semana, somando análises e documentos criados; equipes Pro têm 6 por acesso por mês, somados. Nos demais planos cada análise ou documento é pago com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
-        ["O que a Calculadora faz e quem pode usar?", "A Calculadora tem quatro ferramentas: reajuste por índice (IPCA, IGP-M, INCC e outros, com a nota técnica em PDF), planilha de custos da mão de obra exclusiva no formato da IN 05/2017, repactuação (com custos não renováveis, quadro comparativo, retroativo e nota técnica) e análise da planilha da proposta da licitante (exequibilidade, falhas e diligência). O reajuste por índice é grátis para quem tem conta; as três ferramentas de mão de obra estão em todos os planos pagos e no teste de 7 dias. O agente de IA que lê a convenção coletiva e as planilhas é do plano Pro."],
+        ["O que a Calculadora faz e quem pode usar?", "A Calculadora tem cinco ferramentas: reajuste por índice (IPCA, IGP-M, INCC e outros, com a nota técnica em PDF), planilha de custos da mão de obra exclusiva no formato da IN 05/2017, repactuação (com custos não renováveis, quadro comparativo, retroativo e nota técnica), análise da planilha da proposta da licitante (exequibilidade, falhas e diligência) e reequilíbrio tributário da reforma (CBS e IBS ano a ano, LC 214/2025). O reajuste por índice é grátis para quem tem conta; as ferramentas de mão de obra e o reequilíbrio estão em todos os planos pagos e no teste de 7 dias. O agente de IA que lê a convenção coletiva e as planilhas é do plano Pro."],
         ["Quantas análises de planilha pelo agente de IA eu tenho?", "No Pro, por semana: 1 elaboração de planilha de custos, 1 análise de repactuação e 1 análise de proposta, renovando na segunda-feira. A franquia é por assinatura: na equipe, é compartilhada entre os membros. Análise que falhar por problema técnico não consome a franquia, e a planilha pode sempre ser preenchida manualmente, sem limite."],
         ["O que o plano Gratuito inclui?", "Com a conta grátis, sem cartão e sem prazo, você usa a Biblioteca Jurídica completa (com anotações, marcadores e dossiês), a calculadora de reajuste por índice com a nota técnica em PDF e lê todas as perguntas e respostas do fórum. Para perguntar e responder no fórum e usar as planilhas de mão de obra, faça o teste de 7 dias ou assine um plano."],
         ["A primeira análise do Parecerista é grátis mesmo?", "Sim. Cada CPF tem direito a uma análise grátis, com até 3 documentos, assinante ou não: basta informar o CPF no perfil e confirmar o e-mail. Se a análise não puder ser concluída por falha técnica, a cortesia continua disponível. Quando o limite diário de análises grátis é atingido, a sua entra na fila e é processada no dia seguinte, com prioridade."],
