@@ -1447,6 +1447,7 @@
   .ct-dados small { font-size: 11.5px; font-weight: 700; color: #66757F; text-transform: uppercase; letter-spacing: .04em; } .ct-dados b { font-size: 15.5px; color: #0B1F2A; overflow-wrap: anywhere; } .ct-dados em { font-style: normal; font-size: 12.5px; color: #66757F; }
   .ct-prog { margin-top: 12px; } .ct-prog-r { display: block; height: 6px; border-radius: 99px; background: #E6EEEC; overflow: hidden; } .ct-prog-r i { display: block; height: 100%; border-radius: 99px; background: var(--st); }
   .ct-prog-t { display: flex; justify-content: space-between; gap: 8px; margin-top: 5px; font-size: 12px; color: #7A8A90; } .ct-prog-t b { font-weight: 700; color: var(--stt); }
+  #el-escolher, .ct-filtro { scroll-margin-top: 96px; }
   .ct-filtro { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 12px; }
   .ct-fb { --fc: #0B3B4A; display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 13.5px; font-weight: 700; color: #3D5058; background: #fff; border: 1px solid #DCE4E2; border-radius: 999px; padding: 7px 14px; cursor: pointer; }
   .ct-fb i { width: 8px; height: 8px; border-radius: 50%; background: var(--fc); } .ct-fb b { font-size: 12px; background: #EEF2F1; color: #3D5058; border-radius: 99px; padding: 1px 8px; }
@@ -2480,6 +2481,12 @@
           <span class="lvh-eyebrow">O Elaborador · Lei 14.133/2021</span>
           <h1 class="lva-h1" style="max-width: 22ch">ETP, TR ou Projeto Básico em minutos, não em dias.</h1>
           <p class="lva-lead">Você informa a contratação. Nós pesquisamos o mercado, comparamos as soluções e entregamos o documento pronto para revisar.</p>
+          <sc-if value="{{ elSemDoc }}" hint-placeholder-val="{{ true }}">
+            <div class="lvh-ctas" style="margin-top: 22px">
+              <button type="button" class="lvh-btn" sc-camel-on-click="{{ elIrEscolher }}">Criar um documento</button>
+              <sc-if value="{{ elTemMeus }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ elIrMeusDocs }}">{{ elMeusTxt }}</button></sc-if>
+            </div>
+          </sc-if>
         </div>
       </section>
       <section class="lvc-corpo" id="el-topo">
@@ -2493,8 +2500,7 @@
             <div class="lve-valid lve-valid-ok" role="status" style="margin-top: 22px"><b>✓ {{ elLiberadoTexto }}</b>
               <button type="button" class="lve-voltar" sc-camel-on-click="{{ elIrLiberado }}" style="margin-left: 10px">Preencher agora →</button></div>
           </sc-if>
-          <h2 class="lve-h2">Qual documento você quer criar?</h2>
-          <sc-if value="{{ elTemRecentes }}" hint-placeholder-val="{{ false }}"><p class="lve-nota-docs">Para acompanhar ou baixar os documentos que você já criou, abra <button type="button" class="lve-link" sc-camel-on-click="{{ elIrMeusDocs }}">Minha conta → Meus documentos</button>.</p></sc-if>
+          <h2 class="lve-h2" id="el-escolher">Qual documento você quer criar?</h2>
           <div class="lve-docs">
             <sc-for list="{{ elDocs }}" as="dc" hint-placeholder-count="3">
               <button type="button" class="lve-doc" sc-camel-on-click="{{ dc.escolher }}" aria-pressed="{{ dc.sel }}">
@@ -3867,6 +3873,7 @@
             <p class="lva-lead">Envie até 3 documentos da contratação. O Parecerista confere cada item com a lei e com a jurisprudência da Biblioteca e devolve um parecer em PDF e Word, no formato ABNT, com a gravidade, o fundamento, a providência e a redação sugerida.</p>
             <div class="lvh-ctas">
               <button class="lvh-btn" sc-camel-on-click="{{ anIrIniciar }}">{{ anHeroCta }}</button>
+              <sc-if value="{{ anTemMeus }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ anIrMeus }}">{{ anMeusTxt }}</button></sc-if>
             </div>
             <p class="lvh-micro">{{ anHeroMicro }}</p>
           </div>
@@ -10815,7 +10822,9 @@ class Component extends DCLogic {
                   acao: pr ? "Baixar" : er ? "Ver motivo" : x.status === "aguardando_informacoes" ? "Responder" : "Acompanhar",
                   abrir: () => { this.setState({ el: { doc: x.documento, passo: 0, respostas: {}, aceite: false, acompanhar: x.id } }); this.elAcompanhar(); } };
               }),
-              elIrMeusDocs: () => { this.setState({ contaTab: "documentos" }); this.irPara("conta"); },
+              elIrMeusDocs: () => { this.setState({ contaTab: "documentos", docsFiltro: "criados" }); this.irPara("conta"); },
+              elIrEscolher: () => { try { document.getElementById("el-escolher").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} },
+              ...((n) => ({ elTemMeus: n > 0, elMeusTxt: "Ver meus documentos (" + n + ")" }))((s.analises || []).filter((x) => x.tipo === "geracao" && x.status !== "aguardando_documentos" && x.status !== "cancelada").length),
               elTemRecentes: (s.analises || []).some((x) => x.tipo === "geracao" && x.status !== "aguardando_documentos" && x.status !== "cancelada"),
               elAcompanhando: !!el.acompanhar, elFormVisivel: !el.reapAberto && !el.acompanhar && !el.tri && !el.triando,
               ...(() => {
@@ -11319,6 +11328,7 @@ class Component extends DCLogic {
       anEtapaPedido: s.an.etapa === "pedido" && !!this.creditoAnalise(),
       anIrIniciar: () => { const el = document.getElementById("an-iniciar"); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); },
       anHeroCta: this.creditoAnalise() ? "Ir para o envio dos documentos" : (this.cortesiaAnalise() && (!s.usuario || this.precoAnalise() === 0) ? "Fazer minha análise grátis" : (this.precoAnalise() === 0 && s.usuario ? "Começar uma análise (sem custo)" : "Começar uma análise")),
+      ...((n) => ({ anTemMeus: n > 0, anMeusTxt: "Ver meus pareceres (" + n + ")", anIrMeus: () => { this.setState({ contaTab: "documentos", docsFiltro: "analisados" }); this.irPara("conta"); } }))((s.analises || []).filter((x) => x.tipo !== "geracao" && x.status !== "cancelada" && x.status !== "aguardando_documentos").length),
       anHeroMicro: this.cortesiaAnalise() ? "Primeira análise grátis, uma por CPF · parecer em PDF e Word" : (s.plano === "pro" ? "Plano Pro: 2 por semana incluídas, entre analisar e criar documentos" : "R$ 290,00 por análise · assinantes têm desconto · o Pro inclui 2 por semana"),
       anAmostra: [
         ["Constatação", "O termo de referência exige atestado de execução de 100% do quantitativo do objeto."],
