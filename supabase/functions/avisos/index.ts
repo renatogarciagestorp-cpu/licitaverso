@@ -3,7 +3,8 @@
 // Idempotente: cada assinatura recebe o aviso uma única vez (coluna aviso_fim_em).
 //  - planos pagos: aviso quando faltam 7 dias ou menos;
 //  - teste grátis: dica de uso no 3º dia e aviso na véspera do fim ("termina amanhã");
-//  - fim do preço de fundador: aviso com 30 dias de antecedência e, depois do prazo, novo valor na renovação automática.
+//  - fim do preço de fundador: aviso com 30 dias de antecedência e, depois do prazo, novo valor na renovação automática;
+//  - Meus contratos: anualidade do reajuste, data-base da convenção coletiva e fim da vigência (90 e 30 dias antes).
 
 import { clienteServico, CORS, mp, resposta, segredoConfere } from "../_shared/comum.ts";
 import { enviarEmail, moldura, SITE } from "../_shared/email.ts";
@@ -142,6 +143,71 @@ Deno.serve(async (req) => {
     } catch (e) { console.error("avisos: novo valor no Mercado Pago", r.id, e); precos.falhas++; }
   }
 
-  console.log("avisos", resultado, precos);
-  return resposta({ ok: true, ...resultado, precos });
+  // ---------------------------------------------------------------- prazos dos contratos (Calculadora → Meus contratos)
+  const prazos = { enviados: 0, pulados: 0, falhas: 0 };
+  const { data: cts } = await admin.from("contratos")
+    .select("id, usuario_id, numero, contratada, objeto, data_proposta, fim, mao_obra, data_base_cct").eq("alertas", true).limit(3000);
+  const contratosLista = (cts ?? []) as any[];
+  const eventos: Record<string, any[]> = {}, enviados = new Set<string>();
+  for (let i = 0; i < contratosLista.length; i += 200) {
+    const ids = contratosLista.slice(i, i + 200).map((c) => c.id);
+    const { data: evs } = await admin.from("contrato_eventos").select("contrato_id, tipo, data, novo_fim").in("contrato_id", ids);
+    for (const e of evs ?? []) (eventos[e.contrato_id] = eventos[e.contrato_id] || []).push(e);
+    const { data: ja } = await admin.from("contrato_alertas").select("contrato_id, tipo, ref").in("contrato_id", ids);
+    for (const a of ja ?? []) enviados.add(a.contrato_id + "|" + a.tipo + "|" + a.ref);
+  }
+  const mesN = (iso: string | null) => { const m = /^(\d{4})-(\d{2})/.exec(iso || ""); return m ? Number(m[1]) * 12 + Number(m[2]) - 1 : null; };
+  const mesTxt = (n: number) => String(n % 12 + 1).padStart(2, "0") + "/" + Math.floor(n / 12);
+  const inicioMes = (n: number) => Date.UTC(Math.floor(n / 12), n % 12, 1);
+  const perfis: Record<string, any> = {}, planos: Record<string, string | null> = {};
+  for (const c of contratosLista) {
+    const evs = eventos[c.id] || [];
+    const ultReaj = evs.filter((e) => e.tipo === "reajuste").map((e) => e.data).sort().pop() || null;
+    let fim: string | null = c.fim; for (const e of evs) if (e.novo_fim && (!fim || e.novo_fim > fim)) fim = e.novo_fim;
+    const devidos: { tipo: string; ref: string; texto: string }[] = [];
+    // 1) anualidade: 12 meses da proposta (ou do último reajuste registrado)
+    const base = mesN(ultReaj) ?? mesN(c.data_proposta);
+    if (base != null) {
+      const direito = base + 12, ini = inicioMes(direito);
+      if (agora >= ini - 30 * DIA && agora <= ini + 60 * DIA) devidos.push({ tipo: "anualidade", ref: mesTxt(direito),
+        texto: `<strong>Anualidade:</strong> o contrato completa 12 meses ${ultReaj ? "do último reajuste" : "da proposta (ou do orçamento estimado)"} em <strong>${mesTxt(direito)}</strong> e pode ser reajustado pelo índice previsto. Calcule o reajuste e baixe a nota técnica na Calculadora.` });
+    }
+    // 2) data-base da convenção coletiva (mão de obra exclusiva): repactuação
+    const db = /^(\d{2})\/(\d{2})$/.exec(c.data_base_cct || "");
+    if (c.mao_obra && db) {
+      const ano = new Date(agora).getUTCFullYear(), dt = Date.UTC(ano, Number(db[2]) - 1, Number(db[1]));
+      if (agora >= dt - 15 * DIA && agora <= dt + 30 * DIA) devidos.push({ tipo: "convencao", ref: String(ano),
+        texto: `<strong>Convenção coletiva:</strong> a data-base da categoria é <strong>${db[1]}/${db[2]}</strong>. Quando a nova convenção for registrada, verifique a repactuação; o pedido deve ser feito antes da prorrogação ou do fim do contrato.` });
+    }
+    // 3) fim da vigência: 90 e 30 dias antes
+    if (fim) {
+      const dias = Math.ceil((Date.parse(fim + "T00:00:00Z") - agora) / DIA);
+      const txt = `<strong>Fim da vigência:</strong> o contrato termina em <strong>${dataBR(fim + "T12:00:00Z")}</strong> (${dias} dia${dias === 1 ? "" : "s"}). Se houver prorrogação, peça antes o reajuste, a repactuação ou o reequilíbrio pendente: depois dela, o direito pode se perder (Lei 14.133/2021, art. 131, parágrafo único).`;
+      if (dias > 0 && dias <= 30) devidos.push({ tipo: "fim30", ref: fim, texto: txt });
+      else if (dias > 30 && dias <= 90) devidos.push({ tipo: "fim90", ref: fim, texto: txt });
+    }
+    const novos = devidos.filter((a) => !enviados.has(c.id + "|" + a.tipo + "|" + a.ref));
+    if (!novos.length) continue;
+    if (!(c.usuario_id in perfis)) {
+      const { data: p } = await admin.from("perfis").select("nome, email, notificacoes").eq("id", c.usuario_id).maybeSingle();
+      perfis[c.usuario_id] = p; const { data: pl } = await admin.rpc("plano_vigente", { uid: c.usuario_id }); planos[c.usuario_id] = pl ?? null;
+    }
+    const p = perfis[c.usuario_id];
+    const marcar = () => admin.from("contrato_alertas").upsert(novos.map((a) => ({ contrato_id: c.id, tipo: a.tipo, ref: a.ref })), { onConflict: "contrato_id,tipo,ref", ignoreDuplicates: true });
+    if (!p?.email || p?.notificacoes?.contratos?.email === false || !planos[c.usuario_id]) { await marcar(); prazos.pulados++; continue; }
+    const primeiro = (p.nome || "").trim().split(/\s+/)[0].replace(/[&<>"']/g, "") || "Olá";
+    const esc = (t: string) => String(t || "").replace(/[&<>"']/g, "");
+    const ident = `contrato <strong>${esc(c.numero)}</strong>${c.contratada ? " (" + esc(c.contratada) + ")" : ""}`;
+    const html = moldura(`Prazos do contrato ${esc(c.numero)}`,
+      [`${primeiro}, há ${novos.length === 1 ? "um prazo" : "prazos"} para acompanhar no ${ident}:`].concat(novos.map((a) => a.texto)),
+      { texto: "Abrir Meus contratos", url: `${SITE}index.html?p=calculadora&f=contratos` },
+      "Você recebe este aviso porque cadastrou o contrato na Calculadora do Licitacon. Para parar, desmarque os avisos no cadastro do contrato ou em Minha conta → Notificações.", "Prazos dos meus contratos");
+    try {
+      await enviarEmail({ email: p.email, nome: p.nome }, `Prazos do contrato ${String(c.numero).slice(0, 40)}: ${novos.map((a) => ({ anualidade: "anualidade", convencao: "convenção coletiva", fim90: "fim da vigência", fim30: "fim da vigência" } as Record<string, string>)[a.tipo]).join(", ")}`, html);
+      await marcar(); prazos.enviados++;
+    } catch (e) { console.error("avisos: prazos do contrato", c.id, e); prazos.falhas++; }
+  }
+
+  console.log("avisos", resultado, precos, prazos);
+  return resposta({ ok: true, ...resultado, precos, prazos });
 });

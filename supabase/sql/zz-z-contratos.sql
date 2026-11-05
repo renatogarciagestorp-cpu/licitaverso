@@ -109,3 +109,15 @@ revoke all on public.contratos, public.contrato_eventos from anon;
 revoke all on public.contratos, public.contrato_eventos from authenticated;
 grant select, insert, update, delete on public.contratos to authenticated;
 grant select, insert, delete on public.contrato_eventos to authenticated;
+
+-- Avisos por e-mail dos prazos dos contratos (função avisos, diária): cada aviso sai uma única vez.
+create table if not exists public.contrato_alertas (
+  id          bigint generated always as identity primary key,
+  contrato_id uuid not null references public.contratos on delete cascade,
+  tipo        text not null check (tipo in ('anualidade', 'convencao', 'fim90', 'fim30')),
+  ref         text not null,
+  enviado_em  timestamptz not null default now(),
+  unique (contrato_id, tipo, ref)
+);
+alter table public.contrato_alertas enable row level security;
+revoke all on public.contrato_alertas from anon, authenticated;

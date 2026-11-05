@@ -6130,6 +6130,7 @@ const NOTIF_PADRAO = {
   "jurisprudencia-tema": { email: true, push: true },
   "consultoria": { email: true, push: true },
   "cobranca": { email: true, push: false },
+  "contratos": { email: true, push: false },
   "novidades": { email: false, push: false }
 };
 const AUTH_VAZIO = { nome: "", celular: "", email: "", senha: "", senha2: "", aceite: false, msg: "", erro: "", enviando: false, reenviar: false };
@@ -9691,6 +9692,7 @@ class Component extends DCLogic {
       { id: "jurisprudencia-tema", titulo: "Nova jurisprudência nos meus temas", desc: "A coleta automática encontrou algo nos temas que você favorita." },
       { id: "consultoria", titulo: "Andamento de consultoria", desc: "Escopo aprovado, entrega disponível e prazo de avaliação." },
       { id: "cobranca", titulo: "Plano e cobrança", desc: "Boas-vindas, dicas do teste grátis, confirmação de pagamento e aviso de fim do período." },
+      { id: "contratos", titulo: "Prazos dos meus contratos", desc: "Anualidade do reajuste, data-base da convenção coletiva e fim da vigência dos contratos cadastrados na Calculadora." },
       { id: "novidades", titulo: "Novidades da plataforma", desc: "Novos cursos, especialistas e liberação do agente de IA." }
     ];
 
