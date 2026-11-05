@@ -1392,6 +1392,20 @@
   .ct-linha li::before { background: var(--mc, #0FA36B) !important; } .ct-li-marco::before { border-radius: 2px !important; transform: rotate(45deg); } .ct-li-marco b { color: var(--mc) !important; }
   @media (max-width: 860px) { .ct-pr { grid-template-columns: 1fr; } }
   @media (max-width: 700px) { .ct-mc-rot { display: none; } .ct-tl { height: 100px; margin-top: 0; margin-bottom: 0; } .ct-tl-trilho, .ct-tl-decorrido { top: 40px; } .ct-mc-pt { top: 46px; } .ct-mc-haste { display: none !important; } .ct-tl-ano { top: 56px; } .ct-tl-hoje { top: 30px; } }
+  .ct-ag { min-width: 0; max-width: 100%; box-sizing: border-box; margin-top: 16px; background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 14px 16px; }
+  .ct-ag-cab { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; } .ct-ag-cab h2 { margin: 0; font-size: 16px; color: #0B1F2A; } .ct-ag-cab h2 span { font-size: 12.5px; font-weight: 600; color: #8A9AA0; margin-left: 6px; }
+  .ct-ag-acoes { display: flex; gap: 8px; flex-wrap: wrap; } .ct-ag-acoes button { padding: 7px 12px; font-size: 13px; }
+  .ct-ag-meses { min-width: 0; max-width: 100%; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(44px, 1fr); gap: 6px; margin-top: 14px; overflow-x: auto; padding-bottom: 4px; }
+  .ct-ag-m { font: inherit; background: #F8FAF9; border: 1px solid #E8EEEC; border-radius: 10px; padding: 6px 4px; display: grid; justify-items: center; gap: 4px; cursor: pointer; }
+  .ct-ag-m:hover { border-color: #0FA36B; } .ct-ag-m.sel { border-color: #0FA36B; background: #EAF6F0; box-shadow: 0 0 0 2px rgba(15,163,107,0.15); } .ct-ag-m.vazio { cursor: default; opacity: .65; }
+  .ct-ag-m b { font-size: 13px; color: #0B1F2A; min-height: 16px; } .ct-ag-col { width: 18px; height: 54px; display: flex; align-items: flex-end; background: #EEF2F1; border-radius: 5px; overflow: hidden; }
+  .ct-ag-col i { display: block; width: 100%; background: linear-gradient(180deg, #3CC08D, #0F8F5E); border-radius: 5px 5px 0 0; } .ct-ag-m.atr .ct-ag-col i { background: linear-gradient(180deg, #E07A73, #B83232); } .ct-ag-m.atr b { color: #B83232; }
+  .ct-ag-rot { font-size: 11px; color: #66757F; white-space: nowrap; text-transform: capitalize; } .ct-ag-filtro { margin: 6px 0 0; font-size: 11.5px; color: #8A9AA0; min-height: 1px; }
+  .ct-ag-lista { display: grid; gap: 12px; margin-top: 10px; max-height: 420px; overflow-y: auto; } .ct-ag-g h3 { margin: 0 0 6px; font-size: 12.5px; font-weight: 800; color: #3D5058; }
+  .ct-ag-it { font: inherit; width: 100%; text-align: left; display: grid; grid-template-columns: 82px minmax(0, 1fr) auto; gap: 10px; align-items: start; background: #fff; border: 1px solid #EDF2F1; border-left: 4px solid var(--mc); border-radius: 10px; padding: 8px 10px; margin-bottom: 6px; cursor: pointer; }
+  .ct-ag-it:hover { background: #F8FAF9; } .ct-ag-d { font-size: 12.5px; font-weight: 800; color: #0B1F2A; } .ct-ag-t { display: grid; gap: 1px; font-size: 12.5px; color: #3D5058; } .ct-ag-t b { color: var(--mc); font-size: 13px; } .ct-ag-t em { font-style: normal; font-size: 12px; color: #7A8A90; }
+  .ct-ag-st { font-size: 11px; font-weight: 800; border-radius: 999px; padding: 2px 8px; white-space: nowrap; } .ct-ag-st.breve { background: #FFF4DC; color: #8A5A00; } .ct-ag-st.atr { background: #FDECEC; color: #A23A3A; }
+  @media (max-width: 600px) { .ct-ag-it { grid-template-columns: 1fr auto; } .ct-ag-d { grid-column: 1 / -1; } }
   .ct-sel { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; } .ct-sel label { display: grid; gap: 5px; font-size: 12.5px; font-weight: 700; color: #3D5058; min-width: 280px; flex: 1; max-width: 520px; }
   .ct-sel select { font: inherit; font-size: 14px; font-weight: 600; border: 1px solid #D6DEDD; border-radius: 9px; padding: 9px 10px; background: #fff; }
   .ct-lista { display: grid; gap: 12px; } .ct-card { background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 16px 18px; }
@@ -3427,6 +3441,18 @@
               <sc-if value="{{ ctCarregando }}" hint-placeholder-val="{{ false }}"><span class="lmo-nota" style="margin: 0">Carregando…</span></sc-if>
             </div>
             <sc-if value="{{ ctTemKpis }}" hint-placeholder-val="{{ false }}"><div class="ct-kpis"><sc-for list="{{ ctKpis }}" as="k" hint-placeholder-count="4"><div class="{{ k.cls }}"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div></sc-if>
+            <sc-if value="{{ ctTemKpis }}" hint-placeholder-val="{{ false }}">
+              <section class="ct-ag">
+                <div class="ct-ag-cab"><h2>Agenda da carteira <span>próximos 12 meses</span></h2>
+                  <div class="ct-ag-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctAgExcel }}">Exportar Excel</button><button type="button" class="lmo-btn" sc-camel-on-click="{{ ctRelatorio }}">Relatório completo (PDF)</button></div></div>
+                <div class="ct-ag-meses"><sc-for list="{{ ctAgMeses }}" as="m" hint-placeholder-count="12"><button type="button" class="{{ m.cls }}" sc-camel-on-click="{{ m.sel }}"><b>{{ m.n }}</b><span class="ct-ag-col"><i style="height: {{ m.h }}%"></i></span><span class="ct-ag-rot">{{ m.rot }}</span></button></sc-for></div>
+                <p class="ct-ag-filtro">{{ ctAgFiltro }}</p>
+                <sc-if value="{{ ctAgVazio }}" hint-placeholder-val="{{ false }}"><p class="ct-pb-vazio">Nenhum prazo nos próximos 12 meses. Cadastre as datas do orçamento, da vigência e os registros para montar a agenda.</p></sc-if>
+                <div class="ct-ag-lista"><sc-for list="{{ ctAgGrupos }}" as="g" hint-placeholder-count="2"><div class="ct-ag-g"><h3>{{ g.rot }}</h3>
+                  <sc-for list="{{ g.itens }}" as="it" hint-placeholder-count="2"><button type="button" class="ct-ag-it" style="--mc: {{ it.cor }}" sc-camel-on-click="{{ it.abrir }}"><span class="ct-ag-d">{{ it.data }}</span><span class="ct-ag-t"><b>{{ it.tipo }}</b><span>{{ it.contrato }}</span><em>{{ it.desc }}</em></span><span class="{{ it.stCls }}">{{ it.st }}</span></button></sc-for>
+                </div></sc-for></div>
+              </section>
+            </sc-if>
             <sc-if value="{{ ctOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ ctOk }}</p></sc-if>
             <sc-if value="{{ ctErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ ctErro }}</p></sc-if>
             <sc-if value="{{ ctFormAberto }}" hint-placeholder-val="{{ false }}">
@@ -3460,7 +3486,7 @@
                 <article class="{{ c.cls }}">
                   <div class="ct-cab">
                     <div><h3>Contrato {{ c.numero }}</h3><p>{{ c.contratada }} · {{ c.objeto }}</p></div>
-                    <div class="ct-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.abrir }}">Linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarReajuste }}">Calcular reajuste</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarRq }}">Reequilíbrio</button></div>
+                    <div class="ct-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.abrir }}">Linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarReajuste }}">Calcular reajuste</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarRq }}">Reequilíbrio</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.pdf }}">PDF</button></div>
                   </div>
                   <div class="ct-num"><span>Valor vigente: <b>{{ c.valor }}</b></span><span>Vigência até: <b>{{ c.fim }}</b></span><span>{{ c.prox }}</span><span>{{ c.reaj }}</span></div>
                   <sc-for list="{{ c.avisos }}" as="a" hint-placeholder-count="1"><p class="ct-av">{{ a.t }}</p></sc-for>
@@ -6088,6 +6114,50 @@ function ctReajApos(c, evs, ateIso) {
   const cct = c.mao_obra && c.data_base_cct ? " Na mão de obra exclusiva, a repactuação dos custos da convenção segue a data-base da categoria (" + c.data_base_cct + ")." : "";
   return { txt: txt + cct, prox: ym(direito), proxN: direito, pendente, futuro, seguinte: ym(direito + 12) };
 }
+// agenda da carteira: prazos dos próximos 12 meses (e os atrasados) de todos os contratos vigentes
+function ctAgenda(lista, eventosMap) {
+  const hj = new Date(), hoje = hj.toISOString().slice(0, 10), lim = new Date(hj); lim.setMonth(lim.getMonth() + 12); const limIso = lim.toISOString().slice(0, 10);
+  const iso1 = (n) => Math.floor(n / 12) + "-" + String(n % 12 + 1).padStart(2, "0") + "-01";
+  const itens = [];
+  (lista || []).forEach((c) => {
+    const si = ctSituacao(c, eventosMap[c.id]); if (si.vencido) return;
+    const fim = si.fim ? String(si.fim).slice(0, 10) : null, nome = "Contrato " + c.numero + (c.contratada ? " · " + c.contratada : "");
+    const add = (iso, tipo, cor, desc, forcar) => { if (!iso || (!forcar && iso > limIso)) return; itens.push({ iso, tipo, cor, desc, c, nome }); };
+    const r = ctReajApos(c, si.eventos, hoje);
+    if (r && r.proxN != null) {
+      const a = iso1(r.proxN);
+      if (!fim || a <= fim) add(a, r.pendente ? "Reajuste pendente" : "Reajuste (anualidade)", "#0FA36B", r.pendente ? "Reajuste possível desde " + r.prox + " ainda não registrado." : "Completa 12 meses " + (si.ultReaj ? "do último reajuste" : "do orçamento estimado") + ": calcule o reajuste pelo índice do contrato.", r.pendente);
+      const b = iso1(r.proxN + 12); if ((!fim || b <= fim) && b > hoje) add(b, "Reajuste (anualidade)", "#0FA36B", "Anualidade seguinte.");
+    }
+    const db = /^(\d{2})\/(\d{2})$/.exec(c.data_base_cct || "");
+    if (c.mao_obra && db) { let y = hj.getFullYear(), d = y + "-" + db[2] + "-" + db[1]; if (d < hoje) d = (y + 1) + "-" + db[2] + "-" + db[1]; if (!fim || d <= fim) add(d, "Data-base da convenção", "#0F6B7E", "Verifique a nova convenção coletiva e a repactuação."); }
+    const pr = ctProrrog(c, si);
+    if (pr && pr.st !== "encerrado") add(pr.iniIso, "Iniciar a prorrogação", "#D38B1A", "Recomendado 4 meses antes do fim: o termo aditivo precisa estar assinado antes de " + new Date(fim + "T12:00:00Z").toLocaleDateString("pt-BR", { timeZone: "UTC" }) + ".", true);
+    if (fim) add(fim, "Fim da vigência", "#C24A43", "Último dia de vigência do contrato.");
+  });
+  return itens.sort((a, b) => a.iso.localeCompare(b.iso) || a.nome.localeCompare(b.nome)).map((it) => {
+    const dias = Math.round((Date.parse(it.iso + "T12:00:00Z") - Date.parse(hoje + "T12:00:00Z")) / 864e5);
+    return { ...it, dias, st: dias < 0 ? "atrasado" : dias <= 30 ? "em até 30 dias" : "", data: new Date(it.iso + "T12:00:00Z").toLocaleDateString("pt-BR", { timeZone: "UTC" }) };
+  });
+}
+// linha do tempo completa (marcos + registros), em ordem cronológica, para os documentos em PDF
+function ctLinhaDoc(c, si) {
+  const dBR = (iso) => (iso ? new Date(String(iso).slice(0, 10) + "T12:00:00Z").toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "");
+  const brl = (v) => (v == null || v === "" ? "" : "R$ " + Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+  const pctT = (v) => (v == null ? "" : (Number(v) > 0 ? "+" : "") + Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + "%");
+  const a125 = ctArt125(c, si.eventos), pr = ctProrrog(c, si), out = [];
+  if (c.data_proposta) out.push({ iso: String(c.data_proposta).slice(0, 10), c: [String(c.data_proposta).slice(5, 7) + "/" + String(c.data_proposta).slice(0, 4), "Orçamento estimado", "", "", "", "Data-base da anualidade do reajuste"], marco: true });
+  if (c.assinatura) out.push({ iso: String(c.assinatura).slice(0, 10), c: [dBR(c.assinatura), "Assinatura do contrato", "", "", "", ""], marco: true });
+  if (c.inicio) out.push({ iso: String(c.inicio).slice(0, 10), c: [dBR(c.inicio), "Início da vigência", "", "", brl(c.valor_inicial), "Valor inicial"], marco: true });
+  si.eventos.forEach((e) => {
+    const adt = e.tipo === "aditivo_valor" && a125.porEv[e.id];
+    const obs = [e.descricao || "", e.novo_fim ? "Nova vigência até " + dBR(e.novo_fim) : ""].concat(e.tipo === "prorrogacao" ? [((r) => (r && r.prox ? (r.pendente ? "Reajuste possível desde " + r.prox + " sem registro antes desta prorrogação" : "Próximo reajuste a partir de " + r.prox) : ""))(ctReajApos(c, si.eventos, String(e.data).slice(0, 10)))] : []).filter(Boolean).join(". ");
+    out.push({ iso: String(e.data).slice(0, 10), c: [dBR(e.data), CT_TIPOS[e.tipo] || e.tipo, adt ? pctT(Math.round(adt.pct * 100) / 100) + " (s/ inicial atualizado)" : pctT(e.percentual), brl(e.valor_anterior), brl(e.valor_novo), obs] });
+  });
+  if (pr && pr.st !== "encerrado") out.push({ iso: pr.iniIso, c: [dBR(pr.iniIso), "Iniciar a prorrogação", "", "", "", "Recomendado 4 meses antes do fim"], marco: true, prazo: true });
+  if (si.fim) out.push({ iso: String(si.fim).slice(0, 10), c: [dBR(si.fim), "Fim do contrato", "", "", "", ""], marco: true });
+  return out.sort((a, b) => a.iso.localeCompare(b.iso));
+}
 function ctProrrog(c, si) {
   if (!si.fim) return null;
   const f = new Date(String(si.fim).slice(0, 10) + "T12:00:00Z"), ini = new Date(f); ini.setUTCMonth(ini.getUTCMonth() - 4);
@@ -7890,6 +7960,78 @@ class Component extends DCLogic {
     if (!this.sb) this.ctLocalGravar(this.state.ct.lista, eventos);
     this.setState((x) => ({ ct: { ...x.ct, eventos } }));
   }
+  // documentos da Gestão contratual
+  ctBlocosContrato(c, agenda) {
+    const si = ctSituacao(c, this.state.ct.eventos[c.id]), pn = ctPainel(c, si), a125 = ctArt125(c, si.eventos), pr = ctProrrog(c, si);
+    const brl = (v) => (v == null || v === "" ? "—" : "R$ " + Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    const dBR = (iso) => (iso ? new Date(String(iso).slice(0, 10) + "T12:00:00Z").toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—");
+    const f2 = (v) => Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 2 });
+    const vi = c.valor_inicial != null ? Number(c.valor_inicial) : null, varp = vi && si.valor != null ? (si.valor / vi - 1) * 100 : null;
+    const regime = { "14133": "Lei 14.133/2021", "13303": "Lei 13.303/2016 (estatais)", "13019": "Lei 13.019/2014 (parcerias)" }[c.regime] || c.regime;
+    const indice = { ipca: "IPCA", ipca_e: "IPCA-E", inpc: "INPC", igpm: "IGP-M", igpdi: "IGP-DI", incc: "INCC-DI" }[c.indice] || "—";
+    const rj = pr ? ctReajApos(c, si.eventos, String(si.fim).slice(0, 10)) : null;
+    const bl = [
+      { t: "secao", titulo: "Contrato " + c.numero, sub: [c.contratada, c.objeto].filter(Boolean).join(" · ") },
+      { t: "destaques", itens: [["Valor vigente" + (c.periodicidade === "mensal" ? " (mensal)" : ""), brl(si.valor)], ["Valor inicial", brl(vi)], ["Variação acumulada", varp == null ? "—" : (varp > 0 ? "+" : "") + f2(varp) + "%"], ["Vigência até", si.fim ? dBR(si.fim) : "—"]] },
+      { t: "pares", titulo: "Dados do contrato", pares: [["Contratante", c.contratante || "—"], ["Contratada", c.contratada || "—"], ["Objeto", c.objeto || "—"], ["Regime", regime],
+        ["Orçamento estimado (data-base)", c.data_proposta ? String(c.data_proposta).slice(5, 7) + "/" + String(c.data_proposta).slice(0, 4) : "—"], ["Assinatura", dBR(c.assinatura)], ["Início da vigência", dBR(c.inicio)], ["Fim da vigência atual", si.fim ? dBR(si.fim) : "—"],
+        ["Valor informado", c.periodicidade === "mensal" ? "Mensal" : "Global"], ["Índice de reajuste", indice], ["Mão de obra exclusiva", c.mao_obra ? "Sim" + (c.data_base_cct ? " · convenção em " + c.data_base_cct : "") : "Não"], ["Reforma (limite de 50%)", c.reforma ? "Sim" : "Não"]].concat(c.obs ? [["Observações", c.obs]] : []) }];
+    if (pn.temWf) bl.push({ t: "cascata", passos: pn.wf });
+    bl.push({ t: "tabela", titulo: "Linha do tempo do contrato", cab: ["Data", "Registro", "Percentual", "Valor anterior", "Novo valor", "Observação"], larg: [11, 17, 13, 13, 13, 33], alin: "llrrrl",
+      linhas: ctLinhaDoc(c, si).map((l) => ({ c: l.c, fraco: l.marco && !l.prazo, forte: !!l.prazo })) });
+    bl.push({ t: "pares", titulo: "Prazos e limites", pares: [["Próxima anualidade", si.proxAnual || "—"], ["Reajuste x prorrogação", rj ? rj.txt : "—"],
+      ["Iniciar a prorrogação até", pr && pr.st !== "encerrado" ? dBR(pr.iniIso) + " (4 meses antes do fim)" : pr ? "Vigência encerrada" : "—"], ["Vigência acumulada (art. 107)", pr && pr.anos != null ? pr.anos.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " de 10 anos" : "—"],
+      ["Valor inicial atualizado (art. 125)", a125.base != null ? brl(a125.base) : "—"], ["Acréscimos", f2(a125.acr) + "% de " + a125.limAcr + "%" + (a125.acr > a125.limAcr + 1e-6 ? " (acima do limite)" : "")],
+      ["Supressões", f2(a125.sup) + "% de 25%" + (a125.sup > 25 + 1e-6 ? " (acima do limite)" : "")], ["Acréscimo ainda possível", a125.base != null ? brl(Math.max(0, (a125.limAcr - a125.acr) / 100 * a125.base)) : "—"]] });
+    const ag = (agenda || ctAgenda([c], this.state.ct.eventos)).filter((it) => it.c.id === c.id);
+    if (ag.length) bl.push({ t: "tabela", titulo: "Próximos prazos", sub: "próximos 12 meses e atrasados", cab: ["Data", "Prazo", "Situação", "Providência"], larg: [12, 22, 14, 52], alin: "llll",
+      linhas: ag.map((it) => ({ c: [it.data, it.tipo, it.st || "programado", it.desc], forte: it.dias < 0 })) });
+    return bl;
+  }
+  ctNotasDoc() {
+    return ["Reajuste: data-base vinculada à data do orçamento estimado e periodicidade anual (Lei 14.133/2021, art. 25, § 7º, e art. 92, § 3º). A prorrogação não reinicia a contagem dos 12 meses; após o primeiro reajuste, conta-se da data-base do último reajuste.",
+      "Prorrogação de serviços e fornecimentos contínuos: até 10 anos, com previsão no edital e atestado de que condições e preços permanecem vantajosos (art. 107). O termo aditivo deve ser assinado antes do fim da vigência; a antecedência de 4 meses é orientação de boa prática, não prazo legal.",
+      "Reajuste, repactuação e reequilíbrio pendentes devem ser pedidos antes da prorrogação ou do encerramento do contrato (art. 131, parágrafo único).",
+      "Acréscimos e supressões: até 25% do valor inicial atualizado (50% para acréscimos em reforma de edifício ou de equipamento), computados separadamente, sem compensação (art. 125). O valor inicial atualizado é o valor inicial corrigido pelos reajustes, sem somar aditivos anteriores.",
+      "Documento gerado a partir dos dados cadastrados pelo usuário na Gestão contratual. Confira cada data e valor com o processo antes de juntá-lo aos autos."];
+  }
+  async ctPdf(id) {
+    const c = this.state.ct.lista.find((x) => x.id === id); if (!c) return;
+    const hoje = new Date().toLocaleDateString("pt-BR");
+    try {
+      await this.moDocPdf({ titulo: "Relatório do contrato " + c.numero, sub: [c.contratante, c.contratada].filter(Boolean).join(" · ") || "Gestão contratual", selo: "Gestão contratual · Lei 14.133/2021",
+        arquivo: "contrato-" + String(c.numero).replace(/[^\w-]+/g, "-"), blocos: this.ctBlocosContrato(c), notas: this.ctNotasDoc() }, "", hoje);
+    } catch (e) { this.ctMsg("", "Não foi possível gerar o PDF. Tente de novo."); }
+  }
+  async ctRelatorio() {
+    const ct = this.state.ct; if (!ct.lista.length) return;
+    const hoje = new Date().toLocaleDateString("pt-BR"), agenda = ctAgenda(ct.lista, ct.eventos);
+    const brl = (v) => (v == null ? "—" : "R$ " + Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    const dBR = (iso) => (iso ? new Date(String(iso).slice(0, 10) + "T12:00:00Z").toLocaleDateString("pt-BR", { timeZone: "UTC" }) : "—");
+    const sits = ct.lista.map((c) => ({ c, si: ctSituacao(c, ct.eventos[c.id]) }));
+    const mensal = sits.filter((x) => x.c.periodicidade === "mensal" && x.si.valor != null).reduce((a, x) => a + x.si.valor, 0);
+    const vence = sits.filter((x) => !x.si.vencido && x.si.restante != null && x.si.restante <= 4).length, pend = sits.filter((x) => !x.si.vencido && x.si.reajPendente && x.c.data_proposta).length;
+    const blocos = [{ t: "destaques", itens: [["Contratos", String(ct.lista.length)], ["Valor mensal vigente", brl(mensal)], ["Vigência acabando (até 4 meses)", String(vence)], ["Reajustes não registrados", String(pend)]] },
+      { t: "tabela", titulo: "Contratos da carteira", cab: ["Contrato", "Contratada", "Valor vigente", "Fim da vigência", "Próx. anualidade", "Situação"], larg: [13, 27, 17, 13, 12, 18], alin: "llrlll",
+        linhas: sits.map(({ c, si }) => ({ c: [c.numero, c.contratada || "—", brl(si.valor) + (c.periodicidade === "mensal" ? "/mês" : ""), si.fim ? dBR(si.fim) : "—", si.proxAnual || "—",
+          si.vencido ? "Encerrado" : si.restante != null && si.restante <= 4 ? "Prorrogação próxima" : si.reajPendente && c.data_proposta ? "Reajuste pendente" : "Em dia"], forte: !si.vencido && ((si.restante != null && si.restante <= 4) || (si.reajPendente && c.data_proposta)) })) }];
+    if (agenda.length) blocos.push({ t: "tabela", titulo: "Agenda da carteira", sub: "próximos 12 meses e atrasados", cab: ["Data", "Prazo", "Contrato", "Situação", "Providência"], larg: [11, 18, 22, 12, 37], alin: "lllll",
+      linhas: agenda.map((it) => ({ c: [it.data, it.tipo, it.nome, it.st || "programado", it.desc], forte: it.dias < 0 })) });
+    ct.lista.forEach((c) => { blocos.push({ t: "quebra" }); this.ctBlocosContrato(c, agenda).forEach((b) => blocos.push(b)); });
+    try {
+      await this.moDocPdf({ titulo: "Relatório da carteira de contratos", sub: ct.lista.length + " contrato(s) · situação em " + hoje, selo: "Gestão contratual · Lei 14.133/2021",
+        arquivo: "relatorio-contratos-" + new Date().toISOString().slice(0, 10), blocos, notas: this.ctNotasDoc() }, "", hoje);
+    } catch (e) { this.ctMsg("", "Não foi possível gerar o relatório. Tente de novo."); }
+  }
+  async ctAgendaExcel() {
+    const ct = this.state.ct, agenda = ctAgenda(ct.lista, ct.eventos), hoje = new Date().toLocaleDateString("pt-BR");
+    try {
+      await this.moDocExcel({ id: "agenda", titulo: "Agenda da carteira de contratos", sub: "Próximos 12 meses e prazos atrasados · situação em " + hoje, selo: "Gestão contratual · Lei 14.133/2021",
+        arquivo: "agenda-contratos-" + new Date().toISOString().slice(0, 10),
+        blocos: [{ t: "tabela", titulo: "Prazos", cab: ["Data", "Prazo", "Contrato", "Contratada", "Situação", "Providência"], larg: [12, 24, 14, 26, 14, 60], alin: "llllll",
+          linhas: agenda.map((it) => ({ c: [it.data, it.tipo, it.c.numero, it.c.contratada || "", it.st || "programado", it.desc], forte: it.dias < 0 })) }], notas: this.ctNotasDoc() }, "", hoje);
+    } catch (e) { this.ctMsg("", "Não foi possível gerar a planilha. Tente de novo."); }
+  }
   // preenche o reajuste ou o reequilíbrio com os dados do contrato
   ctUsar(id, destino) {
     const c = this.state.ct.lista.find((x) => x.id === id); if (!c) return;
@@ -8599,7 +8741,25 @@ class Component extends DCLogic {
       didParseCell: (dt) => { dt.cell.text = (dt.cell.text || []).map(limpo); } };
     cab(); let y = 30;
     const fimY = () => (doc.lastAutoTable ? doc.lastAutoTable.finalY : y);
+    const hexRgb = (h) => { const m = /^#?([0-9a-f]{6})$/i.exec(h || ""); const n = m ? parseInt(m[1], 16) : 0x0fa36b; return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
     doc0.blocos.forEach((b) => {
+      if (b.t === "quebra") { doc.addPage(); cab(); y = 30; return; }
+      if (b.t === "secao") { if (y > H - 60) { doc.addPage(); cab(); y = 30; }
+        doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.setTextColor(...C.navy); doc.text(moPdfTxt(b.titulo), ML, y + 4);
+        if (b.sub) { doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...C.fraco); doc.text(moPdfTxt(b.sub), ML, y + 10, { maxWidth: LARG }); }
+        doc.setDrawColor(...C.verde); doc.setLineWidth(0.6); doc.line(ML, y + (b.sub ? 13 : 7), ML + 30, y + (b.sub ? 13 : 7)); doc.setLineWidth(0.2); doc.setTextColor(...C.texto); doc.setFont("helvetica", "normal");
+        y += b.sub ? 19 : 13; return; }
+      if (b.t === "cascata") { const AH = 46, top = y + 9; if (top + AH + 14 > H - 15) { doc.addPage(); cab(); y = 30; }
+        const t0 = y + 9; doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(...C.fraco); doc.text("EVOLUÇÃO DO VALOR (CASCATA DOS AJUSTES)", ML, y + 3);
+        const n = b.passos.length, cw = LARG / n, base0 = t0 + AH; doc.setDrawColor(...C.linha); doc.line(ML, base0, ML + LARG, base0);
+        b.passos.forEach((w, i) => { const x = ML + i * cw, bw = cw * 0.56, bx = x + (cw - bw) / 2, yb = base0 - (Number(w.b) / 100) * AH, h = Math.max(0.6, (Number(w.h) / 100) * AH);
+          doc.setFillColor(...hexRgb(w.cor)); doc.rect(bx, yb - h, bw, h, "F");
+          if (w.temCon) { doc.setDrawColor(150, 165, 170); doc.setLineDashPattern([0.8, 0.8], 0); const yc = base0 - (Number(w.con) / 100) * AH; doc.line(bx + bw, yc, bx + bw + cw - bw, yc); doc.setLineDashPattern([], 0); }
+          doc.setFont("helvetica", "bold"); doc.setFontSize(7.6); doc.setTextColor(...C.texto); doc.text(moPdfTxt(w.val), x + cw / 2, yb - h - (w.pct ? 4.6 : 1.4), { align: "center" });
+          if (w.pct) { doc.setFontSize(6.6); doc.setTextColor(10, 122, 81); doc.text(moPdfTxt(w.pct), x + cw / 2, yb - h - 1.4, { align: "center" }); }
+          doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...C.texto); doc.text(moPdfTxt(w.rot), x + cw / 2, base0 + 4, { align: "center", maxWidth: cw - 1 });
+          doc.setFont("helvetica", "normal"); doc.setFontSize(6.6); doc.setTextColor(...C.fraco); doc.text(moPdfTxt(w.sub), x + cw / 2, base0 + 7.6, { align: "center" }); });
+        doc.setTextColor(...C.texto); y = base0 + 13; return; }
       if (b.t === "destaques") { const n = b.itens.length, cw = (LARG - (n - 1) * 4) / n;
         b.itens.forEach(([k, v], i) => { const x = ML + i * (cw + 4); doc.setFillColor(...(i ? C.cinza2 : C.tot)); doc.roundedRect(x, y, cw, 20, 2.5, 2.5, "F"); if (!i) { doc.setFillColor(...C.verde); doc.rect(x, y + 3, 1.2, 14, "F"); }
           doc.setFontSize(7); doc.setTextColor(...C.fraco); doc.setFont("helvetica", "bold"); doc.text(moPdfTxt(String(k).toUpperCase()), x + 4, y + 6.5, { maxWidth: cw - 6 });
@@ -9130,7 +9290,7 @@ class Component extends DCLogic {
             fim: si.fim ? dataBR(si.fim) : "não informado", prox: si.proxAnual ? "Próxima anualidade: " + si.proxAnual : "Informe a data da proposta para calcular a anualidade",
             reaj: si.reajPct > 0.0001 ? "Reajustes concedidos: " + pctT(si.reajPct) : "", avisos: avisos.map((t) => ({ t })), temAvisos: avisos.length > 0, compart: !meu,
             aberto, cls: "ct-card" + (aberto ? " aberto" : ""), abrir: () => this.ctAbrir(c.id), editar: () => this.ctEditar(c), excluir: () => this.ctExcluir(c.id),
-            excluirTxt: ct.excluir === c.id ? "Confirmar exclusão" : "Excluir", meu, usarReajuste: () => this.ctUsar(c.id, "reajuste"), usarRq: () => this.ctUsar(c.id, "reequilibrio"),
+            excluirTxt: ct.excluir === c.id ? "Confirmar exclusão" : "Excluir", meu, usarReajuste: () => this.ctUsar(c.id, "reajuste"), pdf: () => this.ctPdf(c.id), usarRq: () => this.ctUsar(c.id, "reequilibrio"),
             novoEv: () => this.ctNovoEv(), temEventos: true,
             eventos: (() => {
               const pr = ctProrrog(c, si), fx = [];
@@ -9175,7 +9335,21 @@ class Component extends DCLogic {
                 .map(([k, v, sub, cor]) => ({ k, v, sub, cor }));
             })() });
         });
-        return { ...campos, ctLista: lista, ctKpis, ctTemKpis: lista.length > 0, ctTemLista: lista.length > 0, ctVazio: ct.carregado && !lista.length && !ct.form, ctCarregando: !!ct.carregando,
+        // agenda da carteira (12 meses)
+        const agenda = ctAgenda(ct.lista, ct.eventos), hj = new Date(), meses = [];
+        const atras = agenda.filter((it) => it.dias < 0);
+        if (atras.length) meses.push({ k: "atr", rot: "Atrasados", n: atras.length, itens: atras });
+        for (let i = 0; i < 12; i++) { const d = new Date(hj.getFullYear(), hj.getMonth() + i, 1), k = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+          meses.push({ k, rot: d.toLocaleDateString("pt-BR", { month: "short" }).replace(".", "") + "/" + String(d.getFullYear()).slice(2), n: 0, itens: agenda.filter((it) => it.dias >= 0 && it.iso.slice(0, 7) === k) }); }
+        meses.forEach((m) => { m.n = m.itens.length; });
+        const maxN = Math.max(1, ...meses.map((m) => m.n)), agSel = ct.agMes || "";
+        const ctAgMeses = meses.map((m) => ({ rot: m.rot, n: m.n ? String(m.n) : "", h: m.n ? Math.max(8, (m.n / maxN) * 100).toFixed(0) : "0",
+          cls: "ct-ag-m" + (m.k === "atr" ? " atr" : "") + (agSel === m.k ? " sel" : "") + (!m.n ? " vazio" : ""), sel: () => this.setState((x) => ({ ct: { ...x.ct, agMes: x.ct.agMes === m.k ? "" : m.k } })) }));
+        const ctAgGrupos = meses.filter((m) => m.n && (!agSel || agSel === m.k)).map((m) => ({ rot: m.k === "atr" ? "Atrasados" : ((t) => t.charAt(0).toUpperCase() + t.slice(1))(new Date(m.k + "-15T12:00:00Z").toLocaleDateString("pt-BR", { month: "long", year: "numeric", timeZone: "UTC" })),
+          itens: m.itens.map((it) => ({ data: it.data, tipo: it.tipo, contrato: it.nome, desc: it.desc, cor: it.cor, st: it.st, stCls: "ct-ag-st" + (it.dias < 0 ? " atr" : it.dias <= 30 ? " breve" : ""),
+            abrir: () => { this.setState((x) => ({ ct: { ...x.ct, atual: it.c.id, form: null, ev: null } })); setTimeout(() => { try { document.querySelector(".ct-card.aberto").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }, 200); } })) }));
+        return { ...campos, ctLista: lista, ctKpis, ctAgMeses, ctAgGrupos, ctAgVazio: !agenda.length, ctAgFiltro: agSel ? "Mostrando só o mês escolhido · clique de novo para ver todos" : "",
+          ctAgExcel: () => this.ctAgendaExcel(), ctRelatorio: () => this.ctRelatorio(), ctTemKpis: lista.length > 0, ctTemLista: lista.length > 0, ctVazio: ct.carregado && !lista.length && !ct.form, ctCarregando: !!ct.carregando,
           ctFormAberto: !!ct.form, ctFormTitulo: f.id ? "Editar contrato" : "Novo contrato", ctNovo: () => this.ctNovo(), ctSalvar: () => this.ctSalvar(),
           ctCancelar: () => this.setState((x) => ({ ct: { ...x.ct, form: null, erro: "" } })),
           ctRegimes: [["14133", "Lei 14.133/2021"], ["13303", "Lei 13.303/2016 (estatais)"], ["13019", "Lei 13.019/2014 (parcerias)"]].map(([id, nome]) => ({ id, nome, sel: f.regime === id })),
