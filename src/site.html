@@ -1792,6 +1792,23 @@
   .pca-m.feito b, .pca-m.feito em { color: var(--t-fra); } .pca-m.agora { background: rgba(56, 198, 232, .06); border-radius: 10px; padding: 6px; margin: -6px; }
   @media (max-width: 1000px) { .pca-cal { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pca-campos { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 760px) { .pca-l { grid-template-columns: minmax(0, 1fr) 90px; } .pca-l > span:nth-child(2), .pca-l > span:nth-child(3) { display: none; } .pca-l > span:nth-child(5), .pca-l > span:nth-child(6) { grid-column: span 1; } .pca-cab { display: none; } .pca-campos { grid-template-columns: 1fr; } .pca-l2 { grid-column: auto; } .pca-cal { grid-template-columns: 1fr; } }
+  /* versão limpa: menos ruído visual (sem grade, sem brilho, notas recolhidas) */
+  .lvc-corpo.ct-escuro { background: var(--t-bg); } .lvc-corpo.ct-escuro::before { display: none; }
+  .ct-escuro .lmo-btn, .ct-escuro .gp-tec .lmo-btn { box-shadow: none; }
+  .ct-escuro .gp-tec .gp-acoes { background: var(--t-card); box-shadow: none; border-left-width: 3px; }
+  .ct-escuro .gp-tec .gp-bar-t i, .ct-escuro .gp-tec .gp-mes-aj, .ct-escuro .pca-s-c, .ct-escuro .pca-s-o, .ct-escuro .gp-sec-n, .ct-escuro .pca-m.agora > i { box-shadow: none; }
+  .ct-escuro .gp-tec .gp-kpi { background: var(--t-card); } .ct-escuro .gp-tec .gp-kpi::before { opacity: .55; }
+  .ct-escuro .gp-tec .gp-card { border-color: rgba(126, 210, 230, .09); }
+  .ct-escuro .gp-tec { gap: 22px; } .ct-escuro .gp-grade { gap: 14px; }
+  .ct-escuro .gp-sec { border-top: 0; padding-top: 14px; } .ct-escuro .gp-sec p { display: none; }
+  .ct-escuro .gp-card > .gp-nota { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; cursor: help; }
+  .ct-escuro .gp-card:hover > .gp-nota, .ct-escuro .gp-card:focus-within > .gp-nota { -webkit-line-clamp: unset; }
+  .ct-escuro .gp-tec > .gp-nota { opacity: .7; }
+  .ct-escuro .gp-filtros { background: transparent; border: 0; padding: 0; }
+  .ct-escuro .gp-topo { align-items: center; }
+  .pca-det > summary { list-style: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; } .pca-det > summary::-webkit-details-marker { display: none; }
+  .pca-det > summary > span { font-size: 12.5px; font-weight: 700; color: var(--t-ci); } .pca-det[open] > summary > span::after { content: " ▴"; } .pca-det:not([open]) > summary > span::after { content: " ▾"; }
+  .pca-det[open] > summary { margin-bottom: 8px; }
   /* situação de relance: cartões que filtram */
   .gcs-cards, .gcs-cards.ct-filtro { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 6px 0 14px; }
   .gcs-c4 { --fc: #0B3B4A; font: inherit; text-align: left; display: grid; grid-template-columns: 6px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 12px 14px 12px 0; cursor: pointer; overflow: hidden; color: #0B1F2A; }
@@ -4795,7 +4812,7 @@
           <sc-if value="{{ gpAcoesMais }}" hint-placeholder-val="{{ false }}"><button type="button" class="gp-limpar" sc-camel-on-click="{{ gpAcoesAlternar }}">{{ gpAcoesMaisTxt }}</button></sc-if>
         </div>
         <div class="gp-topo">
-          <div><h2 class="lva-h2" style="margin: 0">{{ gpTitulo }}</h2><p class="gp-sub">{{ gpSub }}</p></div>
+          <div class="gp-tit-c"><h2 class="lva-h2" style="margin: 0">{{ gpTitulo }}</h2></div>
           <div class="gp-topo-d"><button type="button" class="lve-voltar gp-pdf" sc-camel-on-click="{{ gpPdf }}">Baixar painel em PDF</button><sc-if value="{{ gpPodeTrocar }}" hint-placeholder-val="{{ false }}"><div class="gp-visoes" role="group" aria-label="Visão do painel (demonstração)"><sc-for list="{{ gpVisoes }}" as="v" hint-placeholder-count="2"><button type="button" class="{{ v.cls }}" sc-camel-on-click="{{ v.ir }}">{{ v.nome }}</button></sc-for></div></sc-if></div>
         </div>
         <div class="gp-filtros" role="group" aria-label="Filtros">
@@ -4950,9 +4967,9 @@
                     <sc-if value="{{ pcaTemFora }}" hint-placeholder-val="{{ true }}"><ul class="gp-lista"><sc-for list="{{ pcaFora }}" as="x" hint-placeholder-count="3"><li class="gp-n-at"><button type="button" class="gp-li-b" sc-camel-on-click="{{ x.ir }}"><b>{{ x.t }}</b><span>{{ x.d }}</span></button></li></sc-for></ul></sc-if>
                     <sc-if value="{{ pcaSemFora }}" hint-placeholder-val="{{ false }}"><p class="gp-sub">Todos os contratos do exercício estão vinculados a um item do PCA.</p></sc-if>
                   </div>
-                  <div class="gp-card gp-largo"><h3>Calendário do PCA {{ pcaAno }}</h3><p class="gp-nota">Prazos do Decreto federal 10.947/2022, referência para estados e municípios sem regulamento próprio (a Lei 14.133/2021 deixa o PCA ao regulamento de cada ente, art. 12, VII). Confira o regulamento do seu órgão.</p>
+                  <details class="gp-card gp-largo pca-det"><summary><h3>Calendário do PCA {{ pcaAno }}</h3><span>ver prazos</span></summary><p class="gp-nota">Prazos do Decreto federal 10.947/2022, referência para estados e municípios sem regulamento próprio (a Lei 14.133/2021 deixa o PCA ao regulamento de cada ente, art. 12, VII). Confira o regulamento do seu órgão.</p>
                     <ol class="pca-cal"><sc-for list="{{ pcaCal }}" as="m" hint-placeholder-count="7"><li class="{{ m.cls }}"><i></i><span><b>{{ m.t }}</b><em>{{ m.quando }}</em><small>{{ m.d }}</small></span></li></sc-for></ol>
-                  </div>
+                  </details>
                 </div>
               </sc-if>
             </section>
@@ -4960,7 +4977,7 @@
             <sc-if value="{{ ctModoPainel }}" hint-placeholder-val="{{ true }}">
             <section class="gcs" id="gcs">
               <h2 class="lva-h2">Situação de cada contrato, de relance</h2>
-              <p class="lva-sub">Escolha a situação para ver os contratos e abra o que quiser.</p>
+              
               <sc-if value="{{ ctTemLista }}" hint-placeholder-val="{{ true }}">
                 <div class="gcs-cards ct-filtro" role="group" aria-label="Filtrar contratos por situação">
                   <sc-for list="{{ ctFiltros }}" as="fl" hint-placeholder-count="4"><button type="button" class="{{ fl.cls2 }}" aria-pressed="{{ fl.ativo }}" sc-camel-on-click="{{ fl.sel }}"><i></i><span><b>{{ fl.nome }}</b><small>{{ fl.d }}</small></span><strong>{{ fl.n }}</strong></button></sc-for>
@@ -12894,7 +12911,7 @@ class Component extends DCLogic {
             const E = ctPainelExtra(G, s.ct.eventos, s.indices), ymE = E.ym;
             const verC = (id) => () => this.ctVer([id]);
             const nv = (n) => ({ limite: "gp-n-lim", atencao: "gp-n-at", observar: "gp-n-ob" }[n] || "");
-            const acoesTodas = !!pf.acoesTodas, acL = acoesTodas ? E.acoes : E.acoes.slice(0, 6);
+            const acoesTodas = !!pf.acoesTodas, acL = acoesTodas ? E.acoes : E.acoes.slice(0, 4);
             const mxMes = Math.max(1, ...E.meses.map((m) => m.t));
             const C = E.cmp, varP = (a, b, inv) => { if (a == null || b == null || !a) return ["—", ""]; const d = b / a - 1; return [(d >= 0 ? "+" : "") + pc(d), Math.abs(d) < 0.005 ? "" : (d > 0) !== !!inv ? "gp-up" : "gp-down"]; };
             const varPP = (a, b) => (a == null || b == null ? ["—", ""] : [((b - a) * 100 >= 0 ? "+" : "") + ((b - a) * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " p.p.", ""]);
@@ -12910,7 +12927,7 @@ class Component extends DCLogic {
             const somaRisco = E.risco.reduce((a, x) => a + x.v, 0);
             const EX = {
               gpAcoesTit: emp ? "O que fazer agora" : "O que fazer esta semana", gpAcoesSub: E.acoes.length ? E.acoes.length + (E.acoes.length === 1 ? " providência" : " providências") + " em toda a carteira, da mais urgente para a menos urgente" : "toda a carteira",
-              gpAcoesVazio: !E.acoes.length, gpAcoesMais: E.acoes.length > 6, gpAcoesMaisTxt: acoesTodas ? "Mostrar só as 6 mais urgentes" : "Mostrar todas (" + E.acoes.length + ")", gpAcoesAlternar: () => set("acoesTodas")(!acoesTodas),
+              gpAcoesVazio: !E.acoes.length, gpAcoesMais: E.acoes.length > 4, gpAcoesMaisTxt: acoesTodas ? "Mostrar só as 4 mais urgentes" : "Mostrar todas (" + E.acoes.length + ")", gpAcoesAlternar: () => set("acoesTodas")(!acoesTodas),
               gpAcoes: acL.map((a) => ({ quando: a.quando, t: a.t, d: a.d, contrato: "Contrato " + a.c.numero, acao: a.acao, cls: "gp-ac p" + a.prio,
                 ir: a.tipo === "reajuste" ? () => this.ctUsar(a.c.id, "reajuste") : verC(a.c.id) })),
               gpMesTit: emp ? "Receita mês a mês" : "Custo mês a mês", gpMesSub: "Últimos 12 meses, o mês atual e a projeção dos próximos 11 com os valores em vigor hoje. Contratos de valor global entram rateados pelos meses da vigência.",
