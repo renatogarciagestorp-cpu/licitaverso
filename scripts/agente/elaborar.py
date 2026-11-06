@@ -341,7 +341,8 @@ NOMES_SECAO = {"informacoes": "Previsão no PCA e alinhamento", "necessidade": "
                "riscos_texto": "Análise de riscos", "sustentabilidade": "Critérios de sustentabilidade", "situacao_atual": "Situação atual", "competitividade": "Competitividade", "diretrizes_tr": "Diretrizes para o TR",
                "natureza": "Natureza do objeto", "parcelamento_analise": "Análise do parcelamento", "plano_acao": "Plano de providências", "riscos": "Matriz de riscos", "contratacao": "Forma de contratação",
                "solucoes": "Alternativas do mercado", "itens": "Estimativa de custo", "tco": "Custos das soluções", "resumo": "Síntese do estudo"}
-VALOR = re.compile(r"valor|pre[cç]o|custo|r\$|mediana|or[cç]amento estimado|cota[cç]", re.I)
+# só lacunas de dinheiro (não "valor numérico" de desempenho, pontuação, índice etc.)
+VALOR = re.compile(r"\bvalor(es)?\s+(unit|total|global|estimad|mensal|anual|m[eé]di|de refer|do item|do contrato|da contrata)|pre[cç]o|custo|r\$|mediana|or[cç]amento estimado|cota[cç]", re.I)
 TEXTO_VALOR = "conforme a pesquisa de preços a ser juntada aos autos (art. 23 da Lei nº 14.133/2021)"
 
 

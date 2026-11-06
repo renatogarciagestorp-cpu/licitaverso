@@ -449,7 +449,11 @@ def gerar(docj, respostas, saida, logo=None):
     else:
         apagar.add(343)
     if not tem_tec:
-        textos[333] = "Não será exigida qualificação técnica, " + (hab.get("sem_tecnica") or "por se tratar de aquisição de bem comum de pronta entrega, sem complexidade que a justifique (art. 67 da Lei nº 14.133, de 2021)").rstrip(".") + "."
+        mot = (hab.get("sem_tecnica") or "por se tratar de aquisição de bem comum de pronta entrega, sem complexidade que a justifique (art. 67 da Lei nº 14.133, de 2021)").strip().rstrip(".")
+        if len(mot) > 1 and mot[0].isupper() and mot[1].islower():
+            mot = mot[0].lower() + mot[1:]
+        mot = re.sub(r"^trata-se de ", "por se tratar de ", mot)
+        textos[333] = "Não será exigida qualificação técnica, " + mot + "."
         apagar.discard(333)
 
     # 10. estimativa
@@ -469,6 +473,7 @@ def gerar(docj, respostas, saida, logo=None):
         faixa_ap(357, 361)
 
     # 11. adequação orçamentária
+    fora_da_estrutura = []
     apagar.add(371)
     if dot.get("informar"):
         apagar.add(372)
@@ -476,8 +481,11 @@ def gerar(docj, respostas, saida, logo=None):
             textos[363] = f"As despesas decorrentes da presente contratação correrão à conta de recursos específicos consignados no orçamento do(a) {R.get('orgao') or 'Contratante'}."
         for i, (rot, k) in zip(range(365, 370), [("Gestão/unidade", "gestao"), ("Fonte de recursos", "fonte"), ("Programa de trabalho", "programa"),
                                                  ("Elemento de despesa", "elemento"), ("Plano interno", "plano_interno")]):
-            if dot.get(k):
+            # gestão/unidade e plano interno são da estrutura federal: fora dela, só entram se o órgão informou
+            if dot.get(k) and not (not fed and k in ("gestao", "plano_interno") and "PREENCHER" in str(dot[k])):
                 textos[i] = f"{rot}: {dot[k]};"
+            elif dot.get(k):
+                fora_da_estrutura.append(rot.split("/")[0].lower())
             else:
                 apagar.add(i)
     else:
@@ -623,7 +631,8 @@ def gerar(docj, respostas, saida, logo=None):
         except Exception as e:
             print(f"logo não incluída ({type(e).__name__})")
     # pendências: anexo final, para retirar antes de juntar ao processo
-    pend = [x for x in docj.get("pendencias") or [] if str(x).strip()]
+    pend = [x for x in docj.get("pendencias") or [] if str(x).strip()
+            and not any(f in str(x).lower() for f in fora_da_estrutura)]
     if pend:
         from docx.enum.text import WD_BREAK
         p = d.add_paragraph(); p.add_run().add_break(WD_BREAK.PAGE)
