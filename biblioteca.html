@@ -166,6 +166,7 @@ button,input,select,textarea{font-family:inherit}
 @media (max-width:1200px){.lvbar nav.prin{display:none}.lvbar .menu{display:grid}}
 @media (max-width:960px){.lvbar{position:relative}}
 @media (max-width:860px){.lvbar .in{gap:12px;padding:0 16px;height:60px}.lvbar .cta{padding:9px 12px;font-size:13.5px}.lvbar .marca{font-size:17px}}
+.alrow{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 8px;border:1px solid #E3E9E8;border-radius:9px;margin-bottom:6px;font-size:13px}.alrow span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
 <div class="lvbar"><div class="in">
 <a class="marca" href="index.html" aria-label="Licitacon — página inicial"><span>L</span>Licitacon</a>
@@ -404,6 +405,12 @@ dialog.notes::backdrop{background:rgba(10,16,22,.35)}
         <h2>Dossiês</h2>
         <div class="list" id="dossies"></div>
         <button class="ghost" id="novoDos" type="button" style="margin-top:6px;width:100%">+ Novo dossiê</button>
+      </div>
+      <div id="alertBox">
+        <h2>Alertas por e-mail</h2>
+        <div class="list" id="alertas"></div>
+        <button class="ghost" id="novoAlerta" type="button" style="margin-top:6px;width:100%">🔔 Avisar quando entrar documento novo com estes filtros</button>
+        <p class="note" id="alertMsg" style="margin:6px 0 0">Escolha órgão, estado, tema ou digite um termo e crie o alerta. Você recebe um e-mail quando a coleta trouxer documento novo com esses filtros.</p>
       </div>
       <div id="minhasBox" hidden>
         <h2>Minhas anotações</h2>
@@ -777,6 +784,31 @@ function render(){
   L.querySelectorAll(".del[data-id]").forEach(b=>b.onclick=async()=>{if(b.dataset.armed){await S.col.doc(b.dataset.id).delete().catch(()=>{});}else{b.dataset.armed=1;b.textContent="confirmar remoção"}});
 }
 $("q").oninput=e=>{S.q=e.target.value;render()};
+/* ===== Alertas por e-mail (tabela alertas_biblioteca; envio diário pela função avisos) ===== */
+const AL={sb:null,uid:null,lista:[]};
+function filtrosAlerta(){return {tema:S.tema||null,orgao:S.orgao||null,grupo:S.orgao?null:(S.grupo||null),uf:S.uf||null,termo:(S.q||"").trim()||null,natureza:S.nat||null}}
+function nomeAlerta(f){const g=f.grupo?(LV_ORG.GRUPOS.find(x=>x[0]===f.grupo)||[,f.grupo])[1]:"";const nat=f.natureza?(NATS.find(x=>x[0]===f.natureza)||[,""])[1]:"";
+  return [f.tema,f.orgao?lbl(f.orgao):g,f.uf&&!f.orgao?LV_ORG.NOME_UF&&LV_ORG.NOME_UF[f.uf]||f.uf:"",f.termo?"“"+f.termo+"”":"",nat].filter(Boolean).join(" · ")}
+function renderAlertas(){const el=$("alertas");if(!el)return;
+  el.innerHTML=AL.lista.length?AL.lista.map(a=>`<div class="alrow"><span title="${esc(a.nome)}">${esc(a.nome)}</span><button type="button" class="del" data-al="${esc(a.id)}" aria-label="Apagar o alerta ${esc(a.nome)}">apagar</button></div>`).join(""):(AL.uid?`<span class="note">Nenhum alerta criado.</span>`:"");
+  el.querySelectorAll("[data-al]").forEach(b=>b.onclick=async()=>{if(!b.dataset.armed){b.dataset.armed=1;b.textContent="confirmar";return}
+    const {error}=await AL.sb.from("alertas_biblioteca").delete().eq("id",b.dataset.al);if(!error){AL.lista=AL.lista.filter(x=>x.id!==b.dataset.al);renderAlertas();toast("Alerta apagado.")}})}
+async function alertasCarregar(){if(!AL.sb||!AL.uid){renderAlertas();return}
+  const {data}=await AL.sb.from("alertas_biblioteca").select("id,nome,criado_em").order("criado_em");AL.lista=(data||[]).slice();renderAlertas()}
+$("novoAlerta").onclick=async()=>{const msg=$("alertMsg");
+  if(!AL.sb){msg.textContent="Os alertas funcionam com as contas ativas do site.";return}
+  if(!AL.uid){location.href="index.html?p=cadastro&volta=biblioteca";return}
+  const f=filtrosAlerta();if(!f.tema&&!f.orgao&&!f.grupo&&!f.uf&&!f.termo){msg.textContent="Escolha ao menos um órgão, estado, tema ou termo de busca antes de criar o alerta.";return}
+  const nome=nomeAlerta(f).slice(0,200);if(AL.lista.some(a=>a.nome===nome)){msg.textContent="Você já tem um alerta com estes filtros.";return}
+  if(AL.lista.length>=10){msg.textContent="Limite de 10 alertas por conta. Apague um para criar outro.";return}
+  const {data,error}=await AL.sb.from("alertas_biblioteca").insert({nome,...f}).select("id,nome,criado_em").single();
+  if(error){msg.textContent=/Limite/.test(error.message||"")?"Limite de 10 alertas por conta. Apague um para criar outro.":"Não foi possível criar o alerta agora. Tente de novo.";return}
+  AL.lista.push(data);renderAlertas();msg.textContent="✓ Alerta criado: "+nome+". O e-mail chega no dia seguinte à coleta que trouxer documento novo.";};
+(async()=>{try{AL.sb=window.LV?await LV.pronto:null}catch(e){AL.sb=null}
+  if(!AL.sb){$("alertBox").hidden=true;return}
+  try{const {data}=await AL.sb.auth.getSession();AL.uid=data&&data.session?data.session.user.id:null}catch(e){}
+  if(!AL.uid)$("novoAlerta").textContent="🔔 Criar conta grátis para receber alertas";
+  alertasCarregar()})();
 $("tipo").onchange=e=>{S.tipo=e.target.value;render()};
 $("de").onchange=e=>{S.de=e.target.value;render()};
 $("ate").onchange=e=>{S.ate=e.target.value;render()};
@@ -1201,6 +1233,7 @@ function exportarMd(){
     const last=S.docs.map(d=>d.capturado_em||"").sort().pop();
     $("stamp").innerHTML=`${S.docs.length} registros<br>Última captação: ${last?new Date(last).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"}):"—"}`;
     render();
+    if(!S._hash&&/^#it-/.test(location.hash)){S._hash=1;const id=decodeURIComponent(location.hash.slice(4));if(S.byId.has(id))setTimeout(()=>irPara(id),60)}
   },e=>{$("stamp").textContent="Não foi possível carregar o acervo agora. Recarregue a página."});
 
   S.downloads=await claude.use("downloads");

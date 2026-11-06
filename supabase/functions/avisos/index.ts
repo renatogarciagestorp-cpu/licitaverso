@@ -5,12 +5,14 @@
 //  - teste grátis: dica de uso no 3º dia e aviso na véspera do fim ("termina amanhã");
 //  - fim do preço de fundador: aviso com 30 dias de antecedência e, depois do prazo, novo valor na renovação automática;
 //  - Meus contratos: anualidade do reajuste, data-base da convenção coletiva e fim da vigência (90 e 30 dias antes);
-//  - resumo mensal da carteira (dias 1 a 3 de cada mês, uma vez por mês: coluna perfis.resumo_mensal_ref).
+//  - resumo mensal da carteira (dias 1 a 3 de cada mês, uma vez por mês: coluna perfis.resumo_mensal_ref);
+//  - alertas da Biblioteca Jurídica: documentos novos do acervo que atendem aos filtros de cada alerta (tabela alertas_biblioteca).
 
 import { clienteServico, CORS, mp, resposta, segredoConfere } from "../_shared/comum.ts";
 import { enviarEmail, moldura, SITE } from "../_shared/email.ts";
 import { PLANOS, precoPlano } from "../_shared/precos.ts";
 import { diaBrasilia, mesReferencia, montarResumo } from "../_shared/resumo.ts";
+import { type Alerta, type Doc, novosDoAlerta } from "../_shared/alertas.ts";
 
 const DIA = 86400000;
 const nomePlano = (p: string) => (p === "teste" ? "Teste grátis" : PLANOS[p as keyof typeof PLANOS]?.nome ?? p);
@@ -252,6 +254,37 @@ Deno.serve(async (req) => {
     }
   }
 
-  console.log("avisos", resultado, precos, prazos, resumo);
-  return resposta({ ok: true, ...resultado, precos, prazos, resumo });
+  // ---------------------------------------------------------------- alertas da Biblioteca Jurídica
+  const alertas = { enviados: 0, pulados: 0, falhas: 0 };
+  try {
+    const { data: als } = await admin.from("alertas_biblioteca").select("*").limit(5000);
+    if (als && als.length) {
+      const resp = await fetch(SITE + "acervo-completo.json", { headers: { "cache-control": "no-cache" } });
+      const j = resp.ok ? await resp.json() : null;
+      const docs: Doc[] = (j && Array.isArray(j.decisoes) ? j.decisoes : []).map(([id, d]: [string, Doc]) => ({ ...d, id }));
+      const porUsuario: Record<string, Alerta[]> = {};
+      for (const a of als as Alerta[]) (porUsuario[a.usuario_id] = porUsuario[a.usuario_id] || []).push(a);
+      const esc = (t: unknown) => String(t ?? "").replace(/[&<>"']/g, "");
+      const dataTxt = (iso?: string) => (iso && /^\d{4}-\d{2}-\d{2}/.test(iso) ? iso.slice(8, 10) + "/" + iso.slice(5, 7) + "/" + iso.slice(0, 4) : "");
+      for (const uid of Object.keys(porUsuario)) {
+        const comNovos = porUsuario[uid].map((a) => ({ a, novos: novosDoAlerta(a, docs) })).filter((x) => x.novos.length);
+        if (!comNovos.length || !docs.length) continue;
+        const marcarA = () => admin.from("alertas_biblioteca").update({ ultimo_envio: new Date().toISOString() }).in("id", comNovos.map((x) => x.a.id));
+        const { data: p } = await admin.from("perfis").select("nome, email, notificacoes").eq("id", uid).maybeSingle();
+        if (!p?.email || p.notificacoes?.["jurisprudencia-tema"]?.email === false) { await marcarA(); alertas.pulados++; continue; }
+        const total = comNovos.reduce((n, x) => n + x.novos.length, 0), primeiro = (p.nome || "").trim().split(/\s+/)[0].replace(/[&<>"']/g, "") || "Olá";
+        const blocos = comNovos.map(({ a, novos }) => `<div style="font-size:14px;color:#0B1F2A"><strong>${esc(a.nome)}</strong> · ${novos.length} ${novos.length === 1 ? "documento novo" : "documentos novos"}`
+          + `<ul style="margin:6px 0 14px;padding-left:18px">${novos.slice(0, 8).map((d) => `<li style="margin:0 0 8px;font-size:14px;line-height:1.5;color:#3D5058"><a href="${SITE}biblioteca.html#it-${encodeURIComponent(d.id)}" style="color:#0F6B7E;font-weight:bold;text-decoration:none">${esc(d.orgao)} · ${esc(d.numero || d.tipo)}</a>${dataTxt(d.data) ? " · " + dataTxt(d.data) : ""}<br>${esc(d.titulo)}</li>`).join("")}</ul>`
+          + (novos.length > 8 ? `<span style="font-size:13px;color:#6A7B82">E mais ${novos.length - 8} na Biblioteca.</span>` : "") + "</div>");
+        const html = moldura("Novidades nos seus alertas", [`${primeiro}, entraram na Biblioteca Jurídica ${total} ${total === 1 ? "documento" : "documentos"} que atendem aos seus alertas:`].concat(blocos),
+          { texto: "Abrir a Biblioteca Jurídica", url: `${SITE}biblioteca.html` },
+          "Você recebe este e-mail porque criou alertas na Biblioteca Jurídica. Para parar, apague o alerta na Biblioteca ou desligue os avisos de jurisprudência em Minha conta › Notificações.", "Alertas da Biblioteca");
+        try { await enviarEmail({ email: p.email, nome: p.nome }, `${total} ${total === 1 ? "documento novo" : "documentos novos"} nos seus alertas da Biblioteca`, html); await marcarA(); alertas.enviados++; }
+        catch (e) { console.error("avisos: alertas", uid, e); alertas.falhas++; }
+      }
+    }
+  } catch (e) { console.error("avisos: alertas da biblioteca", e); }
+
+  console.log("avisos", resultado, precos, prazos, resumo, alertas);
+  return resposta({ ok: true, ...resultado, precos, prazos, resumo, alertas });
 });
