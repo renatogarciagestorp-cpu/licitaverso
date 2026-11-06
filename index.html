@@ -1701,6 +1701,15 @@
   .gcl-l.v i { background: #0FA36B; } .gcl-l.a i { background: #E0A21B; } .gcl-l.x i { background: #C24A43; }
   .gcl-fim { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; background: #0B3B4A; color: #fff; border-radius: 18px; padding: 22px 24px; }
   .gcl-fim-bt { display: flex !important; gap: 10px; flex-wrap: wrap; } .gcl-fim-sec { background: transparent !important; border: 1px solid #6FA3B0 !important; color: #fff !important; }
+  .ptp { display: grid; gap: 8px; } .ptp-r { font-size: 12.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: #0F6B7E; }
+  .ptp-ops { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; } .ptp-ops-s { grid-template-columns: repeat(2, auto); justify-content: start; }
+  .ptp-op { font: inherit; text-align: left; display: grid; gap: 2px; border: 1px solid #DDE4E3; background: #FBFCFC; border-radius: 11px; padding: 10px 12px; cursor: pointer; color: #22343B; }
+  .ptp-op > b { font-size: 14px; } .ptp-op > small { font-size: 12px; color: #66757F; line-height: 1.35; }
+  .ptp-op.ativo { border-color: #0A1F2A; background: #0A1F2A; color: #fff; } .ptp-op.ativo > small { color: #B9CDD3; }
+  .ptp-c { display: grid; gap: 5px; font-size: 13px; font-weight: 600; color: #3D5058; } .ptp-c > input { font: inherit; font-size: 15px; border: 1px solid #DDE4E3; border-radius: 11px; padding: 12px 14px; background: #FBFCFC; color: #0B1F2A; }
+  .ptp-card { background: #fff; border: 1px solid #DCE4E2; border-left: 6px solid #0FA36B; border-radius: 16px; padding: 18px 20px; display: grid; gap: 12px; margin: 16px 0; max-width: 760px; }
+  .ptp-card > h2 { margin: 0; font-size: 19px; color: #0B1F2A; } .ptp-card > p { margin: 0; font-size: 14px; color: #55666D; } .ptp-card > .lmo-btn { justify-self: start; }
+  @media (max-width: 520px) { .ptp-ops { grid-template-columns: 1fr; } }
   .gcb-caixa { margin-top: 18px; background: #fff; border: 1px solid #DCE4E2; border-radius: 16px; padding: 16px 18px; max-width: 640px; box-shadow: 0 8px 24px rgba(11,59,74,.06); }
   .gcb-caixa.gcb-in { margin: 14px 0 6px; }
   .gcb-tit { margin: 0 0 10px; font-size: 14px; color: #55666D; }
@@ -2131,6 +2140,15 @@
                   <span style="font-size: 12.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: #0F6B7E">Celular</span>
                   <input type="tel" sc-camel-auto-complete="tel" value="{{ authCelular }}" sc-camel-on-input="{{ onAuthCelular }}" sc-camel-on-key-down="{{ teclaAuth }}" placeholder="(21) 99999-9999" style="border: 1px solid #DDE4E3; border-radius: 11px; padding: 12px 14px; font-size: 15px; color: #0B1F2A; background: #FBFCFC" style-focus="border-color: #0FA36B; background: #fff">
                 </label>
+                <div class="ptp">
+                  <span class="ptp-r">Onde você trabalha?</span>
+                  <div class="ptp-ops" role="group" aria-label="Onde você trabalha"><sc-for list="{{ authPTipos }}" as="o" hint-placeholder-count="2"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.ir }}"><b>{{ o.t }}</b><small>{{ o.d }}</small></button></sc-for></div>
+                  <sc-if value="{{ authPPub }}" hint-placeholder-val="{{ false }}"><label class="ptp-c"><span>Qual órgão ou entidade?</span><input type="text" value="{{ authPOrgao }}" sc-camel-on-input="{{ onAuthPOrgao }}" placeholder="Ex.: Prefeitura Municipal de Maricá"></label></sc-if>
+                  <sc-if value="{{ authPPriv }}" hint-placeholder-val="{{ false }}">
+                    <div class="ptp-ops ptp-ops-s" role="group" aria-label="Seu papel na empresa"><sc-for list="{{ authPVinculos }}" as="o" hint-placeholder-count="2"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.ir }}"><b>{{ o.t }}</b></button></sc-for></div>
+                    <label class="ptp-c"><span>Nome da empresa (opcional)</span><input type="text" value="{{ authPOrgao }}" sc-camel-on-input="{{ onAuthPOrgao }}" placeholder="Ex.: Limpa Bem Serviços Ltda."></label>
+                  </sc-if>
+                </div>
               </sc-if>
               <sc-if value="{{ authPedeEmail }}" hint-placeholder-val="{{ true }}">
                 <label style="display: grid; gap: 6px">
@@ -4636,6 +4654,21 @@
             <div class="gcb"><label class="gcb-l"><span>Número do contrato</span><input type="text" list="gcb-nums" value="{{ gcBusca }}" sc-camel-on-input="{{ onGcBusca }}" sc-camel-on-key-down="{{ onGcBuscaTecla }}" placeholder="Ex.: 025/2025"></label><button type="button" class="lvh-btn" sc-camel-on-click="{{ gcBuscar }}">Abrir contrato</button><datalist id="gcb-nums"><sc-for list="{{ gcBuscaNums }}" as="o" hint-placeholder-count="2"><option value="{{ o.v }}"></option></sc-for></datalist></div>
             <sc-if value="{{ gcBuscaErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro gcb-erro" role="alert">{{ gcBuscaErro }}</p></sc-if>
             </div></sc-if>
+            <sc-if value="{{ gpPerguntar }}" hint-placeholder-val="{{ false }}">
+            <div class="ptp-card"><h2>Configure o seu painel</h2><p>O Painel da Organização é montado conforme o seu perfil: para quem trabalha em órgão público, os indicadores de quem contrata; para quem trabalha em empresa privada, os de quem fornece ao governo.</p>
+                <div class="ptp">
+                  <span class="ptp-r">Onde você trabalha?</span>
+                  <div class="ptp-ops" role="group" aria-label="Onde você trabalha"><sc-for list="{{ ptpQTipos }}" as="o" hint-placeholder-count="2"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.ir }}"><b>{{ o.t }}</b><small>{{ o.d }}</small></button></sc-for></div>
+                  <sc-if value="{{ ptpQPub }}" hint-placeholder-val="{{ false }}"><label class="ptp-c"><span>Qual órgão ou entidade?</span><input type="text" value="{{ ptpQOrgao }}" sc-camel-on-input="{{ onPtpQOrgao }}" placeholder="Ex.: Prefeitura Municipal de Maricá"></label></sc-if>
+                  <sc-if value="{{ ptpQPriv }}" hint-placeholder-val="{{ false }}">
+                    <div class="ptp-ops ptp-ops-s" role="group" aria-label="Seu papel na empresa"><sc-for list="{{ ptpQVinculos }}" as="o" hint-placeholder-count="2"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.ir }}"><b>{{ o.t }}</b></button></sc-for></div>
+                    <label class="ptp-c"><span>Nome da empresa (opcional)</span><input type="text" value="{{ ptpQOrgao }}" sc-camel-on-input="{{ onPtpQOrgao }}" placeholder="Ex.: Limpa Bem Serviços Ltda."></label>
+                  </sc-if>
+                </div>
+              <sc-if value="{{ gpPergErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ gpPergErro }}</p></sc-if>
+              <button type="button" class="lmo-btn" sc-camel-on-click="{{ gpPergSalvar }}">Salvar e montar o painel</button>
+            </div>
+            </sc-if>
             <sc-if value="{{ ctPainelGp }}" hint-placeholder-val="{{ false }}">
       <section class="gp gp-in">
         <div class="gp-acoes">
@@ -4646,7 +4679,7 @@
         </div>
         <div class="gp-topo">
           <div><h2 class="lva-h2" style="margin: 0">{{ gpTitulo }}</h2><p class="gp-sub">{{ gpSub }}</p></div>
-          <div class="gp-topo-d"><button type="button" class="lve-voltar gp-pdf" sc-camel-on-click="{{ gpPdf }}">Baixar painel em PDF</button><div class="gp-visoes" role="group" aria-label="Visão do painel"><sc-for list="{{ gpVisoes }}" as="v" hint-placeholder-count="2"><button type="button" class="{{ v.cls }}" sc-camel-on-click="{{ v.ir }}">{{ v.nome }}</button></sc-for></div></div>
+          <div class="gp-topo-d"><button type="button" class="lve-voltar gp-pdf" sc-camel-on-click="{{ gpPdf }}">Baixar painel em PDF</button><sc-if value="{{ gpPodeTrocar }}" hint-placeholder-val="{{ false }}"><div class="gp-visoes" role="group" aria-label="Visão do painel (demonstração)"><sc-for list="{{ gpVisoes }}" as="v" hint-placeholder-count="2"><button type="button" class="{{ v.cls }}" sc-camel-on-click="{{ v.ir }}">{{ v.nome }}</button></sc-for></div></sc-if></div>
         </div>
         <div class="gp-filtros" role="group" aria-label="Filtros">
           <select aria-label="Ano" sc-camel-on-change="{{ onGpAno }}"><sc-for list="{{ gpAnos }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select>
@@ -4727,7 +4760,7 @@
             <section class="gcs" id="gcs">
               <h2 class="lva-h2">Situação de cada contrato, de relance</h2>
               <p class="lva-sub">Cada contrato recebe uma faixa colorida. Escolha a situação para ver os contratos e abra o que quiser.</p>
-              <div class="gcl-leg"><span class="gcl-l v"><i></i><b>Vigente</b>mais de 4 meses de vigência</span><span class="gcl-l a"><i></i><b>Vencendo</b>4 meses ou menos: hora de tramitar a prorrogação</span><span class="gcl-l x"><i></i><b>Vencido</b>vigência encerrada</span></div>
+              <div class="gcl-leg"><span class="gcl-l v"><i></i><b>Vigente</b>mais de 4 meses de vigência</span><span class="gcl-l a"><i></i><b>Vencendo</b>{{ ctLegVen }}</span><span class="gcl-l x"><i></i><b>Vencido</b>vigência encerrada</span></div>
               <sc-if value="{{ ctTemLista }}" hint-placeholder-val="{{ true }}">
                 <div class="ct-filtro" role="group" aria-label="Filtrar contratos por situação">
                   <sc-for list="{{ ctFiltros }}" as="fl" hint-placeholder-count="4"><button type="button" class="{{ fl.cls }}" aria-pressed="{{ fl.ativo }}" sc-camel-on-click="{{ fl.sel }}"><i></i>{{ fl.nome }}<b>{{ fl.n }}</b></button></sc-for>
@@ -4763,7 +4796,7 @@
                 <label class="lmo-campo" style="grid-column: 1 / -1"><span>Objeto</span><input type="text" value="{{ ctFObjeto }}" sc-camel-on-input="{{ onCtFObjeto }}" placeholder="Ex.: serviços de limpeza e conservação"></label>
                 <label class="lmo-campo"><span>Regime</span><select sc-camel-on-change="{{ onCtFRegime }}"><sc-for list="{{ ctRegimes }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
                 <label class="lmo-campo"><span>Modalidade ou forma de contratação</span><select sc-camel-on-change="{{ onCtFModalidade }}"><sc-for list="{{ ctModalidades }}" as="o" hint-placeholder-count="4"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
-                <label class="lmo-campo"><span>Natureza do objeto (controle de fracionamento)</span><input type="text" list="ct-naturezas" value="{{ ctFNatureza }}" sc-camel-on-input="{{ onCtFNatureza }}" placeholder="Ex.: material de expediente"><datalist id="ct-naturezas"><sc-for list="{{ ctNaturezas }}" as="n" hint-placeholder-count="2"><option value="{{ n.v }}"></option></sc-for></datalist></label>
+                <label class="lmo-campo"><span>{{ ctNatRot }}</span><input type="text" list="ct-naturezas" value="{{ ctFNatureza }}" sc-camel-on-input="{{ onCtFNatureza }}" placeholder="Ex.: material de expediente"><datalist id="ct-naturezas"><sc-for list="{{ ctNaturezas }}" as="n" hint-placeholder-count="2"><option value="{{ n.v }}"></option></sc-for></datalist></label>
                 <label class="lmo-campo"><span>Mês do orçamento estimado (data-base do reajuste)</span><input type="month" value="{{ ctFDataProposta }}" sc-camel-on-input="{{ onCtFDataProposta }}"></label>
                 <label class="lmo-campo"><span>Data da assinatura</span><input type="date" value="{{ ctFAssinatura }}" sc-camel-on-input="{{ onCtFAssinatura }}"></label>
                 <label class="lmo-campo"><span>Início da vigência</span><input type="date" value="{{ ctFInicio }}" sc-camel-on-input="{{ onCtFInicio }}"></label>
@@ -4795,7 +4828,7 @@
                 <article class="{{ c.cls }}">
                   <div class="ct-cab">
                     <div class="ct-tit"><span class="{{ c.stCls }}">{{ c.st }}</span><h3>Contrato {{ c.numero }}</h3><p>{{ c.contratada }}<sc-if value="{{ c.temObjeto }}" hint-placeholder-val="{{ true }}"> · {{ c.objeto }}</sc-if></p><sc-if value="{{ c.temModal }}" hint-placeholder-val="{{ false }}"><span class="ct-modal">{{ c.modal }}</span></sc-if></div>
-                    <div class="ct-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.abrir }}">Linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarReajuste }}">Calcular reajuste</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarRq }}">Reequilíbrio</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.vantajosidade }}">Vantajosidade</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.pdf }}">PDF</button></div>
+                    <div class="ct-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.abrir }}">Linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarReajuste }}">Calcular reajuste</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarRq }}">Reequilíbrio</button><sc-if value="{{ ctOrg }}" hint-placeholder-val="{{ true }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.vantajosidade }}">Vantajosidade</button></sc-if><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.pdf }}">PDF</button></div>
                   </div>
                   <div class="ct-dados">
                     <div><small>Valor vigente</small><b>{{ c.valorV }}</b><em>{{ c.valorSub }}</em></div>
@@ -4848,9 +4881,9 @@
                           </div>
                           <sc-if value="{{ c.pn.temPr }}" hint-placeholder-val="{{ false }}">
                             <div class="ct-graf ct-pb-pr" style="--pc: {{ c.pn.prCor }}">
-                              <p class="ct-graf-t">Prorrogação contratual <span class="ct-pr-st">{{ c.pn.prSt }}</span></p>
+                              <p class="ct-graf-t">{{ ctPrTit }} <span class="ct-pr-st">{{ c.pn.prSt }}</span></p>
                               <div class="ct-pr">
-                                <div class="ct-pr-data"><small>Comece a tramitação até</small><b>{{ c.pn.prIni }}</b><em>4 meses antes do fim ({{ c.pn.prFim }})</em><p>{{ c.pn.prFalta }}</p>
+                                <div class="ct-pr-data"><small>{{ ctPrIniRot }}</small><b>{{ c.pn.prIni }}</b><em>4 meses antes do fim ({{ c.pn.prFim }})</em><p>{{ c.pn.prFalta }}</p>
                                   <small style="margin-top: 10px">{{ c.pn.prReajRot }}</small><b class="ct-pr-reaj">{{ c.pn.prReaj }}</b><p>{{ c.pn.prReajTxt }}</p>
                                   <small style="margin-top: 10px">Vigência acumulada (limite do art. 107)</small><div class="ct-comp-t"><i style="width: {{ c.pn.prAnosW }}%; background: #0F6B7E"></i></div><em>{{ c.pn.prAnos }}</em></div>
                                 <div class="ct-pr-info">
@@ -5646,6 +5679,8 @@
                     <button sc-camel-on-click="{{ s.escolher }}" aria-pressed="{{ s.ativo }}" style="border-radius: 11px; padding: 12px 18px; font-size: 14.5px; font-weight: 700; cursor: pointer; border: 1px solid {{ s.borda }}; background: {{ s.fundo }}; color: {{ s.cor }}" style-hover="border-color: #0FA36B">{{ s.label }}</button>
                   </sc-for>
                 </div>
+                <sc-if value="{{ contaPriv }}" hint-placeholder-val="{{ false }}"><div class="ptp-ops ptp-ops-s" role="group" aria-label="Seu papel na empresa" style="margin-top: 10px"><sc-for list="{{ contaVinculos }}" as="o" hint-placeholder-count="2"><button type="button" class="{{ o.cls }}" aria-pressed="{{ o.ativo }}" sc-camel-on-click="{{ o.ir }}"><b>{{ o.t }}</b></button></sc-for></div></sc-if>
+                <p style="margin: 10px 0 0; font-size: 12.5px; color: #7A8B91">{{ contaTipoNota }}</p>
               </div>
               <div style="display: flex; gap: 10px; margin-top: 24px; align-items: center; flex-wrap: wrap">
                 <button sc-camel-on-click="{{ salvarPerfil }}" style="background: #0FA36B; color: #06251A; border: 0; border-radius: 11px; padding: 13px 20px; font-size: 14.5px; font-weight: 700; cursor: pointer" style-hover="background: #14B978">Salvar alterações</button>
@@ -8330,7 +8365,7 @@ function ctPainelExtra(G, eventos, indices) {
     if (x.sit === "ven") acoes.push({ c, tipo: "prorrogacao", prio: x.fimN - agoraN <= 1 ? 0 : 1, ord: x.fimN, quando: "vence em " + ym(x.fimN),
       t: emp ? "Negociar a renovação" : "Iniciar a prorrogação", d: emp ? "Peça a prorrogação ao órgão ou prepare-se para a nova licitação." : "O termo aditivo precisa estar assinado antes do fim da vigência.", acao: "Abrir contrato" });
     if (x.sit === "exp" && x.fimN != null && agoraN - x.fimN <= 3) acoes.push({ c, tipo: "encerrado", prio: 1, ord: x.fimN, quando: "encerrou em " + ym(x.fimN),
-      t: "Contrato encerrado", d: "Registre a prorrogação, se houve, ou confirme a nova contratação.", acao: "Abrir contrato" });
+      t: "Contrato encerrado", d: emp ? "Registre a renovação, se houve, ou acompanhe a nova licitação do órgão." : "Registre a prorrogação, se houve, ou confirme a nova contratação.", acao: "Abrir contrato" });
     const cct = /^(\d{1,2})\/(\d{1,2})$/.exec(String(c.data_base_cct || "").trim());
     if (c.mao_obra && cct && x.sit !== "exp") { let d = Date.UTC(hoje.getFullYear(), Number(cct[2]) - 1, Number(cct[1])); if (d < hojeD) d = Date.UTC(hoje.getFullYear() + 1, Number(cct[2]) - 1, Number(cct[1]));
       const dias = Math.round((d - hojeD) / 864e5); if (dias <= 60) acoes.push({ c, tipo: "cct", prio: dias <= 15 ? 1 : 2, ord: agoraN + dias / 30, quando: "em " + dias + " dias",
@@ -8339,7 +8374,7 @@ function ctPainelExtra(G, eventos, indices) {
   a125.filter((a) => a.uso >= 0.8).forEach((a) => acoes.push({ c: a.p.c, tipo: "art125", prio: a.uso >= 1 ? 0 : 2, ord: agoraN, quando: Math.round(a.uso * 100) + "% do limite",
     t: "Acréscimos perto do limite do art. 125", d: "Acréscimos de " + a.acr.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "% para o limite de " + a.lim + "%.", acao: "Abrir contrato" }));
   vig.filter((v) => v.nivel !== "observar").forEach((v) => acoes.push({ c: v.p.c, tipo: "vigencia", prio: 2, ord: v.limN, quando: "limite em " + ym(v.limN),
-    t: "Limite de vigência perto do fim", d: "Prorrogação possível até " + ym(v.limN) + " (" + v.lim + " anos). Depois disso, nova licitação.", acao: "Abrir contrato" }));
+    t: "Limite de vigência perto do fim", d: (emp ? "Renovação possível até " : "Prorrogação possível até ") + ym(v.limN) + " (" + v.lim + " anos). Depois disso, " + (emp ? "o órgão precisa licitar de novo." : "nova licitação."), acao: "Abrir contrato" }));
   acoes.sort((a, b) => a.prio - b.prio || a.ord - b.ord);
 
   return { a125, vig, atrasos, pend, risco, meses, prev: { A, v: prev, sem: prevSem, prorr: prevProrr, usados: Object.values(usados) }, cmp, qual: { ok, tot, pct: tot ? ok / tot : 1, falt }, acoes, nomeC, ym };
@@ -8727,7 +8762,7 @@ const NOTIF_PADRAO = {
   "contratos": { email: true, push: false },
   "novidades": { email: false, push: false }
 };
-const AUTH_VAZIO = { nome: "", celular: "", email: "", senha: "", senha2: "", aceite: false, msg: "", erro: "", enviando: false, reenviar: false };
+const AUTH_VAZIO = { nome: "", celular: "", email: "", tipo: "", orgao: "", vinculo: "", senha: "", senha2: "", aceite: false, msg: "", erro: "", enviando: false, reenviar: false };
 
 function carregarScript(src) {
   return new Promise((ok, falha) => {
@@ -8832,7 +8867,7 @@ class Component extends DCLogic {
     slide: 0,
     pausado: false,
     contato: { nome: "", email: "", msg: "", assunto: "Suporte à conta", enviado: false, erro: "", enviando: false },
-    perfil: { nome: "", celular: "", email: "", doc: "", orgao: "", cargo: "" },
+    perfil: { nome: "", celular: "", email: "", doc: "", orgao: "", cargo: "", vinculo: "" },
     setor: "Setor Público",
     perfilSalvo: false,
     perfilMsg: "",
@@ -10124,7 +10159,7 @@ class Component extends DCLogic {
       dadosProntos: true,
       planoVisao: visao,
       cupomCurso: (cupom && !cupom.error && cupom.data) || "",
-      perfil: { nome: p.nome || "", celular: p.celular || "", email: p.email || u.email || "", doc: p.documento || "", orgao: p.orgao || "", cargo: p.cargo || "" },
+      perfil: { nome: p.nome || "", celular: p.celular || "", email: p.email || u.email || "", doc: p.documento || "", orgao: p.orgao || "", cargo: p.cargo || "", vinculo: p.vinculo || "" },
       setor: p.setor || "Setor Público",
       notif: { ...NOTIF_PADRAO, ...(p.notificacoes || {}) },
       assinaturas: assin.data || [],
@@ -10266,13 +10301,16 @@ class Component extends DCLogic {
     const cel = soDigitos(a.celular);
     if (cel.length < 10 || cel.length > 11) return erro("Informe o celular com DDD.");
     if (!emailValido(a.email)) return erro("Informe um e-mail válido.");
+    if (!a.tipo) return erro("Informe se você trabalha em órgão público ou em empresa privada.");
+    if (a.tipo === "pub" && !a.orgao.trim()) return erro("Informe o órgão ou a entidade em que você trabalha.");
+    if (a.tipo === "priv" && !a.vinculo) return erro("Informe se você é colaborador ou gestor da empresa.");
     if (a.senha.length < 8 || !/[a-zA-Z]/.test(a.senha) || !/\d/.test(a.senha)) return erro("A senha precisa ter pelo menos 8 caracteres, com letras e números.");
     if (a.senha !== a.senha2) return erro("As duas senhas não conferem.");
     if (!a.aceite) return erro("Para criar a conta, aceite os Termos de Uso e a Política de Privacidade.");
     this.setState({ auth: { ...a, enviando: true, erro: "" } });
     const { data, error } = await this.sb.auth.signUp({
       email: a.email.trim(), password: a.senha,
-      options: { data: { nome, celular: mascaraCelular(cel) }, emailRedirectTo: baseSite() + "index.html?p=conta" }
+      options: { data: { nome, celular: mascaraCelular(cel), setor: a.tipo === "priv" ? "Setor Privado" : "Setor Público", vinculo: a.tipo === "priv" ? a.vinculo : "servidor", orgao: a.orgao.trim().slice(0, 160) }, emailRedirectTo: baseSite() + "index.html?p=conta" }
     });
     if (error) { this.setState({ auth: { ...this.state.auth, enviando: false, erro: traduzErroAuth(error) } }); return; }
     if (data && data.session) {
@@ -10653,6 +10691,9 @@ class Component extends DCLogic {
   // abre um contrato pelo número (subpágina em modo "um contrato") ou volta ao Painel da Organização
   ctVer(ids) { this.setState((x) => ({ ct: { ...x.ct, so: ids && ids.length ? ids : null, atual: "", form: null, ev: null, ok: "", erro: "", excluir: "", busca: "", buscaErro: "", buscaAberta: false } })); if (this.state.page !== "contratos") this.irPara("contratos"); else window.scrollTo({ top: 0, behavior: "smooth" }); }
   ctPainel() { this.ctVer(null); }
+  // visão do painel: vem do perfil (órgão público ou empresa privada); a troca manual fica só para o administrador e o modo demonstração
+  ctPodeTrocarVisao() { return !this.state.sb || !!this.state.admin; }
+  ctVisao() { const s = this.state, pf = s.ct.painel || {}; return this.ctPodeTrocarVisao() && pf.visao ? pf.visao : s.setor === "Setor Privado" ? "empresa" : "orgao"; }
   ctBuscar() {
     const q = String(this.state.ct.busca || "").trim(), nz = (v) => String(v || "").toLowerCase().replace(/[^0-9a-z]/g, ""), sz = (v) => nz(v).replace(/^0+/, "");
     if (!q) { this.setState((x) => ({ ct: { ...x.ct, buscaErro: "Informe o número do contrato." } })); return; }
@@ -12417,9 +12458,12 @@ class Component extends DCLogic {
         const ir = (k) => () => { this.setState((x) => ({ ct: { ...x.ct, filtro: k } })); this.irPara("contratos");
           if (k !== "todos") setTimeout(() => { try { document.querySelector(".ct-filtro").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }, 400); };
         const novo = () => { this.setState((x) => ({ ct: { ...x.ct, so: null } })); this.irPara("contratos"); setTimeout(() => this.ctNovo(), 60); };
+        const q = s.ptp || {};
+        const ptpPerg = { gpPerguntar: !!s.sb && !!s.usuario && !!s.dadosProntos && !s.perfil.vinculo, gpPergErro: q.erro || "", gpPergSalvar: () => this.perfilTipoSalvar(),
+          ...this.ptpProps("ptpQ", { tipo: q.tipo || "", orgao: q.orgao != null ? q.orgao : s.perfil.orgao, vinculo: q.vinculo || "" }, (k, v) => this.setState((x) => ({ ptp: { ...(x.ptp || {}), [k]: v, erro: "" } }))) };
         const buscaAbrir = (forcar) => { this.setState((x) => ({ ct: { ...x.ct, buscaAberta: forcar ? true : !x.ct.buscaAberta, buscaErro: "" } }));
           setTimeout(() => { try { const el = document.querySelector("#gcb-caixa input"); if (el) { el.scrollIntoView({ behavior: "smooth", block: "center" }); el.focus({ preventScroll: true }); } } catch (e) {} }, 120); };
-        return {
+        return { ...ptpPerg,
           gcIrPainel: () => this.ctPainel(), gcPainelNome: "Painel da Organização",
           gcPainelDesc: "A visão de toda a carteira do órgão ou da empresa, com indicadores, gráficos e prazos:",
           gcPainelItens: ["Quantidade e valor das contratações, custo atualizado e gasto mensal", "Contratações por modalidade, regime legal e natureza do objeto", "Situação de cada contrato, de relance: vigentes, vencendo e vencidos", "Tempos médios do orçamento à assinatura e da anualidade ao reajuste", "Alterações registradas, ranking de empresas (ou de clientes) e saúde da carteira", "Agenda de prazos dos próximos 12 meses e controle de fracionamento"].map((t) => ({ t })),
@@ -12434,7 +12478,7 @@ class Component extends DCLogic {
           gcTemResumo: lib && n > 0,
           gcResumo: [["vig", "vigentes"], ["ven", "vencendo"], ["exp", "vencidos"]].filter(([k]) => cnt[k]).map(([k, rot]) => ({ n: String(cnt[k]), rot, cls: "gcl-rb f-" + k, ir: ir(k) })),
           ...(() => { if (!(lib && n > 0) || (s.page === "contratos" && s.ct.so)) return { gpTem: false, ctPainelGp: false };
-            const pf = s.ct.painel || {}, G = ctPainelGeral(s.ct.lista, s.ct.eventos, pf), emp = G.visao === "empresa";
+            const pf = { ...(s.ct.painel || {}), visao: this.ctVisao() }, G = ctPainelGeral(s.ct.lista, s.ct.eventos, pf), emp = G.visao === "empresa";
             const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             const brlC = (v) => { const a = Math.abs(v); return a >= 1e9 ? "R$ " + (v / 1e9).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " bi" : a >= 1e6 ? "R$ " + (v / 1e6).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " mi" : a >= 1e4 ? "R$ " + (v / 1e3).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " mil" : brl(v); };
             const pc = (v) => (v * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%", dias = (v) => v == null ? "—" : Math.round(v) + " dias";
@@ -12458,7 +12502,7 @@ class Component extends DCLogic {
             const mesNome = new Date(2000, C.mesAt, 1).toLocaleDateString("pt-BR", { month: "short" }).replace(".", "");
             const cmpL = [["Novas contratações", String(C.ant.n), String(C.atual.n), varP(C.ant.n, C.atual.n)], ["Valor contratado (novas)", brlC(C.ant.orig), brlC(C.atual.orig), varP(C.ant.orig, C.atual.orig)],
               [emp ? "Receita executada" : "Custo executado", brlC(C.ant.exec), brlC(C.atual.exec), varP(C.ant.exec, C.atual.exec)],
-              ["Contratações diretas", C.ant.dir == null ? "—" : pc(C.ant.dir), C.atual.dir == null ? "—" : pc(C.atual.dir), varPP(C.ant.dir, C.atual.dir)],
+              ...(emp ? [] : [["Contratações diretas", C.ant.dir == null ? "—" : pc(C.ant.dir), C.atual.dir == null ? "—" : pc(C.atual.dir), varPP(C.ant.dir, C.atual.dir)]]),
               ["Reajustes e repactuações registrados", String(C.ant.nAj), String(C.atual.nAj), varP(C.ant.nAj, C.atual.nAj)],
               [emp ? "Tempo médio para receber o reajuste" : "Tempo médio para conceder o reajuste", dias(C.ant.tReaj), dias(C.atual.tReaj), varD(C.ant.tReaj, C.atual.tReaj)]];
             const prevUsados = E.prev.usados.map((u) => u.nome + " " + pc(u.pct)).join(" · ");
@@ -12475,7 +12519,7 @@ class Component extends DCLogic {
                 tit: ymE(m.m) + ": " + brl(m.t) + (m.aj > 0 ? " (original " + brl(m.b) + " + ajustes " + brl(m.aj) + ")" : "") + (m.fut ? " · projeção" : "") })),
               gpPrevTit: (emp ? "Receita prevista para " : "Previsão para ") + E.prev.A, gpPrevV: brlC(E.prev.v), gpPrevSub: "com as vigências atuais e os reajustes das anualidades de " + E.prev.A,
               gpPrevItens: [["Sem novos reajustes", brl(E.prev.sem)], ["Impacto dos reajustes previstos", (E.prev.v - E.prev.sem >= 0 ? "+" : "") + brl(E.prev.v - E.prev.sem)], ["Se os contratos contínuos forem prorrogados", brl(E.prev.prorr)]].map(([t, d]) => ({ t, d })),
-              gpPrevNota: "Estimativa para a proposta orçamentária e o plano de contratações anual. Índice de cada contrato pelos últimos 12 meses" + (prevUsados ? ": " + prevUsados : "") + "; repactuações estimadas pelo mesmo índice.",
+              gpPrevNota: (emp ? "Estimativa para o planejamento financeiro da empresa." : "Estimativa para a proposta orçamentária e o plano de contratações anual.") + " Índice de cada contrato pelos últimos 12 meses" + (prevUsados ? ": " + prevUsados : "") + "; repactuações estimadas pelo mesmo índice.",
               gpCmpTit: "Comparação entre exercícios", gpCmpAnt: String(C.anoAt - 1), gpCmpAt: String(C.anoAt), gpCmp: cmpL.map(([k, a, b, d]) => ({ k, a, b, d: d[0], cls: "gp-var " + d[1] })),
               gpCmpNota: "Mesmo período nos dois anos: janeiro a " + mesNome + ". Toda a carteira, sem os filtros acima. " + (emp ? "Receita" : "Custo") + " executado de " + (C.anoAt - 1) + " no ano inteiro: " + brlC(C.antTodo.exec) + ".",
               gpRiscoTit: emp ? "Receita em risco" : "Depende de prorrogação em 6 meses", gpRiscoV: brlC(somaRisco), gpRiscoSub: emp ? "receita de 12 meses dos contratos que vencem em até 6 meses" : "valor de 12 meses dos contratos que vencem em até 6 meses",
@@ -12485,11 +12529,11 @@ class Component extends DCLogic {
                 larg: "width: " + Math.min(100, a.uso * 100).toFixed(1) + "%", m15: "left: 60%", m20: "left: 80%", cls: "gp-lim-l " + nv(a.nivel), ir: verC(a.p.c.id) })),
               gpTemVig: E.vig.length > 0, gpSemVig: !E.vig.length,
               gpVig: E.vig.slice(0, 8).map((v) => ({ t: E.nomeC(v.p.c), cls: nv(v.nivel), ir: verC(v.p.c.id),
-                d: v.anos.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " de " + v.lim + " anos com a vigência atual · prorrogável até " + ymE(v.limN) + (v.nivel === "limite" ? " — limite atingido: nova licitação" : "") })),
+                d: v.anos.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " de " + v.lim + " anos com a vigência atual · " + (emp ? "renovável até " : "prorrogável até ") + ymE(v.limN) + (v.nivel === "limite" ? (emp ? " — limite atingido: o órgão fará nova licitação" : " — limite atingido: nova licitação") : "") })),
               gpRetTit: "Reajustes concedidos com atraso", gpRetV: String(E.atrasos.length), gpRetSub: E.atrasos.length ? "registros depois da anualidade · retroativo de " + brl(somaRet) : "nenhum reajuste registrado depois da anualidade",
               gpTemRet: E.atrasos.length > 0, gpRet: E.atrasos.slice(0, 6).map((a) => ({ t: E.nomeC(a.p.c), cls: a.dias > 90 ? "gp-n-lim" : a.dias > 30 ? "gp-n-at" : "", ir: verC(a.p.c.id),
                 d: (a.e.tipo === "repactuacao" ? "Repactuação" : "Reajuste") + " de " + ymE(a.an) + " registrado " + Math.round(a.dias) + " dias depois" + (a.retro ? " · retroativo de " + brl(a.retro) : "") })),
-              gpRetNota: "Retroativo: diferença mensal multiplicada pelos meses entre a anualidade e o registro, sem juros nem correção. Atrasos longos aumentam o risco de cobrança de juros e de questionamento pelo controle.",
+              gpRetNota: "Retroativo: diferença mensal multiplicada pelos meses entre a anualidade e o registro, sem juros nem correção. " + (emp ? "Em atrasos longos, avalie pedir também a correção monetária e os juros." : "Atrasos longos aumentam o risco de cobrança de juros e de questionamento pelo controle."),
               gpPendTit: emp ? "Reajustes a pedir" : "Reajustes pendentes (passivo)", gpPendV: brl(somaPend) + "/mês",
               gpPendSub: E.pend.length ? (emp ? "a receber a mais por mês · " : "a pagar a mais por mês · ") + brl(acumPend) + " acumulados desde as anualidades" : "nenhum reajuste pendente",
               gpTemPend: E.pend.length > 0, gpPend: E.pend.slice(0, 6).map((x) => ({ t: E.nomeC(x.p.c), ir: () => this.ctUsar(x.p.c.id, "reajuste"),
@@ -12500,7 +12544,7 @@ class Component extends DCLogic {
               gpTemQual: E.qual.falt.length > 0, gpQual: E.qual.falt.slice(0, 8).map((q) => ({ t: E.nomeC(q.p.c), d: q.f.join(", "), ir: () => { this.ctVer([q.p.c.id]); setTimeout(() => this.ctEditar(q.p.c), 120); } })),
               gpPdf: () => this.ctPainelPdf(G, E),
             };
-            return { ...EX, gpTem: true, ctPainelGp: true, gpEmp: emp, gpOrg: !emp,
+            return { ...EX, gpPodeTrocar: this.ctPodeTrocarVisao(), gpTem: true, ctPainelGp: true, gpEmp: emp, gpOrg: !emp,
               gpTitulo: emp ? "Indicadores da carteira da empresa" : "Indicadores da organização",
               gpSub: emp ? "Contratos que a sua empresa mantém com órgãos e entidades: receita, clientes, prazos e reajustes a receber." : "Todos os contratos da organização: quanto custam, como foram contratados, prazos, alterações e fornecedores.",
               gpVisoes: [["orgao", "Órgão público (contratante)"], ["empresa", "Empresa privada (contratada)"]].map(([id, nome]) => ({ nome, cls: "gp-chip" + (G.visao === id ? " ativo" : ""), ir: () => set("visao")(id) })),
@@ -12512,7 +12556,7 @@ class Component extends DCLogic {
                 [emp ? "Receita contratada" : "Valor total contratado", brlC(G.original), "valor original, na vigência inicial"],
                 [emp ? "Receita atualizada" : "Custo total atualizado", brlC(G.custo), "com reajustes, revisões, aditivos e prorrogações (" + (G.variacao >= 0 ? "+" : "") + pc(G.variacao) + ")"],
                 [emp ? "Receita mensal recorrente" : "Gasto mensal atual", brlC(G.mensal), "soma dos contratos de pagamento mensal"],
-                ["Do orçamento à assinatura", dias(G.tOrcAss), "tempo médio entre o orçamento estimado e a assinatura"],
+                [emp ? "Da proposta à assinatura" : "Do orçamento à assinatura", dias(G.tOrcAss), emp ? "tempo médio entre a data do orçamento (proposta) e a assinatura" : "tempo médio entre o orçamento estimado e a assinatura"],
                 [emp ? "Tempo para o cliente conceder o reajuste" : "Tempo para conceder o reajuste", dias(G.tReaj), "média entre a anualidade e o registro do reajuste ou da repactuação"],
                 [emp ? "Reajustes a pedir" : "Reajustes pendentes", String(G.pend), emp ? "contratos com anualidade atingida e reajuste ainda não concedido" : "anualidade atingida sem reajuste registrado"],
                 [emp ? "Renovações em 6 meses" : "Vencem em 6 meses", String(G.renov6), emp ? "contratos a prorrogar ou a disputar de novo" : "planeje a prorrogação ou a nova licitação"]].map(([k, v, d]) => ({ k, v, d })),
@@ -12523,9 +12567,9 @@ class Component extends DCLogic {
               gpRankTit: emp ? "Clientes com mais contratos" : "Empresas com mais contratos", gpRankCol: emp ? "Cliente (contratante)" : "Empresa (contratada)",
               gpRank: G.partes.slice(0, 10).map((g, i) => ({ pos: String(i + 1), rot: g.k, ir: drill(g.k, g.ids), n: String(g.n), v: brl(g.v), p: pc(G.custo ? g.v / G.custo : 0), larg: "width: " + Math.max(2, (G.custo ? g.v / G.partes[0].v : 0) * 100).toFixed(1) + "%" })),
               gpSaude: [[emp ? "Concentração da receita nos 5 maiores clientes" : "Concentração nos 5 maiores fornecedores", pc(G.conc5), G.nPartes > 5 && G.conc5 > 0.6 ? "alerta" : "ok", G.nPartes <= 5 ? "a carteira tem até 5 " + (emp ? "clientes" : "fornecedores") + ": o indicador fica relevante com mais" : emp ? "acima de 60%, a receita depende de poucos clientes" : "acima de 60%, há dependência de poucos fornecedores"],
-                ["Contratações diretas (dispensa e inexigibilidade)", pc(G.n ? G.diretas / G.n : 0), G.n && G.diretas / G.n > 0.4 ? "alerta" : "ok", "participação no total de contratos"],
+                ...(emp ? [["Contratos com fim em até 6 meses", String(G.renov6), G.renov6 ? "alerta" : "ok", "renovações a negociar ou novas disputas"]] : [["Contratações diretas (dispensa e inexigibilidade)", pc(G.n ? G.diretas / G.n : 0), G.n && G.diretas / G.n > 0.4 ? "alerta" : "ok", "participação no total de contratos"]]),
                 ["Variação do custo desde a contratação", (G.variacao >= 0 ? "+" : "") + pc(G.variacao), G.variacao > 0.25 ? "alerta" : "ok", "reajustes, revisões e aditivos sobre o valor original"],
-                ["Indícios de fracionamento", String(G.frac), G.frac ? "alerta" : "ok", "grupos de dispensas por valor acima do limite anual"],
+                ...(emp ? [] : [["Indícios de fracionamento", String(G.frac), G.frac ? "alerta" : "ok", "grupos de dispensas por valor acima do limite anual"]]),
                 [emp ? "Reajustes a pedir" : "Reajustes pendentes", String(G.pend), G.pend ? "alerta" : "ok", emp ? "receita que pode ser recomposta" : "risco de pedido retroativo"],
                 ["Contratos sem modalidade informada", String(G.semMod), G.semMod ? "alerta" : "ok", "complete o cadastro para o painel ficar preciso"]].map(([k, v, st, d]) => ({ k, v, d, cls: "gp-sau " + st })),
               gpVenc: G.proxVenc.map((x) => ({ t: "Contrato " + x.c.numero + " · " + x.parte, d: "vence em " + mesTxt(x.fimN) })), gpTemVenc: G.proxVenc.length > 0,
@@ -12564,7 +12608,7 @@ class Component extends DCLogic {
           const si = ctSituacao(c, ct.eventos[c.id]), aberto = ct.atual === c.id, meu = !s.usuario || c.usuario_id === (s.usuario && s.usuario.id) || !this.sb;
           const avisos = [].concat(si.vencido ? ["Vigência encerrada em " + dataBR(si.fim) + "."] : [])
             .concat(!si.vencido && si.reajPendente && c.data_proposta ? ["Reajuste possível desde " + si.direitoDesde + " e ainda não registrado."] : [])
-            .concat(!si.vencido && si.restante != null && si.restante <= 4 ? ["Vigência termina em " + dataBR(si.fim) + ": inicie a tramitação da prorrogação (recomendado 4 meses antes) e peça o reajuste ou reequilíbrio pendente antes dela."] : []);
+            .concat(!si.vencido && si.restante != null && si.restante <= 4 ? ["Vigência termina em " + dataBR(si.fim) + ": " + (this.ctVisao() === "empresa" ? "negocie a renovação com o órgão (o ideal é começar 4 meses antes) e peça o reajuste ou reequilíbrio pendente antes dela." : "inicie a tramitação da prorrogação (recomendado 4 meses antes) e peça o reajuste ou reequilíbrio pendente antes dela.")] : []);
           const stK = !si.fim ? "sem" : si.vencido ? "exp" : si.restante != null && si.restante <= 4 ? "ven" : "vig";
           const ini0 = c.inicio || c.assinatura, msD = 864e5, tIni = ini0 ? Date.parse(String(ini0).slice(0, 10) + "T12:00:00Z") : NaN, tFim = si.fim ? Date.parse(String(si.fim).slice(0, 10) + "T12:00:00Z") : NaN;
           const hojeT = Date.now(), temProg = !isNaN(tIni) && !isNaN(tFim) && tFim > tIni, prog = temProg ? Math.min(100, Math.max(0, ((hojeT - tIni) / (tFim - tIni)) * 100)) : 0;
@@ -12641,6 +12685,7 @@ class Component extends DCLogic {
             abrir: () => { this.setState((x) => ({ ct: { ...x.ct, so: [it.c.id], atual: it.c.id, form: null, ev: null } })); window.scrollTo({ top: 0, behavior: "smooth" }); } })) }));
         const ctFil = ct.filtro || "todos", nSt = (k) => lista.filter((x) => x.stK === k).length;
         const listaF = ctFil === "todos" ? lista : lista.filter((x) => x.stK === ctFil);
+        const ctEmp = this.ctVisao() === "empresa";
         const soIds = ct.so || null, modoUm = !!soIds, listaUm = modoUm ? lista.filter((x) => soIds.includes(x.id)) : [];
         const drl = (ct.painel || {}).drill, listaD = drl ? listaF.filter((x) => drl.ids.includes(x.id)) : listaF;
         const ctTab = listaD.map((x) => ({ numero: x.numero, parte: x.contratada || "—", st: x.st, fim: x.fim || "—", valor: x.valorV, cls: "gcs-l st-" + x.stK, ver: () => this.ctVer([x.id]) }));
@@ -12655,7 +12700,8 @@ class Component extends DCLogic {
         const um1 = listaUm.length === 1 ? listaUm[0] : null;
         return { ...campos, ...fracP, ctLista: listaUm, ctFiltros, ctTab,
           ctTemDrill: !!drl, ctDrillRot: drl ? drl.rot + " (" + listaD.length + ")" : "", ctDrillLimpar: () => this.setState((x) => ({ ct: { ...x.ct, painel: { ...(x.ct.painel || {}), drill: null } } })),
-          ctModoUm: modoUm, ctModoPainel: !modoUm, ctKpisVer: false, ctPainelAg: !modoUm && lista.length > 0, ctPainelFrac: !modoUm && frac.length > 0,
+          ctModoUm: modoUm, ctModoPainel: !modoUm, ctKpisVer: false, ctPainelAg: !modoUm && lista.length > 0, ctPainelFrac: !modoUm && frac.length > 0 && !ctEmp, ctEmp, ctOrg: !ctEmp, ctLegVen: ctEmp ? "4 meses ou menos: hora de negociar a renovação" : "4 meses ou menos: hora de tramitar a prorrogação",
+          ctNatRot: ctEmp ? "Natureza do objeto" : "Natureza do objeto (controle de fracionamento)", ctPrIniRot: ctEmp ? "Peça a renovação até" : "Comece a tramitação até", ctPrTit: ctEmp ? "Renovação do contrato" : "Prorrogação contratual",
           ctTopoTit: modoUm ? (um1 ? "Contrato " + um1.numero : listaUm.length ? listaUm.length + " contratos com esse número" : "Contrato") : "Painel da Organização",
           ctTopoSub: modoUm ? (um1 ? [um1.contratada, um1.objeto].filter(Boolean).join(" · ") || "Linha do tempo, reajuste, reequilíbrio, vantajosidade e PDF do contrato." : "Escolha o contrato abaixo.") : "Indicadores de toda a carteira, situação de cada contrato, agenda de prazos e controle de fracionamento.",
           ctBuscaRot: modoUm ? "Ver outro contrato" : "Ver contrato", ctFiltroVazio: lista.length > 0 && !(drl ? listaD : listaF).length,
@@ -13292,13 +13338,33 @@ class Component extends DCLogic {
     this.setState((s) => ({ perfil: { ...s.perfil, [k]: v }, perfilSalvo: false, perfilMsg: "" }));
   };
 
+  // seletor "Onde você trabalha?" (cadastro, pergunta do painel)
+  ptpProps(pre, v, set) {
+    const P = pre.charAt(0).toUpperCase() + pre.slice(1);
+    return {
+      [pre + "Tipos"]: [["pub", "Órgão ou entidade pública", "servidor, empregado público ou agente de contratação"], ["priv", "Empresa privada", "fornecedora ou prestadora de serviços ao governo"]].map(([id, t, d]) => ({ t, d, ativo: v.tipo === id, cls: "ptp-op" + (v.tipo === id ? " ativo" : ""), ir: () => set("tipo", id) })),
+      [pre + "Pub"]: v.tipo === "pub", [pre + "Priv"]: v.tipo === "priv", [pre + "Orgao"]: v.orgao || "", ["on" + P + "Orgao"]: (e) => set("orgao", e.target.value),
+      [pre + "Vinculos"]: [["colaborador", "Colaborador"], ["gestor", "Gestor ou sócio"]].map(([id, t]) => ({ t, ativo: v.vinculo === id, cls: "ptp-op" + (v.vinculo === id ? " ativo" : ""), ir: () => set("vinculo", id) })),
+    };
+  }
+  async perfilTipoSalvar() {
+    const q = this.state.ptp || {};
+    if (!q.tipo) { this.setState({ ptp: { ...q, erro: "Escolha órgão público ou empresa privada." } }); return; }
+    if (q.tipo === "pub" && !String(q.orgao || "").trim()) { this.setState({ ptp: { ...q, erro: "Informe o órgão ou a entidade." } }); return; }
+    if (q.tipo === "priv" && !q.vinculo) { this.setState({ ptp: { ...q, erro: "Informe se você é colaborador ou gestor." } }); return; }
+    const setor = q.tipo === "priv" ? "Setor Privado" : "Setor Público", vinculo = q.tipo === "priv" ? q.vinculo : "servidor", orgao = String(q.orgao || "").trim().slice(0, 160) || this.state.perfil.orgao;
+    if (this.sb && this.state.usuario) { const { error } = await this.sb.from("perfis").update({ setor, vinculo, orgao }).eq("id", this.state.usuario.id); if (error) { this.setState({ ptp: { ...q, erro: "Não foi possível salvar agora. Tente de novo." } }); return; } }
+    this.setState((x) => ({ setor, perfil: { ...x.perfil, vinculo, orgao }, ptp: null, ct: { ...x.ct, painel: { ...(x.ct.painel || {}), visao: undefined } } }));
+    this.aviso("✓ Painel configurado para " + (q.tipo === "priv" ? "empresa privada." : "órgão público."), "ok");
+  }
   async salvarPerfil() {
     const s = this.state, p = s.perfil;
     if (!this.sb || !s.usuario) { this.setState({ perfilSalvo: true, perfilMsg: "✓ Alterações salvas (demonstração)." }); return; }
     if (p.nome.trim().split(/\s+/).length < 2) { this.setState({ perfilMsg: "Informe o nome completo." }); return; }
     if (soDigitos(p.celular).length < 10) { this.setState({ perfilMsg: "Informe o celular com DDD." }); return; }
     const { error } = await this.sb.from("perfis").update({
-      nome: p.nome.trim(), celular: p.celular, documento: p.doc.trim(), orgao: p.orgao.trim(), cargo: p.cargo.trim(), setor: s.setor
+      nome: p.nome.trim(), celular: p.celular, documento: p.doc.trim(), orgao: p.orgao.trim(), cargo: p.cargo.trim(), setor: s.setor,
+      vinculo: s.setor === "Setor Privado" ? (p.vinculo === "gestor" ? "gestor" : "colaborador") : "servidor"
     }).eq("id", s.usuario.id);
     if (error) { this.setState({ perfilMsg: "Não foi possível salvar agora." }); return; }
     let msg = "✓ Alterações salvas.";
@@ -13663,6 +13729,7 @@ class Component extends DCLogic {
       authNome: s.auth.nome, authCelular: s.auth.celular, authEmail: s.auth.email, authSenha: s.auth.senha, authSenha2: s.auth.senha2,
       onAuthNome: authCampo("nome"), onAuthCelular: authCampo("celular"), onAuthEmail: authCampo("email"),
       onAuthSenha: authCampo("senha"), onAuthSenha2: authCampo("senha2"),
+      ...this.ptpProps("authP", { tipo: s.auth.tipo, orgao: s.auth.orgao, vinculo: s.auth.vinculo }, (k, v) => this.setState((st) => ({ auth: { ...st.auth, [k]: v, erro: "" } }))),
       authAceite: s.auth.aceite,
       aceiteMarca: s.auth.aceite ? "✓" : "",
       aceiteBg: s.auth.aceite ? "#0FA36B" : "#fff",
@@ -14848,6 +14915,8 @@ class Component extends DCLogic {
         return { label: v, ativo, escolher: () => this.setState({ setor: v, perfilSalvo: false, perfilMsg: "" }),
           borda: ativo ? "#0A1F2A" : "#DDE4E3", fundo: ativo ? "#0A1F2A" : "#FBFCFC", cor: ativo ? "#FFFFFF" : "#3D5058" };
       }),
+      contaPriv: s.setor === "Setor Privado", contaTipoNota: s.setor === "Setor Privado" ? "O Painel da Organização mostra os indicadores de quem fornece ao governo: receita, clientes, reajustes a pedir e renovações." : "O Painel da Organização mostra os indicadores de quem contrata: custos, modalidades, fornecedores, prazos e controle.",
+      contaVinculos: [["colaborador", "Colaborador"], ["gestor", "Gestor ou sócio"]].map(([id, t]) => { const ativo = (s.perfil.vinculo === "gestor" ? "gestor" : "colaborador") === id; return { t, ativo, cls: "ptp-op" + (ativo ? " ativo" : ""), ir: () => this.setState((x) => ({ perfil: { ...x.perfil, vinculo: id }, perfilSalvo: false, perfilMsg: "" })) }; }),
       salvarPerfil: () => this.salvarPerfil(),
       perfilMsg: s.perfilMsg,
 
