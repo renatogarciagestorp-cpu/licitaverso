@@ -1251,6 +1251,8 @@
   .lmo-cmp-dif { font-style: normal; color: #FFD27A; font-size: 12.5px; font-weight: 700; }
   .lmo-cmpcol .lmo-lin[data-auto="true"] { background: #fff; } /* na comparação, só o aviso prévio trabalhado fica destacado */
   .lmo-cmpcol [data-mudou="true"] { background: #FFF6DE !important; } .lmo-cmpcol label[data-mudou="true"] { border-radius: 8px; padding: 4px; }
+  .lmo-volta-cmp { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; background: #0A1F2A; color: #fff; border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; }
+  .lmo-volta-cmp small { display: block; color: #BFEBD6; font-size: 13px; margin-top: 2px; } .lmo-volta-cmp .lve-voltar { background: transparent; color: #fff; border-color: rgba(255,255,255,.35); }
   .lmo-cmp-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; } .lmo-cmp-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
   .lmo-cmpp, .lmo-cmpp > *, .lmo-cmpp .lmo-bloco { min-width: 0; max-width: 100%; }
   .lmo-cmp-scroll { width: 100%; max-width: 100%; box-sizing: border-box; overflow-x: auto; overflow-y: hidden; border: 1px solid #E1E8E6; border-radius: 12px; margin-top: 12px; background: #F3F7F5; scroll-behavior: smooth; }
@@ -3460,6 +3462,10 @@
             <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}"><div><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCopiar }}">Trazer os dados da Planilha 1 (planejamento) para começar</button></div></sc-if>
 
             <div class="lmo-lei"><span class="lmo-lei-t">Regime legal</span><div class="lmo-modos" role="group" aria-label="Regime legal"><sc-for list="{{ moLeis }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div><p class="lmo-nota" style="margin: 6px 0 0">{{ moLeiTxt }}</p></div>
+            <sc-if value="{{ moVoltaCmp }}" hint-placeholder-val="{{ false }}">
+            <div class="lmo-volta-cmp"><div><b>Você veio de Comparar planilhas (coluna “{{ moVoltaCmpNome }}”).</b><small>Esta planilha já está com os dados da coluna. Use o agente abaixo e, quando terminar, volte levando o resultado. Ao voltar, a planilha que você tinha aqui é restaurada.</small></div>
+              <div class="lmo-cmp-hb"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moVoltaCmpCom }}">Voltar à comparação com esta planilha</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moVoltaCmpSem }}">Voltar sem trazer</button></div></div>
+            </sc-if>
             <section class="lmo-bloco lmo-ag" id="lmo-agente">
               <h2 class="lmo-h2">{{ moAgenteTitulo }}</h2>
               <p class="lmo-nota" style="margin-top: 0">{{ moAgenteTxt }}</p>
@@ -3967,6 +3973,11 @@
                     <div class="lmo-cmpcol-cab"><small>{{ c.tipo }}</small><input type="text" value="{{ c.nome }}" aria-label="Nome da planilha" sc-camel-on-input="{{ c.onNome }}">
                       <span class="lmo-cmp-tot">Preço por empregado: {{ c.total }}</span><sc-if value="{{ c.dif }}" hint-placeholder-val="{{ false }}"><em class="lmo-cmp-dif">{{ c.dif }}</em></sc-if>
                       <span class="lmo-cmp-hb"><button type="button" class="lmo-ano" sc-camel-on-click="{{ c.trazer }}">{{ c.trazerTxt }}</button><sc-if value="{{ c.podeDel }}" hint-placeholder-val="{{ false }}"><button type="button" class="lmo-x" aria-label="Remover esta planilha" sc-camel-on-click="{{ c.del }}">×</button></sc-if></span></div>
+                    <section class="lmo-bloco lmo-cmp-ag">
+                      <h2 class="lmo-h2">Preenchimento pelo agente</h2>
+                      <p class="lmo-nota" style="margin-top: 0">{{ c.agTxt }}</p>
+                      <button type="button" class="lmo-btn" sc-camel-on-click="{{ c.agente }}">Preencher esta planilha com o agente</button>
+                    </section>
                     <section class="lmo-bloco">
                       <h2 class="lmo-h2">Dados para composição dos custos referentes à mão de obra</h2>
                       <div class="lmo-campos">
@@ -3974,6 +3985,52 @@
                           <label class="lmo-campo" data-mudou="{{ c.mudou }}"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
                         </sc-for>
                       </div>
+                    </section>
+                    <section class="lmo-bloco">
+                      <h2 class="lmo-h2">Dimensionamento da equipe (cadernos técnicos)</h2>
+                      <sc-if value="{{ c.P.moPlan }}" hint-placeholder-val="{{ true }}">
+                      <p class="lmo-nota" style="margin-top: 0">Nos serviços com caderno técnico de logística, informe a metragem ou os postos: a quantidade de profissionais é calculada pela fórmula do caderno e da IN 05/2017 (Anexos VI-A e VI-B).</p>
+                      <div class="lmo-modos" style="margin-top: 10px"><sc-for list="{{ c.P.moDimTipos }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
+                      <sc-if value="{{ c.P.moDimLimpeza }}" hint-placeholder-val="{{ false }}">
+                        <sc-for list="{{ c.P.moDimGrupos }}" as="g" hint-placeholder-count="2">
+                          <div class="lmo-tabela" style="margin-top: 12px" role="table">
+                            <div class="lmo-lin lmo-dim lmo-cab" role="row"><span>{{ g.titulo }}</span><span>Faixa da IN</span><span>Área (m²)</span><span>Produtividade (m²)</span><span>Frequência (h/mês)</span><span>Profissionais</span><span>Preço por m²</span></div>
+                            <sc-for list="{{ g.linhas }}" as="l" hint-placeholder-count="3">
+                              <div class="lmo-lin lmo-dim" role="row" data-auto="{{ l.fora }}">
+                                <span>{{ l.rot }}</span><span class="lmo-pct">{{ l.faixa }}</span>
+                                <span><input type="text" inputmode="decimal" aria-label="{{ l.rot }}: área" value="{{ l.m2 }}" placeholder="0" sc-camel-on-input="{{ l.onM2 }}"></span>
+                                <span><input type="text" inputmode="decimal" aria-label="{{ l.rot }}: produtividade" value="{{ l.p }}" sc-camel-on-input="{{ l.onP }}"></span>
+                                <span><sc-if value="{{ l.temH }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }}: frequência" value="{{ l.h }}" sc-camel-on-input="{{ l.onH }}"></sc-if></span>
+                                <span class="lmo-pct">{{ l.q }}</span><span class="lmo-val">{{ l.precoM2 }}</span>
+                              </div>
+                            </sc-for>
+                          </div>
+                        </sc-for>
+                        <sc-if value="{{ c.P.moDimForaFaixa }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso" style="margin-top: 10px">Há produtividade fora da faixa da IN (linhas em amarelo): o órgão pode adotar índice diferente, desde que justificado nos estudos preliminares (Anexo VI-B, item 11).</p></sc-if>
+                      </sc-if>
+                      <sc-if value="{{ c.P.moDimVig }}" hint-placeholder-val="{{ false }}">
+                        <div class="lmo-campos" style="margin-top: 12px">
+                          <label class="lmo-campo"><span>Escala do posto</span><select sc-camel-on-change="{{ c.P.onMoVgEscala }}"><sc-for list="{{ c.P.moVgEscalas }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                          <label class="lmo-campo"><span>Quantidade de postos</span><input type="text" inputmode="numeric" value="{{ c.P.moVgPostos }}" sc-camel-on-input="{{ c.P.onMoVgPostos }}" placeholder="Ex.: 4"></label>
+                        </div>
+                        <label class="lvc-check" style="margin-top: 12px"><input type="checkbox" checked="{{ c.P.moVgCalc }}" sc-camel-on-change="{{ c.P.onMoVgCalc }}"> Calcular os adicionais da escala pelo caderno técnico de vigilância (adicional noturno, hora noturna reduzida e feriados trabalhados)</label>
+                        <sc-if value="{{ c.P.moVgCalc }}" hint-placeholder-val="{{ false }}">
+                          <label class="lvc-check"><input type="checkbox" checked="{{ c.P.moVgIntra }}" sc-camel-on-change="{{ c.P.onMoVgIntra }}"> O intervalo intrajornada não será concedido (posto sem rendição): pagar o período com o adicional</label>
+                          <div class="lmo-campos" style="margin-top: 8px"><sc-for list="{{ c.P.moVgCampos }}" as="c" hint-placeholder-count="4"><label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" inputmode="decimal" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label></sc-for></div>
+                          <p class="lmo-ok">{{ c.P.moVgResumo }}</p>
+                          <sc-if value="{{ c.P.moVgPericAviso }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso">{{ c.P.moVgPericAviso }}</p></sc-if>
+                          <p class="lmo-nota">Se a convenção fixar outro critério (por exemplo, adicional noturno de 12x36 em percentual sobre a remuneração ou hora reduzida já incorporada ao salário), ajuste os parâmetros: a convenção prevalece (CLT, art. 611-A).</p>
+                        </sc-if>
+                      </sc-if>
+                      <sc-if value="{{ c.P.moDimAtivo }}" hint-placeholder-val="{{ false }}">
+                        <p class="lmo-ok">{{ c.P.moDimResumo }}</p>
+                        <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>{{ c.P.moDimLiderRot }}</span><input type="text" inputmode="decimal" value="{{ c.P.moDimLider }}" sc-camel-on-input="{{ c.P.onMoDimLider }}" placeholder="Ex.: 3.950,00"></label></div>
+                        <div class="lmo-agente" style="margin-top: 6px"><sc-for list="{{ c.P.moLiderOpc }}" as="o" hint-placeholder-count="1"><button type="button" class="lmo-ano" sc-camel-on-click="{{ o.usar }}">{{ o.txt }}</button></sc-for></div>
+                        <sc-if value="{{ c.P.moLiderDuplo }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso">{{ c.P.moLiderDuplo }}</p></sc-if>
+                        <p class="lmo-nota">Esta planilha calcula o custo do profissional da categoria informada acima. O preço do encarregado ou supervisor vem da planilha da respectiva categoria (faça uma Planilha 1 para ele e informe o preço total aqui).</p>
+                      </sc-if>
+                      </sc-if>
+                      <sc-if value="{{ c.P.moNaoPlan }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota" style="margin-top: 0">O dimensionamento pelos cadernos técnicos é feito na fase de planejamento. Nesta planilha, a quantidade de empregados e de postos é a do contrato (quadro-resumo).</p></sc-if>
                     </section>
                     <section class="lmo-bloco">
                       <h2 class="lmo-h2">Garantia das obrigações trabalhistas</h2>
@@ -10672,6 +10729,22 @@ class Component extends DCLogic {
     this.moCmpMudar((cols) => cols.map((x) => (x.id === id ? { ...x, d: moSnap({ ...MO_PADRAO, ...dx }) } : x)));
     this.setState((x) => ({ cmp: { ...x.cmp, erro: "", ok: "✓ \u201c" + col.nome + "\u201d preenchida com a planilha de " + nomeF + "." } }));
   }
+  // agente numa coluna: abre a ferramenta correspondente com os dados da coluna e traz o resultado de volta
+  cmpAgente(id) {
+    const col = (this.state.cmp.cols || []).find((x) => x.id === id); if (!col) return;
+    const modo = (CMP_TIPOS[col.tipo] || CMP_TIPOS.repactuacao)[1];
+    let bk = null; try { bk = localStorage.getItem("lv-mo-" + modo); localStorage.setItem("lv-mo-" + modo, JSON.stringify({ ...MO_PADRAO, ...col.d })); } catch (e) {}
+    this.calcFerramenta(modo);
+    setTimeout(() => { this.setState((x) => ({ mo: { ...x.mo, d: { ...MO_PADRAO, ...col.d }, voltaCmp: { id: col.id, nome: col.nome, modo, bk } } })); try { document.getElementById("lmo-agente").scrollIntoView({ block: "start" }); } catch (e) {} }, 0);
+  }
+  cmpVoltarCom(trazer) {
+    const v = this.state.mo.voltaCmp; if (!v) return;
+    if (trazer) { const d = moSnap(this.state.mo.d); this.moCmpMudar((cols) => cols.map((x) => (x.id === v.id ? { ...x, d } : x))); }
+    // devolve à ferramenta a planilha que estava nela antes
+    let dAnt = null; try { if (v.bk != null) { localStorage.setItem("lv-mo-" + v.modo, v.bk); dAnt = { ...MO_PADRAO, ...JSON.parse(v.bk) }; } else { localStorage.removeItem("lv-mo-" + v.modo); dAnt = { ...MO_PADRAO }; } } catch (e) {}
+    this.setState((x) => ({ mo: { ...x.mo, voltaCmp: null, ...(dAnt ? { d: dAnt } : {}) }, cmp: { ...x.cmp, erro: "", ok: trazer ? "✓ \u201c" + v.nome + "\u201d atualizada com a planilha preenchida." : "" } }));
+    this.calcFerramenta("comparar");
+  }
   cmpRecomecar() { try { localStorage.removeItem("lv-cmp"); } catch (e) {} this.setState({ cmp: { cols: [], info: {}, ok: "", erro: "" } }, () => this.cmpIniciar()); }
   // dados da comparação para a tela e o relatório
   moCmpDados() {
@@ -11846,7 +11919,11 @@ class Component extends DCLogic {
         const BEN = [["vt_tarifa", "Tarifa do transporte (R$)"], ["vt_viagens", "Viagens por dia"], ["dias", "Dias trabalhados no mês"], ["aux_dia", "Auxílio-alimentação por dia (R$)"], ["aux_part", "Participação no auxílio-alimentação (%)"], ["ref_dia", "Auxílio-refeição por dia (R$)"], ["ref_part", "Participação no auxílio-refeição (%)"]];
         return { moCmpN: String(cols.length),
           moCmpCols: cols.map((c, i) => { const ant = i ? cols[i - 1] : null;
-            return { P: Ps[i], nome: c.nome, tipo: (CMP_TIPOS[c.tipo] || CMP_TIPOS.repactuacao)[0], cls: "lmo-cmpcol t-" + c.tipo,
+            return { P: Ps[i], nome: c.nome,
+              agTxt: c.tipo === "planejamento" ? "O agente lê a convenção coletiva e preenche esta planilha (piso, adicionais, benefícios e percentuais). Abre a Planilha de custos com os dados desta coluna; depois, você volta com o resultado."
+                : c.tipo === "contratacao" ? "O agente reproduz a planilha da proposta vencedora a partir do arquivo da empresa e da convenção, apontando as falhas. Abre a Análise de proposta com os dados desta coluna; depois, você volta com o resultado."
+                : "O agente lê a planilha da contratação e a nova convenção e monta a planilha repactuada. Abre a Repactuação com os dados desta coluna; depois, você volta com o resultado.",
+              agente: () => this.cmpAgente(c.id), tipo: (CMP_TIPOS[c.tipo] || CMP_TIPOS.repactuacao)[0], cls: "lmo-cmpcol t-" + c.tipo,
               onNome: (e) => { const v = e.target.value; this.moCmpMudar((cs) => cs.map((x) => (x.id === c.id ? { ...x, nome: v } : x))); },
               podeDel: cols.length > 2, del: () => this.moCmpDel(c.id), trazer: () => this.moCmpTrazer(c.id), trazerTxt: "trazer da " + ({ planejamento: "Planilha de custos", contratacao: "Análise de proposta", repactuacao: "Repactuação" }[c.tipo] || "Repactuação"), total: brl(c.r.total),
               dif: ant ? (() => { const dv = c.r.total - ant.r.total, pc = ant.r.total ? dv / ant.r.total : 0; return (dv >= 0 ? "+" : "−") + brl(Math.abs(dv)) + " (" + (pc >= 0 ? "+" : "") + (pc * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%) em relação à anterior"; })() : "",
@@ -11860,6 +11937,7 @@ class Component extends DCLogic {
               qtd: [["emp_posto", "Empregados por posto"], ["postos", "Postos"], ["meses", "Meses"]].map(([k, rot]) => ({ rot, valor: c.d[k] == null ? (MO_PADRAO[k] ?? "") : c.d[k], on: setC(c)(k) })),
               mensal: brl(c.r.mensal), global: brl(c.r.global) }; }) }; })() : {}),
       moIrComparar: () => this.calcFerramenta("comparar"),
+      moVoltaCmp: !!mo.voltaCmp, moVoltaCmpNome: mo.voltaCmp ? mo.voltaCmp.nome : "", moVoltaCmpCom: () => this.cmpVoltarCom(true), moVoltaCmpSem: () => this.cmpVoltarCom(false),
       moCompRegistrar: () => { SET("ant")({ ...moSnap(this.state.mo.d), _origem: "assinante", _em: new Date().toISOString() }); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Valores atuais registrados como planilha da contratação. Agora altere o que mudou com a nova convenção." } })); },
       moCompLimpar: () => SET("ant")(null),
       moMem: memGrupos, moMemEmp: "Empregados considerados no rateio de materiais e equipamentos: " + empTot + " (empregados por posto × postos).",
@@ -12156,7 +12234,7 @@ class Component extends DCLogic {
           rqLimpar: () => { const dd = { ...RQ_PADRAO, tipo: d.tipo || "trib" }; this.rqGravar(dd); this.setState((x) => ({ rq: { ...x.rq, d: dd, erro: "" } })); },
           moLevarRq: () => this.rqDaPlanilha() };
       })(),
-      moPlan: mo.modo === "planejamento", moRep: rep, moProp: prop, moTemPlanArq: rep || prop,
+      moNaoPlan: mo.modo !== "planejamento", moPlan: mo.modo === "planejamento", moRep: rep, moProp: prop, moTemPlanArq: rep || prop,
       moPlanRot: prop ? "Planilha de custos da proposta" : "Planilha utilizada na contratação",
       moPlanSub: prop ? "A planilha de custos e formação de preços apresentada pela licitante, em PDF ou Excel (.xlsx)." : "A planilha de custos da proposta vencedora ou do contrato, em PDF ou Excel (.xlsx).",
       moModos: [["planejamento", "Planilha 1 · Planejamento da contratação"], ["repactuacao", "Planilha 2 · Repactuação"], ["proposta", "Planilha 3 · Análise da proposta"]].map(([id, nome]) => ({ nome, ativo: mo.modo === id, escolher: () => this.moModo(id), ...corBotao(mo.modo === id) })),
