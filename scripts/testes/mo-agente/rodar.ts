@@ -22,7 +22,7 @@ let handler: any = null;
 (Deno as any).serve = (h: any) => { handler = h; return {} as any; };
 await import("../../../supabase/functions/mo-agente/index.ts");
 const dados = JSON.parse(await Deno.readTextFile(pasta + "dados-site.json"));
-const corpo = { modo, arquivo: "teste/mo/cct.pdf", planilha_arquivo: "", planilha_texto: await Deno.readTextFile(pasta + "planilha-contrato-2025.txt"), dados };
+const corpo = { modo, arquivo: "teste/mo/cct.pdf", planilha_arquivo: "", planilha_texto: modo === "planejamento" ? "" : await Deno.readTextFile(pasta + (modo === "proposta" ? "planilha-proposta-2026.txt" : "planilha-contrato-2025.txt")), dados };
 const t0 = Date.now();
 const r: Response = await handler(new Request("http://teste/", { method: "POST", headers: { Authorization: "Bearer x" }, body: JSON.stringify(corpo) }));
 const out = await r.json();
