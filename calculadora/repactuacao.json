@@ -1,37 +1,412 @@
 {
  "status": 200,
- "segundos": 100,
+ "segundos": 74,
  "uso": {
-  "input_tokens": 106722,
+  "input_tokens": 35181,
   "cache_creation_input_tokens": 0,
   "cache_read_input_tokens": 0,
   "cache_creation": {
    "ephemeral_5m_input_tokens": 0,
    "ephemeral_1h_input_tokens": 0
   },
-  "output_tokens": 13679,
+  "output_tokens": 11423,
   "output_tokens_details": {
-   "thinking_tokens": 9948
+   "thinking_tokens": 4816
   },
   "service_tier": "standard",
   "inference_geo": "global",
   "speed": "standard",
   "server_tool_use": {
-   "web_search_requests": 3,
+   "web_search_requests": 1,
    "web_fetch_requests": 0
   },
-  "modelo": "claude-sonnet-5-5"
+  "modelo": "claude-sonnet-5-5",
+  "stop_reason": "tool_use"
  },
- "custo_estimado_usd": 0.555,
+ "custo_estimado_usd": 0.287,
  "resposta": {
-  "campos": [],
-  "observacoes": [],
-  "falhas": [],
+  "campos": [
+   {
+    "campo": "salario",
+    "valor": "1760.00",
+    "fonte": "CCT 2026, Cláusula Terceira (p. 1): piso do Servente de Limpeza R$ 1.760,00 desde 1º/1/2026",
+    "anterior": "1650.00"
+   },
+   {
+    "campo": "categoria",
+    "valor": "Servente de limpeza",
+    "fonte": "CCT 2026, Cláusula Terceira; planilha da contratação",
+    "anterior": "Servente de limpeza"
+   },
+   {
+    "campo": "cbo",
+    "valor": "5143-20",
+    "fonte": "CCT 2026, Cláusula Terceira",
+    "anterior": "5143-20"
+   },
+   {
+    "campo": "data_base",
+    "valor": "01/01/2026",
+    "fonte": "CCT 2026, Cláusula Primeira: data-base em 1º de janeiro"
+   },
+   {
+    "campo": "ano_cct",
+    "valor": "2026",
+    "fonte": "CCT 2026, Cláusula Primeira (vigência 1/1/2026 a 31/12/2026)",
+    "anterior": "2025"
+   },
+   {
+    "campo": "insal",
+    "valor": "18.4205",
+    "fonte": "CCT 2026, Cláusula Quarta: 20% sobre o salário mínimo de R$ 1.621,00 = R$ 324,20, equivalente a 18,4205% do piso de R$ 1.760,00 (ajuste de base)",
+    "anterior": "18.40"
+   },
+   {
+    "campo": "p13",
+    "valor": "8.33",
+    "fonte": "CLT/Lei 4.090/1962: 1/12 da remuneração",
+    "anterior": "8.33"
+   },
+   {
+    "campo": "pfa",
+    "valor": "11.11",
+    "fonte": "Correção: férias + 1/3 constitucional = 1/12 + 1/36 = 11,11% (CF art. 7º, XVII; CLT art. 130); a planilha usava 12,10%",
+    "anterior": "12.10"
+   },
+   {
+    "campo": "inss",
+    "valor": "20",
+    "fonte": "Lei 8.212/1991, art. 22, I",
+    "anterior": "20"
+   },
+   {
+    "campo": "saled",
+    "valor": "2.5",
+    "fonte": "Decreto-Lei 1.422/1975 (salário-educação)",
+    "anterior": "2.5"
+   },
+   {
+    "campo": "rat",
+    "valor": "3",
+    "fonte": "Lei 8.212/1991, art. 22, II (grau de risco grave para limpeza e conservação – RAT 3%), mantido da planilha",
+    "anterior": "3"
+   },
+   {
+    "campo": "fap",
+    "valor": "1.0",
+    "fonte": "Planilha da contratação (FAP 1,0000)",
+    "anterior": "1.0"
+   },
+   {
+    "campo": "sesc",
+    "valor": "1.5",
+    "fonte": "Contribuição ao SESC/SESI 1,5% (Lucro Presumido, não optante do Simples)",
+    "anterior": "1.5"
+   },
+   {
+    "campo": "senac",
+    "valor": "1",
+    "fonte": "Contribuição ao SENAC/SENAI 1%",
+    "anterior": "1"
+   },
+   {
+    "campo": "sebrae",
+    "valor": "0.6",
+    "fonte": "Contribuição ao SEBRAE 0,6%",
+    "anterior": "0.6"
+   },
+   {
+    "campo": "incra",
+    "valor": "0.2",
+    "fonte": "Contribuição ao INCRA 0,2%",
+    "anterior": "0.2"
+   },
+   {
+    "campo": "fgts",
+    "valor": "8",
+    "fonte": "Lei 8.036/1990, art. 15 (8%)",
+    "anterior": "8"
+   },
+   {
+    "campo": "vt_tarifa",
+    "valor": "4.95",
+    "fonte": "Tarifa informada pelo sistema para Niterói; CCT 2026, Cláusula Sexta (Lei 7.418/1985, desconto de até 6% do salário-base)",
+    "anterior": "4.70"
+   },
+   {
+    "campo": "vt_viagens",
+    "valor": "2",
+    "fonte": "Planilha da contratação (2 viagens por dia); Cláusula Sexta",
+    "anterior": "2"
+   },
+   {
+    "campo": "dias",
+    "valor": "22",
+    "fonte": "Planilha da contratação (22 dias por mês)",
+    "anterior": "22"
+   },
+   {
+    "campo": "aux_dia",
+    "valor": "23.00",
+    "fonte": "CCT 2026, Cláusula Quinta: R$ 23,00 por dia efetivamente trabalhado",
+    "anterior": "20.00"
+   },
+   {
+    "campo": "aux_part",
+    "valor": "0",
+    "fonte": "CCT 2026, Cláusula Quinta: sem desconto ou participação do empregado",
+    "anterior": "0"
+   },
+   {
+    "campo": "seguro",
+    "valor": "12.00",
+    "fonte": "CCT 2026, Cláusula Sétima: custo mensal mínimo de R$ 12,00 por empregado",
+    "anterior": "10.00"
+   },
+   {
+    "campo": "assist",
+    "valor": "18.50",
+    "fonte": "CCT 2026, Cláusula Nona: plano odontológico de R$ 18,50 mensais a partir de 1º/3/2026 (benefício novo, ausente da planilha da contratação)"
+   },
+   {
+    "campo": "api",
+    "valor": "0.42",
+    "fonte": "Planilha da contratação; percentual do caderno técnico para aviso prévio indenizado",
+    "anterior": "0.42"
+   },
+   {
+    "campo": "inf_api",
+    "valor": "0.42",
+    "fonte": "Planilha da contratação, Módulo 3, A"
+   },
+   {
+    "campo": "inf_fgts_api",
+    "valor": "0.03",
+    "fonte": "Planilha da contratação, Módulo 3, B"
+   },
+   {
+    "campo": "inf_multa_api",
+    "valor": "3.20",
+    "fonte": "Planilha da contratação, Módulo 3, C"
+   },
+   {
+    "campo": "inf_apt",
+    "valor": "1.94",
+    "fonte": "Planilha da contratação, Módulo 3, D"
+   },
+   {
+    "campo": "inf_inc_apt",
+    "valor": "0.71",
+    "fonte": "Planilha da contratação, Módulo 3, E"
+   },
+   {
+    "campo": "inf_multa_apt",
+    "valor": "0.08",
+    "fonte": "Planilha da contratação, Módulo 3, F"
+   },
+   {
+    "campo": "apt",
+    "valor": "0.194",
+    "fonte": "Não renovável: aviso prévio trabalhado limitado a 0,194% no ano de prorrogação (2º ano); art. 57 da IN 05/2017; Acórdão 1.186/2017-TCU-Plenário; Acórdão 3.006/2010-TCU-Plenário",
+    "anterior": "1.94"
+   },
+   {
+    "campo": "ferias",
+    "valor": "8.33",
+    "fonte": "Planilha da contratação, Módulo 4, A",
+    "anterior": "8.33"
+   },
+   {
+    "campo": "aus",
+    "valor": "1.66",
+    "fonte": "Planilha da contratação, Módulo 4, B (cadernos técnicos)",
+    "anterior": "1.66"
+   },
+   {
+    "campo": "pat",
+    "valor": "0.02",
+    "fonte": "Planilha da contratação, Módulo 4, C",
+    "anterior": "0.02"
+   },
+   {
+    "campo": "acid",
+    "valor": "0.03",
+    "fonte": "Planilha da contratação, Módulo 4, D",
+    "anterior": "0.03"
+   },
+   {
+    "campo": "mat",
+    "valor": "0.02",
+    "fonte": "Planilha da contratação, Módulo 4, E",
+    "anterior": "0.02"
+   },
+   {
+    "campo": "unif",
+    "valor": "35.00",
+    "fonte": "Planilha da contratação, Módulo 5, A; CCT 2026, Cláusula Oitava (2 conjuntos por ano e EPI): custo recorrente, não amortizado no 1º ano; sem reajuste",
+    "anterior": "35.00"
+   },
+   {
+    "campo": "materiais",
+    "valor": "0.00",
+    "fonte": "Planilha da contratação, Módulo 5, B",
+    "anterior": "0.00"
+   },
+   {
+    "campo": "equip",
+    "valor": "0.00",
+    "fonte": "Planilha da contratação, Módulo 5, C",
+    "anterior": "0.00"
+   },
+   {
+    "campo": "ci",
+    "valor": "5",
+    "fonte": "Planilha da contratação, Módulo 6, A",
+    "anterior": "5"
+   },
+   {
+    "campo": "lucro",
+    "valor": "6",
+    "fonte": "Planilha da contratação, Módulo 6, B",
+    "anterior": "6"
+   },
+   {
+    "campo": "pis",
+    "valor": "0.65",
+    "fonte": "Lucro Presumido, regime cumulativo (Lei 9.718/1998 e Lei 10.637/2002)",
+    "anterior": "0.65"
+   },
+   {
+    "campo": "cofins",
+    "valor": "3",
+    "fonte": "Lucro Presumido, regime cumulativo (Lei 9.718/1998)",
+    "anterior": "3"
+   },
+   {
+    "campo": "emp_posto",
+    "valor": "1",
+    "fonte": "Planilha da contratação",
+    "anterior": "1"
+   },
+   {
+    "campo": "postos",
+    "valor": "10",
+    "fonte": "Planilha da contratação",
+    "anterior": "10"
+   },
+   {
+    "campo": "meses",
+    "valor": "12",
+    "fonte": "Planilha da contratação",
+    "anterior": "12"
+   },
+   {
+    "campo": "tipo_servico",
+    "valor": "Limpeza e conservação",
+    "fonte": "Dados do sistema"
+   },
+   {
+    "campo": "municipio",
+    "valor": "Niterói",
+    "fonte": "Dados do sistema e planilha da contratação"
+   },
+   {
+    "campo": "uf",
+    "valor": "RJ",
+    "fonte": "Dados do sistema"
+   },
+   {
+    "campo": "vigente",
+    "valor": "5123.11",
+    "fonte": "Planilha da contratação: valor total por empregado (R$ 51.231,11 por mês para 10 postos)"
+   },
+   {
+    "campo": "rp_contrato",
+    "valor": "015/2025",
+    "fonte": "Cabeçalho da planilha da contratação"
+   },
+   {
+    "campo": "rp_orgao",
+    "valor": "Prefeitura Municipal de Exemplo",
+    "fonte": "Cabeçalho da planilha da contratação"
+   },
+   {
+    "campo": "rp_empresa",
+    "valor": "Limpa Bem Serviços Ltda.",
+    "fonte": "Cabeçalho da planilha da contratação"
+   }
+  ],
+  "observacoes": [
+   "O ano de execução não foi informado. Considerei a repactuação no 2º ano (contrato 015/2025, CCT 2026), por isso o aviso prévio trabalhado foi reduzido a 0,194%.",
+   "A assistência odontológica da Cláusula Nona vale a partir de 1º/3/2026. Se o efeito financeiro da repactuação começar antes dessa data, o valor deve ser proporcional.",
+   "A insalubridade da CCT é calculada sobre o salário mínimo (R$ 324,20 fixos). Por isso o campo insal foi ajustado para 18,4205% do piso.",
+   "O ISS de 2% vale para limpeza de imóveis públicos (Lei 2.597/2008, art. 10, II, 'c'). Para serviço em imóvel privado, a regra geral é 5%. A conferência com a Fazenda de Niterói é recomendável.",
+   "Insumos (uniformes R$ 35,00) foram mantidos sem reajuste. A Cláusula Oitava prevê 2 conjuntos por ano, então o custo é recorrente e não amortizado.",
+   "Resultado estimado da planilha repactuada: Módulo 1 R$ 2.084,20; Módulo 2 R$ 2.047,12; Módulo 3 R$ 87,57; Módulo 4 R$ 209,67; Módulo 5 R$ 35,00. Com custos indiretos de 5%, lucro de 6% e tributos de 5,65%, o total é de cerca de R$ 5.265 por empregado por mês."
+  ],
+  "falhas": [
+   {
+    "rubrica": "Submódulo 2.1, B – Férias e adicional de férias",
+    "problema": "A planilha usa 12,10% (R$ 236,39) para férias e 1/3 constitucional. O percentual correto é 11,11%.",
+    "fundamento": "CF art. 7º, XVII; CLT art. 130; cadernos técnicos de serviços terceirizados (SEGES/Compras.gov.br)",
+    "correcao": "Aplicar 11,11% sobre o Módulo 1 (R$ 2.084,20 = R$ 231,56). O Submódulo 2.1 passa a 19,44%.",
+    "impacto": "Aumenta o preço. A diferença é de cerca de 1 ponto percentual sobre o Módulo 1 (R$ 20 a 21 por empregado por mês). Com os encargos do 2.2 e os percentuais do Módulo 6, chega a cerca de R$ 30 por mês.",
+    "gravidade": "alta"
+   },
+   {
+    "rubrica": "Módulo 3, C – Multa do FGTS sobre o aviso prévio indenizado",
+    "problema": "A planilha usa 3,20% (R$ 62,52). Esse valor não segue o modelo dos cadernos técnicos, que calcula a multa sobre todos os depósitos do contrato.",
+    "fundamento": "Cadernos técnicos SEGES: 8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168) ≈ 3,48%; Lei 8.036/1990, art. 18; multa de 40%, já sem a contribuição de 10% (Lei 13.932/2019)",
+    "correcao": "Usar 3,48% do Módulo 1 (R$ 2.084,20 = R$ 72,53), mantendo apenas a multa de 40%.",
+    "impacto": "A planilha subestima o custo em 0,28 ponto percentual do Módulo 1 (cerca de R$ 6 por empregado por mês, ou R$ 7 com o Módulo 6). Mantê-la reduz o preço.",
+    "gravidade": "media"
+   },
+   {
+    "rubrica": "Módulo 3, D – Aviso prévio trabalhado",
+    "problema": "A planilha mantém 1,94% (R$ 37,90). Esse custo não é renovável. A repactuação ocorre no 2º ano de execução, e o custo já foi pago ou amortizado no 1º ano.",
+    "fundamento": "Art. 57 da IN SEGES/MP 05/2017; Acórdão 1.904/2007-TCU-Plenário; Acórdão 3.006/2010-TCU-Plenário; Acórdão 1.186/2017-TCU-Plenário (máximo de 0,194% por ano de prorrogação)",
+    "correcao": "Reduzir para 0,194% do Módulo 1 (R$ 4,04). Ajustar também os itens E e F.",
+    "impacto": "Manter 1,94% aumenta o preço indevidamente em cerca de R$ 36 por empregado por mês na rubrica D, mais cerca de R$ 13 na E e na F. Com o Módulo 6, o excesso passa de R$ 50 por empregado por mês.",
+    "gravidade": "alta"
+   },
+   {
+    "rubrica": "Módulo 3, E – Incidência do Submódulo 2.2 sobre o aviso prévio trabalhado",
+    "problema": "A planilha usa 0,71% (36,8% × 1,94%), calculado sobre um aviso prévio trabalhado que não é mais devido no percentual cheio.",
+    "fundamento": "Art. 57 da IN SEGES/MP 05/2017; Acórdão 1.186/2017-TCU-Plenário",
+    "correcao": "Aplicar 36,8% sobre 0,194%, o que dá 0,0714% (R$ 1,49).",
+    "impacto": "Manter a incidência cheia aumenta o preço em cerca de R$ 12 a 13 por empregado por mês.",
+    "gravidade": "media"
+   },
+   {
+    "rubrica": "Módulo 3, F – Multa do FGTS sobre o aviso prévio trabalhado",
+    "problema": "A planilha usa 0,08% (R$ 1,56). O correto sobre 1,94% seria 0,062% (40% × 8% × 1,94%), então o percentual está inconsistente com a própria base. Sobre o aviso prévio de 0,194%, o correto é 0,0062%.",
+    "fundamento": "Modelo dos cadernos técnicos SEGES: F = 40% × 8% × aviso prévio trabalhado; Acórdão 1.186/2017-TCU-Plenário",
+    "correcao": "Usar 0,0062% do Módulo 1 (R$ 0,13).",
+    "impacto": "Aumento de cerca de R$ 1,4 por empregado por mês.",
+    "gravidade": "baixa"
+   },
+   {
+    "rubrica": "Módulo 6, C.3 – ISS",
+    "problema": "A planilha usa ISS de 5%. Em Niterói, a Lei 2.597/2008, art. 10, II, 'c', fixa 2% para o subitem 7.10 quando o serviço é de limpeza em imóveis públicos, que é o caso da Prefeitura contratante. O código tributário também prevê 5% como regra geral e como alíquota máxima de retenção.",
+    "fundamento": "LC 116/2003, item 7.10; Lei Municipal 2.597/2008, art. 10, I e II, 'c'; tabela de alíquotas da Fazenda de Niterói",
+    "correcao": "Usar 2% e conferir com a Fazenda municipal se há enquadramento diferente. O total de tributos passa a 5,65% (PIS 0,65% + COFINS 3% + ISS 2%).",
+    "impacto": "Manter 5% aumenta o preço em cerca de R$ 170 por empregado por mês (cerca de R$ 1.700 por mês para 10 postos).",
+    "gravidade": "alta"
+   },
+   {
+    "rubrica": "Submódulo 2.3 – Assistência odontológica (nova CCT)",
+    "problema": "A planilha da contratação não traz benefício odontológico, que passou a ser obrigatório pela nova CCT.",
+    "fundamento": "CCT 2026, Cláusula Nona, a partir de 1º/3/2026",
+    "correcao": "Incluir R$ 18,50 por empregado por mês em assistência médica/odontológica.",
+    "impacto": "Aumenta o preço em cerca de R$ 18,50 por empregado por mês (cerca de R$ 22 com o Módulo 6). A planilha da contratação não o inclui porque o benefício é posterior a ela.",
+    "gravidade": "baixa"
+   }
+  ],
   "iss": {
-   "encontrado": false,
-   "aliquota": null,
-   "item": "",
-   "fonte": "",
+   "encontrado": true,
+   "aliquota": 2,
+   "item": "7.10",
+   "fonte": "Lei Municipal de Niterói 2.597/2008 (Código Tributário), art. 10, II, 'c': alíquota de 2% para os subitens 7.05, 7.10 e 7.11 quando relativos a imóveis públicos. Tabela de alíquotas: https://www.fazenda.niteroi.rj.gov.br/site/aliquotas-de-iss-e-local-da-tributacao/tabela/. Texto da lei: http://www.s",
    "municipio": "Niterói",
    "uf": "RJ"
   },
