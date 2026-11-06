@@ -3699,8 +3699,8 @@
                   <sc-for list="{{ moCvLinhas }}" as="l" hint-placeholder-count="4"><div class="lmo-lin lmo-lin3" role="row"><span class="lmo-cod">{{ l.pct }}</span><span>{{ l.rot }}</span><span class="lmo-val">{{ l.val }}</span></div></sc-for>
                   <div class="lmo-lin lmo-lin3 lmo-tot" role="row"><span>{{ moCvTot }}</span><span>Retenção mensal por empregado</span><span class="lmo-val">{{ moCvEmp }}</span></div>
                 </div>
-                <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>Multa do FGTS e contribuição social (%)</span><input type="text" inputmode="decimal" value="{{ moGtMulta }}" sc-camel-on-input="{{ onMoGtMulta }}"></label></div>
-                <p class="lmo-nota">O Anexo XII traz 5%, que inclui a contribuição social de 10% sobre o FGTS extinta pela Lei 13.932/2019; há órgãos que adotam 4%. A incidência do Submódulo 2.2 segue o RAT informado no Submódulo 2.2.</p>
+                <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>Multa do FGTS (%)</span><input type="text" inputmode="decimal" value="{{ moGtMulta }}" sc-camel-on-input="{{ onMoGtMulta }}"></label></div>
+                <p class="lmo-nota">Padrão de 4%: o Anexo XII traz 5%, mas esse valor inclui a contribuição social de 10% sobre o FGTS, extinta pela Lei 13.932/2019 a partir de 1º/1/2020; por isso a retenção passou a 4%. A incidência do Submódulo 2.2 segue o RAT informado no Submódulo 2.2.</p>
                 <p class="lmo-ok">{{ moCvResumo }}</p>
               </sc-if>
               <sc-if value="{{ moGtFg }}" hint-placeholder-val="{{ false }}">
@@ -6442,7 +6442,7 @@ const MO_PADRAO = {
   ano_exec: "2", vigente: "",
   vg_calc: "", vg_an: "20", vg_hnot: "9", vg_div: "220", vg_ffix: "9", vg_fmov: "1", vg_fer: "100", vg_intra: "", vg_ih: "1", vg_ia: "50", mem_cf: "",
   inf_api: "", inf_fgts_api: "", inf_multa_api: "", inf_apt: "", inf_inc_apt: "", inf_multa_apt: "",
-  gt_tipo: "", gt_multa: "5", rp_db_ant: "", rp_pedido: "", rp_prorrog: "", rp_fim: "", rp_inicio: "", rp_contrato: "", rp_orgao: "", rp_empresa: "",
+  gt_tipo: "", gt_multa: "4", rp_db_ant: "", rp_pedido: "", rp_prorrog: "", rp_fim: "", rp_inicio: "", rp_contrato: "", rp_orgao: "", rp_empresa: "",
   regime: "", rbt12: "", reforma: "", rf_ano: "", rf_cbs: "11,3", rf_ibs: "18,7",
   rj_ativo: "", rj_indice: "ipca", rj_orcamento: "", rj_ref: "", rj_unif: "sim", rj_materiais: "sim", rj_equip: "sim", rj_outros5: "sim"
 };
@@ -6614,6 +6614,7 @@ function moConferir(d, r, modo) {
   const F = (rubrica, problema, fundamento, correcao, gravidade, impacto) => out.push({ rubrica, problema, fundamento, correcao, gravidade, impacto: impacto || "" });
   const pctB = (v) => String(v).replace(".", ",") + "%";
   if (modo && modo !== "planejamento") moConferirM3(d, r, modo).forEach((x) => out.push(x));
+  if (d.gt_tipo === "cv" && moNum(d.gt_multa) > 4.005) F("Conta-depósito vinculada – multa do FGTS", "Retenção de " + pctB(moNum(d.gt_multa)) + " para a multa do FGTS.", "Lei 13.932/2019, art. 12 (extinção da contribuição social de 10% a partir de 1º/1/2020); IN 05/2017, Anexo XII.", "4% sobre o Módulo 1: os 5% do Anexo XII incluíam a contribuição social extinta.", "media");
   if (n("inss") !== 20) F("Submódulo 2.2, A – INSS", "INSS de " + pctB(n("inss")) + ".", "Lei 8.212/1991, art. 22, I.", "Contribuição patronal de 20% sobre a remuneração (também no Simples, Anexo IV).", "alta");
   if (n("fgts") !== 8) F("Submódulo 2.2, H – FGTS", "FGTS de " + pctB(n("fgts")) + ".", "Lei 8.036/1990, art. 15.", "Depósito de 8% sobre a remuneração.", "alta");
   if (![1, 2, 3].includes(n("rat"))) F("Submódulo 2.2, C – SAT/RAT", "RAT de " + pctB(n("rat")) + ".", "Lei 8.212/1991, art. 22, II.", "Alíquota de 1%, 2% ou 3%, conforme o grau de risco do CNAE preponderante da empresa, multiplicada pelo FAP.", "alta");
@@ -7659,8 +7660,11 @@ function moCalcular(d, modo, rj) {
   r.M2 = moT2(r.M21 + r.M22 + r.M23);
   // módulo 3: provisão para rescisão
   r.apt_p = modo === "repactuacao" ? MO_APT_PRORROGACAO / 100 : pc("apt");
-  r.m3p = { api: pc("api"), fgts_api: pc("fgts") * pc("api"), multa_api: 0.5 * pc("fgts") * pc("api"), apt: r.apt_p,
-            inc_apt: r.M22p * r.apt_p, multa_apt: 0.5 * pc("fgts") * r.apt_p };
+  // multa rescisória de 40% (a contribuição social de 10% da LC 110/2001 foi extinta pela Lei 13.932/2019 a partir de 2020).
+  // C segue os cadernos técnicos da SEGES: multa sobre todos os depósitos do contrato (remuneração, 13º, férias e 1/3),
+  // para os 90% de empregados que não pedem demissão: 8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168) ≈ 3,48%
+  r.m3p = { api: pc("api"), fgts_api: pc("fgts") * pc("api"), multa_api: pc("fgts") * 0.4 * 0.9 * (1 + 5 / 56 + 5 / 56 + 5 / 168), apt: r.apt_p,
+            inc_apt: r.M22p * r.apt_p, multa_apt: 0.4 * pc("fgts") * r.apt_p };
   Object.entries(r.m3p).forEach(([k, v]) => { r["r_" + k] = r.M1 * v; });
   r.M3p = moT4(Object.values(r.m3p).reduce((a, b) => a + b, 0));
   r.M3 = moT2(Object.keys(r.m3p).reduce((a, k) => a + r["r_" + k], 0));
@@ -10577,7 +10581,7 @@ class Component extends DCLogic {
         n.push("Caderno técnico de vigilância: 30,4375 dias por mês (ano de 365,25 dias); 12x36 com 15,22 dias de trabalho; adicional noturno com as horas prorrogadas após as 5 h (Súmula 60, II, do TST); hora noturna de 52'30\" (CLT, art. 73, § 1º); feriados em dobro na 12x36 (Súmula 444 do TST); intervalo não concedido com 50% (CLT, art. 71, § 4º). A convenção prevalece quando dispuser de outro modo (CLT, art. 611-A).");
       }
       if (gtU && d.gt_tipo === "cv") { blocos.push(T("CONTA-DEPÓSITO VINCULADA – RETENÇÃO MENSAL", ["Provisão (sobre o Módulo 1)", "%", "Valor por empregado"], gtU.cvP.map(([k, p]) => ({ c: [k, p.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%", brlTxt(r.M1 * p / 100)] })).concat([{ c: ["Retenção mensal por empregado", P.moCvTot, P.moCvEmp], total: true }]), { alin: "lrr", larg: [60, 12, 24] }));
-        n.push(P.moCvResumo); n.push("Conta-depósito vinculada: IN 05/2017, art. 18, I, e Anexo XII; Lei 14.133/2021, art. 121, § 3º, III. O Anexo XII traz 5% para a multa do FGTS, que inclui a contribuição social extinta pela Lei 13.932/2019."); }
+        n.push(P.moCvResumo); n.push("Conta-depósito vinculada: IN 05/2017, art. 18, I, e Anexo XII; Lei 14.133/2021, art. 121, § 3º, III. A multa do FGTS é retida a 4%: os 5% do Anexo XII incluíam a contribuição social de 10%, extinta pela Lei 13.932/2019 a partir de 2020."); }
       if (gtU && d.gt_tipo === "fg") { blocos.push(T("PAGAMENTO PELO FATO GERADOR", ["Parcela paga só quando ocorrer o fato gerador", "Provisão mensal", "Com CI, tributos e lucro"], gtU.fg.map(([k, v]) => ({ c: [k, brlTxt(v), brlTxt(v * gtU.fatorM6)] })), { alin: "lrr", larg: [56, 18, 22] }));
         n.push(P.moFgResumo); n.push("Pagamento pelo fato gerador: IN 05/2017, art. 18, II; Lei 14.133/2021, art. 121, § 3º, V."); }
       docs.memoria = { titulo: "Memória de cálculo", arquivo: base0 + "-memoria-de-calculo", blocos, notas: n };
@@ -10973,10 +10977,10 @@ class Component extends DCLogic {
       { titulo: "Módulo 3 – Provisão para rescisão", linhas: [
         L("A", "Aviso prévio indenizado", { k: "api", v: r.r_api }),
         L("B", "Incidência do FGTS sobre o aviso prévio indenizado", { p: r.m3p.fgts_api, v: r.r_fgts_api }),
-        L("C", "Multa do FGTS e contribuição social sobre o aviso prévio indenizado", { p: r.m3p.multa_api, v: r.r_multa_api }),
+        L("C", "Multa do FGTS (40%) sobre os depósitos do contrato", { p: r.m3p.multa_api, v: r.r_multa_api, nota: "8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168): multa rescisória sobre os depósitos de remuneração, 13º, férias e 1/3, para os 90% de empregados que não pedem demissão (cadernos técnicos da SEGES; Lei 8.036/1990, art. 18, § 1º). Sem a contribuição social de 10%, extinta pela Lei 13.932/2019." }),
         rep ? L("D", "Aviso prévio trabalhado", { p: r.m3p.apt, v: r.r_apt, auto: true, nota: naoRen }) : L("D", "Aviso prévio trabalhado", { k: "apt", v: r.r_apt }),
         L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { p: r.m3p.inc_apt, v: r.r_inc_apt, auto: rep }),
-        L("F", "Multa do FGTS e contribuição social sobre o aviso prévio trabalhado", { p: r.m3p.multa_apt, v: r.r_multa_apt, auto: rep })], total: T("Total do Módulo 3", r.M3p, r.M3) },
+        L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { p: r.m3p.multa_apt, v: r.r_multa_apt, auto: rep })], total: T("Total do Módulo 3", r.M3p, r.M3) },
       { titulo: "Submódulo 4.1 – Ausências legais", linhas: [
         L("A", "Férias", { k: "ferias", v: r.ferias }),
         L("B", "Ausências legais", { k: "aus", v: r.aus }),
@@ -11026,7 +11030,7 @@ class Component extends DCLogic {
     // garantia das obrigações trabalhistas (IN 05/2017, art. 18): conta-depósito vinculada ou pagamento pelo fato gerador
     const empN = Math.max(0, moNum(d.emp_posto) * moNum(d.postos));
     const ratN = Math.min(3, Math.max(1, Math.round(moNum(d.rat) || 2)));
-    const cvP = [["13º (décimo terceiro) salário", 8.33], ["Férias e 1/3 constitucional", 12.10], ["Multa do FGTS e contribuição social sobre o aviso prévio indenizado e trabalhado", moNum(d.gt_multa)],
+    const cvP = [["13º (décimo terceiro) salário", 8.33], ["Férias e 1/3 constitucional", 12.10], ["Multa do FGTS sobre o aviso prévio indenizado e trabalhado", moNum(d.gt_multa)],
       ["Incidência do Submódulo 2.2 sobre férias, 1/3 e 13º (RAT " + ratN + "%)", MO_CV_INCID[ratN]]];
     const cvTot = cvP.reduce((a, x) => a + x[1], 0), cvEmp = moT2(r.M1 * cvTot / 100);
     const fatorM6 = r.sub ? r.total / r.sub : 1;
