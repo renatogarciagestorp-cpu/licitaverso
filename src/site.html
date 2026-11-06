@@ -5372,7 +5372,7 @@
                 <article class="{{ c.cls }}">
                   <div class="ct-cab">
                     <div class="ct-tit"><span class="{{ c.stCls }}">{{ c.st }}</span><h3>Contrato {{ c.numero }}</h3><p>{{ c.contratada }}<sc-if value="{{ c.temObjeto }}" hint-placeholder-val="{{ true }}"> · {{ c.objeto }}</sc-if></p><sc-if value="{{ c.temModal }}" hint-placeholder-val="{{ false }}"><span class="ct-modal">{{ c.modal }}</span></sc-if></div>
-                    <div class="ct-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.abrir }}">Linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarReajuste }}">Calcular reajuste</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarRq }}">Reequilíbrio</button><sc-if value="{{ ctOrg }}" hint-placeholder-val="{{ true }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.vantajosidade }}">Vantajosidade</button></sc-if><sc-if value="{{ ctEmp }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.kitAbrir }}">Pedido ao órgão</button></sc-if><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.pdf }}">PDF</button></div>
+                    <div class="ct-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.abrir }}">Linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarReajuste }}">Calcular reajuste</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarRq }}">Reequilíbrio</button><sc-if value="{{ ctOrg }}" hint-placeholder-val="{{ true }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.vantajosidade }}">Vantajosidade</button></sc-if><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.kitAbrir }}">Modelos de peças</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.pdf }}">PDF</button></div>
                   </div>
                   <div class="ct-dados">
                     <div><small>Valor vigente</small><b>{{ c.valorV }}</b><em>{{ c.valorSub }}</em></div>
@@ -5385,14 +5385,14 @@
                   </sc-if>
                   <sc-for list="{{ c.avisos }}" as="a" hint-placeholder-count="1"><p class="ct-av">{{ a.t }}</p></sc-for>
                   <sc-if value="{{ c.kitAberto }}" hint-placeholder-val="{{ false }}">
-                    <div class="ct-kit"><h4>Pedido ao órgão</h4><p>Gere o requerimento já preenchido com os dados do contrato, com a ressalva contra a preclusão (art. 131, parágrafo único), e registre o protocolo para acompanhar o prazo de resposta.</p>
+                    <div class="ct-kit"><h4>{{ ctKitTit }}</h4><p>{{ ctKitIntro }}</p>
                       <div class="ct-kit-c">
-                        <label class="lmo-campo"><span>Tipo de pedido</span><select sc-camel-on-change="{{ onCtKitTipo }}"><sc-for list="{{ ctKitTipos }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
-                        <label class="lmo-campo"><span>Data do protocolo</span><input type="date" value="{{ ctKitData }}" sc-camel-on-input="{{ onCtKitData }}"></label>
+                        <label class="lmo-campo"><span>Peça</span><select sc-camel-on-change="{{ onCtKitTipo }}"><sc-for list="{{ ctKitTipos }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                        <label class="lmo-campo"><span>{{ ctKitDataRot }}</span><input type="date" value="{{ ctKitData }}" sc-camel-on-input="{{ onCtKitData }}"></label>
                         <label class="lmo-campo"><span>Prazo de resposta do contrato (opcional)</span><input type="date" value="{{ ctKitPrazo }}" sc-camel-on-input="{{ onCtKitPrazo }}"></label>
                       </div>
                       <p>{{ ctKitTxt }}</p>
-                      <div class="ct-kit-bt"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ctKitPdf }}">Baixar requerimento (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctKitReg }}">Registrar o protocolo na linha do tempo</button><button type="button" class="gp-limpar" sc-camel-on-click="{{ ctKitFechar }}">Fechar</button></div>
+                      <div class="ct-kit-bt"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ctKitPdf }}">Baixar a peça (PDF)</button><sc-if value="{{ ctKitTemReg }}" hint-placeholder-val="{{ true }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctKitReg }}">Registrar na linha do tempo</button></sc-if><button type="button" class="gp-limpar" sc-camel-on-click="{{ ctKitFechar }}">Fechar</button></div>
                     </div>
                   </sc-if>
                   <sc-if value="{{ c.aberto }}" hint-placeholder-val="{{ false }}">
@@ -7992,6 +7992,22 @@ const CT_TIPOS = { reajuste: "Reajuste", repactuacao: "Repactuação", reequilib
 const CT_PENAL = { advertencia: 1, multa: 1, impedimento: 1, inidoneidade: 1 }, CT_EXEC = { ocorrencia: 1, advertencia: 1, multa: 1, impedimento: 1, inidoneidade: 1 };
 // registros de acompanhamento (pedidos, decisões, notificações, defesas e atestados): também não alteram valor nem vigência
 const CT_INFO = { pedido_reajuste: 1, pedido_repactuacao: 1, pedido_reequilibrio: 1, decisao: 1, notificacao: 1, defesa: 1, atestado: 1 }, CT_SEMVAL = { ...CT_EXEC, ...CT_INFO };
+// modelos de peças da Gestão Contratual, por visão: [id, nome, registro na linha do tempo ao protocolar/enviar]
+const CT_PECAS = {
+  empresa: [["reajuste", "Pedido de reajuste por índice", "pedido_reajuste"], ["repactuacao", "Pedido de repactuação (convenção coletiva)", "pedido_repactuacao"], ["reequilibrio", "Pedido de reequilíbrio econômico-financeiro", "pedido_reequilibrio"],
+    ["defesa", "Defesa prévia (penalidade)", "defesa"], ["recurso", "Recurso ou pedido de reconsideração", "defesa"], ["resposta", "Resposta à notificação ou diligência do fiscal", ""], ["prorrog_int", "Manifestação de interesse na prorrogação", ""]],
+  orgao: [["notificacao", "Notificação à contratada (falha na execução e prazo de defesa)", "notificacao"], ["diligencia", "Diligência ou pedido de esclarecimentos à contratada", ""], ["resposta_pedido", "Resposta ao pedido da contratada (decisão)", "decisao"],
+    ["consulta_prorrog", "Consulta de interesse na prorrogação", ""], ["apostila", "Termo de apostilamento de reajuste", ""]] };
+const CT_PECA_DICA = {
+  defesa: "A defesa prévia é de 15 dias úteis da intimação na multa e nos processos de impedimento ou inidoneidade (Lei 14.133/2021, arts. 157 e 158; Lei 13.303/2016, art. 83, § 2º: 10 dias úteis). A peça usa a última notificação registrada na linha do tempo.",
+  recurso: "Penalidade: recurso em 15 dias úteis (advertência, multa e impedimento, art. 166) ou pedido de reconsideração em 15 dias úteis (inidoneidade, art. 167). Outras decisões: pedido de reconsideração em 3 dias úteis (art. 165, II).",
+  resposta: "Responda dentro do prazo fixado pelo fiscal e anexe as provas da correção (art. 119: o contratado deve reparar, corrigir ou substituir o que tiver vício).",
+  prorrog_int: "Serviços contínuos podem ser prorrogados até 10 anos, se o contrato permitir e os preços continuarem vantajosos (art. 107). A manifestação pode ressalvar o reajuste e a repactuação pendentes.",
+  notificacao: "A notificação descreve a falha, cita a cláusula e a lei e abre prazo de defesa: 15 dias úteis na multa e no impedimento ou inidoneidade (arts. 157 e 158). Registre a data de envio para acompanhar o prazo.",
+  diligencia: "Peça esclarecimentos ou documentos antes de concluir pela falha ou de decidir um pedido (art. 117 e art. 123: a Administração deve instruir o processo).",
+  resposta_pedido: "Responde ao pedido mais recente registrado na linha do tempo, com o prazo legal de decisão (art. 92, X e XI; art. 123, parágrafo único) e o recurso cabível.",
+  consulta_prorrog: "Envie com antecedência (a agenda sugere 4 meses antes do fim). A prorrogação exige vantajosidade, manutenção das condições de habilitação e autorização (art. 107).",
+  apostila: "O reajuste previsto no contrato se formaliza por apostila, sem termo aditivo (art. 136, I). A minuta usa o último reajuste registrado na linha do tempo." };
 const CT_PEDIDO = { pedido_reajuste: "reajuste", pedido_repactuacao: "repactuação", pedido_reequilibrio: "reequilíbrio" };
 // dias úteis (Lei 14.133/2021, art. 183): exclui o dia do começo e inclui o do vencimento; sábados, domingos e feriados nacionais não contam
 function ctFeriados(ano) {
@@ -11759,13 +11775,14 @@ class Component extends DCLogic {
   }
   async ctKitRegistrar() {
     const k = this.state.ct.kit; if (!k) return;
-    const tipo = { reajuste: "pedido_reajuste", repactuacao: "pedido_repactuacao", reequilibrio: "pedido_reequilibrio" }[k.tipo];
-    const e = await this.ctGravarEv(k.id, { ...CT_EV, tipo, data: k.data, prazo: k.prazo, descricao: "Pedido protocolado (requerimento gerado na Gestão Contratual)." });
+    const pk = [...CT_PECAS.empresa, ...CT_PECAS.orgao].find((x) => x[0] === k.tipo), tipo = pk && pk[2]; if (!tipo) return;
+    const e = await this.ctGravarEv(k.id, { ...CT_EV, tipo, data: k.data, prazo: CT_PEDIDO[tipo] || tipo === "notificacao" ? k.prazo : "", descricao: pk[1] + " (peça gerada na Gestão Contratual)." });
     if (e) { this.ctMsg("", e); return; }
-    this.setState((x) => ({ ct: { ...x.ct, kit: null, ok: "Protocolo registrado. O prazo de resposta do órgão aparece no Painel da Organização.", erro: "" } }));
+    this.setState((x) => ({ ct: { ...x.ct, kit: null, ok: CT_PEDIDO[tipo] ? "Protocolo registrado. O prazo de resposta do órgão aparece no Painel da Organização." : tipo === "notificacao" ? "Notificação registrada. O prazo de defesa aparece no Painel da Organização." : "Registro incluído na linha do tempo.", erro: "" } }));
   }
   async ctKitPdf() {
     const k = this.state.ct.kit, c = k && this.state.ct.lista.find((x) => x.id === k.id); if (!c) return;
+    if (!["reajuste", "repactuacao", "reequilibrio"].includes(k.tipo)) return this.ctPecaPdf(k, c);
     const si = ctSituacao(c, this.state.ct.eventos[c.id]), hoje = new Date().toLocaleDateString("pt-BR");
     const brl = (v) => (v == null ? "—" : "R$ " + Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
     const dBR = (iso) => (iso ? String(iso).slice(8, 10) + "/" + String(iso).slice(5, 7) + "/" + String(iso).slice(0, 4) : "—");
@@ -11803,6 +11820,81 @@ class Component extends DCLogic {
       await this.moDocPdf({ titulo: "Requerimento de " + nomeTipo, sub: "Contrato nº " + c.numero + " · " + contratada, selo: "Gestão Contratual · " + (l13303 ? "Lei 13.303/2016" : "Lei 14.133/2021"),
         arquivo: "requerimento-" + k.tipo + "-contrato-" + String(c.numero).replace(/[^\w]+/g, "-"), blocos, notas: ["Modelo gerado a partir dos dados cadastrados na Gestão Contratual. Revise os dados, complete os campos entre colchetes e anexe os documentos antes de protocolar."] }, "", hoje);
     } catch (e) { this.ctMsg("", "Não foi possível gerar o requerimento. Tente de novo."); }
+  }
+  // demais modelos de peças (defesa, recurso, resposta, prorrogação, notificação, diligência, decisão, apostila), preenchidos com o contrato e a linha do tempo
+  async ctPecaPdf(k, c) {
+    const evs = (this.state.ct.eventos[c.id] || []).slice().sort((a, b) => String(a.data).localeCompare(String(b.data)));
+    const si = ctSituacao(c, this.state.ct.eventos[c.id]), hoje = new Date().toLocaleDateString("pt-BR"), l13303 = c.regime === "13303", l13019 = c.regime === "13019";
+    const brl = (v) => (v == null || v === "" ? "—" : "R$ " + Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    const dBR = (iso) => (iso ? String(iso).slice(8, 10) + "/" + String(iso).slice(5, 7) + "/" + String(iso).slice(0, 4) : "__/__/____");
+    const contratada = c.contratada || "[razão social da contratada]", contratante = c.contratante || "[órgão ou entidade contratante]", ultimo = (tipos) => evs.filter((e) => tipos.includes(e.tipo)).pop();
+    const L = l13303 ? "Lei nº 13.303/2016" : l13019 ? "Lei nº 13.019/2014" : "Lei nº 14.133/2021", dataDoc = k.data ? dBR(k.data) : hoje;
+    const nomeP = { defesa: "Defesa prévia", recurso: "Recurso administrativo", resposta: "Resposta à notificação", prorrog_int: "Interesse na prorrogação", notificacao: "Notificação à contratada",
+      diligencia: "Diligência à contratada", resposta_pedido: "Resposta ao pedido", consulta_prorrog: "Consulta sobre prorrogação", apostila: "Termo de apostilamento" }[k.tipo] || "Peça";
+    const dados = { t: "pares", titulo: "Dados do contrato", pares: [["Contratante", contratante], ["Contratada", contratada], ["Contrato", c.numero], ["Objeto", c.objeto || "—"], ["Vigência até", dBR(si.fim)], ["Valor vigente", brl(si.valor) + (c.periodicidade === "mensal" ? " por mês" : "")],
+      ...(c.gestor ? [[this.ctVisao() === "empresa" ? "Preposto" : "Gestor do contrato", c.gestor]] : []), ...(c.fiscal ? [["Fiscal do contrato", c.fiscal]] : [])] };
+    const assEmp = { t: "texto", titulo: "Assinatura", paragrafos: ["Local e data: ______________________, " + dataDoc + ".", "______________________________________", "Representante legal ou preposto da contratada"] };
+    const assOrg = (cargo) => ({ t: "texto", titulo: "Assinatura", paragrafos: ["Local e data: ______________________, " + dataDoc + ".", "______________________________________", cargo || (c.gestor ? c.gestor + " – Gestor do contrato" : "Gestor ou fiscal do contrato")] });
+    let corpo = [];
+    const notif = ultimo(["notificacao", "ocorrencia"]), pen = ultimo(["advertencia", "multa", "impedimento", "inidoneidade"]), ped = ultimo(["pedido_reajuste", "pedido_repactuacao", "pedido_reequilibrio"]), reaj = ultimo(["reajuste"]);
+    const prazoDef = l13303 ? 10 : 15;
+    if (k.tipo === "defesa") {
+      const intim = notif ? notif.data : k.data, limite = intim ? ctDiasUteis(intim, prazoDef) : "";
+      corpo = [dados, { t: "texto", titulo: "Defesa prévia", paragrafos: ["À " + contratante + ".", contratada + ", contratada no Contrato nº " + c.numero + ", intimada em " + dBR(intim) + (notif && notif.descricao ? " (" + notif.descricao + ")" : "") + ", vem apresentar DEFESA PRÉVIA, no prazo de " + prazoDef + " dias úteis" + (limite ? " (até " + dBR(limite) + ")" : "") + (l13303 ? ", nos termos do art. 83, § 2º, da Lei nº 13.303/2016 e do regulamento interno da contratante." : ", nos termos dos arts. 157 e 158 da Lei nº 14.133/2021, assegurados o contraditório e a ampla defesa (CF, art. 5º, LV)."),
+        "I – DOS FATOS. [Descreva a falha apontada pela Administração e a versão da contratada, com datas.]",
+        "II – DO DIREITO. [Demonstre a inexistência da falha, a ocorrência de caso fortuito ou força maior, a culpa da Administração ou de terceiro, ou a desproporção da penalidade cogitada (art. 156, § 1º: na aplicação das sanções serão considerados a natureza e a gravidade da infração, as peculiaridades do caso, as circunstâncias agravantes ou atenuantes, os danos à Administração e a implantação ou o aperfeiçoamento de programa de integridade).]",
+        "III – DOS PEDIDOS. Requer o arquivamento do processo, sem aplicação de penalidade; subsidiariamente, a aplicação da sanção mais branda (advertência), considerando os antecedentes da contratada; e a produção das provas indicadas, inclusive a juntada dos documentos anexos."] },
+        { t: "texto", titulo: "Documentos anexos", paragrafos: ["[Relatórios, fotos, comunicações com o fiscal, notas fiscais, comprovantes e demais provas.]"] }, assEmp];
+    } else if (k.tipo === "recurso") {
+      const sanc = pen && { advertencia: "advertência", multa: "multa", impedimento: "impedimento de licitar e contratar", inidoneidade: "declaração de inidoneidade" }[pen.tipo];
+      const art = !pen ? "art. 165, II" : pen.tipo === "inidoneidade" ? "art. 167" : "art. 166", dias = pen ? 15 : 3, nomeR = pen && pen.tipo !== "inidoneidade" ? "RECURSO" : "PEDIDO DE RECONSIDERAÇÃO";
+      const intim = pen ? pen.data : (ultimo(["decisao"]) || {}).data || k.data, limite = intim ? ctDiasUteis(intim, dias) : "";
+      corpo = [dados, { t: "texto", titulo: nomeR === "RECURSO" ? "Recurso administrativo" : "Pedido de reconsideração", paragrafos: ["À autoridade que proferiu a decisão" + (nomeR === "RECURSO" ? ", para reconsideração ou encaminhamento à autoridade superior (art. 165, § 2º)." : "."),
+        contratada + ", contratada no Contrato nº " + c.numero + ", vem interpor " + nomeR + " contra " + (pen ? "a decisão que aplicou a sanção de " + sanc + (pen.valor_penalidade ? " no valor de " + brl(pen.valor_penalidade) : "") + ", de " + dBR(pen.data) : "a decisão de " + dBR(intim)) + ", no prazo de " + dias + " dias úteis contados da intimação" + (limite ? " (até " + dBR(limite) + ")" : "") + (l13303 ? ", nos termos do regulamento interno da contratante (Lei nº 13.303/2016, art. 40)." : ", nos termos do " + art + " da Lei nº 14.133/2021."),
+        "I – DA TEMPESTIVIDADE. O " + nomeR.toLowerCase() + " é tempestivo, interposto dentro do prazo legal.",
+        "II – DAS RAZÕES. [Exponha os erros de fato ou de direito da decisão, a ausência de motivação suficiente, a violação do contraditório ou a desproporção da medida.]",
+        "III – DO PEDIDO. Requer a reforma da decisão" + (pen ? ", com o afastamento da sanção ou, subsidiariamente, sua substituição por sanção mais branda" : "") + (pen && pen.tipo !== "advertencia" ? ", e a atribuição de efeito suspensivo até o julgamento (art. 168)" : "") + "."] }, assEmp];
+    } else if (k.tipo === "resposta") {
+      corpo = [dados, { t: "texto", titulo: "Resposta à notificação", paragrafos: ["Ao fiscal do contrato" + (c.fiscal ? ", " + c.fiscal : "") + ".", contratada + ", contratada no Contrato nº " + c.numero + ", em atenção à notificação" + (notif ? " de " + dBR(notif.data) + (notif.descricao ? " (" + notif.descricao + ")" : "") : " recebida") + ", informa:",
+        "1. [Esclarecimento sobre cada ponto apontado.]", "2. [Providências adotadas para corrigir a falha, com datas (art. 119 da Lei nº 14.133/2021).]", "3. [Medidas para evitar a repetição.]",
+        "Coloca-se à disposição para vistoria conjunta e requer o registro desta resposta no processo de fiscalização (art. 117, § 1º)."] },
+        { t: "texto", titulo: "Documentos anexos", paragrafos: ["[Fotos, relatórios, comprovantes da correção.]"] }, assEmp];
+    } else if (k.tipo === "prorrog_int") {
+      corpo = [dados, { t: "texto", titulo: "Manifestação de interesse na prorrogação", paragrafos: ["À " + contratante + ".", contratada + ", contratada no Contrato nº " + c.numero + ", com vigência até " + dBR(si.fim) + ", manifesta interesse na prorrogação do contrato por mais [__] meses, " + (l13303 ? "nos termos do contrato e do art. 71 da Lei nº 13.303/2016." : "nos termos do art. 107 da Lei nº 14.133/2021, mantidas as condições de habilitação."),
+        "A contratada ressalva expressamente o direito ao reajuste e à repactuação ainda não concedidos, cujos pedidos devem ser decididos antes ou junto com a prorrogação, para afastar a preclusão" + (l13303 ? "." : " (art. 131, parágrafo único)."),
+        "Dispõe-se a negociar condições ainda mais vantajosas para a Administração, se for o caso."] }, assEmp];
+    } else if (k.tipo === "notificacao") {
+      const limite = ctDiasUteis(k.data || new Date().toISOString().slice(0, 10), prazoDef);
+      corpo = [dados, { t: "texto", titulo: "Notificação", paragrafos: ["À " + contratada + ".", "Notifica-se a contratada de que a fiscalização do Contrato nº " + c.numero + " registrou a seguinte ocorrência na execução: [descreva a falha, a data e o local, com a cláusula contratual descumprida]" + (notif && notif.tipo === "ocorrencia" && notif.descricao ? " (registro de " + dBR(notif.data) + ": " + notif.descricao + ")" : "") + ".",
+        "Fica a contratada intimada a: (a) corrigir a falha no prazo de [__] dias, nos termos do art. 119 da Lei nº 14.133/2021; e (b) apresentar defesa prévia no prazo de " + prazoDef + " dias úteis, contados do recebimento desta (até " + dBR(limite) + "), " + (l13303 ? "nos termos do art. 83, § 2º, da Lei nº 13.303/2016" : "nos termos dos arts. 157 e 158 da Lei nº 14.133/2021") + ", sob pena de prosseguimento do processo de apuração e eventual aplicação das sanções previstas no contrato" + (l13303 ? "." : " e no art. 156."),
+        "A contratada poderá ter vista dos autos e juntar documentos e provas."] }, assOrg()];
+    } else if (k.tipo === "diligencia") {
+      corpo = [dados, { t: "texto", titulo: "Diligência", paragrafos: ["À " + contratada + ".", "Para a instrução do processo relativo ao Contrato nº " + c.numero + ", solicita-se à contratada que, no prazo de [__] dias úteis, apresente os seguintes esclarecimentos e documentos:",
+        "1. [Esclarecimento ou documento solicitado.]", "2. [Esclarecimento ou documento solicitado.]",
+        ped ? "O pedido de " + CT_PEDIDO[ped.tipo] + " protocolado em " + dBR(ped.data) + " terá a instrução concluída com a resposta a esta diligência; o prazo de decisão conta da conclusão da instrução (Lei nº 14.133/2021, art. 123, parágrafo único)." : "A ausência de resposta no prazo será registrada no processo de fiscalização (art. 117, § 1º)."] }, assOrg()];
+    } else if (k.tipo === "resposta_pedido") {
+      const tp = ped ? CT_PEDIDO[ped.tipo] : "[reajuste, repactuação ou reequilíbrio]";
+      corpo = [dados, { t: "texto", titulo: "Resposta ao pedido", paragrafos: ["À " + contratada + ".", "Em resposta ao pedido de " + tp + " do Contrato nº " + c.numero + (ped ? ", protocolado em " + dBR(ped.data) : "") + ", informa-se que, com base na análise constante do processo (nota técnica nº ___/____), o pedido foi:",
+        "( ) DEFERIDO, com o novo valor de R$ __________" + (c.periodicidade === "mensal" ? " por mês" : "") + ", com efeitos a partir de __/__/____, a ser formalizado por " + (l13303 ? "apostila ou termo aditivo, conforme o contrato" : "apostila (art. 136, I)") + ".",
+        "( ) DEFERIDO PARCIALMENTE, nos termos da nota técnica anexa.", "( ) INDEFERIDO, pelos seguintes motivos: [motivação].",
+        l13303 ? "Da decisão cabe recurso na forma do regulamento interno da contratante." : "Da decisão cabe pedido de reconsideração no prazo de 3 dias úteis, contado da intimação (Lei nº 14.133/2021, art. 165, II)."] }, assOrg("Autoridade competente")];
+    } else if (k.tipo === "consulta_prorrog") {
+      corpo = [dados, { t: "texto", titulo: "Consulta de interesse na prorrogação", paragrafos: ["À " + contratada + ".", "O Contrato nº " + c.numero + " tem vigência até " + dBR(si.fim) + ". Consulta-se a contratada sobre o interesse na prorrogação por mais [__] meses, " + (l13303 ? "nos termos do contrato e do art. 71 da Lei nº 13.303/2016" : "nos termos do art. 107 da Lei nº 14.133/2021") + ", mantidas as condições contratuais.",
+        "Solicita-se resposta em até [__] dias, acompanhada das certidões de regularidade fiscal, trabalhista e com o FGTS e da declaração de manutenção das condições de habilitação.",
+        "A Administração verificará a vantajosidade dos preços (pesquisa de mercado) e poderá negociar condições mais vantajosas. Pedidos de reajuste ou repactuação pendentes devem ser formulados antes da prorrogação, sob pena de preclusão" + (l13303 ? "." : " (art. 131, parágrafo único).")] }, assOrg()];
+    } else if (k.tipo === "apostila") {
+      const pct = reaj && reaj.percentual != null ? Number(reaj.percentual).toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + "%" : "[__]%";
+      const nomeIx = { ipca: "IPCA", ipca_e: "IPCA-E", inpc: "INPC", igpm: "IGP-M", igpdi: "IGP-DI", incc: "INCC-DI" }[c.indice] || "previsto no contrato";
+      corpo = [{ t: "texto", titulo: "Termo de apostilamento nº ___/____", paragrafos: ["Termo de apostilamento ao Contrato nº " + c.numero + ", celebrado entre " + contratante + " e " + contratada + ", para registro do reajuste de preços previsto no contrato" + (l13303 ? ", na forma do contrato e do regulamento interno da contratante (Lei nº 13.303/2016, art. 81, § 7º)." : ", com fundamento no art. 136, I, da Lei nº 14.133/2021."),
+        "CLÁUSULA PRIMEIRA – DO REAJUSTE. Fica registrado o reajuste dos preços pelo índice " + nomeIx + ", com variação de " + pct + " no período da anualidade" + (reaj ? ", com efeitos a partir de " + dBR(reaj.data) : ", com efeitos a partir de __/__/____") + ", conforme a memória de cálculo anexa.",
+        "CLÁUSULA SEGUNDA – DO VALOR. O valor do contrato passa de " + brl(reaj ? reaj.valor_anterior : null) + " para " + brl(reaj ? reaj.valor_novo : null) + (c.periodicidade === "mensal" ? " por mês" : "") + ".",
+        "CLÁUSULA TERCEIRA – DA DOTAÇÃO. As despesas correrão à conta da dotação orçamentária ________________, Nota de Empenho nº ________.",
+        "CLÁUSULA QUARTA – DA RATIFICAÇÃO. Permanecem inalteradas as demais cláusulas do contrato."] }, assOrg("Autoridade competente")];
+    } else return;
+    try {
+      await this.moDocPdf({ titulo: nomeP, sub: "Contrato nº " + c.numero + " · " + (this.ctVisao() === "empresa" ? contratante : contratada), selo: "Gestão Contratual · " + L,
+        arquivo: k.tipo + "-contrato-" + String(c.numero).replace(/[^\w]+/g, "-"), blocos: corpo, notas: ["Modelo gerado a partir dos dados cadastrados na Gestão Contratual. Revise os dados, complete os campos entre colchetes e confira os prazos antes de assinar."] }, "", hoje);
+    } catch (e) { this.ctMsg("", "Não foi possível gerar a peça. Tente de novo."); }
   }
   async ctPainelPdf(G, E) {
     const emp = G.visao === "empresa", hoje = new Date().toLocaleDateString("pt-BR");
@@ -13882,7 +13974,7 @@ class Component extends DCLogic {
             progTit: "Vigência de " + (ini0 ? dataBR(ini0) : "") + " a " + (si.fim ? dataBR(si.fim) : ""),
             fim: si.fim ? dataBR(si.fim) : "não informado", prox: si.proxAnual ? "Próxima anualidade: " + si.proxAnual : "Informe a data da proposta para calcular a anualidade",
             reaj: si.reajPct > 0.0001 ? "Reajustes concedidos: " + pctT(si.reajPct) : "", avisos: avisos.map((t) => ({ t })), temAvisos: avisos.length > 0, compart: !meu,
-            kitAberto: !!(ct.kit && ct.kit.id === c.id), kitAbrir: () => this.ctKitAbrir(c.id, ct.kit && ct.kit.id === c.id ? null : "reajuste"),
+            kitAberto: !!(ct.kit && ct.kit.id === c.id), kitAbrir: () => this.ctKitAbrir(c.id, ct.kit && ct.kit.id === c.id ? null : (this.ctVisao() === "empresa" ? "reajuste" : "notificacao")),
             aberto, cls: "ct-card st-" + stK + (aberto ? " aberto" : ""), abrir: () => this.ctAbrir(c.id), editar: () => this.ctEditar(c), excluir: () => this.ctExcluir(c.id),
             excluirTxt: ct.excluir === c.id ? "Confirmar exclusão" : "Excluir", meu, usarReajuste: () => this.ctUsar(c.id, "reajuste"), pdf: () => this.ctPdf(c.id), usarRq: () => this.ctUsar(c.id, "reequilibrio"),
             novoEv: () => this.ctNovoEv(), temEventos: true, vantajosidade: () => this.ctVantajosidade(c, si),
@@ -13965,9 +14057,11 @@ class Component extends DCLogic {
         const um1 = listaUm.length === 1 ? listaUm[0] : null;
         return { ...campos, ...fracP, ctHead, ctLista: listaUm, ctFiltros, ctTab,
           ...(() => { const k = ct.kit || {}, setK = (campo) => (e) => { const v = e.target.value; this.setState((x) => ({ ct: { ...x.ct, kit: { ...(x.ct.kit || {}), [campo]: v } } })); };
-            return { ctKitTipos: [["reajuste", "Reajuste por índice"], ["repactuacao", "Repactuação (convenção coletiva)"], ["reequilibrio", "Reequilíbrio econômico-financeiro"]].map(([id, nome]) => ({ id, nome, sel: k.tipo === id })),
+            const pecas = CT_PECAS[ctEmp ? "empresa" : "orgao"], pk = pecas.find((x) => x[0] === k.tipo) || pecas[0];
+            return { ctKitTipos: pecas.map(([id, nome]) => ({ id, nome, sel: pk[0] === id })), ctKitTemReg: !!pk[2], ctKitDataRot: ["reajuste", "repactuacao", "reequilibrio", "defesa", "recurso", "resposta", "prorrog_int"].includes(pk[0]) ? "Data do protocolo" : "Data do documento",
+              ctKitTit: ctEmp ? "Modelos de peças" : "Modelos de peças do órgão", ctKitIntro: ctEmp ? "Gere a peça já preenchida com os dados do contrato e da linha do tempo, com os prazos e fundamentos, e registre o protocolo para acompanhar o prazo." : "Gere o documento já preenchido com os dados do contrato e da linha do tempo, com os prazos e fundamentos da lei do contrato.",
               onCtKitTipo: setK("tipo"), ctKitData: k.data || "", onCtKitData: setK("data"), ctKitPrazo: k.prazo || "", onCtKitPrazo: setK("prazo"),
-              ctKitTxt: k.tipo === "repactuacao" ? "Anexe a nova convenção coletiva e a planilha de custos com a variação (a Calculadora gera a planilha de repactuação)." : k.tipo === "reequilibrio" ? "Descreva o fato superveniente e anexe a demonstração do impacto (a Calculadora gera a nota técnica do reequilíbrio)." : "O requerimento traz o índice do contrato e a variação estimada dos últimos 12 meses; anexe a memória de cálculo da Calculadora.",
+              ctKitTxt: CT_PECA_DICA[pk[0]] || (k.tipo === "repactuacao" ? "Anexe a nova convenção coletiva e a planilha de custos com a variação (a Calculadora gera a planilha de repactuação)." : k.tipo === "reequilibrio" ? "Descreva o fato superveniente e anexe a demonstração do impacto (a Calculadora gera a nota técnica do reequilíbrio)." : "O requerimento traz o índice do contrato e a variação estimada dos últimos 12 meses; anexe a memória de cálculo da Calculadora."),
               ctKitPdf: () => this.ctKitPdf(), ctKitReg: () => this.ctKitRegistrar(), ctKitFechar: () => this.setState((x) => ({ ct: { ...x.ct, kit: null } })) }; })(),
           ctTemDrill: !!drl, ctDrillRot: drl ? drl.rot + " (" + listaD.length + ")" : "", ctDrillLimpar: () => this.setState((x) => ({ ct: { ...x.ct, painel: { ...(x.ct.painel || {}), drill: null } } })),
           ctModoUm: modoUm, ctModoPainel: !modoUm, ctPcaVer: !modoUm && !ctEmp && this.ctAba() === "pca", ctAbaContratos: !modoUm && this.ctAba() === "contratos", ctCremeCls: !modoUm && this.ctAba() === "contratos" ? "gx gx-aba gx-ct" : "",
