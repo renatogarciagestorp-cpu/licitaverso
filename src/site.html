@@ -1215,13 +1215,11 @@
   .lmo-minuta { white-space: pre-wrap; font: inherit; font-size: 13.5px; line-height: 1.6; background: #FBFDF6; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px; margin: 8px 0 0; color: #172B33; }
   @media (max-width: 900px) { .lmo-retro { grid-template-columns: 80px 1fr 110px; } .lmo-retro > span:nth-child(2), .lmo-retro > span:nth-child(4) { display: none; } .lmo-lin4 { grid-template-columns: 1fr 110px; } .lmo-lin4 > span:nth-child(2) { display: none; } }
   .lmo-cmp-linha { display: flex; gap: 14px; align-items: flex-start; padding: 12px; min-width: max-content; }
-  .lmo-cmpcol { width: 600px; flex: none; display: grid; gap: 12px; } .lmo-cmpcol .lmo-bloco { margin: 0; }
+  .lmo-cmpcol { width: 640px; flex: none; display: grid; gap: 12px; } .lmo-cmpcol .lmo-bloco { margin: 0; }
   .lmo-cmpcol-cab { background: #0A1F2A; color: #fff; border-radius: 14px; padding: 12px 14px; display: grid; gap: 6px; height: 158px; box-sizing: border-box; align-content: start; }
   .lmo-cmpcol.contr .lmo-cmpcol-cab { background: #0F3A44; }
   .lmo-cmpcol-cab small { color: #9FE3C5; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
   .lmo-cmpcol-cab input { font: inherit; font-weight: 800; font-size: 15px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.08); color: #fff; border-radius: 8px; padding: 6px 9px; }
-  .lmo-cmpcol .lmo-rot small, .lmo-cmpcol .lmo-tab > .lmo-nota { display: none; } /* notas ocultas para manter as linhas alinhadas entre as colunas */
-  .lmo-cmpcol .lmo-lin:not(.lmo-cab):not(.lmo-tot) { min-height: 52px; box-sizing: border-box; align-items: center; }
   .lmo-cmp-dif { font-style: normal; color: #FFD27A; font-size: 12.5px; font-weight: 700; }
   .lmo-cmpcol [data-mudou="true"] { background: #FFF6DE !important; } .lmo-cmpcol label[data-mudou="true"] { border-radius: 8px; padding: 4px; }
   .lmo-cmp-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; } .lmo-cmp-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -3940,37 +3938,215 @@
                     <div class="lmo-cmpcol-cab"><small>{{ c.tipo }}</small><input type="text" value="{{ c.nome }}" aria-label="Nome da planilha" sc-camel-on-input="{{ c.onNome }}">
                       <span class="lmo-cmp-tot">Preço por empregado: {{ c.total }}</span><sc-if value="{{ c.dif }}" hint-placeholder-val="{{ false }}"><em class="lmo-cmp-dif">{{ c.dif }}</em></sc-if>
                       <span class="lmo-cmp-hb"><button type="button" class="lmo-ano" sc-camel-on-click="{{ c.trazer }}">{{ c.trazerTxt }}</button><sc-if value="{{ c.podeDel }}" hint-placeholder-val="{{ false }}"><button type="button" class="lmo-x" aria-label="Remover esta planilha" sc-camel-on-click="{{ c.del }}">×</button></sc-if></span></div>
-                    <sc-for list="{{ c.mods }}" as="md" hint-placeholder-count="3">
-                    <section class="lmo-bloco lmo-tab">
-                      <h2 class="lmo-h2">{{ md.titulo }}</h2>
-                      <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
-                      <div class="lmo-tabela" role="table">
-                        <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
-                        <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
-                          <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-mudou="{{ l.mudou }}">
-                            <span class="lmo-cod">{{ l.cod }}</span>
-                            <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
-                            <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
-                            <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
-                          </div>
+                    <section class="lmo-bloco">
+                      <h2 class="lmo-h2">Dados para composição dos custos referentes à mão de obra</h2>
+                      <div class="lmo-campos">
+                        <sc-for list="{{ c.P.moCamposCmp }}" as="c" hint-placeholder-count="8">
+                          <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
                         </sc-for>
-                        <div class="lmo-lin lmo-tot" role="row" data-mudou="{{ md.mudouTot }}"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
                       </div>
-                      <sc-if value="{{ md.ben }}" hint-placeholder-val="{{ false }}">
-                        <p class="lmo-passo-rot" style="margin-top: 12px">Parâmetros dos benefícios (Submódulo 2.3)</p>
-                        <div class="lmo-campos"><sc-for list="{{ md.benef }}" as="b" hint-placeholder-count="4"><label class="lmo-campo" data-mudou="{{ b.mudou }}"><span>{{ b.rot }}</span><input type="text" value="{{ b.valor }}" sc-camel-on-input="{{ b.on }}"></label></sc-for></div>
-                      </sc-if>
                     </section>
+                    <section class="lmo-bloco">
+                      <h2 class="lmo-h2">Garantia das obrigações trabalhistas</h2>
+                      <p class="lmo-nota" style="margin-top: 0">Nos serviços com dedicação exclusiva de mão de obra, o contrato deve prever a conta-depósito vinculada ou o pagamento pelo fato gerador (IN SEGES/MP nº 5/2017, art. 18; Lei 14.133/2021, art. 121, § 3º).</p>
+                      <div class="lmo-modos" role="group" aria-label="Garantia trabalhista"><sc-for list="{{ c.P.moGtOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
+                      <sc-if value="{{ c.P.moGtCv }}" hint-placeholder-val="{{ false }}">
+                        <div class="lmo-tabela" style="margin-top: 10px" role="table">
+                          <div class="lmo-lin lmo-lin3 lmo-cab" role="row"><span>%</span><span>Provisão (Anexo XII, item 14) sobre o Módulo 1</span><span>Valor por empregado</span></div>
+                          <sc-for list="{{ c.P.moCvLinhas }}" as="l" hint-placeholder-count="4"><div class="lmo-lin lmo-lin3" role="row"><span class="lmo-cod">{{ l.pct }}</span><span>{{ l.rot }}</span><span class="lmo-val">{{ l.val }}</span></div></sc-for>
+                          <div class="lmo-lin lmo-lin3 lmo-tot" role="row"><span>{{ c.P.moCvTot }}</span><span>Retenção mensal por empregado</span><span class="lmo-val">{{ c.P.moCvEmp }}</span></div>
+                        </div>
+                        <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>Multa do FGTS (%)</span><input type="text" inputmode="decimal" value="{{ c.P.moGtMulta }}" sc-camel-on-input="{{ c.P.onMoGtMulta }}"></label></div>
+                        <p class="lmo-nota">Padrão de 4%: o Anexo XII traz 5%, mas esse valor inclui a contribuição social de 10% sobre o FGTS, extinta pela Lei 13.932/2019 a partir de 1º/1/2020; por isso a retenção passou a 4%. A incidência do Submódulo 2.2 segue o RAT informado no Submódulo 2.2.</p>
+                        <p class="lmo-ok">{{ c.P.moCvResumo }}</p>
+                      </sc-if>
+                      <sc-if value="{{ c.P.moGtFg }}" hint-placeholder-val="{{ false }}">
+                        <div class="lmo-tabela" style="margin-top: 10px" role="table">
+                          <div class="lmo-lin lmo-lin4 lmo-cab" role="row"><span>Parcela paga só quando ocorrer o fato gerador</span><span>Provisão mensal</span><span>Com custos indiretos, tributos e lucro</span></div>
+                          <sc-for list="{{ c.P.moFgLinhas }}" as="l" hint-placeholder-count="5"><div class="lmo-lin lmo-lin4" role="row"><span>{{ l.rot }}</span><span class="lmo-val">{{ l.val }}</span><span class="lmo-val">{{ l.comM6 }}</span></div></sc-for>
+                        </div>
+                        <p class="lmo-ok">{{ c.P.moFgResumo }}</p>
+                      </sc-if>
+                      <sc-if value="{{ c.P.moGtNenhum }}" hint-placeholder-val="{{ true }}"><p class="lmo-nota">Escolha uma das opções para ver a retenção mensal ou as parcelas pagas pelo fato gerador.</p></sc-if>
+                    </section>
+                    <sc-for list="{{ c.P.moModsA }}" as="md" hint-placeholder-count="3">
+                      <section class="lmo-bloco lmo-tab">
+                        <h2 class="lmo-h2">{{ md.titulo }}</h2>
+                        <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
+                        <div class="lmo-tabela" role="table">
+                          <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
+                          <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
+                            <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-mudou="{{ l.mudou }}">
+                              <span class="lmo-cod">{{ l.cod }}</span>
+                              <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
+                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                            </div>
+                          </sc-for>
+                          <div class="lmo-lin lmo-tot" role="row" data-mudou="{{ md.mudouTot }}"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
+                        </div>
+                      </section>
                     </sc-for>
+                    <section class="lmo-bloco">
+                      <h2 class="lmo-h2">Parâmetros dos benefícios (Submódulo 2.3)</h2>
+                      <div class="lmo-campos">
+                        <sc-for list="{{ c.P.moBenef }}" as="c" hint-placeholder-count="5">
+                          <label class="lmo-campo" data-mudou="{{ c.mudou }}"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
+                        </sc-for>
+                      </div>
+                    </section>
+                    <sc-for list="{{ c.P.moModsA2 }}" as="md" hint-placeholder-count="3">
+                      <section class="lmo-bloco lmo-tab">
+                        <h2 class="lmo-h2">{{ md.titulo }}</h2>
+                        <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
+                        <div class="lmo-tabela" role="table">
+                          <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
+                          <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
+                            <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-mudou="{{ l.mudou }}">
+                              <span class="lmo-cod">{{ l.cod }}</span>
+                              <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
+                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                            </div>
+                          </sc-for>
+                          <div class="lmo-lin lmo-tot" role="row" data-mudou="{{ md.mudouTot }}"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
+                        </div>
+                      </section>
+                    </sc-for>
+                    <sc-for list="{{ c.P.moModsB }}" as="md" hint-placeholder-count="3">
+                      <section class="lmo-bloco lmo-tab">
+                        <h2 class="lmo-h2">{{ md.titulo }}</h2>
+                        <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
+                        <div class="lmo-tabela" role="table">
+                          <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
+                          <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
+                            <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-mudou="{{ l.mudou }}">
+                              <span class="lmo-cod">{{ l.cod }}</span>
+                              <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
+                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                            </div>
+                          </sc-for>
+                          <div class="lmo-lin lmo-tot" role="row" data-mudou="{{ md.mudouTot }}"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
+                        </div>
+                      </section>
+                    </sc-for>
+                    <section class="lmo-bloco">
+                      <h2 class="lmo-h2">Memória de cálculo dos insumos (Módulo 5)</h2>
+                      <p class="lmo-nota" style="margin-top: 0">Detalhe cada item com quantidade, vida útil e preço: o custo mensal por empregado vai para o Módulo 5 e para os downloads. O preço pode vir da sua pesquisa ou da mediana das compras públicas dos últimos 12 meses no Compras.gov.br (Lei 14.133/2021, art. 23). Sem itens, vale o valor digitado no Módulo 5.</p>
+                      <sc-for list="{{ c.P.moMem }}" as="g" hint-placeholder-count="3">
+                        <div style="margin-top: 14px">
+                          <p class="lmo-nota" style="margin: 0 0 6px"><b>{{ g.rot }}</b> · {{ g.nota }}</p>
+                          <sc-if value="{{ g.temLinhas }}" hint-placeholder-val="{{ false }}">
+                          <div class="lmo-tabela" role="table">
+                            <div class="{{ g.clsCab }}" role="row"><sc-for list="{{ g.cols }}" as="h" hint-placeholder-count="5"><span>{{ h.c }}</span></sc-for></div>
+                            <sc-for list="{{ g.linhas }}" as="l" hint-placeholder-count="2">
+                              <div class="{{ g.cls }}" role="row">
+                                <sc-for list="{{ l.cels }}" as="c" hint-placeholder-count="4"><span><input type="text" aria-label="{{ c.rot }}" value="{{ c.v }}" sc-camel-on-input="{{ c.on }}" style="text-align: left"></span></sc-for>
+                                <span class="lmo-val">{{ l.mensal }}</span>
+                                <span class="lmo-mem-acoes"><button type="button" class="lmo-ano" sc-camel-on-click="{{ l.pesquisar }}">{{ l.busTxt }}</button><button type="button" class="lmo-x" aria-label="Remover item" sc-camel-on-click="{{ l.remover }}">×</button></span>
+                                <sc-if value="{{ l.temFonte }}" hint-placeholder-val="{{ false }}"><small class="lmo-mem-fonte">{{ l.fonte }}</small></sc-if>
+                              </div>
+                            </sc-for>
+                          </div>
+                          <p class="lmo-ok" style="margin-top: 6px">{{ g.total }}</p>
+                          </sc-if>
+                          <div class="lmo-agente" style="margin-top: 6px"><button type="button" class="lve-voltar" sc-camel-on-click="{{ g.adicionar }}">+ Adicionar item</button><sc-if value="{{ g.temModelo }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ g.modelo }}">Carregar os itens de referência do caderno técnico</button></sc-if></div>
+                        </div>
+                      </sc-for>
+                      <div class="lmo-campos" style="margin-top: 12px"><label class="lmo-campo"><span>Custo financeiro dos equipamentos (% ao mês sobre o investimento, opcional)</span><input type="text" inputmode="decimal" value="{{ c.P.moMemCf }}" sc-camel-on-input="{{ c.P.onMoMemCf }}" placeholder="Ex.: 0,8363 (SELIC mensal)"></label></div>
+                      <p class="lmo-nota">{{ c.P.moMemEmp }}</p>
+                    </section>
+                    <sc-for list="{{ c.P.moModsC }}" as="md" hint-placeholder-count="3">
+                      <section class="lmo-bloco lmo-tab">
+                        <h2 class="lmo-h2">{{ md.titulo }}</h2>
+                        <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
+                        <div class="lmo-tabela" role="table">
+                          <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
+                          <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
+                            <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-mudou="{{ l.mudou }}">
+                              <span class="lmo-cod">{{ l.cod }}</span>
+                              <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
+                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                            </div>
+                          </sc-for>
+                          <div class="lmo-lin lmo-tot" role="row" data-mudou="{{ md.mudouTot }}"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
+                        </div>
+                      </section>
+                    </sc-for>
+                    <section class="lmo-bloco">
+                      <h2 class="lmo-h2">Tributação (Módulo 6)</h2>
+                      <p class="lmo-passo-rot">Os tributos serão calculados antes ou depois da reforma tributária?</p>
+                      <div class="lmo-modos" role="group" aria-label="Momento da tributação"><sc-for list="{{ c.P.moReformaOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13px; padding: 7px 12px">{{ m.nome }}</button></sc-for></div>
+                      <p class="lmo-passo-rot">Regime de tributação da empresa</p>
+                      <div class="lmo-modos" role="group" aria-label="Regime de tributação"><sc-for list="{{ c.P.moRegimes }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13px; padding: 7px 12px">{{ m.nome }}</button></sc-for></div>
+                      <sc-if value="{{ c.P.moReformaPendente }}" hint-placeholder-val="{{ true }}"><p class="lve-aviso" style="margin-top: 10px">Escolha, no passo 1 do bloco do agente, se os tributos serão calculados antes ou depois da reforma e o regime de tributação da empresa: o agente usa essas escolhas, e o download depende delas. Até lá, a tela mostra o cálculo com PIS, COFINS e ISS.</p></sc-if>
+                      <p class="lmo-nota">{{ c.P.moRegimeTxt }}</p>
+                      <sc-if value="{{ c.P.moRegSimples }}" hint-placeholder-val="{{ false }}">
+                        <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>Receita bruta dos últimos 12 meses (RBT12, R$)</span><input type="text" inputmode="decimal" value="{{ c.P.moRbt12 }}" sc-camel-on-input="{{ c.P.onMoRbt12 }}" placeholder="Ex.: 1.200.000,00"></label></div>
+                        <p class="{{ c.P.moSimplesCls }}">{{ c.P.moSimplesTxt }}</p>
+                        <sc-if value="{{ c.P.moSimplesVedado }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso" role="alert">{{ c.P.moSimplesVedado }}</p></sc-if>
+                      </sc-if>
+                      <sc-if value="{{ c.P.moReformaDepois }}" hint-placeholder-val="{{ false }}">
+                        <div class="lmo-campos" style="margin-top: 12px">
+                          <label class="lmo-campo"><span>Ano de execução calculado na planilha</span><select sc-camel-on-change="{{ c.P.onMoRfAno }}"><sc-for list="{{ c.P.moRfAnos }}" as="o" hint-placeholder-count="8"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                          <label class="lmo-campo"><span>Alíquota de referência da CBS (%)</span><input type="text" inputmode="decimal" value="{{ c.P.moRfCbs }}" sc-camel-on-input="{{ c.P.onMoRfCbs }}"></label>
+                          <label class="lmo-campo"><span>Alíquota de referência do IBS (%, estimativa)</span><input type="text" inputmode="decimal" value="{{ c.P.moRfIbs }}" sc-camel-on-input="{{ c.P.onMoRfIbs }}"></label>
+                        </div>
+                        <p class="lmo-nota">CBS: 11,3% é a referência calculada pelo TCU para 2027 (o Senado deve fixá-la até 15/12/2026). IBS: a referência ainda não foi fixada; 18,7% é estimativa. Atualize os dois campos quando as alíquotas forem publicadas.</p>
+                        <div class="lmo-tabela" style="margin-top: 10px" role="table" aria-label="Período de transição">
+                          <div class="lmo-lin lmo-trans lmo-cab" role="row"><span>Ano</span><span>PIS e COFINS</span><span>CBS</span><span>IBS</span><span>ISS</span><span>Tributos no preço</span><span>Preço por empregado</span><span>Valor mensal</span></div>
+                          <sc-for list="{{ c.P.moTransicao }}" as="t" hint-placeholder-count="8">
+                            <div class="lmo-lin lmo-trans" role="row" data-forte="{{ t.atual }}"><span><button type="button" class="lmo-ano" aria-pressed="{{ t.atual }}" sc-camel-on-click="{{ t.usar }}">{{ t.ano }}</button></span><span class="lmo-pct">{{ t.pisCof }}</span><span class="lmo-pct">{{ t.cbs }}</span><span class="lmo-pct">{{ t.ibs }}</span><span class="lmo-pct">{{ t.iss }}</span><span class="lmo-pct">{{ t.trib }}</span><span class="lmo-val">{{ t.total }}</span><span class="lmo-val">{{ t.mensal }}</span></div>
+                          </sc-for>
+                        </div>
+                        <p class="lmo-nota">{{ c.P.moTransicaoNota }}</p>
+                      </sc-if>
+              
+                    </section>
+                    <sc-for list="{{ c.P.moModsD }}" as="md" hint-placeholder-count="3">
+                      <section class="lmo-bloco lmo-tab">
+                        <h2 class="lmo-h2">{{ md.titulo }}</h2>
+                        <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
+                        <div class="lmo-tabela" role="table">
+                          <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
+                          <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
+                            <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-mudou="{{ l.mudou }}">
+                              <span class="lmo-cod">{{ l.cod }}</span>
+                              <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
+                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                            </div>
+                          </sc-for>
+                          <div class="lmo-lin lmo-tot" role="row" data-mudou="{{ md.mudouTot }}"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
+                        </div>
+                      </section>
+                    </sc-for>
+
                     <section class="lmo-bloco lmo-tab">
                       <h2 class="lmo-h2">Quadro-resumo do custo por empregado</h2>
-                      <p class="lmo-nota">{{ c.tribTxt }}</p>
+                      <p class="lmo-nota">{{ c.P.moTribTxt }}</p>
                       <div class="lmo-tabela" role="table">
-                        <sc-for list="{{ c.resumo }}" as="l" hint-placeholder-count="6"><div class="lmo-lin lmo-lin3" role="row" data-forte="{{ l.forte }}"><span class="lmo-cod">{{ l.cod }}</span><span>{{ l.rot }}</span><span class="lmo-val">{{ l.valTxt }}</span></div></sc-for>
-                        <div class="lmo-lin lmo-lin3 lmo-tot" role="row"><span></span><span>Preço total por empregado</span><span class="lmo-val">{{ c.total }}</span></div>
+                        <sc-for list="{{ c.P.moResumo }}" as="l" hint-placeholder-count="6">
+                          <div class="lmo-lin lmo-lin3" role="row" data-forte="{{ l.forte }}" data-mudou="{{ l.mudou }}"><span class="lmo-cod">{{ l.cod }}</span><span>{{ l.rot }}</span><span class="lmo-val">{{ l.valTxt }}</span></div>
+                        </sc-for>
+                        <div class="lmo-lin lmo-lin3 lmo-tot" role="row"><span></span><span>Preço total por empregado</span><span class="lmo-val">{{ c.P.moTotal }}</span></div>
                       </div>
-                      <div class="lmo-campos" style="margin-top: 10px"><sc-for list="{{ c.qtd }}" as="q" hint-placeholder-count="3"><label class="lmo-campo"><span>{{ q.rot }}</span><input type="text" value="{{ q.valor }}" sc-camel-on-input="{{ q.on }}"></label></sc-for></div>
-                      <div class="lmo-kpis"><div><small>Valor mensal</small><b>{{ c.mensal }}</b></div><div><small>Valor global</small><b>{{ c.global }}</b></div></div>
+                      <div class="lmo-kpis">
+                        <div><small>Fator K</small><b>{{ c.P.moFatorK }}</b></div>
+                        <sc-if value="{{ c.P.moQuadroManual }}" hint-placeholder-val="{{ true }}">
+                        <sc-for list="{{ c.P.moQuadro }}" as="c" hint-placeholder-count="2">
+                          <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
+                        </sc-for>
+                        </sc-if>
+                        <div><small>Valor por posto</small><b>{{ c.P.moPosto }}</b></div>
+                        <div><small>Valor mensal dos serviços</small><b>{{ c.P.moMensal }}</b></div>
+                        <div><small>Valor global (× meses)</small><b>{{ c.P.moGlobal }}</b></div>
+                        <sc-if value="{{ c.P.moTemUnidade }}" hint-placeholder-val="{{ false }}"><div><small>{{ c.P.moUnidadeRot }}</small><b>{{ c.P.moUnidade }}</b></div></sc-if>
+                      </div>
+                      <sc-if value="{{ c.P.moLiderTxt }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ c.P.moLiderTxt }}</p></sc-if>
+                      <sc-if value="{{ c.P.moTemDif }}" hint-placeholder-val="{{ false }}"><p class="lmo-dif">{{ c.P.moDifRot }} <b>{{ c.P.moDif }}</b></p></sc-if>
                     </section>
                   </div>
                   </sc-for>
@@ -11307,8 +11483,10 @@ class Component extends DCLogic {
     ];
     return modulos;
   }
-  moProps() {
-    const s = this.state, mo = s.mo, d0 = mo.d, rep = mo.modo === "repactuacao", prop = mo.modo === "proposta", rj = rep ? moReajuste(d0, s.indices) : { ativo: false, fator: 1 };
+  moProps(ov) {
+    // ov: planilha avulsa (coluna de "Comparar planilhas"): { mo: { modo, d }, set, mem, regime }
+    const SET = ov ? ov.set : this.moSet, MEM = ov ? ov.mem : (k, fn) => this.moMemMudar(k, fn), REG = ov ? ov.regime : (id) => this.moRegime(id);
+    const s = ov ? { ...this.state, mo: ov.mo, calcAba: "mo", page: "calculadora" } : this.state, mo = s.mo, d0 = mo.d, rep = mo.modo === "repactuacao", prop = mo.modo === "proposta", rj = rep ? moReajuste(d0, s.indices) : { ativo: false, fator: 1 };
     const dim = mo.modo === "planejamento" ? moDimensionar(d0) : null;
     let d = dim && dim.tipo === "limpeza" && dim.serventes ? { ...d0, emp_posto: "1", postos: String(dim.serventes), unidade: "m²", quantidade: String(dim.area) }
       : dim && dim.tipo === "vigilancia" && dim.postos ? { ...d0, emp_posto: String(dim.porPosto), postos: String(dim.postos), unidade: "Posto", quantidade: String(dim.postos) } : d0;
@@ -11329,8 +11507,8 @@ class Component extends DCLogic {
     const fontes = d.fontes || {};
     const L = (cod, rot, o) => ({ cod, rot, auto: !!o.auto || !!fontes[o.k || o.kv],
       nota: [o.nota || "", fontes[o.k || o.kv] && (o.k || o.kv) !== "iss" ? "Agente: " + fontes[o.k || o.kv] : ""].filter(Boolean).join(" · "),
-      pctEdit: !!o.k, pctK: o.k ? d[o.k] : "", onPct: o.k ? this.moSet(o.k) : null, pctTxt: o.k ? "" : (o.p == null ? "" : (o.p === "-" ? "—" : pct(o.p))),
-      valEdit: !!o.kv, valK: o.kv ? d[o.kv] : "", onVal: o.kv ? this.moSet(o.kv) : null, valTxt: o.kv ? "" : (o.v === null ? "—" : brl(o.v)) });
+      pctEdit: !!o.k, pctK: o.k ? d[o.k] : "", onPct: o.k ? SET(o.k) : null, pctTxt: o.k ? "" : (o.p == null ? "" : (o.p === "-" ? "—" : pct(o.p))),
+      valEdit: !!o.kv, valK: o.kv ? d[o.kv] : "", onVal: o.kv ? SET(o.kv) : null, valTxt: o.kv ? "" : (o.v === null ? "—" : brl(o.v)) });
     const T = (rot, p, v) => ({ rot, pctTxt: p == null ? "" : pct(p), valTxt: brl(v) });
     const naoRen = rep ? "Custo não renovável: o aviso prévio trabalhado (1,94%) é devido só no 1º ano; nas prorrogações e repactuações, no máximo 0,194% por ano (TCU, Acórdão 1.186/2017-Plenário). Preenchido automaticamente." : "";
     const simp = r.simp, tr = r.tr, depois = d.reforma === "depois";
@@ -11403,13 +11581,13 @@ class Component extends DCLogic {
         L("B", "Lucro", { k: "lucro", v: r.lucro, nota: "Sobre o subtotal + custos indiretos." }),
         ...trib6], total: T("Total do Módulo 6", r.M6p, r.M6) }
     ];
-    const campo = (k, rot, ph, tipo) => ({ k, rot, ph: ph || "", valor: d[k] == null ? "" : d[k], on: this.moSet(k), tipo: tipo || "text" });
+    const campo = (k, rot, ph, tipo) => ({ k, rot, ph: ph || "", valor: d[k] == null ? "" : d[k], on: SET(k), tipo: tipo || "text" });
     const anoPlan = moNum(d.rf_ano) || new Date().getFullYear();
     const pctC = (v) => v ? pct(v) : "—";
     const transicao = depois ? MO_ANOS_REFORMA.map((ano) => {
       const r2 = moCalcular({ ...d, rf_ano: String(ano) }, mo.modo, rj), t2 = r2.tr;
       const mensal = moT2(r2.mensal + (dim && lider && precoLider ? lider * precoLider : 0));
-      return { ano: String(ano), atual: ano === anoPlan, usar: () => this.moSet("rf_ano")(String(ano)),
+      return { ano: String(ano), atual: ano === anoPlan, usar: () => SET("rf_ano")(String(ano)),
         pisCof: t2.antigos ? pctC(r2.aPis + r2.aCof) : "—", cbs: t2.antigos ? (t2.teste ? "0,9% (compensável)" : "—") : pctC(r2.aCbs), ibs: t2.antigos ? (t2.teste ? "0,1% (compensável)" : "—") : pctC(r2.aIbs),
         iss: pctC(t2.antigos ? r2.aIss : r2.aIssT), trib: pct(r2.To), total: brl(r2.total), mensal: brl(mensal), r: r2 };
     }) : [];
@@ -11420,12 +11598,12 @@ class Component extends DCLogic {
       const cfg = MO_MEM[k], m = mem[k];
       return { k, rot: cfg.rot, nota: cfg.nota, cols: cfg.col.concat(["Custo mensal por empregado", ""]).map((c) => ({ c })), cls: "lmo-lin lmo-mem lmo-mem-" + k, clsCab: "lmo-lin lmo-mem lmo-cab lmo-mem-" + k,
         temLinhas: m.linhas.length > 0, total: "Total mensal por empregado: " + brl(m.total) + (m.financeiro ? " (com custo financeiro de " + brl(m.financeiro) + ")" : ""),
-        adicionar: () => this.moMemMudar(k, (l) => l.concat([{ desc: "", qtd: "", vida: "", preco: "", un: "", res: "", fonte: "" }])),
+        adicionar: () => MEM(k, (l) => l.concat([{ desc: "", qtd: "", vida: "", preco: "", un: "", res: "", fonte: "" }])),
         temModelo: k === "unif", modelo: () => this.moMemModelo(),
         linhas: m.linhas.map((l, i) => ({
-          cels: cfg.campos.map((c) => ({ v: l[c] == null ? "" : String(l[c]), larga: c === "desc", rot: cfg.rot + ", linha " + (i + 1) + ": " + c, on: (e) => { const v = e.target.value; this.moMemMudar(k, (lista) => { lista[i] = { ...lista[i], [c]: v, ...(c === "preco" ? { fonte: "" } : {}) }; }); } })),
+          cels: cfg.campos.map((c) => ({ v: l[c] == null ? "" : String(l[c]), larga: c === "desc", rot: cfg.rot + ", linha " + (i + 1) + ": " + c, on: (e) => { const v = e.target.value; MEM(k, (lista) => { lista[i] = { ...lista[i], [c]: v, ...(c === "preco" ? { fonte: "" } : {}) }; }); } })),
           mensal: l.mensal ? "R$ " + l.mensal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) : "—", fonte: l.fonte || "", temFonte: !!l.fonte,
-          remover: () => this.moMemMudar(k, (lista) => lista.filter((_, j) => j !== i)),
+          remover: () => MEM(k, (lista) => lista.filter((_, j) => j !== i)),
           pesquisar: () => this.moMemPesquisar(k, i), busTxt: mo.memBusca === k + ":" + i ? "Pesquisando…" : "Pesquisar preço" })) };
     });
     // garantia das obrigações trabalhistas (IN 05/2017, art. 18): conta-depósito vinculada ou pagamento pelo fato gerador
@@ -11510,9 +11688,9 @@ class Component extends DCLogic {
     const liderOpc = mo.modo === "planejamento" ? lista.filter((it) => /encarreg|supervis/i.test(it.nome)) : [];
     this._moUltimo.gt = { tipo: d.gt_tipo, cvP, cvTot, cvEmp, empN, fg, fgComM6, fixa, fatorM6 }; this._moUltimo.retro = retro;
     return {
-      moGtOpcoes: [["cv", "Conta-depósito vinculada"], ["fg", "Pagamento pelo fato gerador"]].map(([id, nome]) => ({ nome, ativo: d.gt_tipo === id, escolher: () => this.moSet("gt_tipo")(d.gt_tipo === id ? "" : id), ...corBotao(d.gt_tipo === id) })),
+      moGtOpcoes: [["cv", "Conta-depósito vinculada"], ["fg", "Pagamento pelo fato gerador"]].map(([id, nome]) => ({ nome, ativo: d.gt_tipo === id, escolher: () => SET("gt_tipo")(d.gt_tipo === id ? "" : id), ...corBotao(d.gt_tipo === id) })),
       moGtCv: d.gt_tipo === "cv", moGtFg: d.gt_tipo === "fg", moGtNenhum: !d.gt_tipo,
-      moGtMulta: d.gt_multa || "", onMoGtMulta: this.moSet("gt_multa"),
+      moGtMulta: d.gt_multa || "", onMoGtMulta: SET("gt_multa"),
       moCvLinhas: cvP.map(([rot, p]) => ({ rot, pct: p.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%", val: brl(r.M1 * p / 100) })),
       moCvTot: cvTot.toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + "%", moCvEmp: brl(cvEmp),
       moCvResumo: "Retenção mensal: " + brl(cvEmp) + " por empregado × " + empN + " = " + brl(moT2(cvEmp * empN)) + " por mês (" + brl(moT2(cvEmp * empN * moNum(d.meses || 12))) + " em " + (d.meses || "12") + " meses). Esses valores são depositados na conta vinculada e deixam de ser pagos diretamente à contratada, que recebe " + brl(moT2((r.total - cvEmp) * empN)) + " por mês (IN 05/2017, Anexo XII, itens 2, 7 e 14).",
@@ -11524,7 +11702,7 @@ class Component extends DCLogic {
       moRetroCampos: [campo("rp_db_ant", "Data-base anterior (vigente na proposta ou na última repactuação)", "dd/mm/aaaa"), campo("rp_pedido", "Data do pedido de repactuação", "dd/mm/aaaa"),
         campo("rp_prorrog", "Data de assinatura da prorrogação, se houve depois da data-base", "dd/mm/aaaa"), campo("rp_fim", "Fim da vigência do contrato", "dd/mm/aaaa"),
         campo("rp_contrato", "Número do contrato", "Ex.: 12/2025"), campo("rp_orgao", "Contratante", "Órgão ou entidade"), campo("rp_empresa", "Contratada", "Razão social")],
-      moRpInicio: d.rp_inicio || "", onMoRpInicio: this.moSet("rp_inicio"),
+      moRpInicio: d.rp_inicio || "", onMoRpInicio: SET("rp_inicio"),
       moTemNota: !!(retro && r.vigente), moSemVigente: rep && !r.vigente,
       ...(() => {
         if (!prop) return { moExeqItens: [], moTemDilig: false, moDiligTexto: "", moCopiarDilig: null };
@@ -11580,7 +11758,7 @@ class Component extends DCLogic {
       moListaProp: prop, moListaCons: !prop,
       moCmpCols: cmpCols.map((c) => ({ nome: c.nome })), moCmpLinhas: cmpLinhas, moCmpGrid: "grid-template-columns: minmax(170px, 1.3fr) repeat(" + Math.max(1, cmpCols.length) + ", minmax(120px, 1fr))",
       moCmpAbrir: lista.map((it, i) => ({ nome: it.nome, abrir: () => this.moListaAbrir(i), remover: () => this.moListaDel(i) })),
-      moLiderOpc: liderOpc.map((it) => ({ txt: "Usar " + brl(it.res.total) + " (" + it.nome + ", do quadro)", usar: () => this.moSet("preco_lider")(String(it.res.total).replace(".", ",")) })),
+      moLiderOpc: liderOpc.map((it) => ({ txt: "Usar " + brl(it.res.total) + " (" + it.nome + ", do quadro)", usar: () => SET("preco_lider")(String(it.res.total).replace(".", ",")) })),
       moLiderDuplo: liderOpc.length > 0 && moNum(d0.preco_lider) > 0 ? "Se o encarregado ou supervisor também entra no quadro consolidado como categoria própria, deixe este preço em branco para não contá-lo duas vezes no valor da contratação." : "",
       moRefTem: !!ref, moRefTxt: ref ? "Estimativa da Planilha 1" + (ref.categoria ? " (" + ref.categoria + ")" : "") + ": " + brl(ref.max) + " por empregado (cenário máximo) · valor de atenção " + brl(ref.atencao) + ", com os parâmetros variáveis a 50%, como nos cadernos técnicos de limpeza e vigilância." : "",
       moRefUsar: () => this.moRefPlan1(),
@@ -11593,18 +11771,34 @@ class Component extends DCLogic {
       moCompInfo: comp ? "Planilha da contratação " + comp.origem + (comp.em ? " em " + new Date(comp.em).toLocaleString("pt-BR") : "") + ", recalculada com as regras da IN: " + brl(comp.rA.total) + " por empregado."
         + (r.vigente && Math.abs(comp.rA.total - r.vigente) > 0.05 ? " O preço vigente informado é " + brl(r.vigente) + ": diferença de " + brl(Math.abs(comp.rA.total - r.vigente)) + ", que pode indicar falha de cálculo na planilha da contratação ou repactuação anterior não registrada." : "") : "",
       cmpAdd: () => this.moCmpAdd(), cmpPdf: () => this.moCmpRelatorio("pdf"), cmpExcel: () => this.moCmpRelatorio("xlsx"), cmpRecomecar: () => this.cmpRecomecar(),
-      cmpEsq: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: -614 }); } catch (e) {} }, cmpDir: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: 614 }); } catch (e) {} },
+      cmpEsq: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: -654 }); } catch (e) {} }, cmpDir: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: 654 }); } catch (e) {} },
       cmpOk: (s.cmp && s.cmp.ok) || "", cmpErro: (s.cmp && s.cmp.erro) || "",
       cmpInfo: [["contrato", "Contrato"], ["contratante", "Contratante"], ["contratada", "Contratada"], ["categoria", "Categoria"]].map(([k, rot]) => ({ rot, valor: ((s.cmp && s.cmp.info) || {})[k] || "", on: (e) => { const v = e.target.value; const c = this.state.cmp; this.cmpGravar({ ...c, info: { ...(c.info || {}), [k]: v } }); } })),
       ...(s.calcAba === "cmp" ? (() => { const { cols, brl } = this.moCmpDados();
         const pctX = (v) => ((Number(v) || 0) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
         const setC = (c) => (k) => (e) => { const x = e && e.target ? e.target.value : e; this.moCmpMudar((cs) => cs.map((y) => (y.id === c.id ? { ...y, d: { ...y.d, [k]: x } } : y))); };
         const mods = cols.map((c) => this.moModulosDe({ ...MO_PADRAO, ...c.d, fontes: {} }, c.r, c.tipo === "repactuacao", setC(c)));
+        // planilha completa de cada coluna: as mesmas propriedades das telas Planilha de custos, Análise de proposta e Repactuação
+        const memC = (c) => (k, fn) => this.moCmpMudar((cs) => cs.map((y) => { if (y.id !== c.id) return y; const lista = (Array.isArray(y.d["mem_" + k]) ? y.d["mem_" + k] : []).map((l) => ({ ...l })); return { ...y, d: { ...y.d, ["mem_" + k]: fn(lista) || lista } }; }));
+        const regC = (c) => (id) => this.moCmpMudar((cs) => cs.map((y) => { if (y.id !== c.id) return y; const d = { ...y.d, regime: id }, ter = ["saled", "sesc", "senac", "sebrae", "incra"];
+          if (id === "presumido") { d.pis = "0,65"; d.cofins = "3"; } if (id === "real") { d.pis = MO_PADRAO.pis; d.cofins = MO_PADRAO.cofins; }
+          if (id === "simples") ter.forEach((k) => { d[k] = "0"; }); else if (y.d.regime === "simples") ter.forEach((k) => { d[k] = MO_PADRAO[k]; }); return { ...y, d }; }));
+        const guard = this._moUltimo;
+        const Ps = cols.map((c) => this.moProps({ mo: { modo: (CMP_TIPOS[c.tipo] || CMP_TIPOS.repactuacao)[1], d: { ...MO_PADRAO, ...c.d, fontes: {} } }, set: setC(c), mem: memC(c), regime: regC(c) }));
+        this._moUltimo = guard;
+        const kL = (l) => (l.pctEdit ? String(l.pctK) : l.pctTxt) + "|" + (l.valEdit ? String(l.valK) : l.valTxt);
+        Ps.forEach((P, i) => { const A = i ? Ps[i - 1] : null;
+          ["moModsA", "moModsA2", "moModsB", "moModsC", "moModsD"].forEach((g) => { P[g] = (P[g] || []).map((md, mi) => { const ma = A && A[g] && A[g][mi];
+            return { ...md, mudouTot: !!(ma && ma.total.valTxt !== md.total.valTxt), linhas: md.linhas.map((l, li) => ({ ...l, mudou: !!(ma && ma.linhas[li] && kL(ma.linhas[li]) !== kL(l)) })) }; }); });
+          P.moResumo = (P.moResumo || []).map((l, li) => ({ ...l, mudou: !!(A && A.moResumo[li] && A.moResumo[li].valTxt !== l.valTxt) }));
+          P.moBenef = (P.moBenef || []).map((b, bi) => ({ ...b, mudou: !!(A && A.moBenef[bi] && String(A.moBenef[bi].valor) !== String(b.valor)) }));
+          P.moCamposCmp = (P.moPreCampos || []).concat(P.moCamposIni || []).map((x) => ({ ...x, rot: x.rot.replace(/ \*$/, "") }));
+        });
         const chave = (l) => (l.pctEdit ? String(l.pctK) : l.pctTxt) + "|" + (l.valEdit ? String(l.valK) : l.valTxt);
         const BEN = [["vt_tarifa", "Tarifa do transporte (R$)"], ["vt_viagens", "Viagens por dia"], ["dias", "Dias trabalhados no mês"], ["aux_dia", "Auxílio-alimentação por dia (R$)"], ["aux_part", "Participação no auxílio-alimentação (%)"], ["ref_dia", "Auxílio-refeição por dia (R$)"], ["ref_part", "Participação no auxílio-refeição (%)"]];
         return { moCmpN: String(cols.length),
           moCmpCols: cols.map((c, i) => { const ant = i ? cols[i - 1] : null;
-            return { nome: c.nome, tipo: (CMP_TIPOS[c.tipo] || CMP_TIPOS.repactuacao)[0], cls: "lmo-cmpcol t-" + c.tipo,
+            return { P: Ps[i], nome: c.nome, tipo: (CMP_TIPOS[c.tipo] || CMP_TIPOS.repactuacao)[0], cls: "lmo-cmpcol t-" + c.tipo,
               onNome: (e) => { const v = e.target.value; this.moCmpMudar((cs) => cs.map((x) => (x.id === c.id ? { ...x, nome: v } : x))); },
               podeDel: cols.length > 2, del: () => this.moCmpDel(c.id), trazer: () => this.moCmpTrazer(c.id), trazerTxt: "trazer da " + ({ planejamento: "Planilha de custos", contratacao: "Análise de proposta", repactuacao: "Repactuação" }[c.tipo] || "Repactuação"), total: brl(c.r.total),
               dif: ant ? (() => { const dv = c.r.total - ant.r.total, pc = ant.r.total ? dv / ant.r.total : 0; return (dv >= 0 ? "+" : "−") + brl(Math.abs(dv)) + " (" + (pc >= 0 ? "+" : "") + (pc * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%) em relação à anterior"; })() : "",
@@ -11618,19 +11812,19 @@ class Component extends DCLogic {
               qtd: [["emp_posto", "Empregados por posto"], ["postos", "Postos"], ["meses", "Meses"]].map(([k, rot]) => ({ rot, valor: c.d[k] == null ? (MO_PADRAO[k] ?? "") : c.d[k], on: setC(c)(k) })),
               mensal: brl(c.r.mensal), global: brl(c.r.global) }; }) }; })() : {}),
       moIrComparar: () => this.calcFerramenta("comparar"),
-      moCompRegistrar: () => { this.moSet("ant")({ ...moSnap(this.state.mo.d), _origem: "assinante", _em: new Date().toISOString() }); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Valores atuais registrados como planilha da contratação. Agora altere o que mudou com a nova convenção." } })); },
-      moCompLimpar: () => this.moSet("ant")(null),
+      moCompRegistrar: () => { SET("ant")({ ...moSnap(this.state.mo.d), _origem: "assinante", _em: new Date().toISOString() }); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Valores atuais registrados como planilha da contratação. Agora altere o que mudou com a nova convenção." } })); },
+      moCompLimpar: () => SET("ant")(null),
       moMem: memGrupos, moMemEmp: "Empregados considerados no rateio de materiais e equipamentos: " + empTot + " (empregados por posto × postos).",
-      moMemCf: d0.mem_cf || "", onMoMemCf: this.moSet("mem_cf"),
-      moVgCalc: d0.vg_calc === "sim", onMoVgCalc: (e) => this.moSet("vg_calc")(e.target.checked ? "sim" : ""),
-      moVgIntra: d0.vg_intra === "sim", onMoVgIntra: (e) => this.moSet("vg_intra")(e.target.checked ? "sim" : ""),
+      moMemCf: d0.mem_cf || "", onMoMemCf: SET("mem_cf"),
+      moVgCalc: d0.vg_calc === "sim", onMoVgCalc: (e) => SET("vg_calc")(e.target.checked ? "sim" : ""),
+      moVgIntra: d0.vg_intra === "sim", onMoVgIntra: (e) => SET("vg_intra")(e.target.checked ? "sim" : ""),
       moVgCampos: [campo("vg_an", "Adicional noturno (%)", "20")].concat(vg && vg.noturna ? [campo("vg_hnot", "Horas noturnas na jornada (22 h às 7 h = 9)", "9")] : [])
         .concat([campo("vg_div", "Divisor do salário-hora", "220")]).concat(vg && vg.segDom ? [campo("vg_ffix", "Feriados de data fixa no ano (nacionais, estaduais e municipais)", "9"), campo("vg_fmov", "Feriados móveis no ano", "1"), campo("vg_fer", "Adicional do feriado trabalhado (%)", "100")] : [])
         .concat(d0.vg_intra === "sim" ? [campo("vg_ih", "Horas de intervalo não concedido por dia", "1"), campo("vg_ia", "Adicional do intervalo (%)", "50")] : []),
       moVgResumo: vg ? "Salário de referência R$ " + f2(vg.ref) + " · " + f2(vg.dias) + " dias de trabalho por mês" + (vg.v12 ? " (12x36: metade dos 30,4375 dias; usados também no vale-transporte e no auxílio-alimentação)" : "")
         + " · adicional noturno R$ " + f2(vg.noturno) + " · hora noturna reduzida R$ " + f2(vg.hnr) + " · feriados R$ " + f2(vg.he) + (vg.intraVal ? " · intervalo R$ " + f2(vg.intraVal) : "") + ". Os valores entram no Módulo 1 (D, E e F) e no Submódulo 4.2." : "",
       moVgPericAviso: vg && !moNum(d0.peric) ? "O adicional de periculosidade do vigilante é de 30% (CLT, art. 193, II, Lei 12.740/2012): informe-o no Módulo 1 (B), salvo previsão diferente na convenção." : "",
-      moReformaOpcoes: [["antes", "Antes da reforma (PIS, COFINS e ISS)"], ["depois", "Depois da reforma (CBS e IBS, com a transição)"]].map(([id, nome]) => ({ nome, ativo: d.reforma === id, escolher: () => this.moSet("reforma")(id), ...corBotao(d.reforma === id) })),
+      moReformaOpcoes: [["antes", "Antes da reforma (PIS, COFINS e ISS)"], ["depois", "Depois da reforma (CBS e IBS, com a transição)"]].map(([id, nome]) => ({ nome, ativo: d.reforma === id, escolher: () => SET("reforma")(id), ...corBotao(d.reforma === id) })),
       moReformaPendente: !d.reforma || !d.regime, moReformaDepois: depois,
       moAgenteTitulo: prop ? "Análise da proposta pelo agente" : rep ? "Análise da repactuação pelo agente" : "Preenchimento pelo agente",
       moPre: [["Município e UF onde o serviço é prestado (para o ISS)", String(d.municipio || "").trim() && /^[A-Za-z]{2}$/.test(String(d.uf || "").trim())]]
@@ -11656,19 +11850,19 @@ class Component extends DCLogic {
       moDepois: (rep ? [["Datas da repactuação e efeitos financeiros", "lmo-efeitos"], ["Reajuste dos insumos por índice", "lmo-reaj"], ["Garantia trabalhista (conta vinculada ou fato gerador)", "lmo-gt"]] : [["Garantia trabalhista (conta vinculada ou fato gerador)", "lmo-gt"]])
         .concat([["Conferir o Módulo 3 da empresa", "lmo-m3"], ["Ler e confirmar as falhas apontadas", "lmo-falhas"]])
         .map(([t, id]) => ({ t, ir: () => { try { document.getElementById(id).scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} } })),
-      moLeis: ["14133", "13303", "13019"].map((id) => [id, LEIS[id]]).map(([id, L]) => ({ nome: L.nome, ativo: (d.lei || "14133") === id, escolher: () => this.moSet("lei")(id), ...corBotao((d.lei || "14133") === id) })), moLeiTxt: leiDe(d).ui,
+      moLeis: ["14133", "13303", "13019"].map((id) => [id, LEIS[id]]).map(([id, L]) => ({ nome: L.nome, ativo: (d.lei || "14133") === id, escolher: () => SET("lei")(id), ...corBotao((d.lei || "14133") === id) })), moLeiTxt: leiDe(d).ui,
       moLeiRepac: leiDe(d).repac,
-      moRegimes: [["real", "Lucro Real"], ["presumido", "Lucro Presumido"], ["simples", "Simples Nacional"]].map(([id, nome]) => ({ nome, ativo: d.regime === id, escolher: () => this.moRegime(id), ...corBotao(d.regime === id) })),
+      moRegimes: [["real", "Lucro Real"], ["presumido", "Lucro Presumido"], ["simples", "Simples Nacional"]].map(([id, nome]) => ({ nome, ativo: d.regime === id, escolher: () => REG(id), ...corBotao(d.regime === id) })),
       moRegimeTxt: d.regime === "presumido" ? "Lucro Presumido: PIS (0,65%) e COFINS (3%) no regime cumulativo, sem créditos (Lei 9.718/1998)."
         : d.regime === "simples" ? "Simples Nacional: só para vigilância, limpeza ou conservação, tributadas no Anexo IV, com a contribuição previdenciária patronal (20% + RAT) recolhida fora do DAS e sem as contribuições a terceiros (Salário-Educação, SESC/SESI, SENAC/SENAI, SEBRAE, INCRA), zeradas no Submódulo 2.2 (LC 123/2006, art. 13, § 3º, art. 17, XII, e art. 18, §§ 5º-C e 5º-H)."
         : !d.regime ? "Escolha o regime de tributação da empresa: ele define as alíquotas de PIS, COFINS e ISS (ou a parcela do Simples) e as contribuições do Submódulo 2.2." : "Lucro Real: PIS (1,65%) e COFINS (7,6%) no regime não cumulativo. Na proposta, valem as alíquotas efetivas recolhidas, descontados os créditos, comprovadas pela EFD-Contribuições (TCU, Acórdão 2.647/2009-Plenário)." + (depois ? " Depois da reforma, CBS e IBS seguem a não cumulatividade plena para todos os regimes regulares." : ""),
-      moRegSimples: d.regime === "simples", moRbt12: d.rbt12 || "", onMoRbt12: this.moSet("rbt12"),
+      moRegSimples: d.regime === "simples", moRbt12: d.rbt12 || "", onMoRbt12: SET("rbt12"),
       moSimplesCls: simp ? "lmo-ok" : "lmo-nota",
       moSimplesTxt: simp ? "Faixa " + simp.faixa + " do Anexo IV: alíquota nominal " + String(simp.nom).replace(".", ",") + "%, parcela a deduzir " + brl(simp.ded) + " → alíquota efetiva " + pct(simp.ef) + ". Na planilha: PIS " + pct(simp.pis) + ", COFINS " + pct(simp.cofins) + (simp.issFora ? " e ISS do município (na 6ª faixa, o ISS é recolhido fora do Simples)." : " e ISS " + pct(simp.iss) + (simp.iss === 0.05 ? " (limitado a 5%)" : "") + ". IRPJ e CSLL não entram na planilha.")
         : moNum(String(d.rbt12 || "").replace(/\.(?=\d{3}(\D|$))/g, "")) > 4800000 ? "Receita acima de R$ 4.800.000,00: a empresa não pode estar no Simples Nacional (LC 123/2006, art. 3º, II)." : "Informe a receita bruta dos últimos 12 meses para calcular a alíquota efetiva e a parcela de PIS, COFINS e ISS.",
       moSimplesVedado: vedado ? "Atenção: o Simples Nacional é vedado à empresa que presta serviço por cessão de mão de obra (LC 123/2006, art. 17, XII), salvo vigilância, limpeza ou conservação (art. 18, § 5º-H). Para este serviço, a empresa deve ser tributada pelo Lucro Real ou Presumido; se contratada, deve pedir a exclusão do Simples (IN SEGES/MP nº 5/2017, Anexo VII-A, item 5.2)." : "",
       moRfAnos: MO_ANOS_REFORMA.map((a) => ({ id: String(a), nome: a + (a === 2026 ? " – teste (sem custo adicional)" : a <= 2028 ? " – CBS + IBS de 0,1%" : a <= 2032 ? " – transição ISS → IBS (" + Math.round(MO_ISS_TRANSICAO[a] * 100) + "% do ISS)" : " – IBS integral, sem ISS"), sel: a === anoPlan })),
-      onMoRfAno: this.moSet("rf_ano"), moRfCbs: d.rf_cbs || "", onMoRfCbs: this.moSet("rf_cbs"), moRfIbs: d.rf_ibs || "", onMoRfIbs: this.moSet("rf_ibs"),
+      onMoRfAno: SET("rf_ano"), moRfCbs: d.rf_cbs || "", onMoRfCbs: SET("rf_cbs"), moRfIbs: d.rf_ibs || "", onMoRfIbs: SET("rf_ibs"),
       moTransicao: transicao,
       moTransicaoNota: "Clique no ano para calculá-lo na planilha. Cada linha refaz o Módulo 6 com as alíquotas do ano; os Módulos 1 a 5 e o lucro são os mesmos. A mudança de tributos em contrato vigente pede reequilíbrio econômico-financeiro (LC 214/2025, arts. 374 a 378; Lei 14.133/2021, art. 134).",
       calcAbaCmp: s.calcAba === "cmp", calcAbaIndice: s.calcAba === "indice", calcAbaMo: s.calcAba === "mo", calcAbaRq: s.calcAba === "rq",
@@ -11942,7 +12136,7 @@ class Component extends DCLogic {
         const p4 = (x) => (Math.round(x * 10000) / 10000).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
         return [["inf_api", "A – Aviso prévio indenizado", "usual: 0,42%"], ["inf_fgts_api", "B – FGTS sobre o aviso prévio indenizado", "correto: " + p4(fg / 100 * api)], ["inf_multa_api", "C – Multa do FGTS (sobre os depósitos do contrato)", "referência: " + p4(fg / 100 * 0.4 * 0.9 * (1 + 5 / 56 + 5 / 56 + 5 / 168) * 100) + " (40%)"],
           ["inf_apt", "D – Aviso prévio trabalhado", rep ? "máximo depois do 1º ano: 0,194%" : "máximo no 1º ano: 1,94%"], ["inf_inc_apt", "E – Encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", "correto: " + p4(m22 / 100 * apt)], ["inf_multa_apt", "F – Multa do FGTS sobre o aviso prévio trabalhado", "correto: " + p4(0.4 * fg / 100 * apt) + " (40%)"]]
-          .map(([k, rot, ref]) => ({ k, rot, ref, valor: d[k] == null ? "" : d[k], on: this.moSet(k) })); })(),
+          .map(([k, rot, ref]) => ({ k, rot, ref, valor: d[k] == null ? "" : d[k], on: SET(k) })); })(),
       moFalhasTitulo: mo.modo === "planejamento" ? "Falhas e inconsistências da planilha" : prop ? "Falhas e inconsistências da planilha da proposta" : "Falhas e inconsistências da planilha da contratação",
       moFalhasNota: mo.modo === "planejamento" ? "Conferência automática da planilha com a legislação e o modelo da IN, feita pelo sistema a cada alteração. Cada item traz o fundamento e o caminho correto." : prop ? "Cada item traz o fundamento, o caminho correto e se a correção cabe no preço ofertado. A planilha acima reproduz a proposta sem correções." : "Cada item traz o fundamento e o caminho correto. A planilha repactuada acima já considera as correções indicadas pelo agente; confira antes de concluir.",
       moFalhasAviso: mo.modo === "planejamento" ? "a estimativa com falhas distorce o valor estimado da contratação e pode levar a propostas inexequíveis ou a sobrepreço. Corrija cada item ou justifique no processo (Lei 14.133/2021, art. 23)." : prop ? "falha que exija majorar o preço ofertado ou que contrarie exigência legal (salário abaixo do piso, encargo legal a menor, benefício obrigatório da convenção) pode levar à desclassificação; as demais devem ser corrigidas pela licitante sem aumento do preço (IN 05/2017, Anexo VII-A, itens 7.9, 9.1 e 9.3)." : "manter qualquer uma dessas falhas na planilha impactará os valores da repactuação, para mais ou para menos, e pode levar ao pagamento indevido ou à glosa de valores. Corrija cada item antes de concluir a repactuação.",
@@ -11951,17 +12145,17 @@ class Component extends DCLogic {
       moFalhasAceito: rep && (d.falhas || []).length > 0 && !!d.falhas_aceite,
       moFalhasAceiteTxt: d.falhas_aceite ? "Você concordou com o prosseguimento da análise em " + new Date(d.falhas_aceite).toLocaleString("pt-BR") + ", ciente das inconsistências." : "",
       moFalhasMarcado: !!mo.falhasMarcado, onMoFalhasMarcar: (e) => { const v = e.target.checked; this.setState((x) => ({ mo: { ...x.mo, falhasMarcado: v } })); },
-      moFalhasConcordar: () => { if (!mo.falhasMarcado) { this.setState((x) => ({ mo: { ...x.mo, erro: "Marque a declaração para prosseguir." } })); return; } this.moSet("falhas_aceite")(new Date().toISOString()); this.setState((x) => ({ mo: { ...x.mo, erro: "" } })); }, moSemFalhasOk: (rep || prop) && Array.isArray(d.falhas) && d.falhas.length === 0 && !!d.fontes,
+      moFalhasConcordar: () => { if (!mo.falhasMarcado) { this.setState((x) => ({ mo: { ...x.mo, erro: "Marque a declaração para prosseguir." } })); return; } SET("falhas_aceite")(new Date().toISOString()); this.setState((x) => ({ mo: { ...x.mo, erro: "" } })); }, moSemFalhasOk: (rep || prop) && Array.isArray(d.falhas) && d.falhas.length === 0 && !!d.fontes,
       moFalhas: fsV.map((f, i) => ({ n: i + 1, rubrica: f.rubrica, problema: f.problema, fundamento: f.fundamento, correcao: f.correcao, impacto: f.impacto || "", temImpacto: !!f.impacto, impRot: prop ? "Efeito no preço:" : "Impacto se mantida:",
         grav: { alta: "Alta", media: "Média", baixa: "Baixa" }[f.gravidade] || "Média", cls: "lmo-falha g-" + (f.gravidade || "media") })),
       moFalhasResumo: (() => { const fs = fsV; const c = (g) => fs.filter((f) => f.gravidade === g).length; return fs.length + " falha(s) na planilha" + (prop ? " da proposta" : rep ? " da contratação" : "") + ": " + c("alta") + " alta(s), " + c("media") + " média(s), " + c("baixa") + " baixa(s)."; })(),
       moPlanNome: d.plan_nome || "", moSemPlan: !d.plan_nome,
       moEscolherPlan: (e) => { const f = e.target && e.target.files && e.target.files[0]; if (e.target) e.target.value = ""; if (f) this.moEnviarPlanilha(f); },
-      moRjAtivo: d.rj_ativo === "sim", onMoRj: (e) => { this.moSet("rj_ativo")(e.target.checked ? "sim" : ""); if (e.target.checked) this.carregarIndices(); },
+      moRjAtivo: d.rj_ativo === "sim", onMoRj: (e) => { SET("rj_ativo")(e.target.checked ? "sim" : ""); if (e.target.checked) this.carregarIndices(); },
       moRjIndices: [["ipca", "IPCA (IBGE)"], ["ipca_e", "IPCA-E (IBGE)"], ["inpc", "INPC (IBGE)"], ["igpm", "IGP-M (FGV)"], ["igpdi", "IGP-DI (FGV)"], ["incc", "INCC-DI (FGV)"]]
         .map(([id, nome]) => ({ id, nome, sel: d.rj_indice === id })),
-      onMoRjIndice: this.moSet("rj_indice"), moRjOrc: d.rj_orcamento || "", onMoRjOrc: this.moSet("rj_orcamento"), moRjRef: d.rj_ref || "", onMoRjRef: this.moSet("rj_ref"),
-      moRjItens: MO_INSUMOS.map(([k, nome]) => ({ nome, sel: d["rj_" + k] === "sim", alternar: () => this.moSet("rj_" + k)(d["rj_" + k] === "sim" ? "" : "sim") })),
+      onMoRjIndice: SET("rj_indice"), moRjOrc: d.rj_orcamento || "", onMoRjOrc: SET("rj_orcamento"), moRjRef: d.rj_ref || "", onMoRjRef: SET("rj_ref"),
+      moRjItens: MO_INSUMOS.map(([k, nome]) => ({ nome, sel: d["rj_" + k] === "sim", alternar: () => SET("rj_" + k)(d["rj_" + k] === "sim" ? "" : "sim") })),
       moRjMsg: rj.msg || "", moRjOk: !!rj.pronto, moRjCls: rj.pronto ? "lmo-ok" : "lmo-nota", moRjIndiceSel: d.rj_indice || "ipca",
       moBaixarExcel: () => this.moBaixar("xlsx"), moBaixarPdf: () => this.moBaixar("pdf"),
       moDocs: this.moDocsDisponiveis().map(([id, nome, desc]) => ({ nome, desc, xlsx: () => this.moBaixar("xlsx", id), pdf: () => this.moBaixar("pdf", id) })), moBaixando: !!mo.baixando,
@@ -12000,13 +12194,13 @@ class Component extends DCLogic {
           let g = grupos.find((x) => x.titulo === l.grupo); if (!g) { g = { titulo: l.grupo, esq: l.tipo !== "area", linhas: [] }; grupos.push(g); }
           const precoM2 = l.p ? (l.tipo === "area" ? r.total / l.p + (precoLider ? precoLider / (30 * l.p) : 0)
             : (r.total / l.p + (precoLider ? precoLider / ((l.tipo === "fach" ? 4 : 30) * l.p) : 0)) * (l.h / MO_JORNADA_MES)) : 0;
-          g.linhas.push({ rot: l.rot, faixa: l.min === l.max ? pct2(l.min) + " m²" : pct2(l.min) + " a " + pct2(l.max) + " m²", m2: d0["lp_" + l.id] || "", onM2: this.moSet("lp_" + l.id),
-            p: d0["lp_" + l.id + "_p"] || String(l.min), onP: this.moSet("lp_" + l.id + "_p"), temH: l.tipo !== "area", h: d0["lp_" + l.id + "_h"] || "16", onH: this.moSet("lp_" + l.id + "_h"),
+          g.linhas.push({ rot: l.rot, faixa: l.min === l.max ? pct2(l.min) + " m²" : pct2(l.min) + " a " + pct2(l.max) + " m²", m2: d0["lp_" + l.id] || "", onM2: SET("lp_" + l.id),
+            p: d0["lp_" + l.id + "_p"] || String(l.min), onP: SET("lp_" + l.id + "_p"), temH: l.tipo !== "area", h: d0["lp_" + l.id + "_h"] || "16", onH: SET("lp_" + l.id + "_h"),
             q: l.q ? l.q.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—", fora: l.foraFaixa,
             precoM2: l.m2 && r.total ? "R$ " + precoM2.toLocaleString("pt-BR", { minimumFractionDigits: 4, maximumFractionDigits: 4 }) : "—" });
         });
         return {
-          moDimTipos: [["", "Sem caderno técnico (informo os postos)"], ["limpeza", "Limpeza e conservação"], ["vigilancia", "Vigilância"]].map(([id, nome]) => ({ nome, ativo: (d0.dim || "") === id, escolher: () => this.moSet("dim")(id), ...corBotao((d0.dim || "") === id) })),
+          moDimTipos: [["", "Sem caderno técnico (informo os postos)"], ["limpeza", "Limpeza e conservação"], ["vigilancia", "Vigilância"]].map(([id, nome]) => ({ nome, ativo: (d0.dim || "") === id, escolher: () => SET("dim")(id), ...corBotao((d0.dim || "") === id) })),
           moDimLimpeza: !!dim && dim.tipo === "limpeza", moDimVig: !!dim && dim.tipo === "vigilancia", moDimAtivo: !!dim,
           moDimGrupos: grupos,
           moDimResumo: !dim ? "" : dim.tipo === "limpeza"
@@ -12014,9 +12208,9 @@ class Component extends DCLogic {
             : (dim.postos ? dim.postos + " posto(s) de " + dim.escala[1] + " × " + dim.porPosto + " vigilante(s) = " + dim.vigilantes + " vigilante(s) e " + dim.supervisores + " supervisor(es) (1 para cada 40 vigilantes, ou fração)." : "Informe a quantidade de postos."),
           moDimForaFaixa: !!dim && dim.tipo === "limpeza" && dim.linhas.some((l) => l.m2 && l.foraFaixa),
           moDimLiderRot: dim && dim.tipo === "vigilancia" ? "Preço mensal do supervisor (R$, da planilha dele)" : "Preço mensal do encarregado (R$, da planilha dele)",
-          moDimLider: d0.preco_lider || "", onMoDimLider: this.moSet("preco_lider"),
+          moDimLider: d0.preco_lider || "", onMoDimLider: SET("preco_lider"),
           moVgEscalas: MO_VIGILANCIA.map(([id, nome, nv]) => ({ id, nome: nome + " – " + nv + " vigilante(s) por posto", sel: (d0.vg_escala || "44h") === id })),
-          onMoVgEscala: this.moSet("vg_escala"), moVgPostos: d0.vg_postos || "", onMoVgPostos: this.moSet("vg_postos"),
+          onMoVgEscala: SET("vg_escala"), moVgPostos: d0.vg_postos || "", onMoVgPostos: SET("vg_postos"),
           moQuadroManual: !dim,
           moLiderTxt: dim && lider ? (dim.tipo === "limpeza" ? lider + " encarregado(s)" : lider + " supervisor(es)") + (precoLider ? " × " + brl(precoLider) + " incluídos no valor mensal." : ": informe o preço mensal para incluir no valor mensal.") : ""
         };
