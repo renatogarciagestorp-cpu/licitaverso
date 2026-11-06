@@ -1201,7 +1201,7 @@
   .lmo-salvas-lista small { display: block; font-size: 12px; color: #66757F; }
   .lmo-salvas-acoes { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   .lmo-salvas-acoes select { font: inherit; font-size: 13px; border: 1px solid #D6DEDD; border-radius: 8px; padding: 4px 6px; }
-  .lmo-cons { grid-template-columns: minmax(0, 1.6fr) 130px 90px 70px 90px 130px 140px 110px; font-size: 13.5px; }
+  .lmo-cons { grid-template-columns: minmax(0, 1.6fr) 130px 90px 70px 90px 130px 140px 172px; font-size: 13.5px; }
   .lmo-cons.lmo-cab span { text-align: right; } .lmo-cons.lmo-cab span:first-child { text-align: left; }
   .lmo-cmp-wrap { overflow-x: auto; }
   .lmo-val[data-alerta="true"] { background: #FFF1CC; color: #7A4B00; font-weight: 800; border-radius: 6px; padding: 2px 4px; }
@@ -1244,6 +1244,9 @@
   .lmo-cmp-sec span { position: sticky; left: 10px; }
   .lmo-cmpc { display: grid; gap: 2px; text-align: right; } .lmo-cmpc input { font: inherit; text-align: right; border: 1px solid #D3DEDB; border-radius: 7px; padding: 4px 7px; width: 100%; box-sizing: border-box; background: #FFFEF7; }
   .lmo-cmpc b { font-variant-numeric: tabular-nums; font-weight: 600; } .lmo-cmpc small { font-size: 11px; color: #8A5A00; font-weight: 700; }
+  .lmo-ordem { display: inline-flex; gap: 2px; margin-right: 4px; } .lmo-cons .lmo-mem-acoes { white-space: nowrap; justify-content: flex-end; }
+  .lmo-seta { width: 26px; height: 26px; border: 1px solid #D5DEDC; border-radius: 7px; background: #fff; color: #0F6B7E; font-size: 10px; line-height: 1; cursor: pointer; padding: 0; }
+  .lmo-seta:hover:not(:disabled) { background: #EAF4F2; } .lmo-seta:disabled { opacity: .3; cursor: default; }
   .lmo-cmp-quadro { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; margin: 0 0 14px; padding: 12px 14px; border: 1px solid #E3E9E8; border-radius: 12px; background: #F8FBFA; }
   .lmo-cmp-quadro .lmo-campo { flex: 1 1 320px; margin: 0; } .lmo-cmp-quadro > small { flex: 1 1 100%; margin: 0; }
   .lmo-cmpc.mudou { background: #FFF6DE !important; } [data-calc="true"].lmo-cmpc b, .lmo-cmp-r[data-calc="true"] { font-weight: 800; color: #0B1F2A; }
@@ -4329,7 +4332,7 @@
                   <div class="lmo-lin lmo-cons lmo-cab" role="row"><span>Categoria</span><span>Preço por empregado</span><span>Empregados por posto</span><span>Postos</span><span>Empregados</span><span>Valor mensal</span><span>Valor global</span><span></span></div>
                   <sc-for list="{{ moLista }}" as="l" hint-placeholder-count="2">
                     <div class="lmo-lin lmo-cons" role="row"><span><b>{{ l.nome }}</b></span><span class="lmo-val">{{ l.preco }}</span><span class="lmo-val">{{ l.empPosto }}</span><span class="lmo-val">{{ l.postos }}</span><span class="lmo-val">{{ l.emp }}</span><span class="lmo-val">{{ l.mensal }}</span><span class="lmo-val">{{ l.global }}</span>
-                      <span class="lmo-mem-acoes"><button type="button" class="lmo-ano" sc-camel-on-click="{{ l.abrir }}">Abrir</button><button type="button" class="lmo-x" aria-label="Remover do quadro" sc-camel-on-click="{{ l.remover }}">×</button></span></div>
+                      <span class="lmo-mem-acoes"><span class="lmo-ordem"><button type="button" class="lmo-seta" aria-label="Subir no quadro" title="Subir" disabled="{{ l.naoSobe }}" sc-camel-on-click="{{ l.subir }}">▲</button><button type="button" class="lmo-seta" aria-label="Descer no quadro" title="Descer" disabled="{{ l.naoDesce }}" sc-camel-on-click="{{ l.descer }}">▼</button></span><button type="button" class="lmo-ano" sc-camel-on-click="{{ l.abrir }}">Abrir</button><button type="button" class="lmo-x" aria-label="Remover do quadro" sc-camel-on-click="{{ l.remover }}">×</button></span></div>
                   </sc-for>
                   <div class="lmo-lin lmo-cons lmo-tot" role="row"><span>Total da contratação ({{ moListaTot.cats }} categoria(s))</span><span></span><span></span><span></span><span class="lmo-val">{{ moListaTot.emp }}</span><span class="lmo-val">{{ moListaTot.mensal }}</span><span class="lmo-val">{{ moListaTot.global }}</span><span></span></div>
                 </div>
@@ -12229,6 +12232,8 @@ class Component extends DCLogic {
     catch (e) { console.error(e); this.setState((x) => ({ mo: { ...x.mo, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
     this.setState((x) => ({ mo: { ...x.mo, baixando: false, ok: "✓ Relatório com " + partes.length + " planilha(s) gerado." + (falhas.length ? " Ficaram de fora (incompletas): " + falhas.join(", ") + "." : "") + avisoDesat } }));
   }
+  // ordem do quadro (é a mesma do relatório com todas as planilhas)
+  moListaMover(i, dir) { const modo = this.state.mo.modo, l = this.moListaLer(modo), j = i + dir; if (j < 0 || j >= l.length) return; [l[i], l[j]] = [l[j], l[i]]; this.moListaGravar(modo, l); }
   moListaDel(i) { const modo = this.state.mo.modo, l = this.moListaLer(modo); l.splice(i, 1); this.moListaGravar(modo, l); }
   // Planilha 3: a estimativa do órgão (Planilha 1) como referência – valor estimado (cenário máximo) e valor de atenção
   moRefPlan1() {
@@ -13276,7 +13281,7 @@ class Component extends DCLogic {
       moListaBotao: prop ? "Incluir esta proposta no comparativo" : "Incluir esta categoria no quadro",
       moListaAdd: () => this.moListaAdd(), moQuadroPdf: () => this.moQuadroRelatorio("pdf"), moQuadroExcel: () => this.moQuadroRelatorio("xlsx"),
       moListaEditando: !prop && !!mo.listaEditId && lista.some((x) => x.id === mo.listaEditId) ? "Editando: " + (lista.find((x) => x.id === mo.listaEditId) || {}).nome + ". Ao incluir de novo com o mesmo nome, ela é atualizada; com outro nome, entra como nova categoria." + (this.moListaDesatualizada() ? " ⚠ Há alterações nesta planilha que ainda não estão no quadro: inclua de novo para atualizar (o relatório com todas as planilhas atualiza automaticamente)." : "") : "",
-      moLista: lista.map((it, i) => ({ nome: it.nome, preco: brl(it.res.total), empPosto: String(it.res.empPosto || ""), postos: String(it.res.postos || ""), emp: String(it.res.emp), mensal: brl(it.res.mensal), global: brl(it.res.global),
+      moLista: lista.map((it, i) => ({ nome: it.nome, naoSobe: i === 0, naoDesce: i === lista.length - 1, subir: () => this.moListaMover(i, -1), descer: () => this.moListaMover(i, 1), preco: brl(it.res.total), empPosto: String(it.res.empPosto || ""), postos: String(it.res.postos || ""), emp: String(it.res.emp), mensal: brl(it.res.mensal), global: brl(it.res.global),
         abrir: () => this.moListaAbrir(i), remover: () => this.moListaDel(i), atual: (it.nome === (prop ? (String(d0.pr_licitante || "").trim() || "Licitante sem nome") : null)) })),
       moListaTot: (() => { const m = lista.reduce((a, it) => a + (Number(it.res.mensal) || 0), 0), g = lista.reduce((a, it) => a + (Number(it.res.global) || 0), 0), e = lista.reduce((a, it) => a + (Number(it.res.emp) || 0), 0);
         return { emp: String(e), mensal: brl(m), global: brl(g), cats: String(lista.length) }; })(),
