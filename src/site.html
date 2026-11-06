@@ -12059,6 +12059,13 @@ class Component extends DCLogic {
     this.moListaGravar(mo.modo, lista);
     this.setState((x) => ({ mo: { ...x.mo, erro: "", listaEditId: item.id, ok: "✓ " + item.nome + (atualiza ? " atualizada no " : " incluída no ") + (prop ? "comparativo das propostas." : "quadro consolidado (" + lista.length + " categoria(s)).") + aviso } }));
   }
+  // planilha aberta a partir do quadro e alterada depois, sem incluir de novo: o quadro (e o relatório) ainda tem a versão antiga
+  moListaDesatualizada() {
+    const mo = this.state.mo; if (!mo.listaEditId) return null;
+    const it = this.moListaLer(mo.modo).find((x) => x.id === mo.listaEditId); if (!it) return null;
+    const norm = (d) => { const o = moSnap({ ...MO_PADRAO, ...d }); return JSON.stringify(Object.keys(o).sort().map((k) => [k, o[k] == null ? "" : o[k]])); };
+    return norm(mo.d) !== norm(it.d) ? it : null;
+  }
   moListaAbrir(i) {
     const modo = this.state.mo.modo, l = this.moListaLer(modo), it = l[i]; if (!it) return;
     if (!it.id) { it.id = Math.random().toString(36).slice(2, 10); this.moListaGravar(modo, l); }
@@ -12176,8 +12183,15 @@ class Component extends DCLogic {
     catch (e) { console.error(e); this.setState((x) => ({ cmp: { ...x.cmp, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
   }
   async moQuadroRelatorio(formato) {
-    const mo = this.state.mo, modo = mo.modo, lista = this.moListaLer(modo), rep = modo === "repactuacao";
+    const mo = this.state.mo, modo = mo.modo, rep = modo === "repactuacao";
+    let lista = this.moListaLer(modo);
     if (!lista.length || mo.baixando) return;
+    // a planilha aberta tem alterações que não foram incluídas no quadro: atualiza o quadro antes de montar o relatório
+    const desat = this.moListaDesatualizada(); let avisoDesat = "";
+    if (desat) { const antes = this.moListaLer(modo); this.moListaAdd(); let depois = this.moListaLer(modo);
+      if (depois.length > antes.length) { this.moListaGravar(modo, antes); depois = antes; avisoDesat = " A planilha aberta mudou de categoria e não foi incluída; o relatório usa a versão de " + desat.nome + " que está no quadro."; }
+      else if (JSON.stringify(depois) !== JSON.stringify(antes)) avisoDesat = " A planilha aberta (" + desat.nome + ") tinha alterações que ainda não estavam no quadro; o quadro foi atualizado antes de gerar o relatório.";
+      lista = depois; }
     const orig = mo.d, set = (d) => new Promise((ok) => this.setState((x) => ({ mo: { ...x.mo, d } }), ok));
     this.setState((x) => ({ mo: { ...x.mo, baixando: true, erro: "", ok: "Montando o relatório com " + lista.length + " planilha(s)…" } }));
     const partes = [], falhas = [];
@@ -12213,7 +12227,7 @@ class Component extends DCLogic {
       arquivo: (rep ? "repactuacao" : "planejamento") + "-todas-as-categorias" + (d0.rp_contrato ? "-contrato-" + String(d0.rp_contrato).replace(/[^\w-]+/g, "-") : ""), blocos, notas: [...new Set(notas)] };
     try { if (formato === "xlsx") await this.moDocExcel(doc0, titulo, hoje); else await this.moDocPdf(doc0, titulo, hoje); }
     catch (e) { console.error(e); this.setState((x) => ({ mo: { ...x.mo, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
-    this.setState((x) => ({ mo: { ...x.mo, baixando: false, ok: "✓ Relatório com " + partes.length + " planilha(s) gerado." + (falhas.length ? " Ficaram de fora (incompletas): " + falhas.join(", ") + "." : "") } }));
+    this.setState((x) => ({ mo: { ...x.mo, baixando: false, ok: "✓ Relatório com " + partes.length + " planilha(s) gerado." + (falhas.length ? " Ficaram de fora (incompletas): " + falhas.join(", ") + "." : "") + avisoDesat } }));
   }
   moListaDel(i) { const modo = this.state.mo.modo, l = this.moListaLer(modo); l.splice(i, 1); this.moListaGravar(modo, l); }
   // Planilha 3: a estimativa do órgão (Planilha 1) como referência – valor estimado (cenário máximo) e valor de atenção
@@ -13261,7 +13275,7 @@ class Component extends DCLogic {
         : "Monte uma planilha por categoria (servente, encarregado, vigilante, supervisor…) e inclua cada uma aqui: as planilhas ficam guardadas neste navegador e o quadro soma empregados, valor mensal e global. Para a próxima categoria, troque a Categoria profissional e os valores e inclua de novo. Ao final, baixe o relatório com todas as planilhas.",
       moListaBotao: prop ? "Incluir esta proposta no comparativo" : "Incluir esta categoria no quadro",
       moListaAdd: () => this.moListaAdd(), moQuadroPdf: () => this.moQuadroRelatorio("pdf"), moQuadroExcel: () => this.moQuadroRelatorio("xlsx"),
-      moListaEditando: !prop && !!mo.listaEditId && lista.some((x) => x.id === mo.listaEditId) ? "Editando: " + (lista.find((x) => x.id === mo.listaEditId) || {}).nome + ". Ao incluir de novo com o mesmo nome, ela é atualizada; com outro nome, entra como nova categoria." : "",
+      moListaEditando: !prop && !!mo.listaEditId && lista.some((x) => x.id === mo.listaEditId) ? "Editando: " + (lista.find((x) => x.id === mo.listaEditId) || {}).nome + ". Ao incluir de novo com o mesmo nome, ela é atualizada; com outro nome, entra como nova categoria." + (this.moListaDesatualizada() ? " ⚠ Há alterações nesta planilha que ainda não estão no quadro: inclua de novo para atualizar (o relatório com todas as planilhas atualiza automaticamente)." : "") : "",
       moLista: lista.map((it, i) => ({ nome: it.nome, preco: brl(it.res.total), empPosto: String(it.res.empPosto || ""), postos: String(it.res.postos || ""), emp: String(it.res.emp), mensal: brl(it.res.mensal), global: brl(it.res.global),
         abrir: () => this.moListaAbrir(i), remover: () => this.moListaDel(i), atual: (it.nome === (prop ? (String(d0.pr_licitante || "").trim() || "Licitante sem nome") : null)) })),
       moListaTot: (() => { const m = lista.reduce((a, it) => a + (Number(it.res.mensal) || 0), 0), g = lista.reduce((a, it) => a + (Number(it.res.global) || 0), 0), e = lista.reduce((a, it) => a + (Number(it.res.emp) || 0), 0);
