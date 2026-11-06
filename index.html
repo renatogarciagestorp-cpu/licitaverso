@@ -1269,6 +1269,7 @@
   .lmo-cmp-sec span { position: sticky; left: 10px; }
   .lmo-cmpc { display: grid; gap: 2px; text-align: right; } .lmo-cmpc input { font: inherit; text-align: right; border: 1px solid #D3DEDB; border-radius: 7px; padding: 4px 7px; width: 100%; box-sizing: border-box; background: #FFFEF7; }
   .lmo-cmpc b { font-variant-numeric: tabular-nums; font-weight: 600; } .lmo-cmpc small { font-size: 11px; color: #8A5A00; font-weight: 700; }
+  .lmo-mem-base { max-width: 520px; margin: 0 0 8px; }
   .lmo-ordem { display: inline-flex; gap: 2px; margin-right: 4px; } .lmo-cons .lmo-mem-acoes { white-space: nowrap; justify-content: flex-end; }
   .lmo-seta { width: 26px; height: 26px; border: 1px solid #D5DEDC; border-radius: 7px; background: #fff; color: #0F6B7E; font-size: 10px; line-height: 1; cursor: pointer; padding: 0; }
   .lmo-seta:hover:not(:disabled) { background: #EAF4F2; } .lmo-seta:disabled { opacity: .3; cursor: default; }
@@ -4179,6 +4180,7 @@
               <sc-for list="{{ moMem }}" as="g" hint-placeholder-count="3">
                 <div style="margin-top: 14px">
                   <p class="lmo-nota" style="margin: 0 0 6px"><b>{{ g.rot }}</b> · {{ g.nota }}</p>
+                  <sc-if value="{{ g.temBase }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo lmo-mem-base"><span>Os valores digitados são</span><select sc-camel-on-change="{{ g.onBase }}"><sc-for list="{{ g.baseOps }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select><small class="lmo-ref">{{ g.baseNota }}</small></label></sc-if>
                   <sc-if value="{{ g.temLinhas }}" hint-placeholder-val="{{ false }}">
                   <div class="lmo-tabela" role="table">
                     <div class="{{ g.clsCab }}" role="row"><sc-for list="{{ g.cols }}" as="h" hint-placeholder-count="5"><span>{{ h.c }}</span></sc-for></div>
@@ -4597,6 +4599,7 @@
                       <sc-for list="{{ c.P.moMem }}" as="g" hint-placeholder-count="3">
                         <div style="margin-top: 14px">
                           <p class="lmo-nota" style="margin: 0 0 6px"><b>{{ g.rot }}</b> · {{ g.nota }}</p>
+                  <sc-if value="{{ g.temBase }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo lmo-mem-base"><span>Os valores digitados são</span><select sc-camel-on-change="{{ g.onBase }}"><sc-for list="{{ g.baseOps }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select><small class="lmo-ref">{{ g.baseNota }}</small></label></sc-if>
                           <sc-if value="{{ g.temLinhas }}" hint-placeholder-val="{{ false }}">
                           <div class="lmo-tabela" role="table">
                             <div class="{{ g.clsCab }}" role="row"><sc-for list="{{ g.cols }}" as="h" hint-placeholder-count="5"><span>{{ h.c }}</span></sc-for></div>
@@ -7695,7 +7698,7 @@ const MO_PADRAO = {
   peric: "0", insal: "0", noturno: "0", hnr: "0", he_feriado: "0", outros1: "0",
   p13: "8,33", pfa: "2,78",
   inss: "20", saled: "2,5", rat: "2", fap: "1", sesc: "1,5", senac: "1", sebrae: "0,6", incra: "0,2", fgts: "8",
-  vt_tarifa: "0", vt_gratis: "", vt_dias_zero: "", vt_viagens: "2", dias: "21", aux_dia: "0", aux_part: "20", ref_dia: "0", ref_part: "0", assist: "0", seguro: "0", outros23: "0",
+  mem_base_materiais: "", mem_base_equip: "", vt_tarifa: "0", vt_gratis: "", vt_dias_zero: "", vt_viagens: "2", dias: "21", aux_dia: "0", aux_part: "20", ref_dia: "0", ref_part: "0", assist: "0", seguro: "0", outros23: "0",
   api: "0,42", apt: "1,94",
   ferias: "8,33", aus: "0,82", pat: "0,02", acid: "0,03", mat: "0,61", outros41: "0", intra: "0",
   unif: "0", materiais: "0", equip: "0", outros5: "0",
@@ -7792,10 +7795,19 @@ const MO_MEM_MODELOS = {
   limpeza: [["Calça", 2, 6], ["Camisa", 2, 6], ["Tênis ou sapato antiderrapante", 2, 6], ["Meia (par)", 2, 6], ["Boné", 2, 6], ["Crachá", 1, 6], ["Luva de borracha (par)", 2, 6], ["Bota de borracha (par)", 2, 6]],
   vigilancia: [["Calça", 2, 6], ["Camisa", 2, 6], ["Sapato ou coturno (par)", 1, 6], ["Cinto de náilon", 1, 12], ["Distintivo", 1, 12], ["Jaqueta ou japona", 1, 12], ["Meia (par)", 2, 6], ["Quepe ou boné", 1, 12], ["Colete balístico nível II-A", 1, 60], ["Crachá", 1, 12]]
 };
+const moMemPorEmp = (d, k) => (k === "materiais" || k === "equip") && d["mem_base_" + k] === "emp";
+// nota e colunas da memória conforme a base (total da categoria ou por empregado)
+function moMemCfg(d, k) {
+  const cfg = MO_MEM[k]; if (!moMemPorEmp(d, k)) return cfg;
+  if (k === "materiais") return { ...cfg, col: ["Item", "Quantidade por mês (por empregado)", "Unidade", "Preço unitário (R$)"], nota: "Consumo mensal por empregado × preço (valores já por empregado; não há rateio)." };
+  return { ...cfg, col: ["Item", "Quantidade (por empregado)", "Vida útil (anos)", "Preço unitário (R$)", "Valor residual (%)"], nota: "Depreciação por empregado: preço × quantidade × (1 − residual) ÷ (vida útil × 12) (valores já por empregado; não há rateio)." };
+}
 function moMemoria(d, empregados) {
   const linhas = (k) => (Array.isArray(d["mem_" + k]) ? d["mem_" + k] : []);
-  const emp = empregados > 0 ? empregados : 1, out = {};
+  const emp0 = empregados > 0 ? empregados : 1, out = {};
   Object.keys(MO_MEM).forEach((k) => {
+    // materiais e equipamentos: os valores digitados podem ser o total da categoria (rateado pelos empregados) ou já por empregado
+    const emp = moMemPorEmp(d, k) ? 1 : emp0;
     const ls = linhas(k).map((l) => {
       const q = moNum(l.qtd), p = moNum(l.preco), v = moNum(l.vida);
       const mensal = k === "unif" ? (v > 0 ? p * q / v : 0) : k === "materiais" ? p * q / emp : (v > 0 ? p * q * (1 - moNum(l.res) / 100) / (v * 12) / emp : 0);
@@ -12428,7 +12440,7 @@ class Component extends DCLogic {
       return;
     }
     const transicao = (this._moUltimo && this._moUltimo.transicao) || [];
-    const memU = (this._moUltimo && this._moUltimo.mem) || {};
+    const memU = (this._moUltimo && this._moUltimo.mem) || {}, dU = (this._moUltimo && this._moUltimo.dUsado) || d;
     const brlTxt0 = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const f6 = (x) => (Number(x) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 6, maximumFractionDigits: 6 });
     const pctI = (x) => x == null ? "não divulgado" : (x >= 0 ? "" : "") + x.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
@@ -12446,7 +12458,7 @@ class Component extends DCLogic {
     const gtTxt = d.gt_tipo === "cv" ? "Conta-depósito vinculada (IN 05/2017, art. 18, I, e Anexo XII; Lei 14.133/2021, art. 121, § 3º, III): " + P.moCvTot + " sobre o Módulo 1. " + P.moCvResumo
       : d.gt_tipo === "fg" ? "Pagamento pelo fato gerador (IN 05/2017, art. 18, II; Lei 14.133/2021, art. 121, § 3º, V): " + P.moFgResumo : "";
     const fmt = (v, c) => (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: c == null ? 2 : c, maximumFractionDigits: c == null ? 2 : c });
-    const memTab = Object.keys(MO_MEM).filter((k) => memU[k] && memU[k].ativo).map((k) => ({ rot: MO_MEM[k].rot, nota: MO_MEM[k].nota, col: MO_MEM[k].col.concat(["Custo mensal por empregado"]),
+    const memTab = Object.keys(MO_MEM).filter((k) => memU[k] && memU[k].ativo).map((k) => ({ rot: MO_MEM[k].rot, nota: moMemCfg(dU, k).nota, col: moMemCfg(dU, k).col.concat(["Custo mensal por empregado"]),
       linhas: memU[k].linhas.filter((l) => l.mensal > 0).map((l) => MO_MEM[k].campos.map((c) => String(l[c] == null ? "" : l[c])).concat(["R$ " + fmt(l.mensal, 4)]).concat([l.fonte || ""])),
       total: "R$ " + fmt(memU[k].total, 4) + (memU[k].financeiro ? " (inclui custo financeiro de R$ " + fmt(memU[k].financeiro) + ")" : "") }));
     const regNome = { "": "Lucro Real", real: "Lucro Real", presumido: "Lucro Presumido", simples: "Simples Nacional (Anexo IV)" }[d.regime || "real"];
@@ -13169,8 +13181,11 @@ class Component extends DCLogic {
     const vedado = d.regime === "simples" && !/limp|vigil|conserva/i.test((d.tipo_servico || "") + " " + (d.categoria || ""));
     const f2 = (v) => (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const memGrupos = Object.keys(MO_MEM).map((k) => {
-      const cfg = MO_MEM[k], m = mem[k];
-      return { k, rot: cfg.rot, nota: cfg.nota, cols: cfg.col.concat(["Custo mensal por empregado", ""]).map((c) => ({ c })), cls: "lmo-lin lmo-mem lmo-mem-" + k, clsCab: "lmo-lin lmo-mem lmo-cab lmo-mem-" + k,
+      const cfg = moMemCfg(d, k), m = mem[k], temBase = k === "materiais" || k === "equip", porEmp = moMemPorEmp(d, k);
+      return { k, rot: cfg.rot, nota: cfg.nota, temBase,
+        baseOps: [["", "Total da categoria (dividido por " + empTot + " empregado" + (empTot === 1 ? "" : "s") + ")"], ["emp", "Por empregado (sem rateio)"]].map(([id, nome]) => ({ id, nome, sel: (porEmp ? "emp" : "") === id })),
+        onBase: (e) => SET("mem_base_" + k)(e.target.value),
+        baseNota: porEmp ? "Os valores já são por empregado: mudar o número de postos não altera o custo por empregado." : "Os valores são do total da categoria: se mudar o número de postos (ou copiar esta planilha para outra categoria), ajuste as quantidades ou escolha Por empregado.", cols: cfg.col.concat(["Custo mensal por empregado", ""]).map((c) => ({ c })), cls: "lmo-lin lmo-mem lmo-mem-" + k, clsCab: "lmo-lin lmo-mem lmo-cab lmo-mem-" + k,
         temLinhas: m.linhas.length > 0, total: "Total mensal por empregado: " + brl(m.total) + (m.financeiro ? " (com custo financeiro de " + brl(m.financeiro) + ")" : ""),
         adicionar: () => MEM(k, (l) => l.concat([{ desc: "", qtd: "", vida: "", preco: "", un: "", res: "", fonte: "" }])),
         temModelo: k === "unif", modelo: () => this.moMemModelo(),
