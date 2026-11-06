@@ -1244,6 +1244,12 @@
   .lmo-cmp-sec span { position: sticky; left: 10px; }
   .lmo-cmpc { display: grid; gap: 2px; text-align: right; } .lmo-cmpc input { font: inherit; text-align: right; border: 1px solid #D3DEDB; border-radius: 7px; padding: 4px 7px; width: 100%; box-sizing: border-box; background: #FFFEF7; }
   .lmo-cmpc b { font-variant-numeric: tabular-nums; font-weight: 600; } .lmo-cmpc small { font-size: 11px; color: #8A5A00; font-weight: 700; }
+  .ct-pncp { border: 1px solid #D5E6E2; background: #F4FAF8; border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; }
+  .ct-pncp-t { display: grid; gap: 2px; margin-bottom: 8px; } .ct-pncp-t b { font-size: 14px; color: #0B1F2A; } .ct-pncp-t span { font-size: 12.5px; color: #55666D; }
+  .ct-pncp-c { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 10px; } .ct-pncp-c .lmo-campo { margin: 0; flex: 1 1 170px; } .ct-pncp-link { flex: 2 1 320px !important; } .ct-pncp-n { flex: 0 1 110px !important; }
+  .ct-pncp-ou { font-size: 12px; font-weight: 700; color: #6A7B82; padding-bottom: 10px; }
+  .ct-pncp-cand { display: grid; gap: 2px; width: 100%; text-align: left; border: 1px solid #D5DEDC; background: #fff; border-radius: 9px; padding: 8px 10px; margin-top: 6px; cursor: pointer; } .ct-pncp-cand:hover { border-color: #0FA36B; }
+  .ct-pncp-cand span { font-size: 12.5px; color: #55666D; }
   .lmo-mem-base { max-width: 520px; margin: 0 0 8px; }
   .lmo-ordem { display: inline-flex; gap: 2px; margin-right: 4px; } .lmo-cons .lmo-mem-acoes { white-space: nowrap; justify-content: flex-end; }
   .lmo-seta { width: 26px; height: 26px; border: 1px solid #D5DEDC; border-radius: 7px; background: #fff; color: #0F6B7E; font-size: 10px; line-height: 1; cursor: pointer; padding: 0; }
@@ -5327,6 +5333,19 @@
             <sc-if value="{{ ctFormAberto }}" hint-placeholder-val="{{ false }}">
             <section class="lmo-bloco">
               <h2 class="lmo-h2">{{ ctFormTitulo }}</h2>
+              <div class="ct-pncp">
+                <div class="ct-pncp-t"><b>Puxar do PNCP</b><span>Cole o link do contrato no Portal Nacional de Contratações Públicas, ou informe o CNPJ do órgão, o número e o ano. Os campos abaixo são preenchidos sozinhos; confira antes de salvar.</span></div>
+                <div class="ct-pncp-c">
+                  <label class="lmo-campo ct-pncp-link"><span>Link ou número de controle no PNCP</span><input type="text" value="{{ ctPncpLink }}" sc-camel-on-input="{{ onCtPncpLink }}" placeholder="https://pncp.gov.br/app/contratos/00000000000000/2025/12"></label>
+                  <span class="ct-pncp-ou">ou</span>
+                  <label class="lmo-campo"><span>CNPJ do órgão</span><input type="text" value="{{ ctPncpCnpj }}" sc-camel-on-input="{{ onCtPncpCnpj }}" placeholder="00.000.000/0000-00"></label>
+                  <label class="lmo-campo ct-pncp-n"><span>Nº do contrato</span><input type="text" value="{{ ctPncpNum }}" sc-camel-on-input="{{ onCtPncpNum }}" placeholder="12/2025"></label>
+                  <label class="lmo-campo ct-pncp-n"><span>Ano</span><input type="text" inputmode="numeric" value="{{ ctPncpAno }}" sc-camel-on-input="{{ onCtPncpAno }}" placeholder="2025"></label>
+                  <button type="button" class="lmo-btn" sc-camel-on-click="{{ ctPncpBuscar }}">{{ ctPncpBtn }}</button>
+                </div>
+                <sc-if value="{{ ctPncpMsg }}" hint-placeholder-val="{{ false }}"><p class="{{ ctPncpMsgCls }}" role="status">{{ ctPncpMsg }}</p></sc-if>
+                <sc-for list="{{ ctPncpCands }}" as="o" hint-placeholder-count="0"><button type="button" class="ct-pncp-cand" sc-camel-on-click="{{ o.usar }}"><b>{{ o.t }}</b><span>{{ o.d }}</span></button></sc-for>
+              </div>
               <div class="lmo-campos">
                 <label class="lmo-campo"><span>Número do contrato *</span><input type="text" value="{{ ctFNumero }}" sc-camel-on-input="{{ onCtFNumero }}" placeholder="Ex.: 012/2026"></label>
                 <label class="lmo-campo"><span>Contratante (órgão)</span><input type="text" value="{{ ctFContratante }}" sc-camel-on-input="{{ onCtFContratante }}"></label>
@@ -11560,6 +11579,36 @@ class Component extends DCLogic {
     this.setState((x) => ({ ct: { ...x.ct, lista: error ? [] : (lista || []), eventos, carregado: !error, carregando: false, erro: error ? "Não foi possível carregar os contratos." : "" } }));
   }
   ctMsg(ok, erro) { this.setState((x) => ({ ct: { ...x.ct, ok: ok || "", erro: erro || "" } })); }
+  // Gestão Contratual: dados do contrato publicados no PNCP (função pncp-contrato)
+  async ctPncpBuscar() {
+    const pq = this.state.ct.pncp || {}, set = (o) => this.setState((x) => ({ ct: { ...x.ct, pncp: { ...(x.ct.pncp || {}), ...o } } }));
+    if (pq.buscando) return;
+    if (!this.sb) { set({ msg: "A consulta ao PNCP funciona com as contas ativas do site.", erro: true }); return; }
+    if (!this.state.usuario) { this.setState({ volta: "contratos" }); this.irPara("login"); return; }
+    const corpo = String(pq.link || "").trim() ? { link: pq.link } : { cnpj: pq.cnpj, numero: pq.num, ano: pq.ano || (String(pq.num || "").match(/(\d{4})\s*$/) || [])[1] };
+    set({ buscando: true, msg: "Consultando o PNCP…", erro: false, cands: [] });
+    try {
+      const { data, error } = await this.sb.functions.invoke("pncp-contrato", { body: corpo });
+      if (error || !data) throw error || new Error("sem resposta");
+      if (data.erro) { set({ buscando: false, msg: data.erro, erro: true }); return; }
+      if (data.candidatos) { set({ buscando: false, msg: "Mais de um contrato com esse número: escolha o certo.", erro: false, cands: data.candidatos }); return; }
+      this.ctPncpUsar(data.contrato);
+    } catch (e) { console.error(e); set({ buscando: false, msg: "Não foi possível consultar o PNCP agora. Tente de novo em alguns minutos.", erro: true }); }
+  }
+  ctPncpUsar(c) {
+    if (!c) return;
+    const n = (v) => (v == null || v === "" ? "" : Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    const mensal = c.parcelas > 1 && c.valor_parcela > 0;
+    this.setState((x) => {
+      const f = x.ct.form || { ...CT_FORM }, so = (k, v) => (v ? { [k]: v } : {});
+      const obs = [f.obs, c.link ? "PNCP: " + c.link : ""].filter(Boolean).join(" · ");
+      const form = { ...f, ...so("numero", c.numero), ...so("contratante", c.contratante), ...so("contratada", c.contratada), ...so("objeto", c.objeto), ...so("assinatura", c.assinatura), ...so("inicio", c.inicio), ...so("fim", c.fim),
+        ...(mensal ? { valor_inicial: n(c.valor_parcela), periodicidade: "mensal" } : c.valor_inicial != null ? { valor_inicial: n(c.valor_inicial), periodicidade: "global" } : {}),
+        ...(c.modalidade && c.modalidade.id ? { modalidade: c.modalidade.srp && !/preg|concorr/.test(c.modalidade.id) ? f.modalidade : c.modalidade.id } : {}), obs: obs.slice(0, 500) };
+      return { ct: { ...x.ct, form, pncp: { ...(x.ct.pncp || {}), buscando: false, cands: [], erro: false,
+        msg: "✓ Dados do PNCP preenchidos" + (c.modalidade && c.modalidade.nome ? " (" + c.modalidade.nome + ")" : "") + ". Confira e complete o mês do orçamento estimado, o índice de reajuste e os responsáveis, que o PNCP não informa." } } };
+    });
+  }
   ctNovo() { this.setState((x) => ({ ct: { ...x.ct, form: { ...CT_FORM }, ev: null, ok: "", erro: "", painel: x.ct.so ? x.ct.painel : { ...(x.ct.painel || {}), aba: "contratos" } } })); setTimeout(() => { try { document.querySelector(".lmo-bloco").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }, 120); }
   ctEditar(c) {
     const f = { ...CT_FORM };
@@ -14076,7 +14125,11 @@ class Component extends DCLogic {
           ctBuscaRot: modoUm ? "Ver outro contrato" : "Ver contrato", ctFiltroVazio: lista.length > 0 && !(drl ? listaD : listaF).length,
           ctFiltroVazioTxt: "Nenhum contrato " + ({ vig: "vigente", ven: "vencendo nos próximos 4 meses", exp: "vencido" }[ctFil] || "") + ".", ctKpis, ctAgMeses, ctAgGrupos, ctAgVazio: !agenda.length, ctAgFiltro: agSel ? "Mostrando só o mês escolhido · clique de novo para ver todos" : "",
           ctAgExcel: () => this.ctAgendaExcel(), ctRelatorio: () => this.ctRelatorio(), ctTemKpis: lista.length > 0, ctTemLista: lista.length > 0, ctVazio: ct.carregado && !lista.length && !ct.form, ctCarregando: !!ct.carregando,
-          ctFormAberto: !!ct.form, ctFormTitulo: f.id ? "Editar contrato" : "Novo contrato", ctNovo: () => this.ctNovo(), ctSalvar: () => this.ctSalvar(),
+          ctFormAberto: !!ct.form, ctFormTitulo: f.id ? "Editar contrato" : "Novo contrato",
+          ...(() => { const pq = ct.pncp || {}, setP = (k) => (e) => { const v = e.target.value; this.setState((x) => ({ ct: { ...x.ct, pncp: { ...(x.ct.pncp || {}), [k]: v } } })); };
+            return { ctPncpLink: pq.link || "", onCtPncpLink: setP("link"), ctPncpCnpj: pq.cnpj || "", onCtPncpCnpj: setP("cnpj"), ctPncpNum: pq.num || "", onCtPncpNum: setP("num"), ctPncpAno: pq.ano || "", onCtPncpAno: setP("ano"),
+              ctPncpBuscar: () => this.ctPncpBuscar(), ctPncpBtn: pq.buscando ? "Consultando…" : "Buscar no PNCP", ctPncpMsg: pq.msg || "", ctPncpMsgCls: pq.erro ? "lve-erro" : "lmo-ok",
+              ctPncpCands: (pq.cands || []).map((c) => ({ t: "Contrato " + c.numero + " · " + (c.contratada || "contratada não informada"), d: [c.objeto && c.objeto.slice(0, 120), c.assinatura && "assinado em " + c.assinatura.split("-").reverse().join("/")].filter(Boolean).join(" · "), usar: () => this.ctPncpUsar(c) })) }; })(), ctNovo: () => this.ctNovo(), ctSalvar: () => this.ctSalvar(),
           ctCancelar: () => this.setState((x) => ({ ct: { ...x.ct, form: null, erro: "" } })),
           ctRegimes: [["14133", "Lei 14.133/2021"], ["13303", "Lei 13.303/2016 (estatais)"], ["13019", "Lei 13.019/2014 (parcerias)"]].map(([id, nome]) => ({ id, nome, sel: f.regime === id })),
           ctIndicesOp: [["ipca", "IPCA"], ["ipca_e", "IPCA-E"], ["inpc", "INPC"], ["igpm", "IGP-M"], ["igpdi", "IGP-DI"], ["incc", "INCC-DI"]].map(([id, nome]) => ({ id, nome, sel: f.indice === id })),
