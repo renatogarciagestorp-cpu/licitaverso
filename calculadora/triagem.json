@@ -1,12 +1,100 @@
 {
  "status": 200,
- "segundos": 0,
+ "segundos": 11,
  "uso": {
-  "modelo": "claude-sonnet-5-5"
+  "input_tokens": 2348,
+  "cache_creation_input_tokens": 0,
+  "cache_read_input_tokens": 0,
+  "cache_creation": {
+   "ephemeral_5m_input_tokens": 0,
+   "ephemeral_1h_input_tokens": 0
+  },
+  "output_tokens": 1537,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "service_tier": "standard",
+  "inference_geo": "global",
+  "speed": "standard",
+  "modelo": "claude-sonnet-5-5",
+  "stop_reason": "tool_use"
  },
- "custo_estimado_usd": 0,
+ "custo_estimado_usd": 0.03,
  "resposta": {
-  "perguntas": [],
-  "indisponivel": true
+  "perguntas": [
+   {
+    "id": "q1",
+    "tema": "Desempenho do processador",
+    "pergunta": "Você diz que o desempenho mínimo é dado por pontuação de benchmark, mas o valor não foi informado. Qual benchmark (ex.: PassMark CPU Mark) e qual pontuação mínima você quer exigir?",
+    "por_que": "Sem a pontuação e a referência, o requisito não é objetivo, o que limita a competição e dificulta a conferência das propostas.",
+    "opcoes": [
+     "PassMark CPU Mark – informar pontuação mínima",
+     "Não exigir benchmark, só 8 núcleos"
+    ]
+   },
+   {
+    "id": "q2",
+    "tema": "Sistema operacional",
+    "pergunta": "Qual sistema operacional licenciado e qual versão/edição você exige (ex.: Windows 11 Pro, Linux)? Se for um sistema específico, aceita equivalentes?",
+    "por_que": "Exigir software específico sem justificativa técnica contraria o art. 41 da Lei 14.133/2021, e a edição muda o preço e a compatibilidade com a rede da Prefeitura.",
+    "opcoes": [
+     "Windows 11 Pro ou equivalente",
+     "Windows 11 Pro, com justificativa técnica",
+     "Linux ou outro sistema"
+    ]
+   },
+   {
+    "id": "q3",
+    "tema": "Elemento de despesa e mochilas",
+    "pergunta": "O elemento 4.4.90.52 (equipamento e material permanente) cobre as mochilas? Elas são consumo (3.3.90.30) ou permanente? Você quer que as mochilas entrem no mesmo lote dos notebooks?",
+    "por_que": "Material de consumo e permanente têm dotações diferentes. Em lote único, uma empresa que só vende notebooks pode ficar de fora da disputa.",
+    "opcoes": [
+     "Mochilas em dotação de consumo, no mesmo lote",
+     "Mochilas em dotação de consumo, em item separado",
+     "Mochilas como permanente, no mesmo lote"
+    ]
+   },
+   {
+    "id": "q4",
+    "tema": "Valor do PCA e do orçamento",
+    "pergunta": "O valor estimado é de R$ 231.226,00, mas o item de notebooks no PCA é de R$ 250.000,00. O PCA já inclui as mochilas? Você confirma que as mochilas fazem parte do item do PCA?",
+    "por_que": "É preciso conferir se o objeto da contratação corresponde ao item do PCA e se a dotação cobre o valor estimado.",
+    "opcoes": [
+     "Sim, o PCA inclui as mochilas",
+     "Não, as mochilas não estão no PCA"
+    ]
+   },
+   {
+    "id": "q5",
+    "tema": "Datas e prazos do processo",
+    "pergunta": "O ETP tem data de 20/10/2026, mas o orçamento estimado é de 15/10/2026, anterior ao ETP. Qual é a data correta de cada um? Você confirma que o orçamento com data anterior ao ETP está correto?",
+    "por_que": "A pesquisa de preços normalmente é feita depois ou junto ao ETP. A divergência de datas pode gerar questionamento de auditoria e perda de validade da pesquisa.",
+    "opcoes": [
+     "Datas corretas, manter",
+     "Corrigir as datas"
+    ]
+   },
+   {
+    "id": "q6",
+    "tema": "Assistência técnica e requisitos adicionais",
+    "pergunta": "Quais requisitos adicionais você quer para os notebooks: peso máximo, portas (USB, HDMI), teclado ABNT2, bateria mínima, certificações (Inmetro, EPEAT) e o prazo de atendimento da garantia on-site?",
+    "por_que": "Esses itens afetam o preço e a qualidade do equipamento. O prazo de atendimento da garantia on-site é necessário para a cláusula de garantia.",
+    "opcoes": [
+     "Teclado ABNT2, USB e HDMI, atendimento em até 5 dias úteis",
+     "Teclado ABNT2, USB e HDMI, atendimento no dia útil seguinte",
+     "Quero definir outros requisitos"
+    ]
+   },
+   {
+    "id": "q7",
+    "tema": "Normas aplicáveis",
+    "pergunta": "Você informou que o órgão segue regulamento próprio (Decreto Municipal nº 45/2024). Esse decreto regulamenta a Lei 14.133/2021, ou só ela se aplica à licitação?",
+    "por_que": "Afeta as cláusulas de procedimento, sanções e a fundamentação legal do edital e do contrato.",
+    "opcoes": [
+     "Regulamenta a Lei 14.133/2021",
+     "Outro procedimento próprio"
+    ]
+   }
+  ]
  }
 }
