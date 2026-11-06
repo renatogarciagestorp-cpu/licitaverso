@@ -12,9 +12,22 @@ const ROTULOS: Record<string, string> = {
   orgao: "Órgão", uf: "UF", objeto: "Objeto", necessidade: "Necessidade / fundamentação", quantidades: "Quantidades", especificacoes: "Especificações",
   natureza: "Natureza / solução", prazo: "Prazo", prazo_outro: "Prazo (detalhe)", pca: "PCA", correlatas: "Contratações ligadas", processo: "Nº do processo",
   parcelamento: "Parcelamento", parc_motivo: "Motivo do parcelamento", valor: "Valor estimado", adjudicacao: "Adjudicação", selecao: "Forma de seleção",
-  criterio: "Critério de julgamento", regime_exec: "Regime de execução", local: "Local da obra", unidade: "Unidade requisitante", gestor: "Gestor",
+  criterio: "Critério de julgamento", regime_exec: "Regime de execução", local: "Local (da obra ou de entrega)", unidade: "Unidade requisitante", gestor: "Gestor",
   fiscais: "Fiscais", fonte: "Fonte orçamentária", observacoes: "Observações", municipio: "Município", autoridade: "Autoridade que aprova",
   precos_manual: "Valores informados", precos_links: "Links de preço", historico: "Situação atual e contratações anteriores",
+  // campos do TR de compras (modelo da AGU)
+  prazo_entrega: "Prazo de entrega", garantia_bem: "Garantia do produto", garantia_bem_outro: "Garantia do produto (detalhe)", amostra: "Exigir amostra",
+  instrumento: "Instrumento da contratação", pca_item: "Item do PCA", data_orcamento: "Data do orçamento estimado", indice: "Índice de reajuste",
+  dot_unidade: "Unidade orçamentária", dot_programa: "Programa de trabalho", dot_elemento: "Elemento de despesa", dot_fonte: "Fonte de recursos",
+  normas: "Normas que o órgão segue", normas_ref: "Regulamento do órgão", cadastro: "Cadastro de fornecedores", cadastro_outro: "Cadastro de fornecedores (qual)",
+  itens_pp: "Itens da pesquisa de preços (quantidade, unidade e preço já definidos)",
+};
+// itens da pesquisa de preços chegam em JSON: viram linhas legíveis
+const legivel = (k: string, v: unknown): string => {
+  if (k !== "itens_pp") return String(v);
+  try {
+    return (JSON.parse(String(v)) as any[]).slice(0, 60).map((x) => `\n    ${x.n}) ${x.lote ? x.lote + " · " : ""}${x.desc} · ${x.qtd} ${x.un} · R$ ${Number(x.vu || 0).toFixed(2)}${x.catmat ? " · CATMAT " + x.catmat : ""}`).join("");
+  } catch { return String(v); }
 };
 
 const FERRAMENTA = {
@@ -68,7 +81,7 @@ Deno.serve(async (req) => {
   if (!NOMES[doc]) return erro("Documento inválido.");
   const r = corpo.respostas && typeof corpo.respostas === "object" ? corpo.respostas as Record<string, unknown> : {};
   const linhas = Object.entries(r).filter(([k, v]) => ROTULOS[k] && String(v ?? "").trim())
-    .map(([k, v]) => `- ${ROTULOS[k]}: ${String(v).slice(0, 2000)}`).join("\n");
+    .map(([k, v]) => `- ${ROTULOS[k]}: ${legivel(k, v).slice(0, 4000)}`).join("\n");
   let esclarecimentos = "";
   try {
     const lista = JSON.parse(String(r.esclarecimentos ?? "[]"));
@@ -80,7 +93,7 @@ Aponte somente o que precisa ser resolvido COM O REQUISITANTE para que o documen
 (1) especificações inconsistentes, incomuns ou com provável erro de digitação (ex.: notebook de 19 polegadas, "SSD 225"), unidades confusas, quantidades incoerentes;
 (2) exigência de marca, fabricante ou software específico sem justificativa técnica (art. 41 da Lei 14.133/2021): pergunte a justificativa ou se aceita equivalentes;
 (3) requisitos essenciais que faltam e mudam o preço ou a solução (ex.: para notebook: processador, memória, armazenamento, tela, sistema operacional, garantia; para serviço: horários, local, produtividade);
-(4) dados que só o órgão tem e que o documento exige, se estiverem em branco;
+(4) dados que só o órgão tem e que o documento exige, se estiverem em branco (o que já está nas respostas não se pergunta de novo; quantidades e preços dos itens da pesquisa de preços já estão definidos);
 (5) contradições entre as respostas.
 NÃO pergunte o que você mesmo pode redigir com texto técnico padrão, nem o que o próprio estudo deve analisar (comparação de soluções, pesquisa de mercado, riscos).
 Não repita perguntas já respondidas nos esclarecimentos; se o requisitante disse que não tem a informação, não pergunte de novo.

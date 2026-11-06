@@ -5,7 +5,7 @@ name: Agente — testar a Calculadora (repactuação, proposta ou planilha)
 on:
   workflow_dispatch:
     inputs:
-      modo: { description: "repactuacao, proposta ou planejamento", required: true, default: "repactuacao" }
+      modo: { description: "repactuacao, proposta, planejamento ou triagem (Elaborador)", required: true, default: "repactuacao" }
 
 permissions: { contents: write }
 

@@ -15,3 +15,4 @@ export function clienteServico(): any {
 }
 export async function usuarioDaRequisicao(_req: Request, _admin: unknown) { return { id: "teste" }; }
 export function nivelDoToken(_req: Request): string { return "aal2"; }
+export function segredoConfere(_req: Request): boolean { return true; }
