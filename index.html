@@ -1834,6 +1834,35 @@
   .pca-det > summary { list-style: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; } .pca-det > summary::-webkit-details-marker { display: none; }
   .pca-det > summary > span { font-size: 12.5px; font-weight: 700; color: var(--t-ci); } .pca-det[open] > summary > span::after { content: " ▴"; } .pca-det:not([open]) > summary > span::after { content: " ▾"; }
   .pca-det[open] > summary { margin-bottom: 8px; }
+  /* Painel da Organização: fundo branco, como as demais páginas (mesma estrutura, cores claras) */
+  .gp-tec, .lvc-corpo .gp-tec { --t-bg: #FFFFFF; --t-card: #FFFFFF; --t-card2: #F6F9F8; --t-borda: #E3E9E8; --t-txt: #0B1F2A; --t-mut: #55666D; --t-fra: #7A8B91;
+    --t-ok: #0FA36B; --t-ci: #0F6B7E; --t-at: #C98A12; --t-er: #C24A43; background: transparent; padding: 0; border-radius: 0; overflow: visible; color: var(--t-txt); }
+  .gp-tec::before { display: none; }
+  .gp-tec .gp-acoes { background: #fff; border: 1px solid var(--t-borda); border-left: 4px solid var(--t-ci); box-shadow: 0 8px 22px rgba(11, 31, 42, .05); }
+  .gp-tec .gp-ac { background: #fff; } .gp-tec .gp-ac.p0 { background: #FFF7F6; }
+  .gp-tec .lmo-btn { color: #04261A; box-shadow: none; } .gp-tec .lve-voltar { background: #fff; color: var(--t-txt); border: 1px solid #D3DEDB; }
+  .gp-tec .gp-chip.ativo { color: #fff; }
+  .gp-tec .gp-filtros { background: #fff; border: 1px solid var(--t-borda); padding: 10px; }
+  .gp-tec .gp-filtros select, .pca-ano { background: #F8FAF9; color: var(--t-txt); border: 1px solid #D3DEDB; }
+  .gp-tec .gp-kpi { background: #fff; border: 1px solid var(--t-borda); box-shadow: 0 6px 18px rgba(11, 31, 42, .04); }
+  .gp-tec .gp-kpi b, .gp-tec .gp-prev > b { color: var(--t-txt) !important; }
+  .gp-tec .gp-card { border-color: var(--t-borda); box-shadow: 0 6px 18px rgba(11, 31, 42, .03); } .gp-tec .gp-card:hover { border-color: #C9D8D6; }
+  .gp-tec .gp-bar-t, .gp-tec .gp-lim-b, .gp-tec .gp-qual-b, .pca-s-b { background: #EEF2F1; }
+  .gp-tec .gp-bar-t i, .gp-tec .gp-mes-aj, .pca-s-c { box-shadow: none; } .gp-tec .gp-bar-t i { background: linear-gradient(90deg, #0F6B7E, #0FA36B); }
+  .gp-tec .gp-mes-b { background: #0F6B7E; } .gp-tec .gp-mes-aj { background: #0FA36B; } .gp-tec .gp-mes-m.fut .gp-mes-b, .gp-tec .gp-mes-m.fut .gp-mes-aj { background: #C8D6DA; }
+  .gp-tec .gp-lim-b > em { background: #9AAAB0; }
+  .gp-tec .gp-clic:hover, .pca-s:hover, .pca-s.sel { background: #F1F6F5; }
+  .gp-tec .gp-pes-l.sobre { background: #FFF6DE; } .gp-tec .gp-alerta-b { background: #FFF6DE; color: #8A6100; }
+  .gp-sec { border-top: 1px solid var(--t-borda); } .gp-sec-n { box-shadow: none; background: #EAF4F6; border-color: #BFDCE3; }
+  .gp-tec .gp-sec p { display: block; }
+  .gp-tec .gp-card > .gp-nota { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; cursor: help; }
+  .gp-tec .gp-card:hover > .gp-nota, .gp-tec .gp-card:focus-within > .gp-nota { -webkit-line-clamp: unset; }
+  .pca-s { background: #fff; } .pca-s-p { background: #DDEEF1; border-color: #A9CED6; } .pca-s-o { box-shadow: none; }
+  .gp-tec .gp-qual-n.ok { background: #E5F6EE; } .gp-tec .gp-qual-n.at { background: #FFF3D6; } .gp-tec .gp-qual-n.lim { background: #FDE8E6; }
+  .pca-m > i { background: #E3E9E8; } .pca-m.agora { background: #EAF4F6; } .pca-m.agora > i { box-shadow: none; }
+  .pca-campos input, .pca-campos select, .pca-form textarea, .pca-sel { background: #FBFCFC; color: var(--t-txt); border-color: #D3DEDB; }
+  .gp-tec .gp-tit-c { display: none; }
+  .gp-tec.pca { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--t-borda); }
   /* situação de relance: cartões que filtram */
   .gcs-cards, .gcs-cards.ct-filtro { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 6px 0 14px; }
   .gcs-c4 { --fc: #0B3B4A; font: inherit; text-align: left; display: grid; grid-template-columns: 6px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 12px 14px 12px 0; cursor: pointer; overflow: hidden; color: #0B1F2A; }
@@ -13163,7 +13192,7 @@ class Component extends DCLogic {
         const um1 = listaUm.length === 1 ? listaUm[0] : null;
         return { ...campos, ...fracP, ctLista: listaUm, ctFiltros, ctTab,
           ctTemDrill: !!drl, ctDrillRot: drl ? drl.rot + " (" + listaD.length + ")" : "", ctDrillLimpar: () => this.setState((x) => ({ ct: { ...x.ct, painel: { ...(x.ct.painel || {}), drill: null } } })),
-          ctModoUm: modoUm, ctModoPainel: !modoUm, ctPcaVer: !modoUm && !ctEmp, ctSecCls: "lvc-corpo" + (!modoUm && (!!s.admin || !!s.plano || !s.sb) ? " ct-escuro" : ""),
+          ctModoUm: modoUm, ctModoPainel: !modoUm, ctPcaVer: !modoUm && !ctEmp, ctSecCls: "lvc-corpo",
           ctPcaOp: [{ id: "", nome: "Sem vínculo (entra pelo setor requisitante)", sel: !f.pca_item }].concat(s.pca.lista.filter((i) => i.situacao !== "cancelado").sort((a, b) => b.ano - a.ano || String(a.setor).localeCompare(String(b.setor))).map((i) => ({ id: i.id, nome: i.ano + " · " + i.setor + " · " + String(i.descricao).slice(0, 60) + " (R$ " + Number(i.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + ")", sel: f.pca_item === i.id }))), ctKpisVer: false, ctPainelAg: !modoUm && lista.length > 0, ctPainelFrac: !modoUm && frac.length > 0 && !ctEmp, ctEmp, ctOrg: !ctEmp, ctLegVen: ctEmp ? "4 meses ou menos: hora de negociar a renovação" : "4 meses ou menos: hora de tramitar a prorrogação",
           ctGestorRot: ctEmp ? "Preposto da empresa (art. 118)" : "Gestor do contrato", ctFiscalRot: ctEmp ? "Fiscal do órgão (contato)" : "Fiscal do contrato", ctSetorRot: ctEmp ? "Equipe ou filial responsável" : "Setor ou secretaria requisitante", ctSetorDica: ctEmp ? "Ex.: Filial Niterói" : "Ex.: Secretaria de Educação",
           ctSetoresOp: [...new Set(ct.lista.map((c) => String(c.setor_req || "").trim()).filter(Boolean))].map((v) => ({ v })),
