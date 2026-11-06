@@ -3551,14 +3551,6 @@
 
 
 
-            <section class="lmo-bloco">
-              <h2 class="lmo-h2">Parâmetros dos benefícios (Submódulo 2.3)</h2>
-              <div class="lmo-campos">
-                <sc-for list="{{ moBenef }}" as="c" hint-placeholder-count="5">
-                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
-                </sc-for>
-              </div>
-            </section>
 
 
             <section class="lmo-bloco" id="lmo-gt">
@@ -3585,6 +3577,32 @@
               <sc-if value="{{ moGtNenhum }}" hint-placeholder-val="{{ true }}"><p class="lmo-nota">Escolha uma das opções para ver a retenção mensal ou as parcelas pagas pelo fato gerador.</p></sc-if>
             </section>
             <sc-for list="{{ moModsA }}" as="md" hint-placeholder-count="3">
+              <section class="lmo-bloco lmo-tab">
+                <h2 class="lmo-h2">{{ md.titulo }}</h2>
+                <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
+                <div class="lmo-tabela" role="table">
+                  <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
+                  <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
+                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
+                      <span class="lmo-cod">{{ l.cod }}</span>
+                      <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
+                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                    </div>
+                  </sc-for>
+                  <div class="lmo-lin lmo-tot" role="row"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
+                </div>
+              </section>
+            </sc-for>
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Parâmetros dos benefícios (Submódulo 2.3)</h2>
+              <div class="lmo-campos">
+                <sc-for list="{{ moBenef }}" as="c" hint-placeholder-count="5">
+                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
+                </sc-for>
+              </div>
+            </section>
+            <sc-for list="{{ moModsA2 }}" as="md" hint-placeholder-count="3">
               <section class="lmo-bloco lmo-tab">
                 <h2 class="lmo-h2">{{ md.titulo }}</h2>
                 <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
@@ -6532,7 +6550,7 @@ const MO_PADRAO = {
   peric: "0", insal: "0", noturno: "0", hnr: "0", he_feriado: "0", outros1: "0",
   p13: "8,33", pfa: "2,78",
   inss: "20", saled: "2,5", rat: "2", fap: "1", sesc: "1,5", senac: "1", sebrae: "0,6", incra: "0,2", fgts: "8",
-  vt_tarifa: "0", vt_viagens: "2", dias: "21", aux_dia: "0", aux_part: "20", assist: "0", seguro: "0", outros23: "0",
+  vt_tarifa: "0", vt_viagens: "2", dias: "21", aux_dia: "0", aux_part: "20", ref_dia: "0", ref_part: "0", assist: "0", seguro: "0", outros23: "0",
   api: "0,42", apt: "1,94",
   ferias: "8,33", aus: "0,82", pat: "0,02", acid: "0,03", mat: "0,61", outros41: "0", intra: "0",
   unif: "0", materiais: "0", equip: "0", outros5: "0",
@@ -6661,7 +6679,7 @@ const MO_CV_INCID = { 1: 7.39, 2: 7.60, 3: 7.82 };
 const MO_COMP = [["Salário-base", "salario", "salario"], ["Adicional de periculosidade", "peric", "peric"], ["Adicional de insalubridade", "insal", "insal"],
   ["Adicional noturno", "noturno", "noturno"], ["Hora noturna reduzida", "hnr", "hnr"], ["Hora extra no feriado", "he_feriado", "he_feriado"], ["Outros (Módulo 1)", "outros1", "outros1"],
   ["Módulo 1 – Remuneração", "M1", "", 1], ["Submódulo 2.1 – 13º, férias e adicional", "M21", "", 1], ["Submódulo 2.2 – GPS, FGTS e outras contribuições", "M22", "", 1],
-  ["Transporte", "vt", "vt_tarifa"], ["Auxílio-refeição/alimentação", "aux", "aux_dia"], ["Assistência médica e familiar", "assist", "assist"], ["Seguro de vida", "seguro", "seguro"], ["Outros benefícios", "outros23", "outros23"],
+  ["Transporte", "vt", "vt_tarifa"], ["Auxílio-alimentação", "aux", "aux_dia"], ["Auxílio-refeição", "ref", "ref_dia"], ["Assistência médica e familiar", "assist", "assist"], ["Seguro de vida", "seguro", "seguro"], ["Outros benefícios", "outros23", "outros23"],
   ["Submódulo 2.3 – Benefícios", "M23", "", 1], ["Módulo 3 – Provisão para rescisão", "M3", "apt", 1], ["Submódulo 4.1 – Ausências legais", "M41", "", 1], ["Submódulo 4.2 – Intrajornada", "M42", "intra", 1],
   ["Uniformes e EPI", "unif", "unif"], ["Materiais", "materiais", "materiais"], ["Equipamentos", "equip", "equip"], ["Outros insumos", "outros5", "outros5"], ["Módulo 5 – Insumos", "M5", "", 1],
   ["Custos indiretos", "ci", "ci"], ["Lucro", "lucro", "lucro"], ["Tributos", "trib", "iss"], ["Módulo 6 – Custos indiretos, tributos e lucro", "M6", "", 1], ["Preço por empregado", "total", "", 2]];
@@ -6729,6 +6747,7 @@ function moConferir(d, r, modo) {
   if (![0, 10, 20, 40].includes(n("insal"))) F("Módulo 1, C – Insalubridade", "Adicional de " + pctB(n("insal")) + ".", "CLT, art. 192; NR-15.", "10%, 20% ou 40%, conforme o grau, salvo regra mais favorável da convenção.", "media");
   if (![0, 30].includes(n("peric"))) F("Módulo 1, B – Periculosidade", "Adicional de " + pctB(n("peric")) + ".", "CLT, art. 193, § 1º.", "30% sobre o salário-base, salvo regra mais favorável da convenção.", "media");
   if (n("insal") > 0 && n("peric") > 0) F("Módulo 1, B e C – Adicionais", "Periculosidade e insalubridade somadas.", "CLT, art. 193, § 2º.", "O empregado opta por um dos adicionais; mantenha só o mais vantajoso, salvo previsão da convenção.", "media");
+  if (n("ref_part") > 20) F("Submódulo 2.3, C – Auxílio-refeição", "Participação do empregado de " + pctB(n("ref_part")) + ".", "Programa de Alimentação do Trabalhador (Decreto 10.854/2021) e convenção coletiva.", "Participação de até 20% do custo direto do benefício, salvo regra diversa da convenção.", "baixa");
   if (n("aux_part") > 20) F("Submódulo 2.3, B – Auxílio-alimentação", "Participação do empregado de " + pctB(n("aux_part")) + ".", "Programa de Alimentação do Trabalhador (Decreto 10.854/2021) e convenção coletiva.", "Participação de até 20% do custo, ou o percentual da convenção.", "baixa");
   if (!(n("vt_tarifa") > 0)) F("Submódulo 2.3, A – Transporte", "Tarifa do transporte não informada.", "Lei 7.418/1985.", "Informar a tarifa do transporte público do município; o empregador custeia o que passar de 6% do salário-base.", "baixa");
   if (!(n("ci") > 0) || !(n("lucro") > 0)) F("Módulo 6, A e B – Custos indiretos e lucro", "Custos indiretos ou lucro zerados.", "IN 05/2017, Anexo VII-D.", "Informar os percentuais adotados na estimativa, com base na pesquisa de preços ou em contratações similares.", "baixa");
@@ -7742,8 +7761,9 @@ function moCalcular(d, modo, rj) {
   // benefícios (submódulo 2.3)
   r.vt = Math.max(0, n("vt_tarifa") * n("vt_viagens") * n("dias") - 0.06 * S);
   r.aux = n("aux_dia") * n("dias") * (1 - pc("aux_part"));
+  r.ref = n("ref_dia") * n("dias") * (1 - pc("ref_part")); // auxílio-refeição, quando a convenção prevê os dois
   r.assist = n("assist"); r.seguro = n("seguro"); r.outros23 = n("outros23");
-  r.M23 = moT2(r.vt + r.aux + r.assist + r.seguro + r.outros23);
+  r.M23 = moT2(r.vt + r.aux + r.ref + r.assist + r.seguro + r.outros23);
   // módulo 4 (entra na base do 2.2)
   r.ferias = r.M1 * pc("ferias"); r.aus = r.M1 * pc("aus"); r.pat = r.M1 * pc("pat"); r.acid = r.M1 * pc("acid");
   r.base_mat = r.p13 + r.pfa + r.assist + r.seguro; r.mat = r.base_mat * pc("mat"); r.outros41 = r.M1 * pc("outros41");
@@ -10647,7 +10667,8 @@ class Component extends DCLogic {
         { c: ["Base do Submódulo 2.2", "Módulo 1 (" + brlTxt(r.M1) + ") + Submódulo 2.1 (" + brlTxt(r.M21) + ") + Módulo 4 (" + brlTxt(r.M4) + ")", brlTxt(r.base22)] },
         { c: ["Encargos do Submódulo 2.2", "Base × " + (r.M22p * 100).toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + "%", brlTxt(r.M22)] },
         { c: ["Transporte", "R$ " + f2b(nu("vt_tarifa")) + " × " + f2b(nu("vt_viagens")) + " viagens × " + f2b(nu("dias")) + " dias − 6% de " + brlTxt(nu("salario")) + " (Lei 7.418/1985)", brlTxt(r.vt)] },
-        { c: ["Auxílio-refeição/alimentação", "R$ " + f2b(nu("aux_dia")) + " × " + f2b(nu("dias")) + " dias × (1 − " + f2b(nu("aux_part")) + "% de participação)", brlTxt(r.aux)] },
+        { c: ["Auxílio-alimentação", "R$ " + f2b(nu("aux_dia")) + " × " + f2b(nu("dias")) + " dias × (1 − " + f2b(nu("aux_part")) + "% de participação)", brlTxt(r.aux)] },
+        ...(r.ref > 0 ? [{ c: ["Auxílio-refeição", "R$ " + f2b(nu("ref_dia")) + " × " + f2b(nu("dias")) + " dias × (1 − " + f2b(nu("ref_part")) + "% de participação)", brlTxt(r.ref)] }] : []),
         { c: ["Afastamento maternidade (4.1, E)", "(13º + férias e adicional + assistência + seguro = " + brlTxt(r.base_mat) + ") × " + f2b(nu("mat")) + "%", brlTxt(r.mat)] }], { alin: "llr", larg: [28, 54, 16] }));
       const trib = r.porFora
         ? [{ c: ["Po (Módulos 1 a 5 + custos indiretos + lucro)", brlTxt(r.sub) + " + " + brlTxt(r.ci) + " + " + brlTxt(r.lucro), brlTxt(r.Po)] },
@@ -11069,10 +11090,11 @@ class Component extends DCLogic {
         L("H", "FGTS", { k: "fgts", v: r.g_fgts })], total: T("Total do Submódulo 2.2", r.M22p, r.M22) },
       { titulo: "Submódulo 2.3 – Benefícios mensais e diários", linhas: [
         L("A", "Transporte", { p: "-", v: r.vt, nota: "Tarifa × viagens por dia × dias trabalhados, menos 6% do salário-base (Lei 7.418/1985)." }),
-        L("B", "Auxílio-refeição/alimentação", { p: "-", v: r.aux, nota: "Valor por dia × dias trabalhados, menos a participação do empregado." }),
-        L("C", "Assistência médica e familiar", { kv: "assist" }),
-        L("D", "Seguro de vida", { kv: "seguro" }),
-        L("E", "Outros (especificar)", { kv: "outros23" })], total: T("Total do Submódulo 2.3", null, r.M23) },
+        L("B", "Auxílio-alimentação", { p: "-", v: r.aux, nota: "Valor por dia × dias trabalhados, menos a participação do empregado." }),
+        L("C", "Auxílio-refeição", { p: "-", v: r.ref, nota: "Quando a convenção prevê também o auxílio-refeição: valor por dia × dias trabalhados, menos a participação do empregado." }),
+        L("D", "Assistência médica e familiar", { kv: "assist" }),
+        L("E", "Seguro de vida", { kv: "seguro" }),
+        L("F", "Outros (especificar)", { kv: "outros23" })], total: T("Total do Submódulo 2.3", null, r.M23) },
       { titulo: "Módulo 3 – Provisão para rescisão", linhas: [
         L("A", "Aviso prévio indenizado", { k: "api", v: r.r_api }),
         L("B", "Incidência do FGTS sobre o aviso prévio indenizado", { p: r.m3p.fgts_api, v: r.r_fgts_api }),
@@ -11649,11 +11671,12 @@ class Component extends DCLogic {
       moIrPlanos: () => this.irPara("planos"),
       moErro: mo.erro || "", moOk: mo.ok || "", moObs: mo.obs || [], moTemObs: (mo.obs || []).length > 0,
       moBenef: [campo("vt_tarifa", "Tarifa do transporte (R$)", "Ex.: 4,70"), campo("vt_viagens", "Viagens por dia", "2"), campo("dias", "Dias trabalhados no mês", "21"),
-        campo("aux_dia", "Auxílio-alimentação por dia (R$)", "Ex.: 25,00"), campo("aux_part", "Participação do empregado no auxílio (%)", "20")],
+        campo("aux_dia", "Auxílio-alimentação por dia (R$)", "Ex.: 25,00"), campo("aux_part", "Participação do empregado no auxílio-alimentação (%)", "20"),
+        campo("ref_dia", "Auxílio-refeição por dia (R$, se a convenção também prevê)", "Ex.: 30,00"), campo("ref_part", "Participação do empregado no auxílio-refeição (%)", "0")],
       moModulos: modulos,
       ...(() => { const iM3 = modulos.findIndex((m) => /^Módulo 3/.test(m.titulo)), iM5 = modulos.findIndex((m) => /^Módulo 5/.test(m.titulo)), iM6 = modulos.findIndex((m) => /^Módulo 6/.test(m.titulo));
-        const a = iM3 >= 0 ? iM3 + 1 : modulos.length, b = iM5 >= 0 ? iM5 + 1 : a, c = iM6 >= 0 ? iM6 + 1 : b;
-        return { moModsA: modulos.slice(0, a), moModsB: modulos.slice(a, b), moModsC: modulos.slice(b, c), moModsD: modulos.slice(c) }; })(),
+        const a = iM3 >= 0 ? iM3 + 1 : modulos.length, b = iM5 >= 0 ? iM5 + 1 : a, c = iM6 >= 0 ? iM6 + 1 : b, a0 = iM3 >= 0 ? iM3 : a;
+        return { moModsA: modulos.slice(0, a0), moModsA2: modulos.slice(a0, a), moModsB: modulos.slice(a, b), moModsC: modulos.slice(b, c), moModsD: modulos.slice(c) }; })(),
       moResumo: [["A", "Módulo 1 – Composição da remuneração", r.M1], ["B", "Módulo 2 – Encargos e benefícios anuais, mensais e diários", r.M2],
         ["C", "Módulo 3 – Provisão para rescisão", r.M3], ["D", "Módulo 4 – Custo de reposição do profissional ausente", r.M4], ["E", "Módulo 5 – Insumos diversos", r.M5],
         ["", "Subtotal (A + B + C + D + E)", r.sub], ["F", "Módulo 6 – Custos indiretos, tributos e lucro", r.M6]].map(([cod, rot, v]) => ({ cod, rot, valTxt: brl(v), forte: !cod })),
