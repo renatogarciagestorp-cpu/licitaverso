@@ -1,0 +1,34 @@
+name: Agente — testar a Calculadora (repactuação, proposta ou planilha)
+
+# Teste interno com caso fictício (agente/testes/mo): roda o código real da função mo-agente, com banco e login simulados.
+# Custa crédito da API (uma chamada): rodar só quando necessário.
+on:
+  workflow_dispatch:
+    inputs:
+      modo: { description: "repactuacao, proposta ou planejamento", required: true, default: "repactuacao" }
+
+permissions: { contents: write }
+
+jobs:
+  testar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with: { deno-version: v2.x }
+      - name: Rodar o agente
+        env: { ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}", MODO: "${{ inputs.modo }}" }
+        run: |
+          deno run -A --import-map=scripts/testes/mo-agente/import_map.json scripts/testes/mo-agente/rodar.ts "$MODO" /tmp/mo-teste.json
+          python3 -c "import json;e=json.load(open('/tmp/mo-teste.json'));print('::notice title=Custo::US$',e['custo_estimado_usd'],'·',e['segundos'],'s · status',e['status'])"
+      - name: Guardar o resultado no ramo agente-testes (caso fictício)
+        if: always()
+        env: { MODO: "${{ inputs.modo }}" }
+        run: |
+          [ -f /tmp/mo-teste.json ] || exit 0
+          git fetch -q origin agente-testes && git worktree add -q /tmp/t origin/agente-testes && cd /tmp/t
+          mkdir -p calculadora && cp /tmp/mo-teste.json "calculadora/$MODO.json"
+          git config user.name "Licitacon — agente" && git config user.email "actions@users.noreply.github.com"
+          git checkout -q -B agente-testes && git add calculadora && git commit -q -m "Teste da Calculadora: $MODO" || exit 0
+          for i in 1 2 3; do git push -q origin agente-testes && break; git pull -q --rebase origin agente-testes; done
