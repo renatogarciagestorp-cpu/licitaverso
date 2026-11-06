@@ -1214,6 +1214,15 @@
   .lmo-retro.lmo-cab span:nth-child(5), .lmo-lin4.lmo-cab span { text-align: right; } .lmo-lin4.lmo-cab span:first-child { text-align: left; }
   .lmo-minuta { white-space: pre-wrap; font: inherit; font-size: 13.5px; line-height: 1.6; background: #FBFDF6; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px; margin: 8px 0 0; color: #172B33; }
   @media (max-width: 900px) { .lmo-retro { grid-template-columns: 80px 1fr 110px; } .lmo-retro > span:nth-child(2), .lmo-retro > span:nth-child(4) { display: none; } .lmo-lin4 { grid-template-columns: 1fr 110px; } .lmo-lin4 > span:nth-child(2) { display: none; } }
+  .lmo-passos { display: grid; gap: 12px; margin-top: 14px; }
+  .lmo-passo { border: 1px solid #E1E8E6; border-radius: 14px; padding: 14px 16px; background: #fff; display: grid; gap: 10px; }
+  .lmo-passo.pend { border-left: 4px solid #E0A21B; } .lmo-passo.ok { border-left: 4px solid #0FA36B; background: #FBFEFC; }
+  .lmo-passo-acao { border-left: 4px solid #0A1F2A; background: #F7FAF9; } .lmo-passo-depois { border-style: dashed; }
+  .lmo-passo-cab { display: flex; gap: 12px; align-items: center; } .lmo-passo-cab b { display: block; font-size: 15px; color: #0B1F2A; } .lmo-passo-cab small { display: block; font-size: 12.5px; color: #66757F; margin-top: 1px; }
+  .lmo-passo-n { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 14px; background: #FFF4DC; color: #8A5A00; }
+  .lmo-passo.ok .lmo-passo-n { background: #0FA36B; color: #fff; } .lmo-passo-acao .lmo-passo-n, .lmo-passo-depois .lmo-passo-n { background: #0A1F2A; color: #3FD49A; }
+  .lmo-passo-rot { margin: 2px 0 -4px; font-size: 13px; font-weight: 700; color: #3D5058; } .lmo-passo-dica { margin: 0; font-size: 12.5px; color: #66757F; }
+  .lmo-passo .lmo-cct { margin: 0; } .lmo-passo .lmo-campos { margin: 0; } .lmo-passo .lmo-agente { margin: 0; }
   .lmo-ag { border-color: #BFE3D2; box-shadow: 0 10px 28px rgba(15,163,107,.08); }
   .lmo-ag-h { font-size: 15px; margin: 18px 0 8px; color: #0B1F2A; }
   .lmo-pre { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 4px; } .lmo-pre li { font-size: 14px; font-weight: 600; } .lmo-pre li.ok { color: #0A7A50; } .lmo-pre li.falta { color: #8A5A00; }
@@ -3400,51 +3409,64 @@
             <section class="lmo-bloco lmo-ag" id="lmo-agente">
               <h2 class="lmo-h2">{{ moAgenteTitulo }}</h2>
               <p class="lmo-nota" style="margin-top: 0">{{ moAgenteTxt }}</p>
-              <h3 class="lmo-ag-h">1. Antes de pedir a análise</h3>
-              <ul class="lmo-pre"><sc-for list="{{ moPre }}" as="x" hint-placeholder-count="4"><li class="{{ x.cls }}">{{ x.t }}</li></sc-for></ul>
-              <div class="lmo-campos">
-                <sc-for list="{{ moPreCampos }}" as="c" hint-placeholder-count="3">
-                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" data-mo-campo="{{ c.k }}" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
-                </sc-for>
-              </div>
-              <p class="lmo-nota"><b>Os tributos serão calculados antes ou depois da reforma tributária?</b> <span style="font-weight: 400">Antes: PIS, COFINS e ISS. Depois: CBS e IBS (EC 132/2023 e LC 214/2025), inclusive na transição de 2026 a 2033, ano a ano.</span></p>
-              <div class="lmo-modos" role="group" aria-label="Momento da tributação"><sc-for list="{{ moReformaOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
-              <p class="lmo-nota"><b>Regime de tributação da empresa</b> <span style="font-weight: 400">(os detalhes, a receita bruta do Simples e a transição ficam no bloco Tributação)</span></p>
-              <div class="lmo-modos" role="group" aria-label="Regime de tributação"><sc-for list="{{ moRegimes }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
-              <sc-if value="{{ moTemPlanArq }}" hint-placeholder-val="{{ false }}">
-              <div class="lmo-cct">
-                <div><b>{{ moPlanRot }}</b><small>{{ moPlanSub }}</small></div>
-                <label class="lmo-arq"><input type="file" accept=".pdf,.xlsx" sc-camel-on-change="{{ moEscolherPlan }}">{{ moPlanNome }}<sc-if value="{{ moPlanNome }}" hint-placeholder-val="{{ false }}"> · trocar</sc-if><sc-if value="{{ moSemPlan }}" hint-placeholder-val="{{ true }}">Escolher arquivo</sc-if></label>
-              </div>
-              </sc-if>
-              <div class="lmo-cct">
-                <div><b>{{ moCctRot }}</b><small>Acordo, convenção ou dissídio coletivo da categoria, em PDF.</small></div>
-                <label class="lmo-arq"><input type="file" accept=".pdf,.doc,.docx" sc-camel-on-change="{{ moEscolherCct }}">{{ moCct }}<sc-if value="{{ moCct }}" hint-placeholder-val="{{ false }}"> · trocar</sc-if><sc-if value="{{ moSemCct }}" hint-placeholder-val="{{ true }}">Escolher arquivo</sc-if></label>
-              </div>
-              <h3 class="lmo-ag-h">2. Pedir a análise</h3>
-              <sc-if value="{{ moCotaTxt }}" hint-placeholder-val="{{ false }}"><p class="{{ moCotaCls }}">{{ moCotaTxt }}</p></sc-if>
-              <div class="lmo-agente">
-                <sc-if value="{{ moPro }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moAgente }}">{{ moBotaoAgente }}</button></sc-if>
-                <sc-if value="{{ moSemPro }}" hint-placeholder-val="{{ false }}"><span class="lmo-pro">Exclusivo do plano Pro</span><button type="button" class="lve-voltar" sc-camel-on-click="{{ moIrPlanos }}">Conhecer o Pro</button></sc-if>
-              </div>
-              <sc-if value="{{ moErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moErro }}</p></sc-if>
-              <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
-              <sc-if value="{{ moIssPedir }}" hint-placeholder-val="{{ false }}">
-                <div class="lmo-aceite">
-                  <span>Não encontramos em fonte oficial a alíquota do ISS de {{ moIssLocal }}. Informe a alíquota para ela entrar na planilha (Módulo 6, C.3).</span>
+              <div class="lmo-passos">
+                <div class="{{ moPasso1.cls }}">
+                  <div class="lmo-passo-cab"><span class="lmo-passo-n">{{ moPasso1.n }}</span><div><b>Local e período</b><small>{{ moPasso1.sub }}</small></div></div>
                   <div class="lmo-campos">
-                    <label class="lmo-campo"><span>Alíquota do ISS (%)</span><input type="text" inputmode="decimal" value="{{ moIssAliq }}" sc-camel-on-input="{{ onMoIssAliq }}" placeholder="Ex.: 3"></label>
-                    <label class="lmo-campo"><span>Fonte (lei municipal, artigo)</span><input type="text" value="{{ moIssFonte }}" sc-camel-on-input="{{ onMoIssFonte }}" placeholder="Ex.: Lei Complementar nº 123/2017, art. 40"></label>
+                    <sc-for list="{{ moPreCampos }}" as="c" hint-placeholder-count="3">
+                      <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" data-mo-campo="{{ c.k }}" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
+                    </sc-for>
                   </div>
-                  <button type="button" class="lmo-btn" sc-camel-on-click="{{ moIssUsar }}">Usar na planilha</button>
                 </div>
-              </sc-if>
-              <sc-if value="{{ moTemObs }}" hint-placeholder-val="{{ false }}"><ul class="lmo-obs"><sc-for list="{{ moObs }}" as="o" hint-placeholder-count="2"><li>{{ o }}</li></sc-for></ul></sc-if>
-              <sc-if value="{{ moTemDepois }}" hint-placeholder-val="{{ true }}">
-                <h3 class="lmo-ag-h">3. Depois da análise, complete você mesmo</h3>
-                <p class="lmo-nota" style="margin-top: 0">O agente preenche os dados da planilha e da convenção. Estes pontos dependem do contrato ou de decisão do órgão:</p>
-                <div class="lmo-depois"><sc-for list="{{ moDepois }}" as="x" hint-placeholder-count="4"><button type="button" class="lve-voltar" sc-camel-on-click="{{ x.ir }}">{{ x.t }} →</button></sc-for></div>
-              </sc-if>
+                <div class="{{ moPasso2.cls }}">
+                  <div class="lmo-passo-cab"><span class="lmo-passo-n">{{ moPasso2.n }}</span><div><b>Tributação</b><small>{{ moPasso2.sub }}</small></div></div>
+                  <p class="lmo-passo-rot">Os tributos serão calculados antes ou depois da reforma tributária?</p>
+                  <div class="lmo-modos" role="group" aria-label="Momento da tributação"><sc-for list="{{ moReformaOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
+                  <p class="lmo-passo-rot">Regime de tributação da empresa</p>
+                  <div class="lmo-modos" role="group" aria-label="Regime de tributação"><sc-for list="{{ moRegimes }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
+                  <p class="lmo-passo-dica">Antes: PIS, COFINS e ISS. Depois: CBS e IBS (EC 132/2023 e LC 214/2025), com a transição de 2026 a 2033. Detalhes, receita bruta do Simples e transição ficam no bloco Tributação.</p>
+                </div>
+                <div class="{{ moPasso3.cls }}">
+                  <div class="lmo-passo-cab"><span class="lmo-passo-n">{{ moPasso3.n }}</span><div><b>Arquivos</b><small>{{ moPasso3.sub }}</small></div></div>
+                  <sc-if value="{{ moTemPlanArq }}" hint-placeholder-val="{{ false }}">
+                  <div class="lmo-cct">
+                    <div><b>{{ moPlanRot }}</b><small>{{ moPlanSub }}</small></div>
+                    <label class="lmo-arq"><input type="file" accept=".pdf,.xlsx" sc-camel-on-change="{{ moEscolherPlan }}">{{ moPlanNome }}<sc-if value="{{ moPlanNome }}" hint-placeholder-val="{{ false }}"> · trocar</sc-if><sc-if value="{{ moSemPlan }}" hint-placeholder-val="{{ true }}">Escolher arquivo</sc-if></label>
+                  </div>
+                  </sc-if>
+                  <div class="lmo-cct">
+                    <div><b>{{ moCctRot }}</b><small>Acordo, convenção ou dissídio coletivo da categoria, em PDF.</small></div>
+                    <label class="lmo-arq"><input type="file" accept=".pdf,.doc,.docx" sc-camel-on-change="{{ moEscolherCct }}">{{ moCct }}<sc-if value="{{ moCct }}" hint-placeholder-val="{{ false }}"> · trocar</sc-if><sc-if value="{{ moSemCct }}" hint-placeholder-val="{{ true }}">Escolher arquivo</sc-if></label>
+                  </div>
+                </div>
+                <div class="lmo-passo lmo-passo-acao">
+                  <div class="lmo-passo-cab"><span class="lmo-passo-n">4</span><div><b>Pedir a análise</b><small>{{ moPasso4Sub }}</small></div></div>
+                  <sc-if value="{{ moCotaTxt }}" hint-placeholder-val="{{ false }}"><p class="{{ moCotaCls }}">{{ moCotaTxt }}</p></sc-if>
+                  <div class="lmo-agente">
+                    <sc-if value="{{ moPro }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moAgente }}">{{ moBotaoAgente }}</button></sc-if>
+                    <sc-if value="{{ moSemPro }}" hint-placeholder-val="{{ false }}"><span class="lmo-pro">Exclusivo do plano Pro</span><button type="button" class="lve-voltar" sc-camel-on-click="{{ moIrPlanos }}">Conhecer o Pro</button></sc-if>
+                  </div>
+                  <sc-if value="{{ moErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moErro }}</p></sc-if>
+                  <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
+                  <sc-if value="{{ moIssPedir }}" hint-placeholder-val="{{ false }}">
+                    <div class="lmo-aceite">
+                      <span>Não encontramos em fonte oficial a alíquota do ISS de {{ moIssLocal }}. Informe a alíquota para ela entrar na planilha (Módulo 6, C.3).</span>
+                      <div class="lmo-campos">
+                        <label class="lmo-campo"><span>Alíquota do ISS (%)</span><input type="text" inputmode="decimal" value="{{ moIssAliq }}" sc-camel-on-input="{{ onMoIssAliq }}" placeholder="Ex.: 3"></label>
+                        <label class="lmo-campo"><span>Fonte (lei municipal, artigo)</span><input type="text" value="{{ moIssFonte }}" sc-camel-on-input="{{ onMoIssFonte }}" placeholder="Ex.: Lei Complementar nº 123/2017, art. 40"></label>
+                      </div>
+                      <button type="button" class="lmo-btn" sc-camel-on-click="{{ moIssUsar }}">Usar na planilha</button>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ moTemObs }}" hint-placeholder-val="{{ false }}"><ul class="lmo-obs"><sc-for list="{{ moObs }}" as="o" hint-placeholder-count="2"><li>{{ o }}</li></sc-for></ul></sc-if>
+                </div>
+                <sc-if value="{{ moTemDepois }}" hint-placeholder-val="{{ true }}">
+                <div class="lmo-passo lmo-passo-depois">
+                  <div class="lmo-passo-cab"><span class="lmo-passo-n">5</span><div><b>Depois da análise, complete você mesmo</b><small>Pontos que dependem do contrato ou de decisão do órgão</small></div></div>
+                      <div class="lmo-depois"><sc-for list="{{ moDepois }}" as="x" hint-placeholder-count="4"><button type="button" class="lve-voltar" sc-camel-on-click="{{ x.ir }}">{{ x.t }} →</button></sc-for></div>
+                </div>
+                </sc-if>
+              </div>
             </section>
 
             <section class="lmo-bloco">
@@ -11310,6 +11332,14 @@ class Component extends DCLogic {
         .map(([t, ok]) => ({ t: (ok ? "✓ " : "○ ") + t, cls: ok ? "ok" : "falta" })),
       moTribEscolha: d.reforma && d.regime ? (d.reforma === "depois" ? "Depois da reforma (CBS e IBS)" : "Antes da reforma (PIS, COFINS e ISS)") + " · " + ({ real: "Lucro Real", presumido: "Lucro Presumido", simples: "Simples Nacional" }[d.regime] || "") : "Tributação ainda não escolhida.",
       moIrEscolhaTrib: () => { try { document.getElementById("lmo-agente").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} },
+      ...(() => { const okLocal = !!(String(d.municipio || "").trim() && /^[A-Za-z]{2}$/.test(String(d.uf || "").trim())) && (!rep || !!String(d.ano_exec || "").trim()), okTrib = !!(d.reforma && d.regime);
+        const temPlan = rep || prop, okPlan = !!(d.plan_arquivo || this._moPlanTexto), okCct = !!d.cct_arquivo, okArq = okCct && (!temPlan || okPlan);
+        const P = (n, ok, sub, falta) => ({ n: ok ? "✓" : String(n), cls: "lmo-passo " + (ok ? "ok" : "pend"), sub: ok ? sub : falta });
+        const falta = [!okLocal && "local e período", !okTrib && "tributação", !okArq && "arquivos"].filter(Boolean);
+        return { moPasso1: P(1, okLocal, [d.municipio, d.uf].filter(Boolean).join("/") + (rep ? " · " + (d.ano_exec || "") + "º ano de execução" : ""), rep ? "Município e UF (para o ISS) e o ano de execução após a repactuação" : "Município e UF onde o serviço é prestado (para o ISS)"),
+          moPasso2: P(2, okTrib, (d.reforma === "depois" ? "Depois da reforma" : "Antes da reforma") + " · " + ({ real: "Lucro Real", presumido: "Lucro Presumido", simples: "Simples Nacional" }[d.regime] || ""), "Escolha o momento da reforma e o regime da empresa"),
+          moPasso3: P(3, okArq, temPlan ? "Planilha e convenção enviadas" : "Convenção enviada", temPlan ? (prop ? "Planilha da proposta e convenção coletiva" : "Planilha da contratação e nova convenção coletiva") : "Convenção coletiva da categoria"),
+          moPasso4Sub: falta.length ? "Antes, complete: " + falta.join(", ") + "." : "Tudo pronto: o agente analisa e preenche a planilha. Você confere cada valor." }; })(),
       moPreCampos: [campo("municipio", "Município onde o serviço será prestado", "Ex.: Maricá"), campo("uf", "UF", "RJ")].concat(rep ? [campo("ano_exec", "Ano de execução após a repactuação", "Ex.: 2")] : []),
       moTemDepois: rep || prop,
       moDepois: (rep ? [["Datas da repactuação e efeitos financeiros", "lmo-efeitos"], ["Reajuste dos insumos por índice", "lmo-reaj"], ["Garantia trabalhista (conta vinculada ou fato gerador)", "lmo-gt"]] : [["Garantia trabalhista (conta vinculada ou fato gerador)", "lmo-gt"]])
