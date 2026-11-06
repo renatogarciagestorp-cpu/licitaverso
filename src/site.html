@@ -9360,6 +9360,8 @@ function moTarifaZero(d) {
   if (d.vt_gratis === "sim") return auto || "Transporte público gratuito no município, declarado pelo assinante";
   return auto || null;
 }
+// exposto para os testes automáticos da Calculadora (função pura, sem dados do usuário)
+try { window.lvMoCalcular = (...a) => moCalcular(...a); window.lvMoDerivado = (...a) => moDerivado(...a); } catch (e) {}
 function moCalcular(d, modo, rj) {
   const n = (k) => moNum(d[k]), pc = (k) => moNum(d[k]) / 100;
   const r = {}, S = n("salario");
@@ -13294,6 +13296,14 @@ class Component extends DCLogic {
       if (x.mo.modo === "repactuacao" && anteriores.length) {
         const ant = moSnap(d2);
         anteriores.forEach((c) => { ant[c.campo] = /^-?\d+(\.\d+)?$/.test(String(c.anterior).trim()) ? String(c.anterior).trim().replace(".", ",") : c.anterior; });
+        // benefício ou valor que a planilha da contratação não tinha (veio só da nova convenção): na planilha anterior, zero
+        const comAnterior = new Set(anteriores.map((c) => c.campo));
+        ["assist", "ref_dia", "outros23", "outros1", "peric", "noturno", "hnr", "he_feriado", "intra", "outros41", "outros5", "materiais", "equip"].forEach((k) => {
+          if (campos.some((c) => c.campo === k) && !comAnterior.has(k)) ant[k] = "0";
+        });
+        // Módulo 3 da planilha anterior com os percentuais que a empresa usou (não pela fórmula do site), para o "antes" bater com o contrato
+        [["inf_api", "api"], ["inf_apt", "apt"], ["inf_fgts_api", "m3_fgts_api"], ["inf_multa_api", "m3_multa_api"], ["inf_inc_apt", "m3_inc_apt"], ["inf_multa_apt", "m3_multa_apt"]]
+          .forEach(([de, para]) => { if (String(d2[de] ?? "").trim()) ant[para] = d2[de]; });
         d2.ant = { ...ant, _origem: "agente", _em: new Date().toISOString() };
       }
       const iss = (data && data.iss) || null;
