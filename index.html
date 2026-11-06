@@ -7695,7 +7695,7 @@ const MO_PADRAO = {
   peric: "0", insal: "0", noturno: "0", hnr: "0", he_feriado: "0", outros1: "0",
   p13: "8,33", pfa: "2,78",
   inss: "20", saled: "2,5", rat: "2", fap: "1", sesc: "1,5", senac: "1", sebrae: "0,6", incra: "0,2", fgts: "8",
-  vt_tarifa: "0", vt_gratis: "", vt_viagens: "2", dias: "21", aux_dia: "0", aux_part: "20", ref_dia: "0", ref_part: "0", assist: "0", seguro: "0", outros23: "0",
+  vt_tarifa: "0", vt_gratis: "", vt_dias_zero: "", vt_viagens: "2", dias: "21", aux_dia: "0", aux_part: "20", ref_dia: "0", ref_part: "0", assist: "0", seguro: "0", outros23: "0",
   api: "0,42", apt: "1,94",
   ferias: "8,33", aus: "0,82", pat: "0,02", acid: "0,03", mat: "0,61", outros41: "0", intra: "0",
   unif: "0", materiais: "0", equip: "0", outros5: "0",
@@ -9283,7 +9283,9 @@ function moCalcular(d, modo, rj) {
   r.p13 = r.M1 * pc("p13"); r.pfa = r.M1 * pc("pfa"); r.M21p = moT4(pc("p13") + pc("pfa")); r.M21 = moT2(r.p13 + r.pfa);
   // benefícios (submódulo 2.3)
   r.vtGratis = moTarifaZero(d);
-  r.vt = r.vtGratis ? 0 : Math.max(0, n("vt_tarifa") * n("vt_viagens") * n("dias") - 0.06 * S);
+  // dias de tarifa zero na escala (ex.: domingos gratuitos): saem dos dias de transporte pago; o desconto de 6% do salário-base continua inteiro
+  r.vtDiasZero = Math.min(n("dias"), Math.max(0, n("vt_dias_zero"))); r.vtDiasPagos = Math.max(0, n("dias") - r.vtDiasZero);
+  r.vt = r.vtGratis ? 0 : Math.max(0, n("vt_tarifa") * n("vt_viagens") * r.vtDiasPagos - 0.06 * S);
   r.aux = n("aux_dia") * n("dias") * (1 - pc("aux_part"));
   r.ref = n("ref_dia") * n("dias") * (1 - pc("ref_part")); // auxílio-refeição, quando a convenção prevê os dois
   r.assist = n("assist"); r.seguro = n("seguro"); r.outros23 = n("outros23");
@@ -12582,7 +12584,7 @@ class Component extends DCLogic {
       blocos.push(T("ENCARGOS E BENEFÍCIOS – BASES DE CÁLCULO (POR EMPREGADO)", ["Item", "Cálculo", "Valor"], [
         { c: ["Base do Submódulo 2.2", "Módulo 1 (" + brlTxt(r.M1) + ") + Submódulo 2.1 (" + brlTxt(r.M21) + ") + Módulo 4 (" + brlTxt(r.M4) + ")", brlTxt(r.base22)] },
         { c: ["Encargos do Submódulo 2.2", "Base × " + (r.M22p * 100).toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + "%", brlTxt(r.M22)] },
-        r.vtGratis ? { c: ["Transporte", r.vtGratis + ": sem custo de vale-transporte (Lei 7.418/1985, art. 1º)", brlTxt(0)] } : { c: ["Transporte", "R$ " + f2b(nu("vt_tarifa")) + " × " + f2b(nu("vt_viagens")) + " viagens × " + f2b(nu("dias")) + " dias − 6% de " + brlTxt(nu("salario")) + " (Lei 7.418/1985)", brlTxt(r.vt)] },
+        r.vtGratis ? { c: ["Transporte", r.vtGratis + ": sem custo de vale-transporte (Lei 7.418/1985, art. 1º)", brlTxt(0)] } : { c: ["Transporte", "R$ " + f2b(nu("vt_tarifa")) + " × " + f2b(nu("vt_viagens")) + " viagens × " + f2b(r.vtDiasPagos) + " dias" + (r.vtDiasZero > 0 ? " com transporte pago (" + f2b(nu("dias")) + " trabalhados − " + f2b(r.vtDiasZero) + " de tarifa zero)" : "") + " − 6% de " + brlTxt(nu("salario")) + " (Lei 7.418/1985)", brlTxt(r.vt)] },
         { c: ["Auxílio-alimentação", "R$ " + f2b(nu("aux_dia")) + " × " + f2b(nu("dias")) + " dias × (1 − " + f2b(nu("aux_part")) + "% de participação)", brlTxt(r.aux)] },
         ...(r.ref > 0 ? [{ c: ["Auxílio-refeição", "R$ " + f2b(nu("ref_dia")) + " × " + f2b(nu("dias")) + " dias × (1 − " + f2b(nu("ref_part")) + "% de participação)", brlTxt(r.ref)] }] : []),
         { c: ["Afastamento maternidade (4.1, E)", "(13º + férias e adicional + assistência + seguro = " + brlTxt(r.base_mat) + ") × " + f2b(nu("mat")) + "%", brlTxt(r.mat)] }], { alin: "llr", larg: [28, 54, 16] }));
@@ -13012,7 +13014,7 @@ class Component extends DCLogic {
         L("G", "INCRA", { k: "incra", v: r.g_incra }),
         L("H", "FGTS", { k: "fgts", v: r.g_fgts })], total: T("Total do Submódulo 2.2", r.M22p, r.M22) },
       { titulo: "Submódulo 2.3 – Benefícios mensais e diários", linhas: [
-        L("A", "Transporte", { p: "-", v: r.vt, nota: r.vtGratis ? r.vtGratis + ": sem custo de vale-transporte (Lei 7.418/1985, art. 1º)." : "Tarifa × viagens por dia × dias trabalhados, menos 6% do salário-base (Lei 7.418/1985)." }),
+        L("A", "Transporte", { p: "-", v: r.vt, nota: r.vtGratis ? r.vtGratis + ": sem custo de vale-transporte (Lei 7.418/1985, art. 1º)." : r.vtDiasZero > 0 ? "Tarifa × viagens por dia × " + r.vtDiasPagos.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " dias com transporte pago (" + r.vtDiasZero.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " dia(s) de tarifa zero na escala excluídos), menos 6% do salário-base (Lei 7.418/1985; AGU, Parecer 32/2014/DECOR: a mudança na tarifa entra na repactuação, a partir da data em que ocorre)." : "Tarifa × viagens por dia × dias trabalhados, menos 6% do salário-base (Lei 7.418/1985)." }),
         L("B", "Auxílio-alimentação", { p: "-", v: r.aux, nota: "Valor por dia × dias trabalhados, menos a participação do empregado." }),
         L("C", "Auxílio-refeição", { p: "-", v: r.ref, nota: "Quando a convenção prevê também o auxílio-refeição: valor por dia × dias trabalhados, menos a participação do empregado." }),
         L("D", "Assistência médica e familiar", { kv: "assist" }),
@@ -13115,7 +13117,7 @@ class Component extends DCLogic {
         L("G", "INCRA", { k: "incra", v: r.g_incra }),
         L("H", "FGTS", { k: "fgts", v: r.g_fgts })], total: T("Total do Submódulo 2.2", r.M22p, r.M22) },
       { titulo: "Submódulo 2.3 – Benefícios mensais e diários", linhas: [
-        L("A", "Transporte", { p: "-", v: r.vt, nota: r.vtGratis ? r.vtGratis + ": sem custo de vale-transporte (Lei 7.418/1985, art. 1º)." : "Tarifa × viagens por dia × dias trabalhados, menos 6% do salário-base (Lei 7.418/1985)." }),
+        L("A", "Transporte", { p: "-", v: r.vt, nota: r.vtGratis ? r.vtGratis + ": sem custo de vale-transporte (Lei 7.418/1985, art. 1º)." : r.vtDiasZero > 0 ? "Tarifa × viagens por dia × " + r.vtDiasPagos.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " dias com transporte pago (" + r.vtDiasZero.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " dia(s) de tarifa zero na escala excluídos), menos 6% do salário-base (Lei 7.418/1985; AGU, Parecer 32/2014/DECOR: a mudança na tarifa entra na repactuação, a partir da data em que ocorre)." : "Tarifa × viagens por dia × dias trabalhados, menos 6% do salário-base (Lei 7.418/1985)." }),
         L("B", "Auxílio-alimentação", { p: "-", v: r.aux, nota: "Valor por dia × dias trabalhados, menos a participação do empregado." }),
         L("C", "Auxílio-refeição", { p: "-", v: r.ref, nota: "Quando a convenção prevê também o auxílio-refeição: valor por dia × dias trabalhados, menos a participação do empregado." }),
         L("D", "Assistência médica e familiar", { kv: "assist" }),
@@ -13371,7 +13373,7 @@ class Component extends DCLogic {
           P.moCamposCmp = CAMPOS.map(([k, rot, ph]) => ({ k, rot, ph, valor: cI.d[k] == null ? (MO_PADRAO[k] ?? "") : cI.d[k], on: setC(cI)(k), mudou: false }));
         });
         const chave = (l) => (l.pctEdit ? String(l.pctK) : l.pctTxt) + "|" + (l.valEdit ? String(l.valK) : l.valTxt);
-        const BEN = [["vt_tarifa", "Tarifa do transporte (R$)"], ["vt_viagens", "Viagens por dia"], ["dias", "Dias trabalhados no mês"], ["aux_dia", "Auxílio-alimentação por dia (R$)"], ["aux_part", "Participação no auxílio-alimentação (%)"], ["ref_dia", "Auxílio-refeição por dia (R$)"], ["ref_part", "Participação no auxílio-refeição (%)"]];
+        const BEN = [["vt_tarifa", "Tarifa do transporte (R$)"], ["vt_viagens", "Viagens por dia"], ["dias", "Dias trabalhados no mês"], ["vt_dias_zero", "Dias de tarifa zero no mês"], ["aux_dia", "Auxílio-alimentação por dia (R$)"], ["aux_part", "Participação no auxílio-alimentação (%)"], ["ref_dia", "Auxílio-refeição por dia (R$)"], ["ref_part", "Participação no auxílio-refeição (%)"]];
         return { moCmpN: String(cols.length),
           moCmpCols: cols.map((c, i) => { const ant = i ? cols[i - 1] : null;
             return { P: Ps[i], nome: c.nome,
@@ -14033,6 +14035,7 @@ class Component extends DCLogic {
       onMoVtGratis: (e) => SET("vt_gratis")(e.target.value),
       moVtGratisNota: (() => { const tz = moTarifaZero(d0); return tz ? tz + ": o vale-transporte fica zerado e a falta da tarifa não é apontada como falha." : d0.vt_gratis === "nao" || !String(d0.municipio || "").trim() ? "Informe a tarifa abaixo." : "Município sem tarifa zero cadastrada; se o transporte for gratuito, escolha Gratuito."; })(),
       moBenef: [campo("vt_tarifa", "Tarifa do transporte (R$)", "Ex.: 4,70"), campo("vt_viagens", "Viagens por dia", "2"), campo("dias", "Dias trabalhados no mês", "21"),
+        campo("vt_dias_zero", "Dias de tarifa zero no mês, dentro da escala (ex.: domingos gratuitos)", "0"),
         campo("aux_dia", "Auxílio-alimentação por dia (R$)", "Ex.: 25,00"), campo("aux_part", "Participação do empregado no auxílio-alimentação (%)", "20"),
         campo("ref_dia", "Auxílio-refeição por dia (R$, se a convenção também prevê)", "Ex.: 30,00"), campo("ref_part", "Participação do empregado no auxílio-refeição (%)", "0")],
       moModulos: modulos,
