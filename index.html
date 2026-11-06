@@ -9281,9 +9281,9 @@ function moCalcular(d, modo, rj) {
   // multa rescisória de 40% (a contribuição social de 10% da LC 110/2001 foi extinta pela Lei 13.932/2019 a partir de 2020).
   // C segue os cadernos técnicos da SEGES: multa sobre todos os depósitos do contrato (remuneração, 13º, férias e 1/3),
   // para os 90% de empregados que não pedem demissão: 8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168) ≈ 3,48%
-  // B, C, E e F: em branco, fórmula; preenchidos, o percentual da planilha da empresa (E e F seguem a fórmula na repactuação, pois o APT é reduzido)
+  // B, C, E e F: em branco, fórmula; preenchidos, o percentual da planilha da empresa (na repactuação, a fórmula de E e F usa o APT reduzido a 0,194%)
   r.m3f = { fgts_api: pc("fgts") * pc("api"), multa_api: pc("fgts") * 0.4 * 0.9 * (1 + 5 / 56 + 5 / 56 + 5 / 168), inc_apt: r.M22p * r.apt_p, multa_apt: 0.4 * pc("fgts") * r.apt_p };
-  const m3ov = (k) => (modo === "repactuacao" && (k === "inc_apt" || k === "multa_apt")) || !String(d["m3_" + k] == null ? "" : d["m3_" + k]).trim() ? r.m3f[k] : moNum(d["m3_" + k]) / 100;
+  const m3ov = (k) => !String(d["m3_" + k] == null ? "" : d["m3_" + k]).trim() ? r.m3f[k] : moNum(d["m3_" + k]) / 100;
   r.m3p = { api: pc("api"), fgts_api: m3ov("fgts_api"), multa_api: m3ov("multa_api"), apt: r.apt_p, inc_apt: m3ov("inc_apt"), multa_apt: m3ov("multa_apt") };
   Object.entries(r.m3p).forEach(([k, v]) => { r["r_" + k] = r.M1 * v; });
   r.M3p = moT4(Object.values(r.m3p).reduce((a, b) => a + b, 0));
@@ -12909,6 +12909,7 @@ class Component extends DCLogic {
     const naoRen = rep ? "Custo não renovável: o aviso prévio trabalhado (1,94%) é devido só no 1º ano; nas prorrogações e repactuações, no máximo 0,194% por ano (TCU, Acórdão 1.186/2017-Plenário). Preenchido automaticamente." : "";
     const ph3 = (x) => (Math.round((Number(x) || 0) * 1000000) / 10000).toLocaleString("pt-BR", { maximumFractionDigits: 4 });
     const notaOv = "Em branco, vale a fórmula (o número em cinza); digite o percentual da planilha da empresa para usá-lo.";
+    const notaAptRep = rep ? " Depois do 1º ano, a fórmula usa o aviso prévio trabalhado de 0,194%; percentual calculado sobre 1,94% é custo não renovável e entra na lista de falhas (TCU, Acórdão 1.186/2017-Plenário)." : "";
     const simp = r.simp, tr = r.tr, depois = d.reforma === "depois";
     const issMun = "Alíquota do município (LC 116/2003).";
     const notaSimp = simp ? "Simples Nacional, Anexo IV." : "";
@@ -12956,10 +12957,8 @@ class Component extends DCLogic {
         L("B", "Incidência do FGTS sobre o aviso prévio indenizado", { k: "m3_fgts_api", ph: ph3(r.m3f.fgts_api), v: r.r_fgts_api, nota: notaOv }),
         L("C", "Multa do FGTS (40%) sobre os depósitos do contrato", { k: "m3_multa_api", ph: ph3(r.m3f.multa_api), v: r.r_multa_api, nota: notaOv + " Fórmula: " + "8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168): multa rescisória sobre os depósitos de remuneração, 13º, férias e 1/3, para os 90% de empregados que não pedem demissão (cadernos técnicos da SEGES; Lei 8.036/1990, art. 18, § 1º). Sem a contribuição social de 10%, extinta pela Lei 13.932/2019." }),
         rep ? L("D", "Aviso prévio trabalhado", { p: r.m3p.apt, v: r.r_apt, auto: true, nota: naoRen }) : L("D", "Aviso prévio trabalhado", { k: "apt", v: r.r_apt }),
-        rep ? L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { p: r.m3p.inc_apt, v: r.r_inc_apt, auto: true })
-          : L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { k: "m3_inc_apt", ph: ph3(r.m3f.inc_apt), v: r.r_inc_apt, nota: notaOv }),
-        rep ? L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { p: r.m3p.multa_apt, v: r.r_multa_apt, auto: true })
-          : L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { k: "m3_multa_apt", ph: ph3(r.m3f.multa_apt), v: r.r_multa_apt, nota: notaOv })], total: T("Total do Módulo 3", r.M3p, r.M3) },
+        L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { k: "m3_inc_apt", ph: ph3(r.m3f.inc_apt), v: r.r_inc_apt, nota: notaOv + notaAptRep }),
+        L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { k: "m3_multa_apt", ph: ph3(r.m3f.multa_apt), v: r.r_multa_apt, nota: notaOv + notaAptRep })], total: T("Total do Módulo 3", r.M3p, r.M3) },
       { titulo: "Submódulo 4.1 – Ausências legais", linhas: [
         L("A", "Férias", { k: "ferias", v: r.ferias }),
         L("B", "Ausências legais", { k: "aus", v: r.aus }),
@@ -13013,6 +13012,7 @@ class Component extends DCLogic {
     const naoRen = rep ? "Custo não renovável: o aviso prévio trabalhado (1,94%) é devido só no 1º ano; nas prorrogações e repactuações, no máximo 0,194% por ano (TCU, Acórdão 1.186/2017-Plenário). Preenchido automaticamente." : "";
     const ph3 = (x) => (Math.round((Number(x) || 0) * 1000000) / 10000).toLocaleString("pt-BR", { maximumFractionDigits: 4 });
     const notaOv = "Em branco, vale a fórmula (o número em cinza); digite o percentual da planilha da empresa para usá-lo.";
+    const notaAptRep = rep ? " Depois do 1º ano, a fórmula usa o aviso prévio trabalhado de 0,194%; percentual calculado sobre 1,94% é custo não renovável e entra na lista de falhas (TCU, Acórdão 1.186/2017-Plenário)." : "";
     const simp = r.simp, tr = r.tr, depois = d.reforma === "depois";
     const issMun = "Alíquota do município (LC 116/2003).";
     const notaSimp = simp ? "Simples Nacional, Anexo IV." : "";
@@ -13060,10 +13060,8 @@ class Component extends DCLogic {
         L("B", "Incidência do FGTS sobre o aviso prévio indenizado", { k: "m3_fgts_api", ph: ph3(r.m3f.fgts_api), v: r.r_fgts_api, nota: notaOv }),
         L("C", "Multa do FGTS (40%) sobre os depósitos do contrato", { k: "m3_multa_api", ph: ph3(r.m3f.multa_api), v: r.r_multa_api, nota: notaOv + " Fórmula: " + "8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168): multa rescisória sobre os depósitos de remuneração, 13º, férias e 1/3, para os 90% de empregados que não pedem demissão (cadernos técnicos da SEGES; Lei 8.036/1990, art. 18, § 1º). Sem a contribuição social de 10%, extinta pela Lei 13.932/2019." }),
         rep ? L("D", "Aviso prévio trabalhado", { p: r.m3p.apt, v: r.r_apt, auto: true, nota: naoRen }) : L("D", "Aviso prévio trabalhado", { k: "apt", v: r.r_apt }),
-        rep ? L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { p: r.m3p.inc_apt, v: r.r_inc_apt, auto: true })
-          : L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { k: "m3_inc_apt", ph: ph3(r.m3f.inc_apt), v: r.r_inc_apt, nota: notaOv }),
-        rep ? L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { p: r.m3p.multa_apt, v: r.r_multa_apt, auto: true })
-          : L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { k: "m3_multa_apt", ph: ph3(r.m3f.multa_apt), v: r.r_multa_apt, nota: notaOv })], total: T("Total do Módulo 3", r.M3p, r.M3) },
+        L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { k: "m3_inc_apt", ph: ph3(r.m3f.inc_apt), v: r.r_inc_apt, nota: notaOv + notaAptRep }),
+        L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { k: "m3_multa_apt", ph: ph3(r.m3f.multa_apt), v: r.r_multa_apt, nota: notaOv + notaAptRep })], total: T("Total do Módulo 3", r.M3p, r.M3) },
       { titulo: "Submódulo 4.1 – Ausências legais", linhas: [
         L("A", "Férias", { k: "ferias", v: r.ferias }),
         L("B", "Ausências legais", { k: "aus", v: r.aus }),
