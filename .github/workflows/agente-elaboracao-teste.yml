@@ -29,7 +29,7 @@ jobs:
         env: { DOC: "${{ inputs.doc }}", CASO: "${{ inputs.caso }}", SIMULAR: "${{ inputs.simular }}", CONF: "${{ inputs.conferencia }}" }
         run: |
           python3 scripts/agente/elaborar.py --doc "$DOC" --respostas "agente/testes/elaboracao/$CASO" --pasta /tmp/saida $([ "$SIMULAR" = "sim" ] && echo --simular) $([ "$CONF" = "nao" ] && echo --sem-conferencia)
-          python3 -c "import json;e=json.load(open('/tmp/saida/execucao.json'));print('::notice title=Custo::US$',e['custo_usd'],'·',e['segundos'],'s · pendências',e['pendencias'],'· alta',e['alta'],'· média',e['media'])"
+          python3 -c "import json;e=json.load(open('/tmp/saida/execucao.json'));print('::notice title=Custo::US$',e.get('custo_usd'),'·',e.get('segundos','-'),'s · pendências',e.get('pendencias'),'· perguntas',e.get('perguntas',0),'· alta',e.get('alta',0),'· média',e.get('media',0))"
       - name: Guardar o resultado no ramo agente-testes (caso fictício)
         if: always()
         env: { DOC: "${{ inputs.doc }}" }
