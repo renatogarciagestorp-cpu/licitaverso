@@ -103,7 +103,9 @@ Seja específico e objetivo; no máximo 8 perguntas, das mais importantes para a
   const resp = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "x-api-key": chave, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-    body: JSON.stringify({ model: MODELO, max_tokens: 2000, system, tools: [FERRAMENTA], tool_choice: { type: "tool", name: "registrar_duvidas" },
+    // o Sonnet 5.5 não aceita ferramenta forçada (tool_choice "tool"): escolha automática + instrução; o limite cobre raciocínio e resposta
+    body: JSON.stringify({ model: MODELO, max_tokens: 8000, output_config: { effort: "low" }, system: system + "\nResponda SEMPRE chamando a ferramenta registrar_duvidas (com a lista vazia se estiver tudo certo).",
+      tools: [FERRAMENTA], tool_choice: { type: "auto" },
       messages: [{ role: "user", content: usuarioMsg }] }),
     signal: AbortSignal.timeout(90000),
   }).catch(() => null);

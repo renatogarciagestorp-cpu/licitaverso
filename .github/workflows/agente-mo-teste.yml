@@ -20,6 +20,7 @@ jobs:
       - name: Rodar o agente
         env: { ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}", MODO: "${{ inputs.modo }}" }
         run: |
+          if [ "$MODO" = "modelos" ]; then deno run -A scripts/testes/mo-agente/checar-modelos.ts; exit 0; fi
           deno run -A --import-map=scripts/testes/mo-agente/import_map.json scripts/testes/mo-agente/rodar.ts "$MODO" /tmp/mo-teste.json
           python3 -c "import json;e=json.load(open('/tmp/mo-teste.json'));print('::notice title=Custo::US$',e['custo_estimado_usd'],'·',e['segundos'],'s · status',e['status'])"
       - name: Guardar o resultado no ramo agente-testes (caso fictício)

@@ -195,7 +195,7 @@ Deno.serve(async (req) => {
 ${tarefa}
 ${blocoTrib}
 ${blocoIss}
-Use apenas o que está na convenção enviada e nas normas citadas; nunca invente cláusula, valor ou acórdão. Valores mensais por empregado. Campos disponíveis: ${Object.entries(campos).map(([k, v]) => `${k} (${v})`).join("; ")}.`;
+Ao terminar, devolva SEMPRE o resultado chamando a ferramenta preencher_planilha. Use apenas o que está na convenção enviada e nas normas citadas; nunca invente cláusula, valor ou acórdão. Valores mensais por empregado. Campos disponíveis: ${Object.entries(campos).map(([k, v]) => `${k} (${v})`).join("; ")}.`;
 
   const mensagens = [{ role: "user", content: [
         ...docs.flatMap((x) => [{ type: "text", text: x.titulo + ":" }, { type: "document", source: { type: "base64", media_type: "application/pdf", data: x.pdf } }]),
@@ -210,7 +210,7 @@ Use apenas o que está na convenção enviada e nas normas citadas; nunca invent
       model: MODELO, max_tokens: 32000, output_config: { effort: "medium" }, system, messages: mensagens,
       tools: comBusca ? [FERRAMENTA(campos, comPlanilha, modo === "proposta"), { type: "web_search_20250305", name: "web_search", max_uses: 2, user_location: { type: "approximate", country: "BR" } }]
         : [FERRAMENTA(campos, comPlanilha, modo === "proposta")],
-      tool_choice: comBusca ? { type: "auto" } : { type: "tool", name: "preencher_planilha" },
+      tool_choice: { type: "auto" },  // o Sonnet 5.5 não aceita ferramenta forçada; o pedido manda devolver por preencher_planilha
     }),
     signal: AbortSignal.timeout(140000),
   }).catch(() => null);

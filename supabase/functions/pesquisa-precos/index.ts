@@ -201,10 +201,13 @@ async function coletarPncp(descricao: string, uf: string, abr: string, meses: nu
 
 // ---------------------------------------------------------------- IA
 async function chamarIA(chave: string, system: string, conteudo: unknown[], ferramenta: any, maxTokens = 4000) {
+  // os modelos 5.5 não aceitam ferramenta forçada: escolha automática + instrução; o limite cobre raciocínio e resposta
+  system = system + "\nResponda SEMPRE chamando a ferramenta " + ferramenta.name + ".";
+  maxTokens = Math.max(maxTokens, 12000);
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "x-api-key": chave, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-    body: JSON.stringify({ model: MODELO_IA, max_tokens: maxTokens, system, messages: [{ role: "user", content: conteudo }], tools: [ferramenta], tool_choice: { type: "tool", name: ferramenta.name } }),
+    body: JSON.stringify({ model: MODELO_IA, max_tokens: maxTokens, system, messages: [{ role: "user", content: conteudo }], tools: [ferramenta], tool_choice: { type: "auto" }, output_config: { effort: "low" } }),
     signal: AbortSignal.timeout(120000),
   }).catch(() => null);
   if (!r || !r.ok) {
