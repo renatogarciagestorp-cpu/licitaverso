@@ -4,11 +4,13 @@
 //  - planos pagos: aviso quando faltam 7 dias ou menos;
 //  - teste grátis: dica de uso no 3º dia e aviso na véspera do fim ("termina amanhã");
 //  - fim do preço de fundador: aviso com 30 dias de antecedência e, depois do prazo, novo valor na renovação automática;
-//  - Meus contratos: anualidade do reajuste, data-base da convenção coletiva e fim da vigência (90 e 30 dias antes).
+//  - Meus contratos: anualidade do reajuste, data-base da convenção coletiva e fim da vigência (90 e 30 dias antes);
+//  - resumo mensal da carteira (dias 1 a 3 de cada mês, uma vez por mês: coluna perfis.resumo_mensal_ref).
 
 import { clienteServico, CORS, mp, resposta, segredoConfere } from "../_shared/comum.ts";
 import { enviarEmail, moldura, SITE } from "../_shared/email.ts";
 import { PLANOS, precoPlano } from "../_shared/precos.ts";
+import { diaBrasilia, mesReferencia, montarResumo } from "../_shared/resumo.ts";
 
 const DIA = 86400000;
 const nomePlano = (p: string) => (p === "teste" ? "Teste grátis" : PLANOS[p as keyof typeof PLANOS]?.nome ?? p);
@@ -220,6 +222,36 @@ Deno.serve(async (req) => {
     } catch (e) { console.error("avisos: prazos do contrato", c.id, e); prazos.falhas++; }
   }
 
-  console.log("avisos", resultado, precos, prazos);
-  return resposta({ ok: true, ...resultado, precos, prazos });
+  // ---------------------------------------------------------------- resumo mensal da carteira (Gestão Contratual)
+  const resumo = { enviados: 0, pulados: 0, falhas: 0 };
+  const ref = mesReferencia(agora);
+  const forcar = await req.clone().json().then((b) => b && b.resumo === true).catch(() => false);
+  if (diaBrasilia(agora) <= 3 || forcar) {
+    const { data: todos } = await admin.from("contratos")
+      .select("id, usuario_id, numero, contratante, contratada, data_proposta, inicio, assinatura, fim, valor_inicial, periodicidade, mao_obra, data_base_cct, fiscal, essencial").limit(5000);
+    const porUsuario: Record<string, any[]> = {};
+    for (const c of (todos ?? []) as any[]) (porUsuario[c.usuario_id] = porUsuario[c.usuario_id] || []).push(c);
+    for (const uid of Object.keys(porUsuario)) {
+      const { data: p } = await admin.from("perfis").select("nome, email, notificacoes, setor, resumo_mensal_ref").eq("id", uid).maybeSingle();
+      if (!p || p.resumo_mensal_ref === ref) continue;
+      const marcarR = () => admin.from("perfis").update({ resumo_mensal_ref: ref }).eq("id", uid);
+      const { data: pl } = await admin.rpc("plano_vigente", { uid });
+      if (!p.email || p.notificacoes?.resumo?.email === false || !pl) { await marcarR(); resumo.pulados++; continue; }
+      const lista = porUsuario[uid], evs: Record<string, any[]> = {};
+      for (let i = 0; i < lista.length; i += 200) {
+        const { data: e } = await admin.from("contrato_eventos").select("contrato_id, tipo, data, valor_novo, novo_fim, valor_penalidade").in("contrato_id", lista.slice(i, i + 200).map((c) => c.id));
+        for (const x of e ?? []) (evs[x.contrato_id] = evs[x.contrato_id] || []).push(x);
+      }
+      const r = montarResumo(lista, evs, p.setor === "Setor Privado", agora);
+      const primeiro = (p.nome || "").trim().split(/\s+/)[0].replace(/[&<>"']/g, "") || "Olá";
+      const html = moldura(r.titulo, [`${primeiro}, ` + r.paragrafos[0].charAt(0).toLowerCase() + r.paragrafos[0].slice(1)].concat(r.paragrafos.slice(1)),
+        { texto: "Abrir o Painel da Organização", url: `${SITE}index.html?p=contratos` },
+        "Os números vêm dos contratos e registros cadastrados por você na Gestão Contratual. Confira cada prazo no painel antes de agir.", "Resumo mensal da carteira");
+      try { await enviarEmail({ email: p.email, nome: p.nome }, r.assunto, html); await marcarR(); resumo.enviados++; }
+      catch (e) { console.error("avisos: resumo mensal", uid, e); resumo.falhas++; }
+    }
+  }
+
+  console.log("avisos", resultado, precos, prazos, resumo);
+  return resposta({ ok: true, ...resultado, precos, prazos, resumo });
 });
