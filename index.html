@@ -3432,9 +3432,9 @@
                   <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" data-mo-campo="{{ c.k }}" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
                 </sc-for>
               </div>
-              <p class="lmo-nota"><b>Os tributos serão calculados antes ou depois da reforma tributária?</b></p>
+              <p class="lmo-nota"><b>Os tributos serão calculados antes ou depois da reforma tributária?</b> <span style="font-weight: 400">Antes: PIS, COFINS e ISS. Depois: CBS e IBS (EC 132/2023 e LC 214/2025), inclusive na transição de 2026 a 2033, ano a ano.</span></p>
               <div class="lmo-modos" role="group" aria-label="Momento da tributação"><sc-for list="{{ moReformaOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
-              <p class="lmo-nota"><b>Regime de tributação da empresa</b> <span style="font-weight: 400">(no Simples, informe a receita bruta no bloco Tributação)</span></p>
+              <p class="lmo-nota"><b>Regime de tributação da empresa</b> <span style="font-weight: 400">(os detalhes, a receita bruta do Simples e a transição ficam no bloco Tributação)</span></p>
               <div class="lmo-modos" role="group" aria-label="Regime de tributação"><sc-for list="{{ moRegimes }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
               <sc-if value="{{ moTemPlanArq }}" hint-placeholder-val="{{ false }}">
               <div class="lmo-cct">
@@ -3484,11 +3484,8 @@
 
             <section class="lmo-bloco" id="lmo-trib">
               <h2 class="lmo-h2">Tributação (Módulo 6)</h2>
-              <p class="lmo-nota" style="margin-top: 0"><b>Os tributos devem ser calculados antes ou depois da reforma tributária?</b> Antes: PIS, COFINS e ISS. Depois: CBS e IBS (EC 132/2023 e LC 214/2025), inclusive no período de transição de 2026 a 2033, ano a ano.</p>
-              <div class="lmo-modos" role="group" aria-label="Momento da tributação"><sc-for list="{{ moReformaOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
-              <sc-if value="{{ moReformaPendente }}" hint-placeholder-val="{{ true }}"><p class="lve-aviso" style="margin-top: 10px">Escolha se os tributos serão calculados antes ou depois da reforma e o regime de tributação da empresa: o agente usa essas escolhas na análise, e o download depende delas. Até lá, a tela mostra o cálculo com PIS, COFINS e ISS.</p></sc-if>
-              <p class="lmo-nota"><b>Regime de tributação da empresa</b></p>
-              <div class="lmo-modos" role="group" aria-label="Regime de tributação"><sc-for list="{{ moRegimes }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
+              <p class="lmo-nota" style="margin-top: 0"><b>{{ moTribEscolha }}</b> <button type="button" class="lmo-ano" sc-camel-on-click="{{ moIrEscolhaTrib }}">alterar no passo 1 ↑</button></p>
+              <sc-if value="{{ moReformaPendente }}" hint-placeholder-val="{{ true }}"><p class="lve-aviso" style="margin-top: 10px">Escolha, no passo 1 do bloco do agente, se os tributos serão calculados antes ou depois da reforma e o regime de tributação da empresa: o agente usa essas escolhas, e o download depende delas. Até lá, a tela mostra o cálculo com PIS, COFINS e ISS.</p></sc-if>
               <p class="lmo-nota">{{ moRegimeTxt }}</p>
               <sc-if value="{{ moRegSimples }}" hint-placeholder-val="{{ false }}">
                 <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>Receita bruta dos últimos 12 meses (RBT12, R$)</span><input type="text" inputmode="decimal" value="{{ moRbt12 }}" sc-camel-on-input="{{ onMoRbt12 }}" placeholder="Ex.: 1.200.000,00"></label></div>
@@ -10430,8 +10427,8 @@ class Component extends DCLogic {
       return;
     }
     if (!d.reforma || !d.regime) {
-      this.setState((x) => ({ mo: { ...x.mo, erro: "Antes de baixar, escolha no bloco Tributação se os tributos devem ser calculados antes ou depois da reforma tributária e o regime de tributação da empresa." } }));
-      try { document.getElementById("lmo-trib").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {}
+      this.setState((x) => ({ mo: { ...x.mo, erro: "Antes de baixar, escolha no passo 1 do bloco do agente se os tributos devem ser calculados antes ou depois da reforma tributária e o regime de tributação da empresa." } }));
+      try { document.getElementById("lmo-agente").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {}
       return;
     }
     const transicao = (this._moUltimo && this._moUltimo.transicao) || [];
@@ -10828,7 +10825,7 @@ class Component extends DCLogic {
   // tributação, efeitos financeiros) e conclusão, em redação impessoal
   async moNotaTecnica() {
     const s = this.state, d = s.mo.d;
-    if (!d.reforma || !d.regime) { this.setState((x) => ({ mo: { ...x.mo, erro: "Antes da nota técnica, escolha no bloco Tributação o momento da reforma e o regime de tributação." } })); return; }
+    if (!d.reforma || !d.regime) { this.setState((x) => ({ mo: { ...x.mo, erro: "Antes da nota técnica, escolha no passo 1 do bloco do agente o momento da reforma e o regime de tributação." } })); return; }
     if (!moNum(d.vigente)) { this.setState((x) => ({ mo: { ...x.mo, erro: "Informe o preço vigente por empregado para gerar a nota técnica." } })); return; }
     const P = this.moProps(), U = this._moUltimo || {}, r = U.r, rj = U.rj, comp = U.comp, retro = U.retro;
     const falhas = d.falhas || [];
@@ -10904,8 +10901,8 @@ class Component extends DCLogic {
       return;
     }
     if (!d.reforma || !d.regime) {
-      erro("Antes da análise, escolha no bloco Tributação " + (!d.reforma && !d.regime ? "se os tributos devem ser calculados antes ou depois da reforma tributária e o regime de tributação da empresa." : !d.reforma ? "se os tributos devem ser calculados antes ou depois da reforma tributária." : "o regime de tributação da empresa (Lucro Real, Presumido ou Simples Nacional)."));
-      try { document.getElementById("lmo-trib").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {}
+      erro("Antes da análise, escolha no passo 1 " + (!d.reforma && !d.regime ? "se os tributos devem ser calculados antes ou depois da reforma tributária e o regime de tributação da empresa." : !d.reforma ? "se os tributos devem ser calculados antes ou depois da reforma tributária." : "o regime de tributação da empresa (Lucro Real, Presumido ou Simples Nacional)."));
+      try { document.getElementById("lmo-agente").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {}
       return;
     }
     if (!d.cct_arquivo) { erro(rep ? "Envie a nova convenção coletiva em PDF: ela é obrigatória para a análise da repactuação." : "Envie primeiro a convenção coletiva em PDF."); return; }
@@ -11260,6 +11257,8 @@ class Component extends DCLogic {
         .concat(rep || prop ? [[prop ? "Planilha de custos da proposta (PDF ou Excel)" : "Planilha de custos da contratação (PDF ou Excel)", !!(d.plan_arquivo || this._moPlanTexto)]] : [])
         .concat([[rep ? "Nova convenção coletiva (PDF)" : "Convenção coletiva da categoria (PDF)", !!d.cct_arquivo]])
         .map(([t, ok]) => ({ t: (ok ? "✓ " : "○ ") + t, cls: ok ? "ok" : "falta" })),
+      moTribEscolha: d.reforma && d.regime ? (d.reforma === "depois" ? "Depois da reforma (CBS e IBS)" : "Antes da reforma (PIS, COFINS e ISS)") + " · " + ({ real: "Lucro Real", presumido: "Lucro Presumido", simples: "Simples Nacional" }[d.regime] || "") : "Tributação ainda não escolhida.",
+      moIrEscolhaTrib: () => { try { document.getElementById("lmo-agente").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} },
       moPreCampos: [campo("municipio", "Município onde o serviço será prestado", "Ex.: Maricá"), campo("uf", "UF", "RJ")].concat(rep ? [campo("ano_exec", "Ano de execução após a repactuação", "Ex.: 2")] : []),
       moTemDepois: rep || prop,
       moDepois: (rep ? [["Datas da repactuação e efeitos financeiros", "lmo-efeitos"], ["Reajuste dos insumos por índice", "lmo-reaj"], ["Garantia trabalhista (conta vinculada ou fato gerador)", "lmo-gt"]] : [["Garantia trabalhista (conta vinculada ou fato gerador)", "lmo-gt"]])
