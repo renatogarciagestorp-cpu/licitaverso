@@ -1244,6 +1244,8 @@
   .lmo-cmp-sec span { position: sticky; left: 10px; }
   .lmo-cmpc { display: grid; gap: 2px; text-align: right; } .lmo-cmpc input { font: inherit; text-align: right; border: 1px solid #D3DEDB; border-radius: 7px; padding: 4px 7px; width: 100%; box-sizing: border-box; background: #FFFEF7; }
   .lmo-cmpc b { font-variant-numeric: tabular-nums; font-weight: 600; } .lmo-cmpc small { font-size: 11px; color: #8A5A00; font-weight: 700; }
+  .lmo-cmp-quadro { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; margin: 0 0 14px; padding: 12px 14px; border: 1px solid #E3E9E8; border-radius: 12px; background: #F8FBFA; }
+  .lmo-cmp-quadro .lmo-campo { flex: 1 1 320px; margin: 0; } .lmo-cmp-quadro > small { flex: 1 1 100%; margin: 0; }
   .lmo-cmpc.mudou { background: #FFF6DE !important; } [data-calc="true"].lmo-cmpc b, .lmo-cmp-r[data-calc="true"] { font-weight: 800; color: #0B1F2A; }
   .lmo-passos { display: grid; gap: 12px; margin-top: 14px; }
   .lmo-passo { border: 1px solid #E1E8E6; border-radius: 14px; padding: 14px 16px; background: #fff; display: grid; gap: 10px; }
@@ -4399,6 +4401,13 @@
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Linha do tempo: planejamento × contratação × repactuações</h2>
               <p class="lmo-nota" style="margin-top: 0">Cada coluna é uma planilha completa, com a mesma estrutura e os mesmos cálculos das planilhas da Calculadora (IN 05/2017): a da fase de planejamento, a da contratação e as de cada repactuação. Edite os valores ou use o botão de cada coluna para trazer a planilha já preenchida na Planilha de custos, na Análise de proposta ou na Repactuação. O aviso prévio trabalhado (Módulo 3, D), custo não renovável, fica destacado quando muda. O relatório da comparação detalha todas as alterações. Role o quadro para os lados para ver todas.</p>
+              <sc-if value="{{ cmpTemQuadro }}" hint-placeholder-val="{{ false }}">
+              <div class="lmo-cmp-quadro">
+                <label class="lmo-campo"><span>Usar uma categoria do quadro</span><select sc-camel-on-change="{{ onCmpQuadroSel }}"><sc-for list="{{ cmpQuadroOps }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                <button type="button" class="lmo-btn" sc-camel-on-click="{{ cmpUsarQuadro }}">Usar esta categoria</button>
+                <small class="lmo-nota">Categoria da Repactuação: a repactuada vai para a última coluna de repactuação e a planilha da contratação, para a coluna da contratação. Da Planilha de custos, vai para o planejamento; da Análise de proposta, para a contratação.</small>
+              </div>
+              </sc-if>
               <div class="lmo-campos"><sc-for list="{{ cmpInfo }}" as="c" hint-placeholder-count="4"><label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" sc-camel-on-input="{{ c.on }}"></label></sc-for></div>
               <sc-if value="{{ cmpOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ cmpOk }}</p></sc-if>
               <sc-if value="{{ cmpErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ cmpErro }}</p></sc-if>
@@ -12037,6 +12046,7 @@ class Component extends DCLogic {
     const item = { nome, em: new Date().toISOString(), d: moSnap(d), res: { total: r.total, emp: Math.max(0, moNum(U.dUsado ? U.dUsado.emp_posto : d.emp_posto) * moNum(U.dUsado ? U.dUsado.postos : d.postos)), empPosto: U.dUsado ? U.dUsado.emp_posto : d.emp_posto, postos: U.dUsado ? U.dUsado.postos : d.postos,
       mensal: r.mensal, global: r.global, meses: d.meses || "12", mods: Object.fromEntries(MO_MODS.map(([k]) => [k, r[k]])), ofertado: r.vigente || 0, estimado: moNum(d.pr_estimado), falhas: [c("alta"), c("media"), c("baixa")],
       exeq: d.exeq ? d.exeq.conclusao : "", regime: d.regime || "", reforma: d.reforma || "" } };
+    if (d.ant && typeof d.ant === "object") item.ant = { ...moSnap(d.ant), _origem: d.ant._origem || "", _em: d.ant._em || "" }; // planilha da contratação (Comparar planilhas)
     const lista = this.moListaLer(mo.modo);
     // atualiza só o item que foi aberto do quadro para edição (e mantido com o mesmo nome); nos demais casos inclui um novo
     const iEd = mo.listaEditId ? lista.findIndex((x) => x.id === mo.listaEditId) : -1, atualiza = iEd >= 0 && lista[iEd].nome.replace(/ \(\d+\)$/, "") === nome;
@@ -12052,7 +12062,7 @@ class Component extends DCLogic {
   moListaAbrir(i) {
     const modo = this.state.mo.modo, l = this.moListaLer(modo), it = l[i]; if (!it) return;
     if (!it.id) { it.id = Math.random().toString(36).slice(2, 10); this.moListaGravar(modo, l); }
-    const d = { ...MO_PADRAO, ...it.d };
+    const d = { ...MO_PADRAO, ...it.d, ...(it.ant ? { ant: it.ant } : {}) };
     try { localStorage.setItem("lv-mo-" + modo, JSON.stringify(d)); } catch (e) {}
     this.setState((x) => ({ mo: { ...x.mo, d, erro: "", listaEditId: it.id, ok: "✓ " + it.nome + " aberta para edição. Depois de alterar, inclua de novo no quadro para atualizar." } }));
     try { window.scrollTo({ top: document.querySelector(".lmo").offsetTop - 80, behavior: "smooth" }); } catch (e) {}
@@ -12099,6 +12109,30 @@ class Component extends DCLogic {
     let dAnt = null; try { if (v.bk != null) { localStorage.setItem("lv-mo-" + v.modo, v.bk); dAnt = { ...MO_PADRAO, ...JSON.parse(v.bk) }; } else { localStorage.removeItem("lv-mo-" + v.modo); dAnt = { ...MO_PADRAO }; } } catch (e) {}
     this.setState((x) => ({ mo: { ...x.mo, voltaCmp: null, ...(dAnt ? { d: dAnt } : {}) }, cmp: { ...x.cmp, erro: "", ok: trazer ? "✓ \u201c" + v.nome + "\u201d atualizada com a planilha preenchida." : "" } }));
     this.calcFerramenta("comparar");
+  }
+  // categorias guardadas nos quadros da Repactuação, da Planilha de custos e da Análise de proposta
+  cmpQuadros() {
+    const fontes = [["repactuacao", "Repactuação"], ["planejamento", "Planilha de custos"], ["proposta", "Análise de proposta"]], out = [];
+    fontes.forEach(([modo, rot]) => this.moListaLer(modo).forEach((it, i) => { if (it && it.d) out.push({ id: modo + ":" + i, modo, rot, it }); }));
+    return out;
+  }
+  cmpUsarQuadro() {
+    const q = this.cmpQuadros(), sel = (this.state.cmp && this.state.cmp.quadroSel) || (q[0] && q[0].id), x = q.find((y) => y.id === sel);
+    if (!x) { this.setState((s) => ({ cmp: { ...s.cmp, ok: "", erro: "Escolha uma categoria do quadro." } })); return; }
+    const it = x.it, d = moSnap({ ...MO_PADRAO, ...moDerivado(it.d) }), cols0 = this.state.cmp.cols || [];
+    const alvo = (tipo, ultimo) => { const l = cols0.filter((c) => c.tipo === tipo); return l.length ? (ultimo ? l[l.length - 1] : l[0]).id : null; };
+    const troca = {}; let semAnt = false;
+    if (x.modo === "repactuacao") {
+      troca[alvo("repactuacao", true) || ""] = d;
+      // categorias incluídas antes de o quadro guardar a contratação: usa a do rascunho da Repactuação, se for a mesma categoria
+      const rasc = this.cmpLerRascunho("repactuacao"), ant = it.ant || (rasc && rasc.ant && String(rasc.categoria || "").trim() && rasc.categoria === it.d.categoria ? rasc.ant : null);
+      if (ant) troca[alvo("contratacao") || ""] = moSnap({ ...MO_PADRAO, ...moDerivado(ant) }); else semAnt = true;
+    } else troca[alvo(x.modo === "planejamento" ? "planejamento" : "contratacao") || ""] = d;
+    delete troca[""];
+    const info0 = this.state.cmp.info || {}, dd = it.d;
+    const info = { ...info0, categoria: it.nome, contrato: dd.rp_contrato || info0.contrato || "", contratante: dd.rp_orgao || info0.contratante || "", contratada: dd.rp_empresa || dd.pr_licitante || info0.contratada || "" };
+    this.cmpGravar({ ...this.state.cmp, info, cols: cols0.map((c) => (troca[c.id] ? { ...c, d: troca[c.id] } : c)) });
+    this.setState((s) => ({ cmp: { ...s.cmp, erro: "", ok: "✓ “" + it.nome + "” (" + x.rot + ") trazida para a comparação." + (semAnt ? " A planilha da contratação desta categoria não foi guardada no quadro (categorias incluídas antes desta versão): preencha a coluna da contratação ou abra a categoria na Repactuação, registre a planilha da contratação e inclua de novo no quadro." : "") } }));
   }
   cmpRecomecar() { try { localStorage.removeItem("lv-cmp"); } catch (e) {} this.setState({ cmp: { cols: [], info: {}, ok: "", erro: "" } }, () => this.cmpIniciar()); }
   // dados da comparação para a tela e o relatório
@@ -13250,6 +13284,9 @@ class Component extends DCLogic {
       cmpAdd: () => this.moCmpAdd(), cmpPdf: () => this.moCmpRelatorio("pdf"), cmpExcel: () => this.moCmpRelatorio("xlsx"), cmpRecomecar: () => this.cmpRecomecar(),
       cmpEsq: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: -510 }); } catch (e) {} }, cmpDir: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: 510 }); } catch (e) {} },
       cmpOk: (s.cmp && s.cmp.ok) || "", cmpErro: (s.cmp && s.cmp.erro) || "",
+      ...(() => { const q = this.cmpQuadros(), sel = (s.cmp && s.cmp.quadroSel) || (q[0] && q[0].id) || "";
+        return { cmpTemQuadro: q.length > 0, cmpQuadroOps: q.map((x) => ({ id: x.id, nome: x.rot + " · " + x.it.nome + (x.modo === "repactuacao" ? (x.it.ant ? " (contratação e repactuada)" : " (repactuada)") : ""), sel: x.id === sel })),
+          onCmpQuadroSel: (e) => { const v = e.target.value; this.setState((z) => ({ cmp: { ...z.cmp, quadroSel: v } })); }, cmpUsarQuadro: () => this.cmpUsarQuadro() }; })(),
       cmpInfo: [["contrato", "Contrato"], ["contratante", "Contratante"], ["contratada", "Contratada"], ["categoria", "Categoria"]].map(([k, rot]) => ({ rot, valor: ((s.cmp && s.cmp.info) || {})[k] || "", on: (e) => { const v = e.target.value; const c = this.state.cmp; this.cmpGravar({ ...c, info: { ...(c.info || {}), [k]: v } }); } })),
       ...(s.calcAba === "cmp" ? (() => { const { cols, brl } = this.moCmpDados();
         const pctX = (v) => ((Number(v) || 0) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
