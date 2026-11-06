@@ -3444,15 +3444,23 @@
                   </div>
                 </div>
                 <div class="{{ moPasso2.cls }}">
-                  <div class="lmo-passo-cab"><span class="lmo-passo-n">{{ moPasso2.n }}</span><div><b>Tributação</b><small>{{ moPasso2.sub }}</small></div></div>
+                  <div class="lmo-passo-cab"><span class="lmo-passo-n">{{ moPasso2.n }}</span><div><b>Dados para composição dos custos referentes à mão de obra</b><small>{{ moPasso2.sub }}</small></div></div>
+                  <div class="lmo-campos">
+                    <sc-for list="{{ moCamposIni }}" as="c" hint-placeholder-count="8">
+                      <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" data-mo-campo="{{ c.k }}" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
+                    </sc-for>
+                  </div>
+                </div>
+                <div class="{{ moPasso3.cls }}">
+                  <div class="lmo-passo-cab"><span class="lmo-passo-n">{{ moPasso3.n }}</span><div><b>Tributação</b><small>{{ moPasso3.sub }}</small></div></div>
                   <p class="lmo-passo-rot">Os tributos serão calculados antes ou depois da reforma tributária?</p>
                   <div class="lmo-modos" role="group" aria-label="Momento da tributação"><sc-for list="{{ moReformaOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
                   <p class="lmo-passo-rot">Regime de tributação da empresa</p>
                   <div class="lmo-modos" role="group" aria-label="Regime de tributação"><sc-for list="{{ moRegimes }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
                   <p class="lmo-passo-dica">Antes: PIS, COFINS e ISS. Depois: CBS e IBS (EC 132/2023 e LC 214/2025), com a transição de 2026 a 2033. Detalhes, receita bruta do Simples e transição ficam no bloco Tributação.</p>
                 </div>
-                <div class="{{ moPasso3.cls }}">
-                  <div class="lmo-passo-cab"><span class="lmo-passo-n">{{ moPasso3.n }}</span><div><b>Arquivos</b><small>{{ moPasso3.sub }}</small></div></div>
+                <div class="{{ moPasso4.cls }}">
+                  <div class="lmo-passo-cab"><span class="lmo-passo-n">{{ moPasso4.n }}</span><div><b>Arquivos</b><small>{{ moPasso4.sub }}</small></div></div>
                   <sc-if value="{{ moTemPlanArq }}" hint-placeholder-val="{{ false }}">
                   <div class="lmo-cct">
                     <div><b>{{ moPlanRot }}</b><small>{{ moPlanSub }}</small></div>
@@ -3465,7 +3473,7 @@
                   </div>
                 </div>
                 <div class="lmo-passo lmo-passo-acao">
-                  <div class="lmo-passo-cab"><span class="lmo-passo-n">4</span><div><b>Pedir a análise</b><small>{{ moPasso4Sub }}</small></div></div>
+                  <div class="lmo-passo-cab"><span class="lmo-passo-n">5</span><div><b>Pedir a análise</b><small>{{ moPasso5Sub }}</small></div></div>
                   <sc-if value="{{ moCotaTxt }}" hint-placeholder-val="{{ false }}"><p class="{{ moCotaCls }}">{{ moCotaTxt }}</p></sc-if>
                   <div class="lmo-agente">
                     <sc-if value="{{ moPro }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moAgente }}">{{ moBotaoAgente }}</button></sc-if>
@@ -3487,21 +3495,13 @@
                 </div>
                 <sc-if value="{{ moTemDepois }}" hint-placeholder-val="{{ true }}">
                 <div class="lmo-passo lmo-passo-depois">
-                  <div class="lmo-passo-cab"><span class="lmo-passo-n">5</span><div><b>Depois da análise, complete você mesmo</b><small>Pontos que dependem do contrato ou de decisão do órgão</small></div></div>
+                  <div class="lmo-passo-cab"><span class="lmo-passo-n">6</span><div><b>Depois da análise, complete você mesmo</b><small>Pontos que dependem do contrato ou de decisão do órgão</small></div></div>
                       <div class="lmo-depois"><sc-for list="{{ moDepois }}" as="x" hint-placeholder-count="4"><button type="button" class="lve-voltar" sc-camel-on-click="{{ x.ir }}">{{ x.t }} →</button></sc-for></div>
                 </div>
                 </sc-if>
               </div>
             </section>
 
-            <section class="lmo-bloco">
-              <h2 class="lmo-h2">Dados para composição dos custos referentes à mão de obra</h2>
-              <div class="lmo-campos">
-                <sc-for list="{{ moCamposIni }}" as="c" hint-placeholder-count="8">
-                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" data-mo-campo="{{ c.k }}" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
-                </sc-for>
-              </div>
-            </section>
 
 
 
@@ -10984,6 +10984,17 @@ class Component extends DCLogic {
     } catch (e) { console.error(e); this.setState((x) => ({ mo: { ...x.mo, erro: "Não foi possível gerar a nota técnica. Tente de novo." } })); }
   }
 
+  // dados da contratação que o assinante preenche obrigatoriamente (o agente não os substitui)
+  moCamposObrig(d, modo) {
+    const rep = modo === "repactuacao", prop = modo === "proposta", C = (k, rot, ph) => ({ k, rot, ph: ph || "" });
+    return [C("tipo_servico", "Tipo de serviço", "Ex.: Limpeza"), C("categoria", "Categoria profissional", "Ex.: Servente"), C("cbo", "CBO", "Ex.: 5143-20"),
+        C("salario", rep ? "Novo salário-base (convenção vigente)" : "Salário-base da categoria (R$)", "Ex.: 1.850,00"), C("data_base", "Data-base da categoria", "dd/mm/aaaa"),
+        C("ano_cct", "Ano do acordo, convenção ou dissídio", "Ex.: 2026"),
+        C("data_proposta", "Data de apresentação da proposta", "dd/mm/aaaa"), C("meses", "Nº de meses de execução contratual", "12")]
+        .concat(rep ? [C("vigente", "Preço vigente por empregado (antes da repactuação, R$)", "Ex.: 4.320,15")] : [])
+        .concat(prop ? [C("pr_licitante", "Licitante", "Razão social"), C("vigente", "Preço ofertado por empregado (R$)", "Ex.: 4.150,00"), C("pr_estimado", "Valor estimado pela Administração por empregado (R$)", "Ex.: 4.600,00"), C("pr_processo", "Processo ou pregão", "Ex.: Pregão Eletrônico 10/2026")] : []);
+  }
+  moFaltaObrig(d, modo) { return this.moCamposObrig(d, modo).filter((c) => !String(d[c.k] == null ? "" : d[c.k]).trim()); }
   async moAgente() {
     const mo = this.state.mo, d = mo.d;
     const erro = (m) => this.setState((x) => ({ mo: { ...x.mo, agente: false, erro: m } }));
@@ -10997,6 +11008,8 @@ class Component extends DCLogic {
       try { const el = document.querySelector('[data-mo-campo="municipio"]'); el.scrollIntoView({ behavior: "smooth", block: "center" }); el.focus(); } catch (e) {}
       return;
     }
+    { const f = this.moFaltaObrig(d, mo.modo); if (f.length) { erro("Antes da análise, preencha os dados para composição dos custos (passo 2): " + f.map((c) => c.rot.toLowerCase()).join(", ") + ".");
+      try { const el = document.querySelector('[data-mo-campo="' + f[0].k + '"]'); el.scrollIntoView({ behavior: "smooth", block: "center" }); el.focus(); } catch (e) {} return; } }
     if (!d.reforma || !d.regime) {
       erro("Antes da análise, escolha no passo 1 " + (!d.reforma && !d.regime ? "se os tributos devem ser calculados antes ou depois da reforma tributária e o regime de tributação da empresa." : !d.reforma ? "se os tributos devem ser calculados antes ou depois da reforma tributária." : "o regime de tributação da empresa (Lucro Real, Presumido ou Simples Nacional)."));
       try { document.getElementById("lmo-agente").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {}
@@ -11016,8 +11029,14 @@ class Component extends DCLogic {
       const d2 = { ...x.mo.d, fontes: { ...(x.mo.d.fontes || {}) }, falhas: comPlan ? ((data && data.falhas) || []) : (x.mo.d.falhas || []), falhas_aceite: comPlan ? "" : (x.mo.d.falhas_aceite || "") };
       if (x.mo.modo === "proposta") { d2.exeq = (data && data.exequibilidade) || null; d2.diligencias = (data && data.diligencias) || []; }
       const anteriores = campos.filter((c) => c.anterior != null);
+      const obrig = new Set(this.moCamposObrig(x.mo.d, x.mo.modo).map((c) => c.k)), mantidos = [];
       campos.forEach((c) => {
         const num = /^-?\d+(\.\d+)?$/.test(String(c.valor).trim());
+        if (obrig.has(c.campo) && String(x.mo.d[c.campo] == null ? "" : x.mo.d[c.campo]).trim()) {
+          const novo = num ? String(c.valor).trim().replace(".", ",") : String(c.valor);
+          if (moNum(novo) !== moNum(x.mo.d[c.campo]) && novo.trim() !== String(x.mo.d[c.campo]).trim()) mantidos.push(c.campo + ": o agente encontrou \u201c" + novo + "\u201d" + (c.fonte ? " (" + c.fonte + ")" : "") + "; mantido o valor informado por você, \u201c" + x.mo.d[c.campo] + "\u201d.");
+          return;
+        }
         d2[c.campo] = num ? String(c.valor).trim().replace(".", ",") : c.valor;
         d2.fontes[c.campo] = c.fonte;
       });
@@ -11033,7 +11052,7 @@ class Component extends DCLogic {
         d2.fontes.iss = "ISS de " + iss.municipio + "/" + iss.uf + (iss.item ? " (item " + iss.item + " da LC 116/2003)" : "") + ": " + (iss.fonte || "fonte oficial do município");
       } else if (iss) issPedir = { municipio: iss.municipio, uf: iss.uf, item: iss.item || "", aliquota: "", fonte: "" };
       try { localStorage.setItem("lv-mo-" + x.mo.modo, JSON.stringify(d2)); } catch (e) {}
-      return { mo: { ...x.mo, d: d2, agente: false, issPedir, ok: campos.length ? "✓ O agente preencheu " + campos.length + " campo(s). Confira cada valor e a fonte indicada na linha." : "O agente não encontrou valores para preencher.", obs: (data && data.observacoes) || [] } };
+      return { mo: { ...x.mo, d: d2, agente: false, issPedir, ok: campos.length ? "✓ O agente preencheu " + campos.length + " campo(s). Confira cada valor e a fonte indicada na linha." : "O agente não encontrou valores para preencher.", obs: ((data && data.observacoes) || []).concat(mantidos) } };
     });
   }
   moSet = (k) => (e) => {
@@ -11360,11 +11379,13 @@ class Component extends DCLogic {
       ...(() => { const okLocal = !!(String(d.municipio || "").trim() && /^[A-Za-z]{2}$/.test(String(d.uf || "").trim())) && (!rep || !!String(d.ano_exec || "").trim()), okTrib = !!(d.reforma && d.regime);
         const temPlan = rep || prop, okPlan = !!(d.plan_arquivo || this._moPlanTexto), okCct = !!d.cct_arquivo, okArq = okCct && (!temPlan || okPlan);
         const P = (n, ok, sub, falta) => ({ n: ok ? "✓" : String(n), cls: "lmo-passo " + (ok ? "ok" : "pend"), sub: ok ? sub : falta });
-        const falta = [!okLocal && "local e período", !okTrib && "tributação", !okArq && "arquivos"].filter(Boolean);
+        const fDados = this.moFaltaObrig(d, mo.modo), okDados = !fDados.length;
+        const falta = [!okLocal && "local e período", !okDados && "dados para composição dos custos", !okTrib && "tributação", !okArq && "arquivos"].filter(Boolean);
         return { moPasso1: P(1, okLocal, [d.municipio, d.uf].filter(Boolean).join("/") + (rep ? " · " + (d.ano_exec || "") + "º ano de execução" : ""), rep ? "Município e UF (para o ISS) e o ano de execução após a repactuação" : "Município e UF onde o serviço é prestado (para o ISS)"),
-          moPasso2: P(2, okTrib, (d.reforma === "depois" ? "Depois da reforma" : "Antes da reforma") + " · " + ({ real: "Lucro Real", presumido: "Lucro Presumido", simples: "Simples Nacional" }[d.regime] || ""), "Escolha o momento da reforma e o regime da empresa"),
-          moPasso3: P(3, okArq, temPlan ? "Planilha e convenção enviadas" : "Convenção enviada", temPlan ? (prop ? "Planilha da proposta e convenção coletiva" : "Planilha da contratação e nova convenção coletiva") : "Convenção coletiva da categoria"),
-          moPasso4Sub: falta.length ? "Antes, complete: " + falta.join(", ") + "." : "Tudo pronto: o agente analisa e preenche a planilha. Você confere cada valor." }; })(),
+          moPasso2: P(2, okDados, "Preenchidos por você (o agente não os substitui)", "Preenchimento obrigatório pelo assinante · falta(m) " + fDados.length + ": " + fDados.slice(0, 4).map((c) => c.rot.toLowerCase()).join(", ") + (fDados.length > 4 ? "…" : "")),
+          moPasso3: P(3, okTrib, (d.reforma === "depois" ? "Depois da reforma" : "Antes da reforma") + " · " + ({ real: "Lucro Real", presumido: "Lucro Presumido", simples: "Simples Nacional" }[d.regime] || ""), "Escolha o momento da reforma e o regime da empresa"),
+          moPasso4: P(4, okArq, temPlan ? "Planilha e convenção enviadas" : "Convenção enviada", temPlan ? (prop ? "Planilha da proposta e convenção coletiva" : "Planilha da contratação e nova convenção coletiva") : "Convenção coletiva da categoria"),
+          moPasso5Sub: falta.length ? "Antes, complete: " + falta.join(", ") + "." : "Tudo pronto: o agente analisa e preenche a planilha. Você confere cada valor." }; })(),
       moPreCampos: [campo("municipio", "Município onde o serviço será prestado", "Ex.: Maricá"), campo("uf", "UF", "RJ")].concat(rep ? [campo("ano_exec", "Ano de execução após a repactuação", "Ex.: 2")] : []),
       moTemDepois: rep || prop,
       moDepois: (rep ? [["Datas da repactuação e efeitos financeiros", "lmo-efeitos"], ["Reajuste dos insumos por índice", "lmo-reaj"], ["Garantia trabalhista (conta vinculada ou fato gerador)", "lmo-gt"]] : [["Garantia trabalhista (conta vinculada ou fato gerador)", "lmo-gt"]])
@@ -11635,12 +11656,7 @@ class Component extends DCLogic {
       moIntro: prop ? "Use no julgamento, para analisar a planilha de custos apresentada por uma licitante: o agente reproduz a proposta, confere item por item com a convenção, a lei e os cadernos técnicos, aponta as falhas e os custos abaixo do mínimo, conclui sobre a exequibilidade e monta as perguntas da diligência (Lei 14.133/2021, art. 59; IN 05/2017, Anexo VII-A, itens 7 e 9)."
         : rep ? "Use na repactuação, quando o novo acordo, convenção ou dissídio coletivo der aumento à categoria. Você preenche os custos e percentuais da planilha repactuada; as adequações dos custos não renováveis são feitas automaticamente."
         : "Use na fase de planejamento para formar o custo do profissional que será contratado. Informe os dados iniciais e confira os percentuais: os valores de partida seguem a legislação e o modelo da IN.",
-      moCamposIni: [campo("tipo_servico", "Tipo de serviço", "Ex.: Limpeza"), campo("categoria", "Categoria profissional", "Ex.: Servente"), campo("cbo", "CBO", "Ex.: 5143-20"),
-        campo("salario", rep ? "Novo salário-base (convenção vigente)" : "Salário-base da categoria (R$)", "Ex.: 1.850,00"), campo("data_base", "Data-base da categoria", "dd/mm/aaaa"),
-        campo("ano_cct", "Ano do acordo, convenção ou dissídio", "Ex.: 2026"),
-        campo("data_proposta", "Data de apresentação da proposta", "dd/mm/aaaa"), campo("meses", "Nº de meses de execução contratual", "12")]
-        .concat(rep ? [campo("vigente", "Preço vigente por empregado (antes da repactuação, R$)", "Ex.: 4.320,15")] : [])
-        .concat(prop ? [campo("pr_licitante", "Licitante", "Razão social"), campo("vigente", "Preço ofertado por empregado (R$)", "Ex.: 4.150,00"), campo("pr_estimado", "Valor estimado pela Administração por empregado (R$)", "Ex.: 4.600,00"), campo("pr_processo", "Processo ou pregão", "Ex.: Pregão Eletrônico 10/2026")] : []),
+      moCamposIni: this.moCamposObrig(d, mo.modo).map((c) => campo(c.k, c.rot + " *", c.ph)),
       moCct: d.cct_nome || "", moSemCct: !d.cct_nome, moCctRot: rep ? "Nova convenção coletiva (obrigatória)" : prop ? "Convenção coletiva da categoria (obrigatória)" : "Convenção coletiva",
       moIssPedir: !!mo.issPedir, moIssLocal: mo.issPedir ? mo.issPedir.municipio + "/" + mo.issPedir.uf + (mo.issPedir.item ? " (item " + mo.issPedir.item + " da LC 116/2003)" : "") : "",
       moIssAliq: mo.issPedir ? mo.issPedir.aliquota : "", moIssFonte: mo.issPedir ? mo.issPedir.fonte : "",
