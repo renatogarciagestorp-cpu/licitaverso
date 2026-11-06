@@ -234,6 +234,80 @@ def mesclar_itens(itens_agente, pp):
     return out
 
 
+def conferir_regras(docj, R):
+    """Conferência por regras, sem custo de API. O texto fixo da AGU já está conforme; aqui se confere só o que o agente
+    preencheu, contra as respostas do requisitante e os limites da Lei 14.133/2021. Mesmo formato da conferência do analisador."""
+    res = []
+    def achado(grav, titulo, constat, corr):
+        res.append({"item": titulo, "titulo": titulo, "gravidade": grav, "resultado": "nao_conforme", "constatacao": constat, "correcao": corr})
+    pp = itens_da_pesquisa(R)
+    itens = docj.get("itens") or []
+    if not itens:
+        achado("alta", "Itens da contratação", "A tabela do item 1.1 está vazia.", "Liste cada item com especificação, unidade e quantidade.")
+    if pp and len(itens) != len(pp):
+        achado("media", "Itens da pesquisa de preços", f"A pesquisa tem {len(pp)} itens e o TR tem {len(itens)}.",
+               f"Redija exatamente {len(pp)} especificações, uma por item da pesquisa, na mesma ordem.")
+    sig = (docj.get("estimativa") or {}).get("sigiloso")
+    for i, it in enumerate(itens, 1):
+        esp = str(it.get("especificacao") or "")
+        if len(esp) < 25:
+            achado("alta", f"Especificação do item {i}", "Especificação curta demais para julgar a proposta.", "Descreva as características mínimas objetivas do bem.")
+        if not pp and not sig and it.get("valor_unitario") in (None, ""):
+            achado("media", f"Valor do item {i}", "Item sem valor unitário estimado.", "Informe o valor unitário da pesquisa de preços.")
+        if re.search(r"\bou similar\b", esp, re.I):
+            achado("media", f"Especificação do item {i}", "A expressão \"ou similar\" não dá critério objetivo de aceitação.",
+                   "Troque por características mínimas ou, se houver marca de referência, por \"ou equivalente, ou de melhor qualidade\" (art. 41, I).")
+        if re.search(r"\bmarca\b", esp, re.I) and not (docj.get("marcas") or "").strip():
+            achado("media", f"Marca no item {i}", "A especificação cita marca sem a justificativa do art. 41, I.", "Retire a marca ou justifique-a em marcas.")
+    # decisões do requisitante
+    sel = docj.get("selecao") or {}
+    if R.get("selecao") and sel.get("tipo") == "licitacao":
+        if sel.get("modalidade") and R["selecao"].split()[0].upper() not in sel["modalidade"].upper():
+            achado("alta", "Forma de seleção", f"O requisitante escolheu {R['selecao']} e o TR traz {sel.get('modalidade')}.", "Use a modalidade escolhida pelo requisitante.")
+    if R.get("criterio") and sel.get("criterio") and R["criterio"].upper() != sel["criterio"].upper():
+        achado("alta", "Critério de julgamento", f"O requisitante escolheu {R['criterio']} e o TR traz {sel.get('criterio')}.", "Use o critério escolhido pelo requisitante.")
+    am = docj.get("amostra") or {}
+    if (R.get("amostra") or "") == "Não" and am.get("exigir"):
+        achado("media", "Amostra", "O requisitante não pediu amostra e o TR exige.", "Retire a exigência de amostra.")
+    if (R.get("amostra") or "") == "Sim" and not am.get("exigir"):
+        achado("media", "Amostra", "O requisitante pediu amostra e o TR não exige.", "Inclua a amostra com itens, prazo, local e aspectos avaliados.")
+    if am.get("exigir") and not am.get("aspectos"):
+        achado("media", "Amostra", "Amostra exigida sem os aspectos e padrões mínimos que serão avaliados.", "Liste os aspectos avaliados por item (art. 41, II).")
+    ent = docj.get("entrega") or {}
+    if not ent.get("parcelada") and not ent.get("prazo_dias"):
+        achado("media", "Prazo de entrega", "O prazo de entrega não foi definido.", "Defina o prazo de entrega em dias e o termo inicial.")
+    # limites da lei
+    mul = docj.get("multas") or {}
+    for k in ("comp_eh", "comp_c", "comp_b", "comp_d", "comp_a"):
+        for v in mul.get(k) or []:
+            for n in re.findall(r"(\d+(?:[.,]\d+)?)\s*%", str(v)):
+                x = float(n.replace(",", "."))
+                if x < 0.5 or x > 30:
+                    achado("alta", "Multa compensatória", f"Percentual de {n}% fora do intervalo de 0,5% a 30% (art. 156, § 3º).", "Ajuste o percentual para dentro do intervalo legal.")
+    gc = docj.get("garantia_contratacao") or {}
+    if gc.get("exigir") and gc.get("percentual") and float(gc["percentual"]) > 5 and not re.search(r"complexidade|risco|art\. ?98", str(gc.get("motivo") or ""), re.I):
+        achado("media", "Garantia da contratação", f"Garantia de {gc['percentual']}% acima de 5% sem a justificativa do art. 98.", "Reduza a 5% ou justifique a elevação até 10%.")
+    if gc.get("exigir") and gc.get("percentual") and float(gc["percentual"]) > 10:
+        achado("alta", "Garantia da contratação", f"Garantia de {gc['percentual']}% acima do limite de 10% (art. 98).", "Reduza para no máximo 10%.")
+    sub = docj.get("subcontratacao") or {}
+    if sub.get("permitir") and not sub.get("vedadas"):
+        achado("media", "Subcontratação", "Subcontratação permitida sem indicar a parcela principal vedada.", "Indique a parcela que o contratado executa diretamente (art. 122).")
+    hab = docj.get("habilitacao") or {}
+    tec = json.dumps(hab, ensure_ascii=False)
+    for n in re.findall(r"(\d{2,3})\s*%\s*(?:\(|do quantitativo|das quantidades|da quantidade)", tec):
+        if int(n) > 50:
+            achado("alta", "Qualificação técnica", f"Atestado exigindo {n}% do quantitativo, acima do limite de 50% (art. 67, § 2º).", "Limite a exigência a 50% das parcelas de maior relevância.")
+    est = docj.get("estimativa") or {}
+    if not pp and not sig and est.get("valor_total") and itens:
+        soma = sum(float(it.get("quantidade") or 0) * float(it.get("valor_unitario") or 0) for it in itens)
+        if soma and abs(soma - float(est["valor_total"])) > max(1.0, 0.005 * soma):
+            achado("alta", "Estimativa do valor", f"O total ({brl(est['valor_total'])}) não bate com a soma dos itens ({brl(soma)}).", "Corrija o valor total para a soma dos itens.")
+    v = docj.get("vigencia") or {}
+    if not (v.get("prazo") or "").strip():
+        achado("media", "Vigência", "O prazo de vigência não foi definido.", "Defina o prazo de vigência e o termo inicial (arts. 105 e 106).")
+    return res
+
+
 def gerar(docj, respostas, saida, logo=None):
     from docx import Document
     from docx.oxml.ns import qn

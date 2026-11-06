@@ -774,7 +774,13 @@ def main():
                 "--saida", str(conf), "--fonte", "minuta elaborada pelo agente"]
         for o in DOCS[a.doc]["objetos"]:
             args += ["--objeto", o]
-        r = subprocess.run(args, capture_output=True, text=True, timeout=2700)
+        regras = getattr(M, "conferir_regras", None) if M else None
+        if regras:  # modelo com texto fixo (AGU): conferência por regras, sem custo; só os achados vão à correção paga
+            conf.write_text(json.dumps({"resultados": regras(docj, respostas), "_execucao": {"custo_usd": 0, "metodo": "regras"}}, ensure_ascii=False, indent=1), encoding="utf-8")
+            r = subprocess.CompletedProcess(args, 0)
+            print(f"conferência por regras: {len(json.loads(conf.read_text(encoding='utf-8'))['resultados'])} apontamento(s)")
+        else:
+            r = subprocess.run(args, capture_output=True, text=True, timeout=2700)
         if r.returncode == 0 and conf.exists():
             conferencia = json.loads(conf.read_text(encoding="utf-8"))
             custo_usd += float((conferencia.get("_execucao") or {}).get("custo_usd") or 0)
