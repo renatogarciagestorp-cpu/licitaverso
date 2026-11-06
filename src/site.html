@@ -1216,7 +1216,7 @@
   @media (max-width: 900px) { .lmo-retro { grid-template-columns: 80px 1fr 110px; } .lmo-retro > span:nth-child(2), .lmo-retro > span:nth-child(4) { display: none; } .lmo-lin4 { grid-template-columns: 1fr 110px; } .lmo-lin4 > span:nth-child(2) { display: none; } }
   .lmo-cmp-linha { display: flex; gap: 14px; align-items: flex-start; padding: 12px; min-width: max-content; }
   .lmo-cmpcol { width: 600px; flex: none; display: grid; gap: 12px; } .lmo-cmpcol .lmo-bloco { margin: 0; }
-  .lmo-cmpcol-cab { position: sticky; top: 0; z-index: 3; background: #0A1F2A; color: #fff; border-radius: 14px; padding: 12px 14px; display: grid; gap: 6px; height: 158px; box-sizing: border-box; align-content: start; }
+  .lmo-cmpcol-cab { background: #0A1F2A; color: #fff; border-radius: 14px; padding: 12px 14px; display: grid; gap: 6px; height: 158px; box-sizing: border-box; align-content: start; }
   .lmo-cmpcol.contr .lmo-cmpcol-cab { background: #0F3A44; }
   .lmo-cmpcol-cab small { color: #9FE3C5; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
   .lmo-cmpcol-cab input { font: inherit; font-weight: 800; font-size: 15px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.08); color: #fff; border-radius: 8px; padding: 6px 9px; }
@@ -1225,7 +1225,10 @@
   .lmo-cmp-dif { font-style: normal; color: #FFD27A; font-size: 12.5px; font-weight: 700; }
   .lmo-cmpcol [data-mudou="true"] { background: #FFF6DE !important; } .lmo-cmpcol label[data-mudou="true"] { border-radius: 8px; padding: 4px; }
   .lmo-cmp-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; } .lmo-cmp-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
-  .lmo-cmp-scroll { overflow-x: auto; border: 1px solid #E1E8E6; border-radius: 12px; margin-top: 12px; max-height: 80vh; overflow-y: auto; background: #F3F7F5; }
+  .lmo-cmpp, .lmo-cmpp > *, .lmo-cmpp .lmo-bloco { min-width: 0; max-width: 100%; }
+  .lmo-cmp-scroll { width: 100%; max-width: 100%; box-sizing: border-box; overflow-x: auto; overflow-y: hidden; border: 1px solid #E1E8E6; border-radius: 12px; margin-top: 12px; background: #F3F7F5; scroll-behavior: smooth; }
+  .lmo-cmp-nav { position: sticky; bottom: 12px; z-index: 5; display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
+  .lmo-cmp-nav button { box-shadow: 0 8px 24px rgba(11,31,42,.18); background: #0A1F2A !important; color: #fff !important; border-color: #0A1F2A !important; }
   .lmo-cmp-grade { display: grid; min-width: max-content; font-size: 13px; }
   .lmo-cmp-grade > div { padding: 6px 10px; border-bottom: 1px solid #EEF2F1; border-right: 1px solid #EEF2F1; background: #fff; min-height: 34px; }
   .lmo-cmp-fixa { position: sticky; left: 0; z-index: 2; background: #F8FAF9 !important; font-weight: 600; color: #22343B; }
@@ -3402,7 +3405,7 @@
               <div class="lmo-cmp-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCmpAdd }}">+ Adicionar outra planilha de repactuação</button><button type="button" class="lmo-btn" sc-camel-on-click="{{ moCmpPdf }}">Relatório da comparação (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCmpExcel }}">Excel</button></div></div>
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Comparação: planilha da contratação × repactuações</h2>
-              <p class="lmo-nota" style="margin-top: 0">Cada coluna é uma planilha completa, com a mesma estrutura e os mesmos cálculos das planilhas da Calculadora (IN 05/2017). Edite os valores de cada uma; o que mudou em relação à planilha anterior fica destacado em amarelo. Para uma nova repactuação, use "Adicionar outra planilha de repactuação": ela entra à direita, como numa linha do tempo. Role para os lados para ver todas.</p>
+              <p class="lmo-nota" style="margin-top: 0">Cada coluna é uma planilha completa, com a mesma estrutura e os mesmos cálculos das planilhas da Calculadora (IN 05/2017). Edite os valores de cada uma; o que mudou em relação à planilha anterior fica destacado em amarelo. Para uma nova repactuação, use "Adicionar outra planilha de repactuação": ela entra à direita, como numa linha do tempo. Para ver as demais, role o quadro para os lados (barra de rolagem, Shift + roda do mouse ou os botões no rodapé).</p>
               <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
               <sc-if value="{{ moErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moErro }}</p></sc-if>
               <div class="lmo-cmp-scroll" role="region" aria-label="Planilhas lado a lado" tabindex="0">
@@ -3448,6 +3451,7 @@
                   </sc-for>
                 </div>
               </div>
+              <div class="lmo-cmp-nav"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCmpEsq }}">← Planilha anterior</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCmpDir }}">Próxima planilha →</button></div>
             </section>
           </div>
           </sc-if>
@@ -11571,7 +11575,8 @@ class Component extends DCLogic {
       moCompInfo: comp ? "Planilha da contratação " + comp.origem + (comp.em ? " em " + new Date(comp.em).toLocaleString("pt-BR") : "") + ", recalculada com as regras da IN: " + brl(comp.rA.total) + " por empregado."
         + (r.vigente && Math.abs(comp.rA.total - r.vigente) > 0.05 ? " O preço vigente informado é " + brl(r.vigente) + ": diferença de " + brl(Math.abs(comp.rA.total - r.vigente)) + ", que pode indicar falha de cálculo na planilha da contratação ou repactuação anterior não registrada." : "") : "",
       moTelaCmp: s.calcAba === "mo" && rep && mo.tela === "comparar", moTelaNormal: !(rep && mo.tela === "comparar"),
-      moCmpAbrir: () => this.moCmpAbrir(), moCmpVoltar: () => this.moCmpVoltar(), moCmpAdd: () => this.moCmpAdd(), moCmpPdf: () => this.moCmpRelatorio("pdf"), moCmpExcel: () => this.moCmpRelatorio("xlsx"),
+      moCmpAbrir: () => this.moCmpAbrir(),
+      moCmpEsq: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: -614 }); } catch (e) {} }, moCmpDir: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: 614 }); } catch (e) {} }, moCmpVoltar: () => this.moCmpVoltar(), moCmpAdd: () => this.moCmpAdd(), moCmpPdf: () => this.moCmpRelatorio("pdf"), moCmpExcel: () => this.moCmpRelatorio("xlsx"),
       ...(rep && mo.tela === "comparar" ? (() => { const { cols, brl } = this.moCmpDados();
         const pctX = (v) => ((Number(v) || 0) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
         const setC = (c) => (k) => (e) => { const x = e && e.target ? e.target.value : e; this.moCmpMudar((cs) => cs.map((y) => (y.id === c.id ? { ...y, d: { ...y.d, [k]: x } } : y))); };
