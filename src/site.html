@@ -1220,6 +1220,9 @@
   .lmo-cmpcol.contr .lmo-cmpcol-cab { background: #0F3A44; }
   .lmo-cmpcol-cab small { color: #9FE3C5; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
   .lmo-cmpcol-cab input { font: inherit; font-weight: 800; font-size: 15px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.08); color: #fff; border-radius: 8px; padding: 6px 9px; }
+  .lmo-cmpcol .lmo-campos, .lmo-cmpcol .lmo-kpis { align-content: start; align-items: start; }
+  .lmo-cmpcol .lmo-passo-rot { margin: 10px 0 4px; } .lmo-cmpcol .lmo-modos { margin-bottom: 4px; }
+  .lmo-cmp-kpis { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .lmo-cmp-dif { font-style: normal; color: #FFD27A; font-size: 12.5px; font-weight: 700; }
   .lmo-cmpcol [data-mudou="true"] { background: #FFF6DE !important; } .lmo-cmpcol label[data-mudou="true"] { border-radius: 8px; padding: 4px; }
   .lmo-cmp-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; } .lmo-cmp-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -3620,7 +3623,7 @@
               <h2 class="lmo-h2">Parâmetros dos benefícios (Submódulo 2.3)</h2>
               <div class="lmo-campos">
                 <sc-for list="{{ moBenef }}" as="c" hint-placeholder-count="5">
-                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
+                  <label class="lmo-campo" data-mudou="{{ c.mudou }}"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
                 </sc-for>
               </div>
             </section>
@@ -3942,7 +3945,7 @@
                       <h2 class="lmo-h2">Dados para composição dos custos referentes à mão de obra</h2>
                       <div class="lmo-campos">
                         <sc-for list="{{ c.P.moCamposCmp }}" as="c" hint-placeholder-count="8">
-                          <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
+                          <label class="lmo-campo" data-mudou="{{ c.mudou }}"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
                         </sc-for>
                       </div>
                     </section>
@@ -4081,7 +4084,7 @@
                       <div class="lmo-modos" role="group" aria-label="Momento da tributação"><sc-for list="{{ c.P.moReformaOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13px; padding: 7px 12px">{{ m.nome }}</button></sc-for></div>
                       <p class="lmo-passo-rot">Regime de tributação da empresa</p>
                       <div class="lmo-modos" role="group" aria-label="Regime de tributação"><sc-for list="{{ c.P.moRegimes }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13px; padding: 7px 12px">{{ m.nome }}</button></sc-for></div>
-                      <sc-if value="{{ c.P.moReformaPendente }}" hint-placeholder-val="{{ true }}"><p class="lve-aviso" style="margin-top: 10px">Escolha, no passo 1 do bloco do agente, se os tributos serão calculados antes ou depois da reforma e o regime de tributação da empresa: o agente usa essas escolhas, e o download depende delas. Até lá, a tela mostra o cálculo com PIS, COFINS e ISS.</p></sc-if>
+                      <sc-if value="{{ c.P.moReformaPendente }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">Escolha acima o momento da reforma e o regime desta planilha.</p></sc-if>
                       <p class="lmo-nota">{{ c.P.moRegimeTxt }}</p>
                       <sc-if value="{{ c.P.moRegSimples }}" hint-placeholder-val="{{ false }}">
                         <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>Receita bruta dos últimos 12 meses (RBT12, R$)</span><input type="text" inputmode="decimal" value="{{ c.P.moRbt12 }}" sc-camel-on-input="{{ c.P.onMoRbt12 }}" placeholder="Ex.: 1.200.000,00"></label></div>
@@ -4133,20 +4136,13 @@
                         </sc-for>
                         <div class="lmo-lin lmo-lin3 lmo-tot" role="row"><span></span><span>Preço total por empregado</span><span class="lmo-val">{{ c.P.moTotal }}</span></div>
                       </div>
-                      <div class="lmo-kpis">
+                      <div class="lmo-campos" style="margin-top: 10px"><sc-for list="{{ c.qtd }}" as="q" hint-placeholder-count="3"><label class="lmo-campo"><span>{{ q.rot }}</span><input type="text" value="{{ q.valor }}" sc-camel-on-input="{{ q.on }}"></label></sc-for></div>
+                      <div class="lmo-kpis lmo-cmp-kpis">
                         <div><small>Fator K</small><b>{{ c.P.moFatorK }}</b></div>
-                        <sc-if value="{{ c.P.moQuadroManual }}" hint-placeholder-val="{{ true }}">
-                        <sc-for list="{{ c.P.moQuadro }}" as="c" hint-placeholder-count="2">
-                          <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
-                        </sc-for>
-                        </sc-if>
                         <div><small>Valor por posto</small><b>{{ c.P.moPosto }}</b></div>
                         <div><small>Valor mensal dos serviços</small><b>{{ c.P.moMensal }}</b></div>
                         <div><small>Valor global (× meses)</small><b>{{ c.P.moGlobal }}</b></div>
-                        <sc-if value="{{ c.P.moTemUnidade }}" hint-placeholder-val="{{ false }}"><div><small>{{ c.P.moUnidadeRot }}</small><b>{{ c.P.moUnidade }}</b></div></sc-if>
                       </div>
-                      <sc-if value="{{ c.P.moLiderTxt }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ c.P.moLiderTxt }}</p></sc-if>
-                      <sc-if value="{{ c.P.moTemDif }}" hint-placeholder-val="{{ false }}"><p class="lmo-dif">{{ c.P.moDifRot }} <b>{{ c.P.moDif }}</b></p></sc-if>
                     </section>
                   </div>
                   </sc-for>
@@ -11797,7 +11793,8 @@ class Component extends DCLogic {
       cmpInfo: [["contrato", "Contrato"], ["contratante", "Contratante"], ["contratada", "Contratada"], ["categoria", "Categoria"]].map(([k, rot]) => ({ rot, valor: ((s.cmp && s.cmp.info) || {})[k] || "", on: (e) => { const v = e.target.value; const c = this.state.cmp; this.cmpGravar({ ...c, info: { ...(c.info || {}), [k]: v } }); } })),
       ...(s.calcAba === "cmp" ? (() => { const { cols, brl } = this.moCmpDados();
         const pctX = (v) => ((Number(v) || 0) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
-        const setC = (c) => (k) => (e) => { const x = e && e.target ? e.target.value : e; this.moCmpMudar((cs) => cs.map((y) => (y.id === c.id ? { ...y, d: { ...y.d, [k]: x } } : y))); };
+        const TODAS = ["gt_tipo", "gt_multa"]; // a garantia trabalhista é do contrato: vale para todas as planilhas da linha do tempo
+        const setC = (c) => (k) => (e) => { const x = e && e.target ? e.target.value : e; this.moCmpMudar((cs) => cs.map((y) => (y.id === c.id || TODAS.includes(k) ? { ...y, d: { ...y.d, [k]: x } } : y))); };
         const mods = cols.map((c) => this.moModulosDe({ ...MO_PADRAO, ...c.d, fontes: {} }, c.r, c.tipo === "repactuacao", setC(c)));
         // planilha completa de cada coluna: as mesmas propriedades das telas Planilha de custos, Análise de proposta e Repactuação
         const memC = (c) => (k, fn) => this.moCmpMudar((cs) => cs.map((y) => { if (y.id !== c.id) return y; const lista = (Array.isArray(y.d["mem_" + k]) ? y.d["mem_" + k] : []).map((l) => ({ ...l })); return { ...y, d: { ...y.d, ["mem_" + k]: fn(lista) || lista } }; }));
@@ -11813,7 +11810,10 @@ class Component extends DCLogic {
             return { ...md, mudouTot: !!(ma && ma.total.valTxt !== md.total.valTxt), linhas: md.linhas.map((l, li) => ({ ...l, mudou: !!(ma && ma.linhas[li] && kL(ma.linhas[li]) !== kL(l)) })) }; }); });
           P.moResumo = (P.moResumo || []).map((l, li) => ({ ...l, mudou: !!(A && A.moResumo[li] && A.moResumo[li].valTxt !== l.valTxt) }));
           P.moBenef = (P.moBenef || []).map((b, bi) => ({ ...b, mudou: !!(A && A.moBenef[bi] && String(A.moBenef[bi].valor) !== String(b.valor)) }));
-          P.moCamposCmp = (P.moPreCampos || []).concat(P.moCamposIni || []).map((x) => ({ ...x, rot: x.rot.replace(/ \*$/, "") }));
+          // mesmos campos em todas as colunas, para que fiquem alinhados
+          const cI = cols[i], CAMPOS = [["municipio", "Município onde o serviço será prestado", "Ex.: Maricá"], ["uf", "UF", "RJ"], ["tipo_servico", "Tipo de serviço", "Ex.: Limpeza"], ["categoria", "Categoria profissional", "Ex.: Servente"],
+            ["cbo", "CBO", "Ex.: 5143-20"], ["data_base", "Data-base da categoria", "dd/mm/aaaa"], ["ano_cct", "Ano do acordo, convenção ou dissídio", "Ex.: 2026"], ["data_proposta", "Data de apresentação da proposta", "dd/mm/aaaa"]];
+          P.moCamposCmp = CAMPOS.map(([k, rot, ph]) => ({ k, rot, ph, valor: cI.d[k] == null ? (MO_PADRAO[k] ?? "") : cI.d[k], on: setC(cI)(k), mudou: !!(i && String(cols[i - 1].d[k] ?? "") !== String(cI.d[k] ?? "")) }));
         });
         const chave = (l) => (l.pctEdit ? String(l.pctK) : l.pctTxt) + "|" + (l.valEdit ? String(l.valK) : l.valTxt);
         const BEN = [["vt_tarifa", "Tarifa do transporte (R$)"], ["vt_viagens", "Viagens por dia"], ["dias", "Dias trabalhados no mês"], ["aux_dia", "Auxílio-alimentação por dia (R$)"], ["aux_part", "Participação no auxílio-alimentação (%)"], ["ref_dia", "Auxílio-refeição por dia (R$)"], ["ref_part", "Participação no auxílio-refeição (%)"]];
