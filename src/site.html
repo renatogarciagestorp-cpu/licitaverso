@@ -3930,7 +3930,7 @@
               <div class="lmo-cmp-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpAdd }}">+ Adicionar planilha de repactuação</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpRecomecar }}">Recomeçar</button><button type="button" class="lmo-btn" sc-camel-on-click="{{ cmpPdf }}">Relatório da comparação (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpExcel }}">Excel</button></div></div>
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Linha do tempo: planejamento × contratação × repactuações</h2>
-              <p class="lmo-nota" style="margin-top: 0">Cada coluna é uma planilha completa, com a mesma estrutura e os mesmos cálculos das planilhas da Calculadora (IN 05/2017): a da fase de planejamento, a da contratação e as de cada repactuação. Edite os valores ou use o botão de cada coluna para trazer a planilha já preenchida na Planilha de custos, na Análise de proposta ou na Repactuação. O que mudou em relação à planilha anterior fica destacado em amarelo. Role o quadro para os lados para ver todas.</p>
+              <p class="lmo-nota" style="margin-top: 0">Cada coluna é uma planilha completa, com a mesma estrutura e os mesmos cálculos das planilhas da Calculadora (IN 05/2017): a da fase de planejamento, a da contratação e as de cada repactuação. Edite os valores ou use o botão de cada coluna para trazer a planilha já preenchida na Planilha de custos, na Análise de proposta ou na Repactuação. O aviso prévio trabalhado (Módulo 3, D), custo não renovável, fica destacado quando muda. O relatório da comparação detalha todas as alterações. Role o quadro para os lados para ver todas.</p>
               <div class="lmo-campos"><sc-for list="{{ cmpInfo }}" as="c" hint-placeholder-count="4"><label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" sc-camel-on-input="{{ c.on }}"></label></sc-for></div>
               <sc-if value="{{ cmpOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ cmpOk }}</p></sc-if>
               <sc-if value="{{ cmpErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ cmpErro }}</p></sc-if>
@@ -11807,13 +11807,14 @@ class Component extends DCLogic {
         const kL = (l) => (l.pctEdit ? String(l.pctK) : l.pctTxt) + "|" + (l.valEdit ? String(l.valK) : l.valTxt);
         Ps.forEach((P, i) => { const A = i ? Ps[i - 1] : null;
           ["moModsA", "moModsA2", "moModsB", "moModsC", "moModsD"].forEach((g) => { P[g] = (P[g] || []).map((md, mi) => { const ma = A && A[g] && A[g][mi];
-            return { ...md, mudouTot: !!(ma && ma.total.valTxt !== md.total.valTxt), linhas: md.linhas.map((l, li) => ({ ...l, mudou: !!(ma && ma.linhas[li] && kL(ma.linhas[li]) !== kL(l)) })) }; }); });
-          P.moResumo = (P.moResumo || []).map((l, li) => ({ ...l, mudou: !!(A && A.moResumo[li] && A.moResumo[li].valTxt !== l.valTxt) }));
-          P.moBenef = (P.moBenef || []).map((b, bi) => ({ ...b, mudou: !!(A && A.moBenef[bi] && String(A.moBenef[bi].valor) !== String(b.valor)) }));
+            // destaque só no aviso prévio trabalhado (Módulo 3, D), custo não renovável que muda na repactuação
+            return { ...md, mudouTot: false, linhas: md.linhas.map((l, li) => ({ ...l, mudou: /^Módulo 3/.test(md.titulo) && l.cod === "D" && !!(ma && ma.linhas[li] && kL(ma.linhas[li]) !== kL(l)) })) }; }); });
+          P.moResumo = (P.moResumo || []).map((l) => ({ ...l, mudou: false }));
+          P.moBenef = (P.moBenef || []).map((b) => ({ ...b, mudou: false }));
           // mesmos campos em todas as colunas, para que fiquem alinhados
           const cI = cols[i], CAMPOS = [["municipio", "Município onde o serviço será prestado", "Ex.: Maricá"], ["uf", "UF", "RJ"], ["tipo_servico", "Tipo de serviço", "Ex.: Limpeza"], ["categoria", "Categoria profissional", "Ex.: Servente"],
             ["cbo", "CBO", "Ex.: 5143-20"], ["data_base", "Data-base da categoria", "dd/mm/aaaa"], ["ano_cct", "Ano do acordo, convenção ou dissídio", "Ex.: 2026"], ["data_proposta", "Data de apresentação da proposta", "dd/mm/aaaa"]];
-          P.moCamposCmp = CAMPOS.map(([k, rot, ph]) => ({ k, rot, ph, valor: cI.d[k] == null ? (MO_PADRAO[k] ?? "") : cI.d[k], on: setC(cI)(k), mudou: !!(i && String(cols[i - 1].d[k] ?? "") !== String(cI.d[k] ?? "")) }));
+          P.moCamposCmp = CAMPOS.map(([k, rot, ph]) => ({ k, rot, ph, valor: cI.d[k] == null ? (MO_PADRAO[k] ?? "") : cI.d[k], on: setC(cI)(k), mudou: false }));
         });
         const chave = (l) => (l.pctEdit ? String(l.pctK) : l.pctTxt) + "|" + (l.valEdit ? String(l.valK) : l.valTxt);
         const BEN = [["vt_tarifa", "Tarifa do transporte (R$)"], ["vt_viagens", "Viagens por dia"], ["dias", "Dias trabalhados no mês"], ["aux_dia", "Auxílio-alimentação por dia (R$)"], ["aux_part", "Participação no auxílio-alimentação (%)"], ["ref_dia", "Auxílio-refeição por dia (R$)"], ["ref_part", "Participação no auxílio-refeição (%)"]];
