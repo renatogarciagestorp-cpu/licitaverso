@@ -274,7 +274,8 @@ def chamar(system, usuario, ferramenta=None):
     original = an.FERRAMENTA
     an.FERRAMENTA = ferramenta or FERRAMENTA
     try:
-        return an.chamar(system, usuario, max_tokens=32000)
+        # o limite cobre o raciocínio e o documento juntos; o ETP completo não cabia em 32 mil (só se paga o que for usado)
+        return an.chamar(system, usuario, max_tokens=64000, esforco="medium")
     finally:
         an.FERRAMENTA = original
 
@@ -762,6 +763,8 @@ def main():
         custo_usd += an.custo(uso)
         bloco = next((c for c in resp.get("content", []) if c.get("type") == "tool_use"), None)
         if not bloco or not bloco.get("input"):
+            tipos = [c.get("type") for c in resp.get("content", [])]
+            print(f"redação sem documento: stop_reason={resp.get('stop_reason')} truncado={resp.get('truncado')} blocos={tipos} uso={uso} custo US$ {custo_usd:.3f}")
             sys.exit("O modelo não entregou o documento (resposta incompleta).")
         docj = bloco["input"]
     (pasta / "documento.json").write_text(json.dumps(docj, ensure_ascii=False, indent=1), encoding="utf-8")

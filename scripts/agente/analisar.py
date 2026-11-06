@@ -568,7 +568,7 @@ def _ler_stream(resp):
     return msg
 
 
-def chamar(system, usuario, max_tokens=128000):
+def chamar(system, usuario, max_tokens=128000, esforco=None):
     chave = os.environ.get("ANTHROPIC_API_KEY")
     if not chave:
         sys.exit("ANTHROPIC_API_KEY ausente")
@@ -577,6 +577,8 @@ def chamar(system, usuario, max_tokens=128000):
              "stream": True,  # mantém a conexão ativa enquanto o modelo raciocina (evita queda em análises longas)
              # o documento vai em cache: se for preciso repetir a chamada, a releitura custa ~10% do preço
              "messages": [{"role": "user", "content": [{"type": "text", "text": usuario, "cache_control": {"type": "ephemeral"}}]}]}
+    if esforco:  # quanto o modelo raciocina antes de responder (low, medium, high); sem valor, o padrão do modelo
+        corpo["output_config"] = {"effort": esforco}
     for tentativa in range(4):
         req = urllib.request.Request("https://api.anthropic.com/v1/messages", method="POST", data=json.dumps(corpo).encode(),
                                      headers={"x-api-key": chave, "anthropic-version": "2023-06-01", "content-type": "application/json"})
