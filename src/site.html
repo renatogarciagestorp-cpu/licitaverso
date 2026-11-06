@@ -1838,6 +1838,16 @@
   .pca-campos input, .pca-campos select, .pca-form textarea, .pca-sel { background: #FBFCFC; color: var(--t-txt); border-color: #D3DEDB; }
   .gp-tec .gp-tit-c { display: none; }
   .gp-tec.pca { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--t-borda); }
+  .gp-pzs { display: grid; gap: 8px; } .gp-pz { --pz: var(--t-ci); display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: 12px; align-items: center; border: 1px solid var(--t-borda); border-left: 4px solid var(--pz); border-radius: 12px; padding: 10px 12px; background: #fff; }
+  .gp-pz.at { --pz: var(--t-at); } .gp-pz.urg { --pz: var(--t-er); background: #FFF7F6; } .gp-pz.venc { --pz: #7A8B91; background: #F6F8F8; }
+  .gp-pz-d { display: grid; } .gp-pz-d > b { font-size: 14px; color: var(--t-txt); } .gp-pz-d > small { font-size: 11.5px; font-weight: 800; color: var(--pz); text-transform: uppercase; }
+  .gp-pz-t { display: grid; gap: 2px; min-width: 0; } .gp-pz-t > b { font-size: 13.5px; color: var(--t-txt); } .gp-pz-t > small { font-size: 12px; color: var(--t-mut); }
+  .gp-pz .lve-voltar { padding: 7px 12px; font-size: 12.5px; white-space: nowrap; }
+  @media (max-width: 760px) { .gp-pz { grid-template-columns: 1fr; } }
+  .ct-kit { margin-top: 12px; border: 1px solid #DCE4E2; border-left: 4px solid #0F6B7E; border-radius: 12px; padding: 12px 14px; background: #F8FBFB; display: grid; gap: 10px; }
+  .ct-kit h4 { margin: 0; font-size: 14px; color: #0B1F2A; } .ct-kit p { margin: 0; font-size: 12.5px; color: #55666D; }
+  .ct-kit-c { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; } .ct-kit-bt { display: flex; gap: 8px; flex-wrap: wrap; }
+  @media (max-width: 760px) { .ct-kit-c { grid-template-columns: 1fr; } }
   /* situação de relance: cartões que filtram */
   .gcs-cards, .gcs-cards.ct-filtro { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 6px 0 14px; }
   .gcs-c4 { --fc: #0B3B4A; font: inherit; text-align: left; display: grid; grid-template-columns: 6px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 12px 14px 12px 0; cursor: pointer; overflow: hidden; color: #0B1F2A; }
@@ -4867,6 +4877,20 @@
         </div>
         <div class="gp-sec"><span class="gp-sec-n">02</span><div><h3>Prazos e riscos</h3><p>Vencimentos, reajustes, limites legais e pontos de atenção.</p></div></div>
         <div class="gp-grade">
+          <div class="gp-card gp-largo"><h3>{{ gpPrazosTit }}</h3><p class="gp-nota">{{ gpPrazosSub }}</p>
+            <sc-if value="{{ gpTemPrazos }}" hint-placeholder-val="{{ true }}"><div class="gp-pzs"><sc-for list="{{ gpPrazos }}" as="x" hint-placeholder-count="3"><div class="{{ x.cls }}"><span class="gp-pz-d"><b>{{ x.data }}</b><small>{{ x.quando }}</small></span><span class="gp-pz-t"><b>{{ x.t }}</b><small>{{ x.d }}</small></span><button type="button" class="lve-voltar" sc-camel-on-click="{{ x.ir }}">{{ x.acao }}</button></div></sc-for></div></sc-if>
+            <sc-if value="{{ gpSemPrazos }}" hint-placeholder-val="{{ false }}"><p class="gp-sub">Nenhum prazo em curso. Registre notificações, penalidades e pedidos na linha do tempo para acompanhar a contagem.</p></sc-if>
+          </div>
+          <div class="gp-card"><h3>{{ gpPedTit }}</h3><p class="gp-nota">{{ gpPedSub }}</p>
+            <sc-if value="{{ gpTemPed }}" hint-placeholder-val="{{ true }}"><ul class="gp-lista"><sc-for list="{{ gpPed }}" as="x" hint-placeholder-count="3"><li class="{{ x.cls }}"><button type="button" class="gp-li-b" sc-camel-on-click="{{ x.ir }}"><b>{{ x.t }}</b><span>{{ x.d }}</span></button></li></sc-for></ul></sc-if>
+            <sc-if value="{{ gpSemPed }}" hint-placeholder-val="{{ false }}"><p class="gp-sub">Nenhum pedido em aberto.</p></sc-if>
+          </div>
+          <sc-if value="{{ gpTemCct }}" hint-placeholder-val="{{ false }}"><div class="gp-card"><h3>Convenção coletiva e repactuação</h3><p class="gp-nota">Com a nova convenção registrada, peça a repactuação com a planilha de custos (art. 135). O pedido deve sair antes da prorrogação ou do fim do contrato, sob pena de preclusão (art. 131, parágrafo único).</p>
+            <ul class="gp-lista"><sc-for list="{{ gpCct }}" as="x" hint-placeholder-count="3"><li class="{{ x.cls }}"><button type="button" class="gp-li-b" sc-camel-on-click="{{ x.ir }}"><b>{{ x.t }}</b><span>{{ x.d }}</span></button></li></sc-for></ul></div></sc-if>
+          <sc-if value="{{ gpTemAt }}" hint-placeholder-val="{{ false }}"><div class="gp-card"><h3>Atestados de capacidade técnica</h3>
+            <div class="gp-prev"><b>{{ gpAtV }}</b><span>{{ gpAtSub }}</span></div>
+            <ul class="gp-lista"><sc-for list="{{ gpAt }}" as="x" hint-placeholder-count="3"><li><button type="button" class="gp-li-b" sc-camel-on-click="{{ x.ir }}"><b>{{ x.t }}</b><span>{{ x.d }}</span></button></li></sc-for></ul>
+            <p class="gp-nota">O atestado comprova a experiência exigida em futuras licitações (art. 67). Peça ao órgão ao completar 1 ano de execução e ao encerrar o contrato.</p></div></sc-if>
           <div class="gp-card"><h3>{{ gpRiscoTit }}</h3>
             <div class="gp-prev"><b>{{ gpRiscoV }}</b><span>{{ gpRiscoSub }}</span></div>
             <sc-if value="{{ gpTemRisco }}" hint-placeholder-val="{{ true }}"><ul class="gp-lista"><sc-for list="{{ gpRisco }}" as="x" hint-placeholder-count="3"><li><button type="button" class="gp-li-b" sc-camel-on-click="{{ x.ir }}"><b>{{ x.t }}</b><span>{{ x.d }}</span></button></li></sc-for></ul></sc-if>
@@ -5079,7 +5103,7 @@
                 <article class="{{ c.cls }}">
                   <div class="ct-cab">
                     <div class="ct-tit"><span class="{{ c.stCls }}">{{ c.st }}</span><h3>Contrato {{ c.numero }}</h3><p>{{ c.contratada }}<sc-if value="{{ c.temObjeto }}" hint-placeholder-val="{{ true }}"> · {{ c.objeto }}</sc-if></p><sc-if value="{{ c.temModal }}" hint-placeholder-val="{{ false }}"><span class="ct-modal">{{ c.modal }}</span></sc-if></div>
-                    <div class="ct-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.abrir }}">Linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarReajuste }}">Calcular reajuste</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarRq }}">Reequilíbrio</button><sc-if value="{{ ctOrg }}" hint-placeholder-val="{{ true }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.vantajosidade }}">Vantajosidade</button></sc-if><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.pdf }}">PDF</button></div>
+                    <div class="ct-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.abrir }}">Linha do tempo</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarReajuste }}">Calcular reajuste</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.usarRq }}">Reequilíbrio</button><sc-if value="{{ ctOrg }}" hint-placeholder-val="{{ true }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.vantajosidade }}">Vantajosidade</button></sc-if><sc-if value="{{ ctEmp }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.kitAbrir }}">Pedido ao órgão</button></sc-if><button type="button" class="lve-voltar" sc-camel-on-click="{{ c.pdf }}">PDF</button></div>
                   </div>
                   <div class="ct-dados">
                     <div><small>Valor vigente</small><b>{{ c.valorV }}</b><em>{{ c.valorSub }}</em></div>
@@ -5091,6 +5115,17 @@
                     <div class="ct-prog" title="{{ c.progTit }}"><span class="ct-prog-r"><i style="width: {{ c.prog }}%"></i></span><span class="ct-prog-t">{{ c.progIni }}<b>{{ c.progTxt }}</b>{{ c.progFim }}</span></div>
                   </sc-if>
                   <sc-for list="{{ c.avisos }}" as="a" hint-placeholder-count="1"><p class="ct-av">{{ a.t }}</p></sc-for>
+                  <sc-if value="{{ c.kitAberto }}" hint-placeholder-val="{{ false }}">
+                    <div class="ct-kit"><h4>Pedido ao órgão</h4><p>Gere o requerimento já preenchido com os dados do contrato, com a ressalva contra a preclusão (art. 131, parágrafo único), e registre o protocolo para acompanhar o prazo de resposta.</p>
+                      <div class="ct-kit-c">
+                        <label class="lmo-campo"><span>Tipo de pedido</span><select sc-camel-on-change="{{ onCtKitTipo }}"><sc-for list="{{ ctKitTipos }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                        <label class="lmo-campo"><span>Data do protocolo</span><input type="date" value="{{ ctKitData }}" sc-camel-on-input="{{ onCtKitData }}"></label>
+                        <label class="lmo-campo"><span>Prazo de resposta do contrato (opcional)</span><input type="date" value="{{ ctKitPrazo }}" sc-camel-on-input="{{ onCtKitPrazo }}"></label>
+                      </div>
+                      <p>{{ ctKitTxt }}</p>
+                      <div class="ct-kit-bt"><button type="button" class="lmo-btn" sc-camel-on-click="{{ ctKitPdf }}">Baixar requerimento (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctKitReg }}">Registrar o protocolo na linha do tempo</button><button type="button" class="gp-limpar" sc-camel-on-click="{{ ctKitFechar }}">Fechar</button></div>
+                    </div>
+                  </sc-if>
                   <sc-if value="{{ c.aberto }}" hint-placeholder-val="{{ false }}">
                     <sc-if value="{{ c.temPainel }}" hint-placeholder-val="{{ false }}">
                       <div class="ct-painel">
@@ -5186,6 +5221,7 @@
                             <label class="lmo-campo"><span>Novo valor (R$)</span><input type="text" inputmode="decimal" value="{{ ctEValorNovo }}" sc-camel-on-input="{{ onCtEValorNovo }}"></label>
                             </sc-if>
                             <sc-if value="{{ ctEvMulta }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>Valor da multa (R$) *</span><input type="text" inputmode="decimal" value="{{ ctEValorPenalidade }}" sc-camel-on-input="{{ onCtEValorPenalidade }}"></label></sc-if>
+                            <sc-if value="{{ ctEvPrazo }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>{{ ctEvPrazoRot }}</span><input type="date" value="{{ ctEPrazo }}" sc-camel-on-input="{{ onCtEPrazo }}"></label></sc-if>
                             <sc-if value="{{ ctEvExec }}" hint-placeholder-val="{{ false }}"><p class="ct-ajuda" style="grid-column: 1 / -1">{{ ctEvExecTxt }}</p></sc-if>
                             <sc-if value="{{ ctEvObra }}" hint-placeholder-val="{{ false }}"><label class="lmo-campo"><span>Saldo a executar na data-base (R$) *</span><input type="text" inputmode="decimal" value="{{ ctESaldo }}" sc-camel-on-input="{{ onCtESaldo }}" placeholder="valor ainda não executado"></label><p class="ct-ajuda ct-ajuda-o" style="grid-column: 1 / -1">{{ ctEvObraTxt }}</p></sc-if>
                             <sc-if value="{{ ctEvAditivo }}" hint-placeholder-val="{{ false }}"><p class="ct-ajuda" style="grid-column: 1 / -1">{{ ctEvAditivoTxt }}</p></sc-if>
@@ -7666,10 +7702,28 @@ const rqN = (v) => { const t = String(v == null ? "" : v).replace(/R\$|%|\s/gi, 
 // Meus contratos: tipos de registro da linha do tempo
 const CT_TIPOS = { reajuste: "Reajuste", repactuacao: "Repactuação", reequilibrio_trib: "Reequilíbrio tributário", reequilibrio_fato: "Reequilíbrio por fato superveniente",
   aditivo_valor: "Aditivo de valor", prorrogacao: "Prorrogação", outro: "Outro registro",
-  ocorrencia: "Ocorrência ou notificação", advertencia: "Penalidade: advertência", multa: "Penalidade: multa", impedimento: "Penalidade: impedimento de licitar", inidoneidade: "Penalidade: declaração de inidoneidade" };
+  ocorrencia: "Ocorrência ou notificação", advertencia: "Penalidade: advertência", multa: "Penalidade: multa", impedimento: "Penalidade: impedimento de licitar", inidoneidade: "Penalidade: declaração de inidoneidade",
+  pedido_reajuste: "Pedido de reajuste protocolado", pedido_repactuacao: "Pedido de repactuação protocolado", pedido_reequilibrio: "Pedido de reequilíbrio protocolado", decisao: "Decisão do órgão sobre pedido",
+  notificacao: "Notificação ou intimação (abre prazo de defesa)", defesa: "Defesa ou recurso protocolado", atestado: "Atestado de capacidade técnica emitido" };
 // registros de execução e sanções (Lei 14.133/2021, arts. 155 e 156): não alteram o valor nem a vigência do contrato
 const CT_PENAL = { advertencia: 1, multa: 1, impedimento: 1, inidoneidade: 1 }, CT_EXEC = { ocorrencia: 1, advertencia: 1, multa: 1, impedimento: 1, inidoneidade: 1 };
-const CT_COR = { reajuste: "#0FA36B", repactuacao: "#0F6B7E", reequilibrio_trib: "#C98A1B", reequilibrio_fato: "#B83232", aditivo_valor: "#7D5CBF", prorrogacao: "#5E747C", outro: "#8A9AA0", ocorrencia: "#A0782D", advertencia: "#D38B1A", multa: "#C24A43", impedimento: "#8E2F2A", inidoneidade: "#5C1F1B" };
+// registros de acompanhamento (pedidos, decisões, notificações, defesas e atestados): também não alteram valor nem vigência
+const CT_INFO = { pedido_reajuste: 1, pedido_repactuacao: 1, pedido_reequilibrio: 1, decisao: 1, notificacao: 1, defesa: 1, atestado: 1 }, CT_SEMVAL = { ...CT_EXEC, ...CT_INFO };
+const CT_PEDIDO = { pedido_reajuste: "reajuste", pedido_repactuacao: "repactuação", pedido_reequilibrio: "reequilíbrio" };
+// dias úteis (Lei 14.133/2021, art. 183): exclui o dia do começo e inclui o do vencimento; sábados, domingos e feriados nacionais não contam
+function ctFeriados(ano) {
+  const a = ano % 19, b = Math.floor(ano / 100), c = ano % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30,
+    i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451), mes = Math.floor((h + l - 7 * m + 114) / 31), dia = ((h + l - 7 * m + 114) % 31) + 1;
+  const pascoa = Date.UTC(ano, mes - 1, dia), iso = (t) => new Date(t).toISOString().slice(0, 10);
+  return new Set(["01-01", "04-21", "05-01", "09-07", "10-12", "11-02", "11-15", "11-20", "12-25"].map((x) => ano + "-" + x).concat([iso(pascoa - 2 * 864e5)]));
+}
+function ctDiasUteis(isoIni, n) {
+  let t = Date.parse(String(isoIni).slice(0, 10) + "T12:00:00Z"), cont = 0, fer = null, anoF = 0;
+  while (cont < n) { t += 864e5; const d = new Date(t), y = d.getUTCFullYear(); if (y !== anoF) { fer = ctFeriados(y); anoF = y; } const w = d.getUTCDay(); if (w !== 0 && w !== 6 && !fer.has(d.toISOString().slice(0, 10))) cont++; }
+  return new Date(t).toISOString().slice(0, 10);
+}
+const CT_COR = { reajuste: "#0FA36B", repactuacao: "#0F6B7E", reequilibrio_trib: "#C98A1B", reequilibrio_fato: "#B83232", aditivo_valor: "#7D5CBF", prorrogacao: "#5E747C", outro: "#8A9AA0", ocorrencia: "#A0782D", advertencia: "#D38B1A", multa: "#C24A43", impedimento: "#8E2F2A", inidoneidade: "#5C1F1B",
+  pedido_reajuste: "#2E7D9A", pedido_repactuacao: "#2E7D9A", pedido_reequilibrio: "#2E7D9A", decisao: "#476A75", notificacao: "#B5651D", defesa: "#5B6F9E", atestado: "#3B8F6A" };
 // painel do contrato (estilo Power BI): cascata da evolução do valor, rosca do prazo, composição dos ajustes e régua da vigência.
 // Tudo em HTML/CSS com posições em %: atributos SVG com {{ }} geram erros antes da renderização.
 const CT_CURTO = { reajuste: "Reajuste", repactuacao: "Repactuação", reequilibrio_trib: "Reeq. tributário", reequilibrio_fato: "Reeq. fato", aditivo_valor: "Aditivo", prorrogacao: "Prorrogação", outro: "Outro" };
@@ -8620,7 +8674,7 @@ function ctPainelExtra(G, eventos, indices) {
   // o que fazer agora (toda a carteira, sem os filtros)
   const acoes = [];
   PB.forEach((p) => { const x = p.x, c = p.c;
-    if (x.pend && x.sit !== "exp" && p.direitoN != null) { const m = agoraN - p.direitoN; acoes.push({ c, tipo: "reajuste", prio: m > 0 ? 0 : 1, ord: p.direitoN, quando: m > 0 ? "há " + m + (m === 1 ? " mês" : " meses") : "este mês",
+    if (x.pend && x.sit !== "exp" && p.direitoN != null && !(emp && p.evs.some((e) => e.tipo === "pedido_reajuste" && ctMesN(e.data) >= p.direitoN))) { const m = agoraN - p.direitoN; acoes.push({ c, tipo: "reajuste", prio: m > 0 ? 0 : 1, ord: p.direitoN, quando: m > 0 ? "há " + m + (m === 1 ? " mês" : " meses") : "este mês",
       t: emp ? "Pedir o reajuste" : "Conceder o reajuste", d: "Anualidade desde " + ym(p.direitoN) + " sem reajuste registrado.", acao: "Calcular reajuste" }); }
     if (x.sit === "ven") acoes.push({ c, tipo: "prorrogacao", prio: x.fimN - agoraN <= 1 ? 0 : 1, ord: x.fimN, quando: "vence em " + ym(x.fimN),
       t: emp ? "Negociar a renovação" : "Iniciar a prorrogação", d: emp ? "Peça a prorrogação ao órgão ou prepare-se para a nova licitação." : "O termo aditivo precisa estar assinado antes do fim da vigência.", acao: "Abrir contrato" });
@@ -8633,6 +8687,49 @@ function ctPainelExtra(G, eventos, indices) {
   });
   vig.filter((v) => v.limN - agoraN <= 12).forEach((v) => acoes.push({ c: v.p.c, tipo: "vigencia", prio: 2, ord: v.limN, quando: "limite em " + ym(v.limN),
     t: "Limite de vigência perto do fim", d: (emp ? "Renovação possível até " : "Prorrogação possível até ") + ym(v.limN) + " (" + v.lim + " anos). Depois disso, " + (emp ? "o órgão precisa licitar de novo." : "nova licitação."), acao: "Abrir contrato" }));
+  // prazos de preclusão e processuais (toda a carteira): pedidos antes da prorrogação, defesa, recurso e resposta do órgão
+  const hojeIso = new Date(hojeD).toISOString().slice(0, 10), diasAte = (iso) => Math.round((Date.parse(iso + "T12:00:00Z") - hojeD - 432e5) / 864e5);
+  const dBR = (iso) => iso.slice(8, 10) + "/" + iso.slice(5, 7) + "/" + iso.slice(0, 4);
+  const prazos = [], pedidos = [], cctL = [], atest = { faltam: [], recebidos: 0 };
+  PB.forEach((p) => { const c = p.c, evs = p.evs, fimIso = p.x.si.fim ? String(p.x.si.fim).slice(0, 10) : null, ativo = p.x.sit !== "exp";
+    const depois = (e, tipos) => evs.some((y) => tipos.includes(y.tipo) && String(y.data) >= String(e.data) && y !== e);
+    // 1) pedido de reajuste ou repactuação antes da prorrogação e do fim do contrato (art. 131, parágrafo único)
+    if (ativo && fimIso && p.x.pend && p.direitoN != null) {
+      const jaPediu = evs.some((e) => (e.tipo === "pedido_reajuste" || e.tipo === "pedido_repactuacao") && ctMesN(e.data) >= p.direitoN);
+      if (!jaPediu) prazos.push({ c, tipo: "preclusao", ate: fimIso, dias: diasAte(fimIso), t: emp ? "Pedir o reajuste antes da prorrogação" : "Reajuste pendente antes da prorrogação",
+        d: "Anualidade desde " + ym(p.direitoN) + ". O pedido precisa ser feito durante a vigência e antes de assinar a prorrogação; depois disso, o direito preclui (art. 131, parágrafo único).", acao: emp ? "Gerar pedido" : "Calcular reajuste" });
+    }
+    // 2) notificações: defesa prévia em 15 dias úteis (arts. 157 e 158; Lei 13.303/2016: 10 dias úteis)
+    evs.filter((e) => e.tipo === "notificacao" && !depois(e, ["defesa"])).forEach((e) => { const ate = e.prazo ? String(e.prazo).slice(0, 10) : ctDiasUteis(e.data, c.regime === "13303" ? 10 : 15);
+      if (diasAte(ate) >= -30) prazos.push({ c, tipo: "defesa", ate, dias: diasAte(ate), t: "Defesa prévia", d: "Intimação de " + dBR(String(e.data).slice(0, 10)) + (e.descricao ? ": " + e.descricao : "") + ". " + (c.regime === "13303" ? "10 dias úteis (Lei 13.303/2016, art. 83, § 2º)." : "15 dias úteis (arts. 157 e 158)."), acao: "Abrir contrato" }); });
+    // 3) penalidade aplicada: recurso (advertência, multa, impedimento) ou pedido de reconsideração (inidoneidade) em 15 dias úteis (arts. 166 e 167)
+    evs.filter((e) => CT_PENAL[e.tipo] && !depois(e, ["defesa"])).forEach((e) => { const ate = ctDiasUteis(e.data, 15);
+      if (diasAte(ate) >= -30) prazos.push({ c, tipo: "recurso", ate, dias: diasAte(ate), t: e.tipo === "inidoneidade" ? "Pedido de reconsideração da inidoneidade" : "Recurso contra a penalidade",
+        d: (CT_TIPOS[e.tipo] || "Penalidade") + " de " + dBR(String(e.data).slice(0, 10)) + ". 15 dias úteis da intimação (" + (e.tipo === "inidoneidade" ? "art. 167" : "art. 166") + ").", acao: "Abrir contrato" }); });
+    // pedidos ao órgão e decisões (art. 92, X e XI; art. 123, parágrafo único: 1 mês, prorrogável uma vez)
+    const decis = evs.filter((e) => e.tipo === "decisao").map((e) => String(e.data)).sort();
+    evs.filter((e) => CT_PEDIDO[e.tipo]).sort((a, b) => String(a.data).localeCompare(String(b.data))).forEach((e) => {
+      const i = decis.findIndex((d) => d >= String(e.data)); if (i >= 0) { decis.splice(i, 1); return; }
+      const ini = String(e.data).slice(0, 10), dt = new Date(ini + "T12:00:00Z"); dt.setUTCMonth(dt.getUTCMonth() + 1);
+      const ate = e.prazo ? String(e.prazo).slice(0, 10) : dt.toISOString().slice(0, 10);
+      pedidos.push({ c, e, tipo: CT_PEDIDO[e.tipo], ini, ate, dias: diasAte(ate), proprio: !!e.prazo }); });
+    // convenção coletiva (mão de obra): data-base e pedido de repactuação
+    const db = /^(\d{1,2})\/(\d{1,2})$/.exec(String(c.data_base_cct || "").trim());
+    if (c.mao_obra && db && ativo) { const y = new Date(hojeD).getUTCFullYear(), mk = (yy) => yy + "-" + String(db[2]).padStart(2, "0") + "-" + String(db[1]).padStart(2, "0");
+      const ult = mk(y) <= hojeIso ? mk(y) : mk(y - 1), prox = mk(y) > hojeIso ? mk(y) : mk(y + 1);
+      const pedido = evs.find((e) => e.tipo === "pedido_repactuacao" && String(e.data) >= ult), feita = evs.find((e) => e.tipo === "repactuacao" && String(e.data) >= ult);
+      cctL.push({ c, p, ult, prox, pedido, feita, diasProx: diasAte(prox), fimIso, st: feita ? "ok" : pedido ? "pedido" : "pendente" }); }
+    // atestado de capacidade técnica: contratos com 1 ano ou mais de execução, ou encerrados
+    const temAt = evs.some((e) => e.tipo === "atestado"); if (temAt) atest.recebidos++;
+    else if (p.ini != null && (agoraN - p.ini >= 12 || p.x.sit === "exp")) atest.faltam.push({ p, meses: agoraN - p.ini + 1 });
+  });
+  prazos.sort((a, b) => a.dias - b.dias); pedidos.sort((a, b) => a.dias - b.dias);
+  cctL.sort((a, b) => ({ pendente: 0, pedido: 1, ok: 2 }[a.st] - { pendente: 0, pedido: 1, ok: 2 }[b.st]) || a.diasProx - b.diasProx);
+  prazos.filter((x) => x.dias <= 60).forEach((x) => acoes.push({ c: x.c, tipo: x.tipo, prio: x.dias <= 5 ? 0 : 1, ord: agoraN - 1, quando: x.dias < 0 ? "venceu há " + (-x.dias) + " dias" : x.dias === 0 ? "vence hoje" : "faltam " + x.dias + " dias",
+    t: x.t + " até " + dBR(x.ate), d: x.d, acao: x.acao }));
+  pedidos.filter((x) => x.dias <= 7).forEach((x) => acoes.push({ c: x.c, tipo: "pedido", prio: x.dias < 0 ? 0 : 1, ord: agoraN - 1, quando: x.dias < 0 ? "atrasado " + (-x.dias) + " dias" : "faltam " + x.dias + " dias",
+    t: emp ? "Cobrar a decisão do pedido de " + x.tipo : "Decidir o pedido de " + x.tipo, d: "Protocolado em " + dBR(x.ini) + "; prazo " + (x.proprio ? "do contrato" : "de 1 mês (art. 123, parágrafo único)") + " até " + dBR(x.ate) + ".", acao: "Abrir contrato" }));
+  for (let i = acoes.length - 1; i >= 0; i--) if (acoes[i].tipo === "reajuste" && prazos.some((x) => x.tipo === "preclusao" && x.c.id === acoes[i].c.id && x.dias <= 60)) acoes.splice(i, 1);
   if (!emp) PB.forEach((p) => { if (p.c.essencial && p.x.sit === "ven") { const a = acoes.find((y) => y.c.id === p.c.id && y.tipo === "prorrogacao"); if (a) { a.prio = 0; a.d = "Serviço essencial: " + a.d; } } });
   acoes.sort((a, b) => a.prio - b.prio || a.ord - b.ord);
 
@@ -8660,7 +8757,7 @@ function ctPainelExtra(G, eventos, indices) {
     essRiscos.push({ nivel: g.n >= 3 || part >= 0.7 ? "limite" : "atencao", t: g.k, d: g.n + (g.n === 1 ? " serviço essencial (" : " serviços essenciais (") + g.nums.join(", ") + ") · " + Math.round(part * 100) + "% do valor mensal dos essenciais", ids: g.ids }); });
   ess.forEach((p) => {
     const pe = pen[p.x.parte]; if (pe && (pe.multa || pe.imp) && !essRiscos.some((r) => r.pen === p.x.parte)) essRiscos.push({ nivel: "atencao", t: "Contrato " + p.c.numero + " · " + p.x.parte, d: "Fornecedor de serviço essencial com penalidade registrada: avalie um plano de contingência.", ids: [p.c.id], pen: p.x.parte }); });
-  return { pessoasL, semFiscal, mediaCarga, penL, nPen, nOc, somaMulta, comPen12, ess, essRiscos, a125, vig, atrasos, pend, risco, meses, prev: { A, v: prev, sem: prevSem, prorr: prevProrr, usados: Object.values(usados) }, cmp, qual: { ok, tot, pct: tot ? ok / tot : 1, falt }, acoes, nomeC, ym };
+  return { prazos, pedidos, cctL, atest, pessoasL, semFiscal, mediaCarga, penL, nPen, nOc, somaMulta, comPen12, ess, essRiscos, a125, vig, atrasos, pend, risco, meses, prev: { A, v: prev, sem: prevSem, prorr: prevProrr, usados: Object.values(usados) }, cmp, qual: { ok, tot, pct: tot ? ok / tot : 1, falt }, acoes, nomeC, ym };
 }
 // Plano de Contratações Anual (Lei 14.133/2021, art. 12, VII e § 1º, e art. 18; Decreto federal 10.947/2022): planejado × contratado por setor requisitante
 const PCA_CAT = [["", "Não informada"], ["material", "Material"], ["servico", "Serviço"], ["obra", "Obra ou serviço de engenharia"], ["tic", "Tecnologia da informação"]];
@@ -8722,7 +8819,7 @@ function ctFracionamento(lista, eventos) {
     return { ...x, lim, pct, st, fund: x.reg === "13303" ? "Lei 13.303/2016, art. 29, " + (x.tipo === "obras" ? "I" : "II") + " (confira o valor no regulamento)" : "Lei 14.133/2021, art. 75, " + (x.tipo === "obras" ? "I" : "II") + ", e § 1º; " + L.decreto };
   }).sort((a, b) => b.pct - a.pct);
 }
-const CT_EV = { tipo: "reajuste", data: "", percentual: "", valor_anterior: "", valor_novo: "", saldo: "", novo_fim: "", descricao: "", valor_penalidade: "" };
+const CT_EV = { tipo: "reajuste", data: "", percentual: "", valor_anterior: "", valor_novo: "", saldo: "", novo_fim: "", descricao: "", valor_penalidade: "", prazo: "" };
 // situação atual do contrato a partir da linha do tempo: valor vigente, fim da vigência, reajustes concedidos e próxima anualidade
 function ctSituacao(c, evs) {
   const lista = (evs || []).slice().sort((a, b) => String(a.data).localeCompare(String(b.data)));
@@ -11142,7 +11239,7 @@ class Component extends DCLogic {
   ctEditarEv(e) {
     const f = (v, n) => (v == null || v === "" ? "" : Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: n }));
     const ev = { ...CT_EV, id: e.id, tipo: e.tipo, data: String(e.data || "").slice(0, 10), percentual: f(e.percentual, 4), valor_anterior: f(e.valor_anterior, 2),
-      valor_novo: f(e.valor_novo, 2), saldo: f(e.saldo, 2), valor_penalidade: f(e.valor_penalidade, 2), novo_fim: e.novo_fim ? String(e.novo_fim).slice(0, 10) : "", descricao: e.descricao || "" };
+      valor_novo: f(e.valor_novo, 2), saldo: f(e.saldo, 2), valor_penalidade: f(e.valor_penalidade, 2), prazo: e.prazo ? String(e.prazo).slice(0, 10) : "", novo_fim: e.novo_fim ? String(e.novo_fim).slice(0, 10) : "", descricao: e.descricao || "" };
     this.setState((x) => ({ ct: { ...x.ct, ev, ok: "", erro: "", excluirEv: "" } }));
     setTimeout(() => { try { document.querySelector(".ct-card.aberto .ct-form").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (er) {} }, 150);
   }
@@ -11154,8 +11251,10 @@ class Component extends DCLogic {
       novo_fim: ev.novo_fim || null, descricao: String(ev.descricao || "").slice(0, 600) || null };
     if (!/^\d{4}-\d{2}-\d{2}$/.test(reg.data || "")) return "Informe a data do registro.";
     this.ctAviso125 = "";
-    if (CT_EXEC[reg.tipo]) { reg.percentual = null; reg.valor_anterior = null; reg.valor_novo = null; reg.novo_fim = null; reg.valor_penalidade = reg.tipo === "multa" ? num(ev.valor_penalidade) : null;
-      if (reg.tipo === "multa" && reg.valor_penalidade == null) return "Informe o valor da multa."; if (!reg.descricao) return "Descreva a ocorrência ou o motivo da penalidade (e o processo, se houver)."; }
+    reg.prazo = null;
+    if (CT_SEMVAL[reg.tipo]) { reg.percentual = null; reg.valor_anterior = null; reg.valor_novo = null; reg.novo_fim = null; reg.valor_penalidade = reg.tipo === "multa" ? num(ev.valor_penalidade) : null;
+      if (reg.tipo === "multa" && reg.valor_penalidade == null) return "Informe o valor da multa."; if (CT_EXEC[reg.tipo] && !reg.descricao) return "Descreva a ocorrência ou o motivo da penalidade (e o processo, se houver).";
+      if ((CT_PEDIDO[reg.tipo] || reg.tipo === "notificacao") && /^\d{4}-\d{2}-\d{2}$/.test(ev.prazo || "")) reg.prazo = ev.prazo; }
     else reg.valor_penalidade = null;
     reg.saldo = num(ev.saldo);
     const cObra = this.state.ct.lista.find((x) => x.id === contratoId);
@@ -11279,6 +11378,60 @@ class Component extends DCLogic {
       await this.moDocPdf({ titulo: "Relatório da carteira de contratos", sub: ct.lista.length + " contrato(s) · situação em " + hoje, selo: "Gestão Contratual · Lei 14.133/2021",
         arquivo: "relatorio-contratos-" + new Date().toISOString().slice(0, 10), blocos, notas: this.ctNotasDoc() }, "", hoje);
     } catch (e) { this.ctMsg("", "Não foi possível gerar o relatório. Tente de novo."); }
+  }
+  // kit de pedido ao órgão (visão da empresa): requerimento preenchido e registro do protocolo
+  ctKitAbrir(id, tipo) {
+    if (!tipo) { this.setState((x) => ({ ct: { ...x.ct, kit: null } })); return; }
+    this.setState((x) => ({ ct: { ...x.ct, so: [id], kit: { id, tipo, data: new Date().toISOString().slice(0, 10), prazo: "" }, form: null } }));
+    if (this.state.page !== "contratos") this.irPara("contratos");
+    setTimeout(() => { try { document.querySelector(".ct-kit").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {} }, 250);
+  }
+  async ctKitRegistrar() {
+    const k = this.state.ct.kit; if (!k) return;
+    const tipo = { reajuste: "pedido_reajuste", repactuacao: "pedido_repactuacao", reequilibrio: "pedido_reequilibrio" }[k.tipo];
+    const e = await this.ctGravarEv(k.id, { ...CT_EV, tipo, data: k.data, prazo: k.prazo, descricao: "Pedido protocolado (requerimento gerado na Gestão Contratual)." });
+    if (e) { this.ctMsg("", e); return; }
+    this.setState((x) => ({ ct: { ...x.ct, kit: null, ok: "Protocolo registrado. O prazo de resposta do órgão aparece no Painel da Organização.", erro: "" } }));
+  }
+  async ctKitPdf() {
+    const k = this.state.ct.kit, c = k && this.state.ct.lista.find((x) => x.id === k.id); if (!c) return;
+    const si = ctSituacao(c, this.state.ct.eventos[c.id]), hoje = new Date().toLocaleDateString("pt-BR");
+    const brl = (v) => (v == null ? "—" : "R$ " + Number(v).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    const dBR = (iso) => (iso ? String(iso).slice(8, 10) + "/" + String(iso).slice(5, 7) + "/" + String(iso).slice(0, 4) : "—");
+    const ymBR = (iso) => (iso ? String(iso).slice(5, 7) + "/" + String(iso).slice(0, 4) : "—");
+    const l13303 = c.regime === "13303", ix = ctAcum12(this.state.indices, c.indice || "ipca"), nomeIx = { ipca: "IPCA", ipca_e: "IPCA-E", inpc: "INPC", igpm: "IGP-M", igpdi: "IGP-DI", incc: "INCC-DI" }[c.indice] || "previsto no contrato";
+    const contratada = c.contratada || "[razão social da contratada]", contratante = c.contratante || "[órgão ou entidade contratante]";
+    const nomeTipo = { reajuste: "reajuste de preços", repactuacao: "repactuação de preços", reequilibrio: "restabelecimento do equilíbrio econômico-financeiro" }[k.tipo];
+    const lei = l13303 ? "da Lei 13.303/2016 e do regulamento interno de licitações e contratos da contratante" : "da Lei 14.133/2021";
+    let pedido;
+    if (k.tipo === "reajuste") {
+      const base = si.ultReaj ? "do último reajuste (" + ymBR(si.ultReaj) + ")" : "da data do orçamento estimado (" + ymBR(c.data_proposta) + ")";
+      pedido = [contratada + ", contratada no Contrato nº " + c.numero + ", vem requerer o reajuste dos preços pelo índice " + nomeIx + ", previsto no contrato, em razão do decurso de 12 meses contados " + base + (l13303 ? ", nos termos do contrato e " + lei + "." : ", nos termos do art. 25, § 7º, e do art. 92, V e § 3º, da Lei 14.133/2021."),
+        "Anualidade: " + (si.direitoDesde || "—") + ". " + (ix ? "Variação acumulada do " + ix.nome + " nos 12 meses até " + ymBR(ix.ate + "-01") + ": " + (ix.pct * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "% (estimativa; o percentual definitivo é o do período da anualidade, conforme a memória de cálculo anexa)." : "O percentual consta da memória de cálculo anexa."),
+        "Requer a aplicação do reajuste a partir da anualidade, com o pagamento das diferenças retroativas desde então."];
+    } else if (k.tipo === "repactuacao") {
+      pedido = [contratada + ", contratada no Contrato nº " + c.numero + ", vem requerer a repactuação dos preços em razão da nova convenção coletiva de trabalho da categoria" + (c.data_base_cct ? " (data-base " + c.data_base_cct + ")" : "") + (l13303 ? ", nos termos do contrato e " + lei + "." : ", nos termos do art. 92, X, e do art. 135 da Lei 14.133/2021, com a demonstração analítica da variação dos custos."),
+        "A variação dos custos de mão de obra consta da planilha de custos e formação de preços anexa, elaborada a partir da convenção registrada.",
+        "Requer que os efeitos financeiros retroajam à data-base da convenção coletiva, com o pagamento das diferenças."];
+    } else {
+      pedido = [contratada + ", contratada no Contrato nº " + c.numero + ", vem requerer o restabelecimento do equilíbrio econômico-financeiro do contrato" + (l13303 ? ", nos termos do contrato e " + lei + "," : ", nos termos do art. 124, II, d, da Lei 14.133/2021,") + " em razão de fato superveniente, imprevisível ou previsível de consequências incalculáveis, que onerou a execução nos termos demonstrados em anexo.",
+        "Fato: [descreva o fato, a data em que ocorreu e a relação com os custos do contrato]. Impacto: [percentual ou valor, conforme a nota técnica anexa].",
+        "Requer a revisão dos preços na medida do impacto demonstrado, a partir da data do fato."];
+    }
+    const blocos = [
+      { t: "secao", titulo: "Requerimento de " + nomeTipo, sub: "Contrato nº " + c.numero + " · " + contratante },
+      { t: "pares", titulo: "Dados do contrato", pares: [["Contratante", contratante], ["Contratada", contratada], ["Contrato", c.numero], ["Objeto", c.objeto || "—"], ["Vigência até", dBR(si.fim)],
+        ["Valor vigente", brl(si.valor) + (c.periodicidade === "mensal" ? " por mês" : "")], ["Índice de reajuste", nomeIx], ["Orçamento estimado (data-base)", ymBR(c.data_proposta)], ["Último reajuste", si.ultReaj ? dBR(si.ultReaj) : "nenhum registrado"]] },
+      { t: "texto", titulo: "Pedido", paragrafos: ["À " + contratante + "."].concat(pedido) },
+      { t: "texto", titulo: "Ressalva e prazo", paragrafos: [
+        "A contratada ressalva expressamente o direito ao " + nomeTipo + " aqui requerido na hipótese de prorrogação, de assinatura de termo aditivo ou de encerramento do contrato antes da decisão deste pedido, para afastar a preclusão (" + (l13303 ? "pedido formulado durante a vigência" : "art. 131, parágrafo único, da Lei 14.133/2021") + ").",
+        l13303 ? "Requer decisão no prazo previsto no contrato ou no regulamento interno." : "Requer decisão no prazo previsto no contrato (art. 92, X e XI) ou, na falta dele, em 1 mês contado da conclusão da instrução do requerimento (art. 123, parágrafo único)."] },
+      { t: "texto", titulo: "Documentos anexos", paragrafos: k.tipo === "reajuste" ? ["Memória de cálculo do reajuste (Calculadora · nota técnica).", "Cópia do contrato e dos aditivos."] : k.tipo === "repactuacao" ? ["Convenção coletiva de trabalho registrada.", "Planilha de custos e formação de preços com a variação.", "Cópia do contrato e dos aditivos."] : ["Nota técnica do reequilíbrio com a demonstração do impacto.", "Documentos que comprovam o fato superveniente.", "Cópia do contrato e dos aditivos."] },
+      { t: "texto", titulo: "Assinatura", paragrafos: ["Local e data: ______________________, " + hoje + ".", "______________________________________", "Representante legal ou preposto da contratada"] }];
+    try {
+      await this.moDocPdf({ titulo: "Requerimento de " + nomeTipo, sub: "Contrato nº " + c.numero + " · " + contratada, selo: "Gestão Contratual · " + (l13303 ? "Lei 13.303/2016" : "Lei 14.133/2021"),
+        arquivo: "requerimento-" + k.tipo + "-contrato-" + String(c.numero).replace(/[^\w]+/g, "-"), blocos, notas: ["Modelo gerado a partir dos dados cadastrados na Gestão Contratual. Revise os dados, complete os campos entre colchetes e anexe os documentos antes de protocolar."] }, "", hoje);
+    } catch (e) { this.ctMsg("", "Não foi possível gerar o requerimento. Tente de novo."); }
   }
   async ctPainelPdf(G, E) {
     const emp = G.visao === "empresa", hoje = new Date().toLocaleDateString("pt-BR");
@@ -12958,7 +13111,7 @@ class Component extends DCLogic {
               gpAcoesTit: emp ? "O que fazer agora" : "O que fazer esta semana", gpAcoesSub: E.acoes.length ? E.acoes.length + (E.acoes.length === 1 ? " providência" : " providências") + " em toda a carteira, da mais urgente para a menos urgente" : "toda a carteira",
               gpAcoesVazio: !E.acoes.length, gpAcoesMais: E.acoes.length > 4, gpAcoesMaisTxt: acoesTodas ? "Mostrar só as 4 mais urgentes" : "Mostrar todas (" + E.acoes.length + ")", gpAcoesAlternar: () => set("acoesTodas")(!acoesTodas),
               gpAcoes: acL.map((a) => ({ quando: a.quando, t: a.t, d: a.d, contrato: "Contrato " + a.c.numero, acao: a.acao, cls: "gp-ac p" + a.prio,
-                ir: a.tipo === "reajuste" ? () => this.ctUsar(a.c.id, "reajuste") : verC(a.c.id) })),
+                ir: a.tipo === "reajuste" || (a.tipo === "preclusao" && !emp) ? () => this.ctUsar(a.c.id, "reajuste") : a.tipo === "preclusao" ? () => this.ctKitAbrir(a.c.id, "reajuste") : verC(a.c.id) })),
               gpMesTit: emp ? "Receita mês a mês" : "Custo mês a mês", gpMesSub: "Últimos 12 meses, o mês atual e a projeção dos próximos 11 com os valores em vigor hoje. Contratos de valor global entram rateados pelos meses da vigência.",
               gpMes: E.meses.map((m) => ({ rot: ymE(m.m).replace("/20", "/"), cls: "gp-mes-m" + (m.fut ? " fut" : "") + (m.m === E.meses[12].m ? " hoje" : ""),
                 hB: "height: " + ((Math.max(0, m.b) / mxMes) * 100).toFixed(1) + "%", hAj: "height: " + ((Math.max(0, m.aj) / mxMes) * 100).toFixed(1) + "%",
@@ -12990,6 +13143,18 @@ class Component extends DCLogic {
               gpQualSub: E.qual.falt.length ? E.qual.falt.length + (E.qual.falt.length === 1 ? " contrato com dados faltando" : " contratos com dados faltando") + ". Quanto mais completo o cadastro, mais precisos os indicadores, a agenda e os avisos." : "Todos os contratos com o cadastro completo.",
               gpTemQual: E.qual.falt.length > 0, gpQual: E.qual.falt.slice(0, 8).map((q) => ({ t: E.nomeC(q.p.c), d: q.f.join(", "), ir: () => { this.ctVer([q.p.c.id]); setTimeout(() => this.ctEditar(q.p.c), 120); } })),
               gpPdf: () => this.ctPainelPdf(G, E),
+              gpPrazosTit: emp ? "Prazos que não podem ser perdidos" : "Prazos em curso", gpPrazosSub: emp ? "Pedidos antes da prorrogação, defesa prévia e recursos. Prazo perdido é direito perdido." : "Pedidos pendentes antes da prorrogação, defesas e recursos das contratadas.",
+              gpTemPrazos: E.prazos.length > 0, gpSemPrazos: !E.prazos.length,
+              gpPrazos: E.prazos.slice(0, 8).map((x) => ({ t: x.t, d: E.nomeC(x.c) + " · " + x.d, data: x.ate.slice(8, 10) + "/" + x.ate.slice(5, 7) + "/" + x.ate.slice(0, 4), quando: x.dias < 0 ? "venceu há " + (-x.dias) + " d" : x.dias === 0 ? "hoje" : x.dias + " dias",
+                cls: "gp-pz " + (x.dias < 0 ? "venc" : x.dias <= 5 ? "urg" : x.dias <= 30 ? "at" : ""), acao: x.acao, ir: x.tipo === "preclusao" ? (emp ? () => this.ctKitAbrir(x.c.id, "reajuste") : () => this.ctUsar(x.c.id, "reajuste")) : verC(x.c.id) })),
+              gpPedTit: emp ? "Pedidos aguardando o órgão" : "Pedidos da contratada aguardando decisão", gpTemPed: E.pedidos.length > 0, gpSemPed: !E.pedidos.length,
+              gpPedSub: emp ? "Prazo do contrato (art. 92, X e XI) ou 1 mês após a instrução, prorrogável uma vez (art. 123, parágrafo único). Registre a decisão na linha do tempo quando sair." : "A Administração tem o prazo do contrato ou 1 mês após a instrução para decidir, prorrogável uma vez por motivo justificado (art. 123, parágrafo único).",
+              gpPed: E.pedidos.slice(0, 8).map((x) => ({ t: "Pedido de " + x.tipo + " · " + E.nomeC(x.c), d: "protocolado em " + x.ini.slice(8, 10) + "/" + x.ini.slice(5, 7) + "/" + x.ini.slice(0, 4) + " · prazo " + x.ate.slice(8, 10) + "/" + x.ate.slice(5, 7) + "/" + x.ate.slice(0, 4) + (x.dias < 0 ? " · atrasado " + (-x.dias) + " dias" : " · faltam " + x.dias + " dias"),
+                cls: x.dias < 0 ? "gp-n-lim" : x.dias <= 7 ? "gp-n-at" : "", ir: verC(x.c.id) })),
+              gpTemCct: emp && E.cctL.length > 0, gpCct: E.cctL.slice(0, 8).map((x) => ({ t: E.nomeC(x.c), cls: x.st === "ok" ? "" : x.st === "pedido" ? "gp-n-ob" : "gp-n-at", ir: x.st === "pendente" ? () => this.ctKitAbrir(x.c.id, "repactuacao") : verC(x.c.id),
+                d: "data-base " + x.ult.slice(8, 10) + "/" + x.ult.slice(5, 7) + " · " + (x.st === "ok" ? "repactuação registrada" : x.st === "pedido" ? "pedido protocolado em " + String(x.pedido.data).slice(8, 10) + "/" + String(x.pedido.data).slice(5, 7) + "/" + String(x.pedido.data).slice(0, 4) : "peça a repactuação após o registro da convenção, antes da prorrogação" + (x.fimIso ? " (vigência até " + x.fimIso.slice(8, 10) + "/" + x.fimIso.slice(5, 7) + "/" + x.fimIso.slice(0, 4) + ")" : "")) + " · próxima data-base em " + x.diasProx + " dias" })),
+              gpTemAt: emp && (E.atest.faltam.length > 0 || E.atest.recebidos > 0), gpAtV: String(E.atest.faltam.length), gpAtSub: (E.atest.faltam.length === 1 ? "contrato sem atestado" : "contratos sem atestado") + " com 1 ano ou mais de execução · " + E.atest.recebidos + (E.atest.recebidos === 1 ? " atestado recebido" : " atestados recebidos"),
+              gpAt: E.atest.faltam.slice(0, 6).map((x) => ({ t: E.nomeC(x.p.c), d: (x.p.x.sit === "exp" ? "contrato encerrado" : x.meses + " meses de execução") + " · peça o atestado e registre na linha do tempo", ir: verC(x.p.c.id) })),
               gpTemSetores: G.setores.length > 1 || !!pf.setor, gpSetorRot: emp ? "Equipe ou filial" : "Setor requisitante",
               gpSetores: [{ id: "", nome: emp ? "Todas as equipes" : "Todos os setores", sel: !pf.setor }].concat(G.setores.map((v) => ({ id: v, nome: v, sel: pf.setor === v }))), onGpSetor: (e) => set("setor")(e.target.value),
               gpPesTit: emp ? "Prepostos e carga de contratos" : "Gestores e fiscais", gpPesCol: emp ? "Preposto" : "Pessoa",
@@ -13089,6 +13254,7 @@ class Component extends DCLogic {
             progTit: "Vigência de " + (ini0 ? dataBR(ini0) : "") + " a " + (si.fim ? dataBR(si.fim) : ""),
             fim: si.fim ? dataBR(si.fim) : "não informado", prox: si.proxAnual ? "Próxima anualidade: " + si.proxAnual : "Informe a data da proposta para calcular a anualidade",
             reaj: si.reajPct > 0.0001 ? "Reajustes concedidos: " + pctT(si.reajPct) : "", avisos: avisos.map((t) => ({ t })), temAvisos: avisos.length > 0, compart: !meu,
+            kitAberto: !!(ct.kit && ct.kit.id === c.id), kitAbrir: () => this.ctKitAbrir(c.id, ct.kit && ct.kit.id === c.id ? null : "reajuste"),
             aberto, cls: "ct-card st-" + stK + (aberto ? " aberto" : ""), abrir: () => this.ctAbrir(c.id), editar: () => this.ctEditar(c), excluir: () => this.ctExcluir(c.id),
             excluirTxt: ct.excluir === c.id ? "Confirmar exclusão" : "Excluir", meu, usarReajuste: () => this.ctUsar(c.id, "reajuste"), pdf: () => this.ctPdf(c.id), usarRq: () => this.ctUsar(c.id, "reequilibrio"),
             novoEv: () => this.ctNovoEv(), temEventos: true, vantajosidade: () => this.ctVantajosidade(c, si),
@@ -13166,6 +13332,11 @@ class Component extends DCLogic {
           ctNaturezas: [...new Set(ct.lista.map((c) => c.natureza).filter(Boolean))].map((v) => ({ v })) };
         const um1 = listaUm.length === 1 ? listaUm[0] : null;
         return { ...campos, ...fracP, ctLista: listaUm, ctFiltros, ctTab,
+          ...(() => { const k = ct.kit || {}, setK = (campo) => (e) => { const v = e.target.value; this.setState((x) => ({ ct: { ...x.ct, kit: { ...(x.ct.kit || {}), [campo]: v } } })); };
+            return { ctKitTipos: [["reajuste", "Reajuste por índice"], ["repactuacao", "Repactuação (convenção coletiva)"], ["reequilibrio", "Reequilíbrio econômico-financeiro"]].map(([id, nome]) => ({ id, nome, sel: k.tipo === id })),
+              onCtKitTipo: setK("tipo"), ctKitData: k.data || "", onCtKitData: setK("data"), ctKitPrazo: k.prazo || "", onCtKitPrazo: setK("prazo"),
+              ctKitTxt: k.tipo === "repactuacao" ? "Anexe a nova convenção coletiva e a planilha de custos com a variação (a Calculadora gera a planilha de repactuação)." : k.tipo === "reequilibrio" ? "Descreva o fato superveniente e anexe a demonstração do impacto (a Calculadora gera a nota técnica do reequilíbrio)." : "O requerimento traz o índice do contrato e a variação estimada dos últimos 12 meses; anexe a memória de cálculo da Calculadora.",
+              ctKitPdf: () => this.ctKitPdf(), ctKitReg: () => this.ctKitRegistrar(), ctKitFechar: () => this.setState((x) => ({ ct: { ...x.ct, kit: null } })) }; })(),
           ctTemDrill: !!drl, ctDrillRot: drl ? drl.rot + " (" + listaD.length + ")" : "", ctDrillLimpar: () => this.setState((x) => ({ ct: { ...x.ct, painel: { ...(x.ct.painel || {}), drill: null } } })),
           ctModoUm: modoUm, ctModoPainel: !modoUm, ctPcaVer: !modoUm && !ctEmp, ctSecCls: "lvc-corpo",
           ctPcaOp: [{ id: "", nome: "Sem vínculo (entra pelo setor requisitante)", sel: !f.pca_item }].concat(s.pca.lista.filter((i) => i.situacao !== "cancelado").sort((a, b) => b.ano - a.ano || String(a.setor).localeCompare(String(b.setor))).map((i) => ({ id: i.id, nome: i.ano + " · " + i.setor + " · " + String(i.descricao).slice(0, 60) + " (R$ " + Number(i.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + ")", sel: f.pca_item === i.id }))), ctKpisVer: false, ctPainelAg: !modoUm && lista.length > 0, ctPainelFrac: !modoUm && frac.length > 0 && !ctEmp, ctEmp, ctOrg: !ctEmp, ctLegVen: ctEmp ? "4 meses ou menos: hora de negociar a renovação" : "4 meses ou menos: hora de tramitar a prorrogação",
@@ -13182,7 +13353,14 @@ class Component extends DCLogic {
           ctRegimes: [["14133", "Lei 14.133/2021"], ["13303", "Lei 13.303/2016 (estatais)"], ["13019", "Lei 13.019/2014 (parcerias)"]].map(([id, nome]) => ({ id, nome, sel: f.regime === id })),
           ctIndicesOp: [["ipca", "IPCA"], ["ipca_e", "IPCA-E"], ["inpc", "INPC"], ["igpm", "IGP-M"], ["igpdi", "IGP-DI"], ["incc", "INCC-DI"]].map(([id, nome]) => ({ id, nome, sel: f.indice === id })),
           ctPeriodos: [["mensal", "Valor mensal"], ["global", "Valor global"]].map(([id, nome]) => ({ id, nome, sel: f.periodicidade === id })),
-          ctEvValores: !CT_EXEC[ev.tipo], ctEvMulta: ev.tipo === "multa", ctEvExec: !!CT_EXEC[ev.tipo], ctEvExecTxt: ev.tipo === "ocorrencia" ? "Registre a ocorrência da execução (art. 117, § 1º): falha, atraso, notificação ou advertência verbal. Não altera o valor nem a vigência." : "Sanção aplicada após processo com contraditório e ampla defesa (arts. 156 a 158). Informe na descrição o motivo e o número do processo. Não altera o valor nem a vigência.",
+          ctEvValores: !CT_SEMVAL[ev.tipo], ctEvMulta: ev.tipo === "multa", ctEvExec: !!CT_SEMVAL[ev.tipo], ctEvPrazo: !!CT_PEDIDO[ev.tipo] || ev.tipo === "notificacao",
+          ctEvPrazoRot: ev.tipo === "notificacao" ? "Prazo para a defesa (deixe em branco: 15 dias úteis)" : "Prazo de resposta previsto no contrato (deixe em branco: 1 mês)",
+          ctEvExecTxt: CT_PEDIDO[ev.tipo] ? "Registre a data do protocolo. O órgão tem o prazo do contrato (art. 92, X e XI) ou, na falta dele, 1 mês após a instrução do pedido, prorrogável uma vez (art. 123, parágrafo único). O pedido deve ser feito antes da prorrogação e do fim do contrato (art. 131, parágrafo único)."
+            : ev.tipo === "decisao" ? "Decisão do órgão sobre o pedido mais antigo ainda em aberto deste contrato. Se indeferido, cabe pedido de reconsideração em 3 dias úteis da intimação (art. 165, II)."
+            : ev.tipo === "notificacao" ? "Data em que a empresa foi intimada. A defesa prévia é de 15 dias úteis na multa e nos processos de impedimento ou inidoneidade (arts. 157 e 158); na Lei 13.303/2016, 10 dias úteis (art. 83, § 2º)."
+            : ev.tipo === "defesa" ? "Defesa, recurso ou pedido de reconsideração protocolado: encerra o prazo em aberto mais antigo deste contrato."
+            : ev.tipo === "atestado" ? "Atestado de capacidade técnica emitido pelo órgão: comprova a experiência em futuras licitações (art. 67)."
+            : ev.tipo === "ocorrencia" ? "Registre a ocorrência da execução (art. 117, § 1º): falha, atraso, notificação ou advertência verbal. Não altera o valor nem a vigência." : "Sanção aplicada após processo com contraditório e ampla defesa (arts. 156 a 158). Informe na descrição o motivo e o número do processo. Não altera o valor nem a vigência.",
           ctEvAberto: !!ct.ev, ctTiposOp: Object.entries(CT_TIPOS).map(([id, nome]) => ({ id, nome, sel: ev.tipo === id })), ctEvObra: ev.tipo === "reajuste" && !!(ct.lista.find((x) => x.id === ct.atual) || {}).obra,
           ctEvObraTxt: (() => { const c = ct.lista.find((x) => x.id === ct.atual); if (!c || !c.obra || ev.tipo !== "reajuste") return "";
             const pc = rqN(ev.percentual), sd = rqN(ev.saldo), va = rqN(ev.valor_anterior), f = (v) => "R$ " + v.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
