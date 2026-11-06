@@ -1239,6 +1239,20 @@
   .lmo-retro.lmo-cab span:nth-child(5), .lmo-lin4.lmo-cab span { text-align: right; } .lmo-lin4.lmo-cab span:first-child { text-align: left; }
   .lmo-minuta { white-space: pre-wrap; font: inherit; font-size: 13.5px; line-height: 1.6; background: #FBFDF6; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px; margin: 8px 0 0; color: #172B33; }
   @media (max-width: 900px) { .lmo-retro { grid-template-columns: 80px 1fr 110px; } .lmo-retro > span:nth-child(2), .lmo-retro > span:nth-child(4) { display: none; } .lmo-lin4 { grid-template-columns: 1fr 110px; } .lmo-lin4 > span:nth-child(2) { display: none; } }
+  .lmo-cmp-topo { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; } .lmo-cmp-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
+  .lmo-cmp-scroll { overflow-x: auto; border: 1px solid #E1E8E6; border-radius: 12px; margin-top: 12px; max-height: 75vh; overflow-y: auto; }
+  .lmo-cmp-grade { display: grid; min-width: max-content; font-size: 13px; }
+  .lmo-cmp-grade > div { padding: 6px 10px; border-bottom: 1px solid #EEF2F1; border-right: 1px solid #EEF2F1; background: #fff; min-height: 34px; }
+  .lmo-cmp-fixa { position: sticky; left: 0; z-index: 2; background: #F8FAF9 !important; font-weight: 600; color: #22343B; }
+  .lmo-cmp-h { position: sticky; top: 0; z-index: 3; background: #0A1F2A !important; color: #fff; display: grid; gap: 4px; align-content: start; }
+  .lmo-cmp-h.lmo-cmp-fixa { z-index: 4; color: #fff; background: #0A1F2A !important; } .lmo-cmp-h small { color: #9FE3C5; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+  .lmo-cmp-h input { font: inherit; font-weight: 800; font-size: 13.5px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.08); color: #fff; border-radius: 8px; padding: 5px 8px; width: 100%; box-sizing: border-box; }
+  .lmo-cmp-tot { font-weight: 800; font-variant-numeric: tabular-nums; } .lmo-cmp-tot em { font-style: normal; color: #FFD27A; font-size: 12px; } .lmo-cmp-hb { display: flex; gap: 6px; align-items: center; }
+  .lmo-cmp-sec { grid-column: 1 / -1; background: #EEF3F2 !important; font-weight: 800; font-size: 12.5px; text-transform: uppercase; letter-spacing: .03em; color: #0B1F2A; min-height: 0 !important; }
+  .lmo-cmp-sec span { position: sticky; left: 10px; }
+  .lmo-cmpc { display: grid; gap: 2px; text-align: right; } .lmo-cmpc input { font: inherit; text-align: right; border: 1px solid #D3DEDB; border-radius: 7px; padding: 4px 7px; width: 100%; box-sizing: border-box; background: #FFFEF7; }
+  .lmo-cmpc b { font-variant-numeric: tabular-nums; font-weight: 600; } .lmo-cmpc small { font-size: 11px; color: #8A5A00; font-weight: 700; }
+  .lmo-cmpc.mudou { background: #FFF6DE !important; } [data-calc="true"].lmo-cmpc b, .lmo-cmp-r[data-calc="true"] { font-weight: 800; color: #0B1F2A; }
   .lmo-passos { display: grid; gap: 12px; margin-top: 14px; }
   .lmo-passo { border: 1px solid #E1E8E6; border-radius: 14px; padding: 14px 16px; background: #fff; display: grid; gap: 10px; }
   .lmo-passo.pend { border-left: 4px solid #E0A21B; } .lmo-passo.ok { border-left: 4px solid #0FA36B; background: #FBFEFC; }
@@ -3397,6 +3411,30 @@
         </sc-if>
         <sc-if value="{{ calcLiberada }}" hint-placeholder-val="{{ true }}">
           <sc-if value="{{ calcAbaMo }}" hint-placeholder-val="{{ false }}">
+          <sc-if value="{{ moTelaCmp }}" hint-placeholder-val="{{ false }}">
+          <div class="lmo lmo-cmpp">
+            <div class="lmo-cmp-topo"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCmpVoltar }}">← Voltar à repactuação</button>
+              <div class="lmo-cmp-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCmpAdd }}">+ Adicionar outra planilha de repactuação</button><button type="button" class="lmo-btn" sc-camel-on-click="{{ moCmpPdf }}">Relatório da comparação (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCmpExcel }}">Excel</button></div></div>
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Comparação: planilha da contratação × repactuações</h2>
+              <p class="lmo-nota" style="margin-top: 0">Cada coluna é uma planilha completa no modelo da IN 05/2017, com os mesmos cálculos da Calculadora. Edite os valores de cada uma; o que mudou em relação à planilha anterior fica destacado em amarelo. Para uma nova repactuação, use "Adicionar outra planilha de repactuação": ela entra à direita, como numa linha do tempo. Role para os lados para ver todas.</p>
+              <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
+              <sc-if value="{{ moErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moErro }}</p></sc-if>
+              <div class="lmo-cmp-scroll" role="region" aria-label="Planilhas lado a lado" tabindex="0">
+                <div class="lmo-cmp-grade" style="{{ moCmpGrid }}">
+                  <div class="lmo-cmp-h lmo-cmp-fixa"><b>Rubrica</b></div>
+                  <sc-for list="{{ moCmpCols }}" as="c" hint-placeholder-count="2"><div class="lmo-cmp-h"><small>{{ c.tipo }}</small><input type="text" value="{{ c.nome }}" aria-label="Nome da planilha" sc-camel-on-input="{{ c.onNome }}"><span class="lmo-cmp-tot">{{ c.total }}<sc-if value="{{ c.dif }}" hint-placeholder-val="{{ false }}"> <em>{{ c.dif }}</em></sc-if></span>
+                    <span class="lmo-cmp-hb"><sc-if value="{{ c.ehRep }}" hint-placeholder-val="{{ false }}"><button type="button" class="lmo-ano" sc-camel-on-click="{{ c.atual }}">usar a planilha atual</button></sc-if><sc-if value="{{ c.podeDel }}" hint-placeholder-val="{{ false }}"><button type="button" class="lmo-x" aria-label="Remover esta planilha" sc-camel-on-click="{{ c.del }}">×</button></sc-if></span></div></sc-for>
+                  <sc-for list="{{ moCmpLinhas }}" as="l" hint-placeholder-count="20">
+                    <sc-if value="{{ l.sec }}" hint-placeholder-val="{{ false }}"><div class="lmo-cmp-sec"><span>{{ l.rot }}</span></div></sc-if>
+                    <sc-if value="{{ l.lin }}" hint-placeholder-val="{{ true }}"><div class="lmo-cmp-r lmo-cmp-fixa" data-calc="{{ l.calc }}">{{ l.rot }}</div><sc-for list="{{ l.cels }}" as="v" hint-placeholder-count="2"><div class="{{ v.cls }}" data-calc="{{ l.calc }}"><sc-if value="{{ v.edit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" value="{{ v.valor }}" aria-label="{{ l.rot }}" sc-camel-on-input="{{ v.on }}"></sc-if><sc-if value="{{ v.ver }}" hint-placeholder-val="{{ false }}"><b>{{ v.txt }}</b></sc-if><sc-if value="{{ v.temDif }}" hint-placeholder-val="{{ false }}"><small>{{ v.dif }}</small></sc-if></div></sc-for></sc-if>
+                  </sc-for>
+                </div>
+              </div>
+            </section>
+          </div>
+          </sc-if>
+          <sc-if value="{{ moTelaNormal }}" hint-placeholder-val="{{ true }}">
           <div class="lmo">
             <div class="lmo-salvas">
               <sc-if value="{{ moSalvasAtivo }}" hint-placeholder-val="{{ false }}">
@@ -3875,11 +3913,11 @@
               </sc-if>
             </section>
             <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
-            <section class="lmo-bloco">
+            <section class="lmo-bloco" id="lmo-comp">
               <h2 class="lmo-h2">Quadro comparativo: planilha da contratação × repactuada</h2>
               <sc-if value="{{ moSemComp }}" hint-placeholder-val="{{ true }}">
-                <p class="lmo-nota" style="margin-top: 0">A análise pelo agente monta o quadro sozinha. Sem o agente: preencha a planilha acima com os valores da contratação, clique no botão abaixo e depois altere o que mudou com a nova convenção.</p>
-                <div class="lmo-agente"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompRegistrar }}">Registrar os valores atuais como planilha da contratação</button></div>
+                <p class="lmo-nota" style="margin-top: 0">A análise pelo agente monta este quadro sozinha. Para comparar, lado a lado, a planilha da contratação com a desta repactuação (e com outras repactuações já aplicadas), clique em Comparar.</p>
+                <div class="lmo-agente"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moCmpAbrir }}">Comparar</button></div>
               </sc-if>
               <sc-if value="{{ moTemComp }}" hint-placeholder-val="{{ false }}">
                 <div class="lmo-kpis" style="margin-top: 0"><sc-for list="{{ moCompKpis }}" as="k" hint-placeholder-count="4"><div><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
@@ -3890,7 +3928,7 @@
                     <div class="{{ l.cls }}" role="row" data-forte="{{ l.forte }}" data-auto="{{ l.mudou }}"><span>{{ l.rot }}<sc-if value="{{ l.temMotivo }}" hint-placeholder-val="{{ false }}"><small>{{ l.motivo }}</small></sc-if></span><span class="lmo-val">{{ l.a }}</span><span class="lmo-val">{{ l.n }}</span><span class="lmo-val">{{ l.dv }}</span><span class="lmo-val">{{ l.p }}</span><span class="lmo-val">{{ l.part }}</span></div>
                   </sc-for>
                 </div>
-                <div class="lmo-agente" style="margin-top: 8px"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompRegistrar }}">Registrar de novo a partir dos valores atuais</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompLimpar }}">Apagar o quadro</button></div>
+                <div class="lmo-agente" style="margin-top: 8px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moCmpAbrir }}">Comparar</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompLimpar }}">Apagar o quadro</button></div>
               </sc-if>
             </section>
             </sc-if>
@@ -3920,6 +3958,7 @@
             </section>
             </sc-if>
           </div>
+          </sc-if>
           </sc-if>
           <sc-if value="{{ calcAbaRq }}" hint-placeholder-val="{{ false }}">
           <div class="lmo" id="rq-topo">
@@ -6705,7 +6744,27 @@ const MO_COMP = [["Salário-base", "salario", "salario"], ["Adicional de pericul
   ["Submódulo 2.3 – Benefícios", "M23", "", 1], ["Módulo 3 – Provisão para rescisão", "M3", "apt", 1], ["Submódulo 4.1 – Ausências legais", "M41", "", 1], ["Submódulo 4.2 – Intrajornada", "M42", "intra", 1],
   ["Uniformes e EPI", "unif", "unif"], ["Materiais", "materiais", "materiais"], ["Equipamentos", "equip", "equip"], ["Outros insumos", "outros5", "outros5"], ["Módulo 5 – Insumos", "M5", "", 1],
   ["Custos indiretos", "ci", "ci"], ["Lucro", "lucro", "lucro"], ["Tributos", "trib", "iss"], ["Módulo 6 – Custos indiretos, tributos e lucro", "M6", "", 1], ["Preço por empregado", "total", "", 2]];
-const MO_SNAP_FORA = ["ant", "fontes", "falhas", "falhas_aceite", "exeq", "diligencias", "cct_arquivo", "plan_arquivo"];
+// comparação da planilha da contratação com as planilhas das repactuações (linha do tempo)
+// [tipo, chave, rótulo, unidade]: "s" seção; "i" campo editável; "c" valor calculado
+const MO_CMP_LINHAS = [
+  ["s", "", "Instrumento coletivo"], ["i", "ano_cct", "Ano do acordo, convenção ou dissídio", "t"], ["i", "data_base", "Data-base da categoria", "t"],
+  ["s", "", "Módulo 1 – Remuneração"], ["i", "salario", "Salário-base", "R$"], ["i", "peric", "Periculosidade", "%"], ["i", "insal", "Insalubridade", "%"], ["i", "noturno", "Adicional noturno", "R$"],
+  ["i", "hnr", "Hora noturna reduzida", "R$"], ["i", "he_feriado", "Hora extra no feriado", "R$"], ["i", "outros1", "Outros (Módulo 1)", "R$"], ["c", "M1", "Total do Módulo 1"],
+  ["s", "", "Submódulo 2.1 – 13º, férias e adicional"], ["i", "p13", "13º salário", "%"], ["i", "pfa", "Adicional de férias", "%"], ["c", "M21", "Total do Submódulo 2.1"],
+  ["s", "", "Submódulo 2.2 – GPS, FGTS e outras contribuições"], ["i", "inss", "INSS", "%"], ["i", "saled", "Salário-educação", "%"], ["i", "rat", "RAT", "%"], ["i", "fap", "FAP", "x"],
+  ["i", "sesc", "SESC ou SESI", "%"], ["i", "senac", "SENAC ou SENAI", "%"], ["i", "sebrae", "SEBRAE", "%"], ["i", "incra", "INCRA", "%"], ["i", "fgts", "FGTS", "%"], ["c", "M22", "Total do Submódulo 2.2"],
+  ["s", "", "Submódulo 2.3 – Benefícios"], ["i", "vt_tarifa", "Tarifa do transporte", "R$"], ["i", "vt_viagens", "Viagens por dia", "n"], ["i", "dias", "Dias trabalhados", "n"],
+  ["i", "aux_dia", "Auxílio-alimentação por dia", "R$"], ["i", "aux_part", "Participação no auxílio-alimentação", "%"], ["i", "ref_dia", "Auxílio-refeição por dia", "R$"], ["i", "ref_part", "Participação no auxílio-refeição", "%"],
+  ["i", "assist", "Assistência médica e familiar", "R$"], ["i", "seguro", "Seguro de vida", "R$"], ["i", "outros23", "Outros benefícios", "R$"], ["c", "M23", "Total do Submódulo 2.3"],
+  ["s", "", "Módulo 3 – Provisão para rescisão"], ["i", "api", "Aviso prévio indenizado", "%"], ["i", "apt", "Aviso prévio trabalhado", "%"], ["c", "M3", "Total do Módulo 3"],
+  ["s", "", "Módulo 4 – Reposição do profissional ausente"], ["i", "ferias", "Férias", "%"], ["i", "aus", "Ausências legais", "%"], ["i", "pat", "Licença-paternidade", "%"], ["i", "acid", "Acidente de trabalho", "%"],
+  ["i", "mat", "Afastamento maternidade", "%"], ["i", "outros41", "Outras ausências", "%"], ["i", "intra", "Intrajornada", "%"], ["c", "M4", "Total do Módulo 4"],
+  ["s", "", "Módulo 5 – Insumos"], ["i", "unif", "Uniformes e EPI", "R$"], ["i", "materiais", "Materiais", "R$"], ["i", "equip", "Equipamentos", "R$"], ["i", "outros5", "Outros insumos", "R$"], ["c", "M5", "Total do Módulo 5"],
+  ["s", "", "Módulo 6 – Custos indiretos, tributos e lucro"], ["i", "ci", "Custos indiretos", "%"], ["i", "lucro", "Lucro", "%"], ["i", "pis", "PIS", "%"], ["i", "cofins", "COFINS", "%"], ["i", "iss", "ISS", "%"], ["c", "M6", "Total do Módulo 6"],
+  ["s", "", "Resultado"], ["c", "total", "Preço por empregado"], ["i", "emp_posto", "Empregados por posto", "n"], ["i", "postos", "Postos", "n"], ["c", "mensal", "Valor mensal"], ["c", "global", "Valor global"],
+];
+function moCmpCalc(col) { const dc = { ...MO_PADRAO, ...(col.d || {}) }; return moCalcular({ ...moDerivado(dc), reforma: dc.reforma || "antes" }, col.tipo === "contratacao" ? "planejamento" : "repactuacao", null); }
+const MO_SNAP_FORA = ["cmp", "ant", "fontes", "falhas", "falhas_aceite", "exeq", "diligencias", "cct_arquivo", "plan_arquivo"];
 const moSnap = (d) => { const o = {}; Object.keys(d || {}).forEach((k) => { if (!MO_SNAP_FORA.includes(k)) o[k] = d[k]; }); return JSON.parse(JSON.stringify(o)); };
 // aplica a memória de cálculo dos insumos a uma planilha guardada (planilha anterior, categorias do quadro, propostas)
 function moDerivado(dX) {
@@ -10339,6 +10398,64 @@ class Component extends DCLogic {
     try { window.scrollTo({ top: document.querySelector(".lmo").offsetTop - 80, behavior: "smooth" }); } catch (e) {}
   }
   // relatório único com o quadro consolidado e a planilha completa de cada categoria (e o retroativo, na repactuação)
+  // tela de comparação: planilha da contratação × repactuações, lado a lado
+  moCmpAbrir() {
+    const d = this.state.mo.d;
+    if (!d.cmp || !Array.isArray(d.cmp.cols) || !d.cmp.cols.length) {
+      const base = d.ant ? moSnap({ ...MO_PADRAO, ...d.ant }) : moSnap(d);
+      this.moSet("cmp")({ cols: [{ id: "c0", tipo: "contratacao", nome: "Planilha da contratação", d: base }, { id: "r1", tipo: "repactuacao", nome: "1ª repactuação", d: moSnap(d) }] });
+    }
+    this.setState((x) => ({ mo: { ...x.mo, tela: "comparar", erro: "", ok: "" } }));
+    try { history.replaceState({ p: "calculadora" }, "", location.pathname + "?p=calculadora&f=repactuacao&v=comparar"); window.scrollTo({ top: 0 }); } catch (e) {}
+  }
+  moCmpVoltar() {
+    this.setState((x) => ({ mo: { ...x.mo, tela: "" } }));
+    try { history.replaceState({ p: "calculadora" }, "", location.pathname + "?p=calculadora&f=repactuacao"); setTimeout(() => document.getElementById("lmo-comp").scrollIntoView({ block: "start" }), 50); } catch (e) {}
+  }
+  moCmpMudar(fn) { const c = this.state.mo.d.cmp || { cols: [] }; this.moSet("cmp")({ ...c, cols: fn(c.cols.map((x) => ({ ...x, d: { ...x.d } }))) }); }
+  moCmpAdd() { this.moCmpMudar((cols) => { const u = cols[cols.length - 1], n = cols.filter((x) => x.tipo === "repactuacao").length + 1; return cols.concat([{ id: "r" + Date.now().toString(36), tipo: "repactuacao", nome: n + "ª repactuação", d: moSnap(u.d) }]); }); }
+  moCmpDel(id) { this.moCmpMudar((cols) => cols.filter((x) => x.id !== id)); }
+  moCmpAtual(id) { const d = this.state.mo.d; this.moCmpMudar((cols) => cols.map((x) => (x.id === id ? { ...x, d: moSnap(d) } : x))); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Coluna atualizada com a planilha repactuada atual." } })); }
+  // dados da comparação para a tela e o relatório
+  moCmpDados() {
+    const d = this.state.mo.d, cols = ((d.cmp && d.cmp.cols) || []).map((c) => ({ ...c, r: moCmpCalc(c) }));
+    const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmt = (u, v) => u === "R$" ? brl(moNum(v)) : u === "%" ? String(v == null || v === "" ? "0" : v) + "%" : String(v == null || v === "" ? "—" : v);
+    const val = (c, [t, k, , u]) => t === "c" ? Number(c.r[k]) || 0 : k === "apt" && c.tipo !== "contratacao" ? (c.r.apt_p || 0) * 100 : u === "t" ? String(c.d[k] ?? "") : moNum(c.d[k] ?? MO_PADRAO[k]);
+    const txt = (c, L) => { const v = val(c, L); return L[0] === "c" ? brl(v) : L[3] === "t" ? (v || "—") : L[3] === "R$" ? brl(v) : L[3] === "%" ? v.toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + "%" : v.toLocaleString("pt-BR", { maximumFractionDigits: 4 }); };
+    const varia = (a, b, L) => { if (L[3] === "t") return a !== b ? "alterado" : ""; if (Math.abs(b - a) < 0.00005) return ""; const dv = b - a, pc = a ? dv / a : null;
+      return (L[0] === "c" || L[3] === "R$" ? (dv > 0 ? "+" : "−") + brl(Math.abs(dv)).replace("R$ ", "R$ ") : (dv > 0 ? "+" : "−") + Math.abs(dv).toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + (L[3] === "%" ? " p.p." : "")) + (pc != null && L[3] !== "%" ? " (" + (pc > 0 ? "+" : "") + (pc * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%)" : ""); };
+    return { cols, brl, val, txt, varia };
+  }
+  async moCmpRelatorio(formato) {
+    const { cols, brl, val, txt, varia } = this.moCmpDados(), d = this.state.mo.d;
+    if (cols.length < 2) return;
+    const hoje = new Date().toLocaleDateString("pt-BR"), nC = cols.length, lr = Math.max(22, 40 - nC * 3), lc = (100 - lr) / nC;
+    const linhas = [];
+    MO_CMP_LINHAS.forEach((L) => {
+      if (L[0] === "s") { linhas.push({ c: [L[2]].concat(cols.map(() => "")), span: true, forte: true }); return; }
+      const alerta = []; cols.forEach((c, i) => { if (i > 0 && varia(val(cols[i - 1], L), val(c, L), L)) alerta.push(i + 1); });
+      linhas.push({ c: [L[2]].concat(cols.map((c) => txt(c, L))), total: L[0] === "c" && ["total", "mensal", "global"].includes(L[1]), forte: L[0] === "c", alerta });
+    });
+    const blocos = [
+      { t: "pares", titulo: "Contrato", pares: [["Contrato", d.rp_contrato || "—"], ["Contratante", d.rp_orgao || "—"], ["Contratada", d.rp_empresa || "—"], ["Categoria", d.categoria || "—"]] },
+      { t: "destaques", itens: cols.map((c) => [c.nome, brl(c.r.total) + " por empregado"]) },
+      { t: "tabela", titulo: "Linha do tempo das planilhas", sub: "Em amarelo, o que mudou em relação à planilha anterior.", cab: ["Rubrica"].concat(cols.map((c) => c.nome)), larg: [lr].concat(cols.map(() => lc)), alin: "l" + "r".repeat(nC), linhas, fonte: nC > 4 ? 7 : 8 },
+    ];
+    for (let i = 1; i < nC; i++) {
+      const a = cols[i - 1], b = cols[i], mud = [];
+      MO_CMP_LINHAS.forEach((L) => { if (L[0] === "s") return; const va = val(a, L), vb = val(b, L), v = varia(va, vb, L); if (v) mud.push({ c: [L[2], txt(a, L), txt(b, L), v], forte: L[0] === "c" }); });
+      const dt = b.r.total - a.r.total, pt = a.r.total ? dt / a.r.total : 0;
+      blocos.push({ t: "quebra" }, { t: "secao", titulo: "O que mudou: de " + a.nome + " para " + b.nome });
+      blocos.push({ t: "texto", paragrafos: ["O preço por empregado passou de " + brl(a.r.total) + " para " + brl(b.r.total) + " (" + (dt >= 0 ? "+" : "−") + brl(Math.abs(dt)) + "; " + (pt >= 0 ? "+" : "") + (pt * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%). O valor mensal passou de " + brl(a.r.mensal) + " para " + brl(b.r.mensal) + " e o global, de " + brl(a.r.global) + " para " + brl(b.r.global) + "." + (b.tipo !== "contratacao" && a.tipo === "contratacao" && (a.r.apt_p || 0) > (b.r.apt_p || 0) ? " O aviso prévio trabalhado foi reduzido por ser custo não renovável (TCU, Acórdão 1.186/2017-Plenário)." : "")] });
+      blocos.push(mud.length ? { t: "tabela", titulo: "Rubricas alteradas", cab: ["Rubrica", a.nome, b.nome, "Variação"], larg: [34, 20, 20, 26], alin: "lrrr", linhas: mud } : { t: "legenda", texto: "Nenhuma rubrica foi alterada." });
+    }
+    const doc0 = { id: "comparacao", titulo: "Comparação das planilhas: contratação e repactuações", sub: (d.rp_contrato ? "Contrato " + d.rp_contrato + " · " : "") + (d.categoria || "") + " · " + nC + " planilhas", selo: leiDe(d).selo, paisagem: nC > 3,
+      arquivo: "comparacao-das-planilhas" + (d.rp_contrato ? "-contrato-" + String(d.rp_contrato).replace(/[^\w-]+/g, "-") : ""), blocos,
+      notas: ["Cada planilha segue o modelo da IN 05/2017 (Anexo VII-D) e os mesmos cálculos da Calculadora. Nas repactuações, o aviso prévio trabalhado é considerado custo não renovável (no máximo 0,194% por ano de prorrogação; TCU, Acórdão 1.186/2017-Plenário)."] };
+    try { if (formato === "xlsx") await this.moDocExcel(doc0, doc0.titulo, hoje); else await this.moDocPdf(doc0, doc0.titulo, hoje); }
+    catch (e) { console.error(e); this.setState((x) => ({ mo: { ...x.mo, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
+  }
   async moQuadroRelatorio(formato) {
     const mo = this.state.mo, modo = mo.modo, lista = this.moListaLer(modo), rep = modo === "repactuacao";
     if (!lista.length || mo.baixando) return;
@@ -10766,7 +10883,7 @@ class Component extends DCLogic {
     const NC = Math.max(4, larg.length); while (larg.length < NC) larg.push(16);
     const totalLarg = larg.reduce((a, b) => a + b, 0);
     const wb = new window.ExcelJS.Workbook(); wb.creator = "Licitacon"; wb.created = new Date();
-    const ws = wb.addWorksheet({ planilha: "Planilha", falhas: "Falhas", comparativo: "Comparativo", memoria: "Memória de cálculo", retroativo: "Retroativo" }[doc0.id] || doc0.titulo.slice(0, 31), { views: [{ showGridLines: false }],
+    const ws = wb.addWorksheet({ planilha: "Planilha", falhas: "Falhas", comparativo: "Comparativo", comparacao: "Comparação", memoria: "Memória de cálculo", retroativo: "Retroativo" }[doc0.id] || doc0.titulo.replace(/[*?:\\/\[\]]/g, " ").slice(0, 31), { views: [{ showGridLines: false }],
       pageSetup: { paperSize: 9, orientation: doc0.paisagem ? "landscape" : "portrait", fitToPage: true, fitToWidth: 1, fitToHeight: 0, margins: { left: 0.5, right: 0.5, top: 0.6, bottom: 0.6, header: 0.3, footer: 0.3 } },
       headerFooter: { oddFooter: "&L&8Licitacon · " + doc0.titulo + "&R&8Página &P de &N" } });
     ws.columns = larg.map((w) => ({ width: w }));
@@ -11353,6 +11470,18 @@ class Component extends DCLogic {
         cls: "lmo-lin lmo-comp" + (l.tot === 2 ? " lmo-tot" : ""), forte: l.tot === 1, mudou: Math.abs(l.dv) >= 0.005 && !l.tot })) : [],
       moCompInfo: comp ? "Planilha da contratação " + comp.origem + (comp.em ? " em " + new Date(comp.em).toLocaleString("pt-BR") : "") + ", recalculada com as regras da IN: " + brl(comp.rA.total) + " por empregado."
         + (r.vigente && Math.abs(comp.rA.total - r.vigente) > 0.05 ? " O preço vigente informado é " + brl(r.vigente) + ": diferença de " + brl(Math.abs(comp.rA.total - r.vigente)) + ", que pode indicar falha de cálculo na planilha da contratação ou repactuação anterior não registrada." : "") : "",
+      moTelaCmp: s.calcAba === "mo" && rep && mo.tela === "comparar", moTelaNormal: !(rep && mo.tela === "comparar"),
+      moCmpAbrir: () => this.moCmpAbrir(), moCmpVoltar: () => this.moCmpVoltar(), moCmpAdd: () => this.moCmpAdd(), moCmpPdf: () => this.moCmpRelatorio("pdf"), moCmpExcel: () => this.moCmpRelatorio("xlsx"),
+      ...(rep && mo.tela === "comparar" ? (() => { const { cols, brl, val, txt, varia } = this.moCmpDados(), n = cols.length;
+        const grid = "grid-template-columns: minmax(220px, 260px) repeat(" + n + ", minmax(200px, 230px));";
+        return { moCmpGrid: grid, moCmpN: String(n),
+          moCmpCols: cols.map((c, i) => ({ nome: c.nome, tipo: c.tipo === "contratacao" ? "Contratação" : "Repactuação", onNome: (e) => { const v = e.target.value; this.moCmpMudar((cs) => cs.map((x) => (x.id === c.id ? { ...x, nome: v } : x))); },
+            podeDel: i > 1, del: () => this.moCmpDel(c.id), ehRep: c.tipo !== "contratacao", atual: () => this.moCmpAtual(c.id), total: brl(c.r.total),
+            dif: i ? (() => { const dv = c.r.total - cols[i - 1].r.total, pc = cols[i - 1].r.total ? dv / cols[i - 1].r.total : 0; return (dv >= 0 ? "+" : "−") + brl(Math.abs(dv)) + " (" + (pc >= 0 ? "+" : "") + (pc * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%)"; })() : "" })),
+          moCmpLinhas: MO_CMP_LINHAS.map((L) => ({ sec: L[0] === "s", lin: L[0] !== "s", calc: L[0] === "c", rot: L[2] + (L[3] && L[3] !== "t" && L[0] === "i" ? " (" + L[3] + ")" : ""), cls: "lmo-cmpl" + (L[0] === "c" ? " calc" : ""),
+            cels: cols.map((c, i) => { const v = i ? varia(val(cols[i - 1], L), val(c, L), L) : "", edit = L[0] === "i" && !(L[1] === "apt" && c.tipo !== "contratacao");
+              return { edit, ver: !edit, valor: c.d[L[1]] == null ? (MO_PADRAO[L[1]] ?? "") : c.d[L[1]], txt: txt(c, L), dif: v, temDif: !!v, cls: "lmo-cmpc" + (v ? " mudou" : ""),
+                on: (e) => { const x = e.target.value; this.moCmpMudar((cs) => cs.map((y) => (y.id === c.id ? { ...y, d: { ...y.d, [L[1]]: x } } : y))); } }; }) })) }; })() : {}),
       moCompRegistrar: () => { this.moSet("ant")({ ...moSnap(this.state.mo.d), _origem: "assinante", _em: new Date().toISOString() }); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Valores atuais registrados como planilha da contratação. Agora altere o que mudou com a nova convenção." } })); },
       moCompLimpar: () => this.moSet("ant")(null),
       moMem: memGrupos, moMemEmp: "Empregados considerados no rateio de materiais e equipamentos: " + empTot + " (empregados por posto × postos).",
