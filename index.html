@@ -4104,7 +4104,7 @@
                     <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
                       <span class="lmo-cod">{{ l.cod }}</span>
                       <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
-                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
                       <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                     </div>
                   </sc-for>
@@ -4130,7 +4130,7 @@
                     <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
                       <span class="lmo-cod">{{ l.cod }}</span>
                       <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
-                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
                       <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                     </div>
                   </sc-for>
@@ -4141,7 +4141,7 @@
             <sc-if value="{{ moTemM3Inf }}" hint-placeholder-val="{{ false }}">
             <section class="lmo-bloco" id="lmo-m3">
               <h2 class="lmo-h2">Conferência do Módulo 3 com a planilha da empresa</h2>
-              <p class="lmo-nota" style="margin-top: 0">Digite os percentuais que constam na planilha elaborada pela empresa (deixe em branco o que não quiser conferir). B, C, E e F são fórmulas: só mudam quando mudam A, D ou os encargos do Submódulo 2.2. Cada divergência entra na lista de falhas e no relatório da planilha, com o correto e o fundamento.</p>
+              <p class="lmo-nota" style="margin-top: 0">Digite os percentuais que constam na planilha elaborada pela empresa (deixe em branco o que não quiser conferir). Os percentuais de B, C, E e F digitados direto no Módulo 3 da planilha acima entram no preço e também são conferidos aqui. Cada divergência entra na lista de falhas e no relatório da planilha, com o correto e o fundamento.</p>
               <div class="lmo-campos">
                 <sc-for list="{{ moM3Inf }}" as="c" hint-placeholder-count="6">
                   <label class="lmo-campo"><span>{{ c.rot }} (%)</span><input type="text" inputmode="decimal" data-mo-campo="{{ c.k }}" value="{{ c.valor }}" placeholder="{{ c.ref }}" sc-camel-on-input="{{ c.on }}"><small class="lmo-ref">{{ c.ref }}</small></label>
@@ -4159,7 +4159,7 @@
                     <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
                       <span class="lmo-cod">{{ l.cod }}</span>
                       <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
-                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
                       <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                     </div>
                   </sc-for>
@@ -4203,7 +4203,7 @@
                     <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
                       <span class="lmo-cod">{{ l.cod }}</span>
                       <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
-                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
                       <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                     </div>
                   </sc-for>
@@ -4248,7 +4248,7 @@
                     <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
                       <span class="lmo-cod">{{ l.cod }}</span>
                       <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
-                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
                       <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                     </div>
                   </sc-for>
@@ -4526,7 +4526,7 @@
                             <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-mudou="{{ l.mudou }}">
                               <span class="lmo-cod">{{ l.cod }}</span>
                               <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
-                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
                               <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                             </div>
                           </sc-for>
@@ -4552,7 +4552,7 @@
                             <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-mudou="{{ l.mudou }}">
                               <span class="lmo-cod">{{ l.cod }}</span>
                               <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
-                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
                               <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                             </div>
                           </sc-for>
@@ -4570,7 +4570,7 @@
                             <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-mudou="{{ l.mudou }}">
                               <span class="lmo-cod">{{ l.cod }}</span>
                               <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
-                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
                               <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                             </div>
                           </sc-for>
@@ -4614,7 +4614,7 @@
                             <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-mudou="{{ l.mudou }}">
                               <span class="lmo-cod">{{ l.cod }}</span>
                               <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
-                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
                               <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                             </div>
                           </sc-for>
@@ -4662,7 +4662,7 @@
                             <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-mudou="{{ l.mudou }}">
                               <span class="lmo-cod">{{ l.cod }}</span>
                               <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
-                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                              <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
                               <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                             </div>
                           </sc-for>
@@ -7690,6 +7690,7 @@ const MO_PADRAO = {
   emp_posto: "1", postos: "1",
   ano_exec: "2", vigente: "",
   vg_calc: "", vg_an: "20", vg_hnot: "9", vg_div: "220", vg_ffix: "9", vg_fmov: "1", vg_fer: "100", vg_intra: "", vg_ih: "1", vg_ia: "50", mem_cf: "",
+  m3_fgts_api: "", m3_multa_api: "", m3_inc_apt: "", m3_multa_apt: "",
   inf_api: "", inf_fgts_api: "", inf_multa_api: "", inf_apt: "", inf_inc_apt: "", inf_multa_apt: "",
   gt_tipo: "", gt_multa: "4", rp_db_ant: "", rp_pedido: "", rp_prorrog: "", rp_fim: "", rp_inicio: "", rp_contrato: "", rp_orgao: "", rp_empresa: "",
   regime: "", rbt12: "", reforma: "", rf_ano: "", rf_cbs: "11,3", rf_ibs: "18,7",
@@ -7856,11 +7857,14 @@ function moAtencao(dX) {
 // Planilha 1: conferência automática da planilha (sem inteligência artificial), com o fundamento e o caminho correto
 // Módulo 3: confere os percentuais da planilha da empresa (contratação ou proposta) com as fórmulas do modelo da IN 05/2017
 function moConferirM3(d, r, modo) {
-  const out = [], tem = (k) => String(d[k] == null ? "" : d[k]).trim() !== "", v = (k) => moNum(d[k]);
+  // percentuais da empresa: os da conferência (inf_*) ou, em branco, os digitados direto na planilha (B, C, E e F)
+  const M3K = { inf_fgts_api: "m3_fgts_api", inf_multa_api: "m3_multa_api", inf_inc_apt: "m3_inc_apt", inf_multa_apt: "m3_multa_apt" };
+  const val = (k) => { const s = String(d[k] == null ? "" : d[k]).trim(); return s || (M3K[k] ? String(d[M3K[k]] == null ? "" : d[M3K[k]]).trim() : ""); };
+  const out = [], tem = (k) => val(k) !== "", v = (k) => moNum(val(k));
   const p4 = (x) => (Math.round(x * 10000) / 10000).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
   const F = (rubrica, problema, fundamento, correcao, gravidade) => out.push({ rubrica, problema, fundamento, correcao, gravidade, impacto: "", m3: true });
   const fg = moNum(d.fgts) || 8, api = tem("inf_api") ? v("inf_api") : moNum(d.api), apt = tem("inf_apt") ? v("inf_apt") : (r && r.apt_p != null ? r.apt_p * 100 : moNum(d.apt));
-  const m22 = r && r.M22p ? r.M22p * 100 : null, dif = (a, b) => Math.abs(a - b) > 0.00051;
+  const m22 = r && r.M22p ? r.M22p * 100 : null, dif = (a, b) => Math.abs(a - b) > 0.0051; // tolera o arredondamento a 2 casas da planilha
   const multaOk = (inf, base) => !dif(inf, 0.4 * fg / 100 * base) || !dif(inf, 0.5 * fg / 100 * base);
   const fundMulta = "Lei 8.036/1990, art. 18, § 1º (multa de 40% do FGTS); a contribuição social de 10% da LC 110/2001 foi extinta pela Lei 13.932/2019 a partir de 2020; IN 05/2017, Anexo VII-D";
   if (tem("inf_api") && v("inf_api") > 0.42 + 0.0005) F("Módulo 3, A – Aviso prévio indenizado", "A planilha da empresa usa " + p4(v("inf_api")) + ".", "IN 05/2017, Anexo VII-D; CLT, art. 487, § 1º.", "O percentual usual é de 0,42% (1/12 da remuneração × 5% dos empregados dispensados com aviso indenizado). Percentual maior só se demonstrado pela rotatividade real da empresa ou do contrato.", "media");
@@ -7869,7 +7873,8 @@ function moConferirM3(d, r, modo) {
   const cad = (al) => fg / 100 * al * 0.9 * (1 + 5 / 56 + 5 / 56 + 5 / 168) * 100;
   if (tem("inf_multa_api")) { const x = v("inf_multa_api");
     if (Math.abs(x - cad(0.5)) < 0.06 || Math.abs(x - cad(0.5) / 0.9) < 0.06) F("Módulo 3, C – Multa do FGTS", "A planilha da empresa usa " + p4(x) + ", com a contribuição social de 10% somada à multa (50%).", fundMulta + "; Caderno Técnico de Vigilância da SEGES (fórmula).", "Desde 1º/1/2020, só a multa de 40%: 8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168) = " + p4(cad(0.4)) + ".", "alta");
-    else if (x > cad(0.4) / 0.9 + 0.06) F("Módulo 3, C – Multa do FGTS", "A planilha da empresa usa " + p4(x) + ".", fundMulta + "; Caderno Técnico de Vigilância da SEGES (fórmula).", "Multa de 40% sobre os depósitos do contrato (remuneração, 13º, férias e 1/3): 8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168) = " + p4(cad(0.4)) + ". Percentual maior só se demonstrado.", "media"); }
+    else if (x > cad(0.4) / 0.9 + 0.06) F("Módulo 3, C – Multa do FGTS", "A planilha da empresa usa " + p4(x) + ".", fundMulta + "; Caderno Técnico de Vigilância da SEGES (fórmula).", "Multa de 40% sobre os depósitos do contrato (remuneração, 13º, férias e 1/3): 8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168) = " + p4(cad(0.4)) + ". Percentual maior só se demonstrado.", "media");
+    else if (x < cad(0.4) * 0.5) F("Módulo 3, C – Multa do FGTS", "A planilha da empresa usa " + p4(x) + ", abaixo da referência de " + p4(cad(0.4)) + ".", fundMulta + "; Caderno Técnico de Vigilância da SEGES (fórmula).", "A multa de 40% incide sobre todos os depósitos do FGTS do contrato, não só sobre o aviso prévio indenizado: 8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168) = " + p4(cad(0.4)) + ". O percentual menor é estimativa da empresa e o risco é dela; não justifica aumentar o preço, mas a empresa arca com a diferença nas rescisões.", "baixa"); }
   if (tem("inf_apt")) {
     if (modo === "repactuacao" && v("inf_apt") > 0.194 + 0.0005) F("Módulo 3, D – Aviso prévio trabalhado", "A planilha mantém " + p4(v("inf_apt")) + " de aviso prévio trabalhado depois do primeiro ano.", "TCU, Acórdão 1.186/2017-Plenário (aviso prévio trabalhado como custo não renovável).", "O aviso prévio trabalhado é custo não renovável: o percentual cheio (1,94%) cabe só no primeiro ano. Na prorrogação ou repactuação, no máximo 0,194% por ano, e o valor pago a maior deve ser suprimido.", "alta");
     else if (modo !== "repactuacao" && v("inf_apt") > 1.94 + 0.0005) F("Módulo 3, D – Aviso prévio trabalhado", "A planilha da empresa usa " + p4(v("inf_apt")) + ".", "TCU, Acórdão 1.186/2017-Plenário; CLT, art. 488.", "No máximo 1,94% no primeiro ano (7 dias de redução da jornada ÷ 30 ÷ 12).", "alta");
@@ -9276,8 +9281,10 @@ function moCalcular(d, modo, rj) {
   // multa rescisória de 40% (a contribuição social de 10% da LC 110/2001 foi extinta pela Lei 13.932/2019 a partir de 2020).
   // C segue os cadernos técnicos da SEGES: multa sobre todos os depósitos do contrato (remuneração, 13º, férias e 1/3),
   // para os 90% de empregados que não pedem demissão: 8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168) ≈ 3,48%
-  r.m3p = { api: pc("api"), fgts_api: pc("fgts") * pc("api"), multa_api: pc("fgts") * 0.4 * 0.9 * (1 + 5 / 56 + 5 / 56 + 5 / 168), apt: r.apt_p,
-            inc_apt: r.M22p * r.apt_p, multa_apt: 0.4 * pc("fgts") * r.apt_p };
+  // B, C, E e F: em branco, fórmula; preenchidos, o percentual da planilha da empresa (E e F seguem a fórmula na repactuação, pois o APT é reduzido)
+  r.m3f = { fgts_api: pc("fgts") * pc("api"), multa_api: pc("fgts") * 0.4 * 0.9 * (1 + 5 / 56 + 5 / 56 + 5 / 168), inc_apt: r.M22p * r.apt_p, multa_apt: 0.4 * pc("fgts") * r.apt_p };
+  const m3ov = (k) => (modo === "repactuacao" && (k === "inc_apt" || k === "multa_apt")) || !String(d["m3_" + k] == null ? "" : d["m3_" + k]).trim() ? r.m3f[k] : moNum(d["m3_" + k]) / 100;
+  r.m3p = { api: pc("api"), fgts_api: m3ov("fgts_api"), multa_api: m3ov("multa_api"), apt: r.apt_p, inc_apt: m3ov("inc_apt"), multa_apt: m3ov("multa_apt") };
   Object.entries(r.m3p).forEach(([k, v]) => { r["r_" + k] = r.M1 * v; });
   r.M3p = moT4(Object.values(r.m3p).reduce((a, b) => a + b, 0));
   r.M3 = moT2(Object.keys(r.m3p).reduce((a, k) => a + r["r_" + k], 0));
@@ -12387,7 +12394,7 @@ class Component extends DCLogic {
       return { cab, nome: resto.join(" – "), sub: md.sub || "", linhas: md.linhas.map((l) => {
         const valTxt = l.valEdit ? (l.valTxt.indexOf("→") === 0 ? l.valTxt.slice(2) : brlTxt(moNum(l.valK))) : l.valTxt;
         const ehFap = l.rot.indexOf("FAP") === 0;
-        const pctTxt = l.pctEdit ? (ehFap ? String(l.pctK || "") : (String(l.pctK || "0") + "%")) : l.pctTxt;
+        const pctTxt = l.pctEdit ? (ehFap ? String(l.pctK || "") : (String(String(l.pctK || "").trim() || l.pctPh || "0") + "%")) : l.pctTxt;
         return { cod: l.cod, rot: l.rot, nota: l.nota || "", auto: !!l.auto, pctTxt, pctNum: ehFap ? null : num(pctTxt), ehFap, fapNum: ehFap ? num(l.pctK) : null, valTxt, valNum: num(valTxt) };
       }), total: { rot: md.total.rot, pctTxt: md.total.pctTxt, pctNum: num(md.total.pctTxt), valTxt: md.total.valTxt, valNum: num(md.total.valTxt) } };
     });
@@ -12896,10 +12903,12 @@ class Component extends DCLogic {
     const fontes = d.fontes || {};
     const L = (cod, rot, o) => ({ cod, rot, auto: !!o.auto || !!fontes[o.k || o.kv],
       nota: [o.nota || "", fontes[o.k || o.kv] && (o.k || o.kv) !== "iss" ? "Agente: " + fontes[o.k || o.kv] : ""].filter(Boolean).join(" · "),
-      pctEdit: !!o.k, pctK: o.k ? d[o.k] : "", onPct: o.k ? setK(o.k) : null, pctTxt: o.k ? "" : (o.p == null ? "" : (o.p === "-" ? "—" : pct(o.p))),
+      pctEdit: !!o.k, pctK: o.k ? d[o.k] : "", pctPh: o.ph || "", onPct: o.k ? setK(o.k) : null, pctTxt: o.k ? "" : (o.p == null ? "" : (o.p === "-" ? "—" : pct(o.p))),
       valEdit: !!o.kv, valK: o.kv ? d[o.kv] : "", onVal: o.kv ? setK(o.kv) : null, valTxt: o.kv ? "" : (o.v === null ? "—" : brl(o.v)) });
     const T = (rot, p, v) => ({ rot, pctTxt: p == null ? "" : pct(p), valTxt: brl(v) });
     const naoRen = rep ? "Custo não renovável: o aviso prévio trabalhado (1,94%) é devido só no 1º ano; nas prorrogações e repactuações, no máximo 0,194% por ano (TCU, Acórdão 1.186/2017-Plenário). Preenchido automaticamente." : "";
+    const ph3 = (x) => (Math.round((Number(x) || 0) * 1000000) / 10000).toLocaleString("pt-BR", { maximumFractionDigits: 4 });
+    const notaOv = "Em branco, vale a fórmula (o número em cinza); digite o percentual da planilha da empresa para usá-lo.";
     const simp = r.simp, tr = r.tr, depois = d.reforma === "depois";
     const issMun = "Alíquota do município (LC 116/2003).";
     const notaSimp = simp ? "Simples Nacional, Anexo IV." : "";
@@ -12944,11 +12953,13 @@ class Component extends DCLogic {
         L("F", "Outros (especificar)", { kv: "outros23" })], total: T("Total do Submódulo 2.3", null, r.M23) },
       { titulo: "Módulo 3 – Provisão para rescisão", linhas: [
         L("A", "Aviso prévio indenizado", { k: "api", v: r.r_api }),
-        L("B", "Incidência do FGTS sobre o aviso prévio indenizado", { p: r.m3p.fgts_api, v: r.r_fgts_api }),
-        L("C", "Multa do FGTS (40%) sobre os depósitos do contrato", { p: r.m3p.multa_api, v: r.r_multa_api, nota: "8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168): multa rescisória sobre os depósitos de remuneração, 13º, férias e 1/3, para os 90% de empregados que não pedem demissão (cadernos técnicos da SEGES; Lei 8.036/1990, art. 18, § 1º). Sem a contribuição social de 10%, extinta pela Lei 13.932/2019." }),
+        L("B", "Incidência do FGTS sobre o aviso prévio indenizado", { k: "m3_fgts_api", ph: ph3(r.m3f.fgts_api), v: r.r_fgts_api, nota: notaOv }),
+        L("C", "Multa do FGTS (40%) sobre os depósitos do contrato", { k: "m3_multa_api", ph: ph3(r.m3f.multa_api), v: r.r_multa_api, nota: notaOv + " Fórmula: " + "8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168): multa rescisória sobre os depósitos de remuneração, 13º, férias e 1/3, para os 90% de empregados que não pedem demissão (cadernos técnicos da SEGES; Lei 8.036/1990, art. 18, § 1º). Sem a contribuição social de 10%, extinta pela Lei 13.932/2019." }),
         rep ? L("D", "Aviso prévio trabalhado", { p: r.m3p.apt, v: r.r_apt, auto: true, nota: naoRen }) : L("D", "Aviso prévio trabalhado", { k: "apt", v: r.r_apt }),
-        L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { p: r.m3p.inc_apt, v: r.r_inc_apt, auto: rep }),
-        L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { p: r.m3p.multa_apt, v: r.r_multa_apt, auto: rep })], total: T("Total do Módulo 3", r.M3p, r.M3) },
+        rep ? L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { p: r.m3p.inc_apt, v: r.r_inc_apt, auto: true })
+          : L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { k: "m3_inc_apt", ph: ph3(r.m3f.inc_apt), v: r.r_inc_apt, nota: notaOv }),
+        rep ? L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { p: r.m3p.multa_apt, v: r.r_multa_apt, auto: true })
+          : L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { k: "m3_multa_apt", ph: ph3(r.m3f.multa_apt), v: r.r_multa_apt, nota: notaOv })], total: T("Total do Módulo 3", r.M3p, r.M3) },
       { titulo: "Submódulo 4.1 – Ausências legais", linhas: [
         L("A", "Férias", { k: "ferias", v: r.ferias }),
         L("B", "Ausências legais", { k: "aus", v: r.aus }),
@@ -12996,10 +13007,12 @@ class Component extends DCLogic {
     const fontes = d.fontes || {};
     const L = (cod, rot, o) => ({ cod, rot, auto: !!o.auto || !!fontes[o.k || o.kv],
       nota: [o.nota || "", fontes[o.k || o.kv] && (o.k || o.kv) !== "iss" ? "Agente: " + fontes[o.k || o.kv] : ""].filter(Boolean).join(" · "),
-      pctEdit: !!o.k, pctK: o.k ? d[o.k] : "", onPct: o.k ? SET(o.k) : null, pctTxt: o.k ? "" : (o.p == null ? "" : (o.p === "-" ? "—" : pct(o.p))),
+      pctEdit: !!o.k, pctK: o.k ? d[o.k] : "", pctPh: o.ph || "", onPct: o.k ? SET(o.k) : null, pctTxt: o.k ? "" : (o.p == null ? "" : (o.p === "-" ? "—" : pct(o.p))),
       valEdit: !!o.kv, valK: o.kv ? d[o.kv] : "", onVal: o.kv ? SET(o.kv) : null, valTxt: o.kv ? "" : (o.v === null ? "—" : brl(o.v)) });
     const T = (rot, p, v) => ({ rot, pctTxt: p == null ? "" : pct(p), valTxt: brl(v) });
     const naoRen = rep ? "Custo não renovável: o aviso prévio trabalhado (1,94%) é devido só no 1º ano; nas prorrogações e repactuações, no máximo 0,194% por ano (TCU, Acórdão 1.186/2017-Plenário). Preenchido automaticamente." : "";
+    const ph3 = (x) => (Math.round((Number(x) || 0) * 1000000) / 10000).toLocaleString("pt-BR", { maximumFractionDigits: 4 });
+    const notaOv = "Em branco, vale a fórmula (o número em cinza); digite o percentual da planilha da empresa para usá-lo.";
     const simp = r.simp, tr = r.tr, depois = d.reforma === "depois";
     const issMun = "Alíquota do município (LC 116/2003).";
     const notaSimp = simp ? "Simples Nacional, Anexo IV." : "";
@@ -13044,11 +13057,13 @@ class Component extends DCLogic {
         L("F", "Outros (especificar)", { kv: "outros23" })], total: T("Total do Submódulo 2.3", null, r.M23) },
       { titulo: "Módulo 3 – Provisão para rescisão", linhas: [
         L("A", "Aviso prévio indenizado", { k: "api", v: r.r_api }),
-        L("B", "Incidência do FGTS sobre o aviso prévio indenizado", { p: r.m3p.fgts_api, v: r.r_fgts_api }),
-        L("C", "Multa do FGTS (40%) sobre os depósitos do contrato", { p: r.m3p.multa_api, v: r.r_multa_api, nota: "8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168): multa rescisória sobre os depósitos de remuneração, 13º, férias e 1/3, para os 90% de empregados que não pedem demissão (cadernos técnicos da SEGES; Lei 8.036/1990, art. 18, § 1º). Sem a contribuição social de 10%, extinta pela Lei 13.932/2019." }),
+        L("B", "Incidência do FGTS sobre o aviso prévio indenizado", { k: "m3_fgts_api", ph: ph3(r.m3f.fgts_api), v: r.r_fgts_api, nota: notaOv }),
+        L("C", "Multa do FGTS (40%) sobre os depósitos do contrato", { k: "m3_multa_api", ph: ph3(r.m3f.multa_api), v: r.r_multa_api, nota: notaOv + " Fórmula: " + "8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168): multa rescisória sobre os depósitos de remuneração, 13º, férias e 1/3, para os 90% de empregados que não pedem demissão (cadernos técnicos da SEGES; Lei 8.036/1990, art. 18, § 1º). Sem a contribuição social de 10%, extinta pela Lei 13.932/2019." }),
         rep ? L("D", "Aviso prévio trabalhado", { p: r.m3p.apt, v: r.r_apt, auto: true, nota: naoRen }) : L("D", "Aviso prévio trabalhado", { k: "apt", v: r.r_apt }),
-        L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { p: r.m3p.inc_apt, v: r.r_inc_apt, auto: rep }),
-        L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { p: r.m3p.multa_apt, v: r.r_multa_apt, auto: rep })], total: T("Total do Módulo 3", r.M3p, r.M3) },
+        rep ? L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { p: r.m3p.inc_apt, v: r.r_inc_apt, auto: true })
+          : L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { k: "m3_inc_apt", ph: ph3(r.m3f.inc_apt), v: r.r_inc_apt, nota: notaOv }),
+        rep ? L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { p: r.m3p.multa_apt, v: r.r_multa_apt, auto: true })
+          : L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { k: "m3_multa_apt", ph: ph3(r.m3f.multa_apt), v: r.r_multa_apt, nota: notaOv })], total: T("Total do Módulo 3", r.M3p, r.M3) },
       { titulo: "Submódulo 4.1 – Ausências legais", linhas: [
         L("A", "Férias", { k: "ferias", v: r.ferias }),
         L("B", "Ausências legais", { k: "aus", v: r.aus }),
