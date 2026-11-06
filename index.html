@@ -4355,7 +4355,7 @@
               <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
               <sc-if value="{{ moTemLista }}" hint-placeholder-val="{{ false }}">
                 <sc-if value="{{ moListaCons }}" hint-placeholder-val="{{ true }}">
-                <div class="lmo-agente" style="margin-top: 10px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moQuadroPdf }}">Relatório com todas as planilhas (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moQuadroExcel }}">Excel</button></div>
+                <div class="lmo-agente" style="margin-top: 10px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moQuadroPdf }}">Relatório com todas as planilhas (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moQuadroExcel }}">Excel</button><sc-if value="{{ moEhRep }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moNotaTodas }}">Nota técnica de todas as categorias (PDF)</button></sc-if></div>
                 <div class="lmo-tabela" style="margin-top: 12px" role="table">
                   <div class="lmo-lin lmo-cons lmo-cab" role="row"><span>Categoria</span><span>Preço por empregado</span><span>Empregados por posto</span><span>Postos</span><span>Empregados</span><span>Valor mensal</span><span>Valor global</span><span></span></div>
                   <sc-for list="{{ moLista }}" as="l" hint-placeholder-count="2">
@@ -12896,6 +12896,110 @@ class Component extends DCLogic {
     } catch (e) { console.error(e); this.setState((x) => ({ mo: { ...x.mo, erro: "Não foi possível gerar a nota técnica. Tente de novo." } })); }
   }
 
+  // nota técnica única da repactuação com todas as categorias do quadro: análise consolidada, retroativo somado e minuta de apostilamento
+  async moNotaTecnicaTodas() {
+    const mo = this.state.mo; let lista = this.moListaLer("repactuacao");
+    if (mo.modo !== "repactuacao" || !lista.length || mo.baixando) return;
+    const desat = this.moListaDesatualizada();
+    if (desat) { const antes = this.moListaLer("repactuacao"); this.moListaAdd(); let depois = this.moListaLer("repactuacao"); if (depois.length > antes.length) { this.moListaGravar("repactuacao", antes); depois = antes; } lista = depois; }
+    const orig = mo.d, set = (d) => new Promise((ok) => this.setState((x) => ({ mo: { ...x.mo, d } }), ok));
+    this.setState((x) => ({ mo: { ...x.mo, baixando: true, erro: "", ok: "Montando a nota técnica com " + lista.length + " categoria(s)…" } }));
+    const cats = [], fora = [];
+    try {
+      for (const it of lista) {
+        const d = { ...MO_PADRAO, ...it.d }; await set(d); this.moProps();
+        const U = this._moUltimo || {}, r = U.r;
+        if (!r || !d.reforma || !d.regime || !(moNum(d.vigente) > 0)) { fora.push(it.nome); continue; }
+        const retro = U.retro, emp = retro ? retro.empN : Math.max(1, moNum(d.emp_posto) * moNum(d.postos));
+        cats.push({ nome: it.nome, d, r, emp, retro, rj: U.rj, comp: U.comp, falhas: d.falhas || [],
+          bloq: retro ? retro.alertas.filter((a) => !a.ok && /Preclusão|Anualidade não/.test(a.t)).map((a) => a.t) : [] });
+      }
+    } catch (e) { console.error(e); }
+    await set(orig);
+    if (!cats.length) { this.setState((x) => ({ mo: { ...x.mo, baixando: false, ok: "", erro: "Nenhuma categoria do quadro está completa para a nota técnica: em cada uma, informe o preço vigente por empregado e escolha a tributação." } })); return; }
+    const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const pctx = (v) => ((Number(v) || 0) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
+    const d0 = cats[0].d, lei = leiDe(d0), L14 = (d0.lei || "14133") === "14133";
+    const somaAnt = cats.reduce((a, c) => a + c.r.vigente * c.emp, 0), somaNova = cats.reduce((a, c) => a + c.r.total * c.emp, 0);
+    const retroTot = cats.reduce((a, c) => a + (c.retro ? c.retro.total : 0), 0), varTot = somaAnt ? somaNova / somaAnt - 1 : 0, meses = moNum(d0.meses) || 12;
+    const bloqueadas = cats.filter((c) => c.bloq.length), aptas = cats.filter((c) => !c.bloq.length);
+    const regNome = { real: "Lucro Real", presumido: "Lucro Presumido", simples: "Simples Nacional (Anexo IV)" }[d0.regime] || "";
+    const contrato = d0.rp_contrato || "___/____", orgao = d0.rp_orgao || "a Administração", empresa = d0.rp_empresa || "a contratada";
+    const secoes = [];
+    secoes.push(["1. RELATÓRIO", ["Trata-se de pedido de repactuação de preços do Contrato nº " + contrato + ", firmado entre " + orgao + " e " + empresa + ", formulado em " + (d0.rp_pedido || "__/__/____") + ", em razão " + (d0.cct_nome ? "do instrumento coletivo " + d0.cct_nome : "do novo instrumento coletivo de trabalho") + ", abrangendo " + cats.length + " categoria(s) profissional(is): " + cats.map((c) => c.nome + " (" + c.emp + " empregado" + (c.emp === 1 ? "" : "s") + ")").join("; ") + ".",
+      "O pedido foi instruído com as planilhas de custos e formação de preços de cada categoria e com o instrumento coletivo, " + lei.repacInstr + ". As planilhas completas de cada categoria constam do relatório anexo. É o relatório."]]);
+    const an = [];
+    // alertas iguais em todas as categorias aparecem uma vez; os demais, com o nome das categorias a que se referem
+    const porTxt = new Map(); cats.forEach((c) => (c.retro ? c.retro.alertas : []).forEach((a) => { if (!porTxt.has(a.t)) porTxt.set(a.t, []); porTxt.get(a.t).push(c.nome); }));
+    const tempo = [...porTxt.entries()].map(([t, ns]) => (ns.length === cats.length ? "" : ns.join(", ") + ": ") + t);
+    an.push(["2.1 Tempestividade e anualidade", tempo.length ? tempo.slice(0, 16) : ["Não foram informadas as datas necessárias à verificação da tempestividade."], null]);
+    an.push(["2.2 Variação dos custos por categoria", ["O valor mensal do contrato passa de " + brl(somaAnt) + " para " + brl(somaNova) + ", variação de " + (varTot >= 0 ? "+" : "−") + pctx(Math.abs(varTot)) + ", conforme o quadro abaixo. A variação de cada categoria está demonstrada rubrica por rubrica no quadro comparativo da respectiva planilha (relatório anexo).",
+      "Os efeitos financeiros alcançam exclusivamente os itens que motivaram a repactuação e apenas a diferença porventura existente (IN SEGES/MP nº 5/2017, art. 58, parágrafo único), sendo vedada a inclusão de benefícios não previstos na proposta inicial, salvo se obrigatórios por força de lei ou do instrumento coletivo."], "var"]);
+    const aptN = [...new Set(cats.map((c) => ((Number(c.r.apt_p) || 0) * 100).toLocaleString("pt-BR", { maximumFractionDigits: 3 }) + "%"))];
+    an.push(["2.3 Custos não renováveis", ["Foram suprimidos ou reduzidos os custos não renováveis já pagos ou amortizados no primeiro ano, em especial o aviso prévio trabalhado, considerado em " + aptN.join(" / ") + " (TCU, Acórdão 1.186/2017-Plenário; IN SEGES/MP nº 5/2017, art. 57, § 2º, e Anexo VII-D)."], null]);
+    const comRj = cats.filter((c) => c.rj && c.rj.pronto);
+    an.push(["2.4 Insumos", [comRj.length ? "Os insumos foram reajustados pelo índice previsto no contrato, contado da data do orçamento estimado (Lei nº 14.133/2021, art. 25, § 7º; IN SEGES/MP nº 5/2017, art. 54, § 2º): " + comRj[0].rj.msg + "." : "Não houve reajuste dos insumos nesta repactuação, que se limita aos custos decorrentes do instrumento coletivo."], null]);
+    const comFalha = cats.filter((c) => c.falhas.length);
+    let n = 5;
+    if (comFalha.length) an.push(["2." + (n++) + " Inconsistências das planilhas da contratação", comFalha.map((c) => c.nome + ": " + c.falhas.length + " falha(s) – " + c.falhas.map((f) => f.rubrica).join("; ") + "."), null]);
+    an.push(["2." + (n++) + " Tributação", ["Regime de tributação da contratada: " + regNome + ". " + (d0.reforma === "depois" ? "Os tributos foram calculados com as regras da reforma tributária (EC nº 132/2023 e LC nº 214/2025)." : "Os tributos foram calculados com as regras anteriores à reforma tributária.")], null]);
+    an.push(["2." + (n++) + " Efeitos financeiros", [retroTot > 0 ? "Os novos valores vigoram a partir da data-base de cada categoria (IN SEGES/MP nº 5/2017, art. 58, I e III). Apura-se diferença retroativa total de " + brl(retroTot) + ", somadas as categorias, conforme o quadro abaixo e o detalhamento mês a mês do relatório anexo." : "Não há diferença retroativa a pagar com as datas informadas."], "retro"]);
+    secoes.push(["2. ANÁLISE", an]);
+    const novaApt = aptas.reduce((a, c) => a + c.r.total * c.emp, 0) + bloqueadas.reduce((a, c) => a + c.r.vigente * c.emp, 0), retroApt = aptas.reduce((a, c) => a + (c.retro ? c.retro.total : 0), 0);
+    const concl = [];
+    if (aptas.length) concl.push("Diante do exposto, opina-se pelo deferimento da repactuação " + (bloqueadas.length ? "das categorias " + aptas.map((c) => c.nome).join(", ") : "de todas as categorias") + ", passando o valor mensal do contrato a " + brl(novaApt) + (retroApt > 0 ? ", com diferença retroativa de " + brl(retroApt) : "") + ". " + lei.repacForm + ", precedida da verificação da disponibilidade orçamentária.");
+    if (bloqueadas.length) concl.push((aptas.length ? "Opina-se, ainda, pelo indeferimento" : "Diante do exposto, opina-se pelo indeferimento") + " quanto às categorias " + bloqueadas.map((c) => c.nome + " (" + c.bloq.join(" ") + ")").join("; ") + ".");
+    concl.push("É a nota técnica, que se submete à consideração superior.");
+    secoes.push(["3. CONCLUSÃO", concl]);
+    try {
+      if (!window.jspdf) await carregarScript(baseSite() + "vendor/jspdf-2.5.1.umd.min.js");
+      if (!(window.jspdf && window.jspdf.jsPDF && window.jspdf.jsPDF.API.autoTable)) await carregarScript(baseSite() + "vendor/jspdf-autotable-3.8.2.min.js");
+      const { jsPDF } = window.jspdf; const doc = new jsPDF({ unit: "mm", format: "a4" });
+      const ML = 20, MR = 20, W = 210, limpo = moPdfTxt;
+      const base = { margin: { left: ML, right: MR, top: 20, bottom: 18 }, theme: "plain", styles: { font: "helvetica", fontSize: 10, textColor: [11, 31, 42], cellPadding: { top: 1.4, bottom: 1.4, left: 0, right: 0 }, overflow: "linebreak" },
+        didParseCell: (dt) => { dt.cell.text = (dt.cell.text || []).map(limpo); } };
+      const tab = { headStyles: { fillColor: [238, 243, 242], textColor: [102, 117, 127], fontSize: 8 }, styles: { ...base.styles, fontSize: 8.5, cellPadding: 1.2, lineColor: [221, 229, 228], lineWidth: { bottom: 0.1 } } };
+      let y = 22;
+      doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text("NOTA TÉCNICA Nº ___/____", W / 2, y, { align: "center" }); y += 7;
+      doc.setFont("helvetica", "normal"); doc.setFontSize(10);
+      doc.autoTable({ ...base, startY: y, body: [["Assunto: análise do pedido de repactuação do Contrato nº " + contrato + (d0.rp_empresa ? " – " + d0.rp_empresa : "") + " (" + cats.length + " categorias)."], ["Referência: " + (L14 ? "Lei nº 14.133/2021, arts. 92, § 6º, 135 e 136; IN SEGES/MP nº 5/2017, arts. 54 a 58." : lei.repac + "; IN SEGES/MP nº 5/2017 como referência técnica.")]], styles: { ...base.styles, fontSize: 10 } });
+      const par = (t, o) => doc.autoTable({ ...base, startY: doc.lastAutoTable.finalY + (o && o.gap || 2), body: [[{ content: t, styles: { halign: "left", ...(o && o.st || {}) } }]] });
+      secoes.forEach(([tit, corpo]) => {
+        par(tit, { gap: 5, st: { fontStyle: "bold", fontSize: 11 } });
+        corpo.forEach((c) => {
+          if (!Array.isArray(c)) { par(c); return; }
+          par(c[0], { gap: 3, st: { fontStyle: "bold" } }); c[1].forEach((t) => par(t));
+          if (c[2] === "var") doc.autoTable({ ...base, ...tab, startY: doc.lastAutoTable.finalY + 2, head: [["Categoria", "Empr.", "Preço vigente", "Preço repactuado", "Variação", "Mensal vigente", "Mensal repactuado"]],
+            body: cats.map((k) => [k.nome, String(k.emp), brl(k.r.vigente), brl(k.r.total), (k.r.difp >= 0 ? "+" : "−") + pctx(Math.abs(k.r.difp)), brl(k.r.vigente * k.emp), brl(k.r.total * k.emp)])
+              .concat([[{ content: "Total", styles: { fontStyle: "bold" } }, { content: String(cats.reduce((a, k) => a + k.emp, 0)), styles: { fontStyle: "bold" } }, "", "", { content: (varTot >= 0 ? "+" : "−") + pctx(Math.abs(varTot)), styles: { fontStyle: "bold" } }, { content: brl(somaAnt), styles: { fontStyle: "bold" } }, { content: brl(somaNova), styles: { fontStyle: "bold" } }]]),
+            columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" }, 4: { halign: "right" }, 5: { halign: "right" }, 6: { halign: "right" } } });
+          if (c[2] === "retro" && retroTot > 0) doc.autoTable({ ...base, ...tab, startY: doc.lastAutoTable.finalY + 2, head: [["Categoria", "Período", "Diferença retroativa"]],
+            body: cats.map((k) => [k.nome, k.retro && k.retro.linhas.length ? k.retro.linhas[0].mes + " a " + k.retro.linhas[k.retro.linhas.length - 1].mes : "—", brl(k.retro ? k.retro.total : 0)])
+              .concat([[{ content: "Total", colSpan: 2, styles: { fontStyle: "bold" } }, { content: brl(retroTot), styles: { fontStyle: "bold" } }]]), columnStyles: { 2: { halign: "right" } } });
+        });
+      });
+      par((d0.municipio || "________") + ", ___ de ____________ de ______.", { gap: 8 });
+      par("______________________________________\nResponsável pela análise", { gap: 12, st: { halign: "center" } });
+      // minuta do termo de apostilamento (ou do aditivo, quando a lei ou a prorrogação o exigir)
+      doc.addPage(); doc.autoTable({ ...base, startY: 22, body: [[{ content: "ANEXO – MINUTA DE TERMO DE APOSTILAMENTO Nº ___/____", styles: { fontStyle: "bold", fontSize: 12, halign: "center" } }]] });
+      const valAno = novaApt * meses;
+      [L14 ? "Termo de apostilamento ao Contrato nº " + contrato + ", celebrado entre " + orgao + " e " + empresa + ", para registro da repactuação de preços, com fundamento no art. 136, I, da Lei nº 14.133/2021 e no art. 57, § 4º, da IN SEGES/MP nº 5/2017." : "Termo de registro da repactuação de preços do Contrato nº " + contrato + ", celebrado entre " + orgao + " e " + empresa + ". " + lei.repacForm + ".",
+       "CLÁUSULA PRIMEIRA – DO OBJETO. Registra-se a repactuação dos preços do contrato em razão " + (d0.cct_nome ? "do instrumento coletivo " + d0.cct_nome : "do novo instrumento coletivo de trabalho") + ", conforme a Nota Técnica nº ___/____ e as planilhas de custos anexas ao processo.",
+       "CLÁUSULA SEGUNDA – DOS NOVOS VALORES. Os preços passam a ser os seguintes:"].forEach((t, i) => par(t, { gap: i ? 4 : 6 }));
+      doc.autoTable({ ...base, ...tab, startY: doc.lastAutoTable.finalY + 2, head: [["Categoria", "Empregados", "Preço mensal por empregado", "Valor mensal", "Vigência dos novos valores"]],
+        body: aptas.map((k) => [k.nome, String(k.emp), brl(k.r.total), brl(k.r.total * k.emp), k.d.data_base || "__/__/____"]).concat(bloqueadas.map((k) => [k.nome + " (sem repactuação)", String(k.emp), brl(k.r.vigente), brl(k.r.vigente * k.emp), "—"]))
+          .concat([[{ content: "Valor mensal do contrato", colSpan: 3, styles: { fontStyle: "bold" } }, { content: brl(novaApt), styles: { fontStyle: "bold" } }, ""]]), columnStyles: { 1: { halign: "right" }, 2: { halign: "right" }, 3: { halign: "right" } } });
+      ["Para " + meses + " meses de execução, o valor estimado passa a " + brl(valAno) + ".",
+       "CLÁUSULA TERCEIRA – DOS EFEITOS FINANCEIROS. Os novos valores produzem efeitos a partir da data-base de cada categoria, indicada acima" + (retroApt > 0 ? ", sendo devida à contratada a diferença retroativa de " + brl(retroApt) + ", a ser paga após a apresentação das notas fiscais complementares" : "") + ".",
+       "CLÁUSULA QUARTA – DA DOTAÇÃO ORÇAMENTÁRIA. As despesas decorrentes correrão à conta da dotação orçamentária ________________________, Nota de Empenho nº ________.",
+       "CLÁUSULA QUINTA – DA RATIFICAÇÃO. Permanecem inalteradas as demais cláusulas e condições do contrato.",
+       (d0.municipio || "________") + ", ___ de ____________ de ______.", "______________________________________\nAutoridade competente"].forEach((t, i) => par(t, { gap: i >= 4 ? 10 : 4, st: i === 5 ? { halign: "center" } : {} }));
+      const np = doc.getNumberOfPages(); for (let i = 1; i <= np; i++) { doc.setPage(i); doc.setFontSize(8); doc.setTextColor(102, 117, 127); doc.text("Página " + i + " de " + np, W - MR, 290, { align: "right" }); doc.text("Gerada no Licitacon · confira antes de assinar", ML, 290); }
+      doc.save("nota-tecnica-repactuacao-todas-as-categorias" + (d0.rp_contrato ? "-contrato-" + String(d0.rp_contrato).replace(/[^0-9a-z]+/gi, "-") : "") + ".pdf");
+      this.setState((x) => ({ mo: { ...x.mo, baixando: false, ok: "✓ Nota técnica com " + cats.length + " categoria(s) gerada, com a minuta do apostilamento." + (fora.length ? " Ficaram de fora (sem preço vigente ou tributação): " + fora.join(", ") + "." : "") } }));
+    } catch (e) { console.error(e); this.setState((x) => ({ mo: { ...x.mo, baixando: false, ok: "", erro: "Não foi possível gerar a nota técnica. Tente de novo." } })); }
+  }
+
   // dados da contratação que o assinante preenche obrigatoriamente (o agente não os substitui)
   moCamposObrig(d, modo) {
     const rep = modo === "repactuacao", prop = modo === "proposta", C = (k, rot, ph) => ({ k, rot, ph: ph || "" });
@@ -13315,6 +13419,7 @@ class Component extends DCLogic {
           moCopiarDilig: () => { try { navigator.clipboard.writeText(texto.join("\n\n")); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Diligência copiada." } })); } catch (e) {} } };
       })(),
       moBaixarNota: () => this.moNotaTecnica(),
+      moNotaTodas: () => this.moNotaTecnicaTodas(), moEhRep: mo.modo === "repactuacao",
       ...(() => {
         const uid = this.u ? this.u.id : "", org = s.organizacao, todas = mo.salvasModo === mo.modo ? (mo.salvas || []) : [];
         const grupos = []; todas.forEach((x) => { const chave = x.usuario_id + "|" + x.nome; let g = grupos.find((y) => y.chave === chave); if (!g) { g = { chave, nome: x.nome, minha: x.usuario_id === uid, autor: x.autor_nome || "", compartilhada: x.compartilhada, versoes: [] }; grupos.push(g); } g.versoes.push(x); });
