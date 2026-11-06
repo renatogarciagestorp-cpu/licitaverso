@@ -69,7 +69,7 @@ CAMPOS_ROTULO = {
     "metodos": "Métodos construtivos", "plano_obra": "Plano da obra",
     "prazo": "Prazo", "prazo_outro": "Prazo (detalhe)", "prazo_entrega": "Prazo de entrega", "garantia_bem": "Garantia do produto",
     "garantia_bem_outro": "Garantia do produto (detalhe)", "amostra": "Exigir amostra", "instrumento": "Instrumento da contratação (contrato ou nota de empenho, art. 95)",
-    "pca_item": "Item do Plano de Contratações Anual", "itens_pp": "Itens da pesquisa de preços", "dot_unidade": "Unidade orçamentária", "dot_programa": "Programa de trabalho", "dot_elemento": "Elemento de despesa", "dot_fonte": "Fonte de recursos", "pca_ano": "Ano do PCA", "data_orcamento": "Data do orçamento estimado", "indice": "Índice de reajuste", "observacoes": "Observações do requisitante",
+    "pca_item": "Item do Plano de Contratações Anual", "itens_pp": "Itens da pesquisa de preços", "dot_unidade": "Unidade orçamentária", "dot_programa": "Programa de trabalho", "dot_elemento": "Elemento de despesa", "dot_fonte": "Fonte de recursos", "normas": "Normas que o órgão segue", "normas_ref": "Regulamento de licitações do órgão", "cadastro": "Cadastro de fornecedores", "cadastro_outro": "Cadastro de fornecedores (qual)", "pca_ano": "Ano do PCA", "data_orcamento": "Data do orçamento estimado", "indice": "Índice de reajuste", "observacoes": "Observações do requisitante",
     "parc_motivo": "Motivo do parcelamento ou não (escolha do requisitante)", "adjudicacao": "Forma de adjudicação (escolha do requisitante)",
     "criterio": "Critério de julgamento (escolha do requisitante)", "regime_exec": "Regime de execução (escolha do requisitante)",
     "local": "Local da obra ou serviço", "municipio": "Município", "autoridade": "Autoridade que aprova o documento",
@@ -217,7 +217,8 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
         "questionário. Quem ler deve entender que o texto é da unidade que assina. "
         "Regras: (1) use exclusivamente as informações do requisitante; nunca invente números, valores, datas, nomes, quantitativos, "
         "marcas ou fontes de pesquisa de preços; (2) as dúvidas foram resolvidas com o requisitante antes desta redação (veja os "
-        "esclarecimentos): preencha TODOS os campos; use [PREENCHER: o que falta — por que é necessário] SOMENTE para dados que só o órgão "
+        "esclarecimentos): preencha TODOS os campos; use [PREENCHER: o que falta — por que é necessário] (se, ainda assim, a lacuna for de preço ou valor em dinheiro, escreva "
+        "[PREENCHER: preço: o que falta]) SOMENTE para dados que só o órgão "
         "tem (nomes, números, datas internas) e que estejam listados como \"declarou não ter\"; NUNCA deixe em branco preço, custo ou valor: "
         "encontrar e calcular valores é seu trabalho (use a pesquisa de mercado; se não houver referência do mesmo estado, use a nacional; "
         "se não houver nenhuma, diga isso no texto e indique o valor de referência mais próximo encontrado); os valores citados no texto do "
@@ -429,7 +430,8 @@ def lacunas_do_documento(docj, sem_info=""):
             alvo, desc = m.group(0), m.group(1).strip()
             antes, depois = t[max(0, m.start() - 200):m.start()], t[m.end():m.end() + 140]
             antes = re.sub(r"\[PREENCHER[^\]]*\]", "___", antes); depois = re.sub(r"\[PREENCHER[^\]]*\]", "___", depois)
-            if VALOR.search(desc) or (not desc and (VALOR.search(antes[-60:]) or VALOR.search(depois[:40]))):
+            # o agente marca as lacunas de dinheiro com "preço:"; sem a marca, só se a descrição for claramente de valor monetário
+            if re.match(r"pre[cç]o\s*:", desc, re.I) or VALOR.search(desc) or (not desc and (VALOR.search(antes[-60:]) or VALOR.search(depois[:40]))):
                 auto[alvo] = TEXTO_VALOR
                 continue
             palavras = set(re.findall(r"[a-zà-ú]{4,}", desc.lower()))

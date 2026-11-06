@@ -7542,7 +7542,7 @@ const ELAB = {
   ] }
 };
 // criação rápida: o que o assinante informa em cada documento (obrig = exigido pela Lei 14.133/2021; o agente nunca decide por ele)
-const ELAB_ROT = { dot_unidade: "Unidade orçamentária", dot_programa: "Programa de trabalho", dot_elemento: "Elemento de despesa", dot_fonte: "Fonte de recursos", orgao: "Órgão ou entidade", uf: "UF", objeto: "Objeto", necessidade: "Necessidade / fundamentação", quantidades: "Quantidades",
+const ELAB_ROT = { normas: "Normas do órgão", normas_ref: "Regulamento do órgão", cadastro: "Cadastro de fornecedores", dot_unidade: "Unidade orçamentária", dot_programa: "Programa de trabalho", dot_elemento: "Elemento de despesa", dot_fonte: "Fonte de recursos", orgao: "Órgão ou entidade", uf: "UF", objeto: "Objeto", necessidade: "Necessidade / fundamentação", quantidades: "Quantidades",
   natureza: "Natureza / solução", prazo: "Prazo", prazo_outro: "Prazo (detalhe)", pca: "Plano de Contratações Anual", parcelamento: "Parcelamento",
   parc_motivo: "Motivo do parcelamento", adjudicacao: "Adjudicação", selecao: "Forma de seleção", criterio: "Critério de julgamento",
   regime_exec: "Regime de execução", historico: "Situação atual e contratações anteriores", designacao: "Ato de designação", local: "Local", valor: "Valor estimado", observacoes: "Observações", unidade: "Unidade requisitante",
@@ -7552,7 +7552,7 @@ const ELAB_ROT = { dot_unidade: "Unidade orçamentária", dot_programa: "Program
   especificacoes: "Especificações", local_entrega: "Local de entrega", prazo_entrega: "Prazo de entrega", garantia_bem: "Garantia do produto", amostra: "Amostra",
   instrumento: "Instrumento da contratação", pca_item: "Item do PCA", data_orcamento: "Data do orçamento estimado", indice: "Índice de reajuste", processo: "Nº do processo", municipio: "Município", autoridade: "Autoridade que aprova", gestor: "Gestor do contrato", fiscais: "Fiscais", fonte: "Fonte orçamentária", correlatas: "Contratações ligadas" };
 // dados do órgão e de quem assina: podem ir para qualquer documento (se o assinante marcar)
-const ELAB_GERAIS = ["orgao", "uf", "observacoes", "unidade", "gestor", "fiscais", "fonte", "dot_unidade", "dot_programa", "dot_elemento", "dot_fonte", "municipio", "autoridade", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
+const ELAB_GERAIS = ["orgao", "uf", "observacoes", "unidade", "gestor", "fiscais", "fonte", "dot_unidade", "dot_programa", "dot_elemento", "dot_fonte", "normas", "normas_ref", "cadastro", "municipio", "autoridade", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
 const ELAB_PARES = { modelo_arquivo: "modelo_nome", logo_arquivo: "logo_nome" };
 const ELAB_PROCESSO = { k: "processo", etapa: "contratacao", rot: "Nº do processo administrativo", tipo: "linha", ph: "Se já houver. Ex.: 1234/2026" };
 const ELAB_UNIDADE = { k: "unidade", etapa: "pessoas", rot: "Unidade requisitante", tipo: "linha", ph: "Ex.: Secretaria Municipal de Administração" };
@@ -7561,7 +7561,7 @@ const ELAB_FINAIS = [
   { k: "autoridade", etapa: "pessoas", rot: "Autoridade que aprova o documento", tipo: "linha", ph: "Nome, cargo e matrícula. Ex.: Maria Lima, Secretária de Administração, 4321" }];
 // informações que entram no documento: se estiverem em branco, o assinante é perguntado antes de criar
 const ELAB_NECESSARIOS = { etp: ["processo", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade"],
-  tr: ["processo", "unidade", "gestor", "fiscais", "dot_programa", "dot_elemento", "dot_fonte", "municipio", "autoridade"], projeto_basico: ["processo", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade"] };
+  tr: ["processo", "unidade", "gestor", "fiscais", "normas", "dot_programa", "dot_elemento", "dot_fonte", "municipio", "autoridade"], projeto_basico: ["processo", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade"] };
 const ELAB_MODALIDADES = ["Pregão", "Concorrência", "Concurso", "Diálogo competitivo", "Dispensa", "Inexigibilidade", "Adesão a ata"];
 const ELAB_CRITERIOS = ["Menor preço", "Maior desconto", "Melhor técnica ou conteúdo artístico", "Técnica e preço", "Maior retorno econômico"];
 const ELAB_REC = "Analisar no ETP e recomendar";
@@ -7627,6 +7627,11 @@ const ELAB_RAPIDO = {
     { k: "gestor", etapa: "pessoas", rot: "Gestor do contrato", tipo: "linha", ph: "Nome, cargo e matrícula", dica: "Se ainda não foi designado, deixe em branco: o documento marca para preencher." },
     { k: "fiscais", etapa: "pessoas", rot: "Fiscais do contrato ou comissão de fiscalização", tipo: "texto", ph: "Um por linha: nome, cargo, matrícula e função (fiscal técnico, administrativo, suplente)" },
     // dotação em partes: cada uma vai direto ao item 11 do TR (sem virar pergunta do agente)
+    // regime de normas do órgão: troca no TR as referências federais (SICAF, IN SEGES) pelas do órgão
+    { k: "normas", etapa: "pessoas", rot: "Normas que o órgão segue", tipo: "chips", op: ["Órgão federal", "Adota as instruções normativas federais (SEGES) por decreto", "Regulamento próprio"],
+      dica: "O modelo da AGU é federal. Se o órgão tem regulamento próprio, o TR cita o seu regulamento no lugar das instruções normativas federais." },
+    { k: "normas_ref", etapa: "pessoas", seNormas: true, rot: "Qual é o regulamento?", tipo: "linha", ph: "Ex.: Decreto Municipal nº 45/2024" },
+    { k: "cadastro", etapa: "pessoas", seCompra: true, rot: "Cadastro de fornecedores usado na habilitação e no pagamento", tipo: "chips", outro: true, op: ["SICAF", "Outro"] },
     { k: "dot_unidade", etapa: "pessoas", rot: "Unidade orçamentária", tipo: "linha", ph: "Ex.: 02.10 – Secretaria Municipal de Educação" },
     { k: "dot_programa", etapa: "pessoas", rot: "Programa de trabalho (funcional programática)", tipo: "linha", ph: "Ex.: 12.361.0005.2.015" },
     { k: "dot_elemento", etapa: "pessoas", rot: "Elemento de despesa", tipo: "linha", ph: "Ex.: 4.4.90.52 – Equipamentos e material permanente" },
@@ -15445,7 +15450,7 @@ class Component extends DCLogic {
               })() };
           };
             const et = (ELAB_ETAPAS[el.doc] || [])[el.passo || 0] || {};
-            const vis = (c) => c.etapa === et.id && !(c.seParc && String(R.parcelamento || "").startsWith("Analisar")) && !(c.seCompra && R.natureza !== "Compra");
+            const vis = (c) => c.etapa === et.id && !(c.seParc && String(R.parcelamento || "").startsWith("Analisar")) && !(c.seCompra && R.natureza !== "Compra") && !(c.seNormas && R.normas !== "Regulamento próprio");
             return { elCamposA: (ELAB_RAPIDO[el.doc] || []).filter((c) => vis(c) && !c.depois).map(mapa),
                      elCamposB: (ELAB_RAPIDO[el.doc] || []).filter((c) => vis(c) && c.depois).map(mapa) };
           })(),

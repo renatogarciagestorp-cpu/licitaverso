@@ -161,6 +161,8 @@ def de(termo):
 
 
 def federal(respostas):
+    if (respostas.get("normas") or "").lower().startswith("órgão federal"):
+        return True
     t = (respostas.get("orgao", "") + " " + respostas.get("esfera", "")).lower()
     return bool(re.search(r"federal|minist[ée]rio|uni[ãa]o\b|ag[êe]ncia nacional|comando d|ex[ée]rcito|marinha|aeron[áa]utica|ibama|inss|funai|anvisa", t))
 
@@ -606,6 +608,7 @@ def gerar(docj, respostas, saida, logo=None):
         el = P[i]._p
         if el.getparent() is not None:
             el.getparent().remove(el)
+    adaptar_regime(d, R, fed)
 
     # ---- aparência: o vermelho, o itálico e os realces do modelo marcam cláusula variável; no documento final, texto normal
     for st in d.styles:
@@ -690,6 +693,49 @@ def conferir(P):
     erros = [f"{i}: esperado '{a}', encontrado '{P[i].text[:60]}'" for i, a in ANCORAS.items() if i >= len(P) or not n(P[i].text).startswith(n(a))]
     if erros:
         raise RuntimeError("o modelo de TR da AGU mudou; revise os índices de modelo_tr.py: " + "; ".join(erros[:5]))
+
+
+def regime(R, fed=None):
+    """Regime de normas do órgão: 'federal', 'adota' (instruções normativas federais por decreto) ou 'proprio'."""
+    n = (R.get("normas") or "").lower()
+    if (fed if fed is not None else federal(R)) or n.startswith("órgão federal") or n.startswith("orgao federal"):
+        return "federal"
+    return "proprio" if n.startswith("regulamento") else "adota"
+
+
+def adaptar_regime(d, R, fed):
+    """Fora da esfera federal, troca as referências próprias do Executivo federal no texto da AGU:
+    instruções normativas da SEGES pelo regulamento do órgão (se ele tiver regulamento próprio) e o SICAF pelo cadastro que o órgão usa."""
+    reg = regime(R, fed)
+    if reg == "federal":
+        return
+    trocas = []
+    if reg == "proprio":
+        ref = (R.get("normas_ref") or "").strip().rstrip(".") or "regulamento de licitações e contratos do órgão"
+        do_ref = ("da " if re.match(r"^(lei|portaria|instru|resolu|delibera)", ref, re.I) else "do ") + ref
+        trocas += [(r"conforme Decreto nº 10\.818, de 27 de setembro de 2021", f"conforme o art. 20 da Lei nº 14.133, de 2021, e {do_ref}"),
+                   (r"na forma da Instrução Normativa SEGES/ME nº 26, de 13 de abril de 2022", f"na forma {do_ref}"),
+                   (r"nos termos do art\. 7º, ?§ ?3º da Instrução Normativa SEGES/ME nº 77/2022", f"nos termos {do_ref}"),
+                   (r"nos termos da Instrução Normativa SEGES/ME nº 77, de 2022", f"nos termos {do_ref}")]
+    cad = (R.get("cadastro") or "").strip()
+    if cad == "Outro":
+        nome = (R.get("cadastro_outro") or "").strip().rstrip(".") or "Cadastro de Fornecedores do órgão"
+        if not re.match(r"^(cadastro|sistema|registro)", nome, re.I):
+            nome = f"Cadastro de Fornecedores ({nome})"
+        trocas += [(r"consulta on-line ao SICAF ou, na impossibilidade de acesso ao referido Sistema", f"consulta ao {nome} ou, na impossibilidade de acesso"),
+                   (r"\bSICAF\b", nome)]
+    apagar = []
+    for p in d.paragraphs:
+        t = p.text
+        if reg == "proprio" and "SEGES/MGI nº 82" in t:  # operações de crédito da IN federal: não se aplica
+            apagar.append(p); continue
+        novo = t
+        for padrao, sub in trocas:
+            novo = re.sub(padrao, sub, novo)
+        if novo != t:
+            escrever(p, novo)
+    for p in apagar:
+        p._p.getparent().remove(p._p)
 
 
 def escrever(p, texto):
