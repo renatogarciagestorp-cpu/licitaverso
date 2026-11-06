@@ -365,7 +365,16 @@ def preparar(doc):
         s.header_distance = Cm(1.5); s.footer_distance = Cm(1)
 
 
-def cabecalho_rodape(doc, numero, verificador):
+def logo_bytes(cabx):
+    """Logotipo do cabeçalho da equipe (data URL PNG/JPEG) em bytes, ou None."""
+    import base64
+    m = re.match(r"^data:image/(png|jpeg);base64,(.+)$", (cabx or {}).get("logo") or "")
+    if not m: return None
+    try: return base64.b64decode(m.group(2))
+    except Exception: return None
+
+
+def cabecalho_rodape(doc, numero, verificador, cabx=None):
     s = doc.sections[0]
     s.different_first_page_header_footer = True  # capa sem cabeçalho nem número
     h = s.header
@@ -375,14 +384,21 @@ def cabecalho_rodape(doc, numero, verificador):
     a.width = Cm(12); b.width = Cm(4)
     for c in (a, b): bordas(c, bottom=(C["linha"], 6))
     pa = a.paragraphs[0]; fmt(pa, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT)
-    run(pa, "LICITACON", negrito=True, tam=8, hexa=C["petroleo"]); run(pa, f"  ·  Parecer Técnico nº {numero}", tam=8, hexa=C["fraco"])
+    if cabx and (cabx.get("nome") or cabx.get("logo")):
+        lb = logo_bytes(cabx)
+        if lb:
+            try: pa.add_run().add_picture(io.BytesIO(lb), height=Cm(0.9)); run(pa, "  ")
+            except Exception: pass
+        run(pa, (cabx.get("nome") or "").upper(), negrito=True, tam=8, hexa=C["petroleo"]); run(pa, f"  ·  Parecer Técnico nº {numero}", tam=8, hexa=C["fraco"])
+    else:
+        run(pa, "LICITACON", negrito=True, tam=8, hexa=C["petroleo"]); run(pa, f"  ·  Parecer Técnico nº {numero}", tam=8, hexa=C["fraco"])
     pb = b.paragraphs[0]; fmt(pb, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.RIGHT)
     campo(pb, "PAGE", tam=10, hexa=C["marinho"])
     h.paragraphs[0].text = ""
     f = s.footer
     pf = f.paragraphs[0]; fmt(pf, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.CENTER)
-    run(pf, f"Parecer técnico opinativo · a decisão final cabe exclusivamente ao destinatário · não substitui o parecer jurídico do art. 53 da Lei 14.133/2021 · código {verificador}",
-        tam=7, hexa=C["fraco"])
+    run(pf, f"Parecer técnico opinativo · a decisão final cabe exclusivamente ao destinatário · não substitui o parecer jurídico do art. 53 da Lei 14.133/2021 · código {verificador}"
+        + (" · elaborado com o Licitacon" if cabx and (cabx.get("nome") or cabx.get("logo")) else ""), tam=7, hexa=C["fraco"])
 
 
 def capa(doc, a, numero, data, situacao, cor_sit):
@@ -391,7 +407,16 @@ def capa(doc, a, numero, data, situacao, cor_sit):
     t = tabela_sem_bordas(doc, 1, 1, [16])
     c = t.rows[0].cells[0]; sombrear(c, C["marinho"]); margens_celula(c, 0.6)
     p = c.paragraphs[0]; fmt(p, recuo1=0, entre=1.0, alinh=WD_ALIGN_PARAGRAPH.LEFT, depois=2)
-    run(p, "LICITACON", negrito=True, tam=11, hexa="9FD3DC"); run(p, "   ANÁLISE TÉCNICA EM LICITAÇÕES E CONTRATOS", tam=8, hexa="C9D6DE")
+    cabx = a.get("cabecalho") or {}
+    if cabx.get("nome") or cabx.get("logo"):
+        lb = logo_bytes(cabx)
+        if lb:
+            try: p.add_run().add_picture(io.BytesIO(lb), height=Cm(1.3)); run(p, "   ")
+            except Exception: pass
+        run(p, (cabx.get("nome") or "").upper(), negrito=True, tam=10, hexa="FFFFFF")
+        if cabx.get("linha2"): run(p, "   " + cabx["linha2"], tam=7.5, hexa="C9D6DE")
+    else:
+        run(p, "LICITACON", negrito=True, tam=11, hexa="9FD3DC"); run(p, "   ANÁLISE TÉCNICA EM LICITAÇÕES E CONTRATOS", tam=8, hexa="C9D6DE")
     p = c.add_paragraph(); fmt(p, recuo1=0, entre=1.0, antes=40, alinh=WD_ALIGN_PARAGRAPH.LEFT)
     run(p, "PARECER TÉCNICO", negrito=True, tam=26, hexa="FFFFFF")
     p = c.add_paragraph(); fmt(p, recuo1=0, entre=1.0, antes=2, depois=30, alinh=WD_ALIGN_PARAGRAPH.LEFT)
@@ -497,7 +522,7 @@ def gerar(analise, saida, paginas=None):
     numero = analise.get("numero_parecer") or f"{verificador[:4]}/{data.year}"
 
     doc = Document(); preparar(doc)
-    cabecalho_rodape(doc, numero, verificador)
+    cabecalho_rodape(doc, numero, verificador, analise.get("cabecalho"))
     capa(doc, analise, numero, data, situacao, cor_sit)
     quebra_pagina(doc)
 

@@ -319,6 +319,13 @@ def processar(a):
                     raise ErroCliente("O documento é extenso demais para uma única análise. Envie só o documento a analisar.")
                 raise
             analise = json.loads(saida.read_text(encoding="utf-8"))
+            # plano de equipe: o parecer sai com o cabeçalho (nome e logotipo) da organização de quem pediu a análise
+            try:
+                cabx = rest("POST", "rpc/cabecalho_do_usuario", {"uid": a["usuario_id"]})
+                if isinstance(cabx, dict) and (cabx.get("nome") or cabx.get("logo")):
+                    analise["cabecalho"] = cabx; saida.write_text(json.dumps(analise, ensure_ascii=False), encoding="utf-8")
+            except Exception as e:
+                print(f"análise {aid}: cabeçalho da equipe não obtido ({type(e).__name__})")
             subprocess.run([sys.executable, str(RAIZ / "scripts/agente/exportar-juris.py"), str(saida), "/tmp/jurisprudencia-nova"], capture_output=True)
             rodar([sys.executable, str(RAIZ / "scripts/agente/gerar-relatorio.py"), str(saida), str(pasta / "parecer.docx"), "--pdf"], timeout=600)
             base = f"{a['usuario_id']}/pareceres/{aid}"

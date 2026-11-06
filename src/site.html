@@ -1244,6 +1244,10 @@
   .lmo-cmp-sec span { position: sticky; left: 10px; }
   .lmo-cmpc { display: grid; gap: 2px; text-align: right; } .lmo-cmpc input { font: inherit; text-align: right; border: 1px solid #D3DEDB; border-radius: 7px; padding: 4px 7px; width: 100%; box-sizing: border-box; background: #FFFEF7; }
   .lmo-cmpc b { font-variant-numeric: tabular-nums; font-weight: 600; } .lmo-cmpc small { font-size: 11px; color: #8A5A00; font-weight: 700; }
+  .cabdoc { background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 22px 26px; margin-top: 16px; } .cabdoc h3 { margin: 0; font-size: 17px; } .cabdoc > p { margin: 6px 0 12px; font-size: 13.5px; color: #55666D; }
+  .cabdoc-prev { display: flex; align-items: center; gap: 12px; border: 1px dashed #C9D6D3; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; min-height: 56px; } .cabdoc-prev img { max-height: 46px; max-width: 160px; object-fit: contain; }
+  .cabdoc-prev div { display: grid; } .cabdoc-prev b { font-size: 14px; } .cabdoc-prev span { font-size: 12px; color: #6A7B82; }
+  .cabdoc-campos { display: grid; gap: 10px; } .cabdoc-bt { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
   .ct-pncp { border: 1px solid #D5E6E2; background: #F4FAF8; border-radius: 12px; padding: 12px 14px; margin: 0 0 14px; }
   .ct-pncp-t { display: grid; gap: 2px; margin-bottom: 8px; } .ct-pncp-t b { font-size: 14px; color: #0B1F2A; } .ct-pncp-t span { font-size: 12.5px; color: #55666D; }
   .ct-pncp-c { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 10px; } .ct-pncp-c .lmo-campo { margin: 0; flex: 1 1 170px; } .ct-pncp-link { flex: 2 1 320px !important; } .ct-pncp-n { flex: 0 1 110px !important; }
@@ -6456,6 +6460,21 @@
               <sc-if value="{{ equipeGestor }}" hint-placeholder-val="{{ true }}">
                 <button sc-camel-on-click="{{ abrirEquipe }}" style="margin-top: 18px; background: #0FA36B; color: #06251A; border: 0; border-radius: 10px; padding: 11px 16px; font-size: 14px; font-weight: 700; cursor: pointer">Gerenciar acessos</button>
               </sc-if>
+            </section>
+            <section class="cabdoc">
+              <h3>Cabeçalho dos documentos</h3>
+              <p>O nome, a linha de identificação e o logotipo da equipe saem no topo dos PDFs gerados no site (planilhas, notas técnicas e modelos de peças) e no parecer do Parecerista.</p>
+              <div class="cabdoc-prev"><sc-if value="{{ cabTemLogo }}" hint-placeholder-val="{{ false }}"><img src="{{ cabLogo }}" alt="Logotipo da equipe"></sc-if><div><b>{{ cabNomePrev }}</b><span>{{ cabLinha2 }}</span></div></div>
+              <sc-if value="{{ equipeGestor }}" hint-placeholder-val="{{ true }}">
+                <div class="cabdoc-campos">
+                  <label class="lmo-campo"><span>Nome no cabeçalho</span><input type="text" maxlength="160" value="{{ cabNome }}" sc-camel-on-input="{{ onCabNome }}" placeholder="Ex.: Prefeitura Municipal de Maricá – Secretaria de Administração"></label>
+                  <label class="lmo-campo"><span>Linha de identificação (opcional)</span><input type="text" maxlength="200" value="{{ cabLinha2 }}" sc-camel-on-input="{{ onCabLinha2 }}" placeholder="Ex.: CNPJ 00.000.000/0001-00 · Rua X, 100 · Maricá/RJ"></label>
+                  <label class="lmo-campo"><span>Logotipo (PNG ou JPG)</span><input type="file" accept="image/png,image/jpeg" sc-camel-on-change="{{ onCabLogo }}"></label>
+                </div>
+                <div class="cabdoc-bt"><button type="button" class="lmo-btn" sc-camel-on-click="{{ cabSalvar }}">Salvar cabeçalho</button><sc-if value="{{ cabTemLogo }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ cabTirarLogo }}">Tirar o logotipo</button></sc-if></div>
+              </sc-if>
+              <sc-if value="{{ equipeNaoGestor }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">Quem define o cabeçalho é o gestor da equipe.</p></sc-if>
+              <sc-if value="{{ cabMsg }}" hint-placeholder-val="{{ false }}"><p class="{{ cabMsgCls }}" role="status">{{ cabMsg }}</p></sc-if>
             </section>
           </sc-if>
 
@@ -12874,6 +12893,21 @@ class Component extends DCLogic {
     baixarArquivo(doc0.arquivo + ".xlsx", buf, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
   }
 
+  // cabeçalho do plano de equipe (nome, linha de identificação e logotipo) nos PDFs gerados no site
+  cabDoc() { const o = this.state.organizacao, c = o && o.cabecalho; return c && (String(c.nome || "").trim() || c.logo) ? c : null; }
+  pdfCabLogo(doc, c, x, y, hMax, wMax) {
+    if (!c.logo) return 0;
+    try { const pr = doc.getImageProperties(c.logo), r = pr.width / pr.height; let h = hMax, w = h * r; if (w > wMax) { w = wMax; h = w / r; }
+      doc.addImage(c.logo, /^data:image\/png/.test(c.logo) ? "PNG" : "JPEG", x, y + (hMax - h) / 2, w, h); return w; } catch (e) { return 0; }
+  }
+  pdfCabecalho(doc, W, ML, MR, y) {
+    const c = this.cabDoc(); if (!c) return y;
+    const wl = this.pdfCabLogo(doc, c, ML, 5, 13, 45), x = ML + (wl ? wl + 4 : 0);
+    doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.setTextColor(11, 31, 42); if (c.nome) doc.text(moPdfTxt(c.nome), x, c.linha2 ? 10.5 : 13, { maxWidth: W - MR - x });
+    doc.setFont("helvetica", "normal"); doc.setFontSize(8); doc.setTextColor(102, 117, 127); if (c.linha2) doc.text(moPdfTxt(c.linha2), x, 15.5, { maxWidth: W - MR - x });
+    doc.setDrawColor(15, 107, 126); doc.setLineWidth(0.4); doc.line(ML, 20.5, W - MR, 20.5); doc.setLineWidth(0.2); doc.setTextColor(11, 31, 42); doc.setFontSize(10);
+    return Math.max(y, 30);
+  }
   async moDocPdf(doc0, titulo, hoje) {
     if (!window.jspdf) await carregarScript(baseSite() + "vendor/jspdf-2.5.1.umd.min.js");
     if (!(window.jspdf && window.jspdf.jsPDF && window.jspdf.jsPDF.API.autoTable)) await carregarScript(baseSite() + "vendor/jspdf-autotable-3.8.2.min.js");
@@ -12882,7 +12916,16 @@ class Component extends DCLogic {
     const W = pais ? 297 : 210, H = pais ? 210 : 297, ML = 14, MR = 14, LARG = W - ML - MR;
     const C = { navy: [10, 31, 42], teal: [15, 107, 126], verde: [15, 163, 107], fraco: [102, 117, 127], texto: [11, 31, 42], cinza: [238, 243, 242], cinza2: [246, 248, 247], ambar: [255, 244, 220], tot: [227, 242, 234], linha: [221, 229, 228], alerta: [255, 241, 204] };
     const d = this.state.mo.d;
-    const cab = () => { doc.setFillColor(...C.navy); doc.rect(0, 0, W, 22, "F");
+    const cabE = this.cabDoc();
+    const cab = () => { if (cabE) { doc.setFillColor(255, 255, 255); doc.rect(0, 0, W, 22.4, "F");
+        const wl = this.pdfCabLogo(doc, cabE, ML, 4, 14, 40), x = ML + (wl ? wl + 4 : 0), meio = W * 0.52, larg = meio - x - 4;
+        doc.setFont("helvetica", "bold"); doc.setFontSize(9.5); doc.setTextColor(...C.navy);
+        const ln = cabE.nome ? doc.splitTextToSize(moPdfTxt(cabE.nome), larg).slice(0, 2) : []; ln.forEach((t, i) => doc.text(t, x, 8.5 + i * 4));
+        doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.fraco); if (cabE.linha2) doc.text(doc.splitTextToSize(moPdfTxt(cabE.linha2), larg)[0], x, 8.5 + Math.max(1, ln.length) * 4 + 0.8);
+        doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(...C.teal); doc.text(moPdfTxt(doc0.titulo), W - MR, 9.5, { align: "right", maxWidth: W - MR - meio });
+        doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(...C.fraco); doc.text(moPdfTxt(doc0.sub || titulo || ""), W - MR, 14, { align: "right", maxWidth: W - MR - meio }); doc.text("Gerado em " + hoje, W - MR, 18, { align: "right" });
+        doc.setDrawColor(...C.teal); doc.setLineWidth(0.5); doc.line(0, 22, W, 22); doc.setLineWidth(0.2); doc.setTextColor(...C.texto); return; }
+      doc.setFillColor(...C.navy); doc.rect(0, 0, W, 22, "F");
       doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text(doc0.titulo, ML, 10);
       doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(185, 203, 210); doc.text(moPdfTxt(doc0.sub || (titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + "/" + (d.uf || "") : ""))), ML, 16);
       doc.setTextColor(127, 227, 182); doc.setFontSize(7.5); doc.text(moPdfTxt(doc0.selo || "IN SEGES/MP nº 5/2017 · Anexo VII-D"), W - MR, 10, { align: "right" }); doc.text("Gerado em " + hoje, W - MR, 16, { align: "right" }); doc.setTextColor(...C.texto); };
@@ -13000,7 +13043,7 @@ class Component extends DCLogic {
       const ML = 20, MR = 20, W = 210, limpo = moPdfTxt;
       const base = { margin: { left: ML, right: MR, top: 20, bottom: 18 }, theme: "plain", styles: { font: "helvetica", fontSize: 10, textColor: [11, 31, 42], cellPadding: { top: 1.4, bottom: 1.4, left: 0, right: 0 }, overflow: "linebreak" },
         didParseCell: (dt) => { dt.cell.text = (dt.cell.text || []).map(limpo); } };
-      let y = 22;
+      let y = this.pdfCabecalho(doc, W, ML, MR, 22);
       doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text("NOTA TÉCNICA Nº ___/____", W / 2, y, { align: "center" }); y += 7;
       doc.setFont("helvetica", "normal"); doc.setFontSize(10);
       doc.autoTable({ ...base, startY: y, body: [["Assunto: análise do pedido de repactuação do Contrato nº " + (d.rp_contrato || "___/____") + (d.rp_empresa ? " – " + d.rp_empresa : "") + "."], ["Referência: Lei nº 14.133/2021, arts. 92, § 6º, 135 e 136; IN SEGES/MP nº 5/2017, arts. 54 a 58."]], styles: { ...base.styles, fontStyle: "bold" } });
@@ -13088,7 +13131,7 @@ class Component extends DCLogic {
       const base = { margin: { left: ML, right: MR, top: 20, bottom: 18 }, theme: "plain", styles: { font: "helvetica", fontSize: 10, textColor: [11, 31, 42], cellPadding: { top: 1.4, bottom: 1.4, left: 0, right: 0 }, overflow: "linebreak" },
         didParseCell: (dt) => { dt.cell.text = (dt.cell.text || []).map(limpo); } };
       const tab = { headStyles: { fillColor: [238, 243, 242], textColor: [102, 117, 127], fontSize: 8 }, styles: { ...base.styles, fontSize: 8.5, cellPadding: 1.2, lineColor: [221, 229, 228], lineWidth: { bottom: 0.1 } } };
-      let y = 22;
+      let y = this.pdfCabecalho(doc, W, ML, MR, 22);
       doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text("NOTA TÉCNICA Nº ___/____", W / 2, y, { align: "center" }); y += 7;
       doc.setFont("helvetica", "normal"); doc.setFontSize(10);
       doc.autoTable({ ...base, startY: y, body: [["Assunto: análise do pedido de repactuação do Contrato nº " + contrato + (d0.rp_empresa ? " – " + d0.rp_empresa : "") + " (" + cats.length + " categorias)."], ["Referência: " + (L14 ? "Lei nº 14.133/2021, arts. 92, § 6º, 135 e 136; IN SEGES/MP nº 5/2017, arts. 54 a 58." : lei.repac + "; IN SEGES/MP nº 5/2017 como referência técnica.")]], styles: { ...base.styles, fontSize: 10 } });
@@ -16334,6 +16377,19 @@ class Component extends DCLogic {
         if (o.plano === "pro") { l.push(["O Parecerista", o.analises_mes + " de " + o.limite_mes + " análises usadas neste mês (franquia da equipe)"]); l.push(["Consultoria", "1 consultoria por escrito por mês incluída para a equipe"]); }
         return l.map(([rot, val]) => ({ rot, val })); })(),
       equipeGestor: !!(s.organizacao && s.organizacao.gestor),
+      ...(() => { const o = s.organizacao || {}, c0 = o.cabecalho || {}, cf = s.cabForm || { nome: c0.nome || "", linha2: c0.linha2 || "", logo: c0.logo || "" };
+        const setC = (k, v) => this.setState((x) => ({ cabMsg: "", cabForm: { ...(x.cabForm || cf), [k]: v } }));
+        return { cabNome: cf.nome, cabLinha2: cf.linha2, cabLogo: cf.logo, cabTemLogo: !!cf.logo, cabNomePrev: cf.nome || o.nome || "", equipeNaoGestor: !!s.organizacao && !s.organizacao.gestor,
+          onCabNome: (e) => setC("nome", e.target.value), onCabLinha2: (e) => setC("linha2", e.target.value), cabTirarLogo: () => setC("logo", ""),
+          onCabLogo: (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; if (!/^image\/(png|jpeg)$/.test(f.type)) { this.setState({ cabMsg: "Envie uma imagem PNG ou JPG.", cabMsgErro: true }); return; }
+            const rd = new FileReader(); rd.onload = () => { const im = new Image(); im.onload = () => { const r = Math.min(1, 600 / im.width, 240 / im.height), cv = document.createElement("canvas");
+              cv.width = Math.max(1, Math.round(im.width * r)); cv.height = Math.max(1, Math.round(im.height * r)); const cx = cv.getContext("2d"); if (f.type === "image/jpeg") { cx.fillStyle = "#fff"; cx.fillRect(0, 0, cv.width, cv.height); }
+              cx.drawImage(im, 0, 0, cv.width, cv.height); let url = cv.toDataURL("image/png"); if (url.length > 300000) url = cv.toDataURL("image/jpeg", 0.85); setC("logo", url); }; im.src = rd.result; }; rd.readAsDataURL(f); },
+          cabSalvar: async () => { if (!this.sb) return; const f = this.state.cabForm || cf;
+            const { data, error } = await this.sb.rpc("org_salvar_cabecalho", { p: { nome: f.nome, linha2: f.linha2, logo: f.logo } });
+            if (error) { this.setState({ cabMsg: error.message || "Não foi possível salvar.", cabMsgErro: true }); return; }
+            this.setState({ organizacao: data, cabForm: null, cabMsg: "✓ Cabeçalho salvo. Os próximos PDFs já saem com ele.", cabMsgErro: false }); },
+          cabMsg: s.cabMsg || "", cabMsgCls: s.cabMsgErro ? "lve-erro" : "lmo-ok" }; })(),
       abrirEquipe: async () => { if (!window.LV_EQUIPE) await carregarScript(baseSite() + "equipe.js?v=2"); window.LV_EQUIPE.abrir(() => this.carregarDados()); },
       isAdmin: s.admin,
       abrirPainel: () => { window.location.href = "painel.html"; },
