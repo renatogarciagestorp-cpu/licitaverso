@@ -3482,33 +3482,6 @@
             </section>
 
 
-            <section class="lmo-bloco" id="lmo-trib">
-              <h2 class="lmo-h2">Tributação (Módulo 6)</h2>
-              <p class="lmo-nota" style="margin-top: 0"><b>{{ moTribEscolha }}</b> <button type="button" class="lmo-ano" sc-camel-on-click="{{ moIrEscolhaTrib }}">alterar no passo 1 ↑</button></p>
-              <sc-if value="{{ moReformaPendente }}" hint-placeholder-val="{{ true }}"><p class="lve-aviso" style="margin-top: 10px">Escolha, no passo 1 do bloco do agente, se os tributos serão calculados antes ou depois da reforma e o regime de tributação da empresa: o agente usa essas escolhas, e o download depende delas. Até lá, a tela mostra o cálculo com PIS, COFINS e ISS.</p></sc-if>
-              <p class="lmo-nota">{{ moRegimeTxt }}</p>
-              <sc-if value="{{ moRegSimples }}" hint-placeholder-val="{{ false }}">
-                <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>Receita bruta dos últimos 12 meses (RBT12, R$)</span><input type="text" inputmode="decimal" value="{{ moRbt12 }}" sc-camel-on-input="{{ onMoRbt12 }}" placeholder="Ex.: 1.200.000,00"></label></div>
-                <p class="{{ moSimplesCls }}">{{ moSimplesTxt }}</p>
-                <sc-if value="{{ moSimplesVedado }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso" role="alert">{{ moSimplesVedado }}</p></sc-if>
-              </sc-if>
-              <sc-if value="{{ moReformaDepois }}" hint-placeholder-val="{{ false }}">
-                <div class="lmo-campos" style="margin-top: 12px">
-                  <label class="lmo-campo"><span>Ano de execução calculado na planilha</span><select sc-camel-on-change="{{ onMoRfAno }}"><sc-for list="{{ moRfAnos }}" as="o" hint-placeholder-count="8"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
-                  <label class="lmo-campo"><span>Alíquota de referência da CBS (%)</span><input type="text" inputmode="decimal" value="{{ moRfCbs }}" sc-camel-on-input="{{ onMoRfCbs }}"></label>
-                  <label class="lmo-campo"><span>Alíquota de referência do IBS (%, estimativa)</span><input type="text" inputmode="decimal" value="{{ moRfIbs }}" sc-camel-on-input="{{ onMoRfIbs }}"></label>
-                </div>
-                <p class="lmo-nota">CBS: 11,3% é a referência calculada pelo TCU para 2027 (o Senado deve fixá-la até 15/12/2026). IBS: a referência ainda não foi fixada; 18,7% é estimativa. Atualize os dois campos quando as alíquotas forem publicadas.</p>
-                <div class="lmo-tabela" style="margin-top: 10px" role="table" aria-label="Período de transição">
-                  <div class="lmo-lin lmo-trans lmo-cab" role="row"><span>Ano</span><span>PIS e COFINS</span><span>CBS</span><span>IBS</span><span>ISS</span><span>Tributos no preço</span><span>Preço por empregado</span><span>Valor mensal</span></div>
-                  <sc-for list="{{ moTransicao }}" as="t" hint-placeholder-count="8">
-                    <div class="lmo-lin lmo-trans" role="row" data-forte="{{ t.atual }}"><span><button type="button" class="lmo-ano" aria-pressed="{{ t.atual }}" sc-camel-on-click="{{ t.usar }}">{{ t.ano }}</button></span><span class="lmo-pct">{{ t.pisCof }}</span><span class="lmo-pct">{{ t.cbs }}</span><span class="lmo-pct">{{ t.ibs }}</span><span class="lmo-pct">{{ t.iss }}</span><span class="lmo-pct">{{ t.trib }}</span><span class="lmo-val">{{ t.total }}</span><span class="lmo-val">{{ t.mensal }}</span></div>
-                  </sc-for>
-                </div>
-                <p class="lmo-nota">{{ moTransicaoNota }}</p>
-              </sc-if>
-              <div style="margin-top: 12px"><button type="button" class="lve-voltar" style="padding: 9px 14px; font-size: 13.5px" sc-camel-on-click="{{ moLevarRq }}">Verificar reequilíbrio tributário desta planilha →</button></div>
-            </section>
 
 
             <sc-if value="{{ moPlan }}" hint-placeholder-val="{{ true }}">
@@ -3575,6 +3548,89 @@
             </sc-if>
 
 
+
+
+
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Parâmetros dos benefícios (Submódulo 2.3)</h2>
+              <div class="lmo-campos">
+                <sc-for list="{{ moBenef }}" as="c" hint-placeholder-count="5">
+                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
+                </sc-for>
+              </div>
+            </section>
+
+
+            <section class="lmo-bloco" id="lmo-gt">
+              <h2 class="lmo-h2">Garantia das obrigações trabalhistas</h2>
+              <p class="lmo-nota" style="margin-top: 0">Nos serviços com dedicação exclusiva de mão de obra, o contrato deve prever a conta-depósito vinculada ou o pagamento pelo fato gerador (IN SEGES/MP nº 5/2017, art. 18; Lei 14.133/2021, art. 121, § 3º).</p>
+              <div class="lmo-modos" role="group" aria-label="Garantia trabalhista"><sc-for list="{{ moGtOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
+              <sc-if value="{{ moGtCv }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-tabela" style="margin-top: 10px" role="table">
+                  <div class="lmo-lin lmo-lin3 lmo-cab" role="row"><span>%</span><span>Provisão (Anexo XII, item 14) sobre o Módulo 1</span><span>Valor por empregado</span></div>
+                  <sc-for list="{{ moCvLinhas }}" as="l" hint-placeholder-count="4"><div class="lmo-lin lmo-lin3" role="row"><span class="lmo-cod">{{ l.pct }}</span><span>{{ l.rot }}</span><span class="lmo-val">{{ l.val }}</span></div></sc-for>
+                  <div class="lmo-lin lmo-lin3 lmo-tot" role="row"><span>{{ moCvTot }}</span><span>Retenção mensal por empregado</span><span class="lmo-val">{{ moCvEmp }}</span></div>
+                </div>
+                <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>Multa do FGTS (%)</span><input type="text" inputmode="decimal" value="{{ moGtMulta }}" sc-camel-on-input="{{ onMoGtMulta }}"></label></div>
+                <p class="lmo-nota">Padrão de 4%: o Anexo XII traz 5%, mas esse valor inclui a contribuição social de 10% sobre o FGTS, extinta pela Lei 13.932/2019 a partir de 1º/1/2020; por isso a retenção passou a 4%. A incidência do Submódulo 2.2 segue o RAT informado no Submódulo 2.2.</p>
+                <p class="lmo-ok">{{ moCvResumo }}</p>
+              </sc-if>
+              <sc-if value="{{ moGtFg }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-tabela" style="margin-top: 10px" role="table">
+                  <div class="lmo-lin lmo-lin4 lmo-cab" role="row"><span>Parcela paga só quando ocorrer o fato gerador</span><span>Provisão mensal</span><span>Com custos indiretos, tributos e lucro</span></div>
+                  <sc-for list="{{ moFgLinhas }}" as="l" hint-placeholder-count="5"><div class="lmo-lin lmo-lin4" role="row"><span>{{ l.rot }}</span><span class="lmo-val">{{ l.val }}</span><span class="lmo-val">{{ l.comM6 }}</span></div></sc-for>
+                </div>
+                <p class="lmo-ok">{{ moFgResumo }}</p>
+              </sc-if>
+              <sc-if value="{{ moGtNenhum }}" hint-placeholder-val="{{ true }}"><p class="lmo-nota">Escolha uma das opções para ver a retenção mensal ou as parcelas pagas pelo fato gerador.</p></sc-if>
+            </section>
+            <sc-for list="{{ moModsA }}" as="md" hint-placeholder-count="3">
+              <section class="lmo-bloco lmo-tab">
+                <h2 class="lmo-h2">{{ md.titulo }}</h2>
+                <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
+                <div class="lmo-tabela" role="table">
+                  <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
+                  <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
+                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
+                      <span class="lmo-cod">{{ l.cod }}</span>
+                      <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
+                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                    </div>
+                  </sc-for>
+                  <div class="lmo-lin lmo-tot" role="row"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
+                </div>
+              </section>
+            </sc-for>
+            <sc-if value="{{ moTemM3Inf }}" hint-placeholder-val="{{ false }}">
+            <section class="lmo-bloco" id="lmo-m3">
+              <h2 class="lmo-h2">Conferência do Módulo 3 com a planilha da empresa</h2>
+              <p class="lmo-nota" style="margin-top: 0">Digite os percentuais que constam na planilha elaborada pela empresa (deixe em branco o que não quiser conferir). B, C, E e F são fórmulas: só mudam quando mudam A, D ou os encargos do Submódulo 2.2. Cada divergência entra na lista de falhas e no relatório da planilha, com o correto e o fundamento.</p>
+              <div class="lmo-campos">
+                <sc-for list="{{ moM3Inf }}" as="c" hint-placeholder-count="6">
+                  <label class="lmo-campo"><span>{{ c.rot }} (%)</span><input type="text" inputmode="decimal" data-mo-campo="{{ c.k }}" value="{{ c.valor }}" placeholder="{{ c.ref }}" sc-camel-on-input="{{ c.on }}"><small class="lmo-ref">{{ c.ref }}</small></label>
+                </sc-for>
+              </div>
+            </section>
+            </sc-if>
+            <sc-for list="{{ moModsB }}" as="md" hint-placeholder-count="3">
+              <section class="lmo-bloco lmo-tab">
+                <h2 class="lmo-h2">{{ md.titulo }}</h2>
+                <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
+                <div class="lmo-tabela" role="table">
+                  <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
+                  <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
+                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
+                      <span class="lmo-cod">{{ l.cod }}</span>
+                      <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
+                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                    </div>
+                  </sc-for>
+                  <div class="lmo-lin lmo-tot" role="row"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
+                </div>
+              </section>
+            </sc-for>
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Memória de cálculo dos insumos (Módulo 5)</h2>
               <p class="lmo-nota" style="margin-top: 0">Detalhe cada item com quantidade, vida útil e preço: o custo mensal por empregado vai para o Módulo 5 e para os downloads. O preço pode vir da sua pesquisa ou da mediana das compras públicas dos últimos 12 meses no Compras.gov.br (Lei 14.133/2021, art. 23). Sem itens, vale o valor digitado no Módulo 5.</p>
@@ -3601,20 +3657,52 @@
               <div class="lmo-campos" style="margin-top: 12px"><label class="lmo-campo"><span>Custo financeiro dos equipamentos (% ao mês sobre o investimento, opcional)</span><input type="text" inputmode="decimal" value="{{ moMemCf }}" sc-camel-on-input="{{ onMoMemCf }}" placeholder="Ex.: 0,8363 (SELIC mensal)"></label></div>
               <p class="lmo-nota">{{ moMemEmp }}</p>
             </section>
-
-
-
-            <section class="lmo-bloco">
-              <h2 class="lmo-h2">Parâmetros dos benefícios (Submódulo 2.3)</h2>
-              <div class="lmo-campos">
-                <sc-for list="{{ moBenef }}" as="c" hint-placeholder-count="5">
-                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
-                </sc-for>
-              </div>
+            <sc-for list="{{ moModsC }}" as="md" hint-placeholder-count="3">
+              <section class="lmo-bloco lmo-tab">
+                <h2 class="lmo-h2">{{ md.titulo }}</h2>
+                <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
+                <div class="lmo-tabela" role="table">
+                  <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
+                  <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
+                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
+                      <span class="lmo-cod">{{ l.cod }}</span>
+                      <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
+                      <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                    </div>
+                  </sc-for>
+                  <div class="lmo-lin lmo-tot" role="row"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
+                </div>
+              </section>
+            </sc-for>
+            <section class="lmo-bloco" id="lmo-trib">
+              <h2 class="lmo-h2">Tributação (Módulo 6)</h2>
+              <p class="lmo-nota" style="margin-top: 0"><b>{{ moTribEscolha }}</b> <button type="button" class="lmo-ano" sc-camel-on-click="{{ moIrEscolhaTrib }}">alterar no passo 1 ↑</button></p>
+              <sc-if value="{{ moReformaPendente }}" hint-placeholder-val="{{ true }}"><p class="lve-aviso" style="margin-top: 10px">Escolha, no passo 1 do bloco do agente, se os tributos serão calculados antes ou depois da reforma e o regime de tributação da empresa: o agente usa essas escolhas, e o download depende delas. Até lá, a tela mostra o cálculo com PIS, COFINS e ISS.</p></sc-if>
+              <p class="lmo-nota">{{ moRegimeTxt }}</p>
+              <sc-if value="{{ moRegSimples }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>Receita bruta dos últimos 12 meses (RBT12, R$)</span><input type="text" inputmode="decimal" value="{{ moRbt12 }}" sc-camel-on-input="{{ onMoRbt12 }}" placeholder="Ex.: 1.200.000,00"></label></div>
+                <p class="{{ moSimplesCls }}">{{ moSimplesTxt }}</p>
+                <sc-if value="{{ moSimplesVedado }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso" role="alert">{{ moSimplesVedado }}</p></sc-if>
+              </sc-if>
+              <sc-if value="{{ moReformaDepois }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-campos" style="margin-top: 12px">
+                  <label class="lmo-campo"><span>Ano de execução calculado na planilha</span><select sc-camel-on-change="{{ onMoRfAno }}"><sc-for list="{{ moRfAnos }}" as="o" hint-placeholder-count="8"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                  <label class="lmo-campo"><span>Alíquota de referência da CBS (%)</span><input type="text" inputmode="decimal" value="{{ moRfCbs }}" sc-camel-on-input="{{ onMoRfCbs }}"></label>
+                  <label class="lmo-campo"><span>Alíquota de referência do IBS (%, estimativa)</span><input type="text" inputmode="decimal" value="{{ moRfIbs }}" sc-camel-on-input="{{ onMoRfIbs }}"></label>
+                </div>
+                <p class="lmo-nota">CBS: 11,3% é a referência calculada pelo TCU para 2027 (o Senado deve fixá-la até 15/12/2026). IBS: a referência ainda não foi fixada; 18,7% é estimativa. Atualize os dois campos quando as alíquotas forem publicadas.</p>
+                <div class="lmo-tabela" style="margin-top: 10px" role="table" aria-label="Período de transição">
+                  <div class="lmo-lin lmo-trans lmo-cab" role="row"><span>Ano</span><span>PIS e COFINS</span><span>CBS</span><span>IBS</span><span>ISS</span><span>Tributos no preço</span><span>Preço por empregado</span><span>Valor mensal</span></div>
+                  <sc-for list="{{ moTransicao }}" as="t" hint-placeholder-count="8">
+                    <div class="lmo-lin lmo-trans" role="row" data-forte="{{ t.atual }}"><span><button type="button" class="lmo-ano" aria-pressed="{{ t.atual }}" sc-camel-on-click="{{ t.usar }}">{{ t.ano }}</button></span><span class="lmo-pct">{{ t.pisCof }}</span><span class="lmo-pct">{{ t.cbs }}</span><span class="lmo-pct">{{ t.ibs }}</span><span class="lmo-pct">{{ t.iss }}</span><span class="lmo-pct">{{ t.trib }}</span><span class="lmo-val">{{ t.total }}</span><span class="lmo-val">{{ t.mensal }}</span></div>
+                  </sc-for>
+                </div>
+                <p class="lmo-nota">{{ moTransicaoNota }}</p>
+              </sc-if>
+              <div style="margin-top: 12px"><button type="button" class="lve-voltar" style="padding: 9px 14px; font-size: 13.5px" sc-camel-on-click="{{ moLevarRq }}">Verificar reequilíbrio tributário desta planilha →</button></div>
             </section>
-
-
-            <sc-for list="{{ moModulos }}" as="md" hint-placeholder-count="3">
+            <sc-for list="{{ moModsD }}" as="md" hint-placeholder-count="3">
               <section class="lmo-bloco lmo-tab">
                 <h2 class="lmo-h2">{{ md.titulo }}</h2>
                 <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
@@ -3633,17 +3721,6 @@
               </section>
             </sc-for>
 
-            <sc-if value="{{ moTemM3Inf }}" hint-placeholder-val="{{ false }}">
-            <section class="lmo-bloco" id="lmo-m3">
-              <h2 class="lmo-h2">Conferência do Módulo 3 com a planilha da empresa</h2>
-              <p class="lmo-nota" style="margin-top: 0">Digite os percentuais que constam na planilha elaborada pela empresa (deixe em branco o que não quiser conferir). B, C, E e F são fórmulas: só mudam quando mudam A, D ou os encargos do Submódulo 2.2. Cada divergência entra na lista de falhas e no relatório da planilha, com o correto e o fundamento.</p>
-              <div class="lmo-campos">
-                <sc-for list="{{ moM3Inf }}" as="c" hint-placeholder-count="6">
-                  <label class="lmo-campo"><span>{{ c.rot }} (%)</span><input type="text" inputmode="decimal" data-mo-campo="{{ c.k }}" value="{{ c.valor }}" placeholder="{{ c.ref }}" sc-camel-on-input="{{ c.on }}"><small class="lmo-ref">{{ c.ref }}</small></label>
-                </sc-for>
-              </div>
-            </section>
-            </sc-if>
             <sc-if value="{{ moTemFalhas }}" hint-placeholder-val="{{ false }}">
             <section class="lmo-bloco" id="lmo-falhas">
               <h2 class="lmo-h2">{{ moFalhasTitulo }}</h2>
@@ -3687,76 +3764,8 @@
             </section>
             </sc-if>
 
-            <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
-            <section class="lmo-bloco">
-              <h2 class="lmo-h2">Quadro comparativo: planilha da contratação × repactuada</h2>
-              <sc-if value="{{ moSemComp }}" hint-placeholder-val="{{ true }}">
-                <p class="lmo-nota" style="margin-top: 0">A análise pelo agente monta o quadro sozinha. Sem o agente: preencha a planilha acima com os valores da contratação, clique no botão abaixo e depois altere o que mudou com a nova convenção.</p>
-                <div class="lmo-agente"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompRegistrar }}">Registrar os valores atuais como planilha da contratação</button></div>
-              </sc-if>
-              <sc-if value="{{ moTemComp }}" hint-placeholder-val="{{ false }}">
-                <div class="lmo-kpis" style="margin-top: 0"><sc-for list="{{ moCompKpis }}" as="k" hint-placeholder-count="4"><div><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
-                <p class="lmo-nota">{{ moCompInfo }}</p>
-                <div class="lmo-tabela" role="table" aria-label="Quadro comparativo">
-                  <div class="lmo-lin lmo-comp lmo-cab" role="row"><span>Rubrica</span><span>Contratação</span><span>Repactuada</span><span>Variação</span><span>%</span><span>Participação</span></div>
-                  <sc-for list="{{ moComp }}" as="l" hint-placeholder-count="6">
-                    <div class="{{ l.cls }}" role="row" data-forte="{{ l.forte }}" data-auto="{{ l.mudou }}"><span>{{ l.rot }}<sc-if value="{{ l.temMotivo }}" hint-placeholder-val="{{ false }}"><small>{{ l.motivo }}</small></sc-if></span><span class="lmo-val">{{ l.a }}</span><span class="lmo-val">{{ l.n }}</span><span class="lmo-val">{{ l.dv }}</span><span class="lmo-val">{{ l.p }}</span><span class="lmo-val">{{ l.part }}</span></div>
-                  </sc-for>
-                </div>
-                <div class="lmo-agente" style="margin-top: 8px"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompRegistrar }}">Registrar de novo a partir dos valores atuais</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompLimpar }}">Apagar o quadro</button></div>
-              </sc-if>
-            </section>
-            </sc-if>
 
-            <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
-            <section class="lmo-bloco" id="lmo-efeitos">
-              <h2 class="lmo-h2">Efeitos financeiros, prazos e apostilamento</h2>
-              <p class="lmo-nota" style="margin-top: 0">Diferença retroativa mês a mês desde a data-base, conferência da anualidade e da preclusão e nota técnica da repactuação ({{ moLeiRepac }}).</p>
-              <div class="lmo-campos">
-                <sc-for list="{{ moRetroCampos }}" as="c" hint-placeholder-count="6"><label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label></sc-for>
-                <label class="lmo-campo"><span>Primeiro mês pago com o novo preço</span><input type="month" value="{{ moRpInicio }}" sc-camel-on-input="{{ onMoRpInicio }}"></label>
-              </div>
-              <sc-if value="{{ moRetro }}" hint-placeholder-val="{{ false }}">
-                <sc-for list="{{ moRetroAlertas }}" as="a" hint-placeholder-count="2"><p class="{{ a.cls }}" style="margin-top: 8px">{{ a.t }}</p></sc-for>
-                <p class="lmo-nota">{{ moRetroInfo }}</p>
-                <sc-if value="{{ moRetroTemLinhas }}" hint-placeholder-val="{{ false }}">
-                <div class="lmo-tabela" role="table" aria-label="Diferença retroativa">
-                  <div class="lmo-lin lmo-retro lmo-cab" role="row"><span>Mês</span><span>Período</span><span>Mão de obra</span><span>Insumos</span><span>Diferença</span></div>
-                  <sc-for list="{{ moRetroLinhas }}" as="l" hint-placeholder-count="3"><div class="lmo-lin lmo-retro" role="row"><span>{{ l.mes }}</span><span>{{ l.frac }}</span><span class="lmo-val">{{ l.lab }}</span><span class="lmo-val">{{ l.ins }}</span><span class="lmo-val">{{ l.dif }}</span></div></sc-for>
-                  <div class="lmo-lin lmo-retro lmo-tot" role="row"><span>Total</span><span></span><span></span><span></span><span class="lmo-val">{{ moRetroTotal }}</span></div>
-                </div>
-                </sc-if>
-              </sc-if>
-              <sc-if value="{{ moTemNota }}" hint-placeholder-val="{{ false }}">
-                <div class="lmo-agente" style="margin-top: 8px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moBaixarNota }}">Baixar a nota técnica (PDF)</button></div>
-              </sc-if>
-              <sc-if value="{{ moSemVigente }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">Informe o preço vigente por empregado nos dados iniciais para calcular o retroativo e gerar a nota técnica.</p></sc-if>
-            </section>
-            </sc-if>
 
-            <section class="lmo-bloco" id="lmo-gt">
-              <h2 class="lmo-h2">Garantia das obrigações trabalhistas</h2>
-              <p class="lmo-nota" style="margin-top: 0">Nos serviços com dedicação exclusiva de mão de obra, o contrato deve prever a conta-depósito vinculada ou o pagamento pelo fato gerador (IN SEGES/MP nº 5/2017, art. 18; Lei 14.133/2021, art. 121, § 3º).</p>
-              <div class="lmo-modos" role="group" aria-label="Garantia trabalhista"><sc-for list="{{ moGtOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
-              <sc-if value="{{ moGtCv }}" hint-placeholder-val="{{ false }}">
-                <div class="lmo-tabela" style="margin-top: 10px" role="table">
-                  <div class="lmo-lin lmo-lin3 lmo-cab" role="row"><span>%</span><span>Provisão (Anexo XII, item 14) sobre o Módulo 1</span><span>Valor por empregado</span></div>
-                  <sc-for list="{{ moCvLinhas }}" as="l" hint-placeholder-count="4"><div class="lmo-lin lmo-lin3" role="row"><span class="lmo-cod">{{ l.pct }}</span><span>{{ l.rot }}</span><span class="lmo-val">{{ l.val }}</span></div></sc-for>
-                  <div class="lmo-lin lmo-lin3 lmo-tot" role="row"><span>{{ moCvTot }}</span><span>Retenção mensal por empregado</span><span class="lmo-val">{{ moCvEmp }}</span></div>
-                </div>
-                <div class="lmo-campos" style="margin-top: 8px"><label class="lmo-campo"><span>Multa do FGTS (%)</span><input type="text" inputmode="decimal" value="{{ moGtMulta }}" sc-camel-on-input="{{ onMoGtMulta }}"></label></div>
-                <p class="lmo-nota">Padrão de 4%: o Anexo XII traz 5%, mas esse valor inclui a contribuição social de 10% sobre o FGTS, extinta pela Lei 13.932/2019 a partir de 1º/1/2020; por isso a retenção passou a 4%. A incidência do Submódulo 2.2 segue o RAT informado no Submódulo 2.2.</p>
-                <p class="lmo-ok">{{ moCvResumo }}</p>
-              </sc-if>
-              <sc-if value="{{ moGtFg }}" hint-placeholder-val="{{ false }}">
-                <div class="lmo-tabela" style="margin-top: 10px" role="table">
-                  <div class="lmo-lin lmo-lin4 lmo-cab" role="row"><span>Parcela paga só quando ocorrer o fato gerador</span><span>Provisão mensal</span><span>Com custos indiretos, tributos e lucro</span></div>
-                  <sc-for list="{{ moFgLinhas }}" as="l" hint-placeholder-count="5"><div class="lmo-lin lmo-lin4" role="row"><span>{{ l.rot }}</span><span class="lmo-val">{{ l.val }}</span><span class="lmo-val">{{ l.comM6 }}</span></div></sc-for>
-                </div>
-                <p class="lmo-ok">{{ moFgResumo }}</p>
-              </sc-if>
-              <sc-if value="{{ moGtNenhum }}" hint-placeholder-val="{{ true }}"><p class="lmo-nota">Escolha uma das opções para ver a retenção mensal ou as parcelas pagas pelo fato gerador.</p></sc-if>
-            </section>
 
             <section class="lmo-bloco lmo-tab">
               <h2 class="lmo-h2">Quadro-resumo do custo por empregado</h2>
@@ -3825,6 +3834,51 @@
                 </sc-if>
               </sc-if>
             </section>
+            <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Quadro comparativo: planilha da contratação × repactuada</h2>
+              <sc-if value="{{ moSemComp }}" hint-placeholder-val="{{ true }}">
+                <p class="lmo-nota" style="margin-top: 0">A análise pelo agente monta o quadro sozinha. Sem o agente: preencha a planilha acima com os valores da contratação, clique no botão abaixo e depois altere o que mudou com a nova convenção.</p>
+                <div class="lmo-agente"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompRegistrar }}">Registrar os valores atuais como planilha da contratação</button></div>
+              </sc-if>
+              <sc-if value="{{ moTemComp }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-kpis" style="margin-top: 0"><sc-for list="{{ moCompKpis }}" as="k" hint-placeholder-count="4"><div><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
+                <p class="lmo-nota">{{ moCompInfo }}</p>
+                <div class="lmo-tabela" role="table" aria-label="Quadro comparativo">
+                  <div class="lmo-lin lmo-comp lmo-cab" role="row"><span>Rubrica</span><span>Contratação</span><span>Repactuada</span><span>Variação</span><span>%</span><span>Participação</span></div>
+                  <sc-for list="{{ moComp }}" as="l" hint-placeholder-count="6">
+                    <div class="{{ l.cls }}" role="row" data-forte="{{ l.forte }}" data-auto="{{ l.mudou }}"><span>{{ l.rot }}<sc-if value="{{ l.temMotivo }}" hint-placeholder-val="{{ false }}"><small>{{ l.motivo }}</small></sc-if></span><span class="lmo-val">{{ l.a }}</span><span class="lmo-val">{{ l.n }}</span><span class="lmo-val">{{ l.dv }}</span><span class="lmo-val">{{ l.p }}</span><span class="lmo-val">{{ l.part }}</span></div>
+                  </sc-for>
+                </div>
+                <div class="lmo-agente" style="margin-top: 8px"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompRegistrar }}">Registrar de novo a partir dos valores atuais</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompLimpar }}">Apagar o quadro</button></div>
+              </sc-if>
+            </section>
+            </sc-if>
+            <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
+            <section class="lmo-bloco" id="lmo-efeitos">
+              <h2 class="lmo-h2">Efeitos financeiros, prazos e apostilamento</h2>
+              <p class="lmo-nota" style="margin-top: 0">Diferença retroativa mês a mês desde a data-base, conferência da anualidade e da preclusão e nota técnica da repactuação ({{ moLeiRepac }}).</p>
+              <div class="lmo-campos">
+                <sc-for list="{{ moRetroCampos }}" as="c" hint-placeholder-count="6"><label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label></sc-for>
+                <label class="lmo-campo"><span>Primeiro mês pago com o novo preço</span><input type="month" value="{{ moRpInicio }}" sc-camel-on-input="{{ onMoRpInicio }}"></label>
+              </div>
+              <sc-if value="{{ moRetro }}" hint-placeholder-val="{{ false }}">
+                <sc-for list="{{ moRetroAlertas }}" as="a" hint-placeholder-count="2"><p class="{{ a.cls }}" style="margin-top: 8px">{{ a.t }}</p></sc-for>
+                <p class="lmo-nota">{{ moRetroInfo }}</p>
+                <sc-if value="{{ moRetroTemLinhas }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-tabela" role="table" aria-label="Diferença retroativa">
+                  <div class="lmo-lin lmo-retro lmo-cab" role="row"><span>Mês</span><span>Período</span><span>Mão de obra</span><span>Insumos</span><span>Diferença</span></div>
+                  <sc-for list="{{ moRetroLinhas }}" as="l" hint-placeholder-count="3"><div class="lmo-lin lmo-retro" role="row"><span>{{ l.mes }}</span><span>{{ l.frac }}</span><span class="lmo-val">{{ l.lab }}</span><span class="lmo-val">{{ l.ins }}</span><span class="lmo-val">{{ l.dif }}</span></div></sc-for>
+                  <div class="lmo-lin lmo-retro lmo-tot" role="row"><span>Total</span><span></span><span></span><span></span><span class="lmo-val">{{ moRetroTotal }}</span></div>
+                </div>
+                </sc-if>
+              </sc-if>
+              <sc-if value="{{ moTemNota }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-agente" style="margin-top: 8px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moBaixarNota }}">Baixar a nota técnica (PDF)</button></div>
+              </sc-if>
+              <sc-if value="{{ moSemVigente }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">Informe o preço vigente por empregado nos dados iniciais para calcular o retroativo e gerar a nota técnica.</p></sc-if>
+            </section>
+            </sc-if>
           </div>
           </sc-if>
           <sc-if value="{{ calcAbaRq }}" hint-placeholder-val="{{ false }}">
@@ -11597,6 +11651,9 @@ class Component extends DCLogic {
       moBenef: [campo("vt_tarifa", "Tarifa do transporte (R$)", "Ex.: 4,70"), campo("vt_viagens", "Viagens por dia", "2"), campo("dias", "Dias trabalhados no mês", "21"),
         campo("aux_dia", "Auxílio-alimentação por dia (R$)", "Ex.: 25,00"), campo("aux_part", "Participação do empregado no auxílio (%)", "20")],
       moModulos: modulos,
+      ...(() => { const iM3 = modulos.findIndex((m) => /^Módulo 3/.test(m.titulo)), iM5 = modulos.findIndex((m) => /^Módulo 5/.test(m.titulo)), iM6 = modulos.findIndex((m) => /^Módulo 6/.test(m.titulo));
+        const a = iM3 >= 0 ? iM3 + 1 : modulos.length, b = iM5 >= 0 ? iM5 + 1 : a, c = iM6 >= 0 ? iM6 + 1 : b;
+        return { moModsA: modulos.slice(0, a), moModsB: modulos.slice(a, b), moModsC: modulos.slice(b, c), moModsD: modulos.slice(c) }; })(),
       moResumo: [["A", "Módulo 1 – Composição da remuneração", r.M1], ["B", "Módulo 2 – Encargos e benefícios anuais, mensais e diários", r.M2],
         ["C", "Módulo 3 – Provisão para rescisão", r.M3], ["D", "Módulo 4 – Custo de reposição do profissional ausente", r.M4], ["E", "Módulo 5 – Insumos diversos", r.M5],
         ["", "Subtotal (A + B + C + D + E)", r.sub], ["F", "Módulo 6 – Custos indiretos, tributos e lucro", r.M6]].map(([cod, rot, v]) => ({ cod, rot, valTxt: brl(v), forte: !cod })),
