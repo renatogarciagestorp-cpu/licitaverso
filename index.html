@@ -10496,7 +10496,7 @@ class Component extends DCLogic {
         dims.map((v) => ({ c: [v[1], v[2], v[3], v[4], v[5], v[6]] })).concat([{ c: [P.moDimResumo], span: true, forte: true }]), { alin: "lrrrrr", larg: [40, 12, 14, 14, 12, 14] }));
       if (transicao.length) blocos.push(T("PERÍODO DE TRANSIÇÃO DA REFORMA TRIBUTÁRIA – PREÇO POR EMPREGADO ANO A ANO", ["Ano", "PIS e COFINS", "CBS", "IBS", "ISS", "Tributos", "Preço/empregado", "Valor mensal"],
         transicao.map((t) => ({ c: [t.ano, t.pisCof, t.cbs, t.ibs, t.iss, t.trib, t.total, t.mensal], total: t.atual })), { alin: "lrrrrrrr", larg: [8, 13, 17, 17, 9, 10, 16, 16] }));
-      if (!prop && P.moTemLista) blocos.push(T("QUADRO CONSOLIDADO DA CONTRATAÇÃO (VÁRIAS CATEGORIAS)", listaCab, listaTab.map((v, i) => ({ c: v, total: i === listaTab.length - 1 })), { alin: "lrrrrrr", larg: [34, 16, 12, 9, 11, 16, 17] }));
+      if (!prop && P.moTemLista && !(opc && opc.montar)) blocos.push(T("QUADRO CONSOLIDADO DA CONTRATAÇÃO (VÁRIAS CATEGORIAS)", listaCab, listaTab.map((v, i) => ({ c: v, total: i === listaTab.length - 1 })), { alin: "lrrrrrr", larg: [34, 16, 12, 9, 11, 16, 17] }));
       const n = [];
       n.push("Planilha de custos e formação de preços no formato do Anexo VII-D da IN SEGES/MP nº 5/2017. Valores mensais por empregado; totais truncados em duas casas, como no modelo da IN.");
       if (rep) n.push("Custos não renováveis: aviso prévio trabalhado limitado a 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário; IN 05/2017, art. 57).");
