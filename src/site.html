@@ -7749,7 +7749,7 @@ const MO_PADRAO = {
   data_proposta: "", municipio: "", uf: "", ano_cct: "", meses: "12", tipo_servico: "", unidade: "Posto", quantidade: "",
   cbo: "", categoria: "", salario: "", data_base: "", cct_nome: "",
   peric: "0", insal: "0", noturno: "0", hnr: "0", he_feriado: "0", outros1: "0",
-  p13: "8,33", pfa: "2,78",
+  p13: "8,33", pfa: "11,11",
   inss: "20", saled: "2,5", rat: "2", fap: "1", sesc: "1,5", senac: "1", sebrae: "0,6", incra: "0,2", fgts: "8",
   mem_base_materiais: "", mem_base_equip: "", vt_tarifa: "0", vt_gratis: "", vt_dias_zero: "", vt_viagens: "2", dias: "21", aux_dia: "0", aux_part: "20", ref_dia: "0", ref_part: "0", assist: "0", seguro: "0", outros23: "0",
   api: "0,42", apt: "1,94",
@@ -7973,7 +7973,11 @@ function moConferir(d, r, modo) {
   if (![1, 2, 3].includes(n("rat"))) F("Submódulo 2.2, C – SAT/RAT", "RAT de " + pctB(n("rat")) + ".", "Lei 8.212/1991, art. 22, II.", "Alíquota de 1%, 2% ou 3%, conforme o grau de risco do CNAE preponderante da empresa, multiplicada pelo FAP.", "alta");
   if (n("fap") < 0.5 || n("fap") > 2) F("Submódulo 2.2, C – FAP", "FAP de " + String(d.fap).replace(".", ",") + ".", "Decreto 3.048/1999, art. 202-A.", "Fator entre 0,5000 e 2,0000, conforme o FAP da empresa divulgado pela Previdência (na estimativa, 1,0000).", "media");
   if (Math.abs(n("p13") - 8.33) > 0.005) F("Submódulo 2.1, A – 13º salário", "13º de " + pctB(n("p13")) + ".", "Lei 4.090/1962 (1/12 da remuneração por mês).", "8,33% do Módulo 1.", "media");
-  if (Math.abs(n("pfa") - 2.78) > 0.005) F("Submódulo 2.1, B – Férias e adicional de férias", "Percentual de " + pctB(n("pfa")) + ".", "CF, art. 7º, XVII; IN 05/2017, Anexo VII-D (o custo das férias fica no Submódulo 4.1, A).", "2,78% (1/3 constitucional ÷ 12), com as férias de 8,33% no Submódulo 4.1, A.", "media");
+  // Submódulo 2.1, B: no 1º ano, 1/12 das férias + 1/3 (11,11%); da 1ª prorrogação em diante as férias são custo não renovável e fica só o 1/3 (2,78%)
+  // (IN 05/2017, Anexo VII-D, Submódulo 2.1, notas 1 a 3, incluída a nota 3 pela IN 7/2018; Nota Informativa nº 17408/2018-MP)
+  if (modo === "repactuacao" && (moNum(d.ano_exec) || 2) >= 2) {
+    if (Math.abs(n("pfa") - 2.78) > 0.005) F("Submódulo 2.1, B – Férias e adicional de férias", "Percentual de " + pctB(n("pfa")) + " no " + ((moNum(d.ano_exec) || 2)) + "º ano de execução.", "IN 05/2017, Anexo VII-D, Submódulo 2.1, nota 3 (IN 7/2018): na prorrogação, a rubrica férias torna-se custo não renovável; Nota Informativa nº 17408/2018-MP.", "2,78% (só o adicional de 1/3 ÷ 12). As férias (8,33%) já foram provisionadas no 1º ano; o substituto nas férias continua no Submódulo 4.1, A.", n("pfa") > 2.78 ? "alta" : "media");
+  } else if (Math.abs(n("pfa") - 11.11) > 0.005) F("Submódulo 2.1, B – Férias e adicional de férias", "Percentual de " + pctB(n("pfa")) + ".", "CF, art. 7º, XVII; CLT, art. 130; IN 05/2017, Anexo VII-D, Submódulo 2.1, notas 1 e 2 (provisão mensal de 1/12 das férias e do adicional de 1/3).", "11,11% no 1º ano (8,33% de férias + 2,78% de adicional de 1/3)." + (Math.abs(n("pfa") - 12.10) < 0.005 ? " 12,10% é o percentual de retenção da conta vinculada (Anexo XII), não o da planilha." : n("pfa") < 11.1 ? " Sem as férias, a planilha não cobre o pagamento das férias do empregado ao fim dos 12 meses (nota 3)." : ""), n("pfa") < 11.1 ? "alta" : "media");
   if (simples) { if (["saled", "sesc", "senac", "sebrae", "incra"].some((k) => n(k) > 0)) F("Submódulo 2.2, B e D a G – Contribuições a terceiros", "Optante do Simples com contribuições a terceiros na planilha.", "LC 123/2006, art. 13, § 3º.", "Zerar Salário-Educação, SESC/SESI, SENAC/SENAI, SEBRAE e INCRA.", "alta");
     if (!/limp|vigil|conserva/i.test((d.tipo_servico || "") + " " + (d.categoria || ""))) F("Regime de tributação", "Simples Nacional em serviço de cessão de mão de obra que não é vigilância, limpeza ou conservação.", "LC 123/2006, art. 17, XII, e art. 18, § 5º-H.", "Tributar pelo Lucro Real ou Presumido.", "alta"); }
   else [["saled", "Salário-Educação", 2.5, "Lei 9.424/1996, art. 15"], ["sesc", "SESC ou SESI", 1.5, "Decreto-Lei 9.853/1946 e 9.403/1946"], ["senac", "SENAC ou SENAI", 1, "Decreto-Lei 8.621/1946 e 4.048/1942"], ["sebrae", "SEBRAE", 0.6, "Lei 8.029/1990, art. 8º, § 3º"], ["incra", "INCRA", 0.2, "Decreto-Lei 1.146/1970"]]
@@ -9361,7 +9365,7 @@ function moTarifaZero(d) {
   return auto || null;
 }
 // exposto para os testes automáticos da Calculadora (função pura, sem dados do usuário)
-try { window.lvMoCalcular = (...a) => moCalcular(...a); window.lvMoDerivado = (...a) => moDerivado(...a); } catch (e) {}
+try { window.lvMoCalcular = (...a) => moCalcular(...a); window.lvMoDerivado = (...a) => moDerivado(...a); window.lvMoConferir = (...a) => moConferir(...a); } catch (e) {}
 function moCalcular(d, modo, rj) {
   const n = (k) => moNum(d[k]), pc = (k) => moNum(d[k]) / 100;
   const r = {}, S = n("salario");
@@ -11524,7 +11528,8 @@ class Component extends DCLogic {
   moCarregar(modo) {
     let d = {};
     try { d = JSON.parse(localStorage.getItem("lv-mo-" + modo) || "{}") || {}; } catch (e) { d = {}; }
-    return { ...MO_PADRAO, ...d };
+    // repactuação (contrato prorrogado): as férias do Submódulo 2.1 já são custo não renovável; fica o adicional de 1/3
+    return { ...MO_PADRAO, ...(modo === "repactuacao" ? { pfa: "2,78" } : {}), ...d };
   }
   // ------------------------------------------------------------ Meus contratos (cadastro e linha do tempo)
   // com contas ativas, no Supabase (tabelas contratos e contrato_eventos); em demonstração, neste navegador
@@ -12357,7 +12362,7 @@ class Component extends DCLogic {
     const contr = rp && rp.ant ? rp.ant : pr || pl || {};
     const cols = [{ id: "p0", tipo: "planejamento", nome: "Fase de planejamento", d: moSnap({ ...MO_PADRAO, ...(pl || {}) }) },
       { id: "c0", tipo: "contratacao", nome: "Contratação", d: moSnap({ ...MO_PADRAO, ...contr }) },
-      { id: "r1", tipo: "repactuacao", nome: "1ª repactuação", d: moSnap({ ...MO_PADRAO, ...(rp || contr) }) }];
+      { id: "r1", tipo: "repactuacao", nome: "1ª repactuação", d: moSnap({ ...MO_PADRAO, ...(rp || { ...contr, pfa: "2,78" }) }) }];
     const info = { contrato: (rp && rp.rp_contrato) || "", contratante: (rp && rp.rp_orgao) || "", contratada: (rp && rp.rp_empresa) || (pr && pr.pr_licitante) || "", categoria: (rp && rp.categoria) || (pl && pl.categoria) || "" };
     this.cmpGravar({ cols, info });
   }
@@ -13089,7 +13094,7 @@ class Component extends DCLogic {
     an.push(["2.2 Variação dos custos", ["O preço mensal por empregado passa de " + brl(r.vigente) + " para " + brl(r.total) + ", variação de " + (r.difp >= 0 ? "+" : "−") + pctx(Math.abs(r.difp)) + ". Considerados " + emp + " empregado(s), o valor mensal do contrato passa de " + brl(r.vigente * emp) + " para " + brl(r.total * emp) + "."]
       .concat(comp ? ["O quadro comparativo abaixo demonstra a variação rubrica por rubrica entre a planilha da contratação (" + brl(comp.rA.total) + ", recalculada) e a planilha repactuada. Verifica-se que as variações decorrem, principalmente, de: " + (princ.length ? princ.map((l) => l.rot.toLowerCase() + " (" + (l.dv > 0 ? "+" : "") + brl(l.dv) + ")").join("; ") : "não há variações relevantes") + "."] : ["Não foi registrada a planilha da contratação para o quadro comparativo rubrica por rubrica."])
       .concat(["Os efeitos financeiros alcançam exclusivamente os itens que motivaram a repactuação e apenas a diferença porventura existente (IN SEGES/MP nº 5/2017, art. 58, parágrafo único). É vedada a inclusão de benefícios não previstos na proposta inicial, salvo se obrigatórios por força de lei ou do instrumento coletivo (art. 57, § 1º)."])]);
-    an.push(["2.3 Custos não renováveis", ["Foram suprimidos ou reduzidos os custos não renováveis já pagos ou amortizados no primeiro ano, em especial o aviso prévio trabalhado, considerado em " + pctx(r.apt_p) + " para o " + (d.ano_exec || "2") + "º ano de execução (TCU, Acórdão 1.186/2017-Plenário; IN SEGES/MP nº 5/2017, art. 57)."]]);
+    an.push(["2.3 Custos não renováveis", ["Foram suprimidos ou reduzidos os custos não renováveis já pagos ou amortizados no primeiro ano, em especial o aviso prévio trabalhado, considerado em " + pctx(r.apt_p) + " para o " + (d.ano_exec || "2") + "º ano de execução (TCU, Acórdão 1.186/2017-Plenário; IN SEGES/MP nº 5/2017, art. 57), e as férias do Submódulo 2.1, que passam a conter só o adicional de 1/3 (IN SEGES/MP nº 5/2017, Anexo VII-D, Submódulo 2.1, nota 3, incluída pela IN nº 7/2018)."]]);
     an.push(["2.4 Insumos", [rj && rj.pronto ? "Os insumos foram reajustados pelo índice previsto no contrato, contado da data do orçamento estimado (Lei nº 14.133/2021, art. 25, § 7º; IN SEGES/MP nº 5/2017, art. 54, § 2º): " + rj.msg + "." : "Não houve reajuste dos insumos nesta repactuação, que se limita aos custos de mão de obra decorrentes do instrumento coletivo."]]);
     if (falhas.length) an.push(["2.5 Inconsistências da planilha da contratação", ["Foram identificadas " + falhas.length + " falha(s) de preenchimento na planilha da contratação: " + falhas.map((f) => f.rubrica + " (gravidade " + ({ alta: "alta", media: "média", baixa: "baixa" }[f.gravidade] || "média") + ")").join("; ") + ". As correções foram consideradas na planilha repactuada, conforme o detalhamento anexo à planilha."
       + (d.falhas_aceite ? " O assinante registrou ciência das inconsistências e concordou com o prosseguimento da análise em " + new Date(d.falhas_aceite).toLocaleString("pt-BR") + "." : "")]]);
@@ -13326,7 +13331,7 @@ class Component extends DCLogic {
   };
   moLimpar() {
     try { localStorage.removeItem("lv-mo-" + this.state.mo.modo); } catch (e) {}
-    this.setState((s) => ({ mo: { ...s.mo, d: { ...MO_PADRAO } } }));
+    this.setState((s) => ({ mo: { ...s.mo, d: { ...MO_PADRAO, ...(s.mo.modo === "repactuacao" ? { pfa: "2,78" } : {}) } } }));
   }
 
   // tabelas dos módulos (as mesmas da planilha) para uma planilha qualquer: usado na comparação lado a lado
@@ -13596,6 +13601,7 @@ class Component extends DCLogic {
         let motivo = "";
         if (Math.abs(dv) >= 0.005) {
           if (k === "M3") motivo = "Custo não renovável: aviso prévio trabalhado reduzido a 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário).";
+          else if (k === "M21" && moNum(d0.ant.pfa) > moNum(d0.pfa) + 0.005) motivo = "Custo não renovável: as férias do 1º ano saem do Submódulo 2.1 e fica só o adicional de 1/3 (IN 05/2017, Anexo VII-D, Submódulo 2.1, nota 3).";
           else if (["unif", "materiais", "equip", "outros5"].includes(k) && r["rj_" + k]) motivo = "Reajuste dos insumos pelo índice do contrato (fator " + (rj.fator || 1).toLocaleString("pt-BR", { maximumFractionDigits: 6 }) + ").";
           else if (campoK && String(d0.ant[campoK] ?? MO_PADRAO[campoK] ?? "") === String(d0[campoK] ?? MO_PADRAO[campoK] ?? "")) motivo = k === "vt" ? "Reflexo do novo salário-base no desconto de 6% do empregado (Lei 7.418/1985)." : "Reflexo da variação das demais rubricas.";
           else if (campoK && fontes[campoK]) motivo = fontes[campoK];
@@ -14465,7 +14471,7 @@ class Component extends DCLogic {
       moUnidade: moNum(d.quantidade) ? "R$ " + (r.mensal / moNum(d.quantidade)).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) : "—",
       moTemDif: (rep || prop) && !!r.vigente, moDifRot: prop ? "Planilha recalculada em relação ao preço ofertado:" : "Variação em relação ao preço vigente:", moDif: (r.dif >= 0 ? "+" : "−") + brl(Math.abs(r.dif)).replace("R$ ", "R$ ") + " por empregado (" + (r.difp >= 0 ? "+" : "−") + pct(Math.abs(r.difp)) + ")",
       moLimpar: () => this.moLimpar(),
-      moCopiar: () => { const base = this.moCarregar("planejamento"); const d2 = { ...base, ano_exec: d.ano_exec || "2", vigente: d.vigente || "" };
+      moCopiar: () => { const base = this.moCarregar("planejamento"); const d2 = { ...base, ano_exec: d.ano_exec || "2", vigente: d.vigente || "", pfa: "2,78" };
         try { localStorage.setItem("lv-mo-repactuacao", JSON.stringify(d2)); } catch (e) {} this.setState((x) => ({ mo: { ...x.mo, d: d2 } })); }
     };
   }
