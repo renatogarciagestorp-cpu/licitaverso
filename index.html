@@ -1239,6 +1239,10 @@
   .lmo-retro.lmo-cab span:nth-child(5), .lmo-lin4.lmo-cab span { text-align: right; } .lmo-lin4.lmo-cab span:first-child { text-align: left; }
   .lmo-minuta { white-space: pre-wrap; font: inherit; font-size: 13.5px; line-height: 1.6; background: #FBFDF6; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px; margin: 8px 0 0; color: #172B33; }
   @media (max-width: 900px) { .lmo-retro { grid-template-columns: 80px 1fr 110px; } .lmo-retro > span:nth-child(2), .lmo-retro > span:nth-child(4) { display: none; } .lmo-lin4 { grid-template-columns: 1fr 110px; } .lmo-lin4 > span:nth-child(2) { display: none; } }
+  .lmo-ag { border-color: #BFE3D2; box-shadow: 0 10px 28px rgba(15,163,107,.08); }
+  .lmo-ag-h { font-size: 15px; margin: 18px 0 8px; color: #0B1F2A; }
+  .lmo-pre { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 4px; } .lmo-pre li { font-size: 14px; font-weight: 600; } .lmo-pre li.ok { color: #0A7A50; } .lmo-pre li.falta { color: #8A5A00; }
+  .lmo-depois { display: flex; flex-wrap: wrap; gap: 8px; } .lmo-depois .lve-voltar { font-size: 13.5px; padding: 8px 12px; }
   .lmo-ref { font-size: 12px; color: #0A7A50; font-weight: 600; }
   .lmo-aceite { display: grid; gap: 10px; margin-top: 12px; padding: 14px 16px; border: 1px solid #F1D9A6; background: #FFF8E8; border-radius: 12px; }
   .lmo-aceite span { font-size: 14px; font-weight: 700; line-height: 1.5; color: #172B33; }
@@ -3418,13 +3422,20 @@
             <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}"><div><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCopiar }}">Trazer os dados da Planilha 1 (planejamento) para começar</button></div></sc-if>
 
             <div class="lmo-lei"><span class="lmo-lei-t">Regime legal</span><div class="lmo-modos" role="group" aria-label="Regime legal"><sc-for list="{{ moLeis }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div><p class="lmo-nota" style="margin: 6px 0 0">{{ moLeiTxt }}</p></div>
-            <section class="lmo-bloco">
-              <h2 class="lmo-h2">Dados para composição dos custos referentes à mão de obra</h2>
+            <section class="lmo-bloco lmo-ag" id="lmo-agente">
+              <h2 class="lmo-h2">{{ moAgenteTitulo }}</h2>
+              <p class="lmo-nota" style="margin-top: 0">{{ moAgenteTxt }}</p>
+              <h3 class="lmo-ag-h">1. Antes de pedir a análise</h3>
+              <ul class="lmo-pre"><sc-for list="{{ moPre }}" as="x" hint-placeholder-count="4"><li class="{{ x.cls }}">{{ x.t }}</li></sc-for></ul>
               <div class="lmo-campos">
-                <sc-for list="{{ moCamposIni }}" as="c" hint-placeholder-count="8">
+                <sc-for list="{{ moPreCampos }}" as="c" hint-placeholder-count="3">
                   <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" data-mo-campo="{{ c.k }}" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
                 </sc-for>
               </div>
+              <p class="lmo-nota"><b>Os tributos serão calculados antes ou depois da reforma tributária?</b></p>
+              <div class="lmo-modos" role="group" aria-label="Momento da tributação"><sc-for list="{{ moReformaOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
+              <p class="lmo-nota"><b>Regime de tributação da empresa</b> <span style="font-weight: 400">(no Simples, informe a receita bruta no bloco Tributação)</span></p>
+              <div class="lmo-modos" role="group" aria-label="Regime de tributação"><sc-for list="{{ moRegimes }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
               <sc-if value="{{ moTemPlanArq }}" hint-placeholder-val="{{ false }}">
               <div class="lmo-cct">
                 <div><b>{{ moPlanRot }}</b><small>{{ moPlanSub }}</small></div>
@@ -3434,6 +3445,39 @@
               <div class="lmo-cct">
                 <div><b>{{ moCctRot }}</b><small>Acordo, convenção ou dissídio coletivo da categoria, em PDF.</small></div>
                 <label class="lmo-arq"><input type="file" accept=".pdf,.doc,.docx" sc-camel-on-change="{{ moEscolherCct }}">{{ moCct }}<sc-if value="{{ moCct }}" hint-placeholder-val="{{ false }}"> · trocar</sc-if><sc-if value="{{ moSemCct }}" hint-placeholder-val="{{ true }}">Escolher arquivo</sc-if></label>
+              </div>
+              <h3 class="lmo-ag-h">2. Pedir a análise</h3>
+              <sc-if value="{{ moCotaTxt }}" hint-placeholder-val="{{ false }}"><p class="{{ moCotaCls }}">{{ moCotaTxt }}</p></sc-if>
+              <div class="lmo-agente">
+                <sc-if value="{{ moPro }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moAgente }}">{{ moBotaoAgente }}</button></sc-if>
+                <sc-if value="{{ moSemPro }}" hint-placeholder-val="{{ false }}"><span class="lmo-pro">Exclusivo do plano Pro</span><button type="button" class="lve-voltar" sc-camel-on-click="{{ moIrPlanos }}">Conhecer o Pro</button></sc-if>
+              </div>
+              <sc-if value="{{ moErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moErro }}</p></sc-if>
+              <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
+              <sc-if value="{{ moIssPedir }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-aceite">
+                  <span>Não encontramos em fonte oficial a alíquota do ISS de {{ moIssLocal }}. Informe a alíquota para ela entrar na planilha (Módulo 6, C.3).</span>
+                  <div class="lmo-campos">
+                    <label class="lmo-campo"><span>Alíquota do ISS (%)</span><input type="text" inputmode="decimal" value="{{ moIssAliq }}" sc-camel-on-input="{{ onMoIssAliq }}" placeholder="Ex.: 3"></label>
+                    <label class="lmo-campo"><span>Fonte (lei municipal, artigo)</span><input type="text" value="{{ moIssFonte }}" sc-camel-on-input="{{ onMoIssFonte }}" placeholder="Ex.: Lei Complementar nº 123/2017, art. 40"></label>
+                  </div>
+                  <button type="button" class="lmo-btn" sc-camel-on-click="{{ moIssUsar }}">Usar na planilha</button>
+                </div>
+              </sc-if>
+              <sc-if value="{{ moTemObs }}" hint-placeholder-val="{{ false }}"><ul class="lmo-obs"><sc-for list="{{ moObs }}" as="o" hint-placeholder-count="2"><li>{{ o }}</li></sc-for></ul></sc-if>
+              <sc-if value="{{ moTemDepois }}" hint-placeholder-val="{{ true }}">
+                <h3 class="lmo-ag-h">3. Depois da análise, complete você mesmo</h3>
+                <p class="lmo-nota" style="margin-top: 0">O agente preenche os dados da planilha e da convenção. Estes pontos dependem do contrato ou de decisão do órgão:</p>
+                <div class="lmo-depois"><sc-for list="{{ moDepois }}" as="x" hint-placeholder-count="4"><button type="button" class="lve-voltar" sc-camel-on-click="{{ x.ir }}">{{ x.t }} →</button></sc-for></div>
+              </sc-if>
+            </section>
+
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Dados para composição dos custos referentes à mão de obra</h2>
+              <div class="lmo-campos">
+                <sc-for list="{{ moCamposIni }}" as="c" hint-placeholder-count="8">
+                  <label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" data-mo-campo="{{ c.k }}" value="{{ c.valor }}" placeholder="{{ c.ph }}" sc-camel-on-input="{{ c.on }}"></label>
+                </sc-for>
               </div>
             </section>
 
@@ -3517,7 +3561,7 @@
             </sc-if>
 
             <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
-            <section class="lmo-bloco">
+            <section class="lmo-bloco" id="lmo-reaj">
               <h2 class="lmo-h2">Reajuste dos insumos por índice</h2>
               <label class="lvc-check"><input type="checkbox" checked="{{ moRjAtivo }}" sc-camel-on-change="{{ onMoRj }}"> Também quero reajustar os insumos (EPI, uniformes, materiais, equipamentos)</label>
               <p class="lmo-nota">Na repactuação, os custos com mão de obra seguem a convenção; os insumos, quando já completada a periodicidade, são reajustados pelo índice previsto no contrato, contado da data do orçamento estimado (Lei 14.133/2021, art. 25, § 7º, e art. 135).</p>
@@ -3561,28 +3605,7 @@
               <p class="lmo-nota">{{ moMemEmp }}</p>
             </section>
 
-            <section class="lmo-bloco" id="lmo-agente">
-              <h2 class="lmo-h2">{{ moAgenteTitulo }}</h2>
-              <p class="lmo-nota">{{ moAgenteTxt }}</p>
-              <sc-if value="{{ moCotaTxt }}" hint-placeholder-val="{{ false }}"><p class="{{ moCotaCls }}">{{ moCotaTxt }}</p></sc-if>
-              <div class="lmo-agente">
-                <sc-if value="{{ moPro }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moAgente }}">{{ moBotaoAgente }}</button></sc-if>
-                <sc-if value="{{ moSemPro }}" hint-placeholder-val="{{ false }}"><span class="lmo-pro">Exclusivo do plano Pro</span><button type="button" class="lve-voltar" sc-camel-on-click="{{ moIrPlanos }}">Conhecer o Pro</button></sc-if>
-              </div>
-              <sc-if value="{{ moErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moErro }}</p></sc-if>
-              <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
-              <sc-if value="{{ moIssPedir }}" hint-placeholder-val="{{ false }}">
-                <div class="lmo-aceite">
-                  <span>Não encontramos em fonte oficial a alíquota do ISS de {{ moIssLocal }}. Informe a alíquota para ela entrar na planilha (Módulo 6, C.3).</span>
-                  <div class="lmo-campos">
-                    <label class="lmo-campo"><span>Alíquota do ISS (%)</span><input type="text" inputmode="decimal" value="{{ moIssAliq }}" sc-camel-on-input="{{ onMoIssAliq }}" placeholder="Ex.: 3"></label>
-                    <label class="lmo-campo"><span>Fonte (lei municipal, artigo)</span><input type="text" value="{{ moIssFonte }}" sc-camel-on-input="{{ onMoIssFonte }}" placeholder="Ex.: Lei Complementar nº 123/2017, art. 40"></label>
-                  </div>
-                  <button type="button" class="lmo-btn" sc-camel-on-click="{{ moIssUsar }}">Usar na planilha</button>
-                </div>
-              </sc-if>
-              <sc-if value="{{ moTemObs }}" hint-placeholder-val="{{ false }}"><ul class="lmo-obs"><sc-for list="{{ moObs }}" as="o" hint-placeholder-count="2"><li>{{ o }}</li></sc-for></ul></sc-if>
-            </section>
+
 
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Parâmetros dos benefícios (Submódulo 2.3)</h2>
@@ -3614,7 +3637,7 @@
             </sc-for>
 
             <sc-if value="{{ moTemM3Inf }}" hint-placeholder-val="{{ false }}">
-            <section class="lmo-bloco">
+            <section class="lmo-bloco" id="lmo-m3">
               <h2 class="lmo-h2">Conferência do Módulo 3 com a planilha da empresa</h2>
               <p class="lmo-nota" style="margin-top: 0">Digite os percentuais que constam na planilha elaborada pela empresa (deixe em branco o que não quiser conferir). B, C, E e F são fórmulas: só mudam quando mudam A, D ou os encargos do Submódulo 2.2. Cada divergência entra na lista de falhas e no relatório da planilha, com o correto e o fundamento.</p>
               <div class="lmo-campos">
@@ -3625,7 +3648,7 @@
             </section>
             </sc-if>
             <sc-if value="{{ moTemFalhas }}" hint-placeholder-val="{{ false }}">
-            <section class="lmo-bloco">
+            <section class="lmo-bloco" id="lmo-falhas">
               <h2 class="lmo-h2">{{ moFalhasTitulo }}</h2>
               <p class="lmo-nota">{{ moFalhasResumo }} {{ moFalhasNota }}</p>
               <p class="lve-aviso" role="note"><b>Atenção:</b> {{ moFalhasAviso }}</p>
@@ -3689,7 +3712,7 @@
             </sc-if>
 
             <sc-if value="{{ moRep }}" hint-placeholder-val="{{ false }}">
-            <section class="lmo-bloco">
+            <section class="lmo-bloco" id="lmo-efeitos">
               <h2 class="lmo-h2">Efeitos financeiros, prazos e apostilamento</h2>
               <p class="lmo-nota" style="margin-top: 0">Diferença retroativa mês a mês desde a data-base, conferência da anualidade e da preclusão e nota técnica da repactuação ({{ moLeiRepac }}).</p>
               <div class="lmo-campos">
@@ -3714,7 +3737,7 @@
             </section>
             </sc-if>
 
-            <section class="lmo-bloco">
+            <section class="lmo-bloco" id="lmo-gt">
               <h2 class="lmo-h2">Garantia das obrigações trabalhistas</h2>
               <p class="lmo-nota" style="margin-top: 0">Nos serviços com dedicação exclusiva de mão de obra, o contrato deve prever a conta-depósito vinculada ou o pagamento pelo fato gerador (IN SEGES/MP nº 5/2017, art. 18; Lei 14.133/2021, art. 121, § 3º).</p>
               <div class="lmo-modos" role="group" aria-label="Garantia trabalhista"><sc-for list="{{ moGtOpcoes }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
@@ -11231,6 +11254,17 @@ class Component extends DCLogic {
       moReformaOpcoes: [["antes", "Antes da reforma (PIS, COFINS e ISS)"], ["depois", "Depois da reforma (CBS e IBS, com a transição)"]].map(([id, nome]) => ({ nome, ativo: d.reforma === id, escolher: () => this.moSet("reforma")(id), ...corBotao(d.reforma === id) })),
       moReformaPendente: !d.reforma || !d.regime, moReformaDepois: depois,
       moAgenteTitulo: prop ? "Análise da proposta pelo agente" : rep ? "Análise da repactuação pelo agente" : "Preenchimento pelo agente",
+      moPre: [["Município e UF onde o serviço é prestado (para o ISS)", String(d.municipio || "").trim() && /^[A-Za-z]{2}$/.test(String(d.uf || "").trim())]]
+        .concat(rep ? [["Ano de execução do contrato após a repactuação", !!String(d.ano_exec || "").trim()]] : [])
+        .concat([["Tributação: antes ou depois da reforma e regime da empresa", !!(d.reforma && d.regime)]])
+        .concat(rep || prop ? [[prop ? "Planilha de custos da proposta (PDF ou Excel)" : "Planilha de custos da contratação (PDF ou Excel)", !!(d.plan_arquivo || this._moPlanTexto)]] : [])
+        .concat([[rep ? "Nova convenção coletiva (PDF)" : "Convenção coletiva da categoria (PDF)", !!d.cct_arquivo]])
+        .map(([t, ok]) => ({ t: (ok ? "✓ " : "○ ") + t, cls: ok ? "ok" : "falta" })),
+      moPreCampos: [campo("municipio", "Município onde o serviço será prestado", "Ex.: Maricá"), campo("uf", "UF", "RJ")].concat(rep ? [campo("ano_exec", "Ano de execução após a repactuação", "Ex.: 2")] : []),
+      moTemDepois: rep || prop,
+      moDepois: (rep ? [["Datas da repactuação e efeitos financeiros", "lmo-efeitos"], ["Reajuste dos insumos por índice", "lmo-reaj"], ["Garantia trabalhista (conta vinculada ou fato gerador)", "lmo-gt"]] : [["Garantia trabalhista (conta vinculada ou fato gerador)", "lmo-gt"]])
+        .concat([["Conferir o Módulo 3 da empresa", "lmo-m3"], ["Ler e confirmar as falhas apontadas", "lmo-falhas"]])
+        .map(([t, id]) => ({ t, ir: () => { try { document.getElementById(id).scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} } })),
       moLeis: ["14133", "13303", "13019"].map((id) => [id, LEIS[id]]).map(([id, L]) => ({ nome: L.nome, ativo: (d.lei || "14133") === id, escolher: () => this.moSet("lei")(id), ...corBotao((d.lei || "14133") === id) })), moLeiTxt: leiDe(d).ui,
       moLeiRepac: leiDe(d).repac,
       moRegimes: [["real", "Lucro Real"], ["presumido", "Lucro Presumido"], ["simples", "Simples Nacional"]].map(([id, nome]) => ({ nome, ativo: d.regime === id, escolher: () => this.moRegime(id), ...corBotao(d.regime === id) })),
@@ -11496,11 +11530,11 @@ class Component extends DCLogic {
       moIntro: prop ? "Use no julgamento, para analisar a planilha de custos apresentada por uma licitante: o agente reproduz a proposta, confere item por item com a convenção, a lei e os cadernos técnicos, aponta as falhas e os custos abaixo do mínimo, conclui sobre a exequibilidade e monta as perguntas da diligência (Lei 14.133/2021, art. 59; IN 05/2017, Anexo VII-A, itens 7 e 9)."
         : rep ? "Use na repactuação, quando o novo acordo, convenção ou dissídio coletivo der aumento à categoria. Você preenche os custos e percentuais da planilha repactuada; as adequações dos custos não renováveis são feitas automaticamente."
         : "Use na fase de planejamento para formar o custo do profissional que será contratado. Informe os dados iniciais e confira os percentuais: os valores de partida seguem a legislação e o modelo da IN.",
-      moCamposIni: [campo("municipio", "Município onde o serviço será prestado", "Ex.: Maricá"), campo("uf", "UF", "RJ"), campo("tipo_servico", "Tipo de serviço", "Ex.: Limpeza"), campo("categoria", "Categoria profissional", "Ex.: Servente"), campo("cbo", "CBO", "Ex.: 5143-20"),
+      moCamposIni: [campo("tipo_servico", "Tipo de serviço", "Ex.: Limpeza"), campo("categoria", "Categoria profissional", "Ex.: Servente"), campo("cbo", "CBO", "Ex.: 5143-20"),
         campo("salario", rep ? "Novo salário-base (convenção vigente)" : "Salário-base da categoria (R$)", "Ex.: 1.850,00"), campo("data_base", "Data-base da categoria", "dd/mm/aaaa"),
         campo("ano_cct", "Ano do acordo, convenção ou dissídio", "Ex.: 2026"),
         campo("data_proposta", "Data de apresentação da proposta", "dd/mm/aaaa"), campo("meses", "Nº de meses de execução contratual", "12")]
-        .concat(rep ? [campo("ano_exec", "Ano de execução do contrato após a repactuação", "Ex.: 2"), campo("vigente", "Preço vigente por empregado (antes da repactuação, R$)", "Ex.: 4.320,15")] : [])
+        .concat(rep ? [campo("vigente", "Preço vigente por empregado (antes da repactuação, R$)", "Ex.: 4.320,15")] : [])
         .concat(prop ? [campo("pr_licitante", "Licitante", "Razão social"), campo("vigente", "Preço ofertado por empregado (R$)", "Ex.: 4.150,00"), campo("pr_estimado", "Valor estimado pela Administração por empregado (R$)", "Ex.: 4.600,00"), campo("pr_processo", "Processo ou pregão", "Ex.: Pregão Eletrônico 10/2026")] : []),
       moCct: d.cct_nome || "", moSemCct: !d.cct_nome, moCctRot: rep ? "Nova convenção coletiva (obrigatória)" : prop ? "Convenção coletiva da categoria (obrigatória)" : "Convenção coletiva",
       moIssPedir: !!mo.issPedir, moIssLocal: mo.issPedir ? mo.issPedir.municipio + "/" + mo.issPedir.uf + (mo.issPedir.item ? " (item " + mo.issPedir.item + " da LC 116/2003)" : "") : "",
@@ -11546,7 +11580,7 @@ class Component extends DCLogic {
       moBaixarExcel: () => this.moBaixar("xlsx"), moBaixarPdf: () => this.moBaixar("pdf"),
       moDocs: this.moDocsDisponiveis().map(([id, nome, desc]) => ({ nome, desc, xlsx: () => this.moBaixar("xlsx", id), pdf: () => this.moBaixar("pdf", id) })), moBaixando: !!mo.baixando,
       moAgenteTxt: prop ? "No plano Pro, envie a planilha de custos da proposta (PDF ou Excel) e a convenção coletiva: o agente reproduz a proposta, confere cada rubrica, aponta as falhas com o fundamento, conclui sobre a exequibilidade e monta a diligência. A decisão é do agente de contratação ou do pregoeiro."
-        : rep ? "No plano Pro, envie a planilha utilizada na contratação (PDF ou Excel) e, se quiser, a nova convenção: o agente reproduz a planilha, atualiza o que decorre da convenção e suprime ou reduz os custos não renováveis, indicando o fundamento. Você confere e ajusta qualquer valor."
+        : rep ? "No plano Pro, envie a planilha utilizada na contratação (PDF ou Excel) e a nova convenção coletiva: o agente reproduz a planilha (inclusive o número do contrato, as partes e os percentuais do Módulo 3 como a empresa preencheu), atualiza o que decorre da convenção e suprime ou reduz os custos não renováveis, indicando o fundamento. Você confere e ajusta qualquer valor."
         : "No plano Pro, o agente lê a convenção, a legislação trabalhista, os cadernos técnicos e a jurisprudência do TCU e preenche salário, adicionais, benefícios e percentuais, indicando a fonte de cada valor. Sem o agente, a planilha parte dos percentuais legais e você confere e ajusta.",
       moEscolherCct: (e) => { const f = e.target && e.target.files && e.target.files[0]; if (e.target) e.target.value = ""; if (f) this.moEnviarCct(f); },
       moPro: this.moPodeAgente(), moSemPro: !this.moPodeAgente(),

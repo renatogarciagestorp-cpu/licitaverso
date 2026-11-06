@@ -32,6 +32,15 @@ const CAMPOS_PLANEJAMENTO: Record<string, string> = {
   mat: "afastamento maternidade, %", outros41: "outras ausências, %", intra: "intervalo intrajornada, % (quando não usufruído e indenizado)",
   unif: "uniformes, R$ por empregado por mês (se a convenção fixar quantidade ou valor)",
 };
+// percentuais do Módulo 3 exatamente como estão na planilha da empresa (sem corrigir), para a conferência automática do site
+const CAMPOS_M3_EMPRESA: Record<string, string> = {
+  inf_api: "Módulo 3, A – aviso prévio indenizado, % EXATAMENTE como está na planilha da empresa (sem corrigir)",
+  inf_fgts_api: "Módulo 3, B – incidência do FGTS sobre o aviso prévio indenizado, % como está na planilha da empresa",
+  inf_multa_api: "Módulo 3, C – multa do FGTS (e contribuição social, se houver), % como está na planilha da empresa",
+  inf_apt: "Módulo 3, D – aviso prévio trabalhado, % como está na planilha da empresa (sem a correção dos custos não renováveis)",
+  inf_inc_apt: "Módulo 3, E – incidência do Submódulo 2.2 sobre o aviso prévio trabalhado, % como está na planilha da empresa",
+  inf_multa_apt: "Módulo 3, F – multa do FGTS sobre o aviso prévio trabalhado, % como está na planilha da empresa",
+};
 // Na repactuação, o agente reproduz a planilha da contratação (enviada em PDF ou Excel) e aplica as adequações
 const CAMPOS_REPACTUACAO: Record<string, string> = {
   ...CAMPOS_PLANEJAMENTO,
@@ -47,6 +56,9 @@ const CAMPOS_REPACTUACAO: Record<string, string> = {
   emp_posto: "empregados por posto", postos: "quantidade de postos", meses: "meses de execução",
   tipo_servico: "tipo de serviço (texto)", municipio: "município (texto)", uf: "UF (texto)",
   vigente: "preço total por empregado na planilha da contratação (antes da repactuação), R$",
+  rp_contrato: "número do contrato (texto, como aparece na planilha ou no cabeçalho; omita se não houver)",
+  rp_orgao: "contratante – órgão ou entidade (texto; omita se não houver)", rp_empresa: "contratada – razão social da empresa (texto; omita se não houver)",
+  ...CAMPOS_M3_EMPRESA,
 };
 
 // Na análise da proposta, o agente reproduz a planilha da licitante tal como apresentada (sem corrigir) e aponta as falhas
@@ -58,8 +70,10 @@ const CAMPOS_PROPOSTA: Record<string, string> = {
   ci: "custos indiretos, % (da proposta)", lucro: "lucro, % (da proposta)",
   vigente: "preço total por empregado ofertado na planilha da proposta, R$",
 };
+delete CAMPOS_PROPOSTA.rp_contrato; delete CAMPOS_PROPOSTA.rp_orgao; delete CAMPOS_PROPOSTA.rp_empresa;
 const REGRAS = `Planilha de custos e formação de preços da IN SEGES/MP nº 5/2017, Anexo VII-D (com a redação da IN nº 7/2018), para serviço com dedicação exclusiva de mão de obra.
 Estrutura: Módulo 1 (remuneração), Módulo 2 (2.1 13º e férias; 2.2 GPS, FGTS e outras contribuições, incidindo sobre Módulo 1 + 2.1 + Módulo 4; 2.3 benefícios), Módulo 3 (provisão para rescisão), Módulo 4 (reposição do profissional ausente), Módulo 5 (insumos), Módulo 6 (custos indiretos, tributos e lucro).
+Multa do FGTS: 40% (a contribuição social de 10% da LC 110/2001 foi extinta pela Lei 13.932/2019 a partir de 1º/1/2020; planilha que ainda some 50% tem falha). Módulo 3, C, pelo modelo dos cadernos técnicos da SEGES: multa sobre todos os depósitos do contrato = 8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168) ≈ 3,48% do Módulo 1. Módulo 3, F = 40% × 8% × aviso prévio trabalhado. Conta-depósito vinculada: retenção de 4% para a multa do FGTS.
 Fontes a observar: a convenção/acordo coletivo enviado (piso da categoria, adicionais, vale-transporte, auxílio-alimentação e participação, assistência médica, seguro de vida, uniforme, data-base); CLT; Lei 7.418/1985 (vale-transporte, desconto de até 6% do salário-base); Lei 8.036/1990 (FGTS 8%); Lei 8.212/1991 (INSS 20%; RAT 1%, 2% ou 3% pelo grau de risco da atividade, multiplicado pelo FAP); Decreto-Lei 1.422/1975 (salário-educação 2,5%); SESC/SESI 1,5%; SENAC/SENAI 1%; SEBRAE 0,6%; INCRA 0,2%; Lei 12.506/2011 (aviso prévio proporcional); NR-15 (insalubridade 10%, 20% ou 40%) e NR-16 (periculosidade 30%); cadernos técnicos de serviços terceirizados do Ministério da Gestão (Compras.gov.br) para os percentuais de ausências legais, licença-paternidade, acidente de trabalho e maternidade; jurisprudência do TCU: Acórdão 1.904/2007-Plenário e Acórdão 1.186/2017-Plenário (aviso prévio trabalhado de no máximo 1,94% no 1º ano e 0,194% a cada ano de prorrogação; custo não renovável), Acórdão 3.006/2010-Plenário (exclusão do aviso prévio trabalhado após o 1º ano), e o art. 57 da IN 05/2017 (na repactuação, excluem-se os custos não renováveis já pagos ou amortizados no primeiro ano).`;
 
 const FERRAMENTA = (campos: Record<string, string>, comFalhas: boolean, proposta = false) => ({
