@@ -206,8 +206,9 @@ Use apenas o que está na convenção enviada e nas normas citadas; nunca invent
     method: "POST",
     headers: { "x-api-key": chave, "anthropic-version": "2023-06-01", "content-type": "application/json" },
     body: JSON.stringify({
-      model: MODELO, max_tokens: 9000, system, messages: mensagens,
-      tools: comBusca ? [FERRAMENTA(campos, comPlanilha, modo === "proposta"), { type: "web_search_20250305", name: "web_search", max_uses: 3, user_location: { type: "approximate", country: "BR" } }]
+      // max_tokens cobre o raciocínio e a resposta juntos: com 9.000 o raciocínio consumia o limite e a planilha vinha vazia
+      model: MODELO, max_tokens: 32000, output_config: { effort: "medium" }, system, messages: mensagens,
+      tools: comBusca ? [FERRAMENTA(campos, comPlanilha, modo === "proposta"), { type: "web_search_20250305", name: "web_search", max_uses: 2, user_location: { type: "approximate", country: "BR" } }]
         : [FERRAMENTA(campos, comPlanilha, modo === "proposta")],
       tool_choice: comBusca ? { type: "auto" } : { type: "tool", name: "preencher_planilha" },
     }),
@@ -236,7 +237,13 @@ Use apenas o que está na convenção enviada e nas normas citadas; nunca invent
   }
   const j = await resp.json().catch(() => ({}));
   const bloco = (j.content ?? []).find((c: any) => c.type === "tool_use" && c.name === "preencher_planilha");
-  if (!bloco) { console.log("mo-agente: resposta sem preenchimento", j.stop_reason); await liberar(); return erro("O agente não concluiu a análise. Tente de novo em alguns minutos.", 502); }
+  // resposta cortada (limite de saída) ou sem nenhum campo: é falha, não resultado; a franquia é devolvida
+  const camposBrutos = (bloco?.input?.campos ?? []) as any[];
+  if (!bloco || j.stop_reason === "max_tokens" || !camposBrutos.length) {
+    console.log("mo-agente: resposta sem preenchimento", j.stop_reason, camposBrutos.length);
+    await liberar();
+    return erro("O agente não concluiu a análise. A franquia desta semana não foi usada; tente de novo em alguns minutos.", 502);
+  }
   const saida = ((bloco?.input?.campos ?? []) as any[]).filter((c) => campos[c?.campo]).slice(0, 90).map((c) => ({
     campo: String(c.campo), valor: String(c.valor ?? "").slice(0, 120), fonte: String(c.fonte ?? "").slice(0, 300),
     ...(modo === "repactuacao" && c.anterior != null && String(c.anterior).trim() ? { anterior: String(c.anterior).slice(0, 120) } : {}),

@@ -36,7 +36,7 @@ INSTR = ("A seguir está o conteúdo de uma planilha de custos e formação de p
 
 def main():
     txt = open(sys.argv[1], encoding="utf-8", errors="replace").read()[:400_000]
-    corpo = {"model": MODELO, "max_tokens": 8000, "tools": [FERRAMENTA], "tool_choice": {"type": "auto"},
+    corpo = {"model": MODELO, "max_tokens": 20000, "tools": [FERRAMENTA], "tool_choice": {"type": "auto"},
              "messages": [{"role": "user", "content": INSTR + "\n\n<planilha>\n" + txt + "\n</planilha>"}]}
     d = None
     for t in range(3):

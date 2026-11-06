@@ -13,7 +13,7 @@ globalThis.fetch = async (url: any, init?: any) => {
     }
     const r = await fetchOrig(url, init);
     const j = await r.clone().json().catch(() => ({}));
-    uso = { ...(j.usage || {}), modelo: JSON.parse(init.body).model };
+    uso = { ...(j.usage || {}), modelo: JSON.parse(init.body).model, stop_reason: j.stop_reason };
     return r;
   }
   return fetchOrig(url, init);
