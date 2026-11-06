@@ -1240,8 +1240,8 @@
   .lmo-minuta { white-space: pre-wrap; font: inherit; font-size: 13.5px; line-height: 1.6; background: #FBFDF6; border: 1px solid #E3E9E8; border-radius: 12px; padding: 14px 16px; margin: 8px 0 0; color: #172B33; }
   @media (max-width: 900px) { .lmo-retro { grid-template-columns: 80px 1fr 110px; } .lmo-retro > span:nth-child(2), .lmo-retro > span:nth-child(4) { display: none; } .lmo-lin4 { grid-template-columns: 1fr 110px; } .lmo-lin4 > span:nth-child(2) { display: none; } }
   .lmo-cmp-linha { display: flex; gap: 14px; align-items: flex-start; padding: 12px; min-width: max-content; }
-  .lmo-cmpcol { width: 640px; flex: none; display: grid; gap: 12px; } .lmo-cmpcol .lmo-bloco { margin: 0; }
-  .lmo-cmpcol-cab { background: #0A1F2A; color: #fff; border-radius: 14px; padding: 12px 14px; display: grid; gap: 6px; height: 158px; box-sizing: border-box; align-content: start; }
+  .lmo-cmpcol { zoom: .78; width: 640px; flex: none; display: grid; gap: 12px; } .lmo-cmpcol .lmo-bloco { margin: 0; }
+  .lmo-cmpcol-cab { background: #0A1F2A; color: #fff; border-radius: 14px; padding: 12px 14px; display: grid; gap: 6px; box-sizing: border-box; align-content: start; }
   .lmo-cmpcol.contr .lmo-cmpcol-cab { background: #0F3A44; }
   .lmo-cmpcol-cab small { color: #9FE3C5; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; }
   .lmo-cmpcol-cab input { font: inherit; font-weight: 800; font-size: 15px; border: 1px solid rgba(255,255,255,.25); background: rgba(255,255,255,.08); color: #fff; border-radius: 8px; padding: 6px 9px; }
@@ -8486,6 +8486,27 @@ class Component extends DCLogic {
     } catch (e) {}
   }
 
+  componentDidUpdate() { if (this.state.calcAba === "cmp") this.cmpAlinhar(); }
+  // Comparar planilhas: iguala a altura dos blocos e das linhas correspondentes entre as colunas
+  cmpAlinhar() {
+    if (typeof requestAnimationFrame === "undefined") return;
+    cancelAnimationFrame(this._cmpRaf);
+    this._cmpRaf = requestAnimationFrame(() => {
+      const cols = [...document.querySelectorAll(".lmo-cmpcol")]; if (cols.length < 2) return;
+      cols.forEach((c) => c.querySelectorAll("[data-al]").forEach((e) => { e.style.minHeight = ""; e.removeAttribute("data-al"); }));
+      const igualar = (grupos) => Object.values(grupos).forEach((els) => { if (els.length < 2) return; const h = Math.max(...els.map((e) => e.offsetHeight)); els.forEach((e) => { if (e.offsetHeight < h) { e.style.minHeight = h + "px"; e.setAttribute("data-al", "1"); } }); });
+      const secoes = cols.map((c) => [...c.children]);
+      const linhas = {}, filhos = {}, blocos = {};
+      secoes.forEach((ss) => ss.forEach((sec, si) => {
+        sec.querySelectorAll(".lmo-tabela").forEach((t, ti) => [...t.children].forEach((r, ri) => { (linhas[si + "." + ti + "." + ri] = linhas[si + "." + ti + "." + ri] || []).push(r); }));
+      }));
+      igualar(linhas);
+      secoes.forEach((ss) => ss.forEach((sec, si) => [...sec.children].forEach((f, fi) => { if (!f.classList.contains("lmo-tabela")) (filhos[si + "." + fi] = filhos[si + "." + fi] || []).push(f); })));
+      igualar(filhos);
+      secoes.forEach((ss) => ss.forEach((sec, si) => { (blocos[si] = blocos[si] || []).push(sec); }));
+      igualar(blocos);
+    });
+  }
   componentDidMount() {
     const alvoBib = (e) => { const b = e.target && e.target.closest && e.target.closest("button"); if (b && b.textContent.trim() === "Biblioteca Jurídica") this.prepararBiblioteca(); };
     document.addEventListener("pointerover", alvoBib, { passive: true });
@@ -11796,7 +11817,7 @@ class Component extends DCLogic {
       moCompInfo: comp ? "Planilha da contratação " + comp.origem + (comp.em ? " em " + new Date(comp.em).toLocaleString("pt-BR") : "") + ", recalculada com as regras da IN: " + brl(comp.rA.total) + " por empregado."
         + (r.vigente && Math.abs(comp.rA.total - r.vigente) > 0.05 ? " O preço vigente informado é " + brl(r.vigente) + ": diferença de " + brl(Math.abs(comp.rA.total - r.vigente)) + ", que pode indicar falha de cálculo na planilha da contratação ou repactuação anterior não registrada." : "") : "",
       cmpAdd: () => this.moCmpAdd(), cmpPdf: () => this.moCmpRelatorio("pdf"), cmpExcel: () => this.moCmpRelatorio("xlsx"), cmpRecomecar: () => this.cmpRecomecar(),
-      cmpEsq: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: -654 }); } catch (e) {} }, cmpDir: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: 654 }); } catch (e) {} },
+      cmpEsq: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: -510 }); } catch (e) {} }, cmpDir: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: 510 }); } catch (e) {} },
       cmpOk: (s.cmp && s.cmp.ok) || "", cmpErro: (s.cmp && s.cmp.erro) || "",
       cmpInfo: [["contrato", "Contrato"], ["contratante", "Contratante"], ["contratada", "Contratada"], ["categoria", "Categoria"]].map(([k, rot]) => ({ rot, valor: ((s.cmp && s.cmp.info) || {})[k] || "", on: (e) => { const v = e.target.value; const c = this.state.cmp; this.cmpGravar({ ...c, info: { ...(c.info || {}), [k]: v } }); } })),
       ...(s.calcAba === "cmp" ? (() => { const { cols, brl } = this.moCmpDados();
