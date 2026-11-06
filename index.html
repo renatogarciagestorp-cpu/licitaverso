@@ -3424,63 +3424,6 @@
         </sc-if>
         <sc-if value="{{ calcLiberada }}" hint-placeholder-val="{{ true }}">
           <sc-if value="{{ calcAbaMo }}" hint-placeholder-val="{{ false }}">
-          <sc-if value="{{ moTelaCmp }}" hint-placeholder-val="{{ false }}">
-          <div class="lmo lmo-cmpp">
-            <div class="lmo-cmp-topo"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCmpVoltar }}">← Voltar à repactuação</button>
-              <div class="lmo-cmp-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCmpAdd }}">+ Adicionar outra planilha de repactuação</button><button type="button" class="lmo-btn" sc-camel-on-click="{{ moCmpPdf }}">Relatório da comparação (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCmpExcel }}">Excel</button></div></div>
-            <section class="lmo-bloco">
-              <h2 class="lmo-h2">Comparação: planilha da contratação × repactuações</h2>
-              <p class="lmo-nota" style="margin-top: 0">Cada coluna é uma planilha completa, com a mesma estrutura e os mesmos cálculos das planilhas da Calculadora (IN 05/2017). Edite os valores de cada uma; o que mudou em relação à planilha anterior fica destacado em amarelo. Para uma nova repactuação, use "Adicionar outra planilha de repactuação": ela entra à direita, como numa linha do tempo. Para ver as demais, role o quadro para os lados (barra de rolagem, Shift + roda do mouse ou os botões no rodapé).</p>
-              <sc-if value="{{ moOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moOk }}</p></sc-if>
-              <sc-if value="{{ moErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moErro }}</p></sc-if>
-              <div class="lmo-cmp-scroll" role="region" aria-label="Planilhas lado a lado" tabindex="0">
-                <div class="lmo-cmp-linha">
-                  <sc-for list="{{ moCmpCols }}" as="c" hint-placeholder-count="2">
-                  <div class="{{ c.cls }}">
-                    <div class="lmo-cmpcol-cab"><small>{{ c.tipo }}</small><input type="text" value="{{ c.nome }}" aria-label="Nome da planilha" sc-camel-on-input="{{ c.onNome }}">
-                      <span class="lmo-cmp-tot">Preço por empregado: {{ c.total }}</span><sc-if value="{{ c.dif }}" hint-placeholder-val="{{ false }}"><em class="lmo-cmp-dif">{{ c.dif }}</em></sc-if>
-                      <span class="lmo-cmp-hb"><sc-if value="{{ c.ehRep }}" hint-placeholder-val="{{ false }}"><button type="button" class="lmo-ano" sc-camel-on-click="{{ c.atual }}">usar a planilha atual</button></sc-if><sc-if value="{{ c.podeDel }}" hint-placeholder-val="{{ false }}"><button type="button" class="lmo-x" aria-label="Remover esta planilha" sc-camel-on-click="{{ c.del }}">×</button></sc-if></span></div>
-                    <sc-for list="{{ c.mods }}" as="md" hint-placeholder-count="3">
-                    <section class="lmo-bloco lmo-tab">
-                      <h2 class="lmo-h2">{{ md.titulo }}</h2>
-                      <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
-                      <div class="lmo-tabela" role="table">
-                        <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
-                        <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
-                          <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-mudou="{{ l.mudou }}">
-                            <span class="lmo-cod">{{ l.cod }}</span>
-                            <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
-                            <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
-                            <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
-                          </div>
-                        </sc-for>
-                        <div class="lmo-lin lmo-tot" role="row" data-mudou="{{ md.mudouTot }}"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
-                      </div>
-                      <sc-if value="{{ md.ben }}" hint-placeholder-val="{{ false }}">
-                        <p class="lmo-passo-rot" style="margin-top: 12px">Parâmetros dos benefícios (Submódulo 2.3)</p>
-                        <div class="lmo-campos"><sc-for list="{{ md.benef }}" as="b" hint-placeholder-count="4"><label class="lmo-campo" data-mudou="{{ b.mudou }}"><span>{{ b.rot }}</span><input type="text" value="{{ b.valor }}" sc-camel-on-input="{{ b.on }}"></label></sc-for></div>
-                      </sc-if>
-                    </section>
-                    </sc-for>
-                    <section class="lmo-bloco lmo-tab">
-                      <h2 class="lmo-h2">Quadro-resumo do custo por empregado</h2>
-                      <p class="lmo-nota">{{ c.tribTxt }}</p>
-                      <div class="lmo-tabela" role="table">
-                        <sc-for list="{{ c.resumo }}" as="l" hint-placeholder-count="6"><div class="lmo-lin lmo-lin3" role="row" data-forte="{{ l.forte }}"><span class="lmo-cod">{{ l.cod }}</span><span>{{ l.rot }}</span><span class="lmo-val">{{ l.valTxt }}</span></div></sc-for>
-                        <div class="lmo-lin lmo-lin3 lmo-tot" role="row"><span></span><span>Preço total por empregado</span><span class="lmo-val">{{ c.total }}</span></div>
-                      </div>
-                      <div class="lmo-campos" style="margin-top: 10px"><sc-for list="{{ c.qtd }}" as="q" hint-placeholder-count="3"><label class="lmo-campo"><span>{{ q.rot }}</span><input type="text" value="{{ q.valor }}" sc-camel-on-input="{{ q.on }}"></label></sc-for></div>
-                      <div class="lmo-kpis"><div><small>Valor mensal</small><b>{{ c.mensal }}</b></div><div><small>Valor global</small><b>{{ c.global }}</b></div></div>
-                    </section>
-                  </div>
-                  </sc-for>
-                </div>
-              </div>
-              <div class="lmo-cmp-nav"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCmpEsq }}">← Planilha anterior</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCmpDir }}">Próxima planilha →</button></div>
-            </section>
-          </div>
-          </sc-if>
-          <sc-if value="{{ moTelaNormal }}" hint-placeholder-val="{{ true }}">
           <div class="lmo">
             <div class="lmo-salvas">
               <sc-if value="{{ moSalvasAtivo }}" hint-placeholder-val="{{ false }}">
@@ -3962,8 +3905,8 @@
             <section class="lmo-bloco" id="lmo-comp">
               <h2 class="lmo-h2">Quadro comparativo: planilha da contratação × repactuada</h2>
               <sc-if value="{{ moSemComp }}" hint-placeholder-val="{{ true }}">
-                <p class="lmo-nota" style="margin-top: 0">A análise pelo agente monta este quadro sozinha. Para comparar, lado a lado, a planilha da contratação com a desta repactuação (e com outras repactuações já aplicadas), clique em Comparar.</p>
-                <div class="lmo-agente"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moCmpAbrir }}">Comparar</button></div>
+                <p class="lmo-nota" style="margin-top: 0">A análise pelo agente monta este quadro sozinha. Para ver a linha do tempo completa (planejamento, contratação e cada repactuação, lado a lado), use a ferramenta "Comparar planilhas", ao lado de "Reequilíbrio".</p>
+                <div class="lmo-agente"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moIrComparar }}">Abrir "Comparar planilhas"</button></div>
               </sc-if>
               <sc-if value="{{ moTemComp }}" hint-placeholder-val="{{ false }}">
                 <div class="lmo-kpis" style="margin-top: 0"><sc-for list="{{ moCompKpis }}" as="k" hint-placeholder-count="4"><div><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
@@ -3974,7 +3917,7 @@
                     <div class="{{ l.cls }}" role="row" data-forte="{{ l.forte }}" data-auto="{{ l.mudou }}"><span>{{ l.rot }}<sc-if value="{{ l.temMotivo }}" hint-placeholder-val="{{ false }}"><small>{{ l.motivo }}</small></sc-if></span><span class="lmo-val">{{ l.a }}</span><span class="lmo-val">{{ l.n }}</span><span class="lmo-val">{{ l.dv }}</span><span class="lmo-val">{{ l.p }}</span><span class="lmo-val">{{ l.part }}</span></div>
                   </sc-for>
                 </div>
-                <div class="lmo-agente" style="margin-top: 8px"><button type="button" class="lmo-btn" sc-camel-on-click="{{ moCmpAbrir }}">Comparar</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompLimpar }}">Apagar o quadro</button></div>
+                <div class="lmo-agente" style="margin-top: 8px"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moIrComparar }}">Abrir "Comparar planilhas"</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ moCompLimpar }}">Apagar o quadro</button></div>
               </sc-if>
             </section>
             </sc-if>
@@ -4005,6 +3948,62 @@
             </sc-if>
           </div>
           </sc-if>
+          <sc-if value="{{ calcAbaCmp }}" hint-placeholder-val="{{ false }}">
+          <div class="lmo lmo-cmpp">
+            <div class="lmo-cmp-topo"><span></span>
+              <div class="lmo-cmp-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpAdd }}">+ Adicionar planilha de repactuação</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpRecomecar }}">Recomeçar</button><button type="button" class="lmo-btn" sc-camel-on-click="{{ cmpPdf }}">Relatório da comparação (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpExcel }}">Excel</button></div></div>
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">Linha do tempo: planejamento × contratação × repactuações</h2>
+              <p class="lmo-nota" style="margin-top: 0">Cada coluna é uma planilha completa, com a mesma estrutura e os mesmos cálculos das planilhas da Calculadora (IN 05/2017): a da fase de planejamento, a da contratação e as de cada repactuação. Edite os valores ou use o botão de cada coluna para trazer a planilha já preenchida na Planilha de custos, na Análise de proposta ou na Repactuação. O que mudou em relação à planilha anterior fica destacado em amarelo. Role o quadro para os lados para ver todas.</p>
+              <div class="lmo-campos"><sc-for list="{{ cmpInfo }}" as="c" hint-placeholder-count="4"><label class="lmo-campo"><span>{{ c.rot }}</span><input type="text" value="{{ c.valor }}" sc-camel-on-input="{{ c.on }}"></label></sc-for></div>
+              <sc-if value="{{ cmpOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ cmpOk }}</p></sc-if>
+              <sc-if value="{{ cmpErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ cmpErro }}</p></sc-if>
+              <div class="lmo-cmp-scroll" role="region" aria-label="Planilhas lado a lado" tabindex="0">
+                <div class="lmo-cmp-linha">
+                  <sc-for list="{{ moCmpCols }}" as="c" hint-placeholder-count="2">
+                  <div class="{{ c.cls }}">
+                    <div class="lmo-cmpcol-cab"><small>{{ c.tipo }}</small><input type="text" value="{{ c.nome }}" aria-label="Nome da planilha" sc-camel-on-input="{{ c.onNome }}">
+                      <span class="lmo-cmp-tot">Preço por empregado: {{ c.total }}</span><sc-if value="{{ c.dif }}" hint-placeholder-val="{{ false }}"><em class="lmo-cmp-dif">{{ c.dif }}</em></sc-if>
+                      <span class="lmo-cmp-hb"><button type="button" class="lmo-ano" sc-camel-on-click="{{ c.trazer }}">{{ c.trazerTxt }}</button><sc-if value="{{ c.podeDel }}" hint-placeholder-val="{{ false }}"><button type="button" class="lmo-x" aria-label="Remover esta planilha" sc-camel-on-click="{{ c.del }}">×</button></sc-if></span></div>
+                    <sc-for list="{{ c.mods }}" as="md" hint-placeholder-count="3">
+                    <section class="lmo-bloco lmo-tab">
+                      <h2 class="lmo-h2">{{ md.titulo }}</h2>
+                      <sc-if value="{{ md.sub }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ md.sub }}</p></sc-if>
+                      <div class="lmo-tabela" role="table">
+                        <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
+                        <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
+                          <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-mudou="{{ l.mudou }}">
+                            <span class="lmo-cod">{{ l.cod }}</span>
+                            <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
+                            <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
+                            <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                          </div>
+                        </sc-for>
+                        <div class="lmo-lin lmo-tot" role="row" data-mudou="{{ md.mudouTot }}"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
+                      </div>
+                      <sc-if value="{{ md.ben }}" hint-placeholder-val="{{ false }}">
+                        <p class="lmo-passo-rot" style="margin-top: 12px">Parâmetros dos benefícios (Submódulo 2.3)</p>
+                        <div class="lmo-campos"><sc-for list="{{ md.benef }}" as="b" hint-placeholder-count="4"><label class="lmo-campo" data-mudou="{{ b.mudou }}"><span>{{ b.rot }}</span><input type="text" value="{{ b.valor }}" sc-camel-on-input="{{ b.on }}"></label></sc-for></div>
+                      </sc-if>
+                    </section>
+                    </sc-for>
+                    <section class="lmo-bloco lmo-tab">
+                      <h2 class="lmo-h2">Quadro-resumo do custo por empregado</h2>
+                      <p class="lmo-nota">{{ c.tribTxt }}</p>
+                      <div class="lmo-tabela" role="table">
+                        <sc-for list="{{ c.resumo }}" as="l" hint-placeholder-count="6"><div class="lmo-lin lmo-lin3" role="row" data-forte="{{ l.forte }}"><span class="lmo-cod">{{ l.cod }}</span><span>{{ l.rot }}</span><span class="lmo-val">{{ l.valTxt }}</span></div></sc-for>
+                        <div class="lmo-lin lmo-lin3 lmo-tot" role="row"><span></span><span>Preço total por empregado</span><span class="lmo-val">{{ c.total }}</span></div>
+                      </div>
+                      <div class="lmo-campos" style="margin-top: 10px"><sc-for list="{{ c.qtd }}" as="q" hint-placeholder-count="3"><label class="lmo-campo"><span>{{ q.rot }}</span><input type="text" value="{{ q.valor }}" sc-camel-on-input="{{ q.on }}"></label></sc-for></div>
+                      <div class="lmo-kpis"><div><small>Valor mensal</small><b>{{ c.mensal }}</b></div><div><small>Valor global</small><b>{{ c.global }}</b></div></div>
+                    </section>
+                  </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div class="lmo-cmp-nav"><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpEsq }}">← Planilha anterior</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpDir }}">Próxima planilha →</button></div>
+            </section>
+          </div>
           </sc-if>
           <sc-if value="{{ calcAbaRq }}" hint-placeholder-val="{{ false }}">
           <div class="lmo" id="rq-topo">
@@ -6809,7 +6808,8 @@ const MO_CMP_LINHAS = [
   ["s", "", "Módulo 6 – Custos indiretos, tributos e lucro"], ["i", "ci", "Custos indiretos", "%"], ["i", "lucro", "Lucro", "%"], ["i", "pis", "PIS", "%"], ["i", "cofins", "COFINS", "%"], ["i", "iss", "ISS", "%"], ["c", "M6", "Total do Módulo 6"],
   ["s", "", "Resultado"], ["c", "total", "Preço por empregado"], ["i", "emp_posto", "Empregados por posto", "n"], ["i", "postos", "Postos", "n"], ["c", "mensal", "Valor mensal"], ["c", "global", "Valor global"],
 ];
-function moCmpCalc(col) { const dc = { ...MO_PADRAO, ...(col.d || {}), fontes: {} }; return moCalcular({ ...dc, reforma: dc.reforma || "antes" }, col.tipo === "contratacao" ? "planejamento" : "repactuacao", null); }
+const CMP_TIPOS = { planejamento: ["Planilha da fase de planejamento", "planejamento"], contratacao: ["Planilha da contratação", "proposta"], repactuacao: ["Planilha da repactuação", "repactuacao"] };
+function moCmpCalc(col) { const dc = { ...MO_PADRAO, ...(col.d || {}), fontes: {} }; return moCalcular({ ...dc, reforma: dc.reforma || "antes" }, (CMP_TIPOS[col.tipo] || CMP_TIPOS.repactuacao)[1], null); }
 const MO_SNAP_FORA = ["cmp", "ant", "fontes", "falhas", "falhas_aceite", "exeq", "diligencias", "cct_arquivo", "plan_arquivo"];
 const moSnap = (d) => { const o = {}; Object.keys(d || {}).forEach((k) => { if (!MO_SNAP_FORA.includes(k)) o[k] = d[k]; }); return JSON.parse(JSON.stringify(o)); };
 // aplica a memória de cálculo dos insumos a uma planilha guardada (planilha anterior, categorias do quadro, propostas)
@@ -7988,6 +7988,13 @@ const CALC_FERRAMENTAS = [
     beneficios: ["Carga tributária efetiva da proposta e de cada ano da transição, no Lucro Real, Presumido ou Simples Nacional", "Valor mensal que mantém o equilíbrio do contrato e a diferença em reais e em percentual",
       "Indica se a contratada pode pedir o reequilíbrio (LC 214/2025, art. 376) ou se a Administração deve revisar de ofício (art. 375)", "Considera a não cumulatividade: insumos que ficam mais baratos com o crédito da CBS e do IBS",
       "Roteiro do pedido: prazo, decisão em até 90 dias, recomposição provisória e termo aditivo", "Importa os valores de uma planilha de mão de obra da Calculadora", "Fato superveniente: requisitos do art. 124, II, d, e da matriz de riscos, com Sim, Não ou A comprovar", "Quadro item a item (custo na proposta × custo atual), com o documento de cada valor, compensação dos itens que baixaram e desconto do reajuste já concedido", "Memória de cálculo e nota técnica em Excel e PDF"],
+    plano: "Em todos os planos pagos e no teste grátis de 7 dias." },
+  { id: "comparar", nome: "Comparar planilhas", curto: "Linha do tempo das planilhas de mão de obra: planejamento, contratação e cada repactuação, lado a lado, com o relatório do que mudou.",
+    h1: "Linha do tempo das planilhas, do planejamento ao fim do contrato.",
+    lead: "Coloque lado a lado a planilha da fase de planejamento, a da contratação e as de cada repactuação, no mesmo formato das planilhas da Calculadora. O que mudou de uma para outra fica destacado, e o relatório detalha cada alteração.",
+    beneficios: ["Planilha do planejamento, da contratação e de quantas repactuações houver, lado a lado", "Mesma estrutura e mesmos cálculos das planilhas da Calculadora (IN 05/2017)",
+      "Alterações destacadas em relação à planilha anterior, rubrica por rubrica", "Traz as planilhas já preenchidas na Planilha de custos, na Análise de proposta e na Repactuação",
+      "Relatório da comparação em PDF e Excel, com o que mudou em cada etapa"],
     plano: "Em todos os planos pagos e no teste grátis de 7 dias." }
 ];
 const ELAB_TERMO_VERSAO = "elab-2";
@@ -8267,6 +8274,7 @@ class Component extends DCLogic {
     pp: { iniciado: false, d: PP_PADRAO, etapa: "enq", lista: [], ocupado: "", erro: "", ok: "", id: "", excluir: "", colar: "", colarAberto: false },
     el: { doc: "", passo: 0, respostas: {}, aceite: false, enviando: false, erro: "", ok: "", docEsc: "etp", metodo: "pix", contratando: false, contErro: "" },
     calcAba: "indice",
+    cmp: { cols: [], info: {}, ok: "", erro: "" },
     ct: { lista: [], eventos: {}, carregado: false, carregando: false, atual: "", form: null, ev: null, erro: "", ok: "", excluir: "" },
     rq: { d: (() => { try { return { ...RQ_PADRAO, ...(JSON.parse(localStorage.getItem("lv-rq") || "{}") || {}) }; } catch (e) { return { ...RQ_PADRAO }; } })(), erro: "", baixando: false },
     mo: { modo: "planejamento", d: (() => { try { return { ...MO_PADRAO, ...(JSON.parse(localStorage.getItem("lv-mo-planejamento") || "{}") || {}) }; } catch (e) { return { ...MO_PADRAO }; } })(), enviando: false, agente: false, erro: "", ok: "", obs: [] },
@@ -10444,27 +10452,36 @@ class Component extends DCLogic {
     try { window.scrollTo({ top: document.querySelector(".lmo").offsetTop - 80, behavior: "smooth" }); } catch (e) {}
   }
   // relatório único com o quadro consolidado e a planilha completa de cada categoria (e o retroativo, na repactuação)
-  // tela de comparação: planilha da contratação × repactuações, lado a lado
-  moCmpAbrir() {
-    const d = this.state.mo.d;
-    if (!d.cmp || !Array.isArray(d.cmp.cols) || !d.cmp.cols.length) {
-      const base = d.ant ? moSnap({ ...MO_PADRAO, ...d.ant }) : moSnap(d);
-      this.moSet("cmp")({ cols: [{ id: "c0", tipo: "contratacao", nome: "Planilha da contratação", d: base }, { id: "r1", tipo: "repactuacao", nome: "1ª repactuação", d: moSnap(d) }] });
-    }
-    this.setState((x) => ({ mo: { ...x.mo, tela: "comparar", erro: "", ok: "" } }));
-    try { history.replaceState({ p: "calculadora" }, "", location.pathname + "?p=calculadora&f=repactuacao&v=comparar"); window.scrollTo({ top: 0 }); } catch (e) {}
+  // Comparar planilhas: linha do tempo planejamento → contratação → repactuações (estado próprio, guardado no navegador)
+  cmpLerRascunho(modo) { try { const x = JSON.parse(localStorage.getItem("lv-mo-" + modo) || "null"); return x && typeof x === "object" ? x : null; } catch (e) { return null; } }
+  cmpIniciar() {
+    if ((this.state.cmp.cols || []).length) return;
+    let salvo = null; try { salvo = JSON.parse(localStorage.getItem("lv-cmp") || "null"); } catch (e) {}
+    if (salvo && Array.isArray(salvo.cols) && salvo.cols.length) { this.setState({ cmp: { ...salvo, ok: "", erro: "" } }); return; }
+    const pl = this.cmpLerRascunho("planejamento"), pr = this.cmpLerRascunho("proposta"), rp = this.cmpLerRascunho("repactuacao");
+    const contr = rp && rp.ant ? rp.ant : pr || pl || {};
+    const cols = [{ id: "p0", tipo: "planejamento", nome: "Fase de planejamento", d: moSnap({ ...MO_PADRAO, ...(pl || {}) }) },
+      { id: "c0", tipo: "contratacao", nome: "Contratação", d: moSnap({ ...MO_PADRAO, ...contr }) },
+      { id: "r1", tipo: "repactuacao", nome: "1ª repactuação", d: moSnap({ ...MO_PADRAO, ...(rp || contr) }) }];
+    const info = { contrato: (rp && rp.rp_contrato) || "", contratante: (rp && rp.rp_orgao) || "", contratada: (rp && rp.rp_empresa) || (pr && pr.pr_licitante) || "", categoria: (rp && rp.categoria) || (pl && pl.categoria) || "" };
+    this.cmpGravar({ cols, info });
   }
-  moCmpVoltar() {
-    this.setState((x) => ({ mo: { ...x.mo, tela: "" } }));
-    try { history.replaceState({ p: "calculadora" }, "", location.pathname + "?p=calculadora&f=repactuacao"); setTimeout(() => document.getElementById("lmo-comp").scrollIntoView({ block: "start" }), 50); } catch (e) {}
-  }
-  moCmpMudar(fn) { const c = this.state.mo.d.cmp || { cols: [] }; this.moSet("cmp")({ ...c, cols: fn(c.cols.map((x) => ({ ...x, d: { ...x.d } }))) }); }
-  moCmpAdd() { this.moCmpMudar((cols) => { const u = cols[cols.length - 1], n = cols.filter((x) => x.tipo === "repactuacao").length + 1; return cols.concat([{ id: "r" + Date.now().toString(36), tipo: "repactuacao", nome: n + "ª repactuação", d: moSnap(u.d) }]); }); }
+  cmpGravar(c) { const v = { cols: c.cols, info: c.info || {} }; try { localStorage.setItem("lv-cmp", JSON.stringify(v)); } catch (e) {} this.setState((x) => ({ cmp: { ...x.cmp, ...v } })); }
+  moCmpMudar(fn) { const c = this.state.cmp; this.cmpGravar({ ...c, cols: fn((c.cols || []).map((x) => ({ ...x, d: { ...x.d } }))) }); }
+  moCmpAdd() { this.moCmpMudar((cols) => { const u = cols[cols.length - 1], n = cols.filter((x) => x.tipo === "repactuacao").length + 1; return cols.concat([{ id: "r" + Date.now().toString(36), tipo: "repactuacao", nome: n + "ª repactuação", d: moSnap(u ? u.d : MO_PADRAO) }]); }); }
   moCmpDel(id) { this.moCmpMudar((cols) => cols.filter((x) => x.id !== id)); }
-  moCmpAtual(id) { const d = this.state.mo.d; this.moCmpMudar((cols) => cols.map((x) => (x.id === id ? { ...x, d: moSnap(d) } : x))); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Coluna atualizada com a planilha repactuada atual." } })); }
+  moCmpTrazer(id) {
+    const col = (this.state.cmp.cols || []).find((x) => x.id === id); if (!col) return;
+    const fonte = col.tipo === "planejamento" ? "planejamento" : col.tipo === "contratacao" ? "proposta" : "repactuacao", nomeF = { planejamento: "Planilha de custos", proposta: "Análise de proposta", repactuacao: "Repactuação" }[fonte];
+    const dx = this.cmpLerRascunho(fonte);
+    if (!dx) { this.setState((x) => ({ cmp: { ...x.cmp, ok: "", erro: "Não há planilha preenchida em " + nomeF + " neste navegador." } })); return; }
+    this.moCmpMudar((cols) => cols.map((x) => (x.id === id ? { ...x, d: moSnap({ ...MO_PADRAO, ...dx }) } : x)));
+    this.setState((x) => ({ cmp: { ...x.cmp, erro: "", ok: "✓ \u201c" + col.nome + "\u201d preenchida com a planilha de " + nomeF + "." } }));
+  }
+  cmpRecomecar() { try { localStorage.removeItem("lv-cmp"); } catch (e) {} this.setState({ cmp: { cols: [], info: {}, ok: "", erro: "" } }, () => this.cmpIniciar()); }
   // dados da comparação para a tela e o relatório
   moCmpDados() {
-    const d = this.state.mo.d, cols = ((d.cmp && d.cmp.cols) || []).map((c) => ({ ...c, r: moCmpCalc(c) }));
+    const cols = (this.state.cmp.cols || []).map((c) => ({ ...c, r: moCmpCalc(c) }));
     const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const fmt = (u, v) => u === "R$" ? brl(moNum(v)) : u === "%" ? String(v == null || v === "" ? "0" : v) + "%" : String(v == null || v === "" ? "—" : v);
     const val = (c, [t, k, , u]) => t === "c" ? Number(c.r[k]) || 0 : k === "apt" && c.tipo !== "contratacao" ? (c.r.apt_p || 0) * 100 : u === "t" ? String(c.d[k] ?? "") : moNum(c.d[k] ?? MO_PADRAO[k]);
@@ -10474,7 +10491,7 @@ class Component extends DCLogic {
     return { cols, brl, val, txt, varia };
   }
   async moCmpRelatorio(formato) {
-    const { cols, brl, val, txt, varia } = this.moCmpDados(), d = this.state.mo.d;
+    const { cols, brl, val, txt, varia } = this.moCmpDados(), inf = this.state.cmp.info || {};
     if (cols.length < 2) return;
     const hoje = new Date().toLocaleDateString("pt-BR"), nC = cols.length, lr = Math.max(22, 40 - nC * 3), lc = (100 - lr) / nC;
     const linhas = [];
@@ -10484,7 +10501,7 @@ class Component extends DCLogic {
       linhas.push({ c: [L[2]].concat(cols.map((c) => txt(c, L))), total: L[0] === "c" && ["total", "mensal", "global"].includes(L[1]), forte: L[0] === "c", alerta });
     });
     const blocos = [
-      { t: "pares", titulo: "Contrato", pares: [["Contrato", d.rp_contrato || "—"], ["Contratante", d.rp_orgao || "—"], ["Contratada", d.rp_empresa || "—"], ["Categoria", d.categoria || "—"]] },
+      { t: "pares", titulo: "Contrato", pares: [["Contrato", inf.contrato || "—"], ["Contratante", inf.contratante || "—"], ["Contratada", inf.contratada || "—"], ["Categoria", inf.categoria || "—"]] },
       { t: "destaques", itens: cols.map((c) => [c.nome, brl(c.r.total) + " por empregado"]) },
       { t: "tabela", titulo: "Linha do tempo das planilhas", sub: "Em amarelo, o que mudou em relação à planilha anterior.", cab: ["Rubrica"].concat(cols.map((c) => c.nome)), larg: [lr].concat(cols.map(() => lc)), alin: "l" + "r".repeat(nC), linhas, fonte: nC > 4 ? 7 : 8 },
     ];
@@ -10493,14 +10510,14 @@ class Component extends DCLogic {
       MO_CMP_LINHAS.forEach((L) => { if (L[0] === "s") return; const va = val(a, L), vb = val(b, L), v = varia(va, vb, L); if (v) mud.push({ c: [L[2], txt(a, L), txt(b, L), v], forte: L[0] === "c" }); });
       const dt = b.r.total - a.r.total, pt = a.r.total ? dt / a.r.total : 0;
       blocos.push({ t: "quebra" }, { t: "secao", titulo: "O que mudou: de " + a.nome + " para " + b.nome });
-      blocos.push({ t: "texto", paragrafos: ["O preço por empregado passou de " + brl(a.r.total) + " para " + brl(b.r.total) + " (" + (dt >= 0 ? "+" : "−") + brl(Math.abs(dt)) + "; " + (pt >= 0 ? "+" : "") + (pt * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%). O valor mensal passou de " + brl(a.r.mensal) + " para " + brl(b.r.mensal) + " e o global, de " + brl(a.r.global) + " para " + brl(b.r.global) + "." + (b.tipo !== "contratacao" && a.tipo === "contratacao" && (a.r.apt_p || 0) > (b.r.apt_p || 0) ? " O aviso prévio trabalhado foi reduzido por ser custo não renovável (TCU, Acórdão 1.186/2017-Plenário)." : "")] });
+      blocos.push({ t: "texto", paragrafos: ["O preço por empregado passou de " + brl(a.r.total) + " para " + brl(b.r.total) + " (" + (dt >= 0 ? "+" : "−") + brl(Math.abs(dt)) + "; " + (pt >= 0 ? "+" : "") + (pt * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%). O valor mensal passou de " + brl(a.r.mensal) + " para " + brl(b.r.mensal) + " e o global, de " + brl(a.r.global) + " para " + brl(b.r.global) + "." + (b.tipo === "repactuacao" && a.tipo !== "repactuacao" && (a.r.apt_p || 0) > (b.r.apt_p || 0) ? " O aviso prévio trabalhado foi reduzido por ser custo não renovável (TCU, Acórdão 1.186/2017-Plenário)." : "")] });
       blocos.push(mud.length ? { t: "tabela", titulo: "Rubricas alteradas", cab: ["Rubrica", a.nome, b.nome, "Variação"], larg: [34, 20, 20, 26], alin: "lrrr", linhas: mud } : { t: "legenda", texto: "Nenhuma rubrica foi alterada." });
     }
-    const doc0 = { id: "comparacao", titulo: "Comparação das planilhas: contratação e repactuações", sub: (d.rp_contrato ? "Contrato " + d.rp_contrato + " · " : "") + (d.categoria || "") + " · " + nC + " planilhas", selo: leiDe(d).selo, paisagem: nC > 3,
-      arquivo: "comparacao-das-planilhas" + (d.rp_contrato ? "-contrato-" + String(d.rp_contrato).replace(/[^\w-]+/g, "-") : ""), blocos,
+    const doc0 = { id: "comparacao", titulo: "Comparação das planilhas: do planejamento às repactuações", sub: (inf.contrato ? "Contrato " + inf.contrato + " · " : "") + (inf.categoria || "") + " · " + nC + " planilhas", selo: leiDe(cols[0].d || {}).selo, paisagem: nC > 3,
+      arquivo: "comparacao-das-planilhas" + (inf.contrato ? "-contrato-" + String(inf.contrato).replace(/[^\w-]+/g, "-") : ""), blocos,
       notas: ["Cada planilha segue o modelo da IN 05/2017 (Anexo VII-D) e os mesmos cálculos da Calculadora. Nas repactuações, o aviso prévio trabalhado é considerado custo não renovável (no máximo 0,194% por ano de prorrogação; TCU, Acórdão 1.186/2017-Plenário)."] };
     try { if (formato === "xlsx") await this.moDocExcel(doc0, doc0.titulo, hoje); else await this.moDocPdf(doc0, doc0.titulo, hoje); }
-    catch (e) { console.error(e); this.setState((x) => ({ mo: { ...x.mo, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
+    catch (e) { console.error(e); this.setState((x) => ({ cmp: { ...x.cmp, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
   }
   async moQuadroRelatorio(formato) {
     const mo = this.state.mo, modo = mo.modo, lista = this.moListaLer(modo), rep = modo === "repactuacao";
@@ -10602,6 +10619,7 @@ class Component extends DCLogic {
     if (!this.state.moCota) this.moCotaCarregar();
     if (id === "reajuste") { this.setState({ calcAba: "indice" }); this.ctCarregar(); }
     else if (id === "reequilibrio") { this.setState({ calcAba: "rq" }); this.ctCarregar(); }
+    else if (id === "comparar") { this.cmpIniciar(); this.setState({ calcAba: "cmp" }); }
     else if (id === "contratos") { this.irPara("contratos"); return; }
     else { if (this.state.mo.modo !== id) this.moModo(id); this.setState({ calcAba: "mo" }); }
     this.carregarIndices();
@@ -11599,20 +11617,21 @@ class Component extends DCLogic {
         cls: "lmo-lin lmo-comp" + (l.tot === 2 ? " lmo-tot" : ""), forte: l.tot === 1, mudou: Math.abs(l.dv) >= 0.005 && !l.tot })) : [],
       moCompInfo: comp ? "Planilha da contratação " + comp.origem + (comp.em ? " em " + new Date(comp.em).toLocaleString("pt-BR") : "") + ", recalculada com as regras da IN: " + brl(comp.rA.total) + " por empregado."
         + (r.vigente && Math.abs(comp.rA.total - r.vigente) > 0.05 ? " O preço vigente informado é " + brl(r.vigente) + ": diferença de " + brl(Math.abs(comp.rA.total - r.vigente)) + ", que pode indicar falha de cálculo na planilha da contratação ou repactuação anterior não registrada." : "") : "",
-      moTelaCmp: s.calcAba === "mo" && rep && mo.tela === "comparar", moTelaNormal: !(rep && mo.tela === "comparar"),
-      moCmpAbrir: () => this.moCmpAbrir(),
-      moCmpEsq: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: -614 }); } catch (e) {} }, moCmpDir: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: 614 }); } catch (e) {} }, moCmpVoltar: () => this.moCmpVoltar(), moCmpAdd: () => this.moCmpAdd(), moCmpPdf: () => this.moCmpRelatorio("pdf"), moCmpExcel: () => this.moCmpRelatorio("xlsx"),
-      ...(rep && mo.tela === "comparar" ? (() => { const { cols, brl } = this.moCmpDados();
+      cmpAdd: () => this.moCmpAdd(), cmpPdf: () => this.moCmpRelatorio("pdf"), cmpExcel: () => this.moCmpRelatorio("xlsx"), cmpRecomecar: () => this.cmpRecomecar(),
+      cmpEsq: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: -614 }); } catch (e) {} }, cmpDir: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: 614 }); } catch (e) {} },
+      cmpOk: (s.cmp && s.cmp.ok) || "", cmpErro: (s.cmp && s.cmp.erro) || "",
+      cmpInfo: [["contrato", "Contrato"], ["contratante", "Contratante"], ["contratada", "Contratada"], ["categoria", "Categoria"]].map(([k, rot]) => ({ rot, valor: ((s.cmp && s.cmp.info) || {})[k] || "", on: (e) => { const v = e.target.value; const c = this.state.cmp; this.cmpGravar({ ...c, info: { ...(c.info || {}), [k]: v } }); } })),
+      ...(s.calcAba === "cmp" ? (() => { const { cols, brl } = this.moCmpDados();
         const pctX = (v) => ((Number(v) || 0) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
         const setC = (c) => (k) => (e) => { const x = e && e.target ? e.target.value : e; this.moCmpMudar((cs) => cs.map((y) => (y.id === c.id ? { ...y, d: { ...y.d, [k]: x } } : y))); };
-        const mods = cols.map((c) => this.moModulosDe({ ...MO_PADRAO, ...c.d, fontes: {} }, c.r, c.tipo !== "contratacao", setC(c)));
+        const mods = cols.map((c) => this.moModulosDe({ ...MO_PADRAO, ...c.d, fontes: {} }, c.r, c.tipo === "repactuacao", setC(c)));
         const chave = (l) => (l.pctEdit ? String(l.pctK) : l.pctTxt) + "|" + (l.valEdit ? String(l.valK) : l.valTxt);
         const BEN = [["vt_tarifa", "Tarifa do transporte (R$)"], ["vt_viagens", "Viagens por dia"], ["dias", "Dias trabalhados no mês"], ["aux_dia", "Auxílio-alimentação por dia (R$)"], ["aux_part", "Participação no auxílio-alimentação (%)"], ["ref_dia", "Auxílio-refeição por dia (R$)"], ["ref_part", "Participação no auxílio-refeição (%)"]];
         return { moCmpN: String(cols.length),
           moCmpCols: cols.map((c, i) => { const ant = i ? cols[i - 1] : null;
-            return { nome: c.nome, tipo: c.tipo === "contratacao" ? "Planilha da contratação" : "Planilha da repactuação", cls: "lmo-cmpcol" + (c.tipo === "contratacao" ? " contr" : ""),
+            return { nome: c.nome, tipo: (CMP_TIPOS[c.tipo] || CMP_TIPOS.repactuacao)[0], cls: "lmo-cmpcol t-" + c.tipo,
               onNome: (e) => { const v = e.target.value; this.moCmpMudar((cs) => cs.map((x) => (x.id === c.id ? { ...x, nome: v } : x))); },
-              podeDel: i > 1, del: () => this.moCmpDel(c.id), ehRep: c.tipo !== "contratacao", atual: () => this.moCmpAtual(c.id), total: brl(c.r.total),
+              podeDel: cols.length > 2, del: () => this.moCmpDel(c.id), trazer: () => this.moCmpTrazer(c.id), trazerTxt: "trazer da " + ({ planejamento: "Planilha de custos", contratacao: "Análise de proposta", repactuacao: "Repactuação" }[c.tipo] || "Repactuação"), total: brl(c.r.total),
               dif: ant ? (() => { const dv = c.r.total - ant.r.total, pc = ant.r.total ? dv / ant.r.total : 0; return (dv >= 0 ? "+" : "−") + brl(Math.abs(dv)) + " (" + (pc >= 0 ? "+" : "") + (pc * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%) em relação à anterior"; })() : "",
               mods: mods[i].map((md, mi) => ({ titulo: md.titulo, sub: md.sub || "", total: md.total, ben: /^Submódulo 2\.3/.test(md.titulo),
                 mudouTot: !!(ant && mods[i - 1][mi] && mods[i - 1][mi].total.valTxt !== md.total.valTxt),
@@ -11623,6 +11642,7 @@ class Component extends DCLogic {
               tribTxt: "Po = " + brl(c.r.Po) + " · tributos " + pctX(c.r.To) + " · P1 = " + brl(c.r.P1),
               qtd: [["emp_posto", "Empregados por posto"], ["postos", "Postos"], ["meses", "Meses"]].map(([k, rot]) => ({ rot, valor: c.d[k] == null ? (MO_PADRAO[k] ?? "") : c.d[k], on: setC(c)(k) })),
               mensal: brl(c.r.mensal), global: brl(c.r.global) }; }) }; })() : {}),
+      moIrComparar: () => this.calcFerramenta("comparar"),
       moCompRegistrar: () => { this.moSet("ant")({ ...moSnap(this.state.mo.d), _origem: "assinante", _em: new Date().toISOString() }); this.setState((x) => ({ mo: { ...x.mo, ok: "✓ Valores atuais registrados como planilha da contratação. Agora altere o que mudou com a nova convenção." } })); },
       moCompLimpar: () => this.moSet("ant")(null),
       moMem: memGrupos, moMemEmp: "Empregados considerados no rateio de materiais e equipamentos: " + empTot + " (empregados por posto × postos).",
@@ -11676,14 +11696,14 @@ class Component extends DCLogic {
       onMoRfAno: this.moSet("rf_ano"), moRfCbs: d.rf_cbs || "", onMoRfCbs: this.moSet("rf_cbs"), moRfIbs: d.rf_ibs || "", onMoRfIbs: this.moSet("rf_ibs"),
       moTransicao: transicao,
       moTransicaoNota: "Clique no ano para calculá-lo na planilha. Cada linha refaz o Módulo 6 com as alíquotas do ano; os Módulos 1 a 5 e o lucro são os mesmos. A mudança de tributos em contrato vigente pede reequilíbrio econômico-financeiro (LC 214/2025, arts. 374 a 378; Lei 14.133/2021, art. 134).",
-      calcAbaIndice: s.calcAba === "indice", calcAbaMo: s.calcAba === "mo", calcAbaRq: s.calcAba === "rq",
+      calcAbaCmp: s.calcAba === "cmp", calcAbaIndice: s.calcAba === "indice", calcAbaMo: s.calcAba === "mo", calcAbaRq: s.calcAba === "rq",
       calcAbaIdxCls: "lvc-aba" + (s.calcAba === "indice" ? " ativo" : ""), calcAbaMoCls: "lvc-aba" + (s.calcAba === "mo" ? " ativo" : ""),
       calcIrIndice: () => this.setState({ calcAba: "indice" }), calcIrMo: () => { this.setState({ calcAba: "mo" }); this.carregarIndices(); },
       ...(() => {
-        const atual = s.calcAba === "mo" ? mo.modo : s.calcAba === "rq" ? "reequilibrio" : "reajuste", f = CALC_FERRAMENTAS.find((x) => x.id === atual) || CALC_FERRAMENTAS[0];
+        const atual = s.calcAba === "mo" ? mo.modo : s.calcAba === "rq" ? "reequilibrio" : s.calcAba === "cmp" ? "comparar" : "reajuste", f = CALC_FERRAMENTAS.find((x) => x.id === atual) || CALC_FERRAMENTAS[0];
         const ir = (id) => () => this.calcFerramenta(id);
         return { calcH1: "Cálculos de contratos e planilhas de mão de obra, com a fundamentação pronta.",
-          calcLead: "Reajuste por índice, planilha de custos no formato da IN 05/2017, repactuação, análise da proposta da licitante e reequilíbrio econômico-financeiro: índices oficiais atualizados todos os dias, memória de cálculo, falhas apontadas com o fundamento e documentos em Excel e PDF para juntar ao processo.",
+          calcLead: "Reajuste por índice, planilha de custos no formato da IN 05/2017, repactuação, análise da proposta da licitante, reequilíbrio econômico-financeiro e a linha do tempo das planilhas: índices oficiais atualizados todos os dias, memória de cálculo, falhas apontadas com o fundamento e documentos em Excel e PDF para juntar ao processo.",
           calcFerrTitulo: f.h1, calcFerrLead: f.lead, calcFerrNome: f.nome, calcFerrPlano: f.plano, calcFerrBenef: f.beneficios.map((t) => ({ t })),
           calcAbas: CALC_FERRAMENTAS.map((x) => ({ nome: x.nome, ativo: x.id === atual, cls: "lvc-aba" + (x.id === atual ? " ativo" : ""), ir: ir(x.id) })),
           calcFerrCards: CALC_FERRAMENTAS.map((x) => ({ nome: x.nome, curto: x.curto, ativo: x.id === atual, cls: "lvc-fc" + (x.id === atual ? " ativo" : ""), ir: ir(x.id) })) };
