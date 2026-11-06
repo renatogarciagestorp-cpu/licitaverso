@@ -1725,6 +1725,73 @@
   .gp-tec .gp-sub[style] { font-size: var(--fs-sm) !important; }
   .gp-tec .lve-erro { color: var(--t-er); }
   @media (max-width: 760px) { .gp-tec { padding: 16px; border-radius: 18px; --fs-h2: 19px; --fs-kpi: 22px; } .gp-tec .gp-mes-m:nth-child(even) > small { visibility: hidden; } }
+  /* Painel da Organização em página escura contínua (sem blocos claros destoando) */
+  .lvc-corpo.ct-escuro { --t-bg: #06161F; --t-card: #0C2230; --t-card2: #0F2A3A; --t-borda: rgba(126, 210, 230, .14); --t-txt: #E7F2F5; --t-mut: #8EA8B1; --t-fra: #6E8891; --t-ok: #2EE6A6; --t-ci: #38C6E8; --t-at: #F5B53D; --t-er: #FF6B5E;
+    max-width: none; background: radial-gradient(1100px 520px at 0% 0%, rgba(56, 198, 232, .10), transparent 60%), radial-gradient(900px 420px at 100% 10%, rgba(46, 230, 166, .07), transparent 60%), var(--t-bg); color: var(--t-txt);
+    padding-left: max(16px, calc((100% - 1120px) / 2)); padding-right: max(16px, calc((100% - 1120px) / 2)); padding-bottom: 56px; position: relative; display: flow-root; }
+  .lvc-corpo.ct-escuro::before { content: ""; position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(rgba(126, 210, 230, .04) 1px, transparent 1px), linear-gradient(90deg, rgba(126, 210, 230, .04) 1px, transparent 1px); background-size: 32px 32px; mask-image: linear-gradient(#000, transparent 85%); }
+  .lvc-corpo.ct-escuro > * { position: relative; }
+  .ct-escuro .gp-tec { background: transparent; padding: 0; border-radius: 0; overflow: visible; } .ct-escuro .gp-tec::before { display: none; }
+  .ct-escuro .gp-tec.pca { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--t-borda); }
+  .ct-escuro .lmo-btn { background: var(--t-ok); color: #04261A; box-shadow: 0 0 18px rgba(46, 230, 166, .22); }
+  .ct-escuro .lve-voltar { background: rgba(255, 255, 255, .04); color: var(--t-txt); border: 1px solid var(--t-borda); } .ct-escuro .lve-voltar:hover { border-color: var(--t-ci); }
+  .ct-escuro .lmo-ok, .ct-escuro .pca-ok { color: var(--t-ok); } .ct-escuro .lve-erro { color: var(--t-er); }
+  .ct-escuro .lmo-intro, .ct-escuro .lmo-nota, .ct-escuro .lva-sub { color: var(--t-mut); }
+  .ct-escuro .lva-h2 { color: var(--t-txt); }
+  .ct-escuro .gcb-caixa, .ct-escuro .ptp-card, .ct-escuro .lmo-bloco, .ct-escuro .ct-ag, .ct-escuro .ct-frac { background: var(--t-card); border: 1px solid var(--t-borda); box-shadow: none; color: var(--t-txt); }
+  .ct-escuro .ptp-card { border-left: 3px solid var(--t-ok); } .ct-escuro .ptp-card > h2 { color: var(--t-txt); } .ct-escuro .ptp-card > p, .ct-escuro .gcb-tit { color: var(--t-mut); }
+  .ct-escuro .ptp-r { color: var(--t-ci); } .ct-escuro .ptp-op { background: rgba(255, 255, 255, .03); border-color: var(--t-borda); color: var(--t-txt); } .ct-escuro .ptp-op > small { color: var(--t-mut); }
+  .ct-escuro .ptp-op.ativo { background: var(--t-ci); border-color: var(--t-ci); color: #03202B; } .ct-escuro .ptp-op.ativo > small { color: #0A3A48; }
+  .ct-escuro .ptp-c, .ct-escuro .gcb-l, .ct-escuro .lmo-campo { color: var(--t-mut); }
+  .ct-escuro input, .ct-escuro select, .ct-escuro textarea { background: var(--t-card2) !important; color: var(--t-txt) !important; border-color: var(--t-borda) !important; }
+  .ct-escuro input::placeholder, .ct-escuro textarea::placeholder { color: var(--t-fra); }
+  .ct-escuro .lmo-h2 { background: rgba(56, 198, 232, .1); color: var(--t-txt); }
+  .ct-escuro .gcs-c4 { background: var(--t-card); border-color: var(--t-borda); color: var(--t-txt); } .ct-escuro .gcs-c4 small { color: var(--t-mut); }
+  .ct-escuro .gcs-c4.f-todos { --fc: var(--t-ci); } .ct-escuro .gcs-c4.f-vig { --fc: var(--t-ok); } .ct-escuro .gcs-c4.f-ven { --fc: var(--t-at); } .ct-escuro .gcs-c4.f-exp { --fc: var(--t-er); }
+  .ct-escuro .gcs-l { background: var(--t-card); border-color: var(--t-borda); color: var(--t-txt); } .ct-escuro .gcs-l:hover { box-shadow: 0 0 0 1px var(--fc); }
+  .ct-escuro .gcs-l.st-vig { --fc: var(--t-ok); } .ct-escuro .gcs-l.st-ven { --fc: var(--t-at); } .ct-escuro .gcs-l.st-exp { --fc: var(--t-er); }
+  .ct-escuro .gcs-n > small, .ct-escuro .gcs-c > small { color: var(--t-mut); } .ct-escuro .gcs-ir { color: var(--t-ok); }
+  .ct-escuro .gcs-drill { background: rgba(56, 198, 232, .1); color: var(--t-txt); } .ct-escuro .gp-limpar { color: var(--t-ci); }
+  .ct-escuro .ct-pb-vazio { color: var(--t-mut); }
+  .ct-escuro .ct-ag-cab h2, .ct-escuro .ct-frac summary { color: var(--t-txt); } .ct-escuro .ct-ag-cab h2 span, .ct-escuro .ct-ag-rot, .ct-escuro .ct-ag-filtro, .ct-escuro .ct-ag-g h3 { color: var(--t-mut); }
+  .ct-escuro .ct-ag-m { background: rgba(255, 255, 255, .03); border-color: var(--t-borda); } .ct-escuro .ct-ag-m b { color: var(--t-txt); } .ct-escuro .ct-ag-col { background: rgba(255, 255, 255, .07); }
+  .ct-escuro .ct-ag-m.sel { background: rgba(46, 230, 166, .12); border-color: var(--t-ok); }
+  .ct-escuro .ct-ag-it { background: rgba(255, 255, 255, .025); border-color: var(--t-borda); } .ct-escuro .ct-ag-it:hover { background: rgba(56, 198, 232, .07); }
+  .ct-escuro .ct-ag-d { color: var(--t-txt); } .ct-escuro .ct-ag-t { color: var(--t-mut); }
+  .ct-escuro .ct-frac-g { border-top-color: var(--t-borda); } .ct-escuro .ct-frac-g small, .ct-escuro .ct-frac-cab span { color: var(--t-mut); } .ct-escuro .ct-frac-barra { background: rgba(255, 255, 255, .07); }
+  /* PCA */
+  .pca .gp-sec-n { display: inline-block; }
+  .pca-ano { font: inherit; font-size: 13px; font-weight: 700; border-radius: 10px; padding: 8px 10px; border: 1px solid var(--t-borda); background: var(--t-card2); color: var(--t-txt); }
+  .pca-ok { margin: 0; font-size: 13px; font-weight: 700; color: var(--t-ok); }
+  .gp-tec .gp-kpi.gp-kpi-er::before { background: var(--t-er); } .gp-tec .gp-kpi.gp-kpi-er b { color: var(--t-er) !important; } .gp-tec .gp-kpi.gp-kpi-at::before { background: var(--t-at); }
+  .pca-form textarea { width: 100%; box-sizing: border-box; font: inherit; font-size: 13px; border: 1px solid var(--t-borda); border-radius: 10px; padding: 10px 12px; resize: vertical; }
+  .pca-campos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; } .pca-campos > label { display: grid; gap: 5px; font-size: 12px; font-weight: 700; color: var(--t-mut); }
+  .pca-campos input, .pca-campos select { font: inherit; font-size: 13.5px; border: 1px solid var(--t-borda); border-radius: 10px; padding: 9px 10px; min-width: 0; } .pca-l2 { grid-column: span 2; }
+  .pca-bts { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pca-ss { display: grid; gap: 10px; }
+  .pca-s { font: inherit; text-align: left; background: rgba(255, 255, 255, .02); border: 1px solid var(--t-borda); border-radius: 12px; padding: 10px 12px; cursor: pointer; display: grid; gap: 6px; color: var(--t-txt); }
+  .pca-s:hover, .pca-s.sel { border-color: var(--t-ci); background: rgba(56, 198, 232, .06); }
+  .pca-s-t { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; } .pca-s-t > b { font-size: 14px; } .pca-s-t > em { font-style: normal; font-size: 13px; font-weight: 800; color: var(--t-ok); }
+  .pca-s.quase .pca-s-t > em { color: var(--t-at); } .pca-s.over .pca-s-t > em { color: var(--t-er); }
+  .pca-s-b { position: relative; height: 14px; border-radius: 99px; background: rgba(255, 255, 255, .04); }
+  .pca-s-b > i { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 99px; } .pca-s-p { background: rgba(56, 198, 232, .22); border: 1px solid rgba(56, 198, 232, .45); box-sizing: border-box; }
+  .pca-s-c { background: linear-gradient(90deg, var(--t-ci), var(--t-ok)); box-shadow: 0 0 10px rgba(46, 230, 166, .35); } .pca-s.quase .pca-s-c { background: linear-gradient(90deg, var(--t-ci), var(--t-at)); }
+  .pca-s-o { background: var(--t-er) !important; box-shadow: 0 0 10px rgba(255, 107, 94, .5); border-radius: 0 99px 99px 0 !important; }
+  .pca-s > small { font-size: 12px; color: var(--t-mut); }
+  .pca-tab { display: grid; font-size: 12.5px; } .pca-l { display: grid; grid-template-columns: minmax(0, 2.4fr) 70px 70px 120px 140px 110px; gap: 8px; align-items: center; padding: 8px 4px; border-bottom: 1px solid var(--t-borda); }
+  .pca-l > span:first-child { display: grid; gap: 2px; min-width: 0; } .pca-l > span:first-child b { color: var(--t-txt); font-weight: 700; } .pca-l > span:first-child small { color: var(--t-mut); font-size: 11.5px; }
+  .pca-l > span:nth-child(4) { text-align: right; font-weight: 700; } .pca-cab { color: var(--t-fra); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+  .pca-pr { font-size: 11.5px; font-weight: 800; } .pca-pr.alta { color: var(--t-er); } .pca-pr.media { color: var(--t-at); } .pca-pr.baixa { color: var(--t-mut); }
+  .pca-st { font-size: 12px; } .pca-st.contratado { color: var(--t-ok); }
+  .pca-sel { font: inherit; font-size: 12px; border-radius: 8px; padding: 5px 6px; border: 1px solid var(--t-borda); max-width: 100%; }
+  .pca-ac { display: flex; gap: 8px; justify-content: flex-end; } .pca-ac .gp-limpar { font-size: 12px; } .pca-x { color: var(--t-er) !important; }
+  .pca-cal { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+  .pca-m { display: grid; grid-template-rows: auto 1fr; gap: 8px; } .pca-m > i { height: 4px; border-radius: 99px; background: rgba(255, 255, 255, .1); }
+  .pca-m.feito > i { background: var(--t-fra); } .pca-m.agora > i { background: var(--t-ci); box-shadow: 0 0 12px rgba(56, 198, 232, .6); }
+  .pca-m > span { display: grid; gap: 3px; align-content: start; } .pca-m b { font-size: 12.5px; color: var(--t-txt); } .pca-m em { font-style: normal; font-size: 11.5px; font-weight: 800; color: var(--t-ci); } .pca-m small { font-size: 11px; color: var(--t-mut); line-height: 1.45; }
+  .pca-m.feito b, .pca-m.feito em { color: var(--t-fra); } .pca-m.agora { background: rgba(56, 198, 232, .06); border-radius: 10px; padding: 6px; margin: -6px; }
+  @media (max-width: 1000px) { .pca-cal { grid-template-columns: repeat(2, minmax(0, 1fr)); } .pca-campos { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 760px) { .pca-l { grid-template-columns: minmax(0, 1fr) 90px; } .pca-l > span:nth-child(2), .pca-l > span:nth-child(3) { display: none; } .pca-l > span:nth-child(5), .pca-l > span:nth-child(6) { grid-column: span 1; } .pca-cab { display: none; } .pca-campos { grid-template-columns: 1fr; } .pca-l2 { grid-column: auto; } .pca-cal { grid-template-columns: 1fr; } }
   /* situação de relance: cartões que filtram */
   .gcs-cards, .gcs-cards.ct-filtro { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 6px 0 14px; }
   .gcs-c4 { --fc: #0B3B4A; font: inherit; text-align: left; display: grid; grid-template-columns: 6px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 12px 14px 12px 0; cursor: pointer; overflow: hidden; color: #0B1F2A; }
@@ -4686,7 +4753,7 @@
           <p>{{ ctTopoSub }}</p>
         </div>
       </section>
-      <section class="lvc-corpo">
+      <section class="{{ ctSecCls }}">
         <sc-if value="{{ gcBloqueada }}" hint-placeholder-val="{{ false }}">
           <div class="lvc-bloq" style="margin-top: 24px">
             <span class="lvh-bib-tag">{{ gcBloqTag }}</span>
@@ -4830,6 +4897,69 @@
         <p class="gp-nota">Indicadores calculados com os contratos e os registros da linha do tempo cadastrados na Gestão Contratual (inclusive os compartilhados pela equipe). Custo atualizado: soma, mês a mês, do valor em vigor até o fim da vigência com as prorrogações.</p>
       </section>
       </sc-if>
+            <sc-if value="{{ ctPcaVer }}" hint-placeholder-val="{{ false }}">
+            <section class="gp gp-in gp-tec pca" id="pca">
+              <div class="gp-topo">
+                <div><span class="gp-sec-n">PCA</span><h2 class="lva-h2" style="margin: 8px 0 0">Plano de Contratações Anual</h2><p class="gp-sub">Quanto cada secretaria já contratou e quanto ainda pode contratar dentro do PCA aprovado (Lei 14.133/2021, art. 12, VII, e art. 18).</p></div>
+                <div class="gp-topo-d">
+                  <select class="pca-ano" aria-label="Exercício do PCA" sc-camel-on-change="{{ onPcaAno }}"><sc-for list="{{ pcaAnos }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select>
+                  <button type="button" class="lmo-btn" sc-camel-on-click="{{ pcaNovo }}">+ Item do PCA</button>
+                  <button type="button" class="lve-voltar" sc-camel-on-click="{{ pcaColarAbrir }}">Colar do Excel</button>
+                </div>
+              </div>
+              <sc-if value="{{ pcaMsg }}" hint-placeholder-val="{{ false }}"><p class="pca-ok" role="status">{{ pcaMsg }}</p></sc-if>
+              <sc-if value="{{ pcaErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ pcaErro }}</p></sc-if>
+              <sc-if value="{{ pcaColarAberto }}" hint-placeholder-val="{{ false }}">
+                <div class="gp-card pca-form"><h3>Importar itens do PCA {{ pcaAno }}</h3>
+                  <p class="gp-nota">Cole as linhas do Excel ou do PCA publicado no PNCP, uma por item, nesta ordem: <b>setor; descrição; valor estimado; prioridade (alta, média ou baixa); mês previsto</b>. Aceita tabulação ou ponto e vírgula; a linha de cabeçalho é ignorada.</p>
+                  <textarea rows="7" value="{{ pcaColar }}" sc-camel-on-input="{{ onPcaColar }}" placeholder="Secretaria de Educação;Merenda escolar;1.250.000,00;alta;3&#10;Secretaria de Saúde;Medicamentos da farmácia básica;890.000,00;alta;fev"></textarea>
+                  <div class="pca-bts"><button type="button" class="lmo-btn" sc-camel-on-click="{{ pcaImportar }}">Importar</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ pcaColarAbrir }}">Cancelar</button></div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ pcaFormAberto }}" hint-placeholder-val="{{ false }}">
+                <div class="gp-card pca-form"><h3>{{ pcaFormTit }}</h3>
+                  <div class="pca-campos">
+                    <label><span>Setor ou secretaria requisitante *</span><input type="text" list="pca-setores" value="{{ pcaFSetor }}" sc-camel-on-input="{{ onPcaFSetor }}" placeholder="Ex.: Secretaria de Educação"><datalist id="pca-setores"><sc-for list="{{ pcaSetoresOp }}" as="n" hint-placeholder-count="2"><option value="{{ n.v }}"></option></sc-for></datalist></label>
+                    <label class="pca-l2"><span>Objeto (descrição sucinta) *</span><input type="text" value="{{ pcaFDescricao }}" sc-camel-on-input="{{ onPcaFDescricao }}" placeholder="Ex.: serviço de limpeza e conservação das escolas"></label>
+                    <label><span>Valor estimado (R$) *</span><input type="text" inputmode="decimal" value="{{ pcaFValor }}" sc-camel-on-input="{{ onPcaFValor }}" placeholder="0,00"></label>
+                    <label><span>Categoria</span><select sc-camel-on-change="{{ onPcaFCategoria }}"><sc-for list="{{ pcaCatOp }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                    <label><span>Prioridade</span><select sc-camel-on-change="{{ onPcaFPrioridade }}"><sc-for list="{{ pcaPrioOp }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                    <label><span>Mês previsto para a contratação</span><select sc-camel-on-change="{{ onPcaFMes }}"><sc-for list="{{ pcaMesOp }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                    <label><span>Situação</span><select sc-camel-on-change="{{ onPcaFSituacao }}"><sc-for list="{{ pcaSitOp }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
+                    <label class="pca-l2"><span>Justificativa da necessidade ou da alteração</span><input type="text" value="{{ pcaFJustificativa }}" sc-camel-on-input="{{ onPcaFJustificativa }}" placeholder="Obrigatória para inclusão, exclusão ou redimensionamento fora dos períodos de revisão"></label>
+                  </div>
+                  <div class="pca-bts"><button type="button" class="lmo-btn" sc-camel-on-click="{{ pcaSalvar }}">Salvar item</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ pcaCancelar }}">Cancelar</button></div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ pcaVazio }}" hint-placeholder-val="{{ false }}"><div class="gp-card"><h3>Nenhum item no PCA {{ pcaAno }}</h3><p class="gp-sub">Cadastre os itens aprovados no Plano de Contratações Anual, ou cole a lista do Excel, para acompanhar quanto cada secretaria já contratou e quanto ainda pode contratar. Vincule cada contrato ao item do PCA no cadastro do contrato; sem vínculo, o contrato entra pelo setor requisitante.</p></div></sc-if>
+              <sc-if value="{{ pcaTem }}" hint-placeholder-val="{{ true }}">
+                <div class="gp-kpis"><sc-for list="{{ pcaKpis }}" as="k" hint-placeholder-count="4"><div class="{{ k.cls }}"><small>{{ k.k }}</small><b>{{ k.v }}</b><span>{{ k.d }}</span></div></sc-for></div>
+                <div class="gp-card"><h3>Execução do PCA por secretaria</h3><p class="gp-nota">Barra clara: valor planejado no PCA. Barra preenchida: valor contratado no exercício (contratos assinados no ano, pelo valor da vigência inicial). Vermelho: contratado acima do planejado. Clique na secretaria para ver os itens.</p>
+                  <sc-if value="{{ pcaTemSetores }}" hint-placeholder-val="{{ true }}"><div class="pca-ss"><sc-for list="{{ pcaSetores }}" as="g" hint-placeholder-count="4"><button type="button" class="{{ g.cls }}" sc-camel-on-click="{{ g.ir }}"><span class="pca-s-t"><b>{{ g.nome }}</b><em>{{ g.v }}</em></span><span class="pca-s-b"><i class="pca-s-p" style="{{ g.plan }}"></i><i class="pca-s-c" style="{{ g.cont }}"></i><i class="pca-s-o" style="{{ g.over }}"></i></span><small>{{ g.d }}</small></button></sc-for></div></sc-if>
+                </div>
+                <div class="gp-grade">
+                  <div class="gp-card gp-largo"><h3>{{ pcaFiltro }} <sc-if value="{{ pcaTemFiltro }}" hint-placeholder-val="{{ false }}"><button type="button" class="gp-limpar" sc-camel-on-click="{{ pcaLimpar }}">✕ todas as secretarias</button></sc-if></h3>
+                    <sc-if value="{{ pcaTemItens }}" hint-placeholder-val="{{ true }}"><div class="pca-tab"><div class="pca-l pca-cab"><span>Objeto</span><span>Prioridade</span><span>Mês</span><span>Valor</span><span>Situação</span><span></span></div>
+                      <sc-for list="{{ pcaItens }}" as="i" hint-placeholder-count="4"><div class="pca-l"><span><b>{{ i.desc }}</b><small>{{ i.setor }}<sc-if value="{{ i.temCt }}" hint-placeholder-val="{{ false }}"> · {{ i.ct }}</sc-if></small></span><span class="{{ i.prioCls }}">{{ i.prio }}</span><span>{{ i.mes }}</span><span>{{ i.valor }}</span>
+                        <span><sc-if value="{{ i.temCt }}" hint-placeholder-val="{{ false }}"><b class="{{ i.sitCls }}">{{ i.sit }}</b></sc-if><sc-if value="{{ i.semCt }}" hint-placeholder-val="{{ true }}"><select class="pca-sel" aria-label="Situação do item" sc-camel-on-change="{{ i.onSit }}"><sc-for list="{{ i.sitOp }}" as="o" hint-placeholder-count="4"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></sc-if></span>
+                        <span class="pca-ac"><button type="button" class="gp-limpar" sc-camel-on-click="{{ i.editar }}">Editar</button><button type="button" class="gp-limpar pca-x" sc-camel-on-click="{{ i.excluir }}">{{ i.excluirTxt }}</button></span></div></sc-for></div>
+                      <sc-if value="{{ pcaMais }}" hint-placeholder-val="{{ false }}"><button type="button" class="gp-limpar" sc-camel-on-click="{{ pcaMaisIr }}">{{ pcaMaisTxt }}</button></sc-if></sc-if>
+                  </div>
+                  <div class="gp-card"><h3>{{ pcaRiscoTit }}</h3><p class="gp-nota">{{ pcaRiscoSub }}</p>
+                    <sc-if value="{{ pcaTemRisco }}" hint-placeholder-val="{{ true }}"><ul class="gp-lista"><sc-for list="{{ pcaRisco }}" as="x" hint-placeholder-count="3"><li class="gp-n-at"><b>{{ x.t }}</b><span>{{ x.d }}</span></li></sc-for></ul></sc-if>
+                    <sc-if value="{{ pcaSemRiscoVer }}" hint-placeholder-val="{{ false }}"><p class="gp-sub">{{ pcaSemRisco }}</p></sc-if>
+                  </div>
+                  <div class="gp-card"><h3>Contratos sem item do PCA</h3><p class="gp-nota">Contratação não prevista exige justificativa e revisão do plano aprovada pela autoridade (Decreto 10.947/2022, arts. 16 e 17). Ficam fora do PCA as contratações sigilosas, por suprimento de fundos, de pequeno valor com pronto pagamento (art. 95, § 2º) e as do art. 75, VI a VIII (art. 7º do decreto).</p>
+                    <sc-if value="{{ pcaTemFora }}" hint-placeholder-val="{{ true }}"><ul class="gp-lista"><sc-for list="{{ pcaFora }}" as="x" hint-placeholder-count="3"><li class="gp-n-at"><button type="button" class="gp-li-b" sc-camel-on-click="{{ x.ir }}"><b>{{ x.t }}</b><span>{{ x.d }}</span></button></li></sc-for></ul></sc-if>
+                    <sc-if value="{{ pcaSemFora }}" hint-placeholder-val="{{ false }}"><p class="gp-sub">Todos os contratos do exercício estão vinculados a um item do PCA.</p></sc-if>
+                  </div>
+                  <div class="gp-card gp-largo"><h3>Calendário do PCA {{ pcaAno }}</h3><p class="gp-nota">Prazos do Decreto federal 10.947/2022, referência para estados e municípios sem regulamento próprio (a Lei 14.133/2021 deixa o PCA ao regulamento de cada ente, art. 12, VII). Confira o regulamento do seu órgão.</p>
+                    <ol class="pca-cal"><sc-for list="{{ pcaCal }}" as="m" hint-placeholder-count="7"><li class="{{ m.cls }}"><i></i><span><b>{{ m.t }}</b><em>{{ m.quando }}</em><small>{{ m.d }}</small></span></li></sc-for></ol>
+                  </div>
+                </div>
+              </sc-if>
+            </section>
+            </sc-if>
             <sc-if value="{{ ctModoPainel }}" hint-placeholder-val="{{ true }}">
             <section class="gcs" id="gcs">
               <h2 class="lva-h2">Situação de cada contrato, de relance</h2>
@@ -4873,6 +5003,7 @@
                 <label class="lmo-campo"><span>{{ ctGestorRot }}</span><input type="text" value="{{ ctFGestor }}" sc-camel-on-input="{{ onCtFGestor }}" placeholder="Nome"></label>
                 <label class="lmo-campo"><span>{{ ctFiscalRot }}</span><input type="text" value="{{ ctFFiscal }}" sc-camel-on-input="{{ onCtFFiscal }}" placeholder="Nome"></label>
                 <label class="lmo-campo"><span>{{ ctSetorRot }}</span><input type="text" list="ct-setores" value="{{ ctFSetorReq }}" sc-camel-on-input="{{ onCtFSetorReq }}" placeholder="{{ ctSetorDica }}"><datalist id="ct-setores"><sc-for list="{{ ctSetoresOp }}" as="n" hint-placeholder-count="2"><option value="{{ n.v }}"></option></sc-for></datalist></label>
+                <sc-if value="{{ ctOrg }}" hint-placeholder-val="{{ true }}"><label class="lmo-campo" style="grid-column: 1 / -1"><span>Item do Plano de Contratações Anual (PCA)</span><select sc-camel-on-change="{{ onCtFPcaItem }}"><sc-for list="{{ ctPcaOp }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label></sc-if>
                 <label class="lmo-campo"><span>Mês do orçamento estimado (data-base do reajuste)</span><input type="month" value="{{ ctFDataProposta }}" sc-camel-on-input="{{ onCtFDataProposta }}"></label>
                 <label class="lmo-campo"><span>Data da assinatura</span><input type="date" value="{{ ctFAssinatura }}" sc-camel-on-input="{{ onCtFAssinatura }}"></label>
                 <label class="lmo-campo"><span>Início da vigência</span><input type="date" value="{{ ctFInicio }}" sc-camel-on-input="{{ onCtFInicio }}"></label>
@@ -8302,7 +8433,7 @@ function ctProrrog(c, si) {
   return { fim: f, ini, iniIso: ini.toISOString().slice(0, 10), dias, diasIni, anos, st };
 }
 const CT_FORM = { id: "", numero: "", contratante: "", contratada: "", objeto: "", regime: "14133", data_proposta: "", assinatura: "", inicio: "", fim: "", reforma: false, valor_inicial: "", periodicidade: "mensal", obra: false,
-  indice: "ipca", mao_obra: false, data_base_cct: "", alertas: true, obs: "", modalidade: "", natureza: "", gestor: "", fiscal: "", setor_req: "", essencial: false };
+  indice: "ipca", mao_obra: false, data_base_cct: "", alertas: true, obs: "", modalidade: "", natureza: "", gestor: "", fiscal: "", setor_req: "", essencial: false, pca_item: "" };
 // Painel de gestão (estilo Power BI) da carteira: visão do órgão (contratante) ou da empresa (contratada)
 function ctMesN(iso) { const m = /^(\d{4})-(\d{2})/.exec(iso || ""); return m ? Number(m[1]) * 12 + Number(m[2]) - 1 : null; }
 function ctDia(iso) { const m = /^(\d{4})-(\d{2})(?:-(\d{2}))?/.exec(iso || ""); return m ? Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3] || 1)) : null; }
@@ -8487,6 +8618,44 @@ function ctPainelExtra(G, eventos, indices) {
   ess.forEach((p) => {
     const pe = pen[p.x.parte]; if (pe && (pe.multa || pe.imp) && !essRiscos.some((r) => r.pen === p.x.parte)) essRiscos.push({ nivel: "atencao", t: "Contrato " + p.c.numero + " · " + p.x.parte, d: "Fornecedor de serviço essencial com penalidade registrada: avalie um plano de contingência.", ids: [p.c.id], pen: p.x.parte }); });
   return { pessoasL, semFiscal, mediaCarga, penL, nPen, nOc, somaMulta, comPen12, ess, essRiscos, a125, vig, atrasos, pend, risco, meses, prev: { A, v: prev, sem: prevSem, prorr: prevProrr, usados: Object.values(usados) }, cmp, qual: { ok, tot, pct: tot ? ok / tot : 1, falt }, acoes, nomeC, ym };
+}
+// Plano de Contratações Anual (Lei 14.133/2021, art. 12, VII e § 1º, e art. 18; Decreto federal 10.947/2022): planejado × contratado por setor requisitante
+const PCA_CAT = [["", "Não informada"], ["material", "Material"], ["servico", "Serviço"], ["obra", "Obra ou serviço de engenharia"], ["tic", "Tecnologia da informação"]];
+const PCA_SIT = [["planejado", "Planejado"], ["em_contratacao", "Em contratação"], ["contratado", "Contratado"], ["cancelado", "Cancelado"]];
+const PCA_FORM = { id: "", ano: "", setor: "", descricao: "", categoria: "", valor: "", prioridade: "media", mes: "", situacao: "planejado", justificativa: "" };
+function pcaPainel(itens, contratos, ano, hoje) {
+  const h = hoje || new Date(), anoAt = h.getFullYear(), mesAt = h.getMonth() + 1, norm = (t) => String(t || "").trim().toLowerCase();
+  const its = (itens || []).filter((i) => Number(i.ano) === Number(ano));
+  const vigentes = its.filter((i) => i.situacao !== "cancelado");
+  const valorC = (c) => { const v0 = Number(c.valor_inicial) || 0; if (c.periodicidade !== "mensal") return v0; const a = ctMesN(c.inicio || c.assinatura), b = ctMesN(c.fim); return v0 * (a != null && b != null ? Math.max(1, b - a + 1) : 12); };
+  const doAno = (contratos || []).filter((c) => String(c.assinatura || c.inicio || "").slice(0, 4) === String(ano));
+  const porId = Object.fromEntries(its.map((i) => [i.id, i]));
+  const setores = {};
+  const S = (nome) => { const k = norm(nome) || "(sem setor)"; return (setores[k] = setores[k] || { k, nome: String(nome || "").trim() || "(sem setor)", plan: 0, cont: 0, nItens: 0, nCont: 0, ids: [], itens: [] }); };
+  vigentes.forEach((i) => { const g = S(i.setor); g.plan += Number(i.valor) || 0; g.nItens++; g.itens.push(i.id); });
+  const fora = [], vinc = {};
+  doAno.forEach((c) => { const it = c.pca_item && porId[c.pca_item]; const g = S(it ? it.setor : c.setor_req); g.cont += valorC(c); g.nCont++; g.ids.push(c.id);
+    if (it) vinc[it.id] = (vinc[it.id] || []).concat([c]); else fora.push(c); });
+  const lista = Object.values(setores).filter((g) => g.plan || g.cont).map((g) => ({ ...g, saldo: g.plan - g.cont, uso: g.plan ? g.cont / g.plan : (g.cont ? Infinity : 0) })).sort((a, b) => b.plan - a.plan || b.cont - a.cont);
+  const plan = lista.reduce((a, g) => a + g.plan, 0), cont = lista.reduce((a, g) => a + g.cont, 0);
+  // situação de cada item: contratado quando há contrato vinculado
+  const itensSit = its.map((i) => ({ ...i, sitEf: vinc[i.id] ? "contratado" : i.situacao, contratos: vinc[i.id] || [] }));
+  // risco de não execução (Decreto 10.947/2022, art. 19): a partir de julho do ano de execução, itens ainda não contratados com o mês pretendido vencido
+  const risco = Number(ano) === anoAt && mesAt >= 7 ? itensSit.filter((i) => i.sitEf !== "contratado" && i.sitEf !== "cancelado" && (!i.mes || Number(i.mes) < mesAt)) : Number(ano) < anoAt ? itensSit.filter((i) => i.sitEf !== "contratado" && i.sitEf !== "cancelado") : [];
+  const atrasados = Number(ano) === anoAt ? itensSit.filter((i) => i.sitEf === "planejado" && i.mes && Number(i.mes) < mesAt) : [];
+  return { lista, plan, cont, saldo: plan - cont, uso: plan ? cont / plan : 0, nItens: vigentes.length, nCancel: its.length - vigentes.length, itens: itensSit, fora, risco, atrasados, doAno, valorC };
+}
+// calendário do PCA (Decreto 10.947/2022, arts. 10 a 19): elaboração no ano anterior ao da execução
+function pcaCalendario(anoExec, hoje) {
+  const a = anoExec - 1, h = hoje || new Date(), iso = (y, m, d) => y + "-" + String(m).padStart(2, "0") + "-" + String(d).padStart(2, "0"), hj = iso(h.getFullYear(), h.getMonth() + 1, h.getDate());
+  const marcos = [[iso(a, 4, 1), iso(a, 4, 1), "Formalização das demandas", "Setores requisitantes registram os documentos de formalização de demanda (DFD) até 1º de abril (art. 10)."],
+    [iso(a, 4, 2), iso(a, 4, 30), "Consolidação", "O setor de contratações consolida as demandas até 30 de abril, agrupando o que puder ser contratado em conjunto (art. 11)."],
+    [iso(a, 5, 1), iso(a, 5, 15), "Aprovação", "A autoridade competente aprova o PCA até a primeira quinzena de maio; o plano é divulgado no PNCP e o endereço no site do órgão em até 15 dias (arts. 12 e 14)."],
+    [iso(a, 9, 15), iso(a, 11, 15), "Revisão com a proposta orçamentária", "Inclusões, exclusões e redimensionamentos de 15 de setembro a 15 de novembro, para alinhar à proposta orçamentária (art. 15, I)."],
+    [iso(anoExec, 1, 1), iso(anoExec, 1, 31), "Revisão com a LOA", "Na quinzena seguinte à publicação da lei orçamentária, adequação do PCA ao orçamento aprovado (art. 15, II)."],
+    [iso(anoExec, 7, 1), iso(anoExec, 11, 30), "Relatórios de risco", "A partir de julho, relatórios ao menos em julho, setembro e novembro sobre os itens com risco de não serem contratados no ano (art. 19)."],
+    [iso(anoExec, 12, 31), iso(anoExec, 12, 31), "Encerramento", "Itens não executados são justificados e, se ainda necessários, migram para o PCA seguinte (art. 19, § 3º)."]];
+  return marcos.map(([ini, fim, t, d]) => ({ ini, fim, t, d, st: hj > fim ? "feito" : hj >= ini ? "agora" : "futuro" }));
 }
 const CT_MODALIDADES = [["", "Não informada"], ["pregao", "Pregão"], ["concorrencia", "Concorrência"], ["concurso", "Concurso"], ["leilao", "Leilão"], ["dialogo", "Diálogo competitivo"], ["licitacao_13303", "Licitação (Lei 13.303/2016)"],
   ["dispensa_valor", "Dispensa em razão do valor"], ["dispensa_outra", "Dispensa – outras hipóteses"], ["inexigibilidade", "Inexigibilidade"], ["adesao", "Adesão a ata de registro de preços"], ["chamamento", "Chamamento público (Lei 13.019/2014)"], ["outra", "Outra"]];
@@ -9010,6 +9179,7 @@ class Component extends DCLogic {
     el: { doc: "", passo: 0, respostas: {}, aceite: false, enviando: false, erro: "", ok: "", docEsc: "etp", metodo: "pix", contratando: false, contErro: "" },
     calcAba: "indice",
     cmp: { cols: [], info: {}, ok: "", erro: "" },
+    pca: { lista: [], carregado: false, ano: new Date().getFullYear(), form: null, colar: null, setor: "", msg: "", erro: "", excluir: "", todos: false },
     ct: { lista: [], eventos: {}, carregado: false, carregando: false, atual: "", form: null, ev: null, erro: "", ok: "", excluir: "" },
     rq: { d: (() => { try { return { ...RQ_PADRAO, ...(JSON.parse(localStorage.getItem("lv-rq") || "{}") || {}) }; } catch (e) { return { ...RQ_PADRAO }; } })(), erro: "", baixando: false },
     mo: { modo: "planejamento", d: (() => { try { return { ...MO_PADRAO, ...(JSON.parse(localStorage.getItem("lv-mo-planejamento") || "{}") || {}) }; } catch (e) { return { ...MO_PADRAO }; } })(), enviando: false, agente: false, erro: "", ok: "", obs: [] },
@@ -9095,7 +9265,7 @@ class Component extends DCLogic {
       ACERVO_EM = j.gerado_em || "";
       this.setState({ acervoN: DOCS.length });
     }).catch(() => {});
-    if (pIni === "gestao" || pIni === "contratos") { this.ctCarregar(); if (pIni === "contratos") this.carregarIndices(); }
+    if (pIni === "gestao" || pIni === "contratos") { this.ctCarregar(); if (pIni === "contratos") { this.carregarIndices(); this.pcaCarregar(); } }
     if (pIni === "precos") this.ppIniciar();
     if (pIni === "calculadora") { this.carregarIndices(); const fIni = qsIni.get("f"); if (fIni && CALC_FERRAMENTAS.some((x) => x.id === fIni)) this.calcFerramenta(fIni); }
     this.timer = setInterval(() => {
@@ -9183,7 +9353,7 @@ class Component extends DCLogic {
     if (u) await this.carregarDados();
     if (this.state.page === "forum" && (!u || !this.podeLerForum())) this.carregarVitrine();
     if (this.state.page === "calculadora" && u) this.moCotaCarregar();
-    if ((this.state.page === "calculadora" || this.state.page === "gestao" || this.state.page === "contratos") && u) this.ctCarregar(true);
+    if ((this.state.page === "calculadora" || this.state.page === "gestao" || this.state.page === "contratos") && u) { this.ctCarregar(true); if (this.state.page === "contratos") this.pcaCarregar(true); }
     if (this.state.page === "precos" && u) this.ppListar();
     this.tratarRetornoPagamento();
     this.carregarCursos();
@@ -10374,7 +10544,7 @@ class Component extends DCLogic {
     if (destino === "forum" && (!this.u || !this.podeLerForum())) this.carregarVitrine();
     if (destino === "agente" && this.u) this.carregarDados({ leve: true });
     if (destino === "calculadora") { this.carregarIndices(); this.moCotaCarregar(); this.ctCarregar(); }
-    if (destino === "gestao" || destino === "contratos") { this.ctCarregar(); if (destino === "contratos") this.carregarIndices(); }
+    if (destino === "gestao" || destino === "contratos") { this.ctCarregar(); if (destino === "contratos") { this.carregarIndices(); this.pcaCarregar(); } }
     if (destino === "precos") this.ppIniciar();
   }
 
@@ -10737,6 +10907,119 @@ class Component extends DCLogic {
   }
   // ------------------------------------------------------------ Meus contratos (cadastro e linha do tempo)
   // com contas ativas, no Supabase (tabelas contratos e contrato_eventos); em demonstração, neste navegador
+  // ------------------------------------------------------------ Plano de Contratações Anual (PCA)
+  pcaProps() {
+    const s = this.state, q = s.pca, ano = Number(q.ano) || new Date().getFullYear(), P = pcaPainel(q.lista, s.ct.lista, ano), hoje = new Date();
+    const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const brlC = (v) => { const a = Math.abs(v); return a >= 1e9 ? "R$ " + (v / 1e9).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " bi" : a >= 1e6 ? "R$ " + (v / 1e6).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " mi" : a >= 1e4 ? "R$ " + (v / 1e3).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " mil" : brl(v); };
+    const pc = (v) => (isFinite(v) ? (v * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%" : "—");
+    const set = (patch) => this.setState((x) => ({ pca: { ...x.pca, ...patch } }));
+    const MES = ["", "jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+    const anos = [...new Set(q.lista.map((i) => Number(i.ano)).concat([hoje.getFullYear(), hoje.getFullYear() + 1, ano]))].sort((a, b) => b - a);
+    const mx = Math.max(1, ...P.lista.map((g) => Math.max(g.plan, g.cont)));
+    const setorSel = q.setor || "", f = q.form || {};
+    const itensV = P.itens.filter((i) => !setorSel || (String(i.setor || "").trim().toLowerCase() || "(sem setor)") === setorSel);
+    const ord = { alta: 0, media: 1, baixa: 2 };
+    itensV.sort((a, b) => (ord[a.prioridade] - ord[b.prioridade]) || (Number(a.mes) || 13) - (Number(b.mes) || 13));
+    const mostra = q.todos ? itensV : itensV.slice(0, 15);
+    const setores = [...new Set(q.lista.map((i) => String(i.setor || "").trim()).concat(s.ct.lista.map((c) => String(c.setor_req || "").trim())).filter(Boolean))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+    const cal = pcaCalendario(ano, hoje);
+    const campo = (k) => (e) => { const v = e && e.target ? e.target.value : e; this.setState((x) => ({ pca: { ...x.pca, form: { ...x.pca.form, [k]: v }, erro: "" } })); };
+    const pcaF = {}; Object.keys(PCA_FORM).forEach((k) => { const nome = "pcaF" + k.charAt(0).toUpperCase() + k.slice(1); pcaF[nome] = f[k] == null ? "" : String(f[k]); pcaF["on" + nome.charAt(0).toUpperCase() + nome.slice(1)] = campo(k); });
+    return { ...pcaF,
+      pcaVer: !!q.carregado, pcaAno: String(ano), pcaAnos: anos.map((a) => ({ id: String(a), nome: "PCA " + a, sel: a === ano })), onPcaAno: (e) => set({ ano: Number(e.target.value), setor: "", todos: false }),
+      pcaVazio: !P.nItens && !P.doAno.length, pcaTem: P.nItens > 0 || P.doAno.length > 0, pcaMsg: q.msg || "", pcaErro: q.erro || "",
+      pcaNovo: () => set({ form: { ...PCA_FORM, ano: String(ano), setor: setorSel ? (P.lista.find((g) => g.k === setorSel) || {}).nome || "" : "" }, colar: null, msg: "", erro: "" }),
+      pcaColarAbrir: () => set({ colar: q.colar == null ? "" : null, form: null, msg: "", erro: "" }), pcaColarAberto: q.colar != null, pcaColar: q.colar || "", onPcaColar: (e) => set({ colar: e.target.value }),
+      pcaImportar: () => this.pcaImportar(),
+      pcaFormAberto: !!q.form, pcaFormTit: f.id ? "Editar item do PCA" : "Novo item do PCA " + ano, pcaSalvar: () => this.pcaSalvar(), pcaCancelar: () => set({ form: null, erro: "" }),
+      pcaSetoresOp: setores.map((v) => ({ v })), pcaCatOp: PCA_CAT.map(([id, nome]) => ({ id, nome, sel: (f.categoria || "") === id })),
+      pcaPrioOp: [["alta", "Alta"], ["media", "Média"], ["baixa", "Baixa"]].map(([id, nome]) => ({ id, nome, sel: (f.prioridade || "media") === id })),
+      pcaMesOp: [{ id: "", nome: "Não definido", sel: !f.mes }].concat(MES.slice(1).map((m, i) => ({ id: String(i + 1), nome: m.charAt(0).toUpperCase() + m.slice(1), sel: String(f.mes) === String(i + 1) }))),
+      pcaSitOp: PCA_SIT.map(([id, nome]) => ({ id, nome, sel: (f.situacao || "planejado") === id })),
+      pcaKpis: [["PCA " + ano, brlC(P.plan), P.nItens + (P.nItens === 1 ? " item planejado" : " itens planejados") + (P.nCancel ? " · " + P.nCancel + " cancelado(s)" : "")],
+        ["Contratado no exercício", brlC(P.cont), pc(P.uso) + " do planejado · " + P.doAno.length + (P.doAno.length === 1 ? " contrato" : " contratos")],
+        [P.saldo >= 0 ? "Saldo do PCA" : "Acima do PCA", brlC(Math.abs(P.saldo)), P.saldo >= 0 ? "ainda disponível para contratar" : "contratado além do planejado"],
+        ["Contratos sem item do PCA", String(P.fora.length), P.fora.length ? "exigem justificativa e revisão do plano" : "todos vinculados ao plano"]].map(([k, v, d], i) => ({ k, v, d, cls: "gp-kpi" + (i === 2 && P.saldo < 0 ? " gp-kpi-er" : i === 3 && P.fora.length ? " gp-kpi-at" : "") })),
+      pcaSetores: P.lista.map((g) => { const over = g.cont > g.plan, wP = (g.plan / mx) * 100, wC = (Math.min(g.cont, g.plan) / mx) * 100, wO = over ? ((g.cont - g.plan) / mx) * 100 : 0;
+        return { nome: g.nome, cls: "pca-s" + (setorSel === g.k ? " sel" : "") + (over ? " over" : g.uso >= 0.9 ? " quase" : ""), plan: "width: " + wP.toFixed(2) + "%", cont: "width: " + wC.toFixed(2) + "%", over: "left: " + wP.toFixed(2) + "%; width: " + wO.toFixed(2) + "%",
+          v: over ? "acima do PCA em " + brlC(g.cont - g.plan) : "saldo " + brlC(g.saldo), d: "contratado " + brlC(g.cont) + " de " + brlC(g.plan) + " · " + (g.plan ? pc(g.uso) : "sem item no PCA") + " · " + g.nItens + (g.nItens === 1 ? " item" : " itens"),
+          ir: () => set({ setor: setorSel === g.k ? "" : g.k, todos: false }) }; }),
+      pcaTemSetores: P.lista.length > 0, pcaFiltro: setorSel ? "Itens de " + ((P.lista.find((g) => g.k === setorSel) || {}).nome || setorSel) : "Todos os itens do PCA " + ano, pcaTemFiltro: !!setorSel, pcaLimpar: () => set({ setor: "" }),
+      pcaItens: mostra.map((i) => ({ desc: i.descricao, setor: i.setor, prio: { alta: "Alta", media: "Média", baixa: "Baixa" }[i.prioridade] || "Média", prioCls: "pca-pr " + i.prioridade, mes: i.mes ? MES[i.mes] + "/" + ano : "—", valor: brl(i.valor),
+        sit: { planejado: "Planejado", em_contratacao: "Em contratação", contratado: "Contratado", cancelado: "Cancelado" }[i.sitEf], sitCls: "pca-st " + i.sitEf, ct: i.contratos.length ? "Contrato " + i.contratos.map((c) => c.numero).join(", ") : "",
+        temCt: i.contratos.length > 0, semCt: !i.contratos.length, sitOp: PCA_SIT.map(([id, nome]) => ({ id, nome, sel: i.situacao === id })), onSit: (e) => this.pcaSituacao(i.id, e.target.value),
+        editar: () => set({ form: { ...PCA_FORM, ...Object.fromEntries(Object.keys(PCA_FORM).map((k) => [k, i[k] == null ? "" : String(i[k])])), valor: Number(i.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 }) }, colar: null }),
+        excluir: () => this.pcaExcluir(i.id), excluirTxt: q.excluir === i.id ? "Confirmar" : "Excluir" })),
+      pcaTemItens: itensV.length > 0, pcaMais: itensV.length > 15, pcaMaisTxt: q.todos ? "Mostrar menos" : "Mostrar todos (" + itensV.length + ")", pcaMaisIr: () => set({ todos: !q.todos }),
+      pcaFora: P.fora.slice(0, 8).map((c) => ({ t: "Contrato " + c.numero + " · " + (c.contratada || "contratada não informada"), d: (c.setor_req || "sem setor") + " · " + brl(P.valorC(c)) + " · vincule a um item ou registre a justificativa e a revisão do PCA", ir: () => { this.ctVer([c.id]); const cc = s.ct.lista.find((x) => x.id === c.id); if (cc) setTimeout(() => this.ctEditar(cc), 120); } })),
+      pcaTemFora: P.fora.length > 0, pcaSemFora: !P.fora.length && P.doAno.length > 0,
+      pcaRisco: P.risco.slice(0, 8).map((i) => ({ t: i.descricao, d: i.setor + " · " + brl(i.valor) + (i.mes ? " · previsto para " + MES[i.mes] + "/" + ano : " · sem mês previsto") + " · " + ({ planejado: "não iniciado", em_contratacao: "em contratação" }[i.sitEf] || "") })),
+      pcaTemRisco: P.risco.length > 0, pcaSemRiscoVer: !P.risco.length, pcaRiscoTit: Number(ano) < hoje.getFullYear() ? "Itens não executados em " + ano : "Risco de não execução (art. 19)",
+      pcaRiscoSub: Number(ano) < hoje.getFullYear() ? "Justifique cada um e, se ainda forem necessários, inclua no PCA seguinte (art. 19, § 3º)." : P.risco.length + (P.risco.length === 1 ? " item" : " itens") + " com o mês previsto já passado e ainda não contratado" + (P.risco.length ? "s" : "") + ". Leve ao relatório de riscos à autoridade competente.",
+      pcaSemRisco: Number(ano) === hoje.getFullYear() && hoje.getMonth() < 6 ? "Os relatórios de risco começam em julho do ano de execução (art. 19)." + (P.atrasados.length ? " Já há " + P.atrasados.length + " item(ns) com o mês previsto vencido." : "") : "Nenhum item em risco.",
+      pcaCal: cal.map((m) => ({ t: m.t, d: m.d, quando: m.ini === m.fim ? m.ini.slice(8, 10) + "/" + m.ini.slice(5, 7) + "/" + m.ini.slice(0, 4) : m.ini.slice(8, 10) + "/" + m.ini.slice(5, 7) + " a " + m.fim.slice(8, 10) + "/" + m.fim.slice(5, 7) + "/" + m.fim.slice(0, 4), cls: "pca-m " + m.st })),
+    };
+  }
+  pcaLocal() { try { return JSON.parse(localStorage.getItem("lv-pca-demo") || "[]") || []; } catch (e) { return []; } }
+  pcaLocalGravar(lista) { try { localStorage.setItem("lv-pca-demo", JSON.stringify(lista)); } catch (e) {} }
+  async pcaCarregar(forcar) {
+    const q = this.state.pca; if (q.carregado && !forcar) return;
+    if (!this.sb) { this.setState((x) => ({ pca: { ...x.pca, lista: this.pcaLocal(), carregado: true } })); return; }
+    if (!this.u) return;
+    const { data, error } = await this.sb.from("pca_itens").select("*").order("ano", { ascending: false }).order("setor").limit(3000);
+    this.setState((x) => ({ pca: { ...x.pca, lista: error ? [] : (data || []), carregado: !error, erro: error ? "Não foi possível carregar o PCA." : "" } }));
+  }
+  pcaMsg(msg, erro) { this.setState((x) => ({ pca: { ...x.pca, msg: msg || "", erro: erro || "" } })); }
+  pcaReg(f) {
+    const v = String(f.valor || "").trim() ? rqN(f.valor) : NaN;
+    if (!String(f.setor || "").trim()) return [null, "Informe o setor ou a secretaria requisitante."];
+    if (!String(f.descricao || "").trim()) return [null, "Descreva o objeto da contratação."];
+    if (!(v >= 0)) return [null, "Informe o valor estimado."];
+    return [{ ano: Number(f.ano) || this.state.pca.ano, setor: String(f.setor).trim().slice(0, 160), descricao: String(f.descricao).trim().slice(0, 400), categoria: f.categoria || null, valor: Math.round(v * 100) / 100,
+      prioridade: ["baixa", "media", "alta"].includes(f.prioridade) ? f.prioridade : "media", mes: Number(f.mes) >= 1 && Number(f.mes) <= 12 ? Number(f.mes) : null, situacao: f.situacao || "planejado", justificativa: String(f.justificativa || "").trim().slice(0, 600) || null }, ""];
+  }
+  async pcaSalvar() {
+    const f = this.state.pca.form; if (!f) return;
+    const [reg, erro] = this.pcaReg(f); if (erro) { this.pcaMsg("", erro); return; }
+    if (!this.sb) { const lista = this.state.pca.lista.slice(), id = f.id || ("pca-" + Date.now()); const i = lista.findIndex((x) => x.id === id);
+      if (i >= 0) lista[i] = { ...lista[i], ...reg }; else lista.unshift({ ...reg, id }); this.pcaLocalGravar(lista);
+      this.setState((x) => ({ pca: { ...x.pca, lista, form: null, ano: reg.ano, msg: "Item salvo.", erro: "" } })); return; }
+    const q = f.id ? this.sb.from("pca_itens").update(reg).eq("id", f.id).select().single() : this.sb.from("pca_itens").insert(reg).select().single();
+    const { data, error } = await q; if (error) { this.pcaMsg("", "Não foi possível salvar o item: " + (error.message || "")); return; }
+    this.setState((x) => ({ pca: { ...x.pca, lista: f.id ? x.pca.lista.map((i) => (i.id === data.id ? data : i)) : [data].concat(x.pca.lista), form: null, ano: reg.ano, msg: "Item salvo.", erro: "" } }));
+  }
+  async pcaExcluir(id) {
+    if (this.state.pca.excluir !== id) { this.setState((x) => ({ pca: { ...x.pca, excluir: id } })); return; }
+    if (this.sb) { const { error } = await this.sb.from("pca_itens").delete().eq("id", id); if (error) { this.pcaMsg("", "Não foi possível excluir."); return; } }
+    const lista = this.state.pca.lista.filter((i) => i.id !== id); if (!this.sb) this.pcaLocalGravar(lista);
+    this.setState((x) => ({ pca: { ...x.pca, lista, excluir: "", msg: "Item excluído.", erro: "" } }));
+  }
+  async pcaSituacao(id, sit) {
+    const it = this.state.pca.lista.find((i) => i.id === id); if (!it) return;
+    if (this.sb) { const { error } = await this.sb.from("pca_itens").update({ situacao: sit }).eq("id", id); if (error) { this.pcaMsg("", "Não foi possível alterar a situação."); return; } }
+    const lista = this.state.pca.lista.map((i) => (i.id === id ? { ...i, situacao: sit } : i)); if (!this.sb) this.pcaLocalGravar(lista);
+    this.setState((x) => ({ pca: { ...x.pca, lista } }));
+  }
+  // importa linhas coladas do Excel ou do PCA publicado: setor; descrição; valor; prioridade; mês (tabulação ou ponto e vírgula)
+  async pcaImportar() {
+    const txt = String(this.state.pca.colar || ""), ano = this.state.pca.ano, regs = [], erros = [];
+    txt.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).forEach((l, n) => {
+      const c = l.split(l.includes("\t") ? "\t" : ";").map((x) => x.trim());
+      if (n === 0 && /setor|secretaria/i.test(c[0]) && !/\d/.test(c[2] || "")) return; // cabeçalho
+      const pr = { alta: "alta", "média": "media", media: "media", baixa: "baixa" }[String(c[3] || "").toLowerCase()] || "media";
+      const mesTxt = String(c[4] || "").toLowerCase(), MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+      const mes = /^\d{1,2}$/.test(mesTxt) ? Number(mesTxt) : (MESES.findIndex((m) => mesTxt.startsWith(m)) + 1) || /^\d{1,2}\/\d{4}$/.test(mesTxt) && Number(mesTxt.split("/")[0]) || "";
+      const [reg, e] = this.pcaReg({ ano, setor: c[0], descricao: c[1], valor: String(c[2] || "").replace(/[R$\s]/g, ""), prioridade: pr, mes, situacao: "planejado" });
+      if (e) erros.push("linha " + (n + 1) + ": " + e); else regs.push(reg);
+    });
+    if (!regs.length) { this.pcaMsg("", erros[0] || "Nenhuma linha válida. Use: setor; descrição; valor; prioridade; mês."); return; }
+    if (regs.length > 1000) { this.pcaMsg("", "Importe até 1.000 itens por vez."); return; }
+    let novos = regs.map((r, i) => ({ ...r, id: "pca-" + Date.now() + "-" + i }));
+    if (this.sb) { const { data, error } = await this.sb.from("pca_itens").insert(regs).select(); if (error) { this.pcaMsg("", "Não foi possível importar: " + (error.message || "")); return; } novos = data || []; }
+    const lista = novos.concat(this.state.pca.lista); if (!this.sb) this.pcaLocalGravar(lista);
+    this.setState((x) => ({ pca: { ...x.pca, lista, colar: null, msg: novos.length + (novos.length === 1 ? " item importado." : " itens importados.") + (erros.length ? " " + erros.length + " linha(s) ignorada(s): " + erros.slice(0, 2).join("; ") : ""), erro: "" } }));
+  }
   ctLocal() { try { return JSON.parse(localStorage.getItem("lv-contratos-demo") || "{}") || {}; } catch (e) { return {}; } }
   ctLocalGravar(lista, eventos) { try { localStorage.setItem("lv-contratos-demo", JSON.stringify({ lista, eventos })); } catch (e) {} }
   async ctCarregar(forcar) {
@@ -10770,7 +11053,7 @@ class Component extends DCLogic {
       data_proposta: /^\d{4}-\d{2}$/.test(f.data_proposta || "") ? f.data_proposta + "-01" : null, assinatura: f.assinatura || null, inicio: f.inicio || null, fim: f.fim || null, reforma: !!f.reforma, obra: !!f.obra,
       valor_inicial: String(f.valor_inicial || "").trim() ? rqN(f.valor_inicial) : null, periodicidade: f.periodicidade || "mensal", indice: f.indice || null,
       mao_obra: !!f.mao_obra, data_base_cct: f.data_base_cct || null, alertas: f.alertas !== false, obs: f.obs || null, modalidade: f.modalidade || null, natureza: String(f.natureza || "").trim().slice(0, 120) || null,
-      gestor: String(f.gestor || "").trim().slice(0, 160) || null, fiscal: String(f.fiscal || "").trim().slice(0, 160) || null, setor_req: String(f.setor_req || "").trim().slice(0, 160) || null, essencial: !!f.essencial };
+      gestor: String(f.gestor || "").trim().slice(0, 160) || null, fiscal: String(f.fiscal || "").trim().slice(0, 160) || null, setor_req: String(f.setor_req || "").trim().slice(0, 160) || null, essencial: !!f.essencial, pca_item: f.pca_item || null };
     if (!this.sb) {
       const lista = this.state.ct.lista.slice(), id = f.id || ("demo-" + Date.now());
       const i = lista.findIndex((c) => c.id === id), novo = { ...(i >= 0 ? lista[i] : {}), ...reg, id, criado_em: i >= 0 ? lista[i].criado_em : new Date().toISOString() };
@@ -12569,6 +12852,7 @@ class Component extends DCLogic {
       gcBloqTag: "Exclusivo para assinantes",
       goGestaoInicio: this.nav("gestao"),
       ...(s.page === "precos" ? this.ppProps() : {}),
+      ...(s.page === "contratos" ? this.pcaProps() : {}),
       goPrecos: this.nav("precos"),
       ...(() => {
         const lib = !!s.admin || !!s.plano || !s.sb, n = s.ct.lista.length;
@@ -12585,7 +12869,7 @@ class Component extends DCLogic {
         return { ...ptpPerg,
           gcIrPainel: () => this.ctPainel(), gcPainelNome: "Painel da Organização",
           gcPainelDesc: "A visão de toda a carteira do órgão ou da empresa, com indicadores, gráficos e prazos:",
-          gcPainelItens: ["Quantidade e valor das contratações, custo atualizado e gasto mensal", "Contratações por modalidade, regime legal e natureza do objeto", "Situação de cada contrato, de relance: vigentes, vencendo e vencidos", "Tempos médios do orçamento à assinatura e da anualidade ao reajuste", "Alterações registradas, ranking de empresas (ou de clientes) e saúde da carteira", "Gestores e fiscais, setores requisitantes, penalidades por empresa e dependência em serviços essenciais", "Agenda de prazos dos próximos 12 meses e controle de fracionamento"].map((t) => ({ t })),
+          gcPainelItens: ["Quantidade e valor das contratações, custo atualizado e gasto mensal", "Contratações por modalidade, regime legal e natureza do objeto", "Situação de cada contrato, de relance: vigentes, vencendo e vencidos", "Tempos médios do orçamento à assinatura e da anualidade ao reajuste", "Alterações registradas, ranking de empresas (ou de clientes) e saúde da carteira", "Plano de Contratações Anual: quanto cada secretaria já contratou e quanto ainda pode contratar", "Gestores e fiscais, setores requisitantes, penalidades por empresa e dependência em serviços essenciais", "Agenda de prazos dos próximos 12 meses e controle de fracionamento"].map((t) => ({ t })),
           gcContratoItens: ["Linha do tempo com reajustes, repactuações, revisões, aditivos e prorrogações", "Painel do contrato: evolução do valor, prazo e limite do art. 125", "Cálculo do reajuste e do reequilíbrio com os dados do contrato", "Análise de vantajosidade para a prorrogação", "PDF do contrato e edição do cadastro"].map((t) => ({ t })),
           gcBuscaAberta: !!s.ct.buscaAberta, gcBuscaAlternar: () => buscaAbrir(false), gcBuscaTopo: () => { window.scrollTo({ top: 0, behavior: "smooth" }); buscaAbrir(true); },
           gcBusca: s.ct.busca || "", onGcBusca: (e) => { const v = e.target.value; this.setState((x) => ({ ct: { ...x.ct, busca: v, buscaErro: "" } })); },
@@ -12720,6 +13004,7 @@ class Component extends DCLogic {
             ["📊", "Painel do contrato", "Evolução do valor em cascata, prazo da vigência, limite de acréscimos do art. 125 e composição dos ajustes."],
             ["📅", "Agenda da carteira", "Anualidades, datas-base, início da prorrogação (4 meses antes) e fim da vigência dos próximos 12 meses, com exportação em Excel."],
             ["▦", "Painel da Organização", "Indicadores da carteira inteira estilo Power BI: modalidades, valores, prazos, tempos médios, alterações e ranking de empresas, na visão do órgão ou da empresa."],
+            ["🗂️", "Plano de Contratações Anual", "Itens do PCA por secretaria, saldo a contratar, contratos fora do plano, risco de não execução e calendário de elaboração e revisão (Lei 14.133/2021 e Decreto 10.947/2022)."],
             ["⚖️", "Vantajosidade e fracionamento", "Análise de vantajosidade para a prorrogação e alerta de fracionamento das dispensas por valor, com a modalidade informada em cada contrato."],
             ["🧮", "Integração com a Calculadora", "Reajuste e reequilíbrio preenchidos com os dados do contrato, e o resultado registrado na linha do tempo com um clique."],
             ["✉️", "Avisos e relatórios", "E-mails antes da anualidade, da data-base e do fim da vigência; PDF de cada contrato e relatório completo da carteira."]].map(([ic, t, d]) => ({ ic, t, d })),
@@ -12839,7 +13124,8 @@ class Component extends DCLogic {
         const um1 = listaUm.length === 1 ? listaUm[0] : null;
         return { ...campos, ...fracP, ctLista: listaUm, ctFiltros, ctTab,
           ctTemDrill: !!drl, ctDrillRot: drl ? drl.rot + " (" + listaD.length + ")" : "", ctDrillLimpar: () => this.setState((x) => ({ ct: { ...x.ct, painel: { ...(x.ct.painel || {}), drill: null } } })),
-          ctModoUm: modoUm, ctModoPainel: !modoUm, ctKpisVer: false, ctPainelAg: !modoUm && lista.length > 0, ctPainelFrac: !modoUm && frac.length > 0 && !ctEmp, ctEmp, ctOrg: !ctEmp, ctLegVen: ctEmp ? "4 meses ou menos: hora de negociar a renovação" : "4 meses ou menos: hora de tramitar a prorrogação",
+          ctModoUm: modoUm, ctModoPainel: !modoUm, ctPcaVer: !modoUm && !ctEmp, ctSecCls: "lvc-corpo" + (!modoUm && (!!s.admin || !!s.plano || !s.sb) ? " ct-escuro" : ""),
+          ctPcaOp: [{ id: "", nome: "Sem vínculo (entra pelo setor requisitante)", sel: !f.pca_item }].concat(s.pca.lista.filter((i) => i.situacao !== "cancelado").sort((a, b) => b.ano - a.ano || String(a.setor).localeCompare(String(b.setor))).map((i) => ({ id: i.id, nome: i.ano + " · " + i.setor + " · " + String(i.descricao).slice(0, 60) + " (R$ " + Number(i.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2 }) + ")", sel: f.pca_item === i.id }))), ctKpisVer: false, ctPainelAg: !modoUm && lista.length > 0, ctPainelFrac: !modoUm && frac.length > 0 && !ctEmp, ctEmp, ctOrg: !ctEmp, ctLegVen: ctEmp ? "4 meses ou menos: hora de negociar a renovação" : "4 meses ou menos: hora de tramitar a prorrogação",
           ctGestorRot: ctEmp ? "Preposto da empresa (art. 118)" : "Gestor do contrato", ctFiscalRot: ctEmp ? "Fiscal do órgão (contato)" : "Fiscal do contrato", ctSetorRot: ctEmp ? "Equipe ou filial responsável" : "Setor ou secretaria requisitante", ctSetorDica: ctEmp ? "Ex.: Filial Niterói" : "Ex.: Secretaria de Educação",
           ctSetoresOp: [...new Set(ct.lista.map((c) => String(c.setor_req || "").trim()).filter(Boolean))].map((v) => ({ v })),
           ctNatRot: ctEmp ? "Natureza do objeto" : "Natureza do objeto (controle de fracionamento)", ctPrIniRot: ctEmp ? "Peça a renovação até" : "Comece a tramitação até", ctPrTit: ctEmp ? "Renovação do contrato" : "Prorrogação contratual",
