@@ -805,6 +805,8 @@ def main():
         else:
             print("conferência não concluída (o documento é entregue sem os pontos de atenção)")
     docj = completar_valores(docj, pesquisa)
+    if M and hasattr(M, "aplicar_padroes"):  # padrões do modelo (ex.: vigência da compra) não viram pergunta
+        docj = M.aplicar_padroes(docj, respostas)
     if not a.simular:
         docj = numerar_lacunas(docj)
         lac, auto = lacunas_do_documento(docj, respostas.get("sem_info", ""))

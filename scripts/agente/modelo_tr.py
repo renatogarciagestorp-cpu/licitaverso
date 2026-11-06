@@ -96,6 +96,9 @@ FERRAMENTA = {
 }
 
 INSTRUCOES = (
+    "PADRÕES QUE VOCÊ DEFINE SEM PERGUNTAR: vigência da compra de entrega única = 12 (doze) meses da assinatura do contrato (cobre entrega, "
+    "recebimento, pagamento e garantia contratual inicial; ajuste só se o requisitante informou outro prazo); prazo de decisão sobre "
+    "requerimentos do contratado = 1 (um) mês (art. 92, X e XI). Nunca use [PREENCHER] nesses dois campos. "
     "MODELO DA AGU – TERMO DE REFERÊNCIA DE COMPRAS (Lei 14.133/2021, art. 6º, XXIII, e art. 40, § 1º). O texto padrão da AGU já está "
     "pronto: você só escolhe as cláusulas alternativas e preenche os dados variáveis pela ferramenta. Regras: (1) use as decisões do "
     "requisitante (modalidade, critério, adjudicação, prazo, entrega, garantia) sem trocá-las; (2) especificação objetiva e sem marca, "
@@ -234,6 +237,20 @@ def mesclar_itens(itens_agente, pp):
     return out
 
 
+def aplicar_padroes(docj, R=None):
+    """Campos com padrão conhecido nunca viram pergunta ao requisitante: vigência da compra (12 meses, art. 105) e
+    prazo de decisão sobre requerimentos (1 mês, art. 92, X e XI)."""
+    docj = dict(docj)
+    v = dict(docj.get("vigencia") or {})
+    if "PREENCHER" in str(v.get("prazo") or "") or not str(v.get("prazo") or "").strip():
+        v["prazo"] = "12 (doze) meses"
+        v.setdefault("termo_inicial", "da assinatura do contrato")
+    docj["vigencia"] = v
+    if "PREENCHER" in str(docj.get("prazo_decisao") or "") or not str(docj.get("prazo_decisao") or "").strip():
+        docj["prazo_decisao"] = "1 (um) mês"
+    return docj
+
+
 def conferir_regras(docj, R):
     """Conferência por regras, sem custo de API. O texto fixo da AGU já está conforme; aqui se confere só o que o agente
     preencheu, contra as respostas do requisitante e os limites da Lei 14.133/2021. Mesmo formato da conferência do analisador."""
@@ -327,6 +344,7 @@ def gerar(docj, respostas, saida, logo=None):
 
     R = respostas
     fed = federal(R)
+    docj = aplicar_padroes(docj, R)
     v = docj.get("vigencia") or {}
     ent = docj.get("entrega") or {}
     gb = docj.get("garantia_bem") or {}
