@@ -1653,7 +1653,7 @@
   .gcl-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
   .gcl-card { background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 18px; } .gcl-card h3 { margin: 10px 0 6px; font-size: 16px; color: #0B1F2A; } .gcl-card p { margin: 0; font-size: 14px; color: #55666D; line-height: 1.5; }
   .gcl-ic { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: #E3F5EC; font-size: 19px; }
-  .gcl-passos { list-style: none; counter-reset: p; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .gcl-passos { list-style: none; counter-reset: p; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
   .gcl-passos li { counter-increment: p; position: relative; background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 46px 16px 16px; display: grid; gap: 5px; font-size: 14px; color: #55666D; line-height: 1.5; }
   .gcl-passos li::before { content: counter(p); position: absolute; left: 16px; top: 14px; width: 24px; height: 24px; border-radius: 50%; background: #0B3B4A; color: #fff; font-size: 13px; font-weight: 800; display: grid; place-items: center; } .gcl-passos b { color: #0B1F2A; font-size: 15px; }
   .gcl-leg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
@@ -1661,6 +1661,31 @@
   .gcl-l i { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; } .gcl-l b { color: #0B1F2A; font-size: 15px; }
   .gcl-l.v i { background: #0FA36B; } .gcl-l.a i { background: #E0A21B; } .gcl-l.x i { background: #C24A43; }
   .gcl-fim { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; background: #0B3B4A; color: #fff; border-radius: 18px; padding: 22px 24px; }
+  .gcl-fim-bt { display: flex !important; gap: 10px; flex-wrap: wrap; } .gcl-fim-sec { background: transparent !important; border: 1px solid #6FA3B0 !important; color: #fff !important; }
+  .gcb-caixa { margin-top: 18px; background: #fff; border: 1px solid #DCE4E2; border-radius: 16px; padding: 16px 18px; max-width: 640px; box-shadow: 0 8px 24px rgba(11,59,74,.06); }
+  .gcb-caixa.gcb-in { margin: 14px 0 6px; }
+  .gcb-tit { margin: 0 0 10px; font-size: 14px; color: #55666D; }
+  .gcb { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+  .gcb-l { flex: 1 1 220px; display: grid; gap: 5px; font-size: 13px; font-weight: 600; color: #3D5058; }
+  .gcb-l > input { font: inherit; font-size: 15px; padding: 12px 14px; border: 1px solid #CFDAD8; border-radius: 12px; background: #FBFCFC; }
+  .gcb-l > input:focus { outline: 2px solid #0FA36B; outline-offset: 1px; border-color: transparent; }
+  .gcb .lvh-btn { padding: 12px 20px; }
+  .gcb-erro { margin: 10px 0 0; }
+  .gcl-duas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .gcl-dua { background: #fff; border: 1px solid #E3E9E8; border-radius: 18px; padding: 20px 22px; }
+  .gcl-dua h3 { margin: 10px 0 6px; font-size: 18px; color: #0B1F2A; } .gcl-dua p { margin: 0 0 10px; font-size: 14px; color: #55666D; }
+  .gcl-dua ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; color: #3D5058; }
+  .gp.gp-in { margin: 18px 0 8px; }
+  .gcs { margin: 26px 0 8px; } .gcs .gcl-leg { margin-bottom: 14px; }
+  .gcs-tab { display: grid; gap: 8px; }
+  .gcs-l { --fc: #0FA36B; display: grid; grid-template-columns: minmax(0, 2.2fr) 120px minmax(0, 1fr) minmax(0, 1.2fr) 70px; gap: 12px; align-items: center; text-align: left; font: inherit; background: #fff; border: 1px solid #E3E9E8; border-left: 6px solid var(--fc); border-radius: 14px; padding: 12px 16px; cursor: pointer; color: #0B1F2A; }
+  .gcs-l:hover { border-color: var(--fc); box-shadow: 0 6px 18px rgba(11,59,74,.07); }
+  .gcs-l.st-ven { --fc: #E0A21B; } .gcs-l.st-exp { --fc: #C24A43; } .gcs-l.st-sem { --fc: #B8C4C8; }
+  .gcs-n { display: grid; gap: 2px; min-width: 0; } .gcs-n > b { font-size: 15px; } .gcs-n > small { color: #6B7C83; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .gcs-st { font-size: 12px; font-weight: 700; color: var(--fc); text-transform: uppercase; letter-spacing: .04em; }
+  .gcs-c { display: grid; gap: 2px; font-size: 14px; font-weight: 600; } .gcs-c > small { font-size: 11.5px; color: #6B7C83; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .gcs-ir { font-size: 13.5px; font-weight: 700; color: #0F8A5C; text-align: right; }
+  @media (max-width: 760px) { .gcl-duas { grid-template-columns: 1fr; } .gcs-l { grid-template-columns: 1fr 1fr; } .gcs-n { grid-column: 1 / -1; } .gcs-ir { text-align: left; } }
   .gcl-fim div { display: grid; gap: 4px; } .gcl-fim b { font-size: 18px; } .gcl-fim span { font-size: 14px; color: #C9DDE2; }
   .gcm-topo { background: #0B1F2A; color: #fff; } .gcm-in { max-width: 1240px; margin: 0 auto; padding: 26px 24px 24px; }
   .gcm-in h1 { margin: 8px 0 4px; font-size: 28px; } .gcm-in p { margin: 0; color: #B9CCD2; font-size: 14.5px; }
@@ -2271,7 +2296,7 @@
             <h2 class="lvh-ban-h">Cada contrato com a sua <em>linha do tempo</em> e nenhum prazo perdido.</h2>
             <p class="lvh-ban-lead">Cadastre o contrato uma vez e registre reajustes, repactuações, reequilíbrios, aditivos e prorrogações. O valor vigente, a próxima anualidade, o limite de acréscimos do art. 125 e a hora de iniciar a prorrogação são calculados para você.</p>
             <ul class="lvh-ban-lista">
-              <li>Painel de gestão estilo Power BI</li><li>Situação de cada contrato por cor</li><li>Agenda da carteira em 12 meses</li><li>Avisos de prazo por e-mail</li><li>PDF do contrato e relatório</li>
+              <li>Painel da Organização estilo Power BI</li><li>Situação de cada contrato por cor</li><li>Agenda da carteira em 12 meses</li><li>Avisos de prazo por e-mail</li><li>PDF do contrato e relatório</li>
             </ul>
             <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goGestaoInicio }}">Conhecer a Gestão Contratual</button></div>
             <p class="lvh-ban-micro">Em todos os planos pagos e no teste de 7 dias · nos planos para equipes, contratos compartilhados para consulta · reajuste e reequilíbrio da Calculadora registrados com um clique.</p>
@@ -4499,17 +4524,81 @@
           <h1 class="lva-h1" style="max-width: 24ch">Seus contratos e tudo o que mudou neles, num só lugar.</h1>
           <p class="lva-lead">Cadastre cada contrato uma vez e acompanhe a linha do tempo de reajustes, repactuações, reequilíbrios, aditivos e prorrogações, com o valor vigente, a próxima anualidade e avisos por e-mail dos prazos.</p>
           <div class="lvh-ctas" style="margin-top: 22px">
-            <button type="button" class="lvh-btn" sc-camel-on-click="{{ gcCtaAcao }}">{{ gcCtaTxt }}</button>
-            <sc-if value="{{ gcCtaNovo }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ gcCtaNovoAcao }}">+ Novo contrato</button></sc-if>
-            <sc-if value="{{ gcBloqueada }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ goPlanos }}">Ver os planos</button></sc-if>
+            <sc-if value="{{ gcBloqueada }}" hint-placeholder-val="{{ false }}"><button type="button" class="lvh-btn" sc-camel-on-click="{{ gcCtaAcao }}">{{ gcCtaTxt }}</button><button type="button" class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ goPlanos }}">Ver os planos</button></sc-if>
+            <sc-if value="{{ gcLiberada }}" hint-placeholder-val="{{ true }}">
+              <button type="button" class="lvh-btn" sc-camel-on-click="{{ gcIrPainel }}">▦ {{ gcPainelNome }}</button>
+              <button type="button" class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ gcBuscaAlternar }}">Ver contrato</button>
+              <button type="button" class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ gcCtaNovoAcao }}">+ Novo contrato</button>
+            </sc-if>
           </div>
-          <sc-if value="{{ gcTemResumo }}" hint-placeholder-val="{{ false }}">
-            <div class="gcl-resumo"><sc-for list="{{ gcResumo }}" as="r" hint-placeholder-count="3"><button type="button" class="{{ r.cls }}" sc-camel-on-click="{{ r.ir }}"><i></i><b>{{ r.n }}</b>{{ r.rot }}</button></sc-for></div>
+          <sc-if value="{{ gcBuscaAberta }}" hint-placeholder-val="{{ false }}">
+            <div class="gcb-caixa" id="gcb-caixa"><p class="gcb-tit">Informe o número do contrato para abrir o cadastro, a linha do tempo, o reajuste e os demais registros.</p>
+            <div class="gcb"><label class="gcb-l"><span>Número do contrato</span><input type="text" list="gcb-nums" value="{{ gcBusca }}" sc-camel-on-input="{{ onGcBusca }}" sc-camel-on-key-down="{{ onGcBuscaTecla }}" placeholder="Ex.: 025/2025"></label><button type="button" class="lvh-btn" sc-camel-on-click="{{ gcBuscar }}">Abrir contrato</button><datalist id="gcb-nums"><sc-for list="{{ gcBuscaNums }}" as="o" hint-placeholder-count="2"><option value="{{ o.v }}"></option></sc-for></datalist></div>
+            <sc-if value="{{ gcBuscaErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro gcb-erro" role="alert">{{ gcBuscaErro }}</p></sc-if>
+            </div>
           </sc-if>
         </div>
       </section>
-      <sc-if value="{{ gpTem }}" hint-placeholder-val="{{ false }}">
-      <section class="lvc-corpo gp">
+      <section class="lvc-corpo gcl">
+        <div class="gcl-sec">
+          <h2 class="lva-h2">O que a Gestão Contratual faz por você</h2>
+          <div class="gcl-cards"><sc-for list="{{ gcRecursos }}" as="r" hint-placeholder-count="6"><article class="gcl-card"><span class="gcl-ic">{{ r.ic }}</span><h3>{{ r.t }}</h3><p>{{ r.d }}</p></article></sc-for></div>
+        </div>
+        <div class="gcl-sec">
+          <h2 class="lva-h2">Como funciona</h2>
+          <ol class="gcl-passos"><sc-for list="{{ gcPassos }}" as="ps" hint-placeholder-count="4"><li><b>{{ ps.t }}</b><span>{{ ps.d }}</span></li></sc-for></ol>
+        </div>
+        <div class="gcl-sec">
+          <h2 class="lva-h2">Duas formas de acompanhar</h2>
+          <div class="gcl-duas">
+            <article class="gcl-dua"><span class="gcl-ic">▦</span><h3>{{ gcPainelNome }}</h3><p>{{ gcPainelDesc }}</p><ul><sc-for list="{{ gcPainelItens }}" as="it" hint-placeholder-count="5"><li>{{ it.t }}</li></sc-for></ul></article>
+            <article class="gcl-dua"><span class="gcl-ic">🔎</span><h3>Ver contrato</h3><p>Informe o número e abra o contrato: valor vigente, vigência, próxima anualidade e reajustes concedidos. A partir dele você acessa:</p><ul><sc-for list="{{ gcContratoItens }}" as="it" hint-placeholder-count="5"><li>{{ it.t }}</li></sc-for></ul></article>
+          </div>
+        </div>
+        <sc-if value="{{ gcBloqueada }}" hint-placeholder-val="{{ false }}">
+          <div class="lvc-bloq" style="margin-top: 8px">
+            <span class="lvh-bib-tag">{{ gcBloqTag }}</span>
+            <p class="lva-sub" style="font-size: 14.5px; margin-top: 12px">{{ gcBloqTexto }}</p>
+            <div class="lvh-ctas" style="margin-top: 16px"><button class="lvh-btn" sc-camel-on-click="{{ gcBloqAcao }}">{{ gcBloqCta }}</button><button class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ goPlanos }}">Ver os planos</button></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ gcLiberada }}" hint-placeholder-val="{{ true }}">
+          <div class="gcl-fim"><div><b>{{ gcFimTit }}</b><span>{{ gcFimTxt }}</span></div><div class="gcl-fim-bt"><button type="button" class="lvh-btn" sc-camel-on-click="{{ gcIrPainel }}">{{ gcPainelNome }}</button><button type="button" class="lvh-btn gcl-fim-sec" sc-camel-on-click="{{ gcBuscaTopo }}">Ver contrato</button></div></div>
+        </sc-if>
+      </section>
+    </sc-if>
+    <sc-if value="{{ isContratos }}" hint-placeholder-val="{{ false }}">
+      <section class="gcm-topo">
+        <div class="gcm-in">
+          <button type="button" class="gcm-volta" sc-camel-on-click="{{ goGestaoInicio }}">← Gestão Contratual</button>
+          <sc-if value="{{ ctModoUm }}" hint-placeholder-val="{{ false }}"><button type="button" class="gcm-volta" style="margin-left: 14px" sc-camel-on-click="{{ gcIrPainel }}">▦ {{ gcPainelNome }}</button></sc-if>
+          <h1>{{ ctTopoTit }}</h1>
+          <p>{{ ctTopoSub }}</p>
+        </div>
+      </section>
+      <section class="lvc-corpo">
+        <sc-if value="{{ gcBloqueada }}" hint-placeholder-val="{{ false }}">
+          <div class="lvc-bloq" style="margin-top: 24px">
+            <span class="lvh-bib-tag">{{ gcBloqTag }}</span>
+            <h2 class="lva-h2" style="margin-top: 12px">O que você faz aqui</h2>
+            <ul class="lvc-benef"><sc-for list="{{ gcBenef }}" as="b" hint-placeholder-count="6"><li>{{ b.t }}</li></sc-for></ul>
+            <p class="lva-sub" style="font-size: 14.5px; margin-top: 14px">{{ gcBloqTexto }}</p>
+            <div class="lvh-ctas" style="margin-top: 16px"><button class="lvh-btn" sc-camel-on-click="{{ gcBloqAcao }}">{{ gcBloqCta }}</button><button class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ goPlanos }}">Ver os planos</button></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ gcLiberada }}" hint-placeholder-val="{{ true }}">
+          <div class="lmo" id="ct-topo">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center">
+              <button type="button" class="lmo-btn" sc-camel-on-click="{{ ctNovo }}">+ Novo contrato</button>
+              <button type="button" class="lve-voltar" sc-camel-on-click="{{ gcBuscaAlternar }}">{{ ctBuscaRot }}</button>
+              <sc-if value="{{ ctCarregando }}" hint-placeholder-val="{{ false }}"><span class="lmo-nota" style="margin: 0">Carregando…</span></sc-if>
+            </div>
+            <sc-if value="{{ gcBuscaAberta }}" hint-placeholder-val="{{ false }}"><div class="gcb-caixa gcb-in" id="gcb-caixa">
+            <div class="gcb"><label class="gcb-l"><span>Número do contrato</span><input type="text" list="gcb-nums" value="{{ gcBusca }}" sc-camel-on-input="{{ onGcBusca }}" sc-camel-on-key-down="{{ onGcBuscaTecla }}" placeholder="Ex.: 025/2025"></label><button type="button" class="lvh-btn" sc-camel-on-click="{{ gcBuscar }}">Abrir contrato</button><datalist id="gcb-nums"><sc-for list="{{ gcBuscaNums }}" as="o" hint-placeholder-count="2"><option value="{{ o.v }}"></option></sc-for></datalist></div>
+            <sc-if value="{{ gcBuscaErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro gcb-erro" role="alert">{{ gcBuscaErro }}</p></sc-if>
+            </div></sc-if>
+            <sc-if value="{{ ctPainelGp }}" hint-placeholder-val="{{ false }}">
+      <section class="gp gp-in">
         <div class="gp-topo">
           <div><h2 class="lva-h2" style="margin: 0">{{ gpTitulo }}</h2><p class="gp-sub">{{ gpSub }}</p></div>
           <div class="gp-visoes" role="group" aria-label="Visão do painel"><sc-for list="{{ gpVisoes }}" as="v" hint-placeholder-count="2"><button type="button" class="{{ v.cls }}" sc-camel-on-click="{{ v.ir }}">{{ v.nome }}</button></sc-for></div>
@@ -4545,58 +4634,22 @@
         <p class="gp-nota">Indicadores calculados com os contratos e os registros da linha do tempo cadastrados na Gestão Contratual (inclusive os compartilhados pela equipe). Custo atualizado: soma, mês a mês, do valor em vigor até o fim da vigência com as prorrogações.</p>
       </section>
       </sc-if>
-      <section class="lvc-corpo gcl">
-        <div class="gcl-sec">
-          <h2 class="lva-h2">O que a gestão contratual faz por você</h2>
-          <div class="gcl-cards"><sc-for list="{{ gcRecursos }}" as="r" hint-placeholder-count="6"><article class="gcl-card"><span class="gcl-ic">{{ r.ic }}</span><h3>{{ r.t }}</h3><p>{{ r.d }}</p></article></sc-for></div>
-        </div>
-        <div class="gcl-sec">
-          <h2 class="lva-h2">Como funciona</h2>
-          <ol class="gcl-passos"><sc-for list="{{ gcPassos }}" as="ps" hint-placeholder-count="4"><li><b>{{ ps.t }}</b><span>{{ ps.d }}</span></li></sc-for></ol>
-        </div>
-        <div class="gcl-sec gcl-status">
-          <h2 class="lva-h2">Situação de cada contrato, de relance</h2>
-          <p class="lva-sub">Cada contrato recebe uma faixa colorida e pode ser filtrado pela situação.</p>
-          <div class="gcl-leg"><span class="gcl-l v"><i></i><b>Vigente</b>mais de 4 meses de vigência</span><span class="gcl-l a"><i></i><b>Vencendo</b>4 meses ou menos: hora de tramitar a prorrogação</span><span class="gcl-l x"><i></i><b>Vencido</b>vigência encerrada</span></div>
-        </div>
-        <sc-if value="{{ gcBloqueada }}" hint-placeholder-val="{{ false }}">
-          <div class="lvc-bloq" style="margin-top: 8px">
-            <span class="lvh-bib-tag">{{ gcBloqTag }}</span>
-            <p class="lva-sub" style="font-size: 14.5px; margin-top: 12px">{{ gcBloqTexto }}</p>
-            <div class="lvh-ctas" style="margin-top: 16px"><button class="lvh-btn" sc-camel-on-click="{{ gcBloqAcao }}">{{ gcBloqCta }}</button><button class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ goPlanos }}">Ver os planos</button></div>
-          </div>
-        </sc-if>
-        <sc-if value="{{ gcLiberada }}" hint-placeholder-val="{{ true }}">
-          <div class="gcl-fim"><div><b>{{ gcFimTit }}</b><span>{{ gcFimTxt }}</span></div><button type="button" class="lvh-btn" sc-camel-on-click="{{ gcCtaAcao }}">{{ gcCtaTxt }}</button></div>
-        </sc-if>
-      </section>
-    </sc-if>
-    <sc-if value="{{ isContratos }}" hint-placeholder-val="{{ false }}">
-      <section class="gcm-topo">
-        <div class="gcm-in">
-          <button type="button" class="gcm-volta" sc-camel-on-click="{{ goGestaoInicio }}">← Gestão Contratual</button>
-          <h1>Meus contratos</h1>
-          <p>Carteira de contratos, agenda de prazos, linha do tempo e registros de cada contrato.</p>
-        </div>
-      </section>
-      <section class="lvc-corpo">
-        <sc-if value="{{ gcBloqueada }}" hint-placeholder-val="{{ false }}">
-          <div class="lvc-bloq" style="margin-top: 24px">
-            <span class="lvh-bib-tag">{{ gcBloqTag }}</span>
-            <h2 class="lva-h2" style="margin-top: 12px">O que você faz aqui</h2>
-            <ul class="lvc-benef"><sc-for list="{{ gcBenef }}" as="b" hint-placeholder-count="6"><li>{{ b.t }}</li></sc-for></ul>
-            <p class="lva-sub" style="font-size: 14.5px; margin-top: 14px">{{ gcBloqTexto }}</p>
-            <div class="lvh-ctas" style="margin-top: 16px"><button class="lvh-btn" sc-camel-on-click="{{ gcBloqAcao }}">{{ gcBloqCta }}</button><button class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ goPlanos }}">Ver os planos</button></div>
-          </div>
-        </sc-if>
-        <sc-if value="{{ gcLiberada }}" hint-placeholder-val="{{ true }}">
-          <div class="lmo" id="ct-topo">
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center">
-              <button type="button" class="lmo-btn" sc-camel-on-click="{{ ctNovo }}">+ Novo contrato</button>
-              <sc-if value="{{ ctCarregando }}" hint-placeholder-val="{{ false }}"><span class="lmo-nota" style="margin: 0">Carregando…</span></sc-if>
-            </div>
-            <sc-if value="{{ ctTemKpis }}" hint-placeholder-val="{{ false }}"><div class="ct-kpis"><sc-for list="{{ ctKpis }}" as="k" hint-placeholder-count="4"><div class="{{ k.cls }}"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div></sc-if>
-            <sc-if value="{{ ctTemKpis }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ ctModoPainel }}" hint-placeholder-val="{{ true }}">
+            <section class="gcs" id="gcs">
+              <h2 class="lva-h2">Situação de cada contrato, de relance</h2>
+              <p class="lva-sub">Cada contrato recebe uma faixa colorida. Escolha a situação para ver os contratos e abra o que quiser.</p>
+              <div class="gcl-leg"><span class="gcl-l v"><i></i><b>Vigente</b>mais de 4 meses de vigência</span><span class="gcl-l a"><i></i><b>Vencendo</b>4 meses ou menos: hora de tramitar a prorrogação</span><span class="gcl-l x"><i></i><b>Vencido</b>vigência encerrada</span></div>
+              <sc-if value="{{ ctTemLista }}" hint-placeholder-val="{{ true }}">
+                <div class="ct-filtro" role="group" aria-label="Filtrar contratos por situação">
+                  <sc-for list="{{ ctFiltros }}" as="fl" hint-placeholder-count="4"><button type="button" class="{{ fl.cls }}" aria-pressed="{{ fl.ativo }}" sc-camel-on-click="{{ fl.sel }}"><i></i>{{ fl.nome }}<b>{{ fl.n }}</b></button></sc-for>
+                </div>
+                <sc-if value="{{ ctFiltroVazio }}" hint-placeholder-val="{{ false }}"><p class="ct-pb-vazio">{{ ctFiltroVazioTxt }}</p></sc-if>
+                <div class="gcs-tab"><sc-for list="{{ ctTab }}" as="t" hint-placeholder-count="3"><button type="button" class="{{ t.cls }}" sc-camel-on-click="{{ t.ver }}"><span class="gcs-n"><b>Contrato {{ t.numero }}</b><small>{{ t.parte }}</small></span><span class="gcs-st">{{ t.st }}</span><span class="gcs-c"><small>Vigência até</small>{{ t.fim }}</span><span class="gcs-c"><small>Valor vigente</small>{{ t.valor }}</span><span class="gcs-ir">Abrir →</span></button></sc-for></div>
+              </sc-if>
+            </section>
+            </sc-if>
+            <sc-if value="{{ ctKpisVer }}" hint-placeholder-val="{{ false }}"><div class="ct-kpis"><sc-for list="{{ ctKpis }}" as="k" hint-placeholder-count="4"><div class="{{ k.cls }}"><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div></sc-if>
+            <sc-if value="{{ ctPainelAg }}" hint-placeholder-val="{{ false }}">
               <section class="ct-ag">
                 <div class="ct-ag-cab"><h2>Agenda da carteira <span>próximos 12 meses</span></h2>
                   <div class="ct-ag-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ ctAgExcel }}">Exportar Excel</button><button type="button" class="lmo-btn" sc-camel-on-click="{{ ctRelatorio }}">Relatório completo (PDF)</button></div></div>
@@ -4639,13 +4692,7 @@
             </section>
             </sc-if>
             <sc-if value="{{ ctVazio }}" hint-placeholder-val="{{ false }}"><p class="lmo-intro">Nenhum contrato cadastrado ainda. Cadastre o primeiro para acompanhar reajustes, repactuações, reequilíbrios e prazos.</p></sc-if>
-            <sc-if value="{{ ctTemLista }}" hint-placeholder-val="{{ true }}">
-              <div class="ct-filtro" role="group" aria-label="Filtrar contratos por situação">
-                <sc-for list="{{ ctFiltros }}" as="fl" hint-placeholder-count="4"><button type="button" class="{{ fl.cls }}" aria-pressed="{{ fl.ativo }}" sc-camel-on-click="{{ fl.sel }}"><i></i>{{ fl.nome }}<b>{{ fl.n }}</b></button></sc-for>
-              </div>
-              <sc-if value="{{ ctFiltroVazio }}" hint-placeholder-val="{{ false }}"><p class="ct-pb-vazio">{{ ctFiltroVazioTxt }}</p></sc-if>
-            </sc-if>
-            <sc-if value="{{ ctTemFrac }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ ctPainelFrac }}" hint-placeholder-val="{{ false }}">
               <details class="ct-frac" open="{{ ctFracAberto }}"><summary>Controle de fracionamento – dispensas em razão do valor <b class="{{ ctFracResumoCls }}">{{ ctFracResumo }}</b></summary>
                 <p class="lmo-nota">Soma, por exercício, contratante e natureza do objeto, dos contratos cadastrados com a modalidade "Dispensa em razão do valor". Contratos mensais entram pelo valor mensal vezes os meses de vigência no ano. A soma considera só o que está cadastrado aqui: inclua as demais despesas da unidade gestora com objetos da mesma natureza.</p>
                 <sc-for list="{{ ctFrac }}" as="g" hint-placeholder-count="2"><div class="{{ g.cls }}"><div class="ct-frac-cab"><b>{{ g.natureza }}</b><span>{{ g.ano }} · {{ g.contratante }}</span></div>
@@ -10379,12 +10426,12 @@ class Component extends DCLogic {
       const i = lista.findIndex((c) => c.id === id), novo = { ...(i >= 0 ? lista[i] : {}), ...reg, id, criado_em: i >= 0 ? lista[i].criado_em : new Date().toISOString() };
       if (i >= 0) lista[i] = novo; else lista.unshift(novo);
       this.ctLocalGravar(lista, this.state.ct.eventos);
-      this.setState((x) => ({ ct: { ...x.ct, lista, form: null, atual: id, ok: "Contrato salvo.", erro: "" } })); return;
+      this.setState((x) => ({ ct: { ...x.ct, lista, form: null, atual: "", so: [id], ok: "Contrato salvo.", erro: "" } })); return;
     }
     const q = f.id ? this.sb.from("contratos").update(reg).eq("id", f.id).select().single() : this.sb.from("contratos").insert(reg).select().single();
     const { data, error } = await q;
     if (error) { this.ctMsg("", "Não foi possível salvar: " + (error.message || "tente de novo.")); return; }
-    this.setState((x) => ({ ct: { ...x.ct, lista: f.id ? x.ct.lista.map((c) => (c.id === data.id ? data : c)) : [data].concat(x.ct.lista), form: null, atual: data.id, ok: "Contrato salvo.", erro: "" } }));
+    this.setState((x) => ({ ct: { ...x.ct, lista: f.id ? x.ct.lista.map((c) => (c.id === data.id ? data : c)) : [data].concat(x.ct.lista), form: null, atual: "", so: [data.id], ok: "Contrato salvo.", erro: "" } }));
   }
   ctVantajosidade(c, si) {
     const v = si && si.valor != null ? si.valor : c.valor_inicial, mensal = c.periodicidade === "mensal";
@@ -10400,7 +10447,17 @@ class Component extends DCLogic {
     if (this.sb) { const { error } = await this.sb.from("contratos").delete().eq("id", id); if (error) { this.ctMsg("", "Não foi possível excluir."); return; } }
     const lista = this.state.ct.lista.filter((c) => c.id !== id), eventos = { ...this.state.ct.eventos }; delete eventos[id];
     if (!this.sb) this.ctLocalGravar(lista, eventos);
-    this.setState((x) => ({ ct: { ...x.ct, lista, eventos, excluir: "", atual: x.ct.atual === id ? "" : x.ct.atual, ok: "Contrato excluído.", erro: "" } }));
+    this.setState((x) => ({ ct: { ...x.ct, lista, eventos, excluir: "", atual: x.ct.atual === id ? "" : x.ct.atual, so: x.ct.so && x.ct.so.filter((k) => k !== id).length ? x.ct.so.filter((k) => k !== id) : null, ok: "Contrato excluído.", erro: "" } }));
+  }
+  // abre um contrato pelo número (subpágina em modo "um contrato") ou volta ao Painel da Organização
+  ctVer(ids) { this.setState((x) => ({ ct: { ...x.ct, so: ids && ids.length ? ids : null, atual: "", form: null, ev: null, ok: "", erro: "", excluir: "", busca: "", buscaErro: "", buscaAberta: false } })); if (this.state.page !== "contratos") this.irPara("contratos"); else window.scrollTo({ top: 0, behavior: "smooth" }); }
+  ctPainel() { this.ctVer(null); }
+  ctBuscar() {
+    const q = String(this.state.ct.busca || "").trim(), nz = (v) => String(v || "").toLowerCase().replace(/[^0-9a-z]/g, ""), sz = (v) => nz(v).replace(/^0+/, "");
+    if (!q) { this.setState((x) => ({ ct: { ...x.ct, buscaErro: "Informe o número do contrato." } })); return; }
+    const ids = this.state.ct.lista.filter((c) => nz(c.numero) === nz(q) || (sz(q) && sz(c.numero) === sz(q))).map((c) => c.id);
+    if (!ids.length) { this.setState((x) => ({ ct: { ...x.ct, buscaErro: "Nenhum contrato com o número “" + q + "” na sua carteira. Confira o número ou cadastre o contrato." } })); return; }
+    this.ctVer(ids);
   }
   ctAbrir(id) { this.setState((x) => ({ ct: { ...x.ct, atual: x.ct.atual === id ? "" : id, form: null, ev: null, ok: "", erro: "", excluir: "" } })); }
   ctEditarEv(e) {
@@ -10592,7 +10649,7 @@ class Component extends DCLogic {
     const f4 = (v) => (v == null || v === "" ? "" : Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 4 }));
     const cSel = this.state.ct.lista.find((x) => x.id === id), obraR = origem === "reajuste" && cSel && cSel.obra;
     const pre = { ...CT_EV, ...ev, percentual: f4(ev.percentual), valor_anterior: f2(ev.valor_anterior), valor_novo: obraR ? "" : f2(ev.valor_novo) };
-    this.setState((x) => ({ ct: { ...x.ct, atual: id, ev: pre, form: null, ok: "", erro: "", excluir: "" } }));
+    this.setState((x) => ({ ct: { ...x.ct, atual: id, so: [id], ev: pre, form: null, ok: "", erro: "", excluir: "" } }));
     this.irPara("contratos");
     this.aviso(obraR ? "Obra ou serviço de engenharia: informe o saldo a executar na data-base. O novo valor é calculado só sobre ele." : "Confira os dados do registro e clique em “Incluir na linha do tempo”.", "ok");
     setTimeout(() => { try { document.querySelector(".ct-card.aberto .ct-form").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {} }, 350);
@@ -12127,14 +12184,24 @@ class Component extends DCLogic {
         const cnt = { vig: 0, ven: 0, exp: 0 }; sits.forEach((si) => { if (!si.fim) return; cnt[si.vencido ? "exp" : si.restante != null && si.restante <= 4 ? "ven" : "vig"]++; });
         const ir = (k) => () => { this.setState((x) => ({ ct: { ...x.ct, filtro: k } })); this.irPara("contratos");
           if (k !== "todos") setTimeout(() => { try { document.querySelector(".ct-filtro").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }, 400); };
-        const novo = () => { this.irPara("contratos"); setTimeout(() => this.ctNovo(), 60); };
+        const novo = () => { this.setState((x) => ({ ct: { ...x.ct, so: null } })); this.irPara("contratos"); setTimeout(() => this.ctNovo(), 60); };
+        const buscaAbrir = (forcar) => { this.setState((x) => ({ ct: { ...x.ct, buscaAberta: forcar ? true : !x.ct.buscaAberta, buscaErro: "" } }));
+          setTimeout(() => { try { const el = document.querySelector("#gcb-caixa input"); if (el) { el.scrollIntoView({ behavior: "smooth", block: "center" }); el.focus({ preventScroll: true }); } } catch (e) {} }, 120); };
         return {
+          gcIrPainel: () => this.ctPainel(), gcPainelNome: "Painel da Organização",
+          gcPainelDesc: "A visão de toda a carteira do órgão ou da empresa, com indicadores, gráficos e prazos:",
+          gcPainelItens: ["Quantidade e valor das contratações, custo atualizado e gasto mensal", "Contratações por modalidade, regime legal e natureza do objeto", "Situação de cada contrato, de relance: vigentes, vencendo e vencidos", "Tempos médios do orçamento à assinatura e da anualidade ao reajuste", "Alterações registradas, ranking de empresas (ou de clientes) e saúde da carteira", "Agenda de prazos dos próximos 12 meses e controle de fracionamento"].map((t) => ({ t })),
+          gcContratoItens: ["Linha do tempo com reajustes, repactuações, revisões, aditivos e prorrogações", "Painel do contrato: evolução do valor, prazo e limite do art. 125", "Cálculo do reajuste e do reequilíbrio com os dados do contrato", "Análise de vantajosidade para a prorrogação", "PDF do contrato e edição do cadastro"].map((t) => ({ t })),
+          gcBuscaAberta: !!s.ct.buscaAberta, gcBuscaAlternar: () => buscaAbrir(false), gcBuscaTopo: () => { window.scrollTo({ top: 0, behavior: "smooth" }); buscaAbrir(true); },
+          gcBusca: s.ct.busca || "", onGcBusca: (e) => { const v = e.target.value; this.setState((x) => ({ ct: { ...x.ct, busca: v, buscaErro: "" } })); },
+          onGcBuscaTecla: (e) => { if (e.key === "Enter") { e.preventDefault(); this.ctBuscar(); } }, gcBuscar: () => this.ctBuscar(),
+          gcBuscaNums: [...new Set(s.ct.lista.map((c) => c.numero).filter(Boolean))].map((v) => ({ v })), gcBuscaErro: s.ct.buscaErro || "",
           gcCtaTxt: !lib ? (s.usuario ? "Começar o teste grátis" : "Criar conta grátis") : n ? "Ver meus contratos (" + n + ")" : "Cadastrar meu primeiro contrato",
           gcCtaAcao: !lib ? (s.usuario ? this.nav("planos") : () => { this.setState({ volta: "gestao" }); this.irPara("cadastro"); }) : n ? ir("todos") : novo,
           gcCtaNovo: lib && n > 0, gcCtaNovoAcao: novo,
           gcTemResumo: lib && n > 0,
           gcResumo: [["vig", "vigentes"], ["ven", "vencendo"], ["exp", "vencidos"]].filter(([k]) => cnt[k]).map(([k, rot]) => ({ n: String(cnt[k]), rot, cls: "gcl-rb f-" + k, ir: ir(k) })),
-          ...(() => { if (!(lib && n > 0)) return { gpTem: false };
+          ...(() => { if (!(lib && n > 0) || (s.page === "contratos" && s.ct.so)) return { gpTem: false, ctPainelGp: false };
             const pf = s.ct.painel || {}, G = ctPainelGeral(s.ct.lista, s.ct.eventos, pf), emp = G.visao === "empresa";
             const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             const brlC = (v) => { const a = Math.abs(v); return a >= 1e9 ? "R$ " + (v / 1e9).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " bi" : a >= 1e6 ? "R$ " + (v / 1e6).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " mi" : a >= 1e4 ? "R$ " + (v / 1e3).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " mil" : brl(v); };
@@ -12146,8 +12213,8 @@ class Component extends DCLogic {
             const evRot = { reajuste: "Reajuste", repactuacao: "Repactuação", revisao: "Revisão (reequilíbrio)", acrescimo: "Acréscimo (aditivo)", supressao: "Supressão (aditivo)", prorrogacao: "Prorrogação" };
             const evMx = Math.max(1, ...Object.values(G.evT).map((x) => x[0]));
             const mesTxt = (nn) => nn == null ? "—" : String(nn % 12 + 1).padStart(2, "0") + "/" + Math.floor(nn / 12);
-            return { gpTem: true, gpEmp: emp, gpOrg: !emp,
-              gpTitulo: emp ? "Painel da carteira da empresa" : "Painel de gestão da organização",
+            return { gpTem: true, ctPainelGp: true, gpEmp: emp, gpOrg: !emp,
+              gpTitulo: emp ? "Indicadores da carteira da empresa" : "Indicadores da organização",
               gpSub: emp ? "Contratos que a sua empresa mantém com órgãos e entidades: receita, clientes, prazos e reajustes a receber." : "Todos os contratos da organização: quanto custam, como foram contratados, prazos, alterações e fornecedores.",
               gpVisoes: [["orgao", "Órgão público (contratante)"], ["empresa", "Empresa privada (contratada)"]].map(([id, nome]) => ({ nome, cls: "gp-chip" + (G.visao === id ? " ativo" : ""), ir: () => set("visao")(id) })),
               gpAnos: [{ id: "", nome: "Todos os anos", sel: !pf.ano }].concat(G.anos.map((a) => ({ id: a, nome: a, sel: pf.ano === a }))), onGpAno: (e) => set("ano")(e.target.value),
@@ -12178,16 +12245,17 @@ class Component extends DCLogic {
               gpAniv: G.proxAniv.map((x) => ({ t: "Contrato " + x.c.numero + " · " + x.parte, d: "anualidade em " + mesTxt(x.proxN) + (x.pend ? " (há reajuste pendente)" : "") })), gpTemAniv: G.proxAniv.length > 0,
               gpVazio: G.n === 0 }; })(),
           gcFimTit: n ? "Sua carteira tem " + n + (n === 1 ? " contrato" : " contratos") : "Comece pela sua carteira",
-          gcFimTxt: n ? (cnt.ven ? cnt.ven + (cnt.ven === 1 ? " contrato vence" : " contratos vencem") + " em até 4 meses. Confira a agenda de prazos." : "Veja a agenda de prazos, a linha do tempo e os registros de cada contrato.") : "Cadastre um contrato com as datas e o valor inicial: o restante é calculado a partir dos registros.",
+          gcFimTxt: n ? (cnt.ven ? cnt.ven + (cnt.ven === 1 ? " contrato vence" : " contratos vencem") + " em até 4 meses. Veja no Painel da Organização." : "Veja os indicadores da carteira no Painel da Organização ou abra um contrato pelo número.") : "Cadastre um contrato com as datas e o valor inicial: o restante é calculado a partir dos registros.",
           gcRecursos: [["📄", "Cadastro completo", "Vigência, valor, índice, data do orçamento estimado, data-base da convenção coletiva e regime legal (Leis 14.133, 13.303 e 13.019)."],
             ["🕒", "Linha do tempo", "Reajustes, repactuações, reequilíbrios, aditivos e prorrogações registrados em ordem, com o valor vigente recalculado a cada passo."],
             ["📊", "Painel do contrato", "Evolução do valor em cascata, prazo da vigência, limite de acréscimos do art. 125 e composição dos ajustes."],
             ["📅", "Agenda da carteira", "Anualidades, datas-base, início da prorrogação (4 meses antes) e fim da vigência dos próximos 12 meses, com exportação em Excel."],
-            ["📊", "Painel de gestão", "Indicadores da carteira inteira: modalidades, valores, prazos, tempos médios, alterações e ranking de empresas, na visão do órgão ou da empresa."],
+            ["▦", "Painel da Organização", "Indicadores da carteira inteira estilo Power BI: modalidades, valores, prazos, tempos médios, alterações e ranking de empresas, na visão do órgão ou da empresa."],
+            ["⚖️", "Vantajosidade e fracionamento", "Análise de vantajosidade para a prorrogação e alerta de fracionamento das dispensas por valor, com a modalidade informada em cada contrato."],
             ["🧮", "Integração com a Calculadora", "Reajuste e reequilíbrio preenchidos com os dados do contrato, e o resultado registrado na linha do tempo com um clique."],
             ["✉️", "Avisos e relatórios", "E-mails antes da anualidade, da data-base e do fim da vigência; PDF de cada contrato e relatório completo da carteira."]].map(([ic, t, d]) => ({ ic, t, d })),
           gcPassos: [["Cadastre o contrato", "Número, contratada, objeto, datas, valor inicial e índice."], ["Registre as alterações", "Cada reajuste, aditivo ou prorrogação entra na linha do tempo."],
-            ["Acompanhe os prazos", "A agenda e os avisos por e-mail mostram o que vence e quando."], ["Gere os documentos", "PDF do contrato, relatório da carteira e planilha da agenda."]].map(([t, d]) => ({ t, d })),
+            ["Acompanhe no Painel da Organização", "Indicadores, situação de cada contrato e agenda de prazos de toda a carteira."], ["Abra cada contrato pelo número", "Linha do tempo, reajuste, reequilíbrio, vantajosidade e avisos por e-mail."], ["Gere os documentos", "PDF do contrato, relatório da carteira e planilha da agenda."]].map(([t, d]) => ({ t, d })),
         };
       })(),
       gcBloqTexto: s.usuario ? "Comece o teste grátis de 7 dias ou escolha um plano para cadastrar seus contratos e receber os avisos de prazo." : "Crie sua conta grátis e comece o teste de 7 dias, sem cartão, para cadastrar seus contratos.",
@@ -12283,9 +12351,11 @@ class Component extends DCLogic {
           cls: "ct-ag-m" + (m.k === "atr" ? " atr" : "") + (agSel === m.k ? " sel" : "") + (!m.n ? " vazio" : ""), sel: () => this.setState((x) => ({ ct: { ...x.ct, agMes: x.ct.agMes === m.k ? "" : m.k } })) }));
         const ctAgGrupos = meses.filter((m) => m.n && (!agSel || agSel === m.k)).map((m) => ({ rot: m.k === "atr" ? "Atrasados" : ((t) => t.charAt(0).toUpperCase() + t.slice(1))(new Date(m.k + "-15T12:00:00Z").toLocaleDateString("pt-BR", { month: "long", year: "numeric", timeZone: "UTC" })),
           itens: m.itens.map((it) => ({ data: it.data, tipo: it.tipo, contrato: it.nome, desc: it.desc, cor: it.cor, st: it.st, stCls: "ct-ag-st" + (it.dias < 0 ? " atr" : it.dias <= 30 ? " breve" : ""),
-            abrir: () => { this.setState((x) => ({ ct: { ...x.ct, atual: it.c.id, form: null, ev: null } })); setTimeout(() => { try { document.querySelector(".ct-card.aberto").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }, 200); } })) }));
+            abrir: () => { this.setState((x) => ({ ct: { ...x.ct, so: [it.c.id], atual: it.c.id, form: null, ev: null } })); window.scrollTo({ top: 0, behavior: "smooth" }); } })) }));
         const ctFil = ct.filtro || "todos", nSt = (k) => lista.filter((x) => x.stK === k).length;
         const listaF = ctFil === "todos" ? lista : lista.filter((x) => x.stK === ctFil);
+        const soIds = ct.so || null, modoUm = !!soIds, listaUm = modoUm ? lista.filter((x) => soIds.includes(x.id)) : [];
+        const ctTab = listaF.map((x) => ({ numero: x.numero, parte: x.contratada || "—", st: x.st, fim: x.fim || "—", valor: x.valorV, cls: "gcs-l st-" + x.stK, ver: () => this.ctVer([x.id]) }));
         const ctFiltros = [["todos", "Todos", lista.length], ["vig", "Vigentes", nSt("vig")], ["ven", "Vencendo", nSt("ven")], ["exp", "Vencidos", nSt("exp")]]
           .map(([k, nome, n]) => ({ nome, n: String(n), ativo: ctFil === k, cls: "ct-fb f-" + k + (ctFil === k ? " ativo" : ""), sel: () => this.setState((x) => ({ ct: { ...x.ct, filtro: k } })) }));
         const frac = ctFracionamento(ct.lista, ct.eventos), nEx = frac.filter((g) => g.st === "excede").length, nPe = frac.filter((g) => g.st === "perto").length;
@@ -12294,7 +12364,12 @@ class Component extends DCLogic {
             txt: "Soma de " + brl(g.soma) + " para o limite de " + brl(g.lim) + " (" + Math.round(g.pct * 100) + "%). " + (g.st === "excede" ? "Acima do limite: indício de fracionamento de despesa. A próxima contratação dessa natureza no exercício exige licitação, e as já feitas devem ser revistas." : g.st === "perto" ? "Perto do limite: planeje as próximas contratações dessa natureza no exercício." : "Dentro do limite.") })),
           ctModalidades: CT_MODALIDADES.map(([id, nome]) => ({ id, nome, sel: (f.modalidade || "") === id })),
           ctNaturezas: [...new Set(ct.lista.map((c) => c.natureza).filter(Boolean))].map((v) => ({ v })) };
-        return { ...campos, ...fracP, ctLista: listaF, ctFiltros, ctFiltroVazio: lista.length > 0 && !listaF.length,
+        const um1 = listaUm.length === 1 ? listaUm[0] : null;
+        return { ...campos, ...fracP, ctLista: listaUm, ctFiltros, ctTab,
+          ctModoUm: modoUm, ctModoPainel: !modoUm, ctKpisVer: false, ctPainelAg: !modoUm && lista.length > 0, ctPainelFrac: !modoUm && frac.length > 0,
+          ctTopoTit: modoUm ? (um1 ? "Contrato " + um1.numero : listaUm.length ? listaUm.length + " contratos com esse número" : "Contrato") : "Painel da Organização",
+          ctTopoSub: modoUm ? (um1 ? [um1.contratada, um1.objeto].filter(Boolean).join(" · ") || "Linha do tempo, reajuste, reequilíbrio, vantajosidade e PDF do contrato." : "Escolha o contrato abaixo.") : "Indicadores de toda a carteira, situação de cada contrato, agenda de prazos e controle de fracionamento.",
+          ctBuscaRot: modoUm ? "Ver outro contrato" : "Ver contrato", ctFiltroVazio: lista.length > 0 && !listaF.length,
           ctFiltroVazioTxt: "Nenhum contrato " + ({ vig: "vigente", ven: "vencendo nos próximos 4 meses", exp: "vencido" }[ctFil] || "") + ".", ctKpis, ctAgMeses, ctAgGrupos, ctAgVazio: !agenda.length, ctAgFiltro: agSel ? "Mostrando só o mês escolhido · clique de novo para ver todos" : "",
           ctAgExcel: () => this.ctAgendaExcel(), ctRelatorio: () => this.ctRelatorio(), ctTemKpis: lista.length > 0, ctTemLista: lista.length > 0, ctVazio: ct.carregado && !lista.length && !ct.form, ctCarregando: !!ct.carregando,
           ctFormAberto: !!ct.form, ctFormTitulo: f.id ? "Editar contrato" : "Novo contrato", ctNovo: () => this.ctNovo(), ctSalvar: () => this.ctSalvar(),
@@ -12319,7 +12394,7 @@ class Component extends DCLogic {
           ctOpcoes: [{ id: "", nome: ct.lista.length ? "Escolher um contrato cadastrado…" : "Nenhum contrato cadastrado", sel: !ct.atual }].concat(ct.lista.map((c) => ({ id: c.id, nome: c.numero + (c.contratada ? " · " + c.contratada : ""), sel: ct.atual === c.id }))),
           onCtSelReajuste: (e) => { const v = e.target.value; if (v) this.ctUsar(v, "reajuste"); else this.setState((x) => ({ ct: { ...x.ct, atual: "" } })); },
           onCtSelRq: (e) => { const v = e.target.value; if (v) this.ctUsar(v, "reequilibrio"); else this.setState((x) => ({ ct: { ...x.ct, atual: "" } })); },
-          ctTemSel: !!sel, ctSelNome: sel ? sel.numero : "", ctIrContratos: () => this.irPara("contratos"),
+          ctTemSel: !!sel, ctSelNome: sel ? sel.numero : "", ctIrContratos: () => { if (ct.atual) this.setState((x) => ({ ct: { ...x.ct, so: [ct.atual] } })); this.irPara("contratos"); },
           ctRegReajuste: () => this.ctRegistrar("reajuste"), ctRegRq: () => this.ctRegistrar(s.rq.d.tipo === "fato" ? "rq_fato" : "rq_trib") };
       })(),
       // reequilíbrio tributário
@@ -14311,7 +14386,7 @@ class Component extends DCLogic {
           cta: !s.usuario ? "Criar conta grátis" : s.plano ? "Você já tem acesso" : "Começar o teste de 7 dias", btnBg: "#F1F6F5", btnColor: "#0A1F2A",
           itens: ["Biblioteca Jurídica completa: jurisprudência de todo o país, com anotações, marcadores e dossiês salvos na sua conta", "Calculadora de reajuste por índice, com a nota técnica em PDF", "Leitura do fórum da comunidade", "Teste de 7 dias, sem cartão: perguntar e responder no fórum, usar as planilhas de mão de obra da IN 05/2017 e o reequilíbrio, cadastrar contratos na Gestão Contratual e fazer pesquisas de preços"] },
         { nome: "Básico", base: 119.9, publico: "Profissionais individuais iniciantes.", preco: precoPlano(119.9), unidade: unidadePlano, nota: notaPlano(119.9), detalhePreco: detalhePlano(119.9), destaque: destaque === "Básico", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Fórum da comunidade: leitura e participação", "Calculadora: reajuste por índice com nota técnica, planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta), comparação de planilhas em linha do tempo (planejamento × contratação × repactuações) e reequilíbrio econômico-financeiro", "Gestão Contratual: painel de gestão estilo Power BI da carteira (visão do órgão ou da empresa), contratos com linha do tempo, painel do valor e do limite de acréscimos (art. 125), situação por cor, agenda de prazos em 12 meses, avisos por e-mail, PDF de cada contrato, relatório da carteira e agenda em Excel", "Pesquisa de preços no Elaborador: Painel de Preços e contratações similares do PNCP, tratamento estatístico, ratificação da planilha de mão de obra, análise do orçamento de obras e relatório em PDF, Word e Excel", "O Parecerista e O Elaborador com 10% de desconto", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto"] },
+          itens: ["Fórum da comunidade: leitura e participação", "Calculadora: reajuste por índice com nota técnica, planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta), comparação de planilhas em linha do tempo (planejamento × contratação × repactuações) e reequilíbrio econômico-financeiro", "Gestão Contratual: Painel da Organização estilo Power BI (visão do órgão ou da empresa), contratos com linha do tempo, painel do valor e do limite de acréscimos (art. 125), situação por cor, agenda de prazos em 12 meses, avisos por e-mail, PDF de cada contrato, relatório da carteira e agenda em Excel", "Pesquisa de preços no Elaborador: Painel de Preços e contratações similares do PNCP, tratamento estatístico, ratificação da planilha de mão de obra, análise do orçamento de obras e relatório em PDF, Word e Excel", "O Parecerista e O Elaborador com 10% de desconto", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto"] },
         { nome: "Premium", base: 199.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(199.9), unidade: unidadePlano, nota: notaPlano(199.9), detalhePreco: detalhePlano(199.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
           itens: ["Tudo do Básico", "O Parecerista e O Elaborador com 15% de desconto", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Prioridade na agenda do especialista"] },
         { nome: "Pro", base: 479.9, publico: "Profissionais avançados e empresas.", preco: precoPlano(479.9), unidade: unidadePlano, nota: notaPlano(479.9), detalhePreco: detalhePlano(479.9), destaque: destaque === "Pro", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
@@ -14435,7 +14510,7 @@ class Component extends DCLogic {
         ["O que faz O Parecerista e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. Com O Elaborador, você também cria a minuta do ETP, do Termo de Referência ou do Projeto Básico a partir de um questionário, já conferida. O Pro inclui 2 por semana, somando análises e documentos criados; equipes Pro têm 6 por acesso por mês, somados. Nos demais planos cada análise ou documento é pago com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
         ["O que a Calculadora faz e quem pode usar?", "A Calculadora tem seis ferramentas: reajuste por índice (IPCA, IGP-M, INCC e outros, com a nota técnica em PDF), planilha de custos da mão de obra exclusiva no formato da IN 05/2017, repactuação (com custos não renováveis, quadro comparativo, retroativo e nota técnica), análise da planilha da proposta da licitante (exequibilidade, falhas e diligência), comparação de planilhas lado a lado (planejamento × contratação × repactuações, com relatório) e reequilíbrio econômico-financeiro (tributário da reforma, LC 214/2025, e por fato superveniente, art. 124, II, d, da Lei 14.133/2021). O reajuste por índice é grátis para quem tem conta; as ferramentas de mão de obra, a comparação de planilhas e o reequilíbrio estão em todos os planos pagos e no teste de 7 dias. O agente de IA que lê a convenção coletiva e as planilhas é do plano Pro."],
         ["O que a Pesquisa de preços faz e quem pode usar?", "Fica no Elaborador e estima o valor da contratação na fase de planejamento. Você escolhe o regime (Lei 14.133, com a IN SEGES/ME 65/2021; Lei 13.303, pelo regulamento interno da estatal, que a IA pode ler; ou Lei 13.019) e o tipo de objeto. Para bens e serviços, o site coleta preços no Painel de Preços do Compras.gov.br e em contratações similares do PNCP, aceita cotações e outras fontes, desconsidera os preços mais de 25% abaixo ou acima da mediana e escolhe entre média e mediana pelo coeficiente de variação (menor preço em mercado restrito). Na mão de obra exclusiva, ratifica o valor da planilha da IN 5/2017; em obras, analisa a planilha de orçamento enviada (fontes, aritmética, curva ABC, BDI pelo Acórdão 2.622/2013 do TCU, encargos e data-base). O relatório sai em PDF, Word e Excel, e o resultado vai para o Termo de Referência com um clique. Está nos planos Básico, Premium e Pro e no teste de 7 dias; o filtro de itens semelhantes com IA tem limite diário."],
-        ["O que a Gestão Contratual faz e quem pode usar?", "Você cadastra cada contrato (vigência, valor, índice, data do orçamento estimado e regime legal) e registra reajustes, repactuações, reequilíbrios, aditivos e prorrogações. O site calcula o valor vigente, a próxima anualidade, o limite de acréscimos do art. 125 e a data recomendada para iniciar a prorrogação, mostra a situação de cada contrato por cor (vigente, vencendo ou vencido), monta a agenda de prazos dos próximos 12 meses e avisa por e-mail. O painel de gestão reúne a carteira inteira em indicadores e gráficos: quantidade e valor das contratações, distribuição por modalidade, custo total, contratos vencendo e no prazo, tempo médio entre o orçamento e a assinatura e entre a anualidade e a concessão do reajuste, alterações registradas e as empresas com mais contratos, com filtros por ano, modalidade e situação; para empresas privadas, a mesma leitura é feita por órgão contratante. Também gera o PDF de cada contrato, o relatório completo da carteira e a agenda em Excel. Está em todos os planos pagos e no teste de 7 dias; nos planos para equipes, cada contrato pode ser compartilhado com a equipe, para consulta."],
+        ["O que a Gestão Contratual faz e quem pode usar?", "Você cadastra cada contrato (vigência, valor, índice, data do orçamento estimado e regime legal) e registra reajustes, repactuações, reequilíbrios, aditivos e prorrogações. O site calcula o valor vigente, a próxima anualidade, o limite de acréscimos do art. 125 e a data recomendada para iniciar a prorrogação, mostra a situação de cada contrato por cor (vigente, vencendo ou vencido), monta a agenda de prazos dos próximos 12 meses e avisa por e-mail. O Painel da Organização reúne a carteira inteira em indicadores e gráficos: quantidade e valor das contratações, distribuição por modalidade, custo total, contratos vencendo e no prazo, tempo médio entre o orçamento e a assinatura e entre a anualidade e a concessão do reajuste, alterações registradas e as empresas com mais contratos, com filtros por ano, modalidade e situação; para empresas privadas, a mesma leitura é feita por órgão contratante. Também gera o PDF de cada contrato, o relatório completo da carteira e a agenda em Excel. Está em todos os planos pagos e no teste de 7 dias; nos planos para equipes, cada contrato pode ser compartilhado com a equipe, para consulta."],
         ["Quantas análises de planilha pelo agente de IA eu tenho?", "No Pro, por semana: 1 elaboração de planilha de custos, 1 análise de repactuação e 1 análise de proposta, renovando na segunda-feira. A franquia é por assinatura: na equipe, é compartilhada entre os membros. Análise que falhar por problema técnico não consome a franquia, e a planilha pode sempre ser preenchida manualmente, sem limite."],
         ["O que o plano Gratuito inclui?", "Com a conta grátis, sem cartão e sem prazo, você usa a Biblioteca Jurídica completa (com anotações, marcadores e dossiês), a calculadora de reajuste por índice com a nota técnica em PDF e lê todas as perguntas e respostas do fórum. Para perguntar e responder no fórum, usar as planilhas de mão de obra e o reequilíbrio e cadastrar contratos na Gestão Contratual, faça o teste de 7 dias ou assine um plano."],
         ["A primeira análise do Parecerista é grátis mesmo?", "Sim. Cada CPF tem direito a uma análise grátis, com até 3 documentos, assinante ou não: basta informar o CPF no perfil e confirmar o e-mail. Se a análise não puder ser concluída por falha técnica, a cortesia continua disponível. Quando o limite diário de análises grátis é atingido, a sua entra na fila e é processada no dia seguinte, com prioridade."],
