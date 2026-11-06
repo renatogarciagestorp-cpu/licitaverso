@@ -20,6 +20,21 @@ _spec2 = importlib.util.spec_from_file_location("pesquisa_mercado", RAIZ / "scri
 pm = importlib.util.module_from_spec(_spec2); _spec2.loader.exec_module(pm)
 _spec3 = importlib.util.spec_from_file_location("modelo_etp", RAIZ / "scripts" / "agente" / "modelo_etp.py")
 me = importlib.util.module_from_spec(_spec3); _spec3.loader.exec_module(me)
+_spec4 = importlib.util.spec_from_file_location("modelo_tr", RAIZ / "scripts" / "agente" / "modelo_tr.py")
+mt = importlib.util.module_from_spec(_spec4); _spec4.loader.exec_module(mt)
+# modelos padrão: ETP (Licitacon) e TR de compras (AGU); o Word do assinante, se enviado, prevalece
+MODELOS = {"etp": me, "tr": mt}
+
+
+def modelo_padrao(doc, respostas, modelo_assinante):
+    """'etp' ou 'tr' quando o documento sai num modelo padrão; '' para o formato genérico."""
+    if modelo_assinante:
+        return ""
+    if doc == "etp":
+        return "etp"
+    if doc == "tr" and re.search(r"\bcompra|aquisi", str(respostas.get("natureza", "")), re.I):
+        return "tr"
+    return ""
 rel = an.rel
 
 DOCS = {
@@ -227,7 +242,7 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
            "qualitativos; a estimativa do valor é preliminar (art. 18, § 1º, VI), dependente da pesquisa de preços do art. 23; " if doc == "etp" else
            "se o requisitante não informou o valor, apresente os dados do PNCP como referência preliminar, em mapa resumido, registrando "
            "que o valor estimado deve vir da pesquisa de preços formal do art. 23 da Lei 14.133/2021 ([PREENCHER] no valor final); ")
-        + (f"(10) siga o modelo padrão de ETP descrito a seguir e entregue com a ferramenta entregar_documento.\n{me.INSTRUCOES}" if padrao else
+        + (f"(10) siga o modelo padrão descrito a seguir e entregue com a ferramenta entregar_documento.\n{MODELOS[padrao].INSTRUCOES}" if padrao else
            f"(10) produza as seções na ordem: {'; '.join(d['secoes'])}. Entregue com a ferramenta entregar_documento.")
     )
     usuario = (
@@ -627,7 +642,8 @@ def main():
     a = ap.parse_args()
     pasta = pathlib.Path(a.pasta); pasta.mkdir(parents=True, exist_ok=True)
     respostas = {k: str(v) for k, v in json.loads(pathlib.Path(a.respostas).read_text(encoding="utf-8")).items()}
-    padrao = a.doc == "etp" and not a.modelo
+    padrao = modelo_padrao(a.doc, respostas, a.modelo)
+    M = MODELOS.get(padrao)
     if a.docj:  # fase "completar": o assinante respondeu às lacunas; nenhum custo de API
         docj = json.loads(pathlib.Path(a.docj).read_text(encoding="utf-8"))
         try:
@@ -637,8 +653,10 @@ def main():
         docj = aplicar_lacunas(docj, lac)
         pesquisa = json.loads((pathlib.Path(a.docj).parent / "pesquisa.json").read_text(encoding="utf-8")) if (pathlib.Path(a.docj).parent / "pesquisa.json").exists() else None
         print("ETAPA: word", flush=True)
-        if padrao:
+        if padrao == "etp":
             me.gerar(docj, respostas, pasta / "documento.docx", a.logo, pesquisa, refs_usadas(docj, []), None)
+        elif padrao == "tr":
+            mt.gerar(docj, respostas, pasta / "documento.docx", a.logo)
         else:
             gerar_docx(a.doc, docj, respostas, [], None, pasta / "documento.docx", pesquisa, a.modelo, a.logo)
         (pasta / "documento.json").write_text(json.dumps(docj, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -674,9 +692,9 @@ def main():
             print(f"pré-análise não concluída ({type(e).__name__}); seguindo para a redação")
     print("ETAPA: redacao", flush=True)
     if a.simular:
-        docj = me.simulado(respostas) if padrao else simulado(a.doc, respostas)
+        docj = M.simulado(respostas) if M else simulado(a.doc, respostas)
     else:
-        resp = chamar(system, usuario, me.FERRAMENTA if padrao else None)
+        resp = chamar(system, usuario, M.FERRAMENTA if M else None)
         uso = resp.get("usage") or {}
         custo_usd += an.custo(uso)
         bloco = next((c for c in resp.get("content", []) if c.get("type") == "tool_use"), None)
@@ -687,7 +705,7 @@ def main():
     conferencia = None
     if not a.simular and not a.sem_conferencia:
         print("ETAPA: conferencia", flush=True)
-        txt = pasta / "documento.txt"; txt.write_text(me.texto_plano(docj) if padrao else texto_plano(docj), encoding="utf-8")
+        txt = pasta / "documento.txt"; txt.write_text(M.texto_plano(docj) if M else texto_plano(docj), encoding="utf-8")
         conf = pasta / "conferencia.json"
         args = [sys.executable, str(RAIZ / "scripts/agente/analisar.py"), "--doc", DOCS[a.doc]["roteiro"], "--texto", str(txt),
                 "--saida", str(conf), "--fonte", "minuta elaborada pelo agente"]
@@ -705,7 +723,7 @@ def main():
                           f"próprio texto; não acrescente ressalvas nem pendências por causa deles):\n{lista}\n\nDADOS ORIGINAIS:\n{usuario[:60000]}")
                 try:
                     r2 = chamar(system + " Agora você revisa o documento que redigiu: devolva o documento completo, corrigido, pela mesma ferramenta.",
-                                pedido, me.FERRAMENTA if padrao else None)
+                                pedido, M.FERRAMENTA if M else None)
                     custo_usd += an.custo(r2.get("usage") or {})
                     b2 = next((c for c in r2.get("content", []) if c.get("type") == "tool_use"), None)
                     if b2 and b2.get("input"):
@@ -736,10 +754,14 @@ def main():
     print("ETAPA: word", flush=True)
     if padrao:
         try:
-            me.gerar(docj, respostas, pasta / "documento.docx", a.logo, pesquisa, refs_usadas(docj, juris), conferencia)
+            if padrao == "etp":
+                me.gerar(docj, respostas, pasta / "documento.docx", a.logo, pesquisa, refs_usadas(docj, juris), conferencia)
+            else:
+                mt.gerar(docj, respostas, pasta / "documento.docx", a.logo)
         except Exception as e:  # nunca perde o texto já pago: cai para o Word genérico
-            print(f"modelo padrão do ETP falhou ({type(e).__name__}: {e}); gerando no formato genérico")
-            secs = [{"titulo": k, "paragrafos": v} for k, v in (docj.get("secoes") or {}).items() if v]
+            print(f"modelo padrão ({padrao}) falhou ({type(e).__name__}: {e}); gerando no formato genérico")
+            secs = ([{"titulo": k, "paragrafos": v} for k, v in (docj.get("secoes") or {}).items() if v] if padrao == "etp"
+                    else [{"titulo": "Termo de Referência", "paragrafos": mt.texto_plano(docj).split("\n")}])
             gerar_docx(a.doc, {**docj, "secoes": secs}, respostas, juris, conferencia, pasta / "documento.docx", pesquisa, None, a.logo)
     else:
         gerar_docx(a.doc, docj, respostas, juris, conferencia, pasta / "documento.docx", pesquisa, a.modelo, a.logo)
