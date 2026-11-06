@@ -279,9 +279,13 @@ def gerar(docj, respostas, saida, logo=None):
                 textos[i] = f"{rot}: {R.get(k)};"
             else:
                 apagar.add(i)
-    elif (R.get("pca") or "").lower().startswith("sim") or R.get("pca_ano"):
+    elif R.get("pca_item") or (R.get("pca") or "").lower().startswith("sim") or R.get("pca_ano"):
         faixa_ap(23, 28)
-        textos[30] = f"O objeto da contratação está previsto no Plano de Contratações Anual {ano_pca}, conforme consta das informações básicas deste Termo de Referência."
+        item = (R.get("pca_item") or "").strip().rstrip(".")
+        m = re.search(r"20\d\d", item)
+        ano_pca = R.get("pca_ano") or (m.group(0) if m else ano_pca)
+        item = re.sub(r"^PCA\s+20\d\d\s*[,:–-]\s*", "", item)
+        textos[30] = (f"O objeto da contratação está previsto no Plano de Contratações Anual {ano_pca}" + (f", no item {item}." if item else ", conforme consta das informações básicas deste Termo de Referência."))
     else:
         faixa_ap(23, 30)
 

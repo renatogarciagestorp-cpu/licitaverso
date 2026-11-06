@@ -67,7 +67,9 @@ CAMPOS_ROTULO = {
     "gestao": "Modelo de gestão e fiscalização", "medicao": "Medição e pagamento", "selecao": "Forma de seleção do fornecedor (escolha do requisitante)",
     "orcamento": "Orçamento", "levantamentos": "Levantamentos e estudos", "solucoes": "Soluções técnicas", "servicos": "Serviços e materiais",
     "metodos": "Métodos construtivos", "plano_obra": "Plano da obra",
-    "prazo": "Prazo", "prazo_outro": "Prazo (detalhe)", "observacoes": "Observações do requisitante",
+    "prazo": "Prazo", "prazo_outro": "Prazo (detalhe)", "prazo_entrega": "Prazo de entrega", "garantia_bem": "Garantia do produto",
+    "garantia_bem_outro": "Garantia do produto (detalhe)", "amostra": "Exigir amostra", "instrumento": "Instrumento da contratação (contrato ou nota de empenho, art. 95)",
+    "pca_item": "Item do Plano de Contratações Anual", "pca_ano": "Ano do PCA", "data_orcamento": "Data do orçamento estimado", "indice": "Índice de reajuste", "observacoes": "Observações do requisitante",
     "parc_motivo": "Motivo do parcelamento ou não (escolha do requisitante)", "adjudicacao": "Forma de adjudicação (escolha do requisitante)",
     "criterio": "Critério de julgamento (escolha do requisitante)", "regime_exec": "Regime de execução (escolha do requisitante)",
     "local": "Local da obra ou serviço", "municipio": "Município", "autoridade": "Autoridade que aprova o documento",
@@ -122,7 +124,7 @@ def jurisprudencia_do_estado(uf, consulta, n=6):
 
 
 CHAVES_INTERNAS = {"entrega", "modelo_arquivo", "modelo_nome", "logo_arquivo", "logo_nome", "precos_pdfs", "precos_links", "precos_manual", "precos_sem",
-                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula"}
+                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "pca_ref", "pesquisa_precos_id"}
 
 
 def texto_de_link(url):
@@ -628,6 +630,47 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
     w.save(str(saida))
 
 
+def para_tr(docj, respostas):
+    """O essencial do ETP concluído para o Termo de Referência (vai no resumo da análise; o site oferece para aproveitar)."""
+    r = docj.get("resumo") or {}
+    nat = docj.get("natureza") or {}
+    tipo, exe, mo = nat.get("tipo") or "", nat.get("execucao") or "", nat.get("mao_de_obra") or ""
+    if tipo.startswith("Bem"):
+        natureza = "Compra"
+    elif mo.startswith("Com dedica"):
+        natureza = "Serviço com mão de obra exclusiva"
+    elif exe == "Serviço contínuo":
+        natureza = "Serviço contínuo"
+    elif tipo.startswith("Serviço"):
+        natureza = "Serviço comum"
+    else:
+        natureza = ""
+    def fmt(n):
+        try:
+            return (f"{float(n):,.2f}".rstrip("0").rstrip(".") if float(n) != int(float(n)) else f"{int(float(n)):,}").replace(",", ".")
+        except (TypeError, ValueError):
+            return ""
+    linhas = []
+    for it in (docj.get("itens") or [])[:30]:
+        q = fmt(it.get("quantidade"))
+        un = (it.get("unidade") or "").strip()
+        desc = (it.get("descricao") or it.get("item") or "").strip()
+        if desc:
+            linhas.append((f"{q} {un} – " if q else "") + desc)
+    parc = str(respostas.get("parcelamento") or "")
+    adj = {"Parcelar por itens": "Por item", "Parcelar por lotes": "Por lote", "Não parcelar": "Global (lote único)"}.get(parc, "")
+    ct = docj.get("contratacao") or {}
+    out = {"objeto": str(respostas.get("objeto") or "")[:600],
+           "necessidade": str(r.get("necessidade") or respostas.get("necessidade") or "")[:600],
+           "solucao": str(r.get("solucao") or "")[:400],
+           "quantidades": ("\n".join(linhas) or str(respostas.get("quantidades") or ""))[:1500],
+           "especificacoes": str(respostas.get("especificacoes") or "")[:1500],
+           "natureza": natureza, "prazo": str(respostas.get("prazo") or ""), "prazo_outro": str(respostas.get("prazo_outro") or ""),
+           "adjudicacao": adj, "custo_total": r.get("custo_total"),
+           "registro_precos": ct.get("registro_precos"), "processo": str(respostas.get("processo") or "")[:120]}
+    return {k: v for k, v in out.items() if v not in ("", None)}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--doc", required=True, choices=sorted(DOCS))
@@ -771,6 +814,7 @@ def main():
     ct = docj.get("contratacao") or {}
     resumo = {"custo_usd": round(custo_usd, 4), "segundos": round(time.time() - t0), "uso": uso,
               "recomendacao": {k: ct.get(k) for k in ("modalidade", "criterio", "modo_disputa", "regime_execucao", "registro_precos", "me_epp") if ct.get(k) is not None} or None,
+              **({"para_tr": para_tr(docj, respostas)} if a.doc == "etp" else {}),
               "pendencias": len(docj.get("pendencias") or []),
               "alta": sum(1 for r in (conferencia or {}).get("resultados", []) if r.get("gravidade") == "alta" and r.get("resultado") in ("nao_conforme", "parcial")),
               "media": sum(1 for r in (conferencia or {}).get("resultados", []) if r.get("gravidade") == "media" and r.get("resultado") in ("nao_conforme", "parcial"))}

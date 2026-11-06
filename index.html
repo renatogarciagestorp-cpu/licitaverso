@@ -1053,6 +1053,7 @@
     .lve-resumo dl > div { grid-template-columns: minmax(0, 1fr); gap: 0; }
     .lve-continuar, .lve-gerar { flex: 1; }
   }
+  .lve-pca-sel { margin-bottom: 6px; width: 100%; }
   .lve-reap-box { border: 1px solid #BFE6D2; background: #F3FBF7; border-radius: 16px; padding: 18px; display: grid; gap: 10px; }
   .lve-reap-box p { margin: 0; color: #43535C; font-size: 14px; }
   .lve-reap-lista { display: grid; gap: 6px; }
@@ -3302,13 +3303,13 @@
               </div>
             <sc-if value="{{ elReapAberto }}" hint-placeholder-val="{{ false }}">
               <div class="lve-reap-box">
-                <strong>Quer aproveitar algo do seu último documento{{ elReapDe }}?</strong>
-                <p>Cada contratação tem suas particularidades. Marque só o que vale também para esta; o resto começa em branco.</p>
+                <strong>{{ elReapTitulo }}</strong>
+                <p>{{ elReapTexto }}</p>
                 <div class="lve-reap-lista"><sc-for list="{{ elReapLista }}" as="x" hint-placeholder-count="4">
                   <label class="lvc-check lve-reap-item"><input type="checkbox" checked="{{ x.marcado }}" sc-camel-on-change="{{ x.marcar }}"><span><b>{{ x.rot }}:</b> {{ x.valor }}</span></label>
                 </sc-for></div>
                 <div class="lve-reap-acoes"><button type="button" class="lvh-btn" sc-camel-on-click="{{ elReapUsar }}">Aproveitar os marcados</button>
-                  <button type="button" class="lve-trocar" sc-camel-on-click="{{ elReapNao }}">Começar em branco</button></div>
+                  <button type="button" class="lve-trocar" sc-camel-on-click="{{ elReapNao }}">{{ elReapNaoTxt }}</button></div>
               </div>
             </sc-if>
               <sc-if value="{{ elAcompanhando }}" hint-placeholder-val="{{ false }}">
@@ -3405,6 +3406,7 @@
               <div class="lvc-campo lve-campo">
                 <span>{{ c.rot }}<sc-if value="{{ c.obrig }}" hint-placeholder-val="{{ true }}"><em class="lve-obrig">obrigatório</em></sc-if><sc-if value="{{ c.opcional }}" hint-placeholder-val="{{ false }}"><em class="lve-opc">opcional</em></sc-if></span>
                 <sc-if value="{{ c.ehTexto }}" hint-placeholder-val="{{ true }}"><textarea rows="2" aria-label="{{ c.rot }}" value="{{ c.valor }}" sc-camel-on-input="{{ c.onInput }}" placeholder="{{ c.ph }}"></textarea></sc-if>
+                <sc-if value="{{ c.temPca }}" hint-placeholder-val="{{ false }}"><select class="lve-pca-sel" aria-label="Escolher item do PCA cadastrado no site" sc-camel-on-change="{{ c.onPca }}"><sc-for list="{{ c.pcaOps }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></sc-if>
                 <sc-if value="{{ c.ehLinha }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}" value="{{ c.valor }}" sc-camel-on-input="{{ c.onInput }}" placeholder="{{ c.ph }}"></sc-if>
                 <sc-if value="{{ c.ehChips }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ c.op }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
                 <sc-if value="{{ c.mostraOutro }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}: detalhe" value="{{ c.outroValor }}" sc-camel-on-input="{{ c.onOutro }}" placeholder="Qual?"></sc-if>
@@ -3439,6 +3441,7 @@
               <div class="lvc-campo lve-campo">
                 <span>{{ c.rot }}<sc-if value="{{ c.obrig }}" hint-placeholder-val="{{ true }}"><em class="lve-obrig">obrigatório</em></sc-if><sc-if value="{{ c.opcional }}" hint-placeholder-val="{{ false }}"><em class="lve-opc">opcional</em></sc-if></span>
                 <sc-if value="{{ c.ehTexto }}" hint-placeholder-val="{{ true }}"><textarea rows="2" aria-label="{{ c.rot }}" value="{{ c.valor }}" sc-camel-on-input="{{ c.onInput }}" placeholder="{{ c.ph }}"></textarea></sc-if>
+                <sc-if value="{{ c.temPca }}" hint-placeholder-val="{{ false }}"><select class="lve-pca-sel" aria-label="Escolher item do PCA cadastrado no site" sc-camel-on-change="{{ c.onPca }}"><sc-for list="{{ c.pcaOps }}" as="o" hint-placeholder-count="2"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></sc-if>
                 <sc-if value="{{ c.ehLinha }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}" value="{{ c.valor }}" sc-camel-on-input="{{ c.onInput }}" placeholder="{{ c.ph }}"></sc-if>
                 <sc-if value="{{ c.ehChips }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ c.op }}" as="o" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
                 <sc-if value="{{ c.mostraOutro }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}: detalhe" value="{{ c.outroValor }}" sc-camel-on-input="{{ c.onOutro }}" placeholder="Qual?"></sc-if>
@@ -7546,7 +7549,8 @@ const ELAB_ROT = { orgao: "Órgão ou entidade", uf: "UF", objeto: "Objeto", nec
   elab_nome: "Elaboração: nome", elab_cargo: "Elaboração: cargo", elab_matricula: "Elaboração: matrícula",
   resp_nome: "Responsável pelo setor: nome", resp_cargo: "Responsável pelo setor: cargo", resp_matricula: "Responsável pelo setor: matrícula",
   entrega: "Forma de entrega", rodape_incluir: "Informações no rodapé", rodape: "Texto do rodapé", modelo_arquivo: "Modelo em Word", logo_arquivo: "Logo",
-  especificacoes: "Especificações", processo: "Nº do processo", municipio: "Município", autoridade: "Autoridade que aprova", gestor: "Gestor do contrato", fiscais: "Fiscais", fonte: "Fonte orçamentária", correlatas: "Contratações ligadas" };
+  especificacoes: "Especificações", local_entrega: "Local de entrega", prazo_entrega: "Prazo de entrega", garantia_bem: "Garantia do produto", amostra: "Amostra",
+  instrumento: "Instrumento da contratação", pca_item: "Item do PCA", data_orcamento: "Data do orçamento estimado", indice: "Índice de reajuste", processo: "Nº do processo", municipio: "Município", autoridade: "Autoridade que aprova", gestor: "Gestor do contrato", fiscais: "Fiscais", fonte: "Fonte orçamentária", correlatas: "Contratações ligadas" };
 // dados do órgão e de quem assina: podem ir para qualquer documento (se o assinante marcar)
 const ELAB_GERAIS = ["orgao", "uf", "observacoes", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
 const ELAB_PARES = { modelo_arquivo: "modelo_nome", logo_arquivo: "logo_nome" };
@@ -7597,8 +7601,17 @@ const ELAB_RAPIDO = {
     { k: "especificacoes", etapa: "contratacao", rot: "Especificações e requisitos", tipo: "texto", obrig: true, ph: "Ex.: limpeza diária, de segunda a sexta, das 7h às 16h" },
     { k: "natureza", etapa: "contratacao", rot: "Solução escolhida (do ETP)", tipo: "chips", obrig: true, op: ["Compra", "Locação", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva"] },
     { k: "prazo", etapa: "contratacao", rot: "Prazo", tipo: "chips", obrig: true, outro: true, op: ["Entrega única", "12 meses", "30 meses", "Outro"] },
+    // compras: o TR sai no modelo da AGU (aquisições); estes dados entram nas cláusulas de entrega, garantia, amostra e formalização
+    { k: "local", etapa: "contratacao", seCompra: true, rot: "Local de entrega", tipo: "linha", ph: "Ex.: Almoxarifado Central, Rua X, 100, Centro" },
+    { k: "prazo_entrega", etapa: "contratacao", seCompra: true, rot: "Prazo de entrega", tipo: "linha", ph: "Ex.: 30 dias do recebimento da nota de empenho; ou parcelas mensais" },
+    { k: "garantia_bem", etapa: "contratacao", seCompra: true, rot: "Garantia do produto", tipo: "chips", outro: true, op: ["Garantia legal (Código de Defesa do Consumidor)", "12 meses", "24 meses", "36 meses", "Outro"] },
+    { k: "amostra", etapa: "contratacao", seCompra: true, rot: "Exigir amostra do primeiro colocado?", tipo: "chips", op: ["Não", "Sim"], dica: "Só quando for indispensável para aferir a qualidade (art. 41, II)." },
+    { k: "instrumento", etapa: "contratacao", seCompra: true, rot: "Instrumento da contratação", tipo: "chips", op: ["Contrato", "Nota de empenho (art. 95)"], dica: "A nota de empenho substitui o contrato nas compras de pequeno valor ou de entrega imediata e integral, sem obrigações futuras." },
+    { k: "pca_item", etapa: "contratacao", pca: true, rot: "Item do Plano de Contratações Anual (PCA)", tipo: "linha", ph: "Ex.: PCA 2026, item 45 (ou deixe em branco se não houver)" },
     ELAB_PROCESSO,
-    { k: "valor", etapa: "mercado", rot: "Valor estimado da sua pesquisa de preços", tipo: "linha", ph: "Ex.: R$ 850.000,00 por ano", dica: "Se ainda não tiver, deixe em branco: pesquisamos contratações e preços praticados como referência." },
+    { k: "data_orcamento", etapa: "mercado", seCompra: true, rot: "Data do orçamento estimado (base do reajuste)", tipo: "linha", ph: "dd/mm/aaaa" },
+    { k: "indice", etapa: "mercado", seCompra: true, rot: "Índice de reajuste", tipo: "chips", op: ["IPCA", "IPCA-E", "INPC", "IGP-M"] },
+    { k: "valor", etapa: "mercado", rot: "Valor estimado da sua pesquisa de preços", tipo: "linha", ph: "Ex.: R$ 850.000,00 por ano", dica: "Se fez a Pesquisa de preços aqui (ou ratificou nela a planilha de mão de obra), use o botão \"Levar ao Termo de Referência\" e o valor vem preenchido. Se ainda não tiver, deixe em branco: pesquisamos contratações e preços praticados como referência." },
     { k: "adjudicacao", etapa: "mercado", depois: true, rot: "Adjudicação", tipo: "chips", obrig: true, op: ["Por item", "Por lote", "Global (lote único)"] },
     { k: "selecao", etapa: "mercado", depois: true, rot: "Forma de seleção do fornecedor", tipo: "chips", obrig: true, op: ELAB_MODALIDADES, dica: "Se você fez o ETP aqui, a recomendação dele aparece para você aproveitar." },
     { k: "criterio", etapa: "mercado", depois: true, rot: "Critério de julgamento", tipo: "chips", obrig: true, op: ELAB_CRITERIOS },
@@ -7658,8 +7671,9 @@ const ELAB_MONTAGEM = {
     ["Os 13 itens da lei", "Cada inciso do art. 18, § 1º, da Lei 14.133/2021, com a jurisprudência do Tribunal de Contas do seu estado."],
     ["Conferência e Word", "O agente revisa o próprio texto, lista pendências e entrega em Word e PDF."] ],
   tr: [
-    ["Suas informações", "Objeto, solução escolhida no ETP, quantidades, especificações e responsáveis."],
-    ["Preço", "Seu valor estimado ou, se não tiver, contratações e preços praticados como referência."],
+    ["Suas informações", "Objeto, necessidade, solução, quantidades e forma de contratação puxados do ETP feito aqui, o item do PCA e os responsáveis."],
+    ["Preço", "O valor da Pesquisa de preços (inclusive a planilha de mão de obra ratificada nela) ou, se não tiver, contratações e preços praticados como referência."],
+    ["Modelo da AGU", "Nas compras, o TR sai no modelo da AGU para a Lei 14.133 (dez/2025), com as cláusulas alternativas escolhidas pelas suas respostas: entrega, garantia, amostra, reajuste e formalização."],
     ["Forma de contratação", "Adjudicação, modalidade e critério que você escolheu, fundamentados."],
     ["As 10 alíneas da lei", "Art. 6º, XXIII: execução, gestão, medição e pagamento, seleção, valor e orçamento."],
     ["Conferência e Word", "O agente revisa o próprio texto, lista pendências e entrega em Word e PDF."] ],
@@ -9967,27 +9981,39 @@ class Component extends DCLogic {
             bruto: ok[k], outro: ok[k + "_outro"] || "", par: ELAB_PARES[k] ? [ELAB_PARES[k], ok[ELAB_PARES[k]] || ""] : null, marcado: false }));
         if (reap.length) reap.docAnterior = (ELAB[u.doc] || {}).sigla || "";
       } catch (e) { reap = []; }
-      // TR ou Projeto Básico: a forma de contratação recomendada no último ETP concluído entra como sugestão para marcar
-      if (doc !== "etp") {
-        const etp = (this.state.analises || []).find((a) => a.documento === "etp" && a.status === "concluida" && a.resumo && a.resumo.recomendacao);
-        const rec = etp ? etp.resumo.recomendacao : null;
-        if (rec) {
-          const ant = reap.docAnterior;
-          [["selecao", rec.modalidade], ["criterio", rec.criterio]].forEach(([k, v]) => {
-            const c = (ELAB_RAPIDO[doc] || []).find((x) => x.k === k);
-            if (!v || !c || !(c.op || []).includes(v)) return;
-            reap = reap.filter((x) => x.k !== k);
-            reap.unshift({ k, rot: ELAB_ROT[k] + " (recomendação do ETP)", valor: v + (etp.resumo.objeto ? " · ETP de " + String(etp.resumo.objeto).slice(0, 60) : ""),
-              bruto: v, outro: "", par: null, marcado: false });
-          });
-          reap.docAnterior = ant || "ETP";
-        }
+    }
+    // TR ou Projeto Básico: o último ETP concluído aqui no site entra como sugestão para marcar (mesmo com rascunho:
+    // só os campos ainda vazios), com a forma de contratação recomendada por ele
+    if (doc !== "etp") {
+      const etp = (this.state.analises || []).find((a) => a.documento === "etp" && a.status === "concluida" && a.resumo);
+      const pt = (etp && etp.resumo.para_tr) || {}, rec = (etp && etp.resumo.recomendacao) || {};
+      if (etp && (Object.keys(pt).length || rec.modalidade)) {
+        const ant = reap.docAnterior, data = etp.criado_em ? new Date(etp.criado_em).toLocaleDateString("pt-BR") : "";
+        const nec = [ "ETP elaborado em " + (data || "data a indicar") + (pt.processo ? " (processo " + pt.processo + ")" : ""),
+          pt.necessidade ? "Necessidade: " + pt.necessidade : "", pt.solucao ? "Solução escolhida: " + pt.solucao : ""].filter(Boolean).map((t) => String(t).trim().replace(/\.+$/, "")).join(". ") + ".";
+        const valorEtp = typeof pt.custo_total === "number" && pt.custo_total > 0 ? brlSimples(pt.custo_total) + " (estimativa do ETP; confirme com a pesquisa de preços)" : "";
+        const sug = [["objeto", pt.objeto], ["necessidade", nec], ["quantidades", pt.quantidades], ["especificacoes", pt.especificacoes],
+          ["natureza", pt.natureza], ["prazo", pt.prazo, pt.prazo_outro], ["valor", valorEtp], ["adjudicacao", pt.adjudicacao],
+          ["selecao", rec.modalidade], ["criterio", rec.criterio]];
+        const novos = [];
+        sug.forEach(([k, v, outro]) => {
+          const c = (ELAB_RAPIDO[doc] || []).find((x) => x.k === k);
+          if (!v || !c || String(rasc[k] || "").trim()) return;
+          if (c.tipo === "chips" && !(c.op || []).includes(v)) return;
+          reap = reap.filter((x) => x.k !== k);
+          novos.push({ k, rot: (ELAB_ROT[k] || c.rot) + " (do ETP)", valor: String(v).slice(0, 220) + (String(v).length > 220 ? "…" : "") + (outro ? " (" + outro + ")" : ""),
+            bruto: v, outro: outro || "", par: null, marcado: true });
+        });
+        reap = novos.concat(reap);
+        reap.docAnterior = ant || "ETP";
+        if (novos.length) reap.etp = String(pt.objeto || etp.resumo.objeto || "").slice(0, 80);
       }
     }
+    if (doc !== "etp") this.pcaCarregar();
     const p = this.state.perfil || {};
     const base = temRasc ? rasc : {};
     if (!base.orgao && p.orgao) base.orgao = p.orgao;
-    this.setState({ el: { doc, passo: 0, maxPasso: 0, respostas: base, rascunho: temRasc, reap, reapAnterior: reap.docAnterior || "", reapAberto: reap.length > 0,
+    this.setState({ el: { doc, passo: 0, maxPasso: 0, respostas: base, rascunho: temRasc, reap, reapAnterior: reap.docAnterior || "", reapEtp: reap.etp || "", reapAberto: reap.length > 0,
       aceite: false, enviando: false, erro: "", ok: "" } });
     try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {}
   }
@@ -10000,6 +10026,7 @@ class Component extends DCLogic {
     this.setState((s) => {
       const respostas = { ...s.el.respostas };
       if (usar) s.el.reap.filter((x) => x.marcado).forEach((x) => { respostas[x.k] = x.bruto; if (x.outro) respostas[x.k + "_outro"] = x.outro; if (x.par) respostas[x.par[0]] = x.par[1]; });
+      if (usar) { try { localStorage.setItem("lv-elab-" + s.el.doc, JSON.stringify(respostas)); } catch (e) {} }
       return { el: { ...s.el, respostas, reapAberto: false } };
     });
   }
@@ -10010,6 +10037,13 @@ class Component extends DCLogic {
     this.setState((s) => ({ el: { ...s.el, respostas: p.orgao ? { orgao: p.orgao } : {}, rascunho: false, erro: "" } }));
   }
 
+  elResponderVarios(obj) {
+    this.setState((s) => {
+      const respostas = { ...s.el.respostas, ...obj };
+      try { localStorage.setItem("lv-elab-" + s.el.doc, JSON.stringify(respostas)); } catch (er) {}
+      return { el: { ...s.el, respostas, erro: "", triagemOk: false } };
+    });
+  }
   elResponder = (k) => (e) => {
     const v = e && e.target ? e.target.value : e;
     this.setState((s) => {
@@ -15373,10 +15407,22 @@ class Component extends DCLogic {
               valor: v, onInput: this.elResponder(c.k),
               op: (c.op || []).map((nome) => ({ nome, sel: sel.includes(nome), escolher: () => alterna(nome) })),
               aviso: c.aviso ? c.aviso(R) : "",
-              mostraOutro: !!c.outro && sel.includes("Outro"), outroValor: R[c.k + "_outro"] || "", onOutro: this.elResponder(c.k + "_outro") };
+              mostraOutro: !!c.outro && sel.includes("Outro"), outroValor: R[c.k + "_outro"] || "", onOutro: this.elResponder(c.k + "_outro"),
+              ...(() => {
+                const pl = c.pca ? ((s.pca && s.pca.lista) || []).filter((i) => i.situacao !== "cancelado" && i.situacao !== "contratado") : [];
+                if (!pl.length) return { temPca: false, pcaOps: [], onPca: () => {} };
+                const ord = pl.slice().sort((a, b) => b.ano - a.ano || String(a.setor).localeCompare(String(b.setor)));
+                return { temPca: true,
+                  pcaOps: [{ id: "", nome: "Escolher do PCA cadastrado no site (" + ord.length + (ord.length === 1 ? " item" : " itens") + ")…", sel: !R.pca_ref }].concat(ord.map((i) => ({ id: i.id,
+                    nome: i.ano + " · " + i.setor + " · " + String(i.descricao).slice(0, 70) + " (" + brlSimples(Number(i.valor) || 0) + ")", sel: R.pca_ref === i.id }))),
+                  onPca: (e) => { const it = ord.find((i) => i.id === e.target.value);
+                    this.elResponderVarios(it ? { pca_ref: it.id, pca_ano: String(it.ano), pca: "Sim",
+                      pca_item: "PCA " + it.ano + ", " + it.setor + ": " + String(it.descricao).slice(0, 160) + ", valor previsto de " + brlSimples(Number(it.valor) || 0) }
+                      : { pca_ref: "", pca_ano: "", pca_item: "" }); } };
+              })() };
           };
             const et = (ELAB_ETAPAS[el.doc] || [])[el.passo || 0] || {};
-            const vis = (c) => c.etapa === et.id && !(c.seParc && String(R.parcelamento || "").startsWith("Analisar"));
+            const vis = (c) => c.etapa === et.id && !(c.seParc && String(R.parcelamento || "").startsWith("Analisar")) && !(c.seCompra && R.natureza !== "Compra");
             return { elCamposA: (ELAB_RAPIDO[el.doc] || []).filter((c) => vis(c) && !c.depois).map(mapa),
                      elCamposB: (ELAB_RAPIDO[el.doc] || []).filter((c) => vis(c) && c.depois).map(mapa) };
           })(),
@@ -15560,6 +15606,10 @@ class Component extends DCLogic {
           })(),
           elReapAberto: !!el.reapAberto, elRascunho: !!el.rascunho, elEmBranco: () => this.elEmBranco(),
           elReapDe: el.reapAnterior ? " (" + el.reapAnterior + ")" : "",
+          elReapTitulo: el.reapEtp ? "Puxar os dados do ETP feito aqui no site?" : "Quer aproveitar algo do seu último documento" + (el.reapAnterior ? " (" + el.reapAnterior + ")" : "") + "?",
+          elReapTexto: el.reapEtp ? "ETP de " + el.reapEtp + ". O que vem do estudo já está marcado: desmarque o que mudou. Confira as quantidades e as especificações antes de seguir."
+            : "Cada contratação tem suas particularidades. Marque só o que vale também para esta; o resto começa em branco.",
+          elReapNaoTxt: el.rascunho ? "Agora não" : "Começar em branco",
           elReapLista: (el.reap || []).map((x) => ({ rot: x.rot, valor: x.valor.length > 140 ? x.valor.slice(0, 140) + "…" : x.valor, marcado: !!x.marcado, marcar: () => this.elReapMarcar(x.k) })),
           elReapUsar: () => this.elReapAplicar(true), elReapNao: () => this.elReapAplicar(false),
           elCondicao: condicao,
