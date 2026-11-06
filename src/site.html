@@ -1965,6 +1965,14 @@
   /* abas no mesmo conceito da visão geral: quadro creme, faixa de indicadores e cartões de gráfico */
   .gx-aba { margin-bottom: 14px; }
   .gx-aba > * { grid-column: 1 / -1; min-width: 0; } .gx-aba > .gp-grade { gap: 14px; }
+  .gx-hd:has(.gx-hbar), .gx-hd:has(.gx-hspark) { display: flex; flex-direction: column; } .gx-hd:has(.gx-hbar) > em, .gx-hd:has(.gx-hspark) > em { flex: 1; }
+  .gx-hd:has(.gx-hbar)::after, .gx-hd:has(.gx-hspark)::after { display: none; }
+  .gx-hbar { display: block; height: 5px; margin-top: 8px; border-radius: 3px; background: #EEF0F4; overflow: hidden; }
+  .gx-hbar > span { display: block; height: 100%; border-radius: 3px; background: #3F48A8; }
+  .gx-hd.ok .gx-hbar > span { background: #18A574; } .gx-hd.at .gx-hbar > span { background: #E7A43A; } .gx-hd.er .gx-hbar > span { background: #D9473F; }
+  .gx-hspark { display: block; width: 100%; height: 22px; margin-top: 5px; overflow: visible; }
+  .gx-hspark .l { fill: none; stroke: #3F48A8; stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; } .gx-hspark .a { fill: rgba(63, 72, 168, .1); stroke: none; }
+  .gx-hd.at .gx-hspark .l { stroke: #E7A43A; } .gx-hd.at .gx-hspark .a { fill: rgba(231, 164, 58, .12); }
   .gx-aba > .gx-head-4, .gx-head-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } .gx-head-4 .gx-hd:nth-child(4n) { border-right: 0; } .gx-head-4 .gx-hd:nth-child(-n+4):not(:last-child) { border-bottom: 1px solid #EFECE4; }
   .gx-aba .gp-card { background: #fff; border: 1px solid #E6E3DA; border-radius: 14px; box-shadow: none; padding: 14px 16px; }
   .gx-aba .gp-card:hover { border-color: #D9D4C7; }
@@ -5035,7 +5043,7 @@
         <sc-if value="{{ gpVazio }}" hint-placeholder-val="{{ false }}"><p class="gp-sub">Nenhum contrato com esses filtros.</p></sc-if>
         <sc-if value="{{ gpAbaGeral }}" hint-placeholder-val="{{ true }}">
         <div class="gx">
-          <div class="gx-head"><sc-for list="{{ gxHead }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em></div></sc-for></div>
+          <div class="gx-head"><sc-for list="{{ gxHead }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em><sc-if value="{{ h.temBar }}" hint-placeholder-val="{{ false }}"><span class="gx-hbar"><span style="{{ h.barSt }}"></span></span></sc-if><sc-if value="{{ h.temSpark }}" hint-placeholder-val="{{ false }}"><svg class="gx-hspark" sc-camel-view-box="0 0 100 24" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><path sc-camel-d="{{ h.sparkArea }}" class="a"></path><path sc-camel-d="{{ h.spark }}" class="l"></path></svg></sc-if></div></sc-for></div>
           <div class="gx-c gx-8">
             <div class="gx-t"><h3>{{ gxAreaTit }}</h3><span class="gx-leg"><i style="background: #3F48A8"></i>valor original<i style="background: #E8734A"></i>reajustes, revisões e aditivos<i class="gx-leg-f"></i>projeção</span></div>
             <div class="gx-area">
@@ -5097,7 +5105,7 @@
         </sc-if>
         <sc-if value="{{ gpAbaPrazos }}" hint-placeholder-val="{{ false }}">
         <div class="gx gx-aba">
-          <div class="gx-head"><sc-for list="{{ gxHPrazos }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em></div></sc-for></div>
+          <div class="gx-head"><sc-for list="{{ gxHPrazos }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em><sc-if value="{{ h.temBar }}" hint-placeholder-val="{{ false }}"><span class="gx-hbar"><span style="{{ h.barSt }}"></span></span></sc-if><sc-if value="{{ h.temSpark }}" hint-placeholder-val="{{ false }}"><svg class="gx-hspark" sc-camel-view-box="0 0 100 24" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><path sc-camel-d="{{ h.sparkArea }}" class="a"></path><path sc-camel-d="{{ h.spark }}" class="l"></path></svg></sc-if></div></sc-for></div>
           <div class="gx-c gx-12">
           <div class="gx-t"><h3>Linha do tempo · próximos 120 dias</h3><span class="gx-leg gx-leg-m"><i style="background: #D9473F"></i>prazo processual<i style="background: #E8734A"></i>fim da vigência<i style="background: #E7A43A"></i>iniciar prorrogação<i style="background: #3F48A8"></i>anualidade<i style="background: #1E9AB0"></i>pedido ao órgão</span></div>
           <div class="gx-tl" style="{{ gxTlH }}"><sc-for list="{{ gxTlMarcas }}" as="m" hint-placeholder-count="5"><span class="{{ m.cls }}" style="left: {{ m.l }}"><b>{{ m.rot }}</b></span></sc-for><span class="gx-tl-hoje">hoje</span>
@@ -5154,7 +5162,7 @@
         </sc-if>
         <sc-if value="{{ gpAbaContr }}" hint-placeholder-val="{{ false }}">
         <div class="gx gx-aba">
-          <div class="gx-head"><sc-for list="{{ gxHContr }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em></div></sc-for></div>
+          <div class="gx-head"><sc-for list="{{ gxHContr }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em><sc-if value="{{ h.temBar }}" hint-placeholder-val="{{ false }}"><span class="gx-hbar"><span style="{{ h.barSt }}"></span></span></sc-if><sc-if value="{{ h.temSpark }}" hint-placeholder-val="{{ false }}"><svg class="gx-hspark" sc-camel-view-box="0 0 100 24" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><path sc-camel-d="{{ h.sparkArea }}" class="a"></path><path sc-camel-d="{{ h.spark }}" class="l"></path></svg></sc-if></div></sc-for></div>
         <div class="gp-grade">
           <div class="gp-card gx-card"><h3>Modalidade · participação no valor</h3>
             <div class="gx-ros"><div class="gx-ros-g"><svg sc-camel-view-box="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="16"></circle><sc-for list="{{ gxModR }}" as="r" hint-placeholder-count="4"><circle cx="60" cy="60" r="42" fill="none" sc-camel-stroke="{{ r.cor }}" sc-camel-stroke-width="16" sc-camel-stroke-dasharray="{{ r.dash }}" sc-camel-stroke-dashoffset="{{ r.off }}" transform="rotate(-90 60 60)"></circle></sc-for></svg><span><b>{{ gxModN }}</b>modalidades</span></div>
@@ -5248,7 +5256,7 @@
               <sc-if value="{{ pcaVazio }}" hint-placeholder-val="{{ false }}"><div class="gp-card"><h3>Nenhum item no PCA {{ pcaAno }}</h3><p class="gp-sub">Cadastre os itens aprovados no Plano de Contratações Anual, ou cole a lista do Excel, para acompanhar quanto cada secretaria já contratou e quanto ainda pode contratar. Vincule cada contrato ao item do PCA no cadastro do contrato; sem vínculo, o contrato entra pelo setor requisitante.</p></div></sc-if>
               <sc-if value="{{ pcaTem }}" hint-placeholder-val="{{ true }}">
                 <div class="gx gx-aba">
-                <div class="gx-head gx-head-4"><sc-for list="{{ pcaHead }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em></div></sc-for></div>
+                <div class="gx-head gx-head-4"><sc-for list="{{ pcaHead }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em><sc-if value="{{ h.temBar }}" hint-placeholder-val="{{ false }}"><span class="gx-hbar"><span style="{{ h.barSt }}"></span></span></sc-if><sc-if value="{{ h.temSpark }}" hint-placeholder-val="{{ false }}"><svg class="gx-hspark" sc-camel-view-box="0 0 100 24" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><path sc-camel-d="{{ h.sparkArea }}" class="a"></path><path sc-camel-d="{{ h.spark }}" class="l"></path></svg></sc-if></div></sc-for></div>
                 <div class="gp-grade">
                   <div class="gp-card gx-card"><h3>Execução do PCA {{ pcaAno }}</h3>
                     <div class="gx-ros"><div class="gx-ros-g"><svg sc-camel-view-box="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="16"></circle><sc-for list="{{ pcaRosca }}" as="r" hint-placeholder-count="2"><circle cx="60" cy="60" r="42" fill="none" sc-camel-stroke="{{ r.cor }}" sc-camel-stroke-width="16" sc-camel-stroke-dasharray="{{ r.dash }}" sc-camel-stroke-dashoffset="{{ r.off }}" transform="rotate(-90 60 60)"></circle></sc-for></svg><span><b>{{ pcaUsoP }}</b>executado</span></div>
@@ -5286,7 +5294,7 @@
             </section>
             </sc-if>
             <div class="{{ ctCremeCls }}">
-            <sc-if value="{{ ctAbaContratos }}" hint-placeholder-val="{{ true }}"><div class="gx-head"><sc-for list="{{ ctHead }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em></div></sc-for></div></sc-if>
+            <sc-if value="{{ ctAbaContratos }}" hint-placeholder-val="{{ true }}"><div class="gx-head"><sc-for list="{{ ctHead }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em><sc-if value="{{ h.temBar }}" hint-placeholder-val="{{ false }}"><span class="gx-hbar"><span style="{{ h.barSt }}"></span></span></sc-if><sc-if value="{{ h.temSpark }}" hint-placeholder-val="{{ false }}"><svg class="gx-hspark" sc-camel-view-box="0 0 100 24" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><path sc-camel-d="{{ h.sparkArea }}" class="a"></path><path sc-camel-d="{{ h.spark }}" class="l"></path></svg></sc-if></div></sc-for></div></sc-if>
             <sc-if value="{{ ctAbaContratos }}" hint-placeholder-val="{{ true }}">
             <section class="gcs gx-c gx-12" id="gcs">
               <h2 class="lva-h2">Situação de cada contrato, de relance</h2>
@@ -9076,6 +9084,11 @@ function pcaCalendario(anoExec, hoje) {
 const GX_COR = { navy: "#1F2A4D", indigo: "#3F48A8", roxo: "#7A68C8", coral: "#E8734A", ambar: "#E7A43A", verde: "#18A574", teal: "#1E9AB0", cinza: "#B9C3C9", vermelho: "#D9473F" };
 const GX_PALETA = ["#3F48A8", "#E8734A", "#1E9AB0", "#7A68C8", "#E7A43A", "#18A574", "#1F2A4D", "#C2577A"];
 // curva suave (Catmull-Rom → Bézier) por uma lista de pontos [x, y]
+// minigráfico das faixas do topo das abas: barra de proporção (0 a 1) e/ou linha de tendência (path em 100×24)
+function gxHB(h, p, spark) {
+  const v = p == null || !isFinite(p) ? null : Math.max(0, Math.min(1, p));
+  return { ...h, temBar: v != null && !spark, barSt: v != null ? "width: " + Math.max(2, v * 100).toFixed(1) + "%" : "", temSpark: !!spark, spark: spark || "", sparkArea: spark ? spark + " L100 24 L0 24 Z" : "" };
+}
 function gxSuave(pts) {
   if (!pts.length) return ""; let d = "M" + pts[0][0].toFixed(1) + " " + pts[0][1].toFixed(1);
   for (let i = 0; i < pts.length - 1; i++) { const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
@@ -11439,7 +11452,7 @@ class Component extends DCLogic {
       pcaSitCols: (() => { const g = { planejado: [0, 0], em_contratacao: [0, 0], contratado: [0, 0], cancelado: [0, 0] }; P.itens.forEach((i) => { const k = g[i.sitEf] ? i.sitEf : "planejado"; g[k][0]++; g[k][1] += Number(i.valor) || 0; });
         const mx = Math.max(1, ...Object.values(g).map((x) => x[1])), cor = { planejado: "#B9C3C9", em_contratacao: "#E7A43A", contratado: "#3F48A8", cancelado: "#D9473F" }, rot = { planejado: "Planejado", em_contratacao: "Em contratação", contratado: "Contratado", cancelado: "Cancelado" };
         return Object.keys(g).map((k) => ({ rot: rot[k], n: g[k][0] + " · " + brlC(g[k][1]), h: "height: " + (g[k][1] ? Math.max(6, g[k][1] / mx * 100) : 0).toFixed(1) + "%; background: " + cor[k], tit: g[k][0] + " item(ns)" })); })(),
-      pcaHead: [["PCA " + ano, brlC(P.plan), P.nItens + (P.nItens === 1 ? " item" : " itens") + " planejados", ""], ["Contratado", brlC(P.cont), pc(P.uso) + " do planejado", P.uso > 1 ? "er" : "ok"], [P.saldo >= 0 ? "Saldo disponível" : "Acima do PCA", brlC(Math.abs(P.saldo)), P.saldo >= 0 ? "para contratar" : "além do planejado", P.saldo >= 0 ? "ok" : "er"], ["Fora do PCA", String(P.fora.length), P.fora.length ? "contratos sem item vinculado" : "todos vinculados", P.fora.length ? "at" : "ok"]].map(([k, v, d, c]) => ({ k, v, d, cls: "gx-hd " + c })),
+      pcaHead: [["PCA " + ano, brlC(P.plan), P.nItens + (P.nItens === 1 ? " item" : " itens") + " planejados", ""], ["Contratado", brlC(P.cont), pc(P.uso) + " do planejado", P.uso > 1 ? "er" : "ok"], [P.saldo >= 0 ? "Saldo disponível" : "Acima do PCA", brlC(Math.abs(P.saldo)), P.saldo >= 0 ? "para contratar" : "além do planejado", P.saldo >= 0 ? "ok" : "er"], ["Fora do PCA", String(P.fora.length), P.fora.length ? "contratos sem item vinculado" : "todos vinculados", P.fora.length ? "at" : "ok"]].map(([k, v, d, c], i) => gxHB({ k, v, d, cls: "gx-hd " + c }, [null, P.plan ? P.cont / P.plan : null, P.plan ? Math.max(0, P.saldo) / P.plan : null, null][i])),
       pcaTemSetores: P.lista.length > 0, pcaFiltro: setorSel ? "Itens de " + ((P.lista.find((g) => g.k === setorSel) || {}).nome || setorSel) : "Todos os itens do PCA " + ano, pcaTemFiltro: !!setorSel, pcaLimpar: () => set({ setor: "" }),
       pcaItens: mostra.map((i) => ({ desc: i.descricao, setor: i.setor, prio: { alta: "Alta", media: "Média", baixa: "Baixa" }[i.prioridade] || "Média", prioCls: "pca-pr " + i.prioridade, mes: i.mes ? MES[i.mes] + "/" + ano : "—", valor: brl(i.valor),
         sit: { planejado: "Planejado", em_contratacao: "Em contratação", contratado: "Contratado", cancelado: "Cancelado" }[i.sitEf], sitCls: "pca-st " + i.sitEf, ct: i.contratos.length ? "Contrato " + i.contratos.map((c) => c.numero).join(", ") : "",
@@ -13682,6 +13695,13 @@ class Component extends DCLogic {
             };
             const gauge = (frac, cor, v, d) => ({ dash: (Math.max(0, Math.min(1, frac)) * 157.08).toFixed(1) + " 157.08", cor, v, d });
             const pas = E.meses.filter((m) => !m.fut), mxS = Math.max(1, ...pas.map((m) => m.t)), ptsS = pas.map((m, i) => [i / Math.max(1, pas.length - 1) * 300, 86 - (m.t / mxS) * 78]);
+            // minigráficos das faixas do topo (Geral, Prazos e riscos, Contratações e fornecedores)
+            { const fr = (a, b) => (b ? a / b : 0), ult = pas.slice(-12), mxOC = Math.max(G.original, G.custo) || 1, modT = G.porMod.reduce((a, g) => a + g.v, 0), setT = G.porSetor.reduce((a, g) => a + g.v, 0);
+              const sp = ult.length < 2 ? "" : (() => { const mx = Math.max(...ult.map((m) => m.t)), mn = Math.min(...ult.map((m) => m.t)); return ult.map((m, i) => (i ? "L" : "M") + (i / (ult.length - 1) * 100).toFixed(1) + " " + (21 - ((m.t - mn) / Math.max(1, mx - mn)) * 17).toFixed(1)).join(" "); })();
+              gx.gxHead = gx.gxHead.map((h, i) => gxHB(h, [fr(G.cnt.vig + G.cnt.ven, G.n), G.original / mxOC, G.custo / mxOC, null, fr(G.pend, G.n), fr(E.prev.sem, E.prev.v)][i], i === 3 ? sp : ""));
+              gx3.gxHPrazos = gx3.gxHPrazos.map((h, i) => gxHB(h, [fr(urg, E.prazos.length), fr(atrP, E.pedidos.length), fr(somaRisco, G.custo), fr(E.pend.length, G.n), fr(E.atrasos.length, G.n), maxUso ? maxUso.uso : null][i]));
+              const setMax = G.porSetor.filter((g) => g.k !== "(sem setor)")[0];
+              gx3.gxHContr = gx3.gxHContr.map((h, i) => gxHB(h, [G.porMod[0] ? fr(G.porMod[0].v, modT) : null, G.partes[0] ? fr(G.partes[0].v, G.custo) : null, G.conc5, emp ? null : fr(G.diretas, G.n), setMax ? fr(setMax.v, setT) : null, fr(E.nPen, G.n)][i])); }
             const linhaS = gxSuave(ptsS), ymS = (n) => ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"][n % 12] + "/" + String(Math.floor(n / 12)).slice(2);
             const vigG = G.X.filter((x) => x.sit === "vig" || x.sit === "ven"), comR = vigG.filter((x) => String((emp ? x.c.gestor : x.c.fiscal) || "").trim()).length;
             const top5 = G.partes.slice(0, 5).reduce((a, g) => a + g.v, 0), dirN = G.diretas, compN = G.n - G.diretas;
@@ -13927,7 +13947,7 @@ class Component extends DCLogic {
         const ag30 = agenda.filter((it) => it.dias != null && it.dias <= 30).length, mensalV = ct.lista.reduce((a, c) => { if (c.periodicidade !== "mensal") return a; const si = ctSituacao(c, ct.eventos[c.id]); return si.vencido || si.valor == null ? a : a + Number(si.valor); }, 0);
         const fmtC = (v) => { const a = Math.abs(v); return a >= 1e6 ? "R$ " + (v / 1e6).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " mi" : a >= 1e4 ? "R$ " + (v / 1e3).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " mil" : brl(v); };
         const ctHead = [["Contratos", String(lista.length), "na carteira", ""], ["Vigentes", String(nSt("vig")), "mais de 4 meses", "ok"], ["Vencendo", String(nSt("ven")), "até 4 meses", nSt("ven") ? "at" : "ok"], ["Vencidos", String(nSt("exp")), "vigência encerrada", nSt("exp") ? "er" : "ok"],
-          ["Valor mensal vigente", fmtC(mensalV), "contratos mensais", ""], ["Prazos em 30 dias", String(ag30), "na agenda", ag30 ? "at" : "ok"]].map(([k, v, d, c]) => ({ k, v, d, cls: "gx-hd " + c }));
+          ["Valor mensal vigente", fmtC(mensalV), "contratos mensais", ""], ["Prazos em 30 dias", String(ag30), "na agenda", ag30 ? "at" : "ok"]].map(([k, v, d, c], i) => gxHB({ k, v, d, cls: "gx-hd " + c }, lista.length ? [null, nSt("vig") / lista.length, nSt("ven") / lista.length, nSt("exp") / lista.length, null, null][i] : null));
         const listaF = ctFil === "todos" ? lista : lista.filter((x) => x.stK === ctFil);
         const ctEmp = this.ctVisao() === "empresa";
         const soIds = ct.so || null, modoUm = !!soIds, listaUm = modoUm ? lista.filter((x) => soIds.includes(x.id)) : [];
