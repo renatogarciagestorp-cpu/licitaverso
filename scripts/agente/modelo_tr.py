@@ -11,7 +11,7 @@ só ficam quando a contratação dispensar o termo de contrato (art. 95 da Lei 1
 Os índices dos parágrafos abaixo são os do modelo de dez/2025; conferir() verifica o início de cada um e acusa se a AGU
 mudar o arquivo.
 """
-import copy, datetime, pathlib, re
+import copy, datetime, json, pathlib, re
 
 RAIZ = pathlib.Path(__file__).resolve().parents[2]
 MODELO = RAIZ / "agente" / "modelos" / "tr-compras-agu.docx"
@@ -206,6 +206,32 @@ def simulado(respostas):
 
 
 # ------------------------------------------------------------------------------------------------- preenchimento do Word
+def itens_da_pesquisa(R):
+    """Itens que vieram da Pesquisa de preços do site (descrição, unidade, quantidade, preço unitário, CATMAT e lote)."""
+    try:
+        lista = json.loads(R.get("itens_pp") or "[]")
+    except Exception:
+        return []
+    return [x for x in lista if isinstance(x, dict) and (x.get("desc") or "").strip()]
+
+
+def mesclar_itens(itens_agente, pp):
+    """A tabela do item 1.1 segue a pesquisa de preços: quantidade, unidade, preço e CATMAT nunca vêm do agente.
+    A especificação redigida pelo agente é aproveitada quando o número de itens bate."""
+    if not pp:
+        return itens_agente or []
+    ag = itens_agente or []
+    mesmo = len(ag) == len(pp)
+    out = []
+    for i, x in enumerate(pp):
+        espec = (ag[i].get("especificacao") if mesmo else "") or x.get("desc")
+        lote = (x.get("lote") or "").strip()
+        out.append({"item": str(x.get("n") or i + 1), "especificacao": (lote + " – " if lote else "") + espec,
+                    "catmat": str(x.get("catmat") or ""), "unidade": x.get("un") or "unidade",
+                    "quantidade": x.get("qtd"), "valor_unitario": x.get("vu")})
+    return out
+
+
 def gerar(docj, respostas, saida, logo=None):
     from docx import Document
     from docx.oxml.ns import qn
@@ -230,8 +256,22 @@ def gerar(docj, respostas, saida, logo=None):
     gb = docj.get("garantia_bem") or {}
     sel = docj.get("selecao") or {}
     hab = docj.get("habilitacao") or {}
-    est = docj.get("estimativa") or {}
-    dot = docj.get("dotacao") or {}
+    est = dict(docj.get("estimativa") or {})
+    pp = itens_da_pesquisa(R)
+    itens_tab = mesclar_itens(docj.get("itens"), pp)
+    if pp:  # o valor total é o da pesquisa, item a item
+        tot = sum(float(x.get("qtd") or 0) * float(x.get("vu") or 0) for x in pp)
+        if tot > 0:
+            est["valor_total"] = round(tot, 2)
+    dot = dict(docj.get("dotacao") or {})
+    # dotação informada no formulário vai direto ao item 11 (prevalece sobre o texto do agente)
+    resolvidas = []
+    for k, rk, chave in (("gestao", "dot_unidade", "unidade"), ("programa", "dot_programa", "programa de trabalho"),
+                         ("elemento", "dot_elemento", "elemento de despesa"), ("fonte", "dot_fonte", "fonte de recursos")):
+        if (R.get(rk) or "").strip():
+            dot[k] = R[rk].strip().rstrip(";.")
+            dot["informar"] = True
+            resolvidas.append(chave)
     mul = docj.get("multas") or {}
     rec = docj.get("recebimento") or {}
     am = docj.get("amostra") or {}
@@ -479,13 +519,13 @@ def gerar(docj, respostas, saida, logo=None):
         apagar.add(372)
         if not fed:
             textos[363] = f"As despesas decorrentes da presente contratação correrão à conta de recursos específicos consignados no orçamento do(a) {R.get('orgao') or 'Contratante'}."
-        for i, (rot, k) in zip(range(365, 370), [("Gestão/unidade", "gestao"), ("Fonte de recursos", "fonte"), ("Programa de trabalho", "programa"),
+        for i, (rot, k) in zip(range(365, 370), [("Gestão/unidade" if fed else "Unidade orçamentária", "gestao"), ("Fonte de recursos", "fonte"), ("Programa de trabalho", "programa"),
                                                  ("Elemento de despesa", "elemento"), ("Plano interno", "plano_interno")]):
             # gestão/unidade e plano interno são da estrutura federal: fora dela, só entram se o órgão informou
             if dot.get(k) and not (not fed and k in ("gestao", "plano_interno") and "PREENCHER" in str(dot[k])):
                 textos[i] = f"{rot}: {dot[k]};"
             elif dot.get(k):
-                fora_da_estrutura.append(rot.split("/")[0].lower())
+                fora_da_estrutura.append("gestão" if k == "gestao" else rot.split("/")[0].lower())
             else:
                 apagar.add(i)
     else:
@@ -557,7 +597,7 @@ def gerar(docj, respostas, saida, logo=None):
             escrever(Paragraph(novo, P[i]._parent), t)
             ant = novo
     # tabela de itens (1.1)
-    preencher_itens(T[0], docj.get("itens") or [], est.get("sigiloso"))
+    preencher_itens(T[0], itens_tab, est.get("sigiloso"))
     if not apagar_tab4 and ent.get("parcelas"):
         preencher_linhas(T[4], [[x.get("parcela", ""), x.get("composicao", ""), x.get("prazo", "")] for x in ent["parcelas"]])
     for k in sorted(apagar_tabelas | ({4} if apagar_tab4 else set()), reverse=True):
@@ -632,7 +672,9 @@ def gerar(docj, respostas, saida, logo=None):
             print(f"logo não incluída ({type(e).__name__})")
     # pendências: anexo final, para retirar antes de juntar ao processo
     pend = [x for x in docj.get("pendencias") or [] if str(x).strip()
-            and not any(f in str(x).lower() for f in fora_da_estrutura)]
+            and not any(f in str(x).lower() for f in fora_da_estrutura)
+            and not (resolvidas and str(x).lower().startswith(tuple(resolvidas)))
+            and not (len(resolvidas) >= 3 and str(x).lower().startswith("dotação"))]
     if pend:
         from docx.enum.text import WD_BREAK
         p = d.add_paragraph(); p.add_run().add_break(WD_BREAK.PAGE)

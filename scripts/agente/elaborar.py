@@ -69,7 +69,7 @@ CAMPOS_ROTULO = {
     "metodos": "Métodos construtivos", "plano_obra": "Plano da obra",
     "prazo": "Prazo", "prazo_outro": "Prazo (detalhe)", "prazo_entrega": "Prazo de entrega", "garantia_bem": "Garantia do produto",
     "garantia_bem_outro": "Garantia do produto (detalhe)", "amostra": "Exigir amostra", "instrumento": "Instrumento da contratação (contrato ou nota de empenho, art. 95)",
-    "pca_item": "Item do Plano de Contratações Anual", "pca_ano": "Ano do PCA", "data_orcamento": "Data do orçamento estimado", "indice": "Índice de reajuste", "observacoes": "Observações do requisitante",
+    "pca_item": "Item do Plano de Contratações Anual", "itens_pp": "Itens da pesquisa de preços", "dot_unidade": "Unidade orçamentária", "dot_programa": "Programa de trabalho", "dot_elemento": "Elemento de despesa", "dot_fonte": "Fonte de recursos", "pca_ano": "Ano do PCA", "data_orcamento": "Data do orçamento estimado", "indice": "Índice de reajuste", "observacoes": "Observações do requisitante",
     "parc_motivo": "Motivo do parcelamento ou não (escolha do requisitante)", "adjudicacao": "Forma de adjudicação (escolha do requisitante)",
     "criterio": "Critério de julgamento (escolha do requisitante)", "regime_exec": "Regime de execução (escolha do requisitante)",
     "local": "Local da obra ou serviço", "municipio": "Município", "autoridade": "Autoridade que aprova o documento",
@@ -183,6 +183,16 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
     roteiro = an.carregar_roteiro("lei-14133")
     itens, _ = an.montar_itens(roteiro, d["roteiro"], "lei-14133", d["objetos"])
     def valor_legivel(k, v):
+        if k == "itens_pp":
+            try:
+                lista = json.loads(v)
+                return ("itens e preços FECHADOS pela pesquisa de preços (não altere quantidade, unidade, preço nem a ordem; redija em itens[] uma "
+                        "especificação objetiva para cada um, na mesma ordem e com o mesmo número de itens):" +
+                        "".join(f"\n    {x.get('n')}) {(x.get('lote') + ' · ') if x.get('lote') else ''}{x.get('desc')} · {x.get('qtd')} {x.get('un')} · "
+                                f"R$ {float(x.get('vu') or 0):,.2f}".replace(",", "X").replace(".", ",").replace("X", ".") +
+                                (f" · CATMAT {x.get('catmat')}" if x.get('catmat') else "") for x in lista))
+            except Exception:
+                return v
         if k == "esclarecimentos":
             try:
                 return "".join(f"\n    · {x.get('tema','')}: {x.get('pergunta','')} → {x.get('resposta','')}" for x in json.loads(v))
@@ -651,13 +661,19 @@ def para_tr(docj, respostas):
             return (f"{float(n):,.2f}".rstrip("0").rstrip(".") if float(n) != int(float(n)) else f"{int(float(n)):,}").replace(",", ".")
         except (TypeError, ValueError):
             return ""
-    linhas = []
+    linhas, fora = [], []
+    servico = re.compile(r"manuten|instala|treinament|capacita|suporte|assist[eê]ncia|servi[cç]o|frete|transporte|loca[cç][aã]o|garantia estendida|mão de obra", re.I)
     for it in (docj.get("itens") or [])[:30]:
         q = fmt(it.get("quantidade"))
         un = (it.get("unidade") or "").strip()
         desc = (it.get("descricao") or it.get("item") or "").strip()
-        if desc:
-            linhas.append((f"{q} {un} – " if q else "") + desc)
+        if not desc:
+            continue
+        # no TR de compra entram só os bens: serviços e custos recorrentes do ciclo de vida ficam fora (outro TR ou contrato)
+        if natureza == "Compra" and (servico.search(f"{it.get('item') or ''} {desc}") or re.search(r"/\s*(ano|m[eê]s)", un, re.I)):
+            fora.append(desc[:80])
+            continue
+        linhas.append((f"{q} {un} – " if q else "") + desc)
     parc = str(respostas.get("parcelamento") or "")
     adj = {"Parcelar por itens": "Por item", "Parcelar por lotes": "Por lote", "Não parcelar": "Global (lote único)"}.get(parc, "")
     ct = docj.get("contratacao") or {}
@@ -665,6 +681,7 @@ def para_tr(docj, respostas):
            "necessidade": str(r.get("necessidade") or respostas.get("necessidade") or "")[:600],
            "solucao": str(r.get("solucao") or "")[:400],
            "quantidades": ("\n".join(linhas) or str(respostas.get("quantidades") or ""))[:1500],
+           "fora_da_compra": "; ".join(fora)[:400],
            "especificacoes": str(respostas.get("especificacoes") or "")[:1500],
            "natureza": natureza, "prazo": str(respostas.get("prazo") or ""), "prazo_outro": str(respostas.get("prazo_outro") or ""),
            "adjudicacao": adj, "custo_total": r.get("custo_total"),
