@@ -143,7 +143,7 @@ Deno.serve(async (req) => {
     } catch (e) { console.error("avisos: novo valor no Mercado Pago", r.id, e); precos.falhas++; }
   }
 
-  // ---------------------------------------------------------------- prazos dos contratos (Gestão contratual)
+  // ---------------------------------------------------------------- prazos dos contratos (Gestão Contratual)
   const prazos = { enviados: 0, pulados: 0, falhas: 0 };
   const { data: cts } = await admin.from("contratos")
     .select("id, usuario_id, numero, contratada, objeto, data_proposta, fim, mao_obra, data_base_cct").eq("alertas", true).limit(3000);
@@ -213,7 +213,7 @@ Deno.serve(async (req) => {
     const html = moldura(`Prazos do contrato ${esc(c.numero)}`,
       [`${primeiro}, há ${novos.length === 1 ? "um prazo" : "prazos"} para acompanhar no ${ident}:`].concat(novos.map((a) => a.texto)),
       { texto: "Ver meus contratos", url: `${SITE}index.html?p=contratos` },
-      "Você recebe este aviso porque cadastrou o contrato na Gestão contratual do Licitacon. Para parar, desmarque os avisos no cadastro do contrato ou em Minha conta → Notificações.", "Prazos dos meus contratos");
+      "Você recebe este aviso porque cadastrou o contrato na Gestão Contratual do Licitacon. Para parar, desmarque os avisos no cadastro do contrato ou em Minha conta → Notificações.", "Prazos dos meus contratos");
     try {
       await enviarEmail({ email: p.email, nome: p.nome }, `Prazos do contrato ${String(c.numero).slice(0, 40)}: ${novos.map((a) => ({ anualidade: "anualidade", convencao: "convenção coletiva", fim120: "prorrogação", fim90: "fim da vigência", fim30: "fim da vigência" } as Record<string, string>)[a.tipo]).join(", ")}`, html);
       await marcar(); prazos.enviados++;
