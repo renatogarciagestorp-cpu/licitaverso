@@ -3988,7 +3988,7 @@
                     </section>
                     <section class="lmo-bloco">
                       <h2 class="lmo-h2">Dimensionamento da equipe (cadernos técnicos)</h2>
-                      <sc-if value="{{ c.P.moPlan }}" hint-placeholder-val="{{ true }}">
+                      
                       <p class="lmo-nota" style="margin-top: 0">Nos serviços com caderno técnico de logística, informe a metragem ou os postos: a quantidade de profissionais é calculada pela fórmula do caderno e da IN 05/2017 (Anexos VI-A e VI-B).</p>
                       <div class="lmo-modos" style="margin-top: 10px"><sc-for list="{{ c.P.moDimTipos }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
                       <sc-if value="{{ c.P.moDimLimpeza }}" hint-placeholder-val="{{ false }}">
@@ -4029,8 +4029,8 @@
                         <sc-if value="{{ c.P.moLiderDuplo }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso">{{ c.P.moLiderDuplo }}</p></sc-if>
                         <p class="lmo-nota">Esta planilha calcula o custo do profissional da categoria informada acima. O preço do encarregado ou supervisor vem da planilha da respectiva categoria (faça uma Planilha 1 para ele e informe o preço total aqui).</p>
                       </sc-if>
-                      </sc-if>
-                      <sc-if value="{{ c.P.moNaoPlan }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota" style="margin-top: 0">O dimensionamento pelos cadernos técnicos é feito na fase de planejamento. Nesta planilha, a quantidade de empregados e de postos é a do contrato (quadro-resumo).</p></sc-if>
+                      
+                      
                     </section>
                     <section class="lmo-bloco">
                       <h2 class="lmo-h2">Garantia das obrigações trabalhistas</h2>
@@ -11603,7 +11603,7 @@ class Component extends DCLogic {
     // ov: planilha avulsa (coluna de "Comparar planilhas"): { mo: { modo, d }, set, mem, regime }
     const SET = ov ? ov.set : this.moSet, MEM = ov ? ov.mem : (k, fn) => this.moMemMudar(k, fn), REG = ov ? ov.regime : (id) => this.moRegime(id);
     const s = ov ? { ...this.state, mo: ov.mo, calcAba: "mo", page: "calculadora" } : this.state, mo = s.mo, d0 = mo.d, rep = mo.modo === "repactuacao", prop = mo.modo === "proposta", rj = rep ? moReajuste(d0, s.indices) : { ativo: false, fator: 1 };
-    const dim = mo.modo === "planejamento" ? moDimensionar(d0) : null;
+    const dim = mo.modo === "planejamento" || ov ? moDimensionar(d0) : null; // na comparação, o dimensionamento vale para qualquer planilha
     let d = dim && dim.tipo === "limpeza" && dim.serventes ? { ...d0, emp_posto: "1", postos: String(dim.serventes), unidade: "m²", quantidade: String(dim.area) }
       : dim && dim.tipo === "vigilancia" && dim.postos ? { ...d0, emp_posto: String(dim.porPosto), postos: String(dim.postos), unidade: "Posto", quantidade: String(dim.postos) } : d0;
     // adicionais da escala de vigilância calculados pelo caderno técnico
