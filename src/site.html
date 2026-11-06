@@ -1981,6 +1981,25 @@
   .gx-ct .gcs-c4.f-todos { --fc: #1F2A4D; } .gcs-c4.f-vig { --fc: #18A574; } .gcs-c4.f-ven { --fc: #E7A43A; } .gcs-c4.f-exp { --fc: #D9473F; }
   .ct-ag.gx-c .ct-ag-col i { background: linear-gradient(180deg, #5560C8, #2B3384); } .ct-ag.gx-c .ct-ag-m.atr .ct-ag-col i { background: linear-gradient(180deg, #F08A5D, #D9473F); }
   @media (max-width: 1100px) { .gx-head-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .gx-ges > .gx-4c { grid-column: span 4; } .gx-ges > .gx-3c { grid-column: span 3; } .gx-ges > .gx-8c { grid-column: span 8; } .gx-ges > .gp-card.gx-4c { grid-column: span 4; } .gx-ges > .gp-cheio { grid-column: 1 / -1; }
+  .gx-sub { font-size: 11px; color: #6B7280; line-height: 1.4; }
+  .gx-vc { display: grid; gap: 14px; padding: 6px 0; } .gx-vc-l { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 12px; color: #374151; }
+  .gx-vc-b { height: 22px; background: #F0EEE8; border-radius: 6px; overflow: hidden; } .gx-vc-b > i { display: block; height: 100%; border-radius: 6px; } .gx-vc-l > b { font-size: 14px; color: #1F2A4D; }
+  .gx-tag.at { background: #FFF0D4; color: #9A5F00; } .gx-tag.ok { background: #DDF4EA; color: #0F7F52; } .gx-tag.er { background: #FDE3E0; color: #B73A32; }
+  .gx-sp { position: relative; height: 110px; } .gx-sp > svg { width: 100%; height: 92px; display: block; } .gx-sp-x { display: flex; justify-content: space-between; font-size: 10.5px; color: #6B7280; } .gx-sp-x > em { font-style: normal; }
+  .gx-dz { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; align-items: center; } .gx-ros-p { width: 112px; height: 112px; } .gx-ros-p b { font-size: 17px !important; } .gx-ros-p > span { font-size: 10px; }
+  .gx-dz-l { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 12px; color: #374151; } .gx-dz-l li { display: flex; align-items: center; gap: 7px; } .gx-dz-l i { width: 9px; height: 9px; border-radius: 50%; flex: none; } .gx-dz-l b { margin-left: auto; color: #1F2A4D; }
+  .gx-3c .gx-dz { grid-template-columns: 1fr; justify-items: center; } .gx-3c .gx-dz-l { width: 100%; }
+  .gx-gz { position: relative; width: 100%; max-width: 220px; margin: 4px auto 0; aspect-ratio: 120 / 76; } .gx-gz > svg { width: 100%; height: auto; display: block; }
+  .gx-gz > b { position: absolute; left: 0; right: 0; top: 50%; text-align: center; font-size: 24px; color: #1F2A4D; } .gx-gz > small { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 11px; color: #6B7280; }
+  .gx-sm { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+  .gx-smc { display: grid; grid-template-rows: 30px 130px auto; gap: 6px; text-align: center; border: 1px solid #F0EEE8; border-radius: 10px; padding: 8px 6px; } .gx-smc > small { font-size: 10.5px; font-weight: 700; color: #4B5563; line-height: 1.3; }
+  .gx-smc-g { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: end; } .gx-smc-c { display: flex; flex-direction: column; justify-content: flex-end; height: 130px; }
+  .gx-smc-c > em { font-style: normal; font-size: 10px; font-weight: 800; color: #1F2A4D; margin-bottom: 3px; white-space: nowrap; } .gx-smc-c > i { display: block; border-radius: 5px 5px 2px 2px; min-height: 2px; }
+  .gx-smc-c.a > i { background: #C9C4B8; } .gx-smc-c.b > i { background: linear-gradient(180deg, #5560C8, #2B3384); }
+  .gx-smc > b { font-size: 12px; } .gx-smc > b.gp-up { color: #13915F; } .gx-smc > b.gp-down { color: #D0423A; }
+  @media (max-width: 1100px) { .gx-ges > .gx-4c, .gx-ges > .gp-card.gx-4c { grid-column: span 6; } .gx-ges > .gx-3c { grid-column: span 6; } .gx-ges > .gx-8c { grid-column: 1 / -1; } .gx-sm { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 700px) { .gx-ges > * { grid-column: 1 / -1 !important; } .gx-sm { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   /* situação de relance: cartões que filtram */
   .gcs-cards, .gcs-cards.ct-filtro { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 6px 0 14px; }
   .gcs-c4 { --fc: #0B3B4A; font: inherit; text-align: left; display: grid; grid-template-columns: 6px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: #fff; border: 1px solid #E3E9E8; border-radius: 14px; padding: 12px 14px 12px 0; cursor: pointer; overflow: hidden; color: #0B1F2A; }
@@ -5146,24 +5165,31 @@
         </div>
         </sc-if>
         <sc-if value="{{ gpAbaGestao }}" hint-placeholder-val="{{ false }}">
-        <div class="gx gx-aba">
-          <div class="gx-head gx-head-4"><sc-for list="{{ gxHGestao }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em></div></sc-for></div>
-        <div class="gp-grade">
-          <div class="gp-card"><h3>{{ gpPesTit }}</h3><p class="gp-nota">{{ gpPesSub }}</p>
+        <div class="gx gx-aba gx-ges">
+          <div class="gx-c gx-4c"><div class="gx-t"><h3>{{ gsVcTit }}</h3><span class="{{ gsVc.tagCls }}">{{ gsVc.tag }}</span></div>
+            <div class="gx-vc"><sc-for list="{{ gsVc.barras }}" as="b" hint-placeholder-count="2"><div class="gx-vc-l"><span>{{ b.rot }}</span><span class="gx-vc-b"><i style="{{ b.larg }}"></i></span><b>{{ b.v }}</b></div></sc-for></div>
+            <small class="gx-sub">{{ gsVc.nota }}</small></div>
+          <div class="gx-c gx-4c"><div class="gx-t"><h3>{{ gsSpTit }}</h3><span class="gx-tag">{{ gsSp.atual }}</span></div>
+            <div class="gx-sp"><svg sc-camel-view-box="0 0 300 90" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><defs><linearGradient id="gxgS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" sc-camel-stop-color="#3F48A8" sc-camel-stop-opacity="0.45"></stop><stop offset="1" sc-camel-stop-color="#3F48A8" sc-camel-stop-opacity="0.02"></stop></linearGradient></defs><path sc-camel-d="{{ gsSp.area }}" fill="url(#gxgS)"></path><path sc-camel-d="{{ gsSp.linha }}" fill="none" stroke="#2B3384" sc-camel-stroke-width="2.2" sc-camel-vector-effect="non-scaling-stroke"></path></svg>
+              <span class="gx-sp-x"><em>{{ gsSp.ini }}</em><em>{{ gsSp.fim }}</em></span></div>
+            <small class="gx-sub">{{ gsSp.nota }}</small></div>
+          <div class="gx-c gx-4c"><div class="gx-t"><h3>{{ gsRespTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><svg sc-camel-view-box="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="16"></circle><sc-for list="{{ gsResp.seg }}" as="r" hint-placeholder-count="2"><circle cx="60" cy="60" r="42" fill="none" sc-camel-stroke="{{ r.cor }}" sc-camel-stroke-width="16" sc-camel-stroke-dasharray="{{ r.dash }}" sc-camel-stroke-dashoffset="{{ r.off }}" transform="rotate(-90 60 60)"></circle></sc-for></svg><span><b>{{ gsResp.v }}</b>{{ gsResp.u }}</span></div><ul class="gx-dz-l"><sc-for list="{{ gsResp.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
+          <div class="gx-c gx-3c"><div class="gx-t"><h3>Do orçamento à assinatura</h3></div><div class="gx-gz"><svg sc-camel-view-box="0 0 120 70" aria-hidden="true"><path d="M10 62 A50 50 0 0 1 110 62" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round"></path><path d="M10 62 A50 50 0 0 1 110 62" fill="none" sc-camel-stroke="{{ gsG1.cor }}" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round" sc-camel-stroke-dasharray="{{ gsG1.dash }}"></path></svg><b>{{ gsG1.v }}</b><small>{{ gsG1.d }}</small></div></div>
+          <div class="gx-c gx-3c"><div class="gx-t"><h3>Tempo para conceder o reajuste</h3></div><div class="gx-gz"><svg sc-camel-view-box="0 0 120 70" aria-hidden="true"><path d="M10 62 A50 50 0 0 1 110 62" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round"></path><path d="M10 62 A50 50 0 0 1 110 62" fill="none" sc-camel-stroke="{{ gsG2.cor }}" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round" sc-camel-stroke-dasharray="{{ gsG2.dash }}"></path></svg><b>{{ gsG2.v }}</b><small>{{ gsG2.d }}</small></div></div>
+          <div class="gx-c gx-3c"><div class="gx-t"><h3>{{ gsConcTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><svg sc-camel-view-box="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="16"></circle><sc-for list="{{ gsConc.seg }}" as="r" hint-placeholder-count="2"><circle cx="60" cy="60" r="42" fill="none" sc-camel-stroke="{{ r.cor }}" sc-camel-stroke-width="16" sc-camel-stroke-dasharray="{{ r.dash }}" sc-camel-stroke-dashoffset="{{ r.off }}" transform="rotate(-90 60 60)"></circle></sc-for></svg><span><b>{{ gsConc.v }}</b>{{ gsConc.u }}</span></div><ul class="gx-dz-l"><sc-for list="{{ gsConc.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
+          <div class="gx-c gx-3c"><div class="gx-t"><h3>{{ gsDirTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><svg sc-camel-view-box="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="16"></circle><sc-for list="{{ gsDir.seg }}" as="r" hint-placeholder-count="2"><circle cx="60" cy="60" r="42" fill="none" sc-camel-stroke="{{ r.cor }}" sc-camel-stroke-width="16" sc-camel-stroke-dasharray="{{ r.dash }}" sc-camel-stroke-dashoffset="{{ r.off }}" transform="rotate(-90 60 60)"></circle></sc-for></svg><span><b>{{ gsDir.v }}</b>{{ gsDir.u }}</span></div><ul class="gx-dz-l"><sc-for list="{{ gsDir.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
+          <div class="gx-c gx-8c"><div class="gx-t"><h3>{{ gpCmpTit }}</h3><span class="gx-leg"><i style="background: #C9C4B8"></i>{{ gpCmpAnt }}<i style="background: #3F48A8"></i>{{ gpCmpAt }}</span></div>
+            <div class="gx-sm"><sc-for list="{{ gsCmp }}" as="c" hint-placeholder-count="6"><div class="gx-smc"><small>{{ c.k }}</small><div class="gx-smc-g"><span class="gx-smc-c a"><em>{{ c.a }}</em><i style="{{ c.ha }}"></i></span><span class="gx-smc-c b"><em>{{ c.b }}</em><i style="{{ c.hb }}"></i></span></div><b class="{{ c.cls }}">{{ c.d }}</b></div></sc-for></div>
+            <small class="gx-sub">{{ gpCmpNota }}</small></div>
+          <div class="gp-card gx-4c"><h3>{{ gpPesTit }}</h3><p class="gp-nota">{{ gpPesSub }}</p>
             <sc-if value="{{ gpTemPes }}" hint-placeholder-val="{{ true }}"><div class="gp-pes"><div class="gp-pes-l gp-pes-cab"><span>{{ gpPesCol }}</span><span>Contratos</span><span>Papéis</span></div><sc-for list="{{ gpPes }}" as="x" hint-placeholder-count="4"><button type="button" class="{{ x.cls }}" sc-camel-on-click="{{ x.ir }}"><span>{{ x.nome }}<i style="{{ x.larg }}"></i></span><span>{{ x.n }}</span><span>{{ x.papeis }}</span></button></sc-for></div></sc-if>
             <sc-if value="{{ gpSemPes }}" hint-placeholder-val="{{ false }}"><p class="gp-sub" style="font-size: 13px">{{ gpSemPesTxt }}</p></sc-if>
             <sc-if value="{{ gpTemSemFiscal }}" hint-placeholder-val="{{ false }}"><button type="button" class="gp-alerta-b" sc-camel-on-click="{{ gpSemFiscalIr }}">{{ gpSemFiscalTxt }}</button></sc-if>
-          </div>
-          <div class="gp-card gp-largo"><h3>{{ gpCmpTit }}</h3>
-            <div class="gp-cmp"><div class="gp-cmp-l gp-cmp-cab"><span>Indicador</span><span>{{ gpCmpAnt }}</span><span>{{ gpCmpAt }}</span><span>Variação</span></div>
-              <sc-for list="{{ gpCmp }}" as="r" hint-placeholder-count="6"><div class="gp-cmp-l"><span>{{ r.k }}</span><span class="gx-cb a" style="{{ r.wa }}">{{ r.a }}</span><span class="gx-cb b" style="{{ r.wb }}">{{ r.b }}</span><span class="{{ r.cls }}">{{ r.d }}</span></div></sc-for></div>
-            <p class="gp-nota">{{ gpCmpNota }}</p>
           </div>
           <div class="gp-card gp-cheio"><h3>Qualidade do cadastro <b class="{{ gpQualCls }}">{{ gpQualV }}</b></h3><p class="gp-nota">{{ gpQualSub }}</p>
             <div class="gx-gauge-w"><div class="gx-gauge"><svg sc-camel-view-box="0 0 120 68" aria-hidden="true"><path d="M10 62 A50 50 0 0 1 110 62" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round"></path><path d="M10 62 A50 50 0 0 1 110 62" fill="none" sc-camel-stroke="{{ gpQualCor }}" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round" sc-camel-stroke-dasharray="{{ gpQualDash }}"></path></svg><b>{{ gpQualV }}</b><small>dos campos preenchidos</small></div><div class="gp-qual-b"><i style="{{ gpQualLarg }}"></i></div></div>
             <sc-if value="{{ gpTemQual }}" hint-placeholder-val="{{ true }}"><ul class="gp-lista gp-qual"><sc-for list="{{ gpQual }}" as="x" hint-placeholder-count="3"><li><span><b>{{ x.t }}</b><span>falta: {{ x.d }}</span></span><button type="button" class="lve-voltar" sc-camel-on-click="{{ x.ir }}">Completar</button></li></sc-for></ul></sc-if>
           </div>
-        </div>
         </div>
         </sc-if>
         <p class="gp-nota">Indicadores calculados com os contratos e os registros da linha do tempo cadastrados na Gestão Contratual (inclusive os compartilhados pela equipe). Custo atualizado: soma, mês a mês, do valor em vigor até o fim da vigência com as prorrogações.</p>
@@ -13446,7 +13472,33 @@ class Component extends DCLogic {
                 hd(emp ? "Equipes" : "Setores", String(G.porSetor.filter((g) => g.k !== "(sem setor)").length), G.porSetor[0] ? "maior: " + G.porSetor[0].k : "—"),
                 hd(emp ? "Penalidades recebidas" : "Penalidades", String(E.nPen), E.somaMulta ? "multas de " + brlC(E.somaMulta) : E.nOc + " ocorrência(s)", E.nPen ? "er" : "ok")],
             };
-            const EX = { ...gx, ...gx2, ...gx3,
+            const gauge = (frac, cor, v, d) => ({ dash: (Math.max(0, Math.min(1, frac)) * 157.08).toFixed(1) + " 157.08", cor, v, d });
+            const pas = E.meses.filter((m) => !m.fut), mxS = Math.max(1, ...pas.map((m) => m.t)), ptsS = pas.map((m, i) => [i / Math.max(1, pas.length - 1) * 300, 86 - (m.t / mxS) * 78]);
+            const linhaS = gxSuave(ptsS), ymS = (n) => ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"][n % 12] + "/" + String(Math.floor(n / 12)).slice(2);
+            const vigG = G.X.filter((x) => x.sit === "vig" || x.sit === "ven"), comR = vigG.filter((x) => String((emp ? x.c.gestor : x.c.fiscal) || "").trim()).length;
+            const top5 = G.partes.slice(0, 5).reduce((a, g) => a + g.v, 0), dirN = G.diretas, compN = G.n - G.diretas;
+            const cmpRaw = [["Novas contratações", C.ant.n, C.atual.n, (v) => String(v)], ["Valor contratado", C.ant.orig, C.atual.orig, brlC], [emp ? "Receita executada" : "Custo executado", C.ant.exec, C.atual.exec, brlC]]
+              .concat(emp ? [] : [["Contratações diretas", C.ant.dir, C.atual.dir, (v) => (v == null ? "—" : pc(v))]]).concat([["Reajustes registrados", C.ant.nAj, C.atual.nAj, (v) => String(v)], ["Tempo do reajuste", C.ant.tReaj, C.atual.tReaj, (v) => (v == null ? "—" : Math.round(v) + " d")]]);
+            const gs = {
+              gsVcTit: emp ? "Receita contratada × atualizada" : "Valor contratado × custo atualizado",
+              gsVc: { tag: (G.variacao >= 0 ? "▲ " : "▼ ") + pc(Math.abs(G.variacao)), tagCls: "gx-tag " + (G.variacao > 0.15 ? (emp ? "ok" : "at") : "ok"), nota: "Diferença: " + brlC(G.custo - G.original) + " em reajustes, revisões, aditivos e prorrogações.",
+                barras: [["Contratado", G.original, "#C9C4B8"], ["Atualizado", G.custo, "linear-gradient(90deg, #3F48A8, #E8734A)"]].map(([rot, v, c]) => ({ rot, v: brlC(v), larg: "width: " + (v / Math.max(1, G.original, G.custo) * 100).toFixed(1) + "%; background: " + c })) },
+              gsSpTit: emp ? "Receita mensal · 12 meses" : "Gasto mensal · 12 meses",
+              gsSp: { linha: linhaS, area: linhaS ? linhaS + " L300 90 L0 90 Z" : "", atual: brlC(pas.length ? pas[pas.length - 1].t : 0) + "/mês", ini: pas.length ? ymS(pas[0].m) : "", fim: pas.length ? ymS(pas[pas.length - 1].m) : "",
+                nota: pas.length > 1 ? "Variação em 12 meses: " + ((pas[pas.length - 1].t / Math.max(1, pas[0].t) - 1) >= 0 ? "+" : "") + pc(pas[pas.length - 1].t / Math.max(1, pas[0].t) - 1) + ". Contratos globais entram rateados." : "Sem histórico suficiente." },
+              gsRespTit: emp ? "Contratos com preposto" : "Contratos com fiscal designado",
+              gsResp: { v: vigG.length ? pc(comR / vigG.length) : "—", u: "dos vigentes", seg: gxRosca([comR, vigG.length - comR], ["#18A574", "#E8734A"], 42), leg: [["Com " + (emp ? "preposto" : "fiscal"), comR, "#18A574"], ["Sem " + (emp ? "preposto" : "fiscal"), vigG.length - comR, "#E8734A"]].map(([rot, n, c]) => ({ rot, n: String(n), cor: "background: " + c })) },
+              gsG1: gauge(G.tOrcAss == null ? 0 : G.tOrcAss / 365, G.tOrcAss == null ? "#B9C3C9" : G.tOrcAss <= 120 ? "#18A574" : G.tOrcAss <= 240 ? "#E7A43A" : "#D9473F", G.tOrcAss == null ? "—" : Math.round(G.tOrcAss) + " dias", G.tOrcAss == null ? "informe a data do orçamento e da assinatura" : "escala de 0 a 365 dias"),
+              gsG2: gauge(G.tReaj == null ? 0 : G.tReaj / 180, G.tReaj == null ? "#B9C3C9" : G.tReaj <= 30 ? "#18A574" : G.tReaj <= 90 ? "#E7A43A" : "#D9473F", G.tReaj == null ? "—" : Math.round(G.tReaj) + " dias", G.tReaj == null ? "nenhum reajuste registrado" : "escala de 0 a 180 dias"),
+              gsConcTit: emp ? "Concentração · 5 maiores clientes" : "Concentração · 5 maiores fornecedores",
+              gsConc: { v: pc(G.conc5), u: "do valor", seg: gxRosca([top5, Math.max(0, G.custo - top5)], ["#3F48A8", "#E6E3DA"], 42), leg: [["5 maiores", brlC(top5), "#3F48A8"], ["Demais", brlC(Math.max(0, G.custo - top5)), "#E6E3DA"]].map(([rot, n, c]) => ({ rot, n, cor: "background: " + c })) },
+              gsDirTit: emp ? "Contratos por regime" : "Forma de contratação",
+              gsDir: emp ? { v: String(G.porReg.length), u: "regimes", seg: gxRosca(G.porReg.map((g) => g.n), GX_PALETA, 42), leg: G.porReg.map((g, i) => ({ rot: g.k, n: String(g.n), cor: "background: " + GX_PALETA[i % GX_PALETA.length] })) }
+                : { v: pc(G.n ? dirN / G.n : 0), u: "diretas", seg: gxRosca([compN, dirN], ["#3F48A8", "#E8734A"], 42), leg: [["Licitação e adesão", compN, "#3F48A8"], ["Dispensa e inexigibilidade", dirN, "#E8734A"]].map(([rot, n, c]) => ({ rot, n: String(n), cor: "background: " + c })) },
+              gsCmp: cmpRaw.map(([k, a, b, f]) => { const na = Number(a) || 0, nb = Number(b) || 0, m = Math.max(1e-9, na, nb), d = a == null || b == null || !na ? "—" : (nb / na - 1 >= 0 ? "+" : "") + pc(nb / na - 1);
+                return { k, a: f(a), b: f(b), ha: "height: " + (na / m * 100).toFixed(1) + "%", hb: "height: " + (nb / m * 100).toFixed(1) + "%", d, cls: d === "—" ? "" : (nb >= na) !== (k === "Tempo do reajuste") ? "gp-up" : "gp-down" }; }),
+            };
+            const EX = { ...gx, ...gx2, ...gx3, ...gs,
               gpAcoesTit: emp ? "O que fazer agora" : "O que fazer esta semana", gpAcoesSub: E.acoes.length ? E.acoes.length + (E.acoes.length === 1 ? " providência" : " providências") + " em toda a carteira, da mais urgente para a menos urgente" : "toda a carteira",
               gpAcoesVazio: !E.acoes.length, gpAcoesMais: E.acoes.length > 4, gpAcoesMaisTxt: acoesTodas ? "Mostrar só as 4 mais urgentes" : "Mostrar todas (" + E.acoes.length + ")", gpAcoesAlternar: () => set("acoesTodas")(!acoesTodas),
               gpAcoes: acL.map((a) => ({ quando: a.quando, t: a.t, d: a.d, contrato: "Contrato " + a.c.numero, acao: a.acao, cls: "gp-ac p" + a.prio,
