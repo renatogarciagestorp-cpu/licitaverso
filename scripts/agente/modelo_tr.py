@@ -345,6 +345,16 @@ def gerar(docj, respostas, saida, logo=None):
     R = respostas
     fed = federal(R)
     docj = aplicar_padroes(docj, R)
+    # no corpo, a lacuna mostra só o que falta; o motivo vai para a página de pendências
+    def _curta(o):
+        if isinstance(o, str):
+            return re.sub(r"\[PREENCHER(?:#\d+)?:\s*([^\]—]*?)\s*—[^\]]*\]", r"[PREENCHER: \1]", o)
+        if isinstance(o, list):
+            return [_curta(x) for x in o]
+        if isinstance(o, dict):
+            return {k: (v if k == "pendencias" else _curta(v)) for k, v in o.items()}
+        return o
+    docj = _curta(docj)
     v = docj.get("vigencia") or {}
     ent = docj.get("entrega") or {}
     gb = docj.get("garantia_bem") or {}
@@ -756,15 +766,6 @@ def gerar(docj, respostas, saida, logo=None):
                         k += 1
                     else:
                         pe.getparent().remove(pe)
-    # logo do órgão no cabeçalho
-    if logo:
-        try:
-            h = d.sections[0].header
-            hp = h.paragraphs[0] if h.paragraphs else h.add_paragraph()
-            hp.alignment = 1
-            hp.add_run().add_picture(str(logo), height=Cm(1.6))
-        except Exception as e:
-            print(f"logo não incluída ({type(e).__name__})")
     # pendências: anexo final, para retirar antes de juntar ao processo
     pend = [x for x in docj.get("pendencias") or [] if str(x).strip()
             and not any(f in str(x).lower() for f in fora_da_estrutura)
@@ -776,6 +777,7 @@ def gerar(docj, respostas, saida, logo=None):
         p = d.add_paragraph(); r = p.add_run("INFORMAÇÕES PARA COMPLETAR (retire esta página antes de juntar ao processo)"); r.bold = True
         for t in pend:
             d.add_paragraph("• " + str(t))
+    formatar_abnt(d, R, logo)
     d.save(str(saida))
 
 
@@ -828,6 +830,359 @@ def adaptar_regime(d, R, fed):
             escrever(p, novo)
     for p in apagar:
         p._p.getparent().remove(p._p)
+
+
+# ---------------------------------------------------------------- formatação (ABNT)
+# NBR 6024 (numeração progressiva): indicativo em algarismos arábicos, alinhado à margem esquerda, sem ponto nem outro sinal
+#   depois do número, separado do texto por um espaço; títulos das seções primárias em destaque (negrito, caixa alta);
+#   alíneas com letra minúscula e parêntese, recuadas em relação à margem esquerda.
+# NBR 14724 (apresentação, adotada por analogia): A4, margens superior e esquerda de 3 cm e inferior e direita de 2 cm,
+#   fonte 12, espaçamento 1,5; tabelas e notas em fonte menor e espaço simples; número da página no canto superior direito.
+FONTE = "Arial"
+ESTILOS_NUM = {"Nivel 01": 0, "Nivel 2-Opcional": 1, "Nível 02": 1, "Nível 2-Opcional": 1, "Nivel 3": 2, "Nível 3-Opcional": 2, "Nível 4-R": 3}
+
+
+def _el(tag, **attrs):
+    from docx.oxml import OxmlElement
+    from docx.oxml.ns import qn
+    e = OxmlElement(tag)
+    for k, v in attrs.items():
+        e.set(qn(k), str(v))
+    return e
+
+
+def _set(pai, tag, **attrs):
+    """Troca (ou cria) o filho `tag` de `pai` com os atributos dados."""
+    from docx.oxml.ns import qn
+    for v in pai.findall(qn(tag)):
+        pai.remove(v)
+    e = _el(tag, **attrs)
+    pai.append(e)
+    return e
+
+
+def _numeracao_abnt(d):
+    """Indicativos sem ponto final (1.1, 6.15.1), sem recuo, separados do texto por espaço; alíneas recuadas."""
+    from docx.oxml.ns import qn
+    numbering = d.part.numbering_part.element
+    absmap = {n.get(qn("w:numId")): n.find(qn("w:abstractNumId")).get(qn("w:val")) for n in numbering.findall(qn("w:num"))}
+    for an in numbering.findall(qn("w:abstractNum")):
+        for lvl in an.findall(qn("w:lvl")):
+            fmt = lvl.find(qn("w:numFmt"))
+            fmt = fmt.get(qn("w:val")) if fmt is not None else ""
+            txt = lvl.find(qn("w:lvlText"))
+            if txt is None:
+                continue
+            t = txt.get(qn("w:val")) or ""
+            ppr = lvl.find(qn("w:pPr"))
+            if ppr is None:
+                ppr = _el("w:pPr"); lvl.append(ppr)
+            # o número usa a mesma fonte e o mesmo tamanho do texto (o modelo trazia corpo 10)
+            rpr = lvl.find(qn("w:rPr"))
+            if rpr is None:
+                rpr = _el("w:rPr"); lvl.append(rpr)
+            _set(rpr, "w:rFonts", **{"w:ascii": FONTE, "w:hAnsi": FONTE, "w:cs": FONTE})
+            _set(rpr, "w:sz", **{"w:val": 24}); _set(rpr, "w:szCs", **{"w:val": 24})
+            for tag in ("w:i", "w:color", "w:highlight", "w:shd"):
+                for x in rpr.findall(qn(tag)):
+                    rpr.remove(x)
+            if fmt == "decimal" and re.fullmatch(r"(%\d\.)*%\d\.?", t):
+                txt.set(qn("w:val"), t.rstrip("."))
+                _set(lvl, "w:suff", **{"w:val": "space"})
+                _set(ppr, "w:ind", **{"w:left": 0, "w:firstLine": 0})
+            elif fmt in ("lowerLetter", "upperLetter", "lowerRoman", "upperRoman") or t.endswith(")"):
+                _set(lvl, "w:suff", **{"w:val": "tab"})
+                _set(ppr, "w:ind", **{"w:left": 851, "w:hanging": 284})
+    return absmap
+
+
+def _fonte_run(r, tam):
+    from docx.shared import Pt
+    from docx.oxml.ns import qn
+    r.font.name = FONTE
+    rpr = r._r.get_or_add_rPr()
+    rf = rpr.find(qn("w:rFonts"))
+    if rf is not None:
+        for k in ("w:ascii", "w:hAnsi", "w:cs", "w:eastAsia"):
+            rf.set(qn(k), FONTE)
+    r.font.size = Pt(tam)
+    r.font.italic = None if not r.font.italic else r.font.italic
+
+
+def _realcar_lacunas(p):
+    """Destaca em amarelo só o trecho [PREENCHER: ...] (não o parágrafo inteiro)."""
+    import copy as _c
+    from docx.enum.text import WD_COLOR_INDEX
+    for r in list(p.runs):
+        t = r.text
+        if "[PREENCHER" not in t:
+            continue
+        partes = [x for x in re.split(r"(\[PREENCHER[^\]]*\])", t) if x]
+        if len(partes) == 1:
+            r.font.highlight_color = WD_COLOR_INDEX.YELLOW
+            continue
+        ant = r._r
+        for i, parte in enumerate(partes):
+            novo = ant if i == 0 else _c.deepcopy(r._r)
+            if i:
+                ant.addnext(novo)
+            from docx.text.run import Run
+            rr = Run(novo, p)
+            rr.text = parte
+            rr.font.highlight_color = WD_COLOR_INDEX.YELLOW if parte.startswith("[PREENCHER") else None
+            ant = novo
+
+
+def _campo(p, instr, tam):
+    """Insere um campo (PAGE) no parágrafo."""
+    from docx.oxml.ns import qn
+    for tipo, txt in (("begin", None), (None, instr), ("separate", None), (None, "1"), ("end", None)):
+        r = p.add_run()
+        _fonte_run(r, tam)
+        if tipo:
+            r._r.append(_el("w:fldChar", **{"w:fldCharType": tipo}))
+        elif txt == instr:
+            it = _el("w:instrText"); it.set(qn("xml:space"), "preserve"); it.text = f" {instr} "; r._r.append(it)
+        else:
+            r.text = txt
+
+
+def _cabecalho_rodape(d, R, logo):
+    from docx.shared import Pt, Cm
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
+    from docx.oxml.ns import qn
+    org = (R.get("orgao") or "").strip()
+    ident = "Termo de Referência" + (f" – Processo nº {R.get('processo')}" if R.get("processo") else "")
+    for sec in d.sections:
+        sec.different_first_page_header_footer = False
+        d.settings.odd_and_even_pages_header_footer = False
+        for hf in (sec.header, sec.footer):
+            hf.is_linked_to_previous = False
+            el = hf._element
+            for filho in list(el):
+                el.remove(filho)
+        # cabeçalho: número da página no canto superior direito (NBR 14724) e, se houver, a logo centralizada
+        h = sec.header
+        pn = h.add_paragraph(); pn.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        pn.paragraph_format.space_after = Pt(0)
+        _campo(pn, "PAGE", 10)
+        if logo:
+            try:
+                hl = h.add_paragraph(); hl.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                hl.add_run().add_picture(str(logo), height=Cm(1.5))
+            except Exception as e:
+                print(f"logo não incluída ({type(e).__name__})")
+        # rodapé: identificação do órgão e do documento, com fio superior
+        f = sec.footer
+        for i, t in enumerate([org, ident] if org else [ident]):
+            fp = f.add_paragraph(); fp.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            fp.paragraph_format.space_after = Pt(0); fp.paragraph_format.line_spacing = 1.0
+            r = fp.add_run(t); _fonte_run(r, 8)
+            if i == 0:
+                pbdr = _el("w:pBdr"); pbdr.append(_el("w:top", **{"w:val": "single", "w:sz": 4, "w:space": 4, "w:color": "808080"}))
+                fp._p.get_or_add_pPr().append(pbdr)
+
+
+def _tabela_itens(t):
+    """Tabela do item 1.1: especificação larga, valores alinhados à direita, cabeçalho repetido e linha de total."""
+    from docx.shared import Pt, Cm
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
+    from docx.oxml.ns import qn
+    larg = [Cm(1.15), Cm(5.55), Cm(1.75), Cm(1.75), Cm(1.3), Cm(2.1), Cm(2.4)]  # 16 cm úteis (21 − 3 − 2)
+    rot = ["ITEM", "ESPECIFICAÇÃO", "CATMAT", "UNID.", "QTD.", "VALOR UNIT. (R$)", "VALOR TOTAL (R$)"]
+    grid = t._tbl.find(qn("w:tblGrid"))
+    if grid is not None:
+        for gc, w in zip(grid.findall(qn("w:gridCol")), larg):
+            gc.set(qn("w:w"), str(int(w.twips)))
+    tblpr = t._tbl.tblPr
+    _set(tblpr, "w:tblW", **{"w:w": int(sum(w.twips for w in larg)), "w:type": "dxa"})
+    _set(tblpr, "w:tblLayout", **{"w:type": "fixed"})
+    total = 0.0
+    for ri, row in enumerate(t.rows):
+        trpr = row._tr.get_or_add_trPr()
+        for h in trpr.findall(qn("w:trHeight")):
+            trpr.remove(h)
+        if ri == 0:
+            _set(trpr, "w:tblHeader")
+        _set(trpr, "w:cantSplit")
+        for ci, (c, w) in enumerate(zip(row.cells, larg)):
+            c.width = w
+            tcpr = c._tc.get_or_add_tcPr()
+            if ri == 0:
+                _set(tcpr, "w:shd", **{"w:val": "clear", "w:color": "auto", "w:fill": "E7E6E6"})
+            _set(tcpr, "w:vAlign", **{"w:val": "center" if ri == 0 else "top"})
+            for pi, p in enumerate(c.paragraphs):
+                if ri == 0 and pi == 0:
+                    for r in p.runs[1:]:
+                        r._r.getparent().remove(r._r)
+                    if p.runs:
+                        p.runs[0].text = rot[ci] if ci < len(rot) else p.runs[0].text
+                pf = p.paragraph_format
+                pf.space_before = Pt(2); pf.space_after = Pt(2); pf.line_spacing = 1.0; pf.first_line_indent = None; pf.left_indent = None
+                p.alignment = (WD_ALIGN_PARAGRAPH.CENTER if ri == 0 or ci in (0, 2, 3, 4) else
+                               WD_ALIGN_PARAGRAPH.RIGHT if ci >= 5 else WD_ALIGN_PARAGRAPH.LEFT)
+                for r in p.runs:
+                    if ri and ci >= 5:
+                        r.text = r.text.replace("R$ ", "").replace("R$", "")
+                    _fonte_run(r, 8 if ri == 0 else 9)
+                    r.font.bold = True if ri == 0 else r.font.bold
+        if ri and len(row.cells) >= 7:
+            v = row.cells[6].text.strip().replace(".", "").replace(",", ".")
+            try:
+                total += float(v)
+            except ValueError:
+                total = None if total is None else total
+    # linha de total (só quando todos os itens têm valor)
+    if total and len(t.rows) > 2:
+        import copy as _c
+        nova = _c.deepcopy(t.rows[-1]._tr)
+        t._tbl.append(nova)
+        from docx.table import _Row
+        row = _Row(nova, t)
+        cel = row.cells
+        for i, c in enumerate(cel):
+            for p in c.paragraphs:
+                for r in p.runs[1:]:
+                    r._r.getparent().remove(r._r)
+                if p.runs:
+                    p.runs[0].text = ""
+        primeira = cel[0].merge(cel[5])
+        for p in primeira.paragraphs[1:]:
+            p._p.getparent().remove(p._p)
+        p0 = primeira.paragraphs[0]
+        if not p0.runs:
+            p0.add_run()
+        p0.runs[0].text = "VALOR TOTAL ESTIMADO"; p0.runs[0].font.bold = True; p0.alignment = WD_ALIGN_PARAGRAPH.RIGHT
+        _fonte_run(p0.runs[0], 9)
+        pt = row.cells[-1].paragraphs[0]
+        if not pt.runs:
+            pt.add_run()
+        pt.runs[0].text = f"{total:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        pt.runs[0].font.bold = True; _fonte_run(pt.runs[0], 9)
+        for c in row.cells:
+            _set(c._tc.get_or_add_tcPr(), "w:shd", **{"w:val": "clear", "w:color": "auto", "w:fill": "F2F2F2"})
+
+
+def formatar_abnt(d, R, logo=None):
+    from docx.shared import Pt, Cm
+    from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
+    from docx.oxml.ns import qn
+    # página (NBR 14724)
+    for sec in d.sections:
+        sec.page_width, sec.page_height = Cm(21), Cm(29.7)
+        sec.top_margin, sec.left_margin = Cm(3), Cm(3)
+        sec.bottom_margin, sec.right_margin = Cm(2), Cm(2)
+        sec.header_distance, sec.footer_distance = Cm(2), Cm(1)
+    # estilos: fonte e espaçamento uniformes
+    for st in d.styles:
+        try:
+            if st.type != 1:  # só estilos de parágrafo
+                continue
+            st.font.name = FONTE
+            rpr = st.element.get_or_add_rPr()
+            rf = rpr.find(qn("w:rFonts"))
+            if rf is not None:
+                for k in ("w:ascii", "w:hAnsi", "w:cs", "w:eastAsia"):
+                    rf.set(qn(k), FONTE)
+            ppr = st.element.get_or_add_pPr()
+            for sh in ppr.findall(qn("w:shd")):
+                ppr.remove(sh)
+            if st.name in ESTILOS_NUM or st.name.startswith("Nível 1-Sem"):
+                for ind in ppr.findall(qn("w:ind")):
+                    ppr.remove(ind)
+        except Exception:
+            continue
+    _numeracao_abnt(d)
+    # parágrafos do corpo
+    corpo = list(d.paragraphs)
+    titulo_visto = False
+    for i, p in enumerate(corpo):
+        nome = p.style.name if p.style is not None else ""
+        pf = p.paragraph_format
+        ppr = p._p.get_or_add_pPr()
+        # o realce amarelo do modelo marca cláusula variável; não fica no documento (as lacunas são realçadas adiante)
+        rpr_p = ppr.find(qn("w:rPr"))
+        if rpr_p is not None:
+            for hl in rpr_p.findall(qn("w:highlight")):
+                rpr_p.remove(hl)
+            for tag in ("w:shd", "w:color", "w:i", "w:iCs"):
+                for x in rpr_p.findall(qn(tag)):
+                    rpr_p.remove(x)
+        for sh in ppr.findall(qn("w:shd")):
+            ppr.remove(sh)
+        if nome in ESTILOS_NUM or nome.startswith("Nível 1-Sem"):
+            for ind in ppr.findall(qn("w:ind")):
+                ppr.remove(ind)
+        pf.line_spacing_rule = WD_LINE_SPACING.ONE_POINT_FIVE
+        pf.space_before = Pt(0); pf.space_after = Pt(6)
+        tam = 12
+        if not titulo_visto and nome == "Normal" and p.text.strip():
+            # bloco de identificação: órgão, processo e título
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            pf.line_spacing_rule = WD_LINE_SPACING.SINGLE
+            if p.text.strip().upper() == "TERMO DE REFERÊNCIA":
+                pf.space_before = Pt(18); pf.space_after = Pt(18); tam = 14
+                for r in p.runs:
+                    r.font.bold = True
+            else:
+                pf.space_after = Pt(2)
+                if i == 0:
+                    for r in p.runs:
+                        r.font.bold = True
+        elif nome == "Nivel 01":
+            titulo_visto = True
+            pf.space_before = Pt(18); pf.space_after = Pt(6); pf.keep_with_next = True
+            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            for r in p.runs:
+                r.text = r.text.upper(); r.font.bold = True
+        elif nome.startswith("Nível 1-Sem"):
+            pf.space_before = Pt(10); pf.space_after = Pt(4); pf.keep_with_next = True
+            for r in p.runs:
+                r.font.bold = True
+        elif nome == "paragraph" or nome == "List Paragraph":
+            p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+            _set(ppr, "w:spacing", **{"w:before": 0, "w:after": 60, "w:line": 360, "w:lineRule": "auto"})
+            # alíneas: recuo e texto alinhado depois da letra (NBR 6024, 4.2)
+            _set(ppr, "w:ind", **{"w:left": 851, "w:hanging": 426})
+        else:
+            p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY if p.alignment in (None, WD_ALIGN_PARAGRAPH.JUSTIFY, WD_ALIGN_PARAGRAPH.LEFT) else p.alignment
+        txt = p.text.strip()
+        if re.match(r"^.{3,80}, \d{1,2} de [a-zç]+ de \d{4}\.$", txt) and titulo_visto:
+            # local e data à direita, presos à assinatura
+            _set(ppr, "w:numPr"); ppr.remove(ppr.find(qn("w:numPr")))
+            _set(ppr, "w:numPr").append(_el("w:numId", **{"w:val": 0}))
+            p.alignment = WD_ALIGN_PARAGRAPH.RIGHT; pf.space_before = Pt(18); pf.keep_with_next = True
+        elif re.fullmatch(r"_{10,}", txt):
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER; pf.space_before = Pt(36); pf.space_after = Pt(3); pf.keep_with_next = True
+            pf.line_spacing_rule = WD_LINE_SPACING.SINGLE
+        elif titulo_visto and nome == "Normal" and i > 0 and re.fullmatch(r"_{10,}", corpo[i - 1].text.strip()):
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER; pf.line_spacing_rule = WD_LINE_SPACING.SINGLE
+        elif txt.startswith("INFORMAÇÕES PARA COMPLETAR"):
+            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            for r in p.runs:
+                r.font.bold = True
+        elif txt.startswith("• "):
+            pf.line_spacing_rule = WD_LINE_SPACING.SINGLE; pf.left_indent = Cm(0.5); pf.first_line_indent = Cm(-0.5)
+        for r in p.runs:
+            _fonte_run(r, tam)
+        _realcar_lacunas(p)
+    # tabelas: fonte 10, espaço simples (NBR 14724, 5.3 e 5.8)
+    for k, t in enumerate(d.tables):
+        if k == 0:
+            _tabela_itens(t)
+            continue
+        for row in t.rows:
+            for c in row.cells:
+                for p in c.paragraphs:
+                    p.paragraph_format.line_spacing = 1.0
+                    for r in p.runs:
+                        _fonte_run(r, 10)
+    for t in d.tables:  # o parágrafo seguinte não cola na tabela
+        prox = t._tbl.getnext()
+        if prox is not None and prox.tag == qn("w:p"):
+            from docx.text.paragraph import Paragraph
+            Paragraph(prox, t._parent).paragraph_format.space_before = Pt(10)
+    _cabecalho_rodape(d, R, logo)
 
 
 def escrever(p, texto):
