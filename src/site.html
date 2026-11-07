@@ -1888,7 +1888,8 @@
   .gp-tec .gp-card { padding: 16px 18px; border-radius: 14px; }
   .gp-tec .gp-grade { grid-auto-rows: minmax(0, auto); align-items: stretch; }
   .gp-tec .gp-rosca { width: 132px; height: 132px; } .gp-tec .gp-rosca > span { width: 84px; height: 84px; }
-  @media (max-width: 760px) { .gp-abas { top: 56px; } .gp-mes-w { padding-left: 0; } .gp-mes-y { display: none; } .gp-mes-w::after { left: 0; } }
+  /* no celular a barra de abas rola junto com a página (sticky deixava o fundo translúcido flutuar sobre os filtros) */
+  @media (max-width: 760px) { .gp-abas { position: static; margin: 12px 0 4px; box-shadow: none; } .gp-mes-w { padding-left: 0; } .gp-mes-y { display: none; } .gp-mes-w::after { left: 0; } }
   .gp-tec .gp-leg li { white-space: nowrap; } .gp-tec .gp-legb { grid-template-columns: 10px auto auto; column-gap: 8px; } .gp-tec .gp-legb > b { grid-column: auto; margin-left: auto; }
   .gp-tec .gp-rosca-w { flex-wrap: nowrap; } @media (max-width: 1100px) { .gp-tec .gp-rosca-w { flex-wrap: wrap; } }
   /* Visão geral com gráficos (estilo painel analítico vivo) */
