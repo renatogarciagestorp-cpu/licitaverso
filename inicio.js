@@ -402,14 +402,14 @@
     }, p);
   }
 
-  // ---------------------------------------------------------------- como funciona: passos em sequência
-  // A página rola normalmente; cada passo toca a sua animação quando entra na tela e a linha verde
-  // à esquerda vai enchendo conforme a rolagem.
+  // ---------------------------------------------------------------- como funciona: passos + uma ilustração
+  // Compacto, do tamanho de uma tela: a lista de passos à esquerda e uma ilustração à direita. Enquanto a
+  // seção está à vista os passos avançam sozinhos (a barrinha mostra o tempo de cada um); clicar num passo
+  // vai direto para ele. A rolagem da página nunca é segurada.
   function montarHist(sec) {
-    var ol = sec.querySelector(".lvi-passos");
-    var lis = sec.querySelectorAll(".lvi-passos > li"), palcos = sec.querySelectorAll(".lvi-palco");
-    if (!ol || lis.length < 4 || palcos.length < 4) return;
-    var prog = el("i", "lvi-passos-prog"); ol.appendChild(prog);
+    var palco = sec.querySelector(".lvi-palco"), botoes = sec.querySelectorAll(".lvi-passo");
+    if (!palco || botoes.length < 4) return;
+    var barras = Array.prototype.map.call(botoes, function (b) { var i = el("i", "lvi-passo-barra"); b.appendChild(i); return i; });
 
     // etapa 1: arquivos
     var e1 = el("div", "lvi-et");
@@ -439,10 +439,10 @@
       achadosHtml() + '<div class="lvi-par-pe"><span>Baixar em PDF</span><span>Abrir no Word</span></div></div><div class="lvi-carimbo">Com a lei e a juris&shy;prudência</div>';
     var achs = e4.querySelectorAll(".lvi-ach"), carimbo = e4.querySelector(".lvi-carimbo"), par = e4.querySelector(".lvi-par");
     var etapas = [e1, e2, e3, e4];
-    etapas.forEach(function (e, i) { palcos[i].appendChild(e); });
+    etapas.forEach(function (e) { palco.appendChild(e); });
 
     function posicionarRede() {
-      var palco = palcos[2], w = palco.clientWidth, h = palco.clientHeight, rx = Math.min(w * 0.36, 230), ry = Math.min(h * 0.36, 175);
+      var w = palco.clientWidth, h = palco.clientHeight, rx = Math.min(w * 0.36, 230), ry = Math.min(h * 0.36, 175);
       Array.prototype.forEach.call(nosEl, function (n, i) {
         var a = (i / nosEl.length) * Math.PI * 2 - Math.PI / 2, x = Math.cos(a) * rx, y = Math.sin(a) * ry;
         // a etiqueta inteira dentro do quadro, com 8px de folga
@@ -485,31 +485,50 @@
       }
     }
 
+    var atual = -1, vez = 0, st = vigiar(sec), barraAnim = null;
+    var DUR = [1.5, 2.2, 1.9, 2.1], PAUSA = 1.8;
+    function mostrar(i) {
+      Array.prototype.forEach.call(botoes, function (b, k) { b.classList.toggle("on", k === i); });
+      function zerar() { barras.forEach(function (x, k) { if (k !== i) x.style.transform = "scaleX(0)"; }); }
+      zerar(); requestAnimationFrame(zerar); // de novo no quadro seguinte: a barra interrompida pode gravar o último valor
+      if (i === 2) posicionarRede();
+      if (atual === i) return;
+      var velha = etapas[atual], nova = etapas[i];
+      if (velha) { velha.classList.remove("on"); if (!REDUZ) anima(velha, { opacity: [1, 0], scale: [1, 0.97] }, { duration: 0.3 }).then(function () { velha.style.transform = ""; velha.style.opacity = ""; }); }
+      nova.classList.add("on");
+      if (!REDUZ) anima(nova, { opacity: [0, 1], scale: [1.03, 1] }, { duration: 0.4, ease: SUAVE }).then(function () { nova.style.transform = ""; nova.style.opacity = ""; });
+      atual = i;
+    }
     posicionarRede();
-    window.addEventListener("resize", function () { if (sec.isConnected) { posicionarRede(); pintar(2, feitos[2] ? 1 : 0); } });
-    var feitos = [false, false, false, false];
+    window.addEventListener("resize", function () { if (sec.isConnected && atual === 2) { posicionarRede(); pintar(2, 1); } });
 
-    if (REDUZ || !inView) {
-      Array.prototype.forEach.call(lis, function (l, i) { l.classList.add("on"); feitos[i] = true; pintar(i, 1); });
+    if (REDUZ) {
+      etapas.forEach(function (e, i) { pintar(i, 1); });
+      mostrar(3);
+      Array.prototype.forEach.call(botoes, function (b, i) { b.addEventListener("click", function () { mostrar(i); }); });
       return;
     }
-    var DUR = [1.5, 2.2, 1.9, 2.1];
-    Array.prototype.forEach.call(lis, function (li, i) {
+    async function tocar(i, t) {
+      var vivo = function () { return t === vez && sec.isConnected; };
+      if (!(await quandoVisivel(sec, st)) || !vivo()) return;
+      if (barraAnim) { try { if (barraAnim.cancel) barraAnim.cancel(); else barraAnim.stop(); } catch (e) { /* segue */ } barraAnim = null; }
       pintar(i, 0);
-      uma(li, function () {
-        li.classList.add("on");
-        if (i === 2) posicionarRede();
-        try {
-          animate(0, 1, { duration: DUR[i], ease: "easeInOut", onUpdate: function (v) { pintar(i, v); } })
-            .finished.then(function () { feitos[i] = true; pintar(i, 1); });
-        } catch (e) { feitos[i] = true; pintar(i, 1); }
-      }, { amount: 0.45 });
-    });
-    // linha verde que acompanha a rolagem
-    rolagem(function () {
-      var r = ol.getBoundingClientRect(), p = (innerHeight * 0.6 - r.top) / Math.max(1, r.height);
-      prog.style.transform = "scaleY(" + Math.min(1, Math.max(0, p)) + ")";
-    }, sec);
+      mostrar(i);
+      try { barraAnim = animate(barras[i], { scaleX: [0, 1] }, { duration: DUR[i] + PAUSA, ease: "linear" }); } catch (e) { barraAnim = null; }
+      try {
+        await animate(0, 1, { duration: DUR[i], ease: "easeInOut", onUpdate: function (v) { if (vivo()) pintar(i, v); } }).finished;
+      } catch (e) { /* segue */ }
+      if (!vivo()) return;
+      pintar(i, 1);
+      await espera(PAUSA * 1000);
+      if (!vivo()) return;
+      ir((i + 1) % etapas.length);
+    }
+    function ir(i) { vez++; tocar(i, vez); }
+    Array.prototype.forEach.call(botoes, function (b, i) { b.addEventListener("click", function () { ir(i); }); });
+    etapas.forEach(function (e, i) { pintar(i, 0); });
+    mostrar(0);
+    ir(0);
   }
 
   // ---------------------------------------------------------------- vitrine 3D

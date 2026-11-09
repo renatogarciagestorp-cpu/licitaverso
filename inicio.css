@@ -142,24 +142,25 @@
 .lvi-frase .lvi-p { opacity: 0.14; }
 
 /* ---------- como funciona: passos em sequência, rolagem normal ---------- */
-.lvi-hist { position: relative; padding: 96px 0 104px; background: radial-gradient(900px 500px at 80% 10%, rgba(63,212,154,0.12), transparent 60%), linear-gradient(180deg, #0A2826, #071E1C); color: #fff; }
-.lvi-hist-in { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
-.lvi-hist-cab { max-width: 680px; }
+.lvi-hist { position: relative; padding: 88px 0; background: radial-gradient(900px 500px at 80% 20%, rgba(63,212,154,0.12), transparent 60%), linear-gradient(180deg, #0A2826, #071E1C); color: #fff; }
+.lvi-hist-in { max-width: 1240px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 56px; align-items: center; }
 .lvi-h2 { margin: 12px 0 0; font-size: 44px; line-height: 1.06; letter-spacing: -0.03em; font-weight: 800; }
 .lvi-h2 em { font-style: normal; color: var(--lvi-menta); }
-.lvi-passos { list-style: none; margin: 48px 0 0; padding: 0; display: grid; gap: 36px; position: relative; }
-.lvi-passos::before { content: ""; position: absolute; left: 17px; top: 18px; bottom: 18px; width: 2px; background: rgba(255,255,255,0.10); }
-.lvi-passos-prog { position: absolute; left: 17px; top: 18px; width: 2px; height: calc(100% - 36px); background: var(--lvi-menta); transform-origin: 50% 0; transform: scaleY(0); box-shadow: 0 0 12px var(--lvi-menta); z-index: 1; }
-.lvi-passos > li { position: relative; display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 48px; align-items: center; opacity: 0.4; transition: opacity .5s; }
-.lvi-passos > li.on { opacity: 1; }
-.lvi-passo-txt { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 18px; align-items: start; }
-.lvi-passo-txt > span { position: relative; z-index: 2; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 14px; background: #0A2826; border: 2px solid rgba(255,255,255,0.22); color: var(--lvi-texto); transition: background .4s, border-color .4s, color .4s; }
-.lvi-passos > li.on .lvi-passo-txt > span { background: var(--lvi-verde); border-color: var(--lvi-verde); color: #06251A; }
-.lvi-passo-txt b { display: block; font-size: 22px; font-weight: 800; letter-spacing: -0.015em; margin-top: 4px; }
-.lvi-passo-txt p { margin: 8px 0 0; font-size: 15.5px; line-height: 1.6; color: var(--lvi-texto); max-width: 42ch; }
+.lvi-passos { list-style: none; margin: 26px 0 0; padding: 0; display: grid; gap: 6px; }
+.lvi-passo { position: relative; overflow: hidden; width: 100%; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 14px; align-items: start; padding: 12px 14px; border-radius: 16px; border: 1px solid transparent; background: transparent; color: #fff; font: inherit; text-align: left; cursor: pointer; opacity: 0.55; transition: opacity .3s, background .3s, border-color .3s; }
+.lvi-passo:hover { opacity: 0.85; }
+.lvi-passo:focus-visible { outline: 2px solid var(--lvi-menta); outline-offset: 2px; }
+.lvi-passo.on { opacity: 1; background: rgba(255,255,255,0.05); border-color: var(--lvi-linha); }
+.lvi-passo > span { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 14px; border: 2px solid rgba(255,255,255,0.22); color: var(--lvi-texto); transition: background .3s, border-color .3s, color .3s; }
+.lvi-passo.on > span { background: var(--lvi-verde); border-color: var(--lvi-verde); color: #06251A; }
+.lvi-passo b { display: block; font-size: 17px; font-weight: 800; letter-spacing: -0.01em; margin-top: 6px; }
+.lvi-passo p { display: none; margin: 6px 0 2px; font-size: 14.5px; line-height: 1.55; color: var(--lvi-texto); }
+.lvi-passo.on p { display: block; }
+.lvi-passo-barra { position: absolute; left: 14px; right: 14px; bottom: 0; height: 2px; border-radius: 2px; background: var(--lvi-menta); transform-origin: 0 50%; transform: scaleX(0); }
 
-.lvi-palco { position: relative; height: 360px; border-radius: 26px; background: rgba(255,255,255,0.03); border: 1px solid var(--lvi-linha); overflow: hidden; }
-.lvi-et { position: absolute; inset: 0; display: grid; place-items: center; padding: 28px; }
+.lvi-palco { position: relative; height: 430px; border-radius: 26px; background: rgba(255,255,255,0.03); border: 1px solid var(--lvi-linha); overflow: hidden; }
+.lvi-et { position: absolute; inset: 0; display: grid; place-items: center; padding: 28px; opacity: 0; }
+.lvi-et.on { opacity: 1; }
 /* etapa 1: arquivos entrando */
 .lvi-zona { position: relative; width: min(360px, 90%); aspect-ratio: 4 / 3; border-radius: 22px; border: 2px dashed rgba(111,224,174,0.45); display: grid; place-items: center; text-align: center; color: var(--lvi-texto); font-size: 14px; }
 .lvi-zona strong { display: block; color: #fff; font-size: 16px; margin-top: 8px; }
@@ -228,10 +229,9 @@
   .lvi-hero .lvh-top-h1 { font-size: 40px; max-width: 18ch; }
   .lvi-demo { min-height: 0; }
   .lvi-h2 { font-size: 34px; }
-  .lvi-hist { padding: 72px 0 80px; }
-  .lvi-passos { margin-top: 36px; gap: 40px; }
-  .lvi-passos > li { grid-template-columns: minmax(0, 1fr); gap: 18px; }
-  .lvi-palco { margin-left: 54px; height: 340px; }
+  .lvi-hist { padding: 64px 0; }
+  .lvi-hist-in { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .lvi-palco { height: 360px; }
 }
 @media (max-width: 560px) {
   .lvi-hero .lvh-top-h1 { font-size: 32px; }
@@ -244,9 +244,11 @@
   .lvi-frase-sec { padding: 72px 20px 60px; }
   .lvi-hist-in { padding: 0 16px; }
   .lvi-h2 { font-size: 28px; }
-  .lvi-passo-txt b { font-size: 18px; }
-  .lvi-passo-txt p { font-size: 14.5px; }
-  .lvi-palco { border-radius: 20px; margin-left: 54px; height: 360px; }
+  .lvi-passos { margin-top: 18px; gap: 2px; }
+  .lvi-passo { padding: 9px 10px; }
+  .lvi-passo b { font-size: 15.5px; }
+  .lvi-passo p { font-size: 13.5px; }
+  .lvi-palco { border-radius: 20px; height: 360px; }
   .lvi-nucleo { width: 104px; height: 104px; margin: -52px 0 0 -52px; font-size: 11.5px; }
   .lvi-no { font-size: 11px; padding: 6px 9px; }
   .lvi-par { padding: 13px 13px 11px; }
@@ -263,7 +265,8 @@
 
 /* ---------- sem animação ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .lvi-passos > li { opacity: 1; }
+  .lvi-passo { opacity: 1; }
+  .lvi-passo p { display: block; }
   .lvi-aurora i, .lvi-vivo::before, .lvi-pulso, .lvi-caret, .lvi-topo ~ .lvh-final::before { animation: none; }
   .lvi-trilho { overflow-x: auto; }
   .lvi-trilho-in { animation: none; }
