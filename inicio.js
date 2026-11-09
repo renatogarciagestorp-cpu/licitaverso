@@ -252,31 +252,76 @@
     };
   }
 
+  // IPCA acumulado de n meses a partir do mês ini ("aaaa-mm"), do indices.json (Banco Central, SGS 433)
+  function ipcaPeriodo(ini, n) {
+    return json("indices.json").then(function (d) {
+      var s = d.series.ipca.mensal, a = +ini.slice(0, 4), m = +ini.slice(5), f = 1;
+      for (var k = 0; k < n; k++) {
+        var ch = a + "-" + (m < 10 ? "0" : "") + m;
+        if (s[ch] == null) return null;
+        f *= 1 + s[ch] / 100;
+        m++; if (m > 12) { m = 1; a++; }
+      }
+      return (f - 1) * 100;
+    });
+  }
+
+  // Gestão: linha do tempo de um contrato até o reajuste na anualidade (exemplo ilustrativo, índice real)
   function cenaGestao() {
     var c = el("div", "lvi-cena");
-    var cts = [["v", "Vigente", "Contrato 025/2025 · Limpeza", "até 12/12/2027", 56], ["a", "Vencendo", "Contrato 031/2024 · Vigilância", "faltam 2 meses", 93], ["x", "Vencido", "Contrato 007/2023 · Impressão", "encerrado", 100]];
-    c.innerHTML = '<div class="lvi-doc-cab"><b>Meus contratos</b><span class="lvi-selo">3 contratos</span></div>' +
-      cts.map(function (k) { return '<div class="lvi-ct ' + k[0] + '"><div><small>' + k[1] + "</small><b>" + k[2] + "</b></div><span>" + k[3] + '</span><i><u style="--p:' + k[4] + '%"></u></i></div>'; }).join("") +
-      '<div class="lvi-aviso"><span>!</span><div><b>Iniciar a prorrogação do Contrato 031/2024</b>Aviso por e-mail · faltam 2 meses para o fim da vigência</div></div>';
-    var linhas = c.querySelectorAll(".lvi-ct"), barras = c.querySelectorAll(".lvi-ct u"), aviso = c.querySelector(".lvi-aviso");
+    var BASE = 48250;
+    // posição na régua de 24 meses (mai/2025 a mai/2027)
+    var MARCOS = [[0, "01/05/2025", "Orçamento estimado", "baixo ini"], [30.6, "12/12/2025", "Assinatura", "cima"], [50, "01/05/2026", "1º reajuste", "baixo rj"], [100, "01/05/2027", "Próxima anualidade", "cima fim fut"]];
+    var HOJE = 76.1;
+    c.innerHTML = '<div class="lvi-doc-cab"><b>Contrato 025/2025 · Limpeza</b><span class="lvi-selo">Linha do tempo</span></div>' +
+      '<div class="lvi-lt"><i class="lvi-lt-trilho"><u></u></i>' +
+      MARCOS.map(function (k) { return '<div class="lvi-mc ' + k[3] + '" style="left:' + k[0] + '%"><b></b><span>' + k[1] + "<small>" + k[2] + "</small></span></div>"; }).join("") +
+      '<div class="lvi-hoje" style="left:' + HOJE + '%"><em>hoje</em></div></div>' +
+      '<div class="lvi-rj"><div><small>Reajuste pelo IPCA · mai/2025 a abr/2026</small><b class="ind">+0,00%</b></div><div><small>Valor mensal do contrato</small><b class="val">' + brl(BASE) + "</b></div></div>" +
+      '<div class="lvi-rj-pe"><span class="reg">✓ Registrado na linha do tempo</span><span class="prox">Próxima anualidade: 01/05/2027 · aviso por e-mail</span></div>';
+    var fill = c.querySelector(".lvi-lt-trilho u"), mcs = c.querySelectorAll(".lvi-mc"), hoje = c.querySelector(".lvi-hoje");
+    var rj = c.querySelector(".lvi-rj"), ind = c.querySelector(".lvi-rj .ind"), val = c.querySelector(".lvi-rj .val"), reg = c.querySelector(".reg"), prox = c.querySelector(".prox");
+    var acum = null;
+    var pronto = ipcaPeriodo("2025-05", 12).then(function (v) { acum = v; }).catch(function () { acum = null; });
+    function ate(pos, dur) { return anima(fill, { scaleX: pos / 100 }, { duration: dur, ease: "easeInOut" }); }
+    function marca(i) { mcs[i].classList.add("on"); return anima(mcs[i].querySelector("b"), { scale: [0.4, 1.25, 1] }, { duration: 0.45 }); }
     return {
-      el: c, prompt: "Quais prazos dos meus contratos vencem este ano?",
+      el: c, prompt: "Quando é o reajuste do contrato de limpeza?",
       inicio: function () {
-        Array.prototype.forEach.call(linhas, function (l) { l.style.opacity = "0"; });
-        Array.prototype.forEach.call(barras, function (b) { b.style.transform = "scaleX(0)"; });
-        aviso.style.opacity = "0";
+        fill.style.transform = "scaleX(0)";
+        Array.prototype.forEach.call(mcs, function (m) { m.classList.remove("on"); });
+        hoje.style.opacity = "0"; rj.style.opacity = "0"; reg.style.opacity = "0"; prox.style.opacity = "0";
+        ind.textContent = "+0,00%"; val.textContent = brl(BASE);
       },
       rodar: async function (vivo) {
-        await anima(linhas, { opacity: [0, 1], x: [-14, 0] }, { duration: 0.45, delay: M.stagger(0.12), ease: SUAVE });
+        await pronto;
+        await marca(0); if (!vivo()) return;
+        await ate(MARCOS[1][0], 0.7); if (!vivo()) return;
+        await marca(1); if (!vivo()) return;
+        await ate(MARCOS[2][0], 0.55); if (!vivo()) return;
+        marca(2);
+        await anima(rj, { opacity: [0, 1], y: [10, 0] }, { duration: 0.35, ease: SUAVE });
         if (!vivo()) return;
-        await anima(barras, { scaleX: [0, 1] }, { duration: 0.9, delay: M.stagger(0.15), ease: SUAVE });
+        if (acum !== null) {
+          try {
+            await animate(0, 1, { duration: 1.1, ease: SUAVE, onUpdate: function (t) {
+              ind.textContent = "+" + pct(acum * t); val.textContent = brl(BASE * (1 + acum * t / 100));
+            } }).finished;
+          } catch (e) { /* segue */ }
+        } else { ind.textContent = "IPCA"; }
         if (!vivo()) return;
-        await anima(aviso, { opacity: [0, 1], y: [30, 0] }, { type: "spring", stiffness: 300, damping: 22 });
+        await anima(reg, { opacity: [0, 1], x: [-8, 0] }, { duration: 0.3 });
+        await ate(HOJE, 0.6); if (!vivo()) return;
+        await anima(hoje, { opacity: [0, 1], y: [-6, 0] }, { duration: 0.3 });
+        mcs[3].classList.add("on");
+        anima(mcs[3].querySelector("b"), { scale: [1, 1.35, 1] }, { duration: 0.6 });
+        await anima(prox, { opacity: [0, 1], x: [-8, 0] }, { duration: 0.35 });
       },
       final: function () {
-        Array.prototype.forEach.call(linhas, function (l) { l.style.opacity = ""; });
-        Array.prototype.forEach.call(barras, function (b) { b.style.transform = ""; });
-        aviso.style.opacity = "";
+        fill.style.transform = "scaleX(" + HOJE / 100 + ")";
+        Array.prototype.forEach.call(mcs, function (m) { m.classList.add("on"); });
+        hoje.style.opacity = ""; rj.style.opacity = ""; reg.style.opacity = ""; prox.style.opacity = "";
+        if (acum !== null) { ind.textContent = "+" + pct(acum); val.textContent = brl(BASE * (1 + acum / 100)); }
       }
     };
   }
@@ -419,13 +464,23 @@
     var jan = el("div", "lvi-jan");
     jan.innerHTML = '<div class="lvi-jan-barra"><i></i><i></i><i></i><span>Licitacon · painel</span><em class="lvi-vivo">ao vivo</em></div>' +
       '<div class="lvi-abas">' + nomes.map(function (n, i) { return '<span class="lvi-aba" title="' + n + '"><i>' + icones[i] + "</i><em>" + n + "</em></span>"; }).join("") + '<i class="lvi-aba-marca"></i></div>' +
-      '<div class="lvi-corpo"></div><div class="lvi-campo"><span class="lvi-campo-txt"></span><i class="lvi-caret"></i><b class="lvi-campo-btn">↑</b></div>';
+      '<div class="lvi-corpo"></div><div class="lvi-campo"><span class="lvi-campo-txt"></span><i class="lvi-caret"></i><button type="button" class="lvi-campo-btn">↑</button></div>';
     var corpo = jan.querySelector(".lvi-corpo"), abas = jan.querySelectorAll(".lvi-aba"), marca = jan.querySelector(".lvi-aba-marca"), campo = jan.querySelector(".lvi-campo-txt");
     cenas.forEach(function (c) { corpo.appendChild(c.el); });
     caixa.appendChild(jan);
+    // só a setinha é para leitores de tela; o resto da janela é ilustração
+    ["lvi-jan-barra", "lvi-abas", "lvi-corpo", "lvi-campo-txt", "lvi-caret"].forEach(function (k) { var x = jan.querySelector("." + k); if (x) x.setAttribute("aria-hidden", "true"); });
+    // a setinha leva à página da ferramenta que está na tela
+    var PAGINAS_DEMO = ["agente", "elaborar", "calculadora", "gestao", "biblioteca", "forum", "consultoria", "cursos"];
+    var NOMES_DEMO = ["O Parecerista", "O Elaborador", "a Calculadora", "a Gestão Contratual", "a Biblioteca Jurídica", "o Fórum", "a Consultoria", "os Cursos"];
+    var seta = jan.querySelector(".lvi-campo-btn"), abaAtual = 0;
+    function rotularSeta() { var r = "Abrir " + NOMES_DEMO[abaAtual]; seta.setAttribute("aria-label", r); seta.title = r; }
+    rotularSeta();
+    seta.addEventListener("click", function () { abrir(PAGINAS_DEMO[abaAtual]); });
 
     function marcarAba(i, instantaneo) {
       Array.prototype.forEach.call(abas, function (a, k) { a.classList.toggle("on", k === i); });
+      abaAtual = i; rotularSeta();
       var a = abas[i];
       var q = { x: a.offsetLeft, scaleX: a.offsetWidth };
       if (instantaneo || REDUZ) { marca.style.transform = "translateX(" + q.x + "px) scaleX(" + q.scaleX + ")"; return; }
