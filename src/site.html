@@ -32,6 +32,9 @@
 <!-- telas vivas da página inicial (GSAP): ver inicio-ui.js -->
 <script src="vendor/gsap-3.15.1.min.js" defer></script>
 <script src="inicio-ui.js?v=1" defer></script>
+<!-- painéis da Gestão Contratual: acabamento (gestao.css) e montagem animada com GSAP (gestao-anim.js) -->
+<link rel="stylesheet" href="gestao.css?v=6">
+<script src="gestao-anim.js?v=2" defer></script>
 <script src="54d6539a-d2b1-4cc8-83cc-736f9be08894"></script>
 
 </head>
@@ -1901,85 +1904,85 @@
   .gp-tec .gp-leg li { white-space: nowrap; } .gp-tec .gp-legb { grid-template-columns: 10px auto auto; column-gap: 8px; } .gp-tec .gp-legb > b { grid-column: auto; margin-left: auto; }
   .gp-tec .gp-rosca-w { flex-wrap: nowrap; } @media (max-width: 1100px) { .gp-tec .gp-rosca-w { flex-wrap: wrap; } }
   /* Visão geral com gráficos (estilo painel analítico vivo) */
-  .gx { --gx-navy: #1F2A4D; --gx-ind: #3F48A8; --gx-cor: #E8734A; --gx-bd: #E6E3DA; --gx-mut: #6B7280; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 14px; background: #F6F4EE; border: 1px solid var(--gx-bd); border-radius: 18px; padding: 16px; font-variant-numeric: tabular-nums; }
+  .gx { --gx-navy: #0F3431; --gx-ind: #0FA36B; --gx-cor: #E5675B; --gx-bd: #E3E9E7; --gx-mut: #6B7280; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 14px; background: #F4F6F5; border: 1px solid var(--gx-bd); border-radius: 18px; padding: 16px; font-variant-numeric: tabular-nums; }
   .gx-head { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0; background: #fff; border: 1px solid var(--gx-bd); border-radius: 14px; overflow: hidden; }
-  .gx-hd { padding: 12px 16px; display: grid; gap: 2px; border-right: 1px solid #EFECE4; position: relative; } .gx-hd:last-child { border-right: 0; }
+  .gx-hd { padding: 12px 16px; display: grid; gap: 2px; border-right: 1px solid #E8EDEB; position: relative; } .gx-hd:last-child { border-right: 0; }
   .gx-hd > small { font-size: 10.5px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--gx-mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .gx-hd > b { font-size: 22px; font-weight: 800; color: var(--gx-navy); letter-spacing: -.02em; line-height: 1.15; }
   .gx-hd > em { font-style: normal; font-size: 11.5px; font-weight: 700; color: var(--gx-mut); }
   .gx-hd.ok > em { color: #13915F; } .gx-hd.at > em { color: #C77A12; } .gx-hd.er > em { color: #D0423A; }
   .gx-hd::after { content: ""; position: absolute; left: 16px; right: 16px; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: var(--gx-ind); opacity: .0; }
-  .gx-hd.er::after { background: #D0423A; opacity: .9; } .gx-hd.at::after { background: #E7A43A; opacity: .9; }
+  .gx-hd.er::after { background: #D0423A; opacity: .9; } .gx-hd.at::after { background: #E3A72F; opacity: .9; }
   .gx-c { background: #fff; border: 1px solid var(--gx-bd); border-radius: 14px; padding: 14px 16px; display: grid; align-content: start; gap: 10px; min-width: 0; }
   .gx-8 { grid-column: span 8; } .gx-7 { grid-column: span 7; } .gx-5 { grid-column: span 5; } .gx-4 { grid-column: span 4; }
   .gx-t { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; } .gx-t > h3 { margin: 0; font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: var(--gx-navy); }
   .gx-leg { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--gx-mut); flex-wrap: wrap; } .gx-leg > i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-left: 6px; }
   .gx-leg-f { background: repeating-linear-gradient(90deg, #9AA3B2 0 3px, transparent 3px 6px); height: 3px !important; width: 16px !important; border-radius: 0 !important; }
-  .gx-tag { font-size: 11.5px; font-weight: 800; color: var(--gx-ind); background: #EEF0FB; border-radius: 99px; padding: 2px 9px; }
+  .gx-tag { font-size: 11.5px; font-weight: 800; color: var(--gx-ind); background: #E7F5EE; border-radius: 99px; padding: 2px 9px; }
   .gx-area { position: relative; height: 226px; margin: 18px 0 22px 66px; }
   .gx-svg { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
-  .gx-grid { stroke: #ECE9E1; stroke-width: 1; } .gx-fut { fill: rgba(31, 42, 77, .035); }
-  .gx-ln { fill: none; stroke: #2B3384; stroke-width: 2.4; } .gx-ln-f { stroke-dasharray: 5 5; stroke: #7C83B8; } .gx-hoje { stroke: #1F2A4D; stroke-width: 1; stroke-dasharray: 3 3; }
+  .gx-grid { stroke: #E8EDEB; stroke-width: 1; } .gx-fut { fill: rgba(31, 42, 77, .035); }
+  .gx-ln { fill: none; stroke: #0B7A52; stroke-width: 2.4; } .gx-ln-f { stroke-dasharray: 5 5; stroke: #8FB8AC; } .gx-hoje { stroke: #0F3431; stroke-width: 1; stroke-dasharray: 3 3; }
   .gx-yl { position: absolute; left: -66px; width: 60px; text-align: right; transform: translateY(-50%); font-size: 10.5px; color: var(--gx-mut); white-space: nowrap; }
   .gx-area > .gx-yl { top: 0; }
   .gx-xl { position: absolute; bottom: -20px; transform: translateX(-50%); font-size: 10.5px; color: var(--gx-mut); white-space: nowrap; } .gx-xl.hoje { color: var(--gx-navy); font-weight: 800; }
   .gx-pin { position: absolute; top: -18px; transform: translateX(-50%); background: var(--gx-navy); color: #fff; font-size: 11px; font-weight: 800; border-radius: 6px; padding: 3px 8px; white-space: nowrap; box-shadow: 0 6px 14px rgba(31, 42, 77, .25); }
-  .gx-hp { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; cursor: crosshair; } .gx-hp:hover { background: #fff; border: 3px solid #2B3384; box-shadow: 0 0 0 4px rgba(63, 72, 168, .18); }
+  .gx-hp { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; cursor: crosshair; } .gx-hp:hover { background: #fff; border: 3px solid #0B7A52; box-shadow: 0 0 0 4px rgba(63, 72, 168, .18); }
   .gx-ros { display: grid; grid-template-columns: 136px minmax(0, 1fr); gap: 14px; align-items: center; }
   .gx-ros-g { position: relative; width: 136px; height: 136px; } .gx-ros-g > svg { width: 100%; height: 100%; }
   .gx-ros-g > span { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; font-size: 11px; color: var(--gx-mut); } .gx-ros-g b { font-size: 28px; color: var(--gx-navy); line-height: 1; }
   .gx-ros-l { display: grid; gap: 8px; }
-  .gx-sl { font: inherit; text-align: left; background: none; border: 0; padding: 4px; border-radius: 8px; cursor: pointer; display: grid; gap: 4px; } .gx-sl:hover { background: #F6F4EE; }
+  .gx-sl { font: inherit; text-align: left; background: none; border: 0; padding: 4px; border-radius: 8px; cursor: pointer; display: grid; gap: 4px; } .gx-sl:hover { background: #F4F6F5; }
   .gx-sl-t { display: flex; align-items: center; gap: 7px; font-size: 12.5px; color: #374151; } .gx-sl-t > i { width: 9px; height: 9px; border-radius: 50%; } .gx-sl-t > b { margin-left: auto; color: var(--gx-navy); } .gx-sl-t > em { font-style: normal; font-size: 11px; color: var(--gx-mut); width: 44px; text-align: right; }
-  .gx-sl-b { height: 5px; border-radius: 99px; background: #F0EEE8; overflow: hidden; } .gx-sl-b > i { display: block; height: 100%; border-radius: 99px; }
+  .gx-sl-b { height: 5px; border-radius: 99px; background: #EDF1F0; overflow: hidden; } .gx-sl-b > i { display: block; height: 100%; border-radius: 99px; }
   .gx-cols { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 5px; height: 170px; align-items: end; }
   .gx-col { display: grid; grid-template-rows: 16px 1fr 16px; height: 100%; text-align: center; min-width: 0; }
-  .gx-col-v { font-size: 11px; font-weight: 800; color: var(--gx-navy); } .gx-col-b { display: flex; align-items: flex-end; background: repeating-linear-gradient(0deg, #F3F1EB 0 1px, transparent 1px 34px); border-radius: 4px; }
-  .gx-col-b > i { display: block; width: 100%; border-radius: 5px 5px 2px 2px; background: linear-gradient(180deg, #5560C8, #2B3384); }
-  .gx-col.perto .gx-col-b > i { background: linear-gradient(180deg, #F08A5D, #D95A30); } .gx-col > small { font-size: 10.5px; color: var(--gx-mut); }
+  .gx-col-v { font-size: 11px; font-weight: 800; color: var(--gx-navy); } .gx-col-b { display: flex; align-items: flex-end; background: repeating-linear-gradient(0deg, #EEF2F1 0 1px, transparent 1px 34px); border-radius: 4px; }
+  .gx-col-b > i { display: block; width: 100%; border-radius: 5px 5px 2px 2px; background: linear-gradient(180deg, #2FBF86, #0B7A52); }
+  .gx-col.perto .gx-col-b > i { background: linear-gradient(180deg, #EE8B7F, #C94E43); } .gx-col > small { font-size: 10.5px; color: var(--gx-mut); }
   .gx-fun { display: grid; gap: 9px; }
   .gx-fu { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1.2fr) 30px 46px; gap: 8px; align-items: center; font-size: 12.5px; }
-  .gx-fu-k { color: #374151; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .gx-fu-b { height: 14px; background: #F0EEE8; border-radius: 4px; overflow: hidden; } .gx-fu-b > i { display: block; height: 100%; border-radius: 4px; }
+  .gx-fu-k { color: #374151; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .gx-fu-b { height: 14px; background: #EDF1F0; border-radius: 4px; overflow: hidden; } .gx-fu-b > i { display: block; height: 100%; border-radius: 4px; }
   .gx-fu > b { text-align: right; color: var(--gx-navy); } .gx-fu > em { font-style: normal; font-size: 11px; color: var(--gx-mut); text-align: right; }
-  .gx-fu:last-child > em { color: #D95A30; font-weight: 800; }
-  .gx-hb { display: grid; gap: 9px; } .gx-hbr { font: inherit; text-align: left; background: none; border: 0; padding: 3px 4px; border-radius: 8px; cursor: pointer; display: grid; gap: 4px; } .gx-hbr:hover { background: #F6F4EE; }
+  .gx-fu:last-child > em { color: #C94E43; font-weight: 800; }
+  .gx-hb { display: grid; gap: 9px; } .gx-hbr { font: inherit; text-align: left; background: none; border: 0; padding: 3px 4px; border-radius: 8px; cursor: pointer; display: grid; gap: 4px; } .gx-hbr:hover { background: #F4F6F5; }
   .gx-hbr-t { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; color: #374151; } .gx-hbr-t > em { font-style: normal; font-size: 11.5px; font-weight: 700; color: var(--gx-navy); white-space: nowrap; }
-  .gx-hbr-b { height: 9px; background: #F0EEE8; border-radius: 99px; overflow: hidden; } .gx-hbr-b > i { display: block; height: 100%; border-radius: 99px; }
+  .gx-hbr-b { height: 9px; background: #EDF1F0; border-radius: 99px; overflow: hidden; } .gx-hbr-b > i { display: block; height: 100%; border-radius: 99px; }
   .gx-leg-m > i { width: 12px; height: 12px; margin-left: 8px; }
   .gx-mapa { display: grid; gap: 4px; overflow-x: auto; }
   .gx-ml { font: inherit; text-align: left; background: none; border: 0; padding: 2px 0; display: grid; grid-template-columns: 150px repeat(12, minmax(22px, 1fr)); gap: 4px; align-items: center; cursor: pointer; min-width: 520px; border-radius: 6px; }
-  button.gx-ml:hover { background: #F6F4EE; }
+  button.gx-ml:hover { background: #F4F6F5; }
   .gx-ml-cab { cursor: default; font-size: 10.5px; color: var(--gx-mut); text-align: center; } .gx-ml-cab > span { display: grid; line-height: 1.15; text-transform: capitalize; } .gx-ml-cab small { font-size: 9.5px; font-weight: 800; color: var(--gx-navy); min-height: 11px; }
   .gx-ml-n { display: grid; min-width: 0; } .gx-ml-n > b { font-size: 12px; color: var(--gx-navy); } .gx-ml-n > small { font-size: 10.5px; color: var(--gx-mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .gx-cel { display: block; height: 22px; border-radius: 5px; background: #F2F0EA; }
-  .gx-cel.fora { background: repeating-linear-gradient(45deg, #F2F0EA 0 4px, #E9E6DE 4px 8px); } .gx-cel.aniv { background: #3F48A8; } .gx-cel.cct { background: #1E9AB0; }
-  .gx-cel.pror { background: #E7A43A; } .gx-cel.fim { background: #E8734A; } .gx-cel.pend { background: #fff; border: 2px solid #D9473F; box-shadow: inset 0 0 0 3px #FBE2DF; }
+  .gx-cel { display: block; height: 22px; border-radius: 5px; background: #EEF2F1; }
+  .gx-cel.fora { background: repeating-linear-gradient(45deg, #EEF2F1 0 4px, #E2E8E6 4px 8px); } .gx-cel.aniv { background: #0FA36B; } .gx-cel.cct { background: #3E9CC0; }
+  .gx-cel.pror { background: #E3A72F; } .gx-cel.fim { background: #E5675B; } .gx-cel.pend { background: #fff; border: 2px solid #D9534A; box-shadow: inset 0 0 0 3px #FBE2DF; }
   .gx-leg .gx-cel { display: inline-block; height: 12px; }
-  .gx-tab { display: grid; } .gx-tr { font: inherit; text-align: left; background: none; border: 0; border-bottom: 1px solid #F0EEE8; padding: 8px 2px; display: grid; grid-template-columns: minmax(0, 1.2fr) 108px minmax(0, 1fr) 122px; white-space: nowrap; gap: 10px; align-items: center; font-size: 12.5px; color: #374151; cursor: pointer; }
-  button.gx-tr:hover { background: #FAF9F5; } .gx-tr-cab { cursor: default; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--gx-mut); }
+  .gx-tab { display: grid; } .gx-tr { font: inherit; text-align: left; background: none; border: 0; border-bottom: 1px solid #EDF1F0; padding: 8px 2px; display: grid; grid-template-columns: minmax(0, 1.2fr) 108px minmax(0, 1fr) 122px; white-space: nowrap; gap: 10px; align-items: center; font-size: 12.5px; color: #374151; cursor: pointer; }
+  button.gx-tr:hover { background: #F7F9F8; } .gx-tr-cab { cursor: default; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--gx-mut); }
   .gx-tr > span:first-child { display: grid; min-width: 0; } .gx-tr > span:first-child b { color: var(--gx-navy); } .gx-tr > span:first-child small { font-size: 11px; color: var(--gx-mut); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .gx-pg { display: grid; gap: 3px; } .gx-pg > i { display: block; height: 6px; background: #F0EEE8; border-radius: 99px; overflow: hidden; } .gx-pg > i > b { display: block; height: 100%; background: linear-gradient(90deg, #3F48A8, #7A68C8); border-radius: 99px; } .gx-pg > small { font-size: 10.5px; color: var(--gx-mut); }
+  .gx-pg { display: grid; gap: 3px; } .gx-pg > i { display: block; height: 6px; background: #EDF1F0; border-radius: 99px; overflow: hidden; } .gx-pg > i > b { display: block; height: 100%; background: linear-gradient(90deg, #0FA36B, #2E7D9A); border-radius: 99px; } .gx-pg > small { font-size: 10.5px; color: var(--gx-mut); }
   .gx-pill { font-style: normal; display: inline-block; font-size: 10.5px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; border-radius: 6px; padding: 3px 8px; white-space: nowrap; }
   .gx-pill.ok { background: #DDF4EA; color: #0F7F52; } .gx-pill.at { background: #FFF0D4; color: #9A5F00; } .gx-pill.er { background: #FDE3E0; color: #B73A32; } .gx-pill.ci { background: #E8EBF0; color: #4B5563; }
-  @media (max-width: 1100px) { .gx-8, .gx-7, .gx-5 { grid-column: 1 / -1; } .gx-4 { grid-column: span 6; } .gx-head { grid-template-columns: repeat(3, minmax(0, 1fr)); } .gx-hd:nth-child(3) { border-right: 0; } .gx-hd:nth-child(-n+3) { border-bottom: 1px solid #EFECE4; } }
-  @media (max-width: 700px) { .gx { padding: 10px; gap: 10px; } .gx-4 { grid-column: 1 / -1; } .gx-head { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gx-hd { border-bottom: 1px solid #EFECE4; } .gx-area { margin-left: 52px; height: 210px; } .gx-yl { left: -54px; width: 50px; font-size: 9.5px; } .gx-xl { display: none; } .gx-xl.hoje { display: block; } .gx-tr { grid-template-columns: minmax(0, 1fr) 100px; } .gx-tr > span:nth-child(2), .gx-tr > span:nth-child(3) { display: none; } }
+  @media (max-width: 1100px) { .gx-8, .gx-7, .gx-5 { grid-column: 1 / -1; } .gx-4 { grid-column: span 6; } .gx-head { grid-template-columns: repeat(3, minmax(0, 1fr)); } .gx-hd:nth-child(3) { border-right: 0; } .gx-hd:nth-child(-n+3) { border-bottom: 1px solid #E8EDEB; } }
+  @media (max-width: 700px) { .gx { padding: 10px; gap: 10px; } .gx-4 { grid-column: 1 / -1; } .gx-head { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gx-hd { border-bottom: 1px solid #E8EDEB; } .gx-area { margin-left: 52px; height: 210px; } .gx-yl { left: -54px; width: 50px; font-size: 9.5px; } .gx-xl { display: none; } .gx-xl.hoje { display: block; } .gx-tr { grid-template-columns: minmax(0, 1fr) 100px; } .gx-tr > span:nth-child(2), .gx-tr > span:nth-child(3) { display: none; } }
   .gx-solo { grid-template-columns: 1fr; margin-bottom: 14px; } .gx-12 { grid-column: 1 / -1; }
   .gx-cols-6 { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
-  .gx-col-b2 { font: inherit; background: none; border: 0; padding: 0; cursor: pointer; } .gx-col-b2 .gx-col-b > i { background: none; } .gx-col-b2:hover .gx-col-b { outline: 2px solid #E6E3DA; }
+  .gx-col-b2 { font: inherit; background: none; border: 0; padding: 0; cursor: pointer; } .gx-col-b2 .gx-col-b > i { background: none; } .gx-col-b2:hover .gx-col-b { outline: 2px solid #E3E9E7; }
   .gx-col-b2 > small { font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .gx-card .gx-ros { grid-template-columns: 136px minmax(0, 1fr); }
   .gx-tree { display: flex; flex-wrap: wrap; gap: 4px; min-height: 180px; align-content: stretch; }
   .gx-tile { font: inherit; text-align: left; border: 0; border-radius: 8px; padding: 10px 12px; color: #fff; display: flex; flex-direction: column; justify-content: flex-end; min-height: 86px; flex-basis: 0; cursor: pointer; transition: filter .15s; }
   .gx-tile:hover { filter: brightness(1.08); } .gx-tile > b { font-size: 13px; text-transform: capitalize; } .gx-tile > small { font-size: 11.5px; opacity: .9; }
-  .gx-tl { position: relative; margin: 6px 4px 0; border-top: 2px solid #1F2A4D; margin-top: 26px; }
+  .gx-tl { position: relative; margin: 6px 4px 0; border-top: 2px solid #0F3431; margin-top: 26px; }
   .gx-tl-m { position: absolute; top: -8px; height: 100%; border-left: 1px dashed #DDD9CF; } .gx-tl-m > b { position: absolute; top: -18px; left: 4px; font-size: 10.5px; color: #6B7280; white-space: nowrap; }
-  .gx-tl-hoje { position: absolute; left: 0; top: -22px; font-size: 10.5px; font-weight: 800; color: #1F2A4D; }
-  .gx-tl-e { --c: #3F48A8; position: absolute; font: inherit; background: #fff; border: 1px solid #E6E3DA; border-left: 3px solid var(--c); border-radius: 6px; padding: 3px 8px 3px 6px; display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: #1F2A4D; cursor: pointer; white-space: nowrap; transform: translateX(-3px); box-shadow: 0 3px 8px rgba(31, 42, 77, .06); }
+  .gx-tl-hoje { position: absolute; left: 0; top: -22px; font-size: 10.5px; font-weight: 800; color: #0F3431; }
+  .gx-tl-e { --c: #0FA36B; position: absolute; font: inherit; background: #fff; border: 1px solid #E3E9E7; border-left: 3px solid var(--c); border-radius: 6px; padding: 3px 8px 3px 6px; display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700; color: #0F3431; cursor: pointer; white-space: nowrap; transform: translateX(-3px); box-shadow: 0 3px 8px rgba(31, 42, 77, .06); }
   .gx-tl-e > i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); } .gx-tl-e:hover { border-color: var(--c); z-index: 2; }
   .gx-tl-e::before { content: ""; position: absolute; left: -3px; top: -100vh; height: 100vh; border-left: 1px solid var(--c); opacity: .0; }
   .gx-cb { background: linear-gradient(90deg, var(--bc, #E3E6F6) var(--w, 0%), transparent var(--w, 0%)); border-radius: 4px; padding: 2px 6px !important; } .gx-cb.a { --bc: #ECEAE4; } .gx-cb.b { --bc: #DCE0F6; }
   .gx-gauge-w { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; align-items: center; }
-  .gx-gauge { position: relative; width: 180px; height: 104px; } .gx-gauge > svg { width: 100%; height: 100%; } .gx-gauge > b { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font-size: 26px; color: #1F2A4D; } .gx-gauge > small { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 10.5px; color: #6B7280; }
+  .gx-gauge { position: relative; width: 180px; height: 104px; } .gx-gauge > svg { width: 100%; height: 100%; } .gx-gauge > b { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font-size: 26px; color: #0F3431; } .gx-gauge > small { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 10.5px; color: #6B7280; }
   .gx-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; height: 180px; } .gx-cols-4 .gx-col > small, .gx-cols-4 .gx-col-v { font-size: 11.5px; } .gx-cols-4 .gx-col-b > i { background: none; }
   .gx-tl-m.fim > b { left: auto; right: 4px; }
   /* abas no mesmo conceito da visão geral: quadro creme, faixa de indicadores e cartões de gráfico */
@@ -1988,49 +1991,49 @@
   .gx-hd:has(.gx-hbar), .gx-hd:has(.gx-hspark) { display: flex; flex-direction: column; } .gx-hd:has(.gx-hbar) > em, .gx-hd:has(.gx-hspark) > em { flex: 1; }
   .gx-hd:has(.gx-hbar)::after, .gx-hd:has(.gx-hspark)::after { display: none; }
   .gx-hbar { display: block; height: 5px; margin-top: 8px; border-radius: 3px; background: #EEF0F4; overflow: hidden; }
-  .gx-hbar > span { display: block; height: 100%; border-radius: 3px; background: #3F48A8; }
-  .gx-hd.ok .gx-hbar > span { background: #18A574; } .gx-hd.at .gx-hbar > span { background: #E7A43A; } .gx-hd.er .gx-hbar > span { background: #D9473F; }
+  .gx-hbar > span { display: block; height: 100%; border-radius: 3px; background: #0FA36B; }
+  .gx-hd.ok .gx-hbar > span { background: #0FA36B; } .gx-hd.at .gx-hbar > span { background: #E3A72F; } .gx-hd.er .gx-hbar > span { background: #D9534A; }
   .gx-hspark { display: block; width: 100%; height: 22px; margin-top: 5px; overflow: visible; }
-  .gx-hspark .l { fill: none; stroke: #3F48A8; stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; } .gx-hspark .a { fill: rgba(63, 72, 168, .1); stroke: none; }
-  .gx-hd.at .gx-hspark .l { stroke: #E7A43A; } .gx-hd.at .gx-hspark .a { fill: rgba(231, 164, 58, .12); }
-  .gx-aba > .gx-head-4, .gx-head-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } .gx-head-4 .gx-hd:nth-child(4n) { border-right: 0; } .gx-head-4 .gx-hd:nth-child(-n+4):not(:last-child) { border-bottom: 1px solid #EFECE4; }
-  .gx-aba .gp-card { background: #fff; border: 1px solid #E6E3DA; border-radius: 14px; box-shadow: none; padding: 14px 16px; }
+  .gx-hspark .l { fill: none; stroke: #0FA36B; stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; } .gx-hspark .a { fill: rgba(63, 72, 168, .1); stroke: none; }
+  .gx-hd.at .gx-hspark .l { stroke: #E3A72F; } .gx-hd.at .gx-hspark .a { fill: rgba(231, 164, 58, .12); }
+  .gx-aba > .gx-head-4, .gx-head-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } .gx-head-4 .gx-hd:nth-child(4n) { border-right: 0; } .gx-head-4 .gx-hd:nth-child(-n+4):not(:last-child) { border-bottom: 1px solid #E8EDEB; }
+  .gx-aba .gp-card { background: #fff; border: 1px solid #E3E9E7; border-radius: 14px; box-shadow: none; padding: 14px 16px; }
   .gx-aba .gp-card:hover { border-color: #D9D4C7; }
-  .gx-aba .gp-card h3, .gx-ct ~ * .gx-t h3 { font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: #1F2A4D; }
-  .gx-aba .gp-prev > b { color: #1F2A4D !important; font-size: 24px; }
-  .gx-aba .gp-bar-t { background: #F0EEE8; } .gx-aba .gp-bar-t i { background: linear-gradient(90deg, #3F48A8, #7A68C8); }
-  .gx-aba .gp-bar-r, .gx-aba .gp-bar-v { color: #1F2A4D; }
-  .gx-aba .gp-rank-l i, .gx-aba .gp-pes-l i { background: linear-gradient(90deg, #3F48A8, #7A68C8); height: 6px; }
-  .gx-aba .gp-pes-l.sobre i { background: #E8734A; }
-  .gx-aba .gp-rank-l, .gx-aba button.gp-rank-l, .gx-aba .gp-pes-l, .gx-aba .gp-pen-l, .gx-aba .gp-cmp-l { border-bottom-color: #F0EEE8; }
-  .gx-aba .gp-lista li { border-left-color: #3F48A8; } .gx-aba .gp-lista li.gp-n-at { border-left-color: #E7A43A; } .gx-aba .gp-lista li.gp-n-lim { border-left-color: #D9473F; }
-  .gx-aba .gp-pz { border-color: #E6E3DA; } .gx-aba .gp-pz.urg { --pz: #D9473F; } .gx-aba .gp-pz.at { --pz: #E7A43A; } .gx-aba .gp-pz { --pz: #3F48A8; }
-  .gx-aba .gp-lim-l { --lc: #3F48A8; } .gx-aba .gp-lim-l.gp-n-at { --lc: #E8734A; } .gx-aba .gp-lim-l.gp-n-lim { --lc: #D9473F; } .gx-aba .gp-lim-b { background: #F0EEE8; }
-  .gx-aba .pca-s { border-color: #E6E3DA; } .gx-aba .pca-s-c { background: linear-gradient(90deg, #3F48A8, #7A68C8); } .gx-aba .pca-s-p { background: #E3E6F6; border-color: #C6CBEE; }
-  .gx-aba .pca-s.quase .pca-s-c { background: linear-gradient(90deg, #E7A43A, #E8734A); }
+  .gx-aba .gp-card h3, .gx-ct ~ * .gx-t h3 { font-size: 12px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: #0F3431; }
+  .gx-aba .gp-prev > b { color: #0F3431 !important; font-size: 24px; }
+  .gx-aba .gp-bar-t { background: #EDF1F0; } .gx-aba .gp-bar-t i { background: linear-gradient(90deg, #0FA36B, #2E7D9A); }
+  .gx-aba .gp-bar-r, .gx-aba .gp-bar-v { color: #0F3431; }
+  .gx-aba .gp-rank-l i, .gx-aba .gp-pes-l i { background: linear-gradient(90deg, #0FA36B, #2E7D9A); height: 6px; }
+  .gx-aba .gp-pes-l.sobre i { background: #E5675B; }
+  .gx-aba .gp-rank-l, .gx-aba button.gp-rank-l, .gx-aba .gp-pes-l, .gx-aba .gp-pen-l, .gx-aba .gp-cmp-l { border-bottom-color: #EDF1F0; }
+  .gx-aba .gp-lista li { border-left-color: #0FA36B; } .gx-aba .gp-lista li.gp-n-at { border-left-color: #E3A72F; } .gx-aba .gp-lista li.gp-n-lim { border-left-color: #D9534A; }
+  .gx-aba .gp-pz { border-color: #E3E9E7; } .gx-aba .gp-pz.urg { --pz: #D9534A; } .gx-aba .gp-pz.at { --pz: #E3A72F; } .gx-aba .gp-pz { --pz: #0FA36B; }
+  .gx-aba .gp-lim-l { --lc: #0FA36B; } .gx-aba .gp-lim-l.gp-n-at { --lc: #E5675B; } .gx-aba .gp-lim-l.gp-n-lim { --lc: #D9534A; } .gx-aba .gp-lim-b { background: #EDF1F0; }
+  .gx-aba .pca-s { border-color: #E3E9E7; } .gx-aba .pca-s-c { background: linear-gradient(90deg, #0FA36B, #2E7D9A); } .gx-aba .pca-s-p { background: #E3E6F6; border-color: #C6CBEE; }
+  .gx-aba .pca-s.quase .pca-s-c { background: linear-gradient(90deg, #E3A72F, #E5675B); }
   .gx-hbr-d { gap: 3px; } .gx-hbr-d > small { font-size: 11px; color: #6B7280; line-height: 1.35; }
-  .gx-stk { display: flex; height: 6px; border-radius: 99px; overflow: hidden; background: #F0EEE8; margin-top: 4px; } .gx-stk > b { display: block; height: 100%; }
-  .gx-ct { margin: 18px 0 14px; display: grid; grid-template-columns: 1fr; } .gx-ct > * { grid-column: 1 / -1; min-width: 0; } .gcs.gx-c, .ct-ag.gx-c { border-color: #E6E3DA; box-shadow: none; margin: 0; } .gx-ct > .ct-frac { margin: 0; border-color: #E6E3DA; } .gx-ct .lmo-bloco { margin: 0; }
-  .gcs.gx-c > .lva-h2 { font-size: 12px !important; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: #1F2A4D; margin: 0; }
-  .gx-ct .gcs-c4.f-todos { --fc: #1F2A4D; } .gcs-c4.f-vig { --fc: #18A574; } .gcs-c4.f-ven { --fc: #E7A43A; } .gcs-c4.f-exp { --fc: #D9473F; }
-  .ct-ag.gx-c .ct-ag-col i { background: linear-gradient(180deg, #5560C8, #2B3384); } .ct-ag.gx-c .ct-ag-m.atr .ct-ag-col i { background: linear-gradient(180deg, #F08A5D, #D9473F); }
+  .gx-stk { display: flex; height: 6px; border-radius: 99px; overflow: hidden; background: #EDF1F0; margin-top: 4px; } .gx-stk > b { display: block; height: 100%; }
+  .gx-ct { margin: 18px 0 14px; display: grid; grid-template-columns: 1fr; } .gx-ct > * { grid-column: 1 / -1; min-width: 0; } .gcs.gx-c, .ct-ag.gx-c { border-color: #E3E9E7; box-shadow: none; margin: 0; } .gx-ct > .ct-frac { margin: 0; border-color: #E3E9E7; } .gx-ct .lmo-bloco { margin: 0; }
+  .gcs.gx-c > .lva-h2 { font-size: 12px !important; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; color: #0F3431; margin: 0; }
+  .gx-ct .gcs-c4.f-todos { --fc: #0F3431; } .gcs-c4.f-vig { --fc: #0FA36B; } .gcs-c4.f-ven { --fc: #E3A72F; } .gcs-c4.f-exp { --fc: #D9534A; }
+  .ct-ag.gx-c .ct-ag-col i { background: linear-gradient(180deg, #2FBF86, #0B7A52); } .ct-ag.gx-c .ct-ag-m.atr .ct-ag-col i { background: linear-gradient(180deg, #EE8B7F, #D9534A); }
   @media (max-width: 1100px) { .gx-head-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .gx-ges > .gx-4c { grid-column: span 4; } .gx-ges > .gx-3c { grid-column: span 3; } .gx-ges > .gx-8c { grid-column: span 8; } .gx-ges > .gp-card.gx-4c { grid-column: span 4; } .gx-ges > .gp-cheio { grid-column: 1 / -1; }
   .gx-sub { font-size: 11px; color: #6B7280; line-height: 1.4; }
   .gx-vc { display: grid; gap: 14px; padding: 6px 0; } .gx-vc-l { display: grid; grid-template-columns: 74px minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 12px; color: #374151; }
-  .gx-vc-b { height: 22px; background: #F0EEE8; border-radius: 6px; overflow: hidden; } .gx-vc-b > i { display: block; height: 100%; border-radius: 6px; } .gx-vc-l > b { font-size: 14px; color: #1F2A4D; }
+  .gx-vc-b { height: 22px; background: #EDF1F0; border-radius: 6px; overflow: hidden; } .gx-vc-b > i { display: block; height: 100%; border-radius: 6px; } .gx-vc-l > b { font-size: 14px; color: #0F3431; }
   .gx-tag.at { background: #FFF0D4; color: #9A5F00; } .gx-tag.ok { background: #DDF4EA; color: #0F7F52; } .gx-tag.er { background: #FDE3E0; color: #B73A32; }
   .gx-sp { position: relative; height: 110px; } .gx-sp > svg { width: 100%; height: 92px; display: block; } .gx-sp-x { display: flex; justify-content: space-between; font-size: 10.5px; color: #6B7280; } .gx-sp-x > em { font-style: normal; }
   .gx-dz { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; align-items: center; } .gx-ros-p { width: 112px; height: 112px; } .gx-ros-p b { font-size: 17px !important; } .gx-ros-p > span { font-size: 10px; }
-  .gx-dz-l { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 12px; color: #374151; } .gx-dz-l li { display: flex; align-items: center; gap: 7px; } .gx-dz-l i { width: 9px; height: 9px; border-radius: 50%; flex: none; } .gx-dz-l b { margin-left: auto; color: #1F2A4D; }
+  .gx-dz-l { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 12px; color: #374151; } .gx-dz-l li { display: flex; align-items: center; gap: 7px; } .gx-dz-l i { width: 9px; height: 9px; border-radius: 50%; flex: none; } .gx-dz-l b { margin-left: auto; color: #0F3431; }
   .gx-3c .gx-dz { grid-template-columns: 1fr; justify-items: center; } .gx-3c .gx-dz-l { width: 100%; }
   .gx-gz { position: relative; width: 100%; max-width: 220px; margin: 4px auto 0; aspect-ratio: 120 / 76; } .gx-gz > svg { width: 100%; height: auto; display: block; }
-  .gx-gz > b { position: absolute; left: 0; right: 0; top: 50%; text-align: center; font-size: 24px; color: #1F2A4D; } .gx-gz > small { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 11px; color: #6B7280; }
+  .gx-gz > b { position: absolute; left: 0; right: 0; top: 50%; text-align: center; font-size: 24px; color: #0F3431; } .gx-gz > small { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 11px; color: #6B7280; }
   .gx-sm { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
-  .gx-smc { display: grid; grid-template-rows: 30px 130px auto; gap: 6px; text-align: center; border: 1px solid #F0EEE8; border-radius: 10px; padding: 8px 6px; } .gx-smc > small { font-size: 10.5px; font-weight: 700; color: #4B5563; line-height: 1.3; }
+  .gx-smc { display: grid; grid-template-rows: 30px 130px auto; gap: 6px; text-align: center; border: 1px solid #EDF1F0; border-radius: 10px; padding: 8px 6px; } .gx-smc > small { font-size: 10.5px; font-weight: 700; color: #4B5563; line-height: 1.3; }
   .gx-smc-g { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: end; } .gx-smc-c { display: flex; flex-direction: column; justify-content: flex-end; height: 130px; }
-  .gx-smc-c > em { font-style: normal; font-size: 10px; font-weight: 800; color: #1F2A4D; margin-bottom: 3px; white-space: nowrap; } .gx-smc-c > i { display: block; border-radius: 5px 5px 2px 2px; min-height: 2px; }
-  .gx-smc-c.a > i { background: #C9C4B8; } .gx-smc-c.b > i { background: linear-gradient(180deg, #5560C8, #2B3384); }
+  .gx-smc-c > em { font-style: normal; font-size: 10px; font-weight: 800; color: #0F3431; margin-bottom: 3px; white-space: nowrap; } .gx-smc-c > i { display: block; border-radius: 5px 5px 2px 2px; min-height: 2px; }
+  .gx-smc-c.a > i { background: #C9C4B8; } .gx-smc-c.b > i { background: linear-gradient(180deg, #2FBF86, #0B7A52); }
   .gx-smc > b { font-size: 12px; } .gx-smc > b.gp-up { color: #13915F; } .gx-smc > b.gp-down { color: #D0423A; }
   @media (max-width: 1100px) { .gx-ges > .gx-4c, .gx-ges > .gp-card.gx-4c { grid-column: span 6; } .gx-ges > .gx-3c { grid-column: span 6; } .gx-ges > .gx-8c { grid-column: 1 / -1; } .gx-sm { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @media (max-width: 700px) { .gx-ges > * { grid-column: 1 / -1 !important; } .gx-sm { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -5089,13 +5092,13 @@
         <div class="gx">
           <div class="gx-head"><sc-for list="{{ gxHead }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em><sc-if value="{{ h.temBar }}" hint-placeholder-val="{{ false }}"><span class="gx-hbar"><span style="{{ h.barSt }}"></span></span></sc-if><sc-if value="{{ h.temSpark }}" hint-placeholder-val="{{ false }}"><svg class="gx-hspark" sc-camel-view-box="0 0 100 24" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><path sc-camel-d="{{ h.sparkArea }}" class="a"></path><path sc-camel-d="{{ h.spark }}" class="l"></path></svg></sc-if></div></sc-for></div>
           <div class="gx-c gx-8">
-            <div class="gx-t"><h3>{{ gxAreaTit }}</h3><span class="gx-leg"><i style="background: #3F48A8"></i>valor original<i style="background: #E8734A"></i>reajustes, revisões e aditivos<i class="gx-leg-f"></i>projeção</span></div>
+            <div class="gx-t"><h3>{{ gxAreaTit }}</h3><span class="gx-leg"><i style="background: #0FA36B"></i>valor original<i style="background: #E5675B"></i>reajustes, revisões e aditivos<i class="gx-leg-f"></i>projeção</span></div>
             <div class="gx-area">
               <sc-for list="{{ gxA.ticks }}" as="t" hint-placeholder-count="5"><span class="gx-yl" style="top: {{ t.top }}">{{ t.rot }}</span></sc-for>
               <svg class="gx-svg" sc-camel-view-box="0 0 640 220" sc-camel-preserve-aspect-ratio="none" aria-hidden="true">
                 <defs>
-                  <linearGradient id="gxgT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" sc-camel-stop-color="#E8734A" sc-camel-stop-opacity="0.95"></stop><stop offset="1" sc-camel-stop-color="#E8734A" sc-camel-stop-opacity="0.55"></stop></linearGradient>
-                  <linearGradient id="gxgB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" sc-camel-stop-color="#3F48A8" sc-camel-stop-opacity="0.85"></stop><stop offset="1" sc-camel-stop-color="#3F48A8" sc-camel-stop-opacity="0.12"></stop></linearGradient>
+                  <linearGradient id="gxgT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" sc-camel-stop-color="#E5675B" sc-camel-stop-opacity="0.85"></stop><stop offset="1" sc-camel-stop-color="#F6C9C3" sc-camel-stop-opacity="1"></stop></linearGradient>
+                  <linearGradient id="gxgB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" sc-camel-stop-color="#2FBF86" sc-camel-stop-opacity="1"></stop><stop offset="1" sc-camel-stop-color="#E4F5EC" sc-camel-stop-opacity="1"></stop></linearGradient>
                 </defs>
                 <sc-for list="{{ gxA.ticks }}" as="t" hint-placeholder-count="5"><line x1="0" x2="640" sc-camel-y1="{{ t.y }}" sc-camel-y2="{{ t.y }}" class="gx-grid" sc-camel-vector-effect="non-scaling-stroke"></line></sc-for>
                 <rect sc-camel-x="{{ gxA.futX }}" y="0" sc-camel-width="{{ gxA.futW }}" height="216" class="gx-fut"></rect>
@@ -5151,7 +5154,7 @@
         <div class="gx gx-aba">
           <div class="gx-head"><sc-for list="{{ gxHPrazos }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em><sc-if value="{{ h.temBar }}" hint-placeholder-val="{{ false }}"><span class="gx-hbar"><span style="{{ h.barSt }}"></span></span></sc-if><sc-if value="{{ h.temSpark }}" hint-placeholder-val="{{ false }}"><svg class="gx-hspark" sc-camel-view-box="0 0 100 24" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><path sc-camel-d="{{ h.sparkArea }}" class="a"></path><path sc-camel-d="{{ h.spark }}" class="l"></path></svg></sc-if></div></sc-for></div>
           <div class="gx-c gx-12">
-          <div class="gx-t"><h3>Linha do tempo · próximos 120 dias</h3><span class="gx-leg gx-leg-m"><i style="background: #D9473F"></i>prazo processual<i style="background: #E8734A"></i>fim da vigência<i style="background: #E7A43A"></i>iniciar prorrogação<i style="background: #3F48A8"></i>anualidade<i style="background: #1E9AB0"></i>pedido ao órgão</span></div>
+          <div class="gx-t"><h3>Linha do tempo · próximos 120 dias</h3><span class="gx-leg gx-leg-m"><i style="background: #D9534A"></i>prazo processual<i style="background: #E5675B"></i>fim da vigência<i style="background: #E3A72F"></i>iniciar prorrogação<i style="background: #0FA36B"></i>anualidade<i style="background: #3E9CC0"></i>pedido ao órgão</span></div>
           <div class="gx-tl" style="{{ gxTlH }}"><sc-for list="{{ gxTlMarcas }}" as="m" hint-placeholder-count="5"><span class="{{ m.cls }}" style="left: {{ m.l }}"><b>{{ m.rot }}</b></span></sc-for><span class="gx-tl-hoje">hoje</span>
             <sc-for list="{{ gxTl }}" as="e" hint-placeholder-count="6"><button type="button" class="gx-tl-e" style="{{ e.st }}" title="{{ e.tit }}" sc-camel-on-click="{{ e.ir }}"><i></i><span>{{ e.rot }}</span></button></sc-for></div>
           <sc-if value="{{ gxTlVazio }}" hint-placeholder-val="{{ false }}"><p class="gp-sub">Nenhum prazo nos próximos 120 dias.</p></sc-if>
@@ -5238,7 +5241,7 @@
             <div class="gx-vc"><sc-for list="{{ gsVc.barras }}" as="b" hint-placeholder-count="2"><div class="gx-vc-l"><span>{{ b.rot }}</span><span class="gx-vc-b"><i style="{{ b.larg }}"></i></span><b>{{ b.v }}</b></div></sc-for></div>
             <small class="gx-sub">{{ gsVc.nota }}</small></div>
           <div class="gx-c gx-4c"><div class="gx-t"><h3>{{ gsSpTit }}</h3><span class="gx-tag">{{ gsSp.atual }}</span></div>
-            <div class="gx-sp"><svg sc-camel-view-box="0 0 300 90" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><defs><linearGradient id="gxgS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" sc-camel-stop-color="#3F48A8" sc-camel-stop-opacity="0.45"></stop><stop offset="1" sc-camel-stop-color="#3F48A8" sc-camel-stop-opacity="0.02"></stop></linearGradient></defs><path sc-camel-d="{{ gsSp.area }}" fill="url(#gxgS)"></path><path sc-camel-d="{{ gsSp.linha }}" fill="none" stroke="#2B3384" sc-camel-stroke-width="2.2" sc-camel-vector-effect="non-scaling-stroke"></path></svg>
+            <div class="gx-sp"><svg sc-camel-view-box="0 0 300 90" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><defs><linearGradient id="gxgS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" sc-camel-stop-color="#0FA36B" sc-camel-stop-opacity="0.45"></stop><stop offset="1" sc-camel-stop-color="#0FA36B" sc-camel-stop-opacity="0.02"></stop></linearGradient></defs><path sc-camel-d="{{ gsSp.area }}" fill="url(#gxgS)"></path><path sc-camel-d="{{ gsSp.linha }}" fill="none" stroke="#0B7A52" sc-camel-stroke-width="2.2" sc-camel-vector-effect="non-scaling-stroke"></path></svg>
               <span class="gx-sp-x"><em>{{ gsSp.ini }}</em><em>{{ gsSp.fim }}</em></span></div>
             <small class="gx-sub">{{ gsSp.nota }}</small></div>
           <div class="gx-c gx-4c"><div class="gx-t"><h3>{{ gsRespTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><svg sc-camel-view-box="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="16"></circle><sc-for list="{{ gsResp.seg }}" as="r" hint-placeholder-count="2"><circle cx="60" cy="60" r="42" fill="none" sc-camel-stroke="{{ r.cor }}" sc-camel-stroke-width="16" sc-camel-stroke-dasharray="{{ r.dash }}" sc-camel-stroke-dashoffset="{{ r.off }}" transform="rotate(-90 60 60)"></circle></sc-for></svg><span><b>{{ gsResp.v }}</b>{{ gsResp.u }}</span></div><ul class="gx-dz-l"><sc-for list="{{ gsResp.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
@@ -5246,7 +5249,7 @@
           <div class="gx-c gx-3c"><div class="gx-t"><h3>Tempo para conceder o reajuste</h3></div><div class="gx-gz"><svg sc-camel-view-box="0 0 120 70" aria-hidden="true"><path d="M10 62 A50 50 0 0 1 110 62" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round"></path><path d="M10 62 A50 50 0 0 1 110 62" fill="none" sc-camel-stroke="{{ gsG2.cor }}" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round" sc-camel-stroke-dasharray="{{ gsG2.dash }}"></path></svg><b>{{ gsG2.v }}</b><small>{{ gsG2.d }}</small></div></div>
           <div class="gx-c gx-3c"><div class="gx-t"><h3>{{ gsConcTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><svg sc-camel-view-box="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="16"></circle><sc-for list="{{ gsConc.seg }}" as="r" hint-placeholder-count="2"><circle cx="60" cy="60" r="42" fill="none" sc-camel-stroke="{{ r.cor }}" sc-camel-stroke-width="16" sc-camel-stroke-dasharray="{{ r.dash }}" sc-camel-stroke-dashoffset="{{ r.off }}" transform="rotate(-90 60 60)"></circle></sc-for></svg><span><b>{{ gsConc.v }}</b>{{ gsConc.u }}</span></div><ul class="gx-dz-l"><sc-for list="{{ gsConc.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
           <div class="gx-c gx-3c"><div class="gx-t"><h3>{{ gsDirTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><svg sc-camel-view-box="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="16"></circle><sc-for list="{{ gsDir.seg }}" as="r" hint-placeholder-count="2"><circle cx="60" cy="60" r="42" fill="none" sc-camel-stroke="{{ r.cor }}" sc-camel-stroke-width="16" sc-camel-stroke-dasharray="{{ r.dash }}" sc-camel-stroke-dashoffset="{{ r.off }}" transform="rotate(-90 60 60)"></circle></sc-for></svg><span><b>{{ gsDir.v }}</b>{{ gsDir.u }}</span></div><ul class="gx-dz-l"><sc-for list="{{ gsDir.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
-          <div class="gx-c gx-8c"><div class="gx-t"><h3>{{ gpCmpTit }}</h3><span class="gx-leg"><i style="background: #C9C4B8"></i>{{ gpCmpAnt }}<i style="background: #3F48A8"></i>{{ gpCmpAt }}</span></div>
+          <div class="gx-c gx-8c"><div class="gx-t"><h3>{{ gpCmpTit }}</h3><span class="gx-leg"><i style="background: #C9C4B8"></i>{{ gpCmpAnt }}<i style="background: #0FA36B"></i>{{ gpCmpAt }}</span></div>
             <div class="gx-sm"><sc-for list="{{ gsCmp }}" as="c" hint-placeholder-count="6"><div class="gx-smc"><small>{{ c.k }}</small><div class="gx-smc-g"><span class="gx-smc-c a"><em>{{ c.a }}</em><i style="{{ c.ha }}"></i></span><span class="gx-smc-c b"><em>{{ c.b }}</em><i style="{{ c.hb }}"></i></span></div><b class="{{ c.cls }}">{{ c.d }}</b></div></sc-for></div>
             <small class="gx-sub">{{ gpCmpNota }}</small></div>
           <div class="gp-card gx-4c"><h3>{{ gpPesTit }}</h3><p class="gp-nota">{{ gpPesSub }}</p>
@@ -9202,8 +9205,8 @@ function pcaCalendario(anoExec, hoje) {
   return marcos.map(([ini, fim, t, d]) => ({ ini, fim, t, d, st: hj > fim ? "feito" : hj >= ini ? "agora" : "futuro" }));
 }
 // ---------------------------------------------------------------- gráficos do Painel da Organização (SVG gerado a partir dos dados)
-const GX_COR = { navy: "#1F2A4D", indigo: "#3F48A8", roxo: "#7A68C8", coral: "#E8734A", ambar: "#E7A43A", verde: "#18A574", teal: "#1E9AB0", cinza: "#B9C3C9", vermelho: "#D9473F" };
-const GX_PALETA = ["#3F48A8", "#E8734A", "#1E9AB0", "#7A68C8", "#E7A43A", "#18A574", "#1F2A4D", "#C2577A"];
+const GX_COR = { navy: "#0F3431", indigo: "#0B7A52", roxo: "#2E7D9A", coral: "#E5675B", ambar: "#E3A72F", verde: "#0FA36B", teal: "#3E9CC0", cinza: "#B9C3C9", vermelho: "#D9534A" };
+const GX_PALETA = ["#0FA36B", "#E5675B", "#3E9CC0", "#0F3431", "#E3A72F", "#6FE0AE", "#8FA39E", "#B4835A"];
 // curva suave (Catmull-Rom → Bézier) por uma lista de pontos [x, y]
 // minigráfico das faixas do topo das abas: barra de proporção (0 a 1) e/ou linha de tendência (path em 100×24)
 function gxHB(h, p, spark) {
@@ -11602,10 +11605,10 @@ class Component extends DCLogic {
         return { nome: g.nome, cls: "pca-s" + (setorSel === g.k ? " sel" : "") + (over ? " over" : g.uso >= 0.9 ? " quase" : ""), plan: "width: " + wP.toFixed(2) + "%", cont: "width: " + wC.toFixed(2) + "%", over: "left: " + wP.toFixed(2) + "%; width: " + wO.toFixed(2) + "%",
           v: over ? "acima do PCA em " + brlC(g.cont - g.plan) : "saldo " + brlC(g.saldo), d: "contratado " + brlC(g.cont) + " de " + brlC(g.plan) + " · " + (g.plan ? pc(g.uso) : "sem item no PCA") + " · " + g.nItens + (g.nItens === 1 ? " item" : " itens"),
           ir: () => set({ setor: setorSel === g.k ? "" : g.k, todos: false }) }; }),
-      pcaRosca: gxRosca(P.cont > P.plan ? [P.plan, P.cont - P.plan] : [P.cont, Math.max(0, P.plan - P.cont)], P.cont > P.plan ? ["#3F48A8", "#D9473F"] : ["#3F48A8", "#E6E3DA"], 42), pcaUsoP: pc(P.uso),
-      pcaRoscaL: [["Planejado", brlC(P.plan), "#B9C3C9"], ["Contratado", brlC(P.cont), "#3F48A8"], [P.saldo >= 0 ? "Saldo" : "Acima do PCA", brlC(Math.abs(P.saldo)), P.saldo >= 0 ? "#E6E3DA" : "#D9473F"]].map(([rot, v, c]) => ({ rot, v, cor: "background: " + c })),
+      pcaRosca: gxRosca(P.cont > P.plan ? [P.plan, P.cont - P.plan] : [P.cont, Math.max(0, P.plan - P.cont)], P.cont > P.plan ? ["#0FA36B", "#D9534A"] : ["#0FA36B", "#E6E3DA"], 42), pcaUsoP: pc(P.uso),
+      pcaRoscaL: [["Planejado", brlC(P.plan), "#B9C3C9"], ["Contratado", brlC(P.cont), "#0FA36B"], [P.saldo >= 0 ? "Saldo" : "Acima do PCA", brlC(Math.abs(P.saldo)), P.saldo >= 0 ? "#E6E3DA" : "#D9534A"]].map(([rot, v, c]) => ({ rot, v, cor: "background: " + c })),
       pcaSitCols: (() => { const g = { planejado: [0, 0], em_contratacao: [0, 0], contratado: [0, 0], cancelado: [0, 0] }; P.itens.forEach((i) => { const k = g[i.sitEf] ? i.sitEf : "planejado"; g[k][0]++; g[k][1] += Number(i.valor) || 0; });
-        const mx = Math.max(1, ...Object.values(g).map((x) => x[1])), cor = { planejado: "#B9C3C9", em_contratacao: "#E7A43A", contratado: "#3F48A8", cancelado: "#D9473F" }, rot = { planejado: "Planejado", em_contratacao: "Em contratação", contratado: "Contratado", cancelado: "Cancelado" };
+        const mx = Math.max(1, ...Object.values(g).map((x) => x[1])), cor = { planejado: "#B9C3C9", em_contratacao: "#E3A72F", contratado: "#0FA36B", cancelado: "#D9534A" }, rot = { planejado: "Planejado", em_contratacao: "Em contratação", contratado: "Contratado", cancelado: "Cancelado" };
         return Object.keys(g).map((k) => ({ rot: rot[k], n: g[k][0] + " · " + brlC(g[k][1]), h: "height: " + (g[k][1] ? Math.max(6, g[k][1] / mx * 100) : 0).toFixed(1) + "%; background: " + cor[k], tit: g[k][0] + " item(ns)" })); })(),
       pcaHead: [["PCA " + ano, brlC(P.plan), P.nItens + (P.nItens === 1 ? " item" : " itens") + " planejados", ""], ["Contratado", brlC(P.cont), pc(P.uso) + " do planejado", P.uso > 1 ? "er" : "ok"], [P.saldo >= 0 ? "Saldo disponível" : "Acima do PCA", brlC(Math.abs(P.saldo)), P.saldo >= 0 ? "para contratar" : "além do planejado", P.saldo >= 0 ? "ok" : "er"], ["Fora do PCA", String(P.fora.length), P.fora.length ? "contratos sem item vinculado" : "todos vinculados", P.fora.length ? "at" : "ok"]].map(([k, v, d, c], i) => gxHB({ k, v, d, cls: "gx-hd " + c }, [null, P.plan ? P.cont / P.plan : null, P.plan ? Math.max(0, P.saldo) / P.plan : null, null][i])),
       pcaTemSetores: P.lista.length > 0, pcaFiltro: setorSel ? "Itens de " + ((P.lista.find((g) => g.k === setorSel) || {}).nome || setorSel) : "Todos os itens do PCA " + ano, pcaTemFiltro: !!setorSel, pcaLimpar: () => set({ setor: "" }),
@@ -13944,22 +13947,22 @@ class Component extends DCLogic {
               gxVenc: V.venc.map((o, i) => ({ rot: ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"][o.m % 12], n: o.n ? String(o.n) : "", v: o.v ? brlC(o.v) : "",
                 h: "height: " + (o.v ? Math.max(6, (o.v / V.mxV) * 100) : 0).toFixed(1) + "%", cls: "gx-col" + (o.n ? "" : " zero") + (i < 4 && o.n ? " perto" : ""), tit: o.n ? o.nums.map((x) => "Contrato " + x).join(", ") + " · " + brlC(o.v) : "sem vencimentos" })),
               gxVencTot: String(V.venc.reduce((a, o) => a + o.n, 0)), gxVencVal: brlC(V.venc.reduce((a, o) => a + o.v, 0)),
-              gxFun: V.fun.map(([k, n], i) => ({ k, n: String(n), p: G.n ? pc(n / G.n) : "—", larg: "width: " + (G.n ? Math.max(4, (n / G.n) * 100) : 0).toFixed(1) + "%; background: " + ["#1F2A4D", "#3F48A8", "#5E62C2", "#7A68C8", "#E8734A"][i] })),
+              gxFun: V.fun.map(([k, n], i) => ({ k, n: String(n), p: G.n ? pc(n / G.n) : "—", larg: "width: " + (G.n ? Math.max(4, (n / G.n) * 100) : 0).toFixed(1) + "%; background: " + ["#0F3431", "#0FA36B", "#34B98A", "#2E7D9A", "#E5675B"][i] })),
               gxMod: G.porMod.slice(0, 6).map((g, i) => ({ rot: g.k, n: String(g.n), v: brlC(g.v), p: pc(G.custo ? g.v / G.custo : 0), larg: "width: " + Math.max(3, (g.v / Math.max(1, G.porMod[0].v)) * 100).toFixed(1) + "%; background: " + GX_PALETA[i % GX_PALETA.length], ir: drill("modalidade " + g.k, g.ids) })),
               gxMapa: V.lin.map((l) => ({ ...l, ir: verC(l.id) })), gxMapaMeses: V.mapaMeses, gxTemMapa: V.lin.length > 0,
               gxTab: V.tab.map((t) => ({ ...t, ir: verC(t.id) })), gxTemTab: V.tab.length > 0,
             };
-            const evRotC = { reajuste: "Reajuste", repactuacao: "Repactuação", revisao: "Revisão", acrescimo: "Acréscimo", supressao: "Supressão", prorrogacao: "Prorrogação" }, evCor = ["#3F48A8", "#1E9AB0", "#7A68C8", "#18A574", "#E8734A", "#E7A43A"];
+            const evRotC = { reajuste: "Reajuste", repactuacao: "Repactuação", revisao: "Revisão", acrescimo: "Acréscimo", supressao: "Supressão", prorrogacao: "Prorrogação" }, evCor = ["#0FA36B", "#3E9CC0", "#2E7D9A", "#0FA36B", "#E5675B", "#E3A72F"];
             const evMxC = Math.max(1, ...Object.keys(evRotC).map((k) => G.evT[k][1]));
             const modTot = G.porMod.reduce((a, g) => a + g.v, 0) || 1, natTot = G.porNat.reduce((a, g) => a + g.v, 0) || 1;
             // linha do tempo dos próximos 120 dias
             const hojeD0 = Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()), dd = (iso) => Math.round((Date.parse(String(iso).slice(0, 10) + "T12:00:00Z") - hojeD0 - 432e5) / 864e5);
             const tlE = [];
-            E.prazos.forEach((x) => tlE.push({ d: x.dias, cor: "#D9473F", rot: { preclusao: "Pedido", defesa: "Defesa", recurso: "Recurso" }[x.tipo] + " · " + x.c.numero, tit: x.t + " · " + E.nomeC(x.c), id: x.c.id }));
-            E.pedidos.forEach((x) => tlE.push({ d: x.dias, cor: "#1E9AB0", rot: "Resposta · " + x.c.numero, tit: "Prazo do órgão para o pedido de " + x.tipo + " · " + E.nomeC(x.c), id: x.c.id }));
-            G.X.forEach((x) => { if (x.sit === "exp" || !x.si.fim) return; const f = String(x.si.fim).slice(0, 10), df = dd(f); tlE.push({ d: df, cor: "#E8734A", rot: "Fim · " + x.c.numero, tit: "Fim da vigência · " + E.nomeC(x.c), id: x.c.id });
-              const pr = new Date(f + "T12:00:00Z"); pr.setUTCMonth(pr.getUTCMonth() - 4); tlE.push({ d: dd(pr.toISOString()), cor: "#E7A43A", rot: "Prorrogação · " + x.c.numero, tit: "Iniciar a prorrogação · " + E.nomeC(x.c), id: x.c.id });
-              if (x.proxN != null && !x.pend) tlE.push({ d: dd(Math.floor(x.proxN / 12) + "-" + String(x.proxN % 12 + 1).padStart(2, "0") + "-01"), cor: "#3F48A8", rot: "Anualidade · " + x.c.numero, tit: "Anualidade do reajuste · " + E.nomeC(x.c), id: x.c.id }); });
+            E.prazos.forEach((x) => tlE.push({ d: x.dias, cor: "#D9534A", rot: { preclusao: "Pedido", defesa: "Defesa", recurso: "Recurso" }[x.tipo] + " · " + x.c.numero, tit: x.t + " · " + E.nomeC(x.c), id: x.c.id }));
+            E.pedidos.forEach((x) => tlE.push({ d: x.dias, cor: "#3E9CC0", rot: "Resposta · " + x.c.numero, tit: "Prazo do órgão para o pedido de " + x.tipo + " · " + E.nomeC(x.c), id: x.c.id }));
+            G.X.forEach((x) => { if (x.sit === "exp" || !x.si.fim) return; const f = String(x.si.fim).slice(0, 10), df = dd(f); tlE.push({ d: df, cor: "#E5675B", rot: "Fim · " + x.c.numero, tit: "Fim da vigência · " + E.nomeC(x.c), id: x.c.id });
+              const pr = new Date(f + "T12:00:00Z"); pr.setUTCMonth(pr.getUTCMonth() - 4); tlE.push({ d: dd(pr.toISOString()), cor: "#E3A72F", rot: "Prorrogação · " + x.c.numero, tit: "Iniciar a prorrogação · " + E.nomeC(x.c), id: x.c.id });
+              if (x.proxN != null && !x.pend) tlE.push({ d: dd(Math.floor(x.proxN / 12) + "-" + String(x.proxN % 12 + 1).padStart(2, "0") + "-01"), cor: "#0FA36B", rot: "Anualidade · " + x.c.numero, tit: "Anualidade do reajuste · " + E.nomeC(x.c), id: x.c.id }); });
             const tl = tlE.filter((e) => e.d >= 0 && e.d <= 120).sort((a, b) => a.d - b.d), lanes = [];
             tl.forEach((e) => { let k = lanes.findIndex((u) => e.d - u >= 16); if (k < 0) { k = lanes.length; lanes.push(e.d); } else lanes[k] = e.d; e.lane = Math.min(k, 5); });
             const gx2 = {
@@ -14004,19 +14007,19 @@ class Component extends DCLogic {
             const gs = {
               gsVcTit: emp ? "Receita contratada × atualizada" : "Valor contratado × custo atualizado",
               gsVc: { tag: (G.variacao >= 0 ? "▲ " : "▼ ") + pc(Math.abs(G.variacao)), tagCls: "gx-tag " + (G.variacao > 0.15 ? (emp ? "ok" : "at") : "ok"), nota: "Diferença: " + brlC(G.custo - G.original) + " em reajustes, revisões, aditivos e prorrogações.",
-                barras: [["Contratado", G.original, "#C9C4B8"], ["Atualizado", G.custo, "linear-gradient(90deg, #3F48A8, #E8734A)"]].map(([rot, v, c]) => ({ rot, v: brlC(v), larg: "width: " + (v / Math.max(1, G.original, G.custo) * 100).toFixed(1) + "%; background: " + c })) },
+                barras: [["Contratado", G.original, "#C9C4B8"], ["Atualizado", G.custo, "linear-gradient(90deg, #0FA36B, #E5675B)"]].map(([rot, v, c]) => ({ rot, v: brlC(v), larg: "width: " + (v / Math.max(1, G.original, G.custo) * 100).toFixed(1) + "%; background: " + c })) },
               gsSpTit: emp ? "Receita mensal · 12 meses" : "Gasto mensal · 12 meses",
               gsSp: { linha: linhaS, area: linhaS ? linhaS + " L300 90 L0 90 Z" : "", atual: brlC(pas.length ? pas[pas.length - 1].t : 0) + "/mês", ini: pas.length ? ymS(pas[0].m) : "", fim: pas.length ? ymS(pas[pas.length - 1].m) : "",
                 nota: pas.length > 1 ? "Variação em 12 meses: " + ((pas[pas.length - 1].t / Math.max(1, pas[0].t) - 1) >= 0 ? "+" : "") + pc(pas[pas.length - 1].t / Math.max(1, pas[0].t) - 1) + ". Contratos globais entram rateados." : "Sem histórico suficiente." },
               gsRespTit: emp ? "Contratos com preposto" : "Contratos com fiscal designado",
-              gsResp: { v: vigG.length ? pc(comR / vigG.length) : "—", u: "dos vigentes", seg: gxRosca([comR, vigG.length - comR], ["#18A574", "#E8734A"], 42), leg: [["Com " + (emp ? "preposto" : "fiscal"), comR, "#18A574"], ["Sem " + (emp ? "preposto" : "fiscal"), vigG.length - comR, "#E8734A"]].map(([rot, n, c]) => ({ rot, n: String(n), cor: "background: " + c })) },
-              gsG1: gauge(G.tOrcAss == null ? 0 : G.tOrcAss / 365, G.tOrcAss == null ? "#B9C3C9" : G.tOrcAss <= 120 ? "#18A574" : G.tOrcAss <= 240 ? "#E7A43A" : "#D9473F", G.tOrcAss == null ? "—" : Math.round(G.tOrcAss) + " dias", G.tOrcAss == null ? "informe a data do orçamento e da assinatura" : "escala de 0 a 365 dias"),
-              gsG2: gauge(G.tReaj == null ? 0 : G.tReaj / 180, G.tReaj == null ? "#B9C3C9" : G.tReaj <= 30 ? "#18A574" : G.tReaj <= 90 ? "#E7A43A" : "#D9473F", G.tReaj == null ? "—" : Math.round(G.tReaj) + " dias", G.tReaj == null ? "nenhum reajuste registrado" : "escala de 0 a 180 dias"),
+              gsResp: { v: vigG.length ? pc(comR / vigG.length) : "—", u: "dos vigentes", seg: gxRosca([comR, vigG.length - comR], ["#0FA36B", "#E5675B"], 42), leg: [["Com " + (emp ? "preposto" : "fiscal"), comR, "#0FA36B"], ["Sem " + (emp ? "preposto" : "fiscal"), vigG.length - comR, "#E5675B"]].map(([rot, n, c]) => ({ rot, n: String(n), cor: "background: " + c })) },
+              gsG1: gauge(G.tOrcAss == null ? 0 : G.tOrcAss / 365, G.tOrcAss == null ? "#B9C3C9" : G.tOrcAss <= 120 ? "#0FA36B" : G.tOrcAss <= 240 ? "#E3A72F" : "#D9534A", G.tOrcAss == null ? "—" : Math.round(G.tOrcAss) + " dias", G.tOrcAss == null ? "informe a data do orçamento e da assinatura" : "escala de 0 a 365 dias"),
+              gsG2: gauge(G.tReaj == null ? 0 : G.tReaj / 180, G.tReaj == null ? "#B9C3C9" : G.tReaj <= 30 ? "#0FA36B" : G.tReaj <= 90 ? "#E3A72F" : "#D9534A", G.tReaj == null ? "—" : Math.round(G.tReaj) + " dias", G.tReaj == null ? "nenhum reajuste registrado" : "escala de 0 a 180 dias"),
               gsConcTit: emp ? "Concentração · 5 maiores clientes" : "Concentração · 5 maiores fornecedores",
-              gsConc: { v: pc(G.conc5), u: "do valor", seg: gxRosca([top5, Math.max(0, G.custo - top5)], ["#3F48A8", "#E6E3DA"], 42), leg: [["5 maiores", brlC(top5), "#3F48A8"], ["Demais", brlC(Math.max(0, G.custo - top5)), "#E6E3DA"]].map(([rot, n, c]) => ({ rot, n, cor: "background: " + c })) },
+              gsConc: { v: pc(G.conc5), u: "do valor", seg: gxRosca([top5, Math.max(0, G.custo - top5)], ["#0FA36B", "#E6E3DA"], 42), leg: [["5 maiores", brlC(top5), "#0FA36B"], ["Demais", brlC(Math.max(0, G.custo - top5)), "#E6E3DA"]].map(([rot, n, c]) => ({ rot, n, cor: "background: " + c })) },
               gsDirTit: emp ? "Contratos por regime" : "Forma de contratação",
               gsDir: emp ? { v: String(G.porReg.length), u: "regimes", seg: gxRosca(G.porReg.map((g) => g.n), GX_PALETA, 42), leg: G.porReg.map((g, i) => ({ rot: g.k, n: String(g.n), cor: "background: " + GX_PALETA[i % GX_PALETA.length] })) }
-                : { v: pc(G.n ? dirN / G.n : 0), u: "diretas", seg: gxRosca([compN, dirN], ["#3F48A8", "#E8734A"], 42), leg: [["Licitação e adesão", compN, "#3F48A8"], ["Dispensa e inexigibilidade", dirN, "#E8734A"]].map(([rot, n, c]) => ({ rot, n: String(n), cor: "background: " + c })) },
+                : { v: pc(G.n ? dirN / G.n : 0), u: "diretas", seg: gxRosca([compN, dirN], ["#0FA36B", "#E5675B"], 42), leg: [["Licitação e adesão", compN, "#0FA36B"], ["Dispensa e inexigibilidade", dirN, "#E5675B"]].map(([rot, n, c]) => ({ rot, n: String(n), cor: "background: " + c })) },
               gsCmp: cmpRaw.map(([k, a, b, f]) => { const na = Number(a) || 0, nb = Number(b) || 0, m = Math.max(1e-9, na, nb), d = a == null || b == null || !na ? "—" : (nb / na - 1 >= 0 ? "+" : "") + pc(nb / na - 1);
                 return { k, a: f(a), b: f(b), ha: "height: " + (na / m * 100).toFixed(1) + "%", hb: "height: " + (nb / m * 100).toFixed(1) + "%", d, cls: d === "—" ? "" : (nb >= na) !== (k === "Tempo do reajuste") ? "gp-up" : "gp-down" }; }),
             };
@@ -14038,23 +14041,23 @@ class Component extends DCLogic {
               gpCmpNota: "Mesmo período nos dois anos: janeiro a " + mesNome + ". Toda a carteira, sem os filtros acima. " + (emp ? "Receita" : "Custo") + " executado de " + (C.anoAt - 1) + " no ano inteiro: " + brlC(C.antTodo.exec) + ".",
               gpSec1: emp ? "Tamanho da carteira, receita e tempos médios." : "Tamanho da carteira, custos e tempos médios.", gpSec3: emp ? "Contratos e clientes" : "Contratações e fornecedores",
               gpRiscoTit: emp ? "Próximos vencimentos · receita em risco" : "Próximos vencimentos", gpRiscoV: brlC(somaRisco), gpRiscoSub: emp ? "receita de 12 meses dos contratos que vencem em até 6 meses" : "valor de 12 meses dos contratos que vencem em até 6 meses",
-              gpTemRisco: E.risco.length > 0, gpRisco: E.risco.slice(0, 6).map((r) => ({ v: brlC(r.v), larg: "width: " + Math.max(3, r.v / Math.max(1, ...E.risco.map((y) => y.v)) * 100).toFixed(1) + "%; background: " + (r.p.fimA - (new Date().getFullYear() * 12 + new Date().getMonth()) <= 1 ? "#D9473F" : r.p.fimA - (new Date().getFullYear() * 12 + new Date().getMonth()) <= 3 ? "#E8734A" : "#E7A43A"), t: E.nomeC(r.p.c), d: "vence em " + ymE(r.p.fimA) + " · " + brl(r.v) + (r.p.mensal ? " em 12 meses" : " (valor global)") + (r.p.c.essencial && !emp ? " · serviço essencial" : ""), ir: verC(r.p.c.id) })),
+              gpTemRisco: E.risco.length > 0, gpRisco: E.risco.slice(0, 6).map((r) => ({ v: brlC(r.v), larg: "width: " + Math.max(3, r.v / Math.max(1, ...E.risco.map((y) => y.v)) * 100).toFixed(1) + "%; background: " + (r.p.fimA - (new Date().getFullYear() * 12 + new Date().getMonth()) <= 1 ? "#D9534A" : r.p.fimA - (new Date().getFullYear() * 12 + new Date().getMonth()) <= 3 ? "#E5675B" : "#E3A72F"), t: E.nomeC(r.p.c), d: "vence em " + ymE(r.p.fimA) + " · " + brl(r.v) + (r.p.mensal ? " em 12 meses" : " (valor global)") + (r.p.c.essencial && !emp ? " · serviço essencial" : ""), ir: verC(r.p.c.id) })),
               gpTem125: E.a125.length > 0, gpSem125: !E.a125.length,
               gp125: E.a125.slice(0, 8).map((a) => ({ t: "Contrato " + a.p.c.numero, d: (emp ? a.p.c.contratante : a.p.c.contratada) || "", v: a.acr.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "% de " + a.lim + "%" + (a.sup ? " · supr. " + a.sup.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%" : ""),
                 larg: "width: " + Math.min(100, a.uso * 100).toFixed(1) + "%", m15: "left: 60%", m20: "left: 80%", cls: "gp-lim-l " + nv(a.nivel), ir: verC(a.p.c.id) })),
               gpTemVig: E.vig.length > 0, gpSemVig: !E.vig.length,
-              gpVig: E.vig.slice(0, 8).map((v) => ({ v: v.anos.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " / " + v.lim + " anos", larg: "width: " + Math.min(100, v.anos / v.lim * 100).toFixed(1) + "%; background: " + (v.nivel === "limite" ? "#D9473F" : v.nivel === "atencao" ? "#E8734A" : "#E7A43A"), t: E.nomeC(v.p.c), cls: nv(v.nivel), ir: verC(v.p.c.id),
+              gpVig: E.vig.slice(0, 8).map((v) => ({ v: v.anos.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " / " + v.lim + " anos", larg: "width: " + Math.min(100, v.anos / v.lim * 100).toFixed(1) + "%; background: " + (v.nivel === "limite" ? "#D9534A" : v.nivel === "atencao" ? "#E5675B" : "#E3A72F"), t: E.nomeC(v.p.c), cls: nv(v.nivel), ir: verC(v.p.c.id),
                 d: v.anos.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + " de " + v.lim + " anos com a vigência atual · " + (emp ? "renovável até " : "prorrogável até ") + ymE(v.limN) + (v.nivel === "limite" ? (emp ? " — limite atingido: o órgão fará nova licitação" : " — limite atingido: nova licitação") : "") })),
               gpRetTit: "Reajustes concedidos com atraso", gpRetV: String(E.atrasos.length), gpRetSub: E.atrasos.length ? "registros depois da anualidade · retroativo de " + brl(somaRet) : "nenhum reajuste registrado depois da anualidade",
-              gpTemRet: E.atrasos.length > 0, gpRet: E.atrasos.slice(0, 6).map((a) => ({ v: Math.round(a.dias) + " dias", larg: "width: " + Math.max(3, a.dias / Math.max(1, ...E.atrasos.map((y) => y.dias)) * 100).toFixed(1) + "%; background: " + (a.dias > 90 ? "#D9473F" : a.dias > 30 ? "#E8734A" : "#E7A43A"), t: E.nomeC(a.p.c), cls: a.dias > 90 ? "gp-n-lim" : a.dias > 30 ? "gp-n-at" : "", ir: verC(a.p.c.id),
+              gpTemRet: E.atrasos.length > 0, gpRet: E.atrasos.slice(0, 6).map((a) => ({ v: Math.round(a.dias) + " dias", larg: "width: " + Math.max(3, a.dias / Math.max(1, ...E.atrasos.map((y) => y.dias)) * 100).toFixed(1) + "%; background: " + (a.dias > 90 ? "#D9534A" : a.dias > 30 ? "#E5675B" : "#E3A72F"), t: E.nomeC(a.p.c), cls: a.dias > 90 ? "gp-n-lim" : a.dias > 30 ? "gp-n-at" : "", ir: verC(a.p.c.id),
                 d: (a.e.tipo === "repactuacao" ? "Repactuação" : "Reajuste") + " de " + ymE(a.an) + " registrado " + Math.round(a.dias) + " dias depois" + (a.retro ? " · retroativo de " + brl(a.retro) : "") })),
               gpRetNota: "Retroativo: diferença mensal multiplicada pelos meses entre a anualidade e o registro, sem juros nem correção. " + (emp ? "Em atrasos longos, avalie pedir também a correção monetária e os juros." : "Atrasos longos aumentam o risco de cobrança de juros e de questionamento pelo controle."),
               gpPendTit: emp ? "Reajustes a pedir" : "Reajustes pendentes (passivo)", gpPendV: brl(somaPend) + "/mês",
               gpPendSub: E.pend.length ? (emp ? "a receber a mais por mês · " : "a pagar a mais por mês · ") + brl(acumPend) + " acumulados desde as anualidades" : "nenhum reajuste pendente",
-              gpTemPend: E.pend.length > 0, gpPend: E.pend.slice(0, 6).map((x) => ({ v: x.global ? brlC(x.valorGlobal) : brlC(x.acum), larg: "width: " + Math.max(3, (x.global ? x.valorGlobal : x.acum) / Math.max(1, ...E.pend.map((y) => y.global ? y.valorGlobal : y.acum)) * 100).toFixed(1) + "%; background: linear-gradient(90deg, #E8734A, #D9473F)", t: E.nomeC(x.p.c), ir: () => this.ctUsar(x.p.c.id, "reajuste"),
+              gpTemPend: E.pend.length > 0, gpPend: E.pend.slice(0, 6).map((x) => ({ v: x.global ? brlC(x.valorGlobal) : brlC(x.acum), larg: "width: " + Math.max(3, (x.global ? x.valorGlobal : x.acum) / Math.max(1, ...E.pend.map((y) => y.global ? y.valorGlobal : y.acum)) * 100).toFixed(1) + "%; background: linear-gradient(90deg, #E5675B, #D9534A)", t: E.nomeC(x.p.c), ir: () => this.ctUsar(x.p.c.id, "reajuste"),
                 d: (x.global ? "valor global · reajuste estimado de " + brl(x.valorGlobal) : brl(x.mes) + "/mês desde " + ymE(x.p.direitoN) + " (" + x.meses + (x.meses === 1 ? " mês)" : " meses)")) + " · " + (x.p.ix ? x.p.ix.nome + " " + pc(x.r) : "índice indisponível") })),
               gpPendNota: (emp ? "Clique no contrato para calcular o reajuste e gerar o pedido. " : "Clique no contrato para calcular o reajuste. ") + "Estimativa pelo índice do contrato nos últimos 12 meses; o cálculo definitivo usa a anualidade exata.",
-              gpQualV: Math.round(E.qual.pct * 100) + "%", gpQualDash: (E.qual.pct * 157.08).toFixed(1) + " 157.08", gpQualCor: E.qual.pct >= 0.9 ? "#18A574" : E.qual.pct >= 0.7 ? "#E7A43A" : "#D9473F", gpQualCls: "gp-qual-n " + (E.qual.pct >= 0.9 ? "ok" : E.qual.pct >= 0.7 ? "at" : "lim"), gpQualLarg: "width: " + (E.qual.pct * 100).toFixed(1) + "%",
+              gpQualV: Math.round(E.qual.pct * 100) + "%", gpQualDash: (E.qual.pct * 157.08).toFixed(1) + " 157.08", gpQualCor: E.qual.pct >= 0.9 ? "#0FA36B" : E.qual.pct >= 0.7 ? "#E3A72F" : "#D9534A", gpQualCls: "gp-qual-n " + (E.qual.pct >= 0.9 ? "ok" : E.qual.pct >= 0.7 ? "at" : "lim"), gpQualLarg: "width: " + (E.qual.pct * 100).toFixed(1) + "%",
               gpQualSub: E.qual.falt.length ? E.qual.falt.length + (E.qual.falt.length === 1 ? " contrato com dados faltando" : " contratos com dados faltando") + ". Quanto mais completo o cadastro, mais precisos os indicadores, a agenda e os avisos." : "Todos os contratos com o cadastro completo.",
               gpTemQual: E.qual.falt.length > 0, gpQual: E.qual.falt.slice(0, 8).map((q) => ({ t: E.nomeC(q.p.c), d: q.f.join(", "), ir: () => { this.ctVer([q.p.c.id]); setTimeout(() => this.ctEditar(q.p.c), 120); } })),
               gpPdf: () => this.ctPainelPdf(G, E),
@@ -14083,7 +14086,7 @@ class Component extends DCLogic {
               gpSet: barras(G.porSetor, "v", emp ? "equipe " : "setor "), gpTemSet: G.porSetor.some((g) => g.k !== "(sem setor)"), gpSemSet: !G.porSetor.some((g) => g.k !== "(sem setor)"), gpSemSetTxt: emp ? "Informe a equipe ou filial no cadastro dos contratos." : "Informe o setor requisitante no cadastro dos contratos.",
               gpPenTit: emp ? "Penalidades recebidas" : "Penalidades e ocorrências por empresa", gpPenCol: emp ? "Cliente" : "Empresa",
               gpPenV: String(E.nPen), gpPenSub: (E.nPen === 1 ? "penalidade" : "penalidades") + " · " + E.nOc + (E.nOc === 1 ? " ocorrência" : " ocorrências") + (E.somaMulta ? " · multas de " + brl(E.somaMulta) : "") + " · " + E.comPen12 + (E.comPen12 === 1 ? " contrato" : " contratos") + " com penalidade em 12 meses",
-              gpTemPen: E.penL.length > 0, gpPen: E.penL.slice(0, 8).map((r) => { const tt = Math.max(1, r.oc + r.adv + r.multa + r.imp), w = (n, c) => "width: " + (n / tt * 100).toFixed(1) + "%; background: " + c; return { s1: w(r.oc, "#B9C3C9"), s2: w(r.adv, "#E7A43A"), s3: w(r.multa, "#E8734A"), s4: w(r.imp, "#D9473F"), k: r.k, oc: String(r.oc), adv: String(r.adv), multa: r.multa ? r.multa + " · " + brlC(r.multaV) : "0", imp: String(r.imp), d: "último registro em " + (r.ult ? r.ult.slice(8, 10) + "/" + r.ult.slice(5, 7) + "/" + r.ult.slice(0, 4) : "—"), ir: drill((emp ? "penalidades de " : "ocorrências de ") + r.k, r.ids) }; }),
+              gpTemPen: E.penL.length > 0, gpPen: E.penL.slice(0, 8).map((r) => { const tt = Math.max(1, r.oc + r.adv + r.multa + r.imp), w = (n, c) => "width: " + (n / tt * 100).toFixed(1) + "%; background: " + c; return { s1: w(r.oc, "#B9C3C9"), s2: w(r.adv, "#E3A72F"), s3: w(r.multa, "#E5675B"), s4: w(r.imp, "#D9534A"), k: r.k, oc: String(r.oc), adv: String(r.adv), multa: r.multa ? r.multa + " · " + brlC(r.multaV) : "0", imp: String(r.imp), d: "último registro em " + (r.ult ? r.ult.slice(8, 10) + "/" + r.ult.slice(5, 7) + "/" + r.ult.slice(0, 4) : "—"), ir: drill((emp ? "penalidades de " : "ocorrências de ") + r.k, r.ids) }; }),
               gpPenNota: emp ? "Registre na linha do tempo as notificações e sanções recebidas. Ajudam a corrigir a execução e a se defender em novos processos." : "Registre na linha do tempo as ocorrências e as sanções (advertência, multa, impedimento e inidoneidade). O histórico apoia a decisão sobre prorrogar e a avaliação do fornecedor.",
               gpEssV: String(E.ess.length), gpEssSub: (E.ess.length === 1 ? "serviço essencial vigente" : "serviços essenciais vigentes") + " · " + (E.essRiscos.length ? E.essRiscos.length + (E.essRiscos.length === 1 ? " ponto de atenção" : " pontos de atenção") : "sem pontos de atenção"),
               gpTemEss: E.essRiscos.length > 0, gpEss: E.essRiscos.slice(0, 6).map((r) => ({ t: r.t, d: r.d, cls: r.nivel === "limite" ? "gp-n-lim" : "gp-n-at", ir: drill(r.t, r.ids) })),
