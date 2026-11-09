@@ -1,22 +1,20 @@
-/* Licitacon — cenas 3D da página inicial (Three.js): Parecerista e Biblioteca Jurídica.
+/* Licitacon — cena 3D da Biblioteca Jurídica (Three.js): 90 fontes oficiais em volta do acervo, com decisões viajando até ele.
  *
  * Fonte deste arquivo: src/inicio3d.js. O site carrega o pacote gerado na raiz (inicio3d.js), montado por
- * scripts/3d/montar.mjs com o Three.js e só com as partes usadas. O inicio.js baixa o pacote quando a primeira
- * cena chega perto da tela e chama montar(elemento, tipo) para cada lugar marcado com data-lv3d="…":
- *   parecer     — tomografia (coral): páginas do edital empilhadas, cortadas por um plano; achados viram alvos com mira
- *   biblioteca  — 90 fontes oficiais em volta do acervo, com decisões viajando até ele (menta)
- * Elaborador, Calculadora, Gestão e Comunidade usam telas vivas em GSAP (inicio-ui.js), não 3D.
+ * scripts/3d/montar.mjs com o Three.js e só com as partes usadas. O inicio.js baixa o pacote quando a cena chega perto
+ * da tela e chama montar(elemento, tipo) para o lugar marcado com data-lv3d="biblioteca".
+ * As outras ferramentas (Parecerista, Elaborador, Calculadora, Gestão e Comunidade) usam telas vivas em GSAP
+ * (inicio-ui.js), que mostram a própria ferramenta trabalhando.
  *
- * Um só WebGLRenderer para a página inteira (o celular aguenta poucos contextos): cada cena é desenhada num
- * pedaço da tela dele e copiada para o canvas 2D da sua seção. Só desenha o que está na tela e com a aba aberta.
- * Com "reduzir movimento", cada cena aparece parada no seu quadro mais completo. O botão "Pausar animação" (o mesmo das
- * telas vivas, inicio-ui.js) para todas. Sem WebGL, nada muda na página.
+ * Um só WebGLRenderer; a cena é desenhada num pedaço da tela dele e copiada para o canvas 2D do palco. Só desenha com
+ * o palco à vista e a aba aberta. Com "reduzir movimento", aparece parada no quadro mais completo. O botão "Pausar
+ * animação" (o mesmo das telas vivas) para a cena. Sem WebGL, nada muda na página.
  */
 import {
   WebGLRenderer, Scene, PerspectiveCamera, Group, Mesh, Sprite, SpriteMaterial, MeshStandardMaterial,
-  MeshBasicMaterial, PlaneGeometry, SphereGeometry, IcosahedronGeometry, InstancedMesh, LineSegments,
+  MeshBasicMaterial, SphereGeometry, IcosahedronGeometry, InstancedMesh, LineSegments,
   LineBasicMaterial, BufferGeometry, Float32BufferAttribute, Object3D, Vector3, Color, CanvasTexture,
-  SRGBColorSpace, AdditiveBlending, HemisphereLight, DirectionalLight, PointLight, ACESFilmicToneMapping, DoubleSide
+  SRGBColorSpace, AdditiveBlending, HemisphereLight, DirectionalLight, PointLight, ACESFilmicToneMapping
 } from "three";
 
 // ------------------------------------------------------------------ cores da marca
@@ -115,166 +113,8 @@ function base(fov) {
   return { scene, camera };
 }
 
-// Câmera que olha para "alvo" e se inclina com o mouse (tx, ty) e com a rolagem (prog 0..1).
-function mirar(cam, p, raio, alvo, op) {
-  op = op || {};
-  const giroX = (op.giroX == null ? 0.22 : op.giroX) * p.tx + (op.rolagem == null ? 0.35 : op.rolagem) * (p.prog - 0.5);
-  const giroY = (op.giroY == null ? 0.12 : op.giroY) * p.ty;
-  const ang0 = op.ang || 0, alt0 = op.alt || 0;
-  const a = ang0 + giroX, e = alt0 + giroY;
-  cam.position.set(alvo.x + raio * Math.sin(a) * Math.cos(e), alvo.y + raio * Math.sin(e), alvo.z + raio * Math.cos(a) * Math.cos(e));
-  cam.lookAt(alvo);
-}
 
-// ------------------------------------------------------------------ peças comuns
-let TEX_PONTO = null, TEX_ANEL = null;
-function texPonto() {
-  if (TEX_PONTO) return TEX_PONTO;
-  TEX_PONTO = textura(64, 64, (g, w) => {
-    const r = g.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2);
-    r.addColorStop(0, "rgba(255,255,255,1)");
-    r.addColorStop(0.32, "rgba(255,255,255,0.85)");
-    r.addColorStop(0.6, "rgba(255,255,255,0.18)");
-    r.addColorStop(1, "rgba(255,255,255,0)");
-    g.fillStyle = r; g.fillRect(0, 0, w, w);
-  });
-  return TEX_PONTO;
-}
-function texAnel() {
-  if (TEX_ANEL) return TEX_ANEL;
-  TEX_ANEL = textura(128, 128, (g, w) => {
-    g.beginPath(); g.arc(w / 2, w / 2, w / 2 - 6, 0, Math.PI * 2);
-    g.lineWidth = 5; g.strokeStyle = "rgba(255,255,255,1)"; g.shadowColor = "rgba(255,255,255,1)"; g.shadowBlur = 8; g.stroke();
-  });
-  return TEX_ANEL;
-}
-function segmentos(pontos, cor, opac) {
-  const g = new BufferGeometry();
-  g.setAttribute("position", new Float32BufferAttribute(pontos, 3));
-  return new LineSegments(g, new LineBasicMaterial({ color: cor, transparent: true, opacity: opac, blending: AdditiveBlending, depthWrite: false, toneMapped: false }));
-}
-
-// Etiqueta de painel (HUD): texto com cantos de mira, sem fundo cheio. Linha de baixo opcional, menor.
-function hud(texto, cor, op) {
-  op = op || {};
-  const tam = 38, sub = op.sub || "", pad = 26;
-  const m = document.createElement("canvas").getContext("2d");
-  m.font = "800 " + tam + "px " + FONTE;
-  let larg = m.measureText(texto).width;
-  if (sub) { m.font = "600 " + Math.round(tam * 0.62) + "px " + FONTE; larg = Math.max(larg, m.measureText(sub).width); }
-  const W = Math.ceil(larg) + pad * 2, H = Math.round(tam * (sub ? 2.55 : 1.8));
-  const tex = textura(W, H, (g, w, h) => {
-    g.fillStyle = "rgba(4,10,14,0.55)"; caixa(g, 0, 0, w, h, 8); g.fill();
-    g.strokeStyle = cor; g.lineWidth = 3; const c = 14;
-    [[2, 2, 1, 1], [w - 2, 2, -1, 1], [2, h - 2, 1, -1], [w - 2, h - 2, -1, -1]].forEach(([x, y, dx, dy]) => {
-      g.beginPath(); g.moveTo(x + dx * c, y); g.lineTo(x, y); g.lineTo(x, y + dy * c); g.stroke();
-    });
-    g.textBaseline = "middle"; g.fillStyle = op.corTexto || cor;
-    g.font = "800 " + tam + "px " + FONTE; g.fillText(texto, pad, sub ? h * 0.36 : h / 2 + 2);
-    if (sub) { g.fillStyle = "rgba(255,255,255,0.78)"; g.font = "600 " + Math.round(tam * 0.62) + "px " + FONTE; g.fillText(sub, pad, h * 0.74); }
-  });
-  const s = new Sprite(new SpriteMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: false }));
-  const a = op.altura || 0.36;
-  s.scale.set(a * W / H, a, 1);
-  s.userData.base = s.scale.clone();
-  s.renderOrder = 10;
-  return s;
-}
-
-// Mantém uma etiqueta inteira dentro do painel (no celular a câmera se afasta e as pontas cortariam).
-function dentro(et, cam) {
-  const dist = Math.max(1, cam.position.distanceTo(et.position));
-  const meiaH = Math.tan((cam.fov * Math.PI) / 360) * dist / (cam.zoom || 1), meiaW = meiaH * cam.aspect;
-  const m = Math.max(0, meiaW - et.scale.x / 2 - 0.12);
-  et.position.x = lim(et.position.x, -m, m);
-}
-
-// ------------------------------------------------------------------ 1. Parecerista — tomografia do edital (coral)
-// As páginas do edital ficam empilhadas no espaço; um plano de varredura atravessa a pilha. Cada página acende
-// quando é cortada e, onde há problema, aparece um alvo com mira na cor da gravidade.
-function cenaParecer() {
-  const { scene, camera } = base(34);
-  const CORAL = 0xff7a6b;
-  const pilha = new Group();
-  const PW = 2.0, PH = 2.6, NP = 7, DZ = 0.36;
-  const texPag = textura(400, 520, (g, w, h) => {
-    g.strokeStyle = "rgba(255,255,255,0.9)"; g.lineWidth = 3; g.strokeRect(2, 2, w - 4, h - 4);
-    g.fillStyle = "rgba(255,255,255,0.75)";
-    for (let i = 0; i < 15; i++) { const l = [0.9, 0.7, 0.95, 0.6, 0.85][i % 5]; caixa(g, 34, 50 + i * 30, (w - 68) * l, 7, 3); g.fill(); }
-  });
-  const paginas = [];
-  for (let i = 0; i < NP; i++) {
-    const m = new Mesh(new PlaneGeometry(PW, PH), new MeshBasicMaterial({ map: texPag, transparent: true, opacity: 0.16, depthWrite: false, side: DoubleSide, blending: AdditiveBlending, toneMapped: false }));
-    m.position.z = (i - (NP - 1) / 2) * DZ;
-    pilha.add(m);
-    paginas.push(m);
-  }
-  // plano de varredura
-  const corte = new Group();
-  corte.add(new Mesh(new PlaneGeometry(PW + 0.5, PH + 0.5), new MeshBasicMaterial({ color: CORAL, transparent: true, opacity: 0.1, depthWrite: false, side: DoubleSide, blending: AdditiveBlending, toneMapped: false })));
-  const bx = (PW + 0.5) / 2, by = (PH + 0.5) / 2;
-  corte.add(segmentos([-bx, by, 0, bx, by, 0, bx, by, 0, bx, -by, 0, bx, -by, 0, -bx, -by, 0, -bx, -by, 0, -bx, by, 0], CORAL, 0.95));
-  pilha.add(corte);
-  // achados: página, posição, cor, gravidade, dispositivo
-  const ACH = [[1, -0.45, 0.65, COR.alta, "ALTA", "art. 82, § 1º", CSS.alta], [3, 0.5, -0.1, COR.media, "MÉDIA", "art. 86, § 8º", CSS.media], [5, -0.2, -0.75, COR.baixa, "BAIXA", "erro material", CSS.baixa]].map(([pg, x, y, cor, nome, sub, css], k) => {
-    const g = new Group();
-    g.position.set(x, y, paginas[pg].position.z + 0.01);
-    const luz = brilho(cor, 0.9, 0.9);
-    const mira = new Sprite(new SpriteMaterial({ map: texAnel(), color: cor, transparent: true, depthWrite: false, blending: AdditiveBlending, toneMapped: false }));
-    mira.scale.setScalar(0.5);
-    const cruz = segmentos([-0.42, 0, 0, -0.26, 0, 0, 0.26, 0, 0, 0.42, 0, 0, 0, -0.42, 0, 0, -0.26, 0, 0, 0.26, 0, 0, 0.42, 0], cor, 0.9);
-    g.add(luz, mira, cruz);
-    pilha.add(g);
-    const et = hud(nome, css, { sub, altura: 0.5 });
-    scene.add(et);
-    const fio = segmentos([0, 0, 0, 0, 0, 0], cor, 0.6);
-    scene.add(fio);
-    return { pg, g, mira, cruz, luz, et, fio, lado: k === 1 ? 1 : -1, v: 0, mundo: new Vector3() };
-  });
-  pilha.rotation.set(-0.12, -0.72, 0);
-  pilha.position.set(-0.2, 0.05, 0);
-  scene.add(pilha);
-  const ciclo = 8, TV = 3.8, z0 = paginas[0].position.z - 0.35, z1 = paginas[NP - 1].position.z + 0.35;
-  return {
-    scene, camera, tParado: 6.0,
-    update(t, dt, p) {
-      const c = t % ciclo, some = suave(7.0, 7.9, c);
-      const zc = z0 + (z1 - z0) * suave(0.2, TV, c);
-      corte.position.z = zc;
-      corte.visible = c < TV + 0.3 && c > 0.1;
-      paginas.forEach((m, i) => {
-        const d = Math.abs(m.position.z - zc);
-        const lido = m.position.z < zc ? 0.06 : 0;
-        m.material.opacity = 0.14 + lido + (corte.visible ? 0.6 * Math.exp(-d * d / 0.02) : 0);
-        m.material.color.setHex(d < 0.2 && corte.visible ? 0xffd0c8 : 0xffffff);
-      });
-      pilha.updateMatrixWorld();
-      ACH.forEach((a, k) => {
-        const passou = zc > paginas[a.pg].position.z || c > TV;
-        const alvo = passou && c < 7.9 ? 1 : 0;
-        a.v = aprox(a.v, alvo * (1 - some), dt || 1, 6);
-        a.g.visible = a.v > 0.01;
-        a.mira.scale.setScalar(0.55 + 0.9 * (1 - a.v) + 0.06 * Math.sin(t * 5 + k));
-        a.mira.material.opacity = a.v;
-        a.cruz.material.opacity = 0.9 * a.v;
-        a.cruz.rotation.z = t * 0.8;
-        a.luz.material.opacity = 0.9 * a.v;
-        a.mundo.set(0, 0, 0); a.g.localToWorld(a.mundo);
-        a.et.position.set(a.mundo.x + a.lado * 1.55, a.mundo.y + 0.12, a.mundo.z + 0.3);
-        dentro(a.et, camera);
-        a.et.material.opacity = a.v;
-        const F = a.fio.geometry.attributes.position.array;
-        F.set([a.mundo.x, a.mundo.y, a.mundo.z, a.et.position.x - a.lado * a.et.scale.x / 2, a.et.position.y, a.et.position.z]);
-        a.fio.geometry.attributes.position.needsUpdate = true;
-        a.fio.material.opacity = 0.6 * a.v;
-      });
-      pilha.rotation.y = -0.72 + 0.08 * Math.sin(t * 0.35);
-      mirar(camera, p, 8.4, new Vector3(0, 0, 0), { alt: 0.14 });
-    }
-  };
-}
-
-// ------------------------------------------------------------------ 5. Biblioteca Jurídica
+// ------------------------------------------------------------------ Biblioteca Jurídica
 function cenaBiblioteca() {
   const { scene, camera } = base(34);
   const mundo = new Group();
@@ -331,7 +171,7 @@ function cenaBiblioteca() {
   };
 }
 
-const CENAS = { parecer: cenaParecer, biblioteca: cenaBiblioteca };
+const CENAS = { biblioteca: cenaBiblioteca };
 
 // ------------------------------------------------------------------ motor: um renderer para todas as cenas
 let R = null, bufW = 0, bufH = 0, raf = 0, ult = 0, perdido = false;
@@ -402,7 +242,7 @@ function descartar(p) {
   p.cena.scene.traverse((o) => {
     if (o.geometry) o.geometry.dispose();
     const ms = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : [];
-    ms.forEach((m) => { if (m.map && m.map !== TEX_BRILHO && m.map !== TEX_PONTO && m.map !== TEX_ANEL) m.map.dispose(); m.dispose(); });
+    ms.forEach((m) => { if (m.map && m.map !== TEX_BRILHO) m.map.dispose(); m.dispose(); });
   });
 }
 // palcos de páginas que o runtime já tirou da tela (o inicio.js chama a cada troca de página)

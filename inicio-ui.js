@@ -7,6 +7,9 @@
  *                 do PNCP e do Compras.gov.br calculando a mediana; no fim, a minuta em Word e PDF
  *   gestao      — a carteira numa linha do tempo; a linha "hoje" anda, os prazos acendem e o aviso por e-mail sai
  *   comunidade  — chega uma pergunta ao fórum, o especialista responde com a resposta oficial e os votos sobem
+ *   parecer     — o parecer como painel: itens conferidos, apontamentos por gravidade com o fundamento, redação sugerida
+ *   como        — "Como funciona O Parecerista": envio, leitura item a item, conferência com a lei e o TCU e o parecer;
+ *                 os passos ao lado acompanham a etapa e levam direto a ela
  *
  * Regras: só anima transform e opacity; textos e números mudam no próprio nó de texto (nodeValue), sem criar nós, para
  * não acordar os observadores de página do site. A tela só monta quando chega perto, para quando sai da vista e tem um
@@ -228,13 +231,159 @@
     return { tl: tl, quadroFinal: 0.9 };
   }
 
-  var MONTA = { calculadora: montarCalculadora, elaborador: montarElaborador, gestao: montarGestao, comunidade: montarComunidade };
+  // ------------------------------------------------------------------ Parecerista: o resultado da análise
+  // O parecer como painel: itens conferidos, apontamentos por gravidade, fontes citadas, a lista de apontamentos com
+  // o fundamento e, no primeiro, a redação sugerida: o trecho do edital riscado e o texto corrigido sendo escrito.
+  function montarParecer(G, tela) {
+    var AP = [["alta", "Alta", "Julgamento por lote único sem justificativa", ["Lei 14.133, art. 82, § 1º", "TCU · Súmula 247"]],
+      ["media", "Média", "Adesão à ata por órgãos federais", ["Lei 14.133, art. 86, § 8º"]],
+      ["baixa", "Baixa", "Data do ETP diferente no item 9.1", ["Roteiro Licitacon"]]];
+    tela.innerHTML = janela("Parecer técnico", "Pregão eletrônico 041/2026 · Lei 14.133/2021",
+      '<div class="lvu-kpis lvu-k3 lvu-pk"><div><small>Itens conferidos</small><b class="lvu-p1">0</b><em>de 62 do edital</em></div>' +
+      '<div><small>Apontamentos</small><b class="lvu-p2">0</b><span class="lvu-sev"><i class="alta"></i><i class="media"></i><i class="baixa"></i></span></div>' +
+      '<div><small>Fontes citadas</small><b class="lvu-p3">0</b><em>lei, TCU e roteiro</em></div></div>' +
+      '<div class="lvu-aps">' + AP.map(function (a) {
+        return '<div class="lvu-ap"><span class="lvu-gr ' + a[0] + '">' + a[1] + "</span><div><b>" + a[2] + '</b><span class="lvu-funds">' +
+          a[3].map(function (f) { return "<em>" + f + "</em>"; }).join("") + "</span></div></div>";
+      }).join("") + "</div>" +
+      '<div class="lvu-red"><small>Redação sugerida · item 7.4</small><p><del>O julgamento será por lote único, reunindo os 32 itens.</del> <ins class="lvu-ins"></ins></p></div>' +
+      '<div class="lvu-pe"><span class="lvu-chip">Formato ABNT</span><span class="lvu-doc">Parecer.pdf · Parecer.docx</span><span class="lvu-carimbo">Parecer pronto</span></div>');
+    var p1 = q(tela, ".lvu-p1"), p2 = q(tela, ".lvu-p2"), p3 = q(tela, ".lvu-p3"), sev = qa(tela, ".lvu-sev i"), aps = qa(tela, ".lvu-ap"), red = q(tela, ".lvu-red"), del = q(tela, ".lvu-red del"), ins = q(tela, ".lvu-ins");
+    var doc = q(tela, ".lvu-doc"), carimbo = q(tela, ".lvu-carimbo");
+    var novo = "O julgamento será por item; o agrupamento só com a justificativa do ETP (art. 82, § 1º).";
+    var tl = G.timeline({ repeat: -1, repeatDelay: 1.2, defaults: { ease: "power3.out" } });
+    tl.set(aps, { autoAlpha: 0, x: -12 }, 0).set(sev, { scaleX: 0, transformOrigin: "0 50%" }, 0).set([red, doc, carimbo], { autoAlpha: 0 }, 0)
+      .set(del, { "--risco": 0 }, 0).call(function () { txt(ins, ""); txt(p1, "0"); txt(p2, "0"); txt(p3, "0"); }, null, 0);
+    contar(G, tl, p1, 0, 62, function (v) { return String(Math.round(v)); }, 1.6, 0.2);
+    aps.forEach(function (a, i) {
+      tl.to(a, { autoAlpha: 1, x: 0, duration: 0.4 }, 0.7 + i * 0.45);
+      tl.to(sev[i], { scaleX: 1, duration: 0.4 }, 0.7 + i * 0.45);
+      tl.call(function () { txt(p2, String(i + 1)); }, null, 0.7 + i * 0.45);
+    });
+    contar(G, tl, p3, 0, 7, function (v) { return String(Math.round(v)); }, 1.2, 0.8);
+    tl.to(red, { autoAlpha: 1, duration: 0.4 }, 2.4);
+    tl.to(del, { "--risco": 1, duration: 0.6, ease: "power1.inOut" }, 2.7);
+    digitar(G, tl, ins, novo, 2.2, 3.3);
+    tl.to(doc, { autoAlpha: 1, duration: 0.3 }, 5.7);
+    tl.fromTo(carimbo, { autoAlpha: 0, scale: 1.8, rotation: -14 }, { autoAlpha: 1, scale: 1, rotation: -8, duration: 0.45, ease: "back.out(2)" }, 6.0);
+    tl.to({}, { duration: 4 });
+    tl.to([aps, red, doc, carimbo], { autoAlpha: 0, duration: 0.35 });
+    return { tl: tl, quadroFinal: 0.88 };
+  }
+
+  // ------------------------------------------------------------------ Como funciona O Parecerista
+  // Uma linha do tempo com as 4 etapas na janela do Parecerista: envio, leitura item a item, conferência com a lei e a
+  // jurisprudência e o parecer. Os passos da esquerda acompanham a etapa (barrinha de tempo) e levam direto a ela.
+  function montarComo(G, tela, dados, alvo) {
+    var botoes = qa(alvo, ".lvi-passo");
+    if (botoes.length < 4) throw new Error("passos");
+    var barras = botoes.map(function (b) { var i = b.querySelector(".lvc-barra") || document.createElement("i"); i.className = "lvc-barra"; b.appendChild(i); return i; });
+    var ARQ = [["PDF", "pdf", "Edital.pdf", "pregão eletrônico · 2,4 MB"], ["DOCX", "docx", "ETP.docx", "estudo técnico preliminar · 860 KB"], ["XLSX", "xlsx", "Planilha.xlsx", "custos e formação de preços · 310 KB"]];
+    var CL = [["7.1", "Poderão participar empresas do ramo pertinente ao objeto.", ""], ["7.4", "O julgamento será por lote único, reunindo os 32 itens.", "alta|Alta"],
+      ["8.2", "Será admitida a adesão à ata por órgãos federais e estaduais.", "media|Média"], ["9.1", "Quantidades estimadas no ETP de 12/03/2026, anexo II.", "baixa|Baixa"],
+      ["10.3", "A impugnação segue o art. 164 da Lei 14.133/2021.", ""]];
+    var FT = [["Lei", "Lei 14.133/2021 · art. 82, § 1º", "Grupo de itens só com a inviabilidade da adjudicação por item demonstrada."],
+      ["TCU", "TCU · Súmula 247", "Adjudicação por item é a regra quando o objeto é divisível."],
+      ["Roteiro", "Roteiro Licitacon · parcelamento", "Justificativa no ETP e no edital."]];
+    tela.innerHTML = janela("O Parecerista", "Nova análise · Prefeitura Municipal",
+      '<div class="lvc-telas">' +
+      // 1. envio
+      '<div class="lvc-t lvc-envio"><div class="lvc-zona">' + ARQ.map(function (a) {
+        return '<div class="lvc-arq"><i class="' + a[1] + '">' + a[0] + "</i><div><b>" + a[2] + "</b><small>" + a[3] + '</small><span class="lvc-up"><u></u></span></div><span class="lvc-ok"></span></div>';
+      }).join("") + '</div><div class="lvc-reg"><small>Regime</small><span class="lvu-segs"><span class="lvu-seg-ind"></span><span class="lvu-seg">Lei 14.133</span><span class="lvu-seg">Lei 13.303</span><span class="lvu-seg">Lei 13.019</span></span></div>' +
+      '<span class="lvc-btn">Analisar 3 documentos</span></div>' +
+      // 2. leitura
+      '<div class="lvc-t lvc-leit"><div class="lvc-cab"><b>Edital · pregão eletrônico</b><span class="lvc-cont">item 0 de 62</span></div><span class="lvu-lim lvc-prog"><i></i></span>' +
+      '<div class="lvc-cls"><span class="lvc-feixe"></span>' + CL.map(function (c) {
+        var g = c[2].split("|");
+        return '<div class="lvc-cl"><em>' + c[0] + "</em><p>" + c[1] + "</p>" + (c[2] ? '<span class="lvu-gr ' + g[0] + '">' + g[1] + "</span>" : "<span></span>") + "</div>";
+      }).join("") + "</div></div>" +
+      // 3. conferência
+      '<div class="lvc-t lvc-conf"><div class="lvc-clau"><small>Cláusula 7.4 do edital</small><p>O julgamento será por <mark>lote único</mark>, reunindo os 32 itens.</p></div>' +
+      FT.map(function (f) { return '<div class="lvc-f"><span class="lvc-tipo">' + f[0] + "</span><div><b>" + f[1] + "</b><p>" + f[2] + '</p></div><span class="lvc-ok"></span></div>'; }).join("") +
+      '<div class="lvc-ver"><span class="lvu-gr alta">Alta</span> falta a justificativa do art. 82, § 1º</div></div>' +
+      // 4. parecer
+      '<div class="lvc-t lvc-par"><div class="lvc-folha"><b class="lvc-tit">Parecer técnico</b><small>Pregão eletrônico 041/2026 · Lei 14.133/2021</small>' +
+      '<div class="lvc-sec"><b>1. Relatório</b><p>Edital, ETP e planilha conferidos item a item.</p></div>' +
+      '<div class="lvc-sec"><b>2. Análise</b><p><span class="lvu-gr alta">Alta</span> julgamento por lote · <span class="lvu-gr media">Média</span> adesão federal · <span class="lvu-gr baixa">Baixa</span> data do ETP</p></div>' +
+      '<div class="lvc-sec"><b>3. Conclusão</b><p>Pode seguir depois das providências. O parecer é opinativo: a decisão é sua.</p></div></div>' +
+      '<div class="lvu-pe"><span class="lvu-doc">Parecer.pdf · Parecer.docx</span><span class="lvu-carimbo">Com a lei e a jurisprudência</span></div></div>' +
+      "</div>");
+    var ts = qa(tela, ".lvc-t");
+    var arqs = qa(tela, ".lvc-arq"), ups = qa(tela, ".lvc-up u"), oksE = qa(tela, ".lvc-envio .lvc-ok"), ind = q(tela, ".lvc-reg .lvu-seg-ind"), seg0 = q(tela, ".lvc-reg .lvu-seg"), btn = q(tela, ".lvc-btn");
+    var cont = q(tela, ".lvc-cont"), prog = q(tela, ".lvc-prog i"), feixe = q(tela, ".lvc-feixe"), cls = qa(tela, ".lvc-cl"), grs = qa(tela, ".lvc-cl .lvu-gr");
+    var clau = q(tela, ".lvc-clau"), fs = qa(tela, ".lvc-f"), oksF = qa(tela, ".lvc-conf .lvc-ok"), ver = q(tela, ".lvc-ver");
+    var secs = qa(tela, ".lvc-sec"), docP = q(tela, ".lvc-par .lvu-doc"), carP = q(tela, ".lvc-par .lvu-carimbo");
+    var DUR = [3.4, 4, 3.8, 3.6], PAUSA = 1.8, inicios = [];
+    var tl = G.timeline({ repeat: -1, defaults: { ease: "power3.out" } });
+    var t = 0;
+    for (var i = 0; i < 4; i++) {
+      inicios.push(t);
+      tl.addLabel("p" + i, t);
+      tl.set(ts, { autoAlpha: 0 }, t).set(ts[i], { autoAlpha: 1 }, t);
+      tl.fromTo(ts[i], { y: 10 }, { y: 0, duration: 0.4 }, t);
+      tl.set(barras, { scaleX: 0, transformOrigin: "0 50%" }, t);
+      tl.fromTo(barras[i], { scaleX: 0 }, { scaleX: 1, duration: DUR[i] + PAUSA, ease: "none", transformOrigin: "0 50%" }, t);
+      t += DUR[i] + PAUSA;
+    }
+    // 1. envio
+    var e = inicios[0];
+    tl.fromTo(arqs, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.45, stagger: 0.2 }, e + 0.1);
+    tl.fromTo(ups, { scaleX: 0 }, { scaleX: 1, transformOrigin: "0 50%", duration: 0.7, stagger: 0.25, ease: "power1.inOut" }, e + 0.6);
+    tl.fromTo(oksE, { scale: 0 }, { scale: 1, duration: 0.3, stagger: 0.25, ease: "back.out(2.5)" }, e + 1.3);
+    tl.fromTo(ind, { autoAlpha: 0, x: 0, scaleX: 0.5 }, { autoAlpha: 1, x: function () { return seg0.offsetLeft; }, scaleX: function () { return seg0.offsetWidth / 100; }, transformOrigin: "0 50%", duration: 0.4 }, e + 2.1);
+    tl.fromTo(btn, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.35 }, e + 2.4);
+    tl.to(btn, { scale: 0.95, duration: 0.12, yoyo: true, repeat: 1 }, e + 3.0);
+    // 2. leitura
+    e = inicios[1];
+    var oc = { v: 0 };
+    tl.fromTo(oc, { v: 0 }, { v: 62, duration: 3.4, ease: "none", onUpdate: function () { txt(cont, "item " + Math.max(1, Math.round(oc.v)) + " de 62"); } }, e + 0.2);
+    tl.fromTo(prog, { scaleX: 0 }, { scaleX: 1, transformOrigin: "0 50%", duration: 3.4, ease: "none" }, e + 0.2);
+    tl.fromTo(feixe, { y: 0, autoAlpha: 1 }, { y: function () { return cls[cls.length - 1].offsetTop + cls[cls.length - 1].offsetHeight - 6; }, duration: 3.2, ease: "none" }, e + 0.2);
+    tl.set(feixe, { autoAlpha: 0 }, e + 3.5);
+    tl.fromTo(grs.filter(function (g, k) { return CL[k][2]; }), { autoAlpha: 0, scale: 0.6 }, { autoAlpha: 1, scale: 1, duration: 0.3, stagger: 0.75, ease: "back.out(2.5)" }, e + 0.9);
+    // 3. conferência
+    e = inicios[2];
+    tl.fromTo(clau, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.4 }, e + 0.1);
+    tl.fromTo(fs, { autoAlpha: 0, x: 14 }, { autoAlpha: 1, x: 0, duration: 0.4, stagger: 0.7 }, e + 0.6);
+    tl.fromTo(oksF, { scale: 0 }, { scale: 1, duration: 0.3, stagger: 0.7, ease: "back.out(2.5)" }, e + 1.1);
+    tl.fromTo(ver, { autoAlpha: 0, scale: 0.92 }, { autoAlpha: 1, scale: 1, duration: 0.4 }, e + 3.1);
+    // 4. parecer
+    e = inicios[3];
+    tl.fromTo(secs, { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, duration: 0.4, stagger: 0.55 }, e + 0.3);
+    tl.fromTo(docP, { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35 }, e + 2.1);
+    tl.fromTo(carP, { autoAlpha: 0, scale: 1.8, rotation: -14 }, { autoAlpha: 1, scale: 1, rotation: -8, duration: 0.45, ease: "back.out(2)" }, e + 2.5);
+    // o passo da esquerda acompanha a etapa que está na tela
+    var atual = -1;
+    tl.eventCallback("onUpdate", function () {
+      var x = tl.time(), k = 0;
+      for (var j = 0; j < 4; j++) if (x >= inicios[j]) k = j;
+      if (k === atual) return;
+      atual = k;
+      botoes.forEach(function (b, j) { b.classList.toggle("on", j === k); if (j === k) b.setAttribute("aria-current", "step"); else b.removeAttribute("aria-current"); });
+    });
+    botoes.forEach(function (b, j) {
+      b.addEventListener("click", function () {
+        // com a animação parada (pausa ou reduzir movimento), mostra a etapa já completa
+        var parada = tl.paused();
+        tl.seek(parada ? inicios[j] + DUR[j] : inicios[j], false);
+        if (!parada) tl.play();
+      });
+    });
+    return { tl: tl, quadroFinal: (inicios[3] + DUR[3]) / t };
+  }
+
+  var MONTA = { calculadora: montarCalculadora, elaborador: montarElaborador, gestao: montarGestao, comunidade: montarComunidade, parecer: montarParecer, como: montarComo };
   var ROTULOS = {
     calculadora: "Animação: reajuste de um contrato pelo IPCA, IGP-M, INCC e IPCA-E dos últimos 12 meses, com o acumulado, o valor reajustado e a nota técnica em Excel e PDF.",
     elaborador: "Animação: o questionário é respondido e o Estudo Técnico Preliminar é redigido seção por seção, com a pesquisa de preços no PNCP e no Compras.gov.br e a minuta em Word e PDF.",
     gestao: "Animação: a carteira de contratos numa linha do tempo, com os prazos de prorrogação, repactuação e reajuste e o aviso enviado por e-mail.",
-    comunidade: "Animação: uma pergunta chega ao fórum e o especialista responde com a resposta oficial, que recebe votos e indica curso e consultoria."
+    comunidade: "Animação: uma pergunta chega ao fórum e o especialista responde com a resposta oficial, que recebe votos e indica curso e consultoria.",
+    parecer: "Animação: o parecer do edital com 62 itens conferidos, três apontamentos por gravidade com o fundamento legal, a redação sugerida para o item 7.4 e os arquivos em PDF e Word.",
+    como: "Animação das quatro etapas: envio dos documentos e escolha do regime, leitura do edital item a item, conferência da cláusula com a lei, a súmula do TCU e o roteiro, e o parecer em PDF e Word."
   };
+  // onde a tela entra: no "Como funciona" ela ocupa o palco ao lado dos passos; nas outras, a coluna do exemplo
+  var ONDE = { como: function (alvo) { return alvo.querySelector(".lvi-palco"); } };
 
   // ---------------------------------------------------------------- montagem, pausa e limpeza
   var telas = []; // { raiz, tl, io, ro, quadroFinal, botao }
@@ -245,6 +394,7 @@
       t.botao.setAttribute("aria-label", pausado() ? "Retomar animação" : "Pausar animação");
       t.botao.title = pausado() ? "Retomar animação" : "Pausar animação";
       t.raiz.classList.toggle("lvu-parado", p);
+      t.botao.hidden = REDUZ || POUPA; // sem movimento, não há o que pausar
     }
     if (!t.tl) return;
     if (REDUZ || POUPA) { t.tl.progress(t.quadroFinal).pause(); return; }
@@ -287,9 +437,11 @@
       if (!t.alvo.isConnected) return;
       var res;
       try {
-        res = MONTA[t.tipo](G, t.tela, t.tipo === "calculadora" ? dadosIndices(r[1]) : null);
+        res = MONTA[t.tipo](G, t.tela, t.tipo === "calculadora" ? dadosIndices(r[1]) : null, t.alvo);
       } catch (e) { if (window.console) console.warn("inicio-ui", e); return; }
-      t.alvo.insertBefore(t.raiz, t.alvo.firstChild);
+      var dest = ONDE[t.tipo] ? ONDE[t.tipo](t.alvo) : t.alvo;
+      if (!dest) return;
+      dest.insertBefore(t.raiz, dest.firstChild);
       t.alvo.classList.add("lvu-on");
       t.tl = res.tl; t.quadroFinal = res.quadroFinal;
       // quem já deixou pausado vê a tela completa, parada; ao retomar, segue dali
