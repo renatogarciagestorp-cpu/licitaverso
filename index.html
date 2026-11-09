@@ -9683,7 +9683,7 @@ const PLANO_BENEFICIOS = {
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "13";
+const CHAT_VERSAO = "14";
 // versão da Biblioteca no endereço: força o navegador a buscar a página nova depois de cada mudança (o GitHub Pages guarda em cache por 10 minutos)
 const BIB_URL = "biblioteca.html?v=2";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
@@ -9918,6 +9918,7 @@ class Component extends DCLogic {
       if (o.tab) this.setState({ contaTab: o.tab });
       if (o.inst && INSTITUCIONAL[o.inst]) this.setState({ institTab: o.inst });
       this.irPara(PAGINAS.includes(pagina) || pagina === "biblioteca" ? pagina : "home");
+      if (pagina === "calculadora" && o.f && CALC_FERRAMENTAS.some((x) => x.id === o.f)) this.calcFerramenta(o.f);
     };
     const voltaIni = qsIni.get("volta");
     if (voltaIni && (PAGINAS.includes(voltaIni) || voltaIni === "biblioteca" || voltaIni === "painel")) this.setState({ volta: voltaIni });
