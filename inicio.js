@@ -252,76 +252,47 @@
     };
   }
 
-  // IPCA acumulado de n meses a partir do mês ini ("aaaa-mm"), do indices.json (Banco Central, SGS 433)
-  function ipcaPeriodo(ini, n) {
-    return json("indices.json").then(function (d) {
-      var s = d.series.ipca.mensal, a = +ini.slice(0, 4), m = +ini.slice(5), f = 1;
-      for (var k = 0; k < n; k++) {
-        var ch = a + "-" + (m < 10 ? "0" : "") + m;
-        if (s[ch] == null) return null;
-        f *= 1 + s[ch] / 100;
-        m++; if (m > 12) { m = 1; a++; }
-      }
-      return (f - 1) * 100;
-    });
-  }
-
-  // Gestão: linha do tempo de um contrato até o reajuste na anualidade (exemplo ilustrativo, índice real)
+  // Gestão: painel da carteira de contratos (exemplo ilustrativo), como o Painel da Organização do site
   function cenaGestao() {
     var c = el("div", "lvi-cena");
-    var BASE = 48250;
-    // posição na régua de 24 meses (mai/2025 a mai/2027)
-    var MARCOS = [[0, "01/05/2025", "Orçamento estimado", "baixo ini"], [30.6, "12/12/2025", "Assinatura", "cima"], [50, "01/05/2026", "1º reajuste", "baixo rj"], [100, "01/05/2027", "Próxima anualidade", "cima fim fut"]];
-    var HOJE = 76.1;
-    c.innerHTML = '<div class="lvi-doc-cab"><b>Contrato 025/2025 · Limpeza</b><span class="lvi-selo">Linha do tempo</span></div>' +
-      '<div class="lvi-lt"><i class="lvi-lt-trilho"><u></u></i>' +
-      MARCOS.map(function (k) { return '<div class="lvi-mc ' + k[3] + '" style="left:' + k[0] + '%"><b></b><span>' + k[1] + "<small>" + k[2] + "</small></span></div>"; }).join("") +
-      '<div class="lvi-hoje" style="left:' + HOJE + '%"><em>hoje</em></div></div>' +
-      '<div class="lvi-rj"><div><small>Reajuste pelo IPCA · mai/2025 a abr/2026</small><b class="ind">+0,00%</b></div><div><small>Valor mensal do contrato</small><b class="val">' + brl(BASE) + "</b></div></div>" +
-      '<div class="lvi-rj-pe"><span class="reg">✓ Registrado na linha do tempo</span><span class="prox">Próxima anualidade: 01/05/2027 · aviso por e-mail</span></div>';
-    var fill = c.querySelector(".lvi-lt-trilho u"), mcs = c.querySelectorAll(".lvi-mc"), hoje = c.querySelector(".lvi-hoje");
-    var rj = c.querySelector(".lvi-rj"), ind = c.querySelector(".lvi-rj .ind"), val = c.querySelector(".lvi-rj .val"), reg = c.querySelector(".reg"), prox = c.querySelector(".prox");
-    var acum = null;
-    var pronto = ipcaPeriodo("2025-05", 12).then(function (v) { acum = v; }).catch(function () { acum = null; });
-    function ate(pos, dur) { return anima(fill, { scaleX: pos / 100 }, { duration: dur, ease: "easeInOut" }); }
-    function marca(i) { mcs[i].classList.add("on"); return anima(mcs[i].querySelector("b"), { scale: [0.4, 1.25, 1] }, { duration: 0.45 }); }
+    var KPI = [["12", "contratos"], ["R$ 8,4 mi", "por ano"], ["3", "prazos em 60 dias"]];
+    var SIT = [["v", "Vigentes", 9], ["a", "Vencendo", 2], ["x", "Vencidos", 1]];
+    var PRAZOS = [["01/12", "Reajuste pela anualidade", "Vigilância · 018/2024", "rj"], ["15/12", "Repactuação · nova convenção", "Limpeza · 025/2025", "rp"], ["20/01", "Iniciar a prorrogação", "Manutenção predial · 007/2023", "pr"]];
+    c.innerHTML = '<div class="lvi-doc-cab"><b>Painel da Organização</b><span class="lvi-selo">Carteira</span></div>' +
+      '<div class="lvi-kpis">' + KPI.map(function (k) { return "<div><b>" + k[0] + "</b><small>" + k[1] + "</small></div>"; }).join("") + "</div>" +
+      '<div class="lvi-sits">' + SIT.map(function (s) { return '<div class="lvi-sit ' + s[0] + '"><span>' + s[1] + '</span><i><u style="width:' + (s[2] / 12 * 100).toFixed(1) + '%"></u></i><b>' + s[2] + "</b></div>"; }).join("") + "</div>" +
+      '<div class="lvi-prz-cab">Próximos prazos</div><div class="lvi-przs">' +
+      PRAZOS.map(function (p) { return '<div class="lvi-prz ' + p[3] + '"><span>' + p[0] + "</span><div><b>" + p[1] + "</b><small>" + p[2] + "</small></div></div>"; }).join("") +
+      '</div><div class="lvi-email">✉ Aviso enviado por e-mail · reajuste da Vigilância</div>';
+    var kpis = c.querySelectorAll(".lvi-kpis > div"), barras = c.querySelectorAll(".lvi-sit u"), nums = c.querySelectorAll(".lvi-sit b");
+    var przs = c.querySelectorAll(".lvi-prz"), email = c.querySelector(".lvi-email");
     return {
-      el: c, prompt: "Quando é o reajuste do contrato de limpeza?",
+      el: c, prompt: "Quais prazos da carteira vencem nos próximos 60 dias?",
       inicio: function () {
-        fill.style.transform = "scaleX(0)";
-        Array.prototype.forEach.call(mcs, function (m) { m.classList.remove("on"); });
-        hoje.style.opacity = "0"; rj.style.opacity = "0"; reg.style.opacity = "0"; prox.style.opacity = "0";
-        ind.textContent = "+0,00%"; val.textContent = brl(BASE);
+        Array.prototype.forEach.call(kpis, function (k) { k.style.opacity = "0"; });
+        Array.prototype.forEach.call(barras, function (b) { b.style.transform = "scaleX(0)"; });
+        Array.prototype.forEach.call(nums, function (n) { n.style.opacity = "0"; });
+        Array.prototype.forEach.call(przs, function (p) { p.style.opacity = "0"; p.classList.remove("on"); });
+        email.style.opacity = "0";
       },
       rodar: async function (vivo) {
-        await pronto;
-        await marca(0); if (!vivo()) return;
-        await ate(MARCOS[1][0], 0.7); if (!vivo()) return;
-        await marca(1); if (!vivo()) return;
-        await ate(MARCOS[2][0], 0.55); if (!vivo()) return;
-        marca(2);
-        await anima(rj, { opacity: [0, 1], y: [10, 0] }, { duration: 0.35, ease: SUAVE });
+        await anima(kpis, { opacity: [0, 1], y: [10, 0] }, { duration: 0.4, delay: M.stagger(0.12), ease: SUAVE });
         if (!vivo()) return;
-        if (acum !== null) {
-          try {
-            await animate(0, 1, { duration: 1.1, ease: SUAVE, onUpdate: function (t) {
-              ind.textContent = "+" + pct(acum * t); val.textContent = brl(BASE * (1 + acum * t / 100));
-            } }).finished;
-          } catch (e) { /* segue */ }
-        } else { ind.textContent = "IPCA"; }
+        anima(nums, { opacity: [0, 1] }, { duration: 0.3, delay: M.stagger(0.15, { startDelay: 0.4 }) });
+        await anima(barras, { scaleX: [0, 1] }, { duration: 0.8, delay: M.stagger(0.15), ease: SUAVE });
         if (!vivo()) return;
-        await anima(reg, { opacity: [0, 1], x: [-8, 0] }, { duration: 0.3 });
-        await ate(HOJE, 0.6); if (!vivo()) return;
-        await anima(hoje, { opacity: [0, 1], y: [-6, 0] }, { duration: 0.3 });
-        mcs[3].classList.add("on");
-        anima(mcs[3].querySelector("b"), { scale: [1, 1.35, 1] }, { duration: 0.6 });
-        await anima(prox, { opacity: [0, 1], x: [-8, 0] }, { duration: 0.35 });
+        await anima(przs, { opacity: [0, 1], x: [-14, 0] }, { duration: 0.4, delay: M.stagger(0.2), ease: SUAVE });
+        if (!vivo()) return;
+        przs[0].classList.add("on");
+        anima(przs[0], { scale: [1, 1.03, 1] }, { duration: 0.45 });
+        await anima(email, { opacity: [0, 1], y: [10, 0] }, { type: "spring", stiffness: 300, damping: 22 });
       },
       final: function () {
-        fill.style.transform = "scaleX(" + HOJE / 100 + ")";
-        Array.prototype.forEach.call(mcs, function (m) { m.classList.add("on"); });
-        hoje.style.opacity = ""; rj.style.opacity = ""; reg.style.opacity = ""; prox.style.opacity = "";
-        if (acum !== null) { ind.textContent = "+" + pct(acum); val.textContent = brl(BASE * (1 + acum / 100)); }
+        Array.prototype.forEach.call(kpis, function (k) { k.style.opacity = ""; });
+        Array.prototype.forEach.call(barras, function (b) { b.style.transform = ""; });
+        Array.prototype.forEach.call(nums, function (n) { n.style.opacity = ""; });
+        Array.prototype.forEach.call(przs, function (p) { p.style.opacity = ""; }); przs[0].classList.add("on");
+        email.style.opacity = "";
       }
     };
   }
@@ -598,67 +569,76 @@
     if (!palco || botoes.length < 4) return;
     var barras = Array.prototype.map.call(botoes, function (b) { var i = el("i", "lvi-passo-barra"); b.appendChild(i); return i; });
 
-    // etapa 1: os arquivos voam para a área, sobem (barra) e ganham o ✓; depois o regime é escolhido
-    var ARQ = [["PDF", "", "Edital.pdf", "pregão eletrônico"], ["DOCX", "docx", "ETP.docx", "estudo técnico preliminar"], ["XLSX", "xlsx", "Planilha.xlsx", "custos e formação de preços"]];
+    // etapa 1: os arquivos voam para a área, sobem (barra) e ganham o ✓; o regime é escolhido e "Analisar" é pressionado
+    var ARQ = [["PDF", "", "Edital.pdf", "pregão eletrônico · 2,4 MB"], ["DOCX", "docx", "ETP.docx", "estudo técnico preliminar · 860 KB"], ["XLSX", "xlsx", "Planilha.xlsx", "custos e formação de preços · 310 KB"]];
     var e1 = el("div", "lvi-et");
     e1.innerHTML = '<div class="lvi-envio"><div class="lvi-zona"><div class="lvi-zona-txt"><div><div class="lvi-zona-ic">⇪</div><strong>Solte os documentos aqui</strong>PDF ou Excel · até 3 documentos</div></div>' +
       '<div class="lvi-fila">' + ARQ.map(function (a) {
         return '<div class="lvi-arq ' + a[1] + '"><i>' + a[0] + "</i><div>" + a[2] + "<small>" + a[3] + '</small><span class="lvi-up"><u></u></span></div><b class="lvi-ok">✓</b></div>';
       }).join("") + "</div></div>" +
-      '<div class="lvi-regime"><small>Regime</small><span>Lei 14.133</span><span>Lei 13.303</span><span>Lei 13.019</span></div></div>';
+      '<div class="lvi-regime"><small>Regime</small><span>Lei 14.133</span><span>Lei 13.303</span><span>Lei 13.019</span></div>' +
+      '<div class="lvi-analisar">Analisar 3 documentos <span>→</span></div></div>';
     var zona = e1.querySelector(".lvi-zona"), zonaTxt = e1.querySelector(".lvi-zona-txt"), arqs = e1.querySelectorAll(".lvi-arq");
     var ups = e1.querySelectorAll(".lvi-up u"), oks = e1.querySelectorAll(".lvi-ok"), regime = e1.querySelector(".lvi-regime"), regs = e1.querySelectorAll(".lvi-regime span");
+    var analisar = e1.querySelector(".lvi-analisar");
     var origem = [[-230, -110, -16], [240, -40, 12], [-210, 150, 10]];
 
-    // etapa 2: a leitura marca as linhas, aponta os artigos e preenche a verificação ao lado
-    var cl = [[94, 80, 66], [88, 72], [96, 84, 58], [90, 70], [92, 86, 62], [80, 68]];
-    var NOTAS = { 2: ["alta", "art. 82, § 1º"], 4: ["media", "art. 86, § 8º"] };
-    var CHECK = [["baixa", "Planejamento", "baixa"], ["ok", "Habilitação", "ok"], ["alta", "Julgamento", "alta"], ["media", "Adesão à ata", "média"]];
+    // etapa 2: o edital com texto de verdade; o feixe lê, o marca-texto destaca o trecho e o comentário aparece na margem
+    var CL = [
+      ["7.1", "Poderão participar empresas do ramo pertinente ao objeto.", null],
+      ["7.4", "O julgamento será por |lote único|, reunindo os 32 itens do registro de preços.", ["alta", "Alta", "Sem a justificativa do art. 82, § 1º"]],
+      ["8.2", "Será admitida a adesão à ata por |órgãos federais e estaduais|.", ["media", "Média", "Adesão federal vedada (art. 86, § 8º)"]],
+      ["9.1", "As quantidades foram estimadas no ETP de |12/03/2026|, anexo II.", ["baixa", "Baixa", "Data diverge do ETP"]],
+      ["10.3", "A impugnação segue o art. 164 da Lei 14.133/2021.", null]
+    ];
     var e2 = el("div", "lvi-et");
-    e2.innerHTML = '<div class="lvi-leit"><div class="lvi-folha"><span class="lvi-cont">item 1 de 62</span><h4>Edital · condições de participação</h4>' +
-      cl.map(function (l, i) {
-        var n = NOTAS[i];
-        return '<div class="cl' + (n ? " alvo" : "") + '"><em>' + (i + 7) + ".</em><div>" + l.map(function (w) { return '<span style="width:' + w + '%"></span>'; }).join("") + "</div>" +
-          (n ? '<b class="lvi-nota ' + n[0] + '">' + n[1] + "</b>" : "") + "</div>";
-      }).join("") + '<i class="lvi-feixe"></i></div>' +
-      '<ul class="lvi-check">' + CHECK.map(function (k) { return '<li data-g="' + k[0] + '">' + k[1] + "<em>" + k[2] + "</em></li>"; }).join("") + "</ul></div>";
-    var folha = e2.querySelector(".lvi-folha"), feixe = e2.querySelector(".lvi-feixe"), cont = e2.querySelector(".lvi-cont");
-    var cls = e2.querySelectorAll(".cl"), alvos = e2.querySelectorAll(".cl.alvo"), notas = e2.querySelectorAll(".lvi-nota"), checks = e2.querySelectorAll(".lvi-check li");
+    e2.innerHTML = '<div class="lvi-ed"><div class="lvi-ed-cab"><b>Edital · pregão eletrônico</b><span class="lvi-ed-cont">item 1 de 62</span></div>' +
+      CL.map(function (k) {
+        var p = k[1].split("|"), txt = esc(p[0]) + (p.length > 1 ? '<mark><i></i><span>' + esc(p[1]) + "</span></mark>" + esc(p[2]) : "");
+        return '<div class="lvi-ed-l"><em>' + k[0] + "</em><p>" + txt + "</p>" +
+          (k[2] ? '<div class="lvi-ed-com ' + k[2][0] + '"><b>' + k[2][1] + "</b>" + esc(k[2][2]) + "</div>" : "<div></div>") + "</div>";
+      }).join("") + '<i class="lvi-feixe"></i></div>';
+    var ed = e2.querySelector(".lvi-ed"), edFeixe = e2.querySelector(".lvi-feixe"), edCont = e2.querySelector(".lvi-ed-cont");
+    var edLinhas = e2.querySelectorAll(".lvi-ed-l"), edMarcas = e2.querySelectorAll(".lvi-ed-l mark"), edComs = e2.querySelectorAll(".lvi-ed-com");
 
-    // etapa 3: gotas de luz correm das fontes até o edital, que pulsa e termina conferido
-    var nos = [["Lei 14.133/2021", "texto da lei"], ["TCU", "acórdãos e súmulas"], ["Tribunais de Contas", "dos 26 estados e do DF"], ["STJ e STF", "temas e precedentes"], ["PGEs e TJs", "pareceres e decisões"], ["Roteiro Licitacon", "verificação item a item"]];
+    // etapa 3: quadro de provas — a cláusula ao lado da lei, da súmula e do roteiro, cada um conferido, e o veredito
+    var FONTES = [
+      ["Lei 14.133/2021 · art. 82, § 1º", "Menor preço por grupo de itens só quando demonstrada a inviabilidade da adjudicação por item e a vantagem técnica e econômica."],
+      ["TCU · Súmula 247", "Adjudicação por item é a regra quando o objeto é divisível, sem prejuízo para o conjunto."],
+      ["Roteiro Licitacon", "Parcelamento do objeto: justificativa no ETP e no edital."]
+    ];
     var e3 = el("div", "lvi-et");
-    e3.innerHTML = '<div class="lvi-rede">' + nos.map(function () { return '<i class="lvi-fio"></i><b class="lvi-gota"></b>'; }).join("") +
-      '<div class="lvi-nucleo"><i class="lvi-onda"></i><div><i>§</i>Seu edital<small class="lvi-nuc-st">conferindo…</small></div></div>' +
-      nos.map(function (n) { return '<div class="lvi-no">' + n[0] + "<small>" + n[1] + "</small></div>"; }).join("") + "</div>";
-    var fios = e3.querySelectorAll(".lvi-fio"), gotas = e3.querySelectorAll(".lvi-gota"), nosEl = e3.querySelectorAll(".lvi-no");
-    var onda = e3.querySelector(".lvi-onda"), nucSt = e3.querySelector(".lvi-nuc-st"), nucleo = e3.querySelector(".lvi-nucleo");
+    e3.innerHTML = '<div class="lvi-ev"><div class="lvi-ev-cl"><small>Cláusula 7.4 do edital</small><p>O julgamento será por <mark><i></i><span>lote único</span></mark>, reunindo os 32 itens do registro de preços.</p></div>' +
+      '<div class="lvi-ev-fontes">' + FONTES.map(function (f) { return '<div class="lvi-ev-f"><i class="lvi-ev-fio"></i><small>' + f[0] + "</small><p>" + f[1] + "</p><em>✓ conferido</em></div>"; }).join("") + "</div>" +
+      '<div class="lvi-ev-ver"><b>Gravidade alta</b> falta a justificativa do art. 82, § 1º</div></div>';
+    var evCl = e3.querySelector(".lvi-ev-cl"), evMarca = e3.querySelector(".lvi-ev-cl mark i"), evFs = e3.querySelectorAll(".lvi-ev-f");
+    var evFios = e3.querySelectorAll(".lvi-ev-fio"), evOks = e3.querySelectorAll(".lvi-ev-f em"), evVer = e3.querySelector(".lvi-ev-ver");
 
-    // etapa 4: o parecer é gerado, os apontamentos entram, o PDF é baixado e o selo carimba
+    // etapa 4: o parecer sendo escrito, rolando dentro da folha; depois saem o PDF e o DOCX e o selo carimba
     var e4 = el("div", "lvi-et");
-    e4.innerHTML = '<div class="lvi-par"><div class="lvi-par-cab"><i>✦</i><div><b>Parecer técnico</b><small class="lvi-par-st">Gerando o parecer…</small></div></div>' +
-      '<div class="lvi-gerar"><u></u></div>' + achadosHtml() +
-      '<div class="lvi-resumo"><span class="alta">1 alta</span><span class="media">1 média</span><span class="baixa">1 baixa</span></div>' +
-      '<div class="lvi-par-pe"><span>Baixar em PDF</span><span>Abrir no Word</span></div></div>' +
-      '<div class="lvi-carimbo">Com a lei e a juris&shy;prudência</div>';
-    var par = e4.querySelector(".lvi-par"), parSt = e4.querySelector(".lvi-par-st"), gerar = e4.querySelector(".lvi-gerar u"), achs = e4.querySelectorAll(".lvi-ach");
-    var resumo = e4.querySelector(".lvi-resumo"), pe = e4.querySelector(".lvi-par-pe"), pdf = e4.querySelector(".lvi-par-pe span"), carimbo = e4.querySelector(".lvi-carimbo");
+    e4.innerHTML = '<div class="lvi-pt"><div class="lvi-pt-folha"><div class="lvi-pt-rolo">' +
+      '<div class="lvi-pt-b"><h5>Parecer técnico</h5><small>Edital de pregão eletrônico · Lei 14.133/2021</small></div>' +
+      '<div class="lvi-pt-b"><h6>1. Relatório</h6><p>Análise do edital, do ETP e da planilha enviados, item a item, com o roteiro de verificação do Licitacon.</p></div>' +
+      '<div class="lvi-pt-b"><h6>2. Análise</h6></div>' +
+      '<div class="lvi-pt-b lvi-pt-ap alta"><b>2.1 Julgamento por lote · gravidade alta</b><p>Fundamento: Lei 14.133/2021, art. 82, § 1º; TCU, Súmula 247.</p><p>Providência: justificar o lote no ETP ou adjudicar por item.</p></div>' +
+      '<div class="lvi-pt-b lvi-pt-ap media"><b>2.2 Adesão à ata · gravidade média</b><p>Fundamento: art. 86, § 8º.</p><p>Providência: excluir a adesão por órgãos federais.</p></div>' +
+      '<div class="lvi-pt-b lvi-pt-ap baixa"><b>2.3 Data do ETP · gravidade baixa</b><p>Providência: corrigir a data no item 9.1.</p></div>' +
+      '<div class="lvi-pt-b"><h6>3. Conclusão</h6><p>O edital pode seguir depois das providências indicadas. O parecer é opinativo: a decisão é sua.</p></div>' +
+      '</div></div><div class="lvi-pt-arqs"><span class="pdf"><i>PDF</i>Parecer.pdf<small>✓ pronto</small></span><span class="doc"><i>DOCX</i>Parecer.docx<small>✓ pronto</small></span></div>' +
+      '<div class="lvi-carimbo">Com a lei e a juris&shy;prudência</div></div>';
+    var ptFolha = e4.querySelector(".lvi-pt-folha"), ptRolo = e4.querySelector(".lvi-pt-rolo"), ptBs = e4.querySelectorAll(".lvi-pt-b");
+    var ptArqs = e4.querySelectorAll(".lvi-pt-arqs > span"), carimbo = e4.querySelector(".lvi-carimbo");
 
     var etapas = [e1, e2, e3, e4];
     etapas.forEach(function (e) { palco.appendChild(e); });
 
-    function posicionarRede() {
-      var w = palco.clientWidth, h = palco.clientHeight, rx = Math.min(w * 0.36, 230), ry = Math.min(h * 0.36, 175);
-      Array.prototype.forEach.call(nosEl, function (n, i) {
-        var a = (i / nosEl.length) * Math.PI * 2 - Math.PI / 2, x = Math.cos(a) * rx, y = Math.sin(a) * ry;
-        // a etiqueta inteira dentro do quadro, com 8px de folga
-        var nw = n.offsetWidth, nh = n.offsetHeight;
-        var nx = Math.min(w / 2 - 8 - nw, Math.max(-w / 2 + 8, x - nw / 2)), ny = Math.min(h / 2 - 8 - nh, Math.max(-h / 2 + 8, y - nh / 2));
-        n.dataset.x = nx; n.dataset.y = ny;
-        var cx = nx + nw / 2, cy = ny + nh / 2, d = Math.sqrt(cx * cx + cy * cy);
-        fios[i].style.width = d + "px"; fios[i].dataset.a = Math.atan2(cy, cx) * 180 / Math.PI;
-        gotas[i].dataset.x = cx; gotas[i].dataset.y = cy;
+    // no computador, o palco inclina um pouco seguindo o mouse
+    if (!REDUZ && matchMedia("(hover: hover) and (min-width: 981px)").matches) {
+      palco.addEventListener("pointermove", function (e) {
+        var r = palco.getBoundingClientRect(), dx = (e.clientX - r.left) / r.width - 0.5, dy = (e.clientY - r.top) / r.height - 0.5;
+        animate(palco, { rotateY: dx * 6, rotateX: -dy * 5, transformPerspective: 1400 }, { type: "spring", stiffness: 140, damping: 20 });
       });
+      palco.addEventListener("pointerleave", function () { animate(palco, { rotateY: 0, rotateX: 0, transformPerspective: 1400 }, { type: "spring", stiffness: 140, damping: 20 }); });
     }
 
     function faixa(q, ini, dur) { return Math.min(1, Math.max(0, (q - ini) / dur)); }
@@ -667,74 +647,86 @@
     function pintar(i, p) {
       var q = Math.min(1, Math.max(0, p));
       if (i === 0) {
-        zonaTxt.style.opacity = String(1 - faixa(q, 0, 0.15));
+        zonaTxt.style.opacity = String(1 - faixa(q, 0, 0.12));
         Array.prototype.forEach.call(arqs, function (a, k) {
-          var t = faixa(q, 0.04 + k * 0.1, 0.22), e = sai(t), o = origem[k];
+          var t = faixa(q, 0.03 + k * 0.09, 0.2), e = sai(t), o = origem[k];
           a.style.transform = "translate(" + o[0] * (1 - e) + "px," + o[1] * (1 - e) + "px) rotate(" + o[2] * (1 - e) + "deg)";
           a.style.opacity = String(Math.min(1, t * 2));
-          var u = faixa(q, 0.38 + k * 0.1, 0.18);
+          var u = faixa(q, 0.32 + k * 0.09, 0.16);
           ups[k].style.transform = "scaleX(" + u + ")";
           oks[k].style.opacity = u >= 1 ? "1" : "0";
           oks[k].style.transform = "scale(" + (u >= 1 ? 1 : 0.4) + ")";
         });
-        zona.classList.toggle("pronta", q > 0.72);
-        regime.style.opacity = String(faixa(q, 0.7, 0.1));
-        Array.prototype.forEach.call(regs, function (r, k) { r.classList.toggle("on", k === 0 && q > 0.84); });
+        zona.classList.toggle("pronta", q > 0.62);
+        regime.style.opacity = String(faixa(q, 0.62, 0.08));
+        Array.prototype.forEach.call(regs, function (r, k) { r.classList.toggle("on", k === 0 && q > 0.72); });
+        var ta = faixa(q, 0.78, 0.08);
+        analisar.style.opacity = String(ta);
+        analisar.style.transform = "translateY(" + 8 * (1 - sai(ta)) + "px) scale(" + (q > 0.9 && q < 0.96 ? 0.95 : 1) + ")";
+        analisar.classList.toggle("on", q > 0.9);
       } else if (i === 1) {
-        var hgt = folha.offsetHeight;
-        feixe.style.transform = "translateY(" + (-46 + (hgt + 46) * q) + "px)";
-        cont.textContent = "item " + Math.max(1, Math.round(62 * q)) + " de 62";
-        Array.prototype.forEach.call(cls, function (c, k) { c.classList.toggle("lida", q > (k + 1) / (cls.length + 1)); });
-        Array.prototype.forEach.call(alvos, function (a, k) {
-          var t = faixa(q, 0.36 + k * 0.24, 0.08);
-          a.style.setProperty("--alvo", t > 0 ? "1" : "0");
-          notas[k].style.opacity = String(t);
-          notas[k].style.transform = "scale(" + (0.6 + 0.4 * sai(t)) + ")";
+        var topo = edLinhas[0].offsetTop, fim = edLinhas[edLinhas.length - 1].offsetTop + edLinhas[edLinhas.length - 1].offsetHeight;
+        var y = topo - 20 + (fim - topo + 20) * faixa(q, 0.05, 0.75);
+        edFeixe.style.transform = "translateY(" + y + "px)";
+        edFeixe.style.opacity = q > 0.03 && q < 0.85 ? "1" : "0";
+        edCont.textContent = "item " + Math.max(1, Math.round(62 * faixa(q, 0.05, 0.75))) + " de 62";
+        Array.prototype.forEach.call(edLinhas, function (l) {
+          var meio = l.offsetTop + l.offsetHeight / 2;
+          l.classList.toggle("lida", y > meio);
         });
-        Array.prototype.forEach.call(checks, function (c, k) { c.classList.toggle("feito", q > 0.22 + k * 0.2); });
+        Array.prototype.forEach.call(edLinhas, function (l) {
+          var mk = l.querySelector("mark i"), cm = l.querySelector(".lvi-ed-com");
+          if (!mk) return;
+          var base = (l.offsetTop + l.offsetHeight / 2 - topo + 20) / (fim - topo + 20) * 0.75 + 0.05;
+          var tm = faixa(q, base, 0.07), tc = faixa(q, base + 0.04, 0.08);
+          mk.style.transform = "scaleX(" + tm + ")";
+          cm.style.opacity = String(tc);
+          cm.style.transform = "translateX(" + 12 * (1 - sai(tc)) + "px)";
+        });
       } else if (i === 2) {
-        Array.prototype.forEach.call(nosEl, function (n, k) {
-          var t = faixa(q, k * 0.06, 0.22), e = sai(t);
-          n.style.transform = "translate(" + (+n.dataset.x * e) + "px," + (+n.dataset.y * e) + "px) scale(" + (0.6 + 0.4 * e) + ")";
-          n.style.opacity = String(t);
-          fios[k].style.transform = "rotate(" + fios[k].dataset.a + "deg) scaleX(" + e + ")";
-          var vivo = q > 0.42 && q < 0.9, f = (((q - 0.42) / 0.48) * 2.4 + k * 0.17) % 1;
-          gotas[k].style.opacity = vivo ? String(Math.sin(Math.PI * f)) : "0";
-          gotas[k].style.transform = "translate(" + (+gotas[k].dataset.x * (1 - f)) + "px," + (+gotas[k].dataset.y * (1 - f)) + "px)";
+        var tcl = faixa(q, 0, 0.1);
+        evCl.style.opacity = String(tcl);
+        evCl.style.transform = "translateY(" + 10 * (1 - sai(tcl)) + "px)";
+        evMarca.style.transform = "scaleX(" + faixa(q, 0.1, 0.1) + ")";
+        Array.prototype.forEach.call(evFs, function (f, k) {
+          var t = faixa(q, 0.2 + k * 0.17, 0.12), e = sai(t);
+          f.style.opacity = String(t);
+          f.style.transform = "translateX(" + 22 * (1 - e) + "px)";
+          evFios[k].style.transform = "scaleX(" + e + ")";
+          var to = faixa(q, 0.3 + k * 0.17, 0.06);
+          evOks[k].style.opacity = String(to);
+          evOks[k].style.transform = "scale(" + (0.6 + 0.4 * sai(to)) + ")";
+          f.classList.toggle("ok", to >= 1);
         });
-        var w = q > 0.42 ? ((q - 0.42) * 4) % 1 : 0;
-        onda.style.opacity = q > 0.42 && q < 0.92 ? String(1 - w) : "0";
-        onda.style.transform = "scale(" + (1 + w * 0.45) + ")";
-        var feito = q > 0.88;
-        nucSt.textContent = feito ? "✓ conferido" : "conferindo…";
-        nucleo.classList.toggle("feito", feito);
+        var tv = faixa(q, 0.8, 0.1);
+        evVer.style.opacity = String(tv);
+        evVer.style.transform = "scale(" + (0.9 + 0.1 * sai(tv)) + ")";
       } else {
-        par.style.transform = "translateY(" + 16 * (1 - sai(faixa(q, 0, 0.12))) + "px)";
-        gerar.style.transform = "scaleX(" + faixa(q, 0.02, 0.26) + ")";
-        parSt.textContent = q < 0.3 ? "Gerando o parecer…" : "Edital de pregão eletrônico · 3 apontamentos";
-        Array.prototype.forEach.call(achs, function (a, k) {
-          var t = faixa(q, 0.3 + k * 0.09, 0.12);
-          a.style.opacity = String(t);
-          a.style.transform = "translateX(" + -12 * (1 - sai(t)) + "px)";
+        Array.prototype.forEach.call(ptBs, function (b, k) {
+          var t = faixa(q, 0.02 + k * 0.075, 0.08);
+          b.style.opacity = String(t);
+          b.style.transform = "translateY(" + 8 * (1 - sai(t)) + "px)";
         });
-        resumo.style.opacity = String(faixa(q, 0.6, 0.08));
-        pe.style.opacity = String(faixa(q, 0.64, 0.08));
-        pdf.style.transform = "scale(" + (q > 0.74 && q < 0.8 ? 0.94 : 1) + ")";
-        var baixou = q > 0.8;
-        if (pdf.classList.contains("ok") !== baixou) { pdf.classList.toggle("ok", baixou); pdf.textContent = baixou ? "✓ PDF baixado" : "Baixar em PDF"; }
-        var tc = faixa(q, 0.86, 0.1);
+        var sobra = Math.max(0, ptRolo.scrollHeight - ptFolha.clientHeight + 16);
+        ptRolo.style.transform = "translateY(" + -sobra * sai(faixa(q, 0.2, 0.42)) + "px)";
+        Array.prototype.forEach.call(ptArqs, function (a, k) {
+          var t = faixa(q, 0.7 + k * 0.07, 0.1), e = sai(t);
+          a.style.opacity = String(t);
+          a.style.transform = "translateY(" + 18 * (1 - e) + "px) scale(" + (0.85 + 0.15 * e) + ")";
+          a.classList.toggle("ok", t >= 1);
+        });
+        var tc = faixa(q, 0.88, 0.08);
         carimbo.style.opacity = String(tc);
         carimbo.style.transform = "rotate(-12deg) scale(" + (1.6 - 0.6 * sai(tc)) + ")";
       }
     }
 
     var atual = -1, vez = 0, st = vigiar(sec), barraAnim = null;
-    var DUR = [2.6, 3.2, 3, 3.4], PAUSA = 1.6;
+    var DUR = [3, 3.8, 3.6, 4], PAUSA = 1.9;
     function mostrar(i) {
       Array.prototype.forEach.call(botoes, function (b, k) { b.classList.toggle("on", k === i); });
       function zerar() { barras.forEach(function (x, k) { if (k !== i) x.style.transform = "scaleX(0)"; }); }
       zerar(); requestAnimationFrame(zerar); // de novo no quadro seguinte: a barra interrompida pode gravar o último valor
-      if (i === 2) posicionarRede();
       if (atual === i) return;
       var velha = etapas[atual], nova = etapas[i];
       if (velha) { velha.classList.remove("on"); if (!REDUZ) anima(velha, { opacity: [1, 0], scale: [1, 0.97] }, { duration: 0.3 }).then(function () { velha.style.transform = ""; velha.style.opacity = ""; }); }
@@ -742,8 +734,7 @@
       if (!REDUZ) anima(nova, { opacity: [0, 1], scale: [1.03, 1] }, { duration: 0.4, ease: SUAVE }).then(function () { nova.style.transform = ""; nova.style.opacity = ""; });
       atual = i;
     }
-    posicionarRede();
-    window.addEventListener("resize", function () { if (sec.isConnected && atual === 2) { posicionarRede(); pintar(2, 1); } });
+    window.addEventListener("resize", function () { if (sec.isConnected && atual >= 0) pintar(atual, 1); });
 
     if (REDUZ) {
       etapas.forEach(function (e, i) { pintar(i, 1); });

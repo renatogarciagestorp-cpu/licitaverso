@@ -116,36 +116,34 @@
 .lvi-aba.on > em { display: inline; animation: lvi-surge .35s ease both; }
 @keyframes lvi-surge { from { opacity: 0; transform: translateX(-4px); } }
 
-/* cena: gestão — linha do tempo do contrato até o reajuste */
-.lvi-lt { position: relative; height: 104px; margin: 16px 8px 0; }
-.lvi-lt-trilho { position: absolute; left: 0; right: 0; top: 46px; height: 3px; border-radius: 3px; background: rgba(255,255,255,0.12); }
-.lvi-lt-trilho u { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--lvi-verde), var(--lvi-menta)); transform-origin: 0 50%; transform: scaleX(0); }
-.lvi-mc { position: absolute; top: 40px; width: 0; }
-.lvi-mc > b { position: absolute; left: -7px; top: 0; width: 14px; height: 14px; border-radius: 50%; background: #0A2826; border: 2px solid rgba(255,255,255,0.3); transition: background .3s, border-color .3s, box-shadow .3s; }
-.lvi-mc.on > b { background: var(--lvi-menta); border-color: var(--lvi-menta); box-shadow: 0 0 12px var(--lvi-menta); }
-.lvi-mc.rj.on > b { background: var(--lvi-ouro); border-color: var(--lvi-ouro); box-shadow: 0 0 14px var(--lvi-ouro); }
-.lvi-mc.fut > b { border-style: dashed; }
-.lvi-mc.fut.on > b { background: #0A2826; border-color: var(--lvi-menta); }
-.lvi-mc > span { position: absolute; left: 0; transform: translateX(-50%); white-space: nowrap; text-align: center; font-size: 11px; font-weight: 800; color: var(--lvi-texto-2); transition: color .3s; }
-.lvi-mc > span small { display: block; font-size: 10px; font-weight: 600; }
-.lvi-mc.cima > span { bottom: 22px; }
-.lvi-mc.baixo > span { top: 22px; }
-.lvi-mc.ini > span { transform: none; text-align: left; left: -7px; }
-.lvi-mc.fim > span { transform: translateX(-100%); text-align: right; left: 7px; }
-.lvi-mc.on > span { color: #fff; }
-.lvi-mc.rj.on > span { color: var(--lvi-ouro); }
-.lvi-hoje { position: absolute; top: 34px; width: 0; }
-.lvi-hoje::before { content: ""; position: absolute; left: -1px; top: 0; width: 2px; height: 26px; border-radius: 2px; background: #fff; }
-.lvi-hoje em { position: absolute; top: 30px; left: 0; transform: translateX(-50%); font-style: normal; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; background: #fff; color: #0A1F2A; }
-.lvi-rj { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; margin-top: 10px; }
-.lvi-rj > div { padding: 9px 12px; border-radius: 10px; background: rgba(255,255,255,0.05); }
-.lvi-rj small { display: block; font-size: 10.5px; color: var(--lvi-texto-2); }
-.lvi-rj b { display: block; margin-top: 2px; font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
-.lvi-rj .ind { color: var(--lvi-ouro); }
-.lvi-rj .val { color: var(--lvi-menta); }
-.lvi-rj-pe { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-size: 11.5px; }
-.lvi-rj-pe .reg { color: var(--lvi-menta); font-weight: 800; }
-.lvi-rj-pe .prox { color: var(--lvi-texto-2); }
+/* cena: gestão — painel da carteira */
+.lvi-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; }
+.lvi-kpis > div { padding: 6px 10px; border-radius: 10px; background: rgba(255,255,255,0.05); }
+.lvi-kpis b { display: block; font-size: 15px; font-weight: 800; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.lvi-kpis small { font-size: 10.5px; color: var(--lvi-texto-2); }
+.lvi-sits { display: grid; gap: 6px; margin-top: 10px; }
+.lvi-sit { display: grid; grid-template-columns: 74px minmax(0, 1fr) 20px; align-items: center; gap: 10px; font-size: 11.5px; color: var(--lvi-texto); }
+.lvi-sit i { display: block; height: 8px; border-radius: 6px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.lvi-sit u { display: block; height: 100%; border-radius: inherit; background: var(--c); transform-origin: 0 50%; }
+.lvi-sit b { text-align: right; font-weight: 800; color: #fff; }
+.lvi-sit.v { --c: #3FD49A; } .lvi-sit.a { --c: #F2B544; } .lvi-sit.x { --c: #F0716B; }
+.lvi-prz-cab { margin-top: 10px; font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--lvi-texto-2); }
+.lvi-przs { display: grid; gap: 5px; margin-top: 6px; }
+.lvi-prz { display: grid; grid-template-columns: 50px minmax(0, 1fr); align-items: center; gap: 10px; padding: 4px 10px 4px 4px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid transparent; transition: border-color .3s, background .3s; }
+.lvi-prz > span { text-align: center; padding: 3px 0; border-radius: 7px; font-size: 11.5px; font-weight: 900; background: rgba(255,255,255,0.08); }
+.lvi-prz.rj > span { background: rgba(242,181,68,0.18); color: var(--lvi-ouro); }
+.lvi-prz.rp > span { background: rgba(91,192,218,0.18); color: #8AD4EA; }
+.lvi-prz.pr > span { background: rgba(240,113,107,0.18); color: #F59A95; }
+.lvi-prz > div { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.lvi-prz b { flex: none; font-size: 12px; white-space: nowrap; }
+.lvi-prz small { min-width: 0; font-size: 10.5px; color: var(--lvi-texto-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lvi-prz.on { border-color: rgba(242,181,68,0.55); background: rgba(242,181,68,0.08); }
+.lvi-email { margin-top: 8px; font-size: 11.5px; font-weight: 800; color: var(--lvi-menta); }
+@media (max-width: 560px) {
+  .lvi-kpis b { font-size: 14px; }
+  .lvi-kpis small { font-size: 9.5px; }
+  .lvi-sit { grid-template-columns: 64px minmax(0, 1fr) 18px; }
+}
 
 /* setinha do pedido: abre a ferramenta da cena */
 button.lvi-campo-btn { border: 0; padding: 0; font: inherit; font-weight: 900; cursor: pointer; transition: background .2s, transform .15s; }
@@ -371,6 +369,96 @@ button.lvi-campo-btn:focus-visible { outline: 2px solid var(--lvi-menta); outlin
   .lvi-zona { min-height: 196px; padding: 12px; }
   .lvi-resumo { display: none; }
   .lvi-baixado { bottom: 8px; }
+}
+
+/* ---------- como funciona: palco com conteúdo de verdade ---------- */
+.lvi-palco { isolation: isolate; }
+.lvi-palco::before { content: ""; position: absolute; inset: -30%; z-index: -1; background: radial-gradient(closest-side at 30% 30%, rgba(63,212,154,0.16), transparent), radial-gradient(closest-side at 75% 70%, rgba(91,192,218,0.12), transparent); animation: lvi-brilho 14s ease-in-out infinite alternate; pointer-events: none; }
+.lvi-palco::after { content: ""; position: absolute; inset: 0; z-index: -1; background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); background-size: 32px 32px; pointer-events: none; }
+@keyframes lvi-brilho { to { transform: translate(8%, -6%) rotate(8deg); } }
+.lvi-zona.pronta { animation: lvi-portal 1.6s ease-in-out infinite; }
+@keyframes lvi-portal { 50% { box-shadow: 0 0 0 7px rgba(111,224,174,0.10), 0 0 50px -4px rgba(63,212,154,0.6); } }
+.lvi-analisar { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 12px; background: rgba(255,255,255,0.08); border: 1px solid var(--lvi-linha); font-size: 13px; font-weight: 800; color: #fff; opacity: 0; transition: background .25s, box-shadow .25s, color .25s; }
+.lvi-analisar.on { background: var(--lvi-verde); color: #06251A; box-shadow: 0 0 0 6px rgba(15,163,107,0.18), 0 10px 30px -10px rgba(15,163,107,0.8); }
+
+/* etapa 2: edital com texto */
+.lvi-ed { position: relative; width: 100%; max-width: 560px; border-radius: 16px; background: #fff; color: #0B1F2A; padding: 14px 16px 10px; box-shadow: 0 30px 60px -24px rgba(0,0,0,0.75); overflow: hidden; }
+.lvi-ed-cab { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid #E8EEEC; }
+.lvi-ed-cab b { font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: #3D5058; }
+.lvi-ed-cont { font-size: 11px; font-weight: 800; color: #0A7A50; background: #E3F5EC; border-radius: 999px; padding: 3px 10px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lvi-ed-l { display: grid; grid-template-columns: 30px minmax(0, 1fr) 150px; gap: 4px 10px; align-items: center; padding: 7px 0; border-bottom: 1px dashed #EEF2F1; }
+.lvi-ed-l:last-of-type { border-bottom: 0; }
+.lvi-ed-l > em { font-style: normal; font-size: 11px; font-weight: 800; color: #8A9AA0; }
+.lvi-ed-l > p { margin: 0; font-size: 12px; line-height: 1.45; color: #9AA9AE; transition: color .3s; }
+.lvi-ed-l.lida > p { color: #26393F; }
+.lvi-ed-l mark, .lvi-ev-cl mark { position: relative; background: none; color: inherit; font-weight: 800; white-space: nowrap; }
+.lvi-ed-l mark > i, .lvi-ev-cl mark > i { position: absolute; left: -2px; right: -2px; top: 1px; bottom: 0; border-radius: 3px; background: rgba(240,113,107,0.32); transform-origin: 0 50%; transform: scaleX(0); }
+.lvi-ed-l mark > span, .lvi-ev-cl mark > span { position: relative; }
+.lvi-ed-com { display: grid; gap: 1px; padding: 6px 8px; border-radius: 8px; border-left: 3px solid var(--c); background: color-mix(in srgb, var(--c) 10%, #fff); font-size: 10.5px; line-height: 1.3; color: #3D5058; opacity: 0; }
+.lvi-ed-com b { font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--c); }
+.lvi-ed-com.alta { --c: #D64545; } .lvi-ed-com.media { --c: #C88A0A; } .lvi-ed-com.baixa { --c: #2E8FA8; }
+.lvi-ed .lvi-feixe { left: 0; right: 0; top: 0; height: 30px; background: linear-gradient(180deg, transparent, rgba(15,163,107,0.22), transparent); }
+
+/* etapa 3: quadro de provas */
+.lvi-ev { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); grid-template-rows: auto auto; gap: 14px 26px; align-items: center; width: 100%; }
+.lvi-ev-cl { padding: 14px; border-radius: 14px; background: #fff; color: #26393F; box-shadow: 0 24px 50px -24px rgba(0,0,0,0.75); }
+.lvi-ev-cl small { display: block; font-size: 10.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: #8A9AA0; margin-bottom: 4px; }
+.lvi-ev-cl p { margin: 0; font-size: 13px; line-height: 1.5; }
+.lvi-ev-fontes { display: grid; gap: 8px; }
+.lvi-ev-f { position: relative; padding: 9px 12px; border-radius: 12px; background: rgba(255,255,255,0.06); border: 1px solid var(--lvi-linha); transition: border-color .3s, background .3s; }
+.lvi-ev-f.ok { border-color: rgba(111,224,174,0.5); background: rgba(111,224,174,0.08); }
+.lvi-ev-f small { display: block; font-size: 11px; font-weight: 800; color: var(--lvi-menta); }
+.lvi-ev-f p { margin: 3px 0 0; font-size: 11.5px; line-height: 1.4; color: var(--lvi-texto); padding-right: 74px; }
+.lvi-ev-f em { position: absolute; right: 10px; top: 9px; font-style: normal; font-size: 10px; font-weight: 800; color: #06251A; background: var(--lvi-menta); padding: 2px 7px; border-radius: 999px; opacity: 0; }
+.lvi-ev-fio { position: absolute; right: 100%; top: 50%; width: 26px; height: 2px; background: linear-gradient(90deg, rgba(240,113,107,0.7), rgba(111,224,174,0.8)); transform-origin: 0 50%; transform: scaleX(0); }
+.lvi-ev-ver { grid-column: 1 / -1; justify-self: center; display: inline-flex; align-items: center; gap: 10px; padding: 9px 16px; border-radius: 999px; background: rgba(240,113,107,0.14); border: 1px solid rgba(240,113,107,0.55); font-size: 12.5px; color: #FBD2CF; opacity: 0; }
+.lvi-ev-ver b { color: #fff; background: #D64545; padding: 2px 9px; border-radius: 999px; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; }
+
+/* etapa 4: parecer sendo escrito */
+.lvi-pt { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 150px; gap: 18px; align-items: center; width: 100%; }
+.lvi-pt-folha { position: relative; height: 330px; border-radius: 16px; background: #fff; color: #26393F; overflow: hidden; box-shadow: 0 30px 60px -24px rgba(0,0,0,0.75); }
+.lvi-pt-folha::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 36px; background: linear-gradient(transparent, #fff); }
+.lvi-pt-rolo { padding: 16px 18px; }
+.lvi-pt-b { opacity: 0; }
+.lvi-pt-b h5 { margin: 0; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: #0B1F2A; text-align: center; }
+.lvi-pt-b > small { display: block; text-align: center; font-size: 10.5px; color: #6A7B82; margin-top: 2px; padding-bottom: 8px; border-bottom: 1px solid #E8EEEC; }
+.lvi-pt-b h6 { margin: 10px 0 4px; font-size: 12px; color: #0B1F2A; }
+.lvi-pt-b p { margin: 0; font-size: 11.5px; line-height: 1.45; }
+.lvi-pt-ap { margin-top: 6px; padding: 7px 10px; border-radius: 9px; border-left: 3px solid var(--c); background: #F6F8F7; }
+.lvi-pt-ap b { display: block; font-size: 11.5px; color: var(--c); margin-bottom: 2px; }
+.lvi-pt-ap.alta { --c: #C23B3B; } .lvi-pt-ap.media { --c: #A87400; } .lvi-pt-ap.baixa { --c: #1F7F96; }
+.lvi-pt-arqs { display: grid; gap: 10px; }
+.lvi-pt-arqs > span { display: grid; grid-template-columns: 36px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 10px; align-items: center; padding: 10px; border-radius: 14px; background: rgba(255,255,255,0.07); border: 1px solid var(--lvi-linha); font-size: 12px; font-weight: 800; opacity: 0; transition: border-color .3s; }
+.lvi-pt-arqs > span > i { grid-row: 1 / 3; width: 36px; height: 44px; border-radius: 7px; display: grid; place-items: center; font-style: normal; font-size: 9.5px; font-weight: 900; color: #fff; background: #C24A43; }
+.lvi-pt-arqs > span.doc > i { background: #2B6CB0; }
+.lvi-pt-arqs > span small { font-size: 10.5px; font-weight: 800; color: var(--lvi-menta); }
+.lvi-pt-arqs > span.ok { border-color: rgba(111,224,174,0.55); }
+.lvi-pt .lvi-carimbo { right: 30px; top: 0; }
+@media (max-width: 980px) {
+  .lvi-pt-folha { height: 300px; }
+}
+@media (max-width: 560px) {
+  .lvi-ed { padding: 10px 12px 8px; }
+  .lvi-ed-l { grid-template-columns: 26px minmax(0, 1fr); padding: 5px 0; }
+  .lvi-ed-l > div:empty { display: none; }
+  .lvi-ed-com { grid-column: 2; padding: 4px 7px; }
+  .lvi-ed-l > p { font-size: 11px; }
+  .lvi-ev { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .lvi-ev-cl { padding: 10px 12px; }
+  .lvi-ev-cl p { font-size: 11.5px; }
+  .lvi-ev-f { padding: 7px 10px; }
+  .lvi-ev-f p { display: none; }
+  .lvi-ev-fio { display: none; }
+  .lvi-ev-ver { font-size: 11px; padding: 7px 12px; }
+  .lvi-pt { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .lvi-pt-folha { height: 250px; }
+  .lvi-pt-arqs { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .lvi-pt-arqs > span { padding: 7px; font-size: 11px; }
+  .lvi-pt-arqs > span > i { width: 28px; height: 34px; }
+  .lvi-pt .lvi-carimbo { right: 6px; top: -6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lvi-palco::before, .lvi-zona.pronta { animation: none; }
 }
 
 /* ---------- vitrine 3D ---------- */
