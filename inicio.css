@@ -546,6 +546,12 @@ button.lvi-campo-btn:focus-visible { outline: 2px solid var(--lvi-menta); outlin
 .lv3d-palco canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .lvh-art.lv3d-on > .lv3d-palco { height: 290px; border-radius: 18px; margin-bottom: 16px; }
 .lv3d-bib.lv3d-on > .lv3d-palco { height: 270px; border-radius: 22px; margin-bottom: 20px; }
+/* cada ferramenta com o seu tom */
+.lv3d-parecer > .lv3d-palco { background: radial-gradient(420px 220px at 45% 45%, rgba(255,122,107,0.16), transparent 70%), repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 6px), linear-gradient(180deg, #17141B, #0B0A0F); }
+.lv3d-elaborador > .lv3d-palco { background: radial-gradient(460px 240px at 50% 48%, rgba(110,168,255,0.18), transparent 70%), radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1.5px) 0 0 / 18px 18px, linear-gradient(180deg, #0E1A3A, #070C1E); }
+.lv3d-calculadora > .lv3d-palco { background: radial-gradient(460px 220px at 55% 30%, rgba(242,181,68,0.2), transparent 70%), linear-gradient(180deg, #221A0C, #0D0A05); }
+.lv3d-gestao > .lv3d-palco { background: radial-gradient(420px 260px at 50% 50%, rgba(91,214,240,0.16), transparent 70%), repeating-radial-gradient(circle at 50% 50%, rgba(91,214,240,0.04) 0 1px, transparent 1px 34px), linear-gradient(180deg, #082029, #041015); }
+.lv3d-comunidade > .lv3d-palco { background: radial-gradient(440px 240px at 50% 20%, rgba(182,156,255,0.2), transparent 70%), linear-gradient(180deg, #1A1233, #0B0718); }
 @media (max-width: 560px) {
   .lvh-art.lv3d-on > .lv3d-palco { height: 240px; border-radius: 16px; }
   .lv3d-bib.lv3d-on > .lv3d-palco { height: 240px; }
