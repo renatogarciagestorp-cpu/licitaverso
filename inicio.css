@@ -465,10 +465,10 @@ button.lvi-campo-btn:focus-visible { outline: 2px solid var(--lvi-menta); outlin
 .lvi-vit { position: relative; margin-top: 84px; padding: 72px 0 40px; background: radial-gradient(800px 420px at 50% 40%, rgba(63,212,154,0.16), transparent 70%), linear-gradient(180deg, #0A2826, #0F3431); color: #fff; overflow: hidden; }
 .lvi-vit-cab { max-width: 760px; margin: 0 auto; padding: 0 24px; text-align: center; }
 .lvi-vit-cab p { margin: 12px 0 0; color: var(--lvi-texto); font-size: 15.5px; }
-.lvi-vit-palco { position: relative; height: 430px; margin-top: 18px; perspective: 1200px; touch-action: pan-y; cursor: grab; user-select: none; }
+.lvi-vit-palco { position: relative; height: 380px; margin-top: 18px; perspective: 1200px; touch-action: pan-y; cursor: grab; user-select: none; }
 .lvi-vit-palco:active { cursor: grabbing; }
-.lvi-anel { position: absolute; left: 50%; top: 46%; width: 0; height: 0; transform-style: preserve-3d; }
-.lvi-vc { position: absolute; left: -110px; top: -140px; width: 220px; height: 280px; display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 22px; text-align: left; font: inherit; color: #fff; cursor: pointer; background: linear-gradient(165deg, rgba(31, 92, 86, 0.95), rgba(9, 36, 34, 0.98)); border: 1px solid rgba(111,224,174,0.25); box-shadow: 0 30px 60px -30px rgba(0,0,0,0.8); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.lvi-anel { position: absolute; left: 50%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; }
+.lvi-vc { position: absolute; left: -110px; top: -140px; width: 220px; height: 280px; display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 22px; text-align: left; font: inherit; color: #fff; cursor: pointer; background: linear-gradient(165deg, #1F5C56, #092422); border: 1px solid rgba(111,224,174,0.25); box-shadow: 0 30px 60px -30px rgba(0,0,0,0.8); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .lvi-vc:focus-visible { outline: 3px solid var(--lvi-menta); outline-offset: 3px; }
 .lvi-vc > i { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font-style: normal; font-size: 22px; background: rgba(111,224,174,0.16); color: var(--lvi-menta); }
 .lvi-vc small { font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--lvi-texto-2); margin-top: 6px; }
@@ -519,7 +519,7 @@ button.lvi-campo-btn:focus-visible { outline: 2px solid var(--lvi-menta); outlin
   .lvi-carimbo { width: 70px; height: 70px; font-size: 8.5px; right: 3%; top: 2%; }
   .lvi-et { padding: 16px; }
   .lvi-vit { margin-top: 56px; padding-top: 52px; }
-  .lvi-vit-palco { height: 360px; }
+  .lvi-vit-palco { height: 320px; }
   .lvi-vc { left: -90px; top: -120px; width: 180px; height: 240px; padding: 14px; }
   .lvi-vc b { font-size: 16.5px; }
   .lvi-vc p { font-size: 12px; }

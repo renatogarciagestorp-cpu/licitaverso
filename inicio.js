@@ -798,16 +798,29 @@
     palco.parentNode.appendChild(ctl);
     var rotulo = ctl.querySelector("span");
 
-    var raio = 0, ang = 0, vel = 0, arrastando = false, moveu = 0, ultX = 0, frente = -1, foco = null, st = vigiar(palco), animAng = null, girando = false;
-    function medir() { var w = cartoes[0].offsetWidth || 220; raio = Math.round((w / 2) / Math.tan(Math.PI / n) * 1.12); }
+    // Leque: o cartão da frente fica reto no centro; os vizinhos se abrem para os lados, um pouco inclinados e
+    // mais ao fundo. "ang" anda em graus (passo = um cartão) para o arrasto e a mola seguirem contínuos.
+    var esp = 200, ang = 0, vel = 0, arrastando = false, moveu = 0, ultX = 0, frente = -1, foco = null, st = vigiar(palco), animAng = null, girando = false;
+    var VISIVEIS = 3.4;
+    function medir() {
+      var w = cartoes[0].offsetWidth || 220, W = palco.offsetWidth || 1000;
+      esp = Math.min(w * 1.04, Math.max(w * 0.6, (W - w) / 6));
+    }
     function pintar() {
-      anel.style.transform = "translateZ(" + -raio + "px) rotateY(" + ang + "deg)";
-      var melhor = -2, mi = 0;
+      var melhor = 99, mi = 0;
       cartoes.forEach(function (c, i) {
-        var a = (i * passo + ang) * Math.PI / 180, f = Math.cos(a);
-        c.style.transform = "rotateY(" + i * passo + "deg) translateZ(" + raio + "px)";
-        c.style.opacity = String(0.35 + 0.65 * Math.max(0, f));
-        if (f > melhor) { melhor = f; mi = i; }
+        var d = ((i * passo + ang) % 360 + 540) % 360 - 180;
+        d = d / passo;
+        var ad = Math.abs(d), lado = d < 0 ? -1 : 1, giro = Math.min(ad, 1) * 26;
+        var x = lado * (Math.min(ad, 1) * esp * 1.08 + Math.max(0, ad - 1) * esp * 0.9);
+        c.style.transform = "translate3d(" + x.toFixed(1) + "px,0," + (-ad * 90).toFixed(1) + "px) rotateY(" + (-lado * giro).toFixed(2) + "deg) scale(" + (1 - Math.min(ad, 3) * 0.05).toFixed(3) + ")";
+        var op = ad > VISIVEIS ? 0 : ad > VISIVEIS - 0.8 ? (VISIVEIS - ad) / 0.8 : 1;
+        c.style.opacity = op >= 1 ? "" : op.toFixed(3);
+        c.style.filter = ad < 0.05 ? "" : "brightness(" + (1 - Math.min(ad, 3) * 0.17).toFixed(3) + ")";
+        c.style.zIndex = String(100 - Math.round(ad * 10));
+        c.style.visibility = op <= 0 ? "hidden" : "";
+        c.tabIndex = ad < 0.5 ? 0 : -1;
+        if (ad < melhor) { melhor = ad; mi = i; }
       });
       if (mi !== frente) { frente = mi; rotulo.textContent = FERRAMENTAS[mi][2]; }
     }
@@ -816,7 +829,7 @@
       if (animAng) animAng.stop();
       if (REDUZ) { ang += d; pintar(); return; }
       girando = true; vel = 0;
-      animAng = animate(ang, ang + d, { type: "spring", stiffness: 90, damping: 18, onUpdate: function (v) { ang = v; pintar(); }, onComplete: function () { girando = false; } });
+      animAng = animate(ang, ang + d, { type: "spring", stiffness: 110, damping: 20, onUpdate: function (v) { ang = v; pintar(); }, onComplete: function () { girando = false; ultimo = Date.now(); } });
     }
     medir(); pintar();
     window.addEventListener("resize", function () { if (palco.isConnected) { medir(); pintar(); } });
@@ -829,31 +842,45 @@
     window.addEventListener("pointermove", function (e) {
       if (!arrastando) return;
       var dx = e.clientX - ultX; ultX = e.clientX; moveu += Math.abs(dx);
-      ang += dx * 0.32; vel = dx * 0.32; pintar();
+      var da = dx / esp * passo;
+      ang += da; vel = da; pintar();
     });
-    window.addEventListener("pointerup", function () { arrastando = false; });
-    window.addEventListener("pointercancel", function () { arrastando = false; });
+    function soltar() {
+      if (!arrastando) return;
+      arrastando = false;
+      if (moveu > 8) {
+        // segue o embalo e para no cartão mais próximo
+        var fim = ang + vel * 8, i = Math.round(-fim / passo);
+        girarPara(((i % n) + n) % n);
+      }
+    }
+    window.addEventListener("pointerup", soltar);
+    window.addEventListener("pointercancel", soltar);
     cartoes.forEach(function (c, i) {
       c.addEventListener("click", function (e) {
         if (moveu > 8) { e.preventDefault(); return; }
         if (i === frente) abrir(FERRAMENTAS[i][4]); else girarPara(i);
       });
-      c.addEventListener("focus", function () { foco = i; girarPara(i); });
+      c.addEventListener("focus", function () { foco = i; if (i !== frente) girarPara(i); });
       c.addEventListener("blur", function () { foco = null; });
     });
     ctl.querySelectorAll("button")[0].addEventListener("click", function () { girarPara((frente - 1 + n) % n); });
     ctl.querySelectorAll("button")[1].addEventListener("click", function () { girarPara((frente + 1) % n); });
-    var parado = false;
+    palco.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft") { e.preventDefault(); girarPara((frente - 1 + n) % n); cartoes[(frente - 1 + n) % n].focus(); }
+      if (e.key === "ArrowRight") { e.preventDefault(); girarPara((frente + 1) % n); cartoes[(frente + 1) % n].focus(); }
+    });
+    var parado = false, ultimo = Date.now();
     palco.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") parado = true; });
-    palco.addEventListener("pointerleave", function () { parado = false; });
+    palco.addEventListener("pointerleave", function () { parado = false; ultimo = Date.now(); });
     if (REDUZ) return;
+    // passa sozinho para o próximo cartão a cada 3,5 s (parado com o mouse em cima, no arrasto ou com o foco do teclado)
     (function laco() {
       if (!palco.isConnected) return;
-      if (st.vis && !document.hidden && !arrastando && foco === null && !girando) {
-        if (Math.abs(vel) > 0.05) { ang += vel; vel *= 0.94; } else if (!parado) ang -= 0.09;
-        pintar();
-      }
-      requestAnimationFrame(laco);
+      var livre = st.vis && !document.hidden && !arrastando && foco === null && !girando && !parado;
+      if (!livre) ultimo = Date.now();
+      else if (Date.now() - ultimo > 3500) { ultimo = Date.now(); girarPara((frente + 1) % n); }
+      setTimeout(laco, 250);
     })();
   }
 
