@@ -45,6 +45,7 @@ Lembrar de atualizar SITE_URL no Supabase e os endereços de retorno do login.
 ## Como editar o site
 O código fica em `src/site.html`. Depois de mudar: `python3 scripts/empacotar-site.py` (gera o `index.html`).
 Biblioteca: `python3 scripts/atualizar-biblioteca.py` reaplica o shim e a barra.
+Cenas 3D da página inicial: o código fica em `src/inicio3d.js`. Depois de mudar: `cd scripts/3d && npm install && npm run montar` (gera o `inicio3d.js` com o Three.js) e suba o `?v=` do `import("./inicio3d.js?v=…")` no `inicio.js`.
 
 ## Fórum: aviso por e-mail e perguntas iniciais (27/10/2026)
 - Ao criar uma pergunta, o site pergunta se a pessoa quer receber e-mail quando alguém responder (Sim/Não, obrigatório). Dá para ligar/desligar depois, na própria pergunta.
@@ -71,3 +72,8 @@ Biblioteca: `python3 scripts/atualizar-biblioteca.py` reaplica o shim e a barra.
 - Busca e compartilhamento: descrição, Open Graph (icones/compartilhar.png), robots.txt e sitemap.xml.
 - Medição de visitas: Cloudflare Web Analytics, carregada só com consentimento "todos" (falta o token em config.js).
 - E-mails: boas-vindas no primeiro acesso (função boas-vindas), dica no 3º dia do teste e aviso na véspera do fim (avisos).
+
+## Página inicial em 3D (09/11/2026)
+- Referência estudada: profitize.com.br/build (loja de prompts de landing page para Claude Code e Codex). Os sites 3D de lá usam Three.js (cena 3D em WebGL), GSAP com ScrollTrigger (seção presa enquanto rola) e Lenis (rolagem suave).
+- No Licitacon: Three.js + Motion (já usado no site, no lugar do GSAP). Uma cena por ferramenta, no alto da coluna de exemplo de cada seção: Parecerista (feixe lê o edital e acende ALTA/MÉDIA/BAIXA), Elaborador (seções do ETP montam o documento e saem Word e PDF), Calculadora (módulos 1 a 6 saem um a um como gavetas, com o valor), Gestão Contratual (contratos passando pelos portais de reajuste, repactuação e prorrogação), Biblioteca (90 fontes alimentando o acervo) e Comunidade (perguntas subindo e a resposta oficial em destaque).
+- Um só WebGL para a página toda; só desenha a cena que está na tela; pacote 3D (~150 KB comprimido) baixado só quando a primeira cena chega perto; nada com "economia de dados". Sem WebGL a página fica como era; com "reduzir movimento" as cenas aparecem paradas no quadro completo. O cartão de exemplo inclina um pouco com o mouse.

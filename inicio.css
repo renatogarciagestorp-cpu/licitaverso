@@ -534,3 +534,23 @@ button.lvi-campo-btn:focus-visible { outline: 2px solid var(--lvi-menta); outlin
   .lvi-trilho-in { animation: none; }
   .lvi-frase .lvi-p { opacity: 1; }
 }
+
+/* ---------- cenas 3D das ferramentas (inicio3d.js) ----------
+   O palco escuro ocupa o alto da coluna do exemplo; o cartão do exemplo sobe por cima da parte de baixo da cena.
+   Só ganha essas regras quando a cena monta (classe lv3d-on): sem WebGL, a página fica como era. */
+.lv3d-palco { position: relative; overflow: hidden; background:
+    radial-gradient(520px 240px at 50% 34%, rgba(63, 212, 154, 0.22), transparent 70%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 28px),
+    linear-gradient(180deg, #0F3431, #071E1C); }
+.lv3d-palco canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.lvh-art.lv3d-on > .lv3d-palco { margin: -22px -22px 0; height: 290px; border-radius: 22px 22px 0 0; }
+.lvh-art.lv3d-on > .lvh-demo,
+.lvh-art.lv3d-on > .lvh-art-doc { position: relative; z-index: 1; margin-top: -78px; transition: transform .25s ease-out; will-change: transform; }
+.lv3d-bib.lv3d-on > .lv3d-palco { height: 270px; border-radius: 22px; margin-bottom: 20px; }
+@media (max-width: 560px) {
+  .lvh-art.lv3d-on > .lv3d-palco { height: 230px; }
+  .lvh-art.lv3d-on > .lvh-demo,
+  .lvh-art.lv3d-on > .lvh-art-doc { margin-top: -56px; }
+  .lv3d-bib.lv3d-on > .lv3d-palco { height: 240px; }
+}

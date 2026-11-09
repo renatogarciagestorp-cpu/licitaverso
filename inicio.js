@@ -7,7 +7,8 @@
  *   fontes  — órgãos e normas, rolando no sentido contrário
  *   frase   — frase grande que acende palavra por palavra com a rolagem
  *   hist    — "Como funciona O Parecerista", preso na tela enquanto os passos avançam com a rolagem
- *   vitrine — anel 3D com as ferramentas: gira sozinho, dá para arrastar e tocar para abrir
+ *   vitrine — leque com as ferramentas: passa sozinho, dá para arrastar e tocar para abrir
+ *   data-lv3d — cenas 3D (Three.js) de cada ferramenta, em inicio3d.js, baixado só quando a primeira chega perto
  * Também conta os números e enche as barras dos exemplos das seções.
  * Só anima transform e opacity. Com "reduzir movimento", mostra tudo parado e completo.
  */
@@ -926,6 +927,25 @@
       x.setAttribute("data-lvi-ok", "1");
       if (f) { try { f(x); } catch (e) { if (window.console) console.warn("inicio.js", e); } }
     });
+    Array.prototype.forEach.call(document.querySelectorAll("#dc-root [data-lv3d]:not([data-lv3d-ok])"), function (x) {
+      x.setAttribute("data-lv3d-ok", "1");
+      vigiar3d(x);
+    });
+  }
+
+  // ---------------------------------------------------------------- cenas 3D (inicio3d.js, com Three.js)
+  // O pacote 3D só é baixado quando a primeira cena chega perto da tela, e nunca com "economia de dados".
+  var pacote3d = null;
+  function vigiar3d(alvo) {
+    try { if (navigator.connection && navigator.connection.saveData) return; } catch (e) { /* segue */ }
+    if (!window.IntersectionObserver) return;
+    var io = new IntersectionObserver(function (es) {
+      if (!es[es.length - 1].isIntersecting) return;
+      io.disconnect();
+      if (!pacote3d) pacote3d = import("./inicio3d.js?v=1").catch(function (e) { if (window.console) console.warn("inicio3d", e); return null; });
+      pacote3d.then(function (m) { if (m && alvo.isConnected) m.montar(alvo, alvo.getAttribute("data-lv3d")); });
+    }, { rootMargin: "700px 0px" });
+    io.observe(alvo);
   }
   var agendado = false;
   new MutationObserver(function () {
