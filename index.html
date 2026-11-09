@@ -52,12 +52,12 @@
 <!-- animações (Motion): ver animacoes.js -->
 <script src="vendor/motion-12.23.12.js" defer></script>
 <script src="animacoes.js?v=6" defer></script>
-<link rel="stylesheet" href="inicio.css?v=28">
+<link rel="stylesheet" href="inicio.css?v=31">
 <script src="inicio.js?v=24" defer></script>
 <!-- telas vivas da página inicial (GSAP, baixado sob demanda): ver inicio-ui.js -->
-<script src="inicio-ui.js?v=6" defer></script>
+<script src="inicio-ui.js?v=7" defer></script>
 <!-- painéis da Gestão Contratual: acabamento (gestao.css) e montagem animada com GSAP sob demanda (gestao-anim.js) -->
-<link rel="stylesheet" href="gestao.css?v=7">
+<link rel="stylesheet" href="gestao.css?v=10">
 <script src="gestao-anim.js?v=3" defer></script>
 <script src="assets/dc-runtime-8fe7df7440.js"></script>
 
@@ -2057,7 +2057,7 @@
   .gx-smc { display: grid; grid-template-rows: 30px 130px auto; gap: 6px; text-align: center; border: 1px solid #EDF1F0; border-radius: 10px; padding: 8px 6px; } .gx-smc > small { font-size: 10.5px; font-weight: 700; color: #4B5563; line-height: 1.3; }
   .gx-smc-g { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: end; } .gx-smc-c { display: flex; flex-direction: column; justify-content: flex-end; height: 130px; }
   .gx-smc-c > em { font-style: normal; font-size: 10px; font-weight: 800; color: #0F3431; margin-bottom: 3px; white-space: nowrap; } .gx-smc-c > i { display: block; border-radius: 5px 5px 2px 2px; min-height: 2px; }
-  .gx-smc-c.a > i { background: #C9C4B8; } .gx-smc-c.b > i { background: linear-gradient(180deg, #2FBF86, #0B7A52); }
+  .gx-smc-c.a > i { background: #A3B1AD; } .gx-smc-c.b > i { background: linear-gradient(180deg, #2FBF86, #0B7A52); }
   .gx-smc > b { font-size: 12px; } .gx-smc > b.gp-up { color: #13915F; } .gx-smc > b.gp-down { color: #D0423A; }
   @media (max-width: 1100px) { .gx-ges > .gx-4c, .gx-ges > .gp-card.gx-4c { grid-column: span 6; } .gx-ges > .gx-3c { grid-column: span 6; } .gx-ges > .gx-8c { grid-column: 1 / -1; } .gx-sm { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   @media (max-width: 700px) { .gx-ges > * { grid-column: 1 / -1 !important; } .gx-sm { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -5121,8 +5121,8 @@
               <sc-for list="{{ gxA.ticks }}" as="t" hint-placeholder-count="5"><span class="gx-yl" style="top: {{ t.top }}">{{ t.rot }}</span></sc-for>
               <svg class="gx-svg" sc-camel-view-box="0 0 640 220" sc-camel-preserve-aspect-ratio="none" aria-hidden="true">
                 <defs>
-                  <linearGradient id="gxgT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" sc-camel-stop-color="#E5675B" sc-camel-stop-opacity="0.85"></stop><stop offset="1" sc-camel-stop-color="#F6C9C3" sc-camel-stop-opacity="1"></stop></linearGradient>
-                  <linearGradient id="gxgB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" sc-camel-stop-color="#2FBF86" sc-camel-stop-opacity="1"></stop><stop offset="1" sc-camel-stop-color="#E4F5EC" sc-camel-stop-opacity="1"></stop></linearGradient>
+                  <linearGradient id="gxgT" x1="0" y1="0" x2="0" y2="1"><stop offset="0" sc-camel-stop-color="#F7D3CD" sc-camel-stop-opacity="1"></stop><stop offset="1" sc-camel-stop-color="#FCEDEA" sc-camel-stop-opacity="1"></stop></linearGradient>
+                  <linearGradient id="gxgB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" sc-camel-stop-color="#CDEBDD" sc-camel-stop-opacity="1"></stop><stop offset="1" sc-camel-stop-color="#F1F9F5" sc-camel-stop-opacity="1"></stop></linearGradient>
                 </defs>
                 <sc-for list="{{ gxA.ticks }}" as="t" hint-placeholder-count="5"><line x1="0" x2="640" sc-camel-y1="{{ t.y }}" sc-camel-y2="{{ t.y }}" class="gx-grid" sc-camel-vector-effect="non-scaling-stroke"></line></sc-for>
                 <rect sc-camel-x="{{ gxA.futX }}" y="0" sc-camel-width="{{ gxA.futW }}" height="216" class="gx-fut"></rect>
@@ -5140,7 +5140,7 @@
           <div class="gx-c gx-4">
             <div class="gx-t"><h3>Situação dos contratos</h3></div>
             <div class="gx-ros">
-              <div class="gx-ros-g"><svg sc-camel-view-box="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="16"></circle><sc-for list="{{ gxRosca }}" as="r" hint-placeholder-count="4"><circle cx="60" cy="60" r="42" fill="none" sc-camel-stroke="{{ r.cor }}" sc-camel-stroke-width="16" sc-camel-stroke-dasharray="{{ r.dash }}" sc-camel-stroke-dashoffset="{{ r.off }}" transform="rotate(-90 60 60)"></circle></sc-for></svg><span><b>{{ gxRoscaN }}</b>contratos</span></div>
+              <div class="gx-ros-g"><span><b>{{ gxRoscaN }}</b>contratos</span><span class="gx-seg" aria-hidden="true"><sc-for list="{{ gxRosca }}" as="r" hint-placeholder-count="4"><i style="flex-grow: {{ r.v }}; background: {{ r.cor }}"></i></sc-for></span></div>
               <div class="gx-ros-l"><sc-for list="{{ gxSit }}" as="x" hint-placeholder-count="4"><button type="button" class="gx-sl" sc-camel-on-click="{{ x.ir }}"><span class="gx-sl-t"><i style="{{ x.cor }}"></i>{{ x.rot }}<b>{{ x.n }}</b><em>{{ x.p }}</em></span><span class="gx-sl-b"><i style="{{ x.larg }}"></i></span></button></sc-for></div>
             </div>
           </div>
@@ -5236,7 +5236,7 @@
           <div class="gx-head"><sc-for list="{{ gxHContr }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em><sc-if value="{{ h.temBar }}" hint-placeholder-val="{{ false }}"><span class="gx-hbar"><span style="{{ h.barSt }}"></span></span></sc-if><sc-if value="{{ h.temSpark }}" hint-placeholder-val="{{ false }}"><svg class="gx-hspark" sc-camel-view-box="0 0 100 24" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><path sc-camel-d="{{ h.sparkArea }}" class="a"></path><path sc-camel-d="{{ h.spark }}" class="l"></path></svg></sc-if></div></sc-for></div>
         <div class="gp-grade">
           <div class="gp-card gx-card"><h3>Modalidade · participação no valor</h3>
-            <div class="gx-ros"><div class="gx-ros-g"><svg sc-camel-view-box="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="16"></circle><sc-for list="{{ gxModR }}" as="r" hint-placeholder-count="4"><circle cx="60" cy="60" r="42" fill="none" sc-camel-stroke="{{ r.cor }}" sc-camel-stroke-width="16" sc-camel-stroke-dasharray="{{ r.dash }}" sc-camel-stroke-dashoffset="{{ r.off }}" transform="rotate(-90 60 60)"></circle></sc-for></svg><span><b>{{ gxModN }}</b>modalidades</span></div>
+            <div class="gx-ros"><div class="gx-ros-g"><span><b>{{ gxModN }}</b>modalidades</span><span class="gx-seg" aria-hidden="true"><sc-for list="{{ gxModR }}" as="r" hint-placeholder-count="4"><i style="flex-grow: {{ r.v }}; background: {{ r.cor }}"></i></sc-for></span></div>
               <div class="gx-ros-l"><sc-for list="{{ gxModL }}" as="x" hint-placeholder-count="4"><button type="button" class="gx-sl" sc-camel-on-click="{{ x.ir }}"><span class="gx-sl-t"><i style="{{ x.cor }}"></i>{{ x.rot }}<b>{{ x.n }}</b><em>{{ x.p }}</em></span></button></sc-for></div></div>
           </div>
           <div class="gp-card gx-card gp-largo"><h3>Natureza do objeto · mapa de valor</h3>
@@ -5268,12 +5268,12 @@
             <div class="gx-sp"><svg sc-camel-view-box="0 0 300 90" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><defs><linearGradient id="gxgS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" sc-camel-stop-color="#0FA36B" sc-camel-stop-opacity="0.45"></stop><stop offset="1" sc-camel-stop-color="#0FA36B" sc-camel-stop-opacity="0.02"></stop></linearGradient></defs><path sc-camel-d="{{ gsSp.area }}" fill="url(#gxgS)"></path><path sc-camel-d="{{ gsSp.linha }}" fill="none" stroke="#0B7A52" sc-camel-stroke-width="2.2" sc-camel-vector-effect="non-scaling-stroke"></path></svg>
               <span class="gx-sp-x"><em>{{ gsSp.ini }}</em><em>{{ gsSp.fim }}</em></span></div>
             <small class="gx-sub">{{ gsSp.nota }}</small></div>
-          <div class="gx-c gx-4c"><div class="gx-t"><h3>{{ gsRespTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><svg sc-camel-view-box="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="16"></circle><sc-for list="{{ gsResp.seg }}" as="r" hint-placeholder-count="2"><circle cx="60" cy="60" r="42" fill="none" sc-camel-stroke="{{ r.cor }}" sc-camel-stroke-width="16" sc-camel-stroke-dasharray="{{ r.dash }}" sc-camel-stroke-dashoffset="{{ r.off }}" transform="rotate(-90 60 60)"></circle></sc-for></svg><span><b>{{ gsResp.v }}</b>{{ gsResp.u }}</span></div><ul class="gx-dz-l"><sc-for list="{{ gsResp.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
+          <div class="gx-c gx-4c"><div class="gx-t"><h3>{{ gsRespTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><span><b>{{ gsResp.v }}</b>{{ gsResp.u }}</span><span class="gx-seg" aria-hidden="true"><sc-for list="{{ gsResp.seg }}" as="r" hint-placeholder-count="2"><i style="flex-grow: {{ r.v }}; background: {{ r.cor }}"></i></sc-for></span></div><ul class="gx-dz-l"><sc-for list="{{ gsResp.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
           <div class="gx-c gx-3c"><div class="gx-t"><h3>Do orçamento à assinatura</h3></div><div class="gx-gz"><svg sc-camel-view-box="0 0 120 70" aria-hidden="true"><path d="M10 62 A50 50 0 0 1 110 62" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round"></path><path d="M10 62 A50 50 0 0 1 110 62" fill="none" sc-camel-stroke="{{ gsG1.cor }}" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round" sc-camel-stroke-dasharray="{{ gsG1.dash }}"></path></svg><b>{{ gsG1.v }}</b><small>{{ gsG1.d }}</small></div></div>
           <div class="gx-c gx-3c"><div class="gx-t"><h3>Tempo para conceder o reajuste</h3></div><div class="gx-gz"><svg sc-camel-view-box="0 0 120 70" aria-hidden="true"><path d="M10 62 A50 50 0 0 1 110 62" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round"></path><path d="M10 62 A50 50 0 0 1 110 62" fill="none" sc-camel-stroke="{{ gsG2.cor }}" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round" sc-camel-stroke-dasharray="{{ gsG2.dash }}"></path></svg><b>{{ gsG2.v }}</b><small>{{ gsG2.d }}</small></div></div>
-          <div class="gx-c gx-3c"><div class="gx-t"><h3>{{ gsConcTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><svg sc-camel-view-box="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="16"></circle><sc-for list="{{ gsConc.seg }}" as="r" hint-placeholder-count="2"><circle cx="60" cy="60" r="42" fill="none" sc-camel-stroke="{{ r.cor }}" sc-camel-stroke-width="16" sc-camel-stroke-dasharray="{{ r.dash }}" sc-camel-stroke-dashoffset="{{ r.off }}" transform="rotate(-90 60 60)"></circle></sc-for></svg><span><b>{{ gsConc.v }}</b>{{ gsConc.u }}</span></div><ul class="gx-dz-l"><sc-for list="{{ gsConc.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
-          <div class="gx-c gx-3c"><div class="gx-t"><h3>{{ gsDirTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><svg sc-camel-view-box="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="16"></circle><sc-for list="{{ gsDir.seg }}" as="r" hint-placeholder-count="2"><circle cx="60" cy="60" r="42" fill="none" sc-camel-stroke="{{ r.cor }}" sc-camel-stroke-width="16" sc-camel-stroke-dasharray="{{ r.dash }}" sc-camel-stroke-dashoffset="{{ r.off }}" transform="rotate(-90 60 60)"></circle></sc-for></svg><span><b>{{ gsDir.v }}</b>{{ gsDir.u }}</span></div><ul class="gx-dz-l"><sc-for list="{{ gsDir.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
-          <div class="gx-c gx-8c"><div class="gx-t"><h3>{{ gpCmpTit }}</h3><span class="gx-leg"><i style="background: #C9C4B8"></i>{{ gpCmpAnt }}<i style="background: #0FA36B"></i>{{ gpCmpAt }}</span></div>
+          <div class="gx-c gx-3c"><div class="gx-t"><h3>{{ gsConcTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><span><b>{{ gsConc.v }}</b>{{ gsConc.u }}</span><span class="gx-seg" aria-hidden="true"><sc-for list="{{ gsConc.seg }}" as="r" hint-placeholder-count="2"><i style="flex-grow: {{ r.v }}; background: {{ r.cor }}"></i></sc-for></span></div><ul class="gx-dz-l"><sc-for list="{{ gsConc.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
+          <div class="gx-c gx-3c"><div class="gx-t"><h3>{{ gsDirTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><span><b>{{ gsDir.v }}</b>{{ gsDir.u }}</span><span class="gx-seg" aria-hidden="true"><sc-for list="{{ gsDir.seg }}" as="r" hint-placeholder-count="2"><i style="flex-grow: {{ r.v }}; background: {{ r.cor }}"></i></sc-for></span></div><ul class="gx-dz-l"><sc-for list="{{ gsDir.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
+          <div class="gx-c gx-8c"><div class="gx-t"><h3>{{ gpCmpTit }}</h3><span class="gx-leg"><i style="background: #A3B1AD"></i>{{ gpCmpAnt }}<i style="background: #0FA36B"></i>{{ gpCmpAt }}</span></div>
             <div class="gx-sm"><sc-for list="{{ gsCmp }}" as="c" hint-placeholder-count="6"><div class="gx-smc"><small>{{ c.k }}</small><div class="gx-smc-g"><span class="gx-smc-c a"><em>{{ c.a }}</em><i style="{{ c.ha }}"></i></span><span class="gx-smc-c b"><em>{{ c.b }}</em><i style="{{ c.hb }}"></i></span></div><b class="{{ c.cls }}">{{ c.d }}</b></div></sc-for></div>
             <small class="gx-sub">{{ gpCmpNota }}</small></div>
           <div class="gp-card gx-4c"><h3>{{ gpPesTit }}</h3><p class="gp-nota">{{ gpPesSub }}</p>
@@ -5330,7 +5330,7 @@
                 <div class="gx-head gx-head-4"><sc-for list="{{ pcaHead }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em><sc-if value="{{ h.temBar }}" hint-placeholder-val="{{ false }}"><span class="gx-hbar"><span style="{{ h.barSt }}"></span></span></sc-if><sc-if value="{{ h.temSpark }}" hint-placeholder-val="{{ false }}"><svg class="gx-hspark" sc-camel-view-box="0 0 100 24" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><path sc-camel-d="{{ h.sparkArea }}" class="a"></path><path sc-camel-d="{{ h.spark }}" class="l"></path></svg></sc-if></div></sc-for></div>
                 <div class="gp-grade">
                   <div class="gp-card gx-card"><h3>Execução do PCA {{ pcaAno }}</h3>
-                    <div class="gx-ros"><div class="gx-ros-g"><svg sc-camel-view-box="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="42" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="16"></circle><sc-for list="{{ pcaRosca }}" as="r" hint-placeholder-count="2"><circle cx="60" cy="60" r="42" fill="none" sc-camel-stroke="{{ r.cor }}" sc-camel-stroke-width="16" sc-camel-stroke-dasharray="{{ r.dash }}" sc-camel-stroke-dashoffset="{{ r.off }}" transform="rotate(-90 60 60)"></circle></sc-for></svg><span><b>{{ pcaUsoP }}</b>executado</span></div>
+                    <div class="gx-ros"><div class="gx-ros-g"><span><b>{{ pcaUsoP }}</b>executado</span><span class="gx-seg" aria-hidden="true"><sc-for list="{{ pcaRosca }}" as="r" hint-placeholder-count="2"><i style="flex-grow: {{ r.v }}; background: {{ r.cor }}"></i></sc-for></span></div>
                       <div class="gx-ros-l"><sc-for list="{{ pcaRoscaL }}" as="x" hint-placeholder-count="3"><div class="gx-sl"><span class="gx-sl-t"><i style="{{ x.cor }}"></i>{{ x.rot }}<b>{{ x.v }}</b></span></div></sc-for></div></div>
                   </div>
                   <div class="gp-card gx-card gp-largo"><h3>Itens por situação</h3>
@@ -5504,7 +5504,7 @@
                           </div>
                           <div class="ct-graf ct-pb-rosca">
                             <p class="ct-graf-t">Prazo da vigência</p>
-                            <div class="ct-rosca" style="background: conic-gradient({{ c.pn.roscaCor }} 0 {{ c.pn.rosca }}%, #E6EEEC {{ c.pn.rosca }}% 100%)"><div><b>{{ c.pn.roscaPct }}</b><small>{{ c.pn.roscaSub }}</small></div></div>
+                            <div class="ct-rosca ct-medidor"><div><b>{{ c.pn.roscaPct }}</b><small>{{ c.pn.roscaSub }}</small></div><span class="ct-med" aria-hidden="true"><i style="width: {{ c.pn.rosca }}%; background: {{ c.pn.roscaCor }}"></i></span></div>
                             <p class="ct-rosca-txt"><b>{{ c.pn.roscaTxt }}</b><span>{{ c.pn.roscaIni }} → {{ c.pn.roscaFim }}</span></p>
                           </div>
                           <div class="ct-graf ct-pb-regua">
@@ -9230,8 +9230,17 @@ function pcaCalendario(anoExec, hoje) {
 }
 // ---------------------------------------------------------------- gráficos do Painel da Organização (SVG gerado a partir dos dados)
 const GX_COR = { navy: "#0F3431", indigo: "#0B7A52", roxo: "#2E7D9A", coral: "#E5675B", ambar: "#E3A72F", verde: "#0FA36B", teal: "#3E9CC0", cinza: "#B9C3C9", vermelho: "#D9534A" };
-// texto branco por cima (ladrilhos do mapa de valor): todas com contraste ≥ 4,5:1
-const GX_PALETA = ["#0B7A52", "#B8433A", "#0F6B7E", "#0F3431", "#9A6B12", "#2E7D9A", "#5B6F6A", "#8A5A33"];
+// paleta categórica (identidade), validada com o validate_palette.js da skill dataviz sobre fundo branco:
+// pior par vizinho sob daltonismo ΔE 15,6 (alvo ≥ 8), visão normal ΔE 19,8 (mínimo 15); o âmbar (7º) fica abaixo de 3:1
+// e por isso só aparece com o rótulo escrito ao lado. A ordem é a da validação: não embaralhar.
+const GX_PALETA = ["#0FA36B", "#7A68C8", "#E5675B", "#3E8ED0", "#B07A3F", "#1E9AB0", "#E3A72F", "#D06A9C"];
+const GX_OUTRAS = "#9AA9A5"; // categorias raras, somadas como "outras"
+// a cor segue a categoria, nunca a posição no ranking: filtrar não repinta quem fica
+const GX_COR_MOD = { "Pregão": 0, "Concorrência": 1, "Dispensa em razão do valor": 2, "Inexigibilidade": 3, "Adesão a ata de registro de preços": 4, "Dispensa – outras hipóteses": 5, "Licitação (Lei 13.303/2016)": 6, "Chamamento público (Lei 13.019/2014)": 7 };
+const GX_COR_REG = { "Lei 14.133/2021": 0, "Lei 13.303/2016": 3, "Lei 13.019/2014": 2 };
+function gxCor(mapa, rot) { const i = mapa[rot]; return i == null ? GX_OUTRAS : GX_PALETA[i]; }
+// mapa de valor (ladrilhos com texto branco): um tom só, a área diz o tamanho e o rótulo diz o nome
+const GX_TILE = "#0B7A52";
 // curva suave (Catmull-Rom → Bézier) por uma lista de pontos [x, y]
 // minigráfico das faixas do topo das abas: barra de proporção (0 a 1) e/ou linha de tendência (path em 100×24)
 function gxHB(h, p, spark) {
@@ -9247,7 +9256,7 @@ function gxSuave(pts) {
 // arcos de rosca: segmentos com stroke-dasharray num círculo de raio r
 function gxRosca(valores, cores, r) {
   const C = 2 * Math.PI * r, tot = valores.reduce((a, v) => a + v, 0) || 1; let acc = 0;
-  return valores.map((v, i) => { const len = (v / tot) * C, seg = { cor: cores[i % cores.length], dash: Math.max(0, len - (v ? 1.5 : 0)).toFixed(2) + " " + C.toFixed(2), off: (-acc).toFixed(2), vazio: !v }; acc += len; return seg; }).filter((x) => !x.vazio);
+  return valores.map((v, i) => { const len = (v / tot) * C, seg = { v: v, cor: cores[i % cores.length], dash: Math.max(0, len - (v ? 1.5 : 0)).toFixed(2) + " " + C.toFixed(2), off: (-acc).toFixed(2), vazio: !v }; acc += len; return seg; }).filter((x) => !x.vazio);
 }
 function ctVisual(G, E, emp, brlC) {
   const hoje = new Date(), agoraN = hoje.getFullYear() * 12 + hoje.getMonth(), ym = (n) => ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"][n % 12] + "/" + String(Math.floor(n / 12)).slice(2);
@@ -13972,12 +13981,12 @@ class Component extends DCLogic {
               gxVenc: V.venc.map((o, i) => ({ rot: ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"][o.m % 12], n: o.n ? String(o.n) : "", v: o.v ? brlC(o.v) : "",
                 h: "height: " + (o.v ? Math.max(6, (o.v / V.mxV) * 100) : 0).toFixed(1) + "%", cls: "gx-col" + (o.n ? "" : " zero") + (i < 4 && o.n ? " perto" : ""), tit: o.n ? o.nums.map((x) => "Contrato " + x).join(", ") + " · " + brlC(o.v) : "sem vencimentos" })),
               gxVencTot: String(V.venc.reduce((a, o) => a + o.n, 0)), gxVencVal: brlC(V.venc.reduce((a, o) => a + o.v, 0)),
-              gxFun: V.fun.map(([k, n], i) => ({ k, n: String(n), p: G.n ? pc(n / G.n) : "—", larg: "width: " + (G.n ? Math.max(4, (n / G.n) * 100) : 0).toFixed(1) + "%; background: " + ["#0F3431", "#0FA36B", "#34B98A", "#2E7D9A", "#E5675B"][i] })),
-              gxMod: G.porMod.slice(0, 6).map((g, i) => ({ rot: g.k, n: String(g.n), v: brlC(g.v), p: pc(G.custo ? g.v / G.custo : 0), larg: "width: " + Math.max(3, (g.v / Math.max(1, G.porMod[0].v)) * 100).toFixed(1) + "%; background: " + GX_PALETA[i % GX_PALETA.length], ir: drill("modalidade " + g.k, g.ids) })),
+              gxFun: V.fun.map(([k, n], i) => ({ k, n: String(n), p: G.n ? pc(n / G.n) : "—", larg: "width: " + (G.n ? Math.max(4, (n / G.n) * 100) : 0).toFixed(1) + "%; background: " + ["#0B4F36", "#0B6B49", "#0F8A5C", "#2FA876", "#6CC59C"][i] })),
+              gxMod: G.porMod.slice(0, 6).map((g, i) => ({ rot: g.k, n: String(g.n), v: brlC(g.v), p: pc(G.custo ? g.v / G.custo : 0), larg: "width: " + Math.max(3, (g.v / Math.max(1, G.porMod[0].v)) * 100).toFixed(1) + "%; background: " + gxCor(GX_COR_MOD, g.k), ir: drill("modalidade " + g.k, g.ids) })),
               gxMapa: V.lin.map((l) => ({ ...l, ir: verC(l.id) })), gxMapaMeses: V.mapaMeses, gxTemMapa: V.lin.length > 0,
               gxTab: V.tab.map((t) => ({ ...t, ir: verC(t.id) })), gxTemTab: V.tab.length > 0,
             };
-            const evRotC = { reajuste: "Reajuste", repactuacao: "Repactuação", revisao: "Revisão", acrescimo: "Acréscimo", supressao: "Supressão", prorrogacao: "Prorrogação" }, evCor = ["#0FA36B", "#3E9CC0", "#2E7D9A", "#0F3431", "#E5675B", "#E3A72F"];
+            const evRotC = { reajuste: "Reajuste", repactuacao: "Repactuação", revisao: "Revisão", acrescimo: "Acréscimo", supressao: "Supressão", prorrogacao: "Prorrogação" }, evCor = ["#0FA36B", "#0FA36B", "#0FA36B", "#0FA36B", "#0FA36B", "#0FA36B"]; // um tipo por coluna: o rótulo diz qual, a cor não precisa repetir
             const evMxC = Math.max(1, ...Object.keys(evRotC).map((k) => G.evT[k][1]));
             const modTot = G.porMod.reduce((a, g) => a + g.v, 0) || 1, natTot = G.porNat.reduce((a, g) => a + g.v, 0) || 1;
             // linha do tempo dos próximos 120 dias
@@ -13993,9 +14002,9 @@ class Component extends DCLogic {
             const gx2 = {
               gxAlt: Object.keys(evRotC).map((k, i) => ({ rot: evRotC[k], n: String(G.evT[k][1]), h: "height: " + (G.evT[k][1] ? Math.max(6, (G.evT[k][1] / evMxC) * 100) : 0).toFixed(1) + "%; background: " + evCor[i], tit: G.evT[k][0] + " contrato(s) com " + evRotC[k].toLowerCase(), ir: drill("contratos com " + evRotC[k].toLowerCase(), G.idsEv[k]) })),
               gxAltTot: String(Object.keys(evRotC).reduce((a, k) => a + G.evT[k][1], 0)),
-              gxModR: gxRosca(G.porMod.map((g) => g.v), GX_PALETA, 42), gxModN: String(G.porMod.length),
-              gxModL: G.porMod.slice(0, 7).map((g, i) => ({ rot: g.k, n: String(g.n), p: pc(g.v / modTot), cor: "background: " + GX_PALETA[i % GX_PALETA.length], ir: drill("modalidade " + g.k, g.ids) })),
-              gxTree: G.porNat.map((g, i) => ({ rot: g.k, v: brlC(g.v), p: pc(g.v / natTot), tit: g.n + " contrato(s) · " + brlC(g.v), st: "flex-grow: " + Math.max(1, Math.round((g.v / natTot) * 1000)) + "; background: " + GX_PALETA[i % GX_PALETA.length] + "; min-width: " + (g.v / natTot > 0.3 ? 220 : 110) + "px", ir: drill("natureza " + g.k, g.ids) })),
+              gxModR: gxRosca(G.porMod.map((g) => g.v), G.porMod.map((g) => gxCor(GX_COR_MOD, g.k)), 42), gxModN: String(G.porMod.length),
+              gxModL: G.porMod.slice(0, 7).map((g, i) => ({ rot: g.k, n: String(g.n), p: pc(g.v / modTot), cor: "background: " + gxCor(GX_COR_MOD, g.k), ir: drill("modalidade " + g.k, g.ids) })),
+              gxTree: G.porNat.map((g, i) => ({ rot: g.k, v: brlC(g.v), p: pc(g.v / natTot), tit: g.n + " contrato(s) · " + brlC(g.v), st: "flex-grow: " + Math.max(1, Math.round((g.v / natTot) * 1000)) + "; background: " + GX_TILE + "; min-width: " + (g.v / natTot > 0.3 ? 220 : 110) + "px", ir: drill("natureza " + g.k, g.ids) })),
               gxTl: tl.map((e) => ({ rot: e.rot, tit: e.tit + " · " + (e.d === 0 ? "hoje" : "em " + e.d + " dias"), st: "left: " + (e.d / 120 * 100).toFixed(2) + "%; top: " + (34 + e.lane * 34) + "px; --c: " + e.cor + (e.d > 96 ? "; transform: translateX(calc(-100% + 3px))" : ""), ir: verC(e.id) })),
               gxTlMarcas: [0, 30, 60, 90, 120].map((d) => ({ rot: d ? "+" + d + " dias" : "", l: (d / 120 * 100) + "%", cls: d === 120 ? "gx-tl-m fim" : "gx-tl-m" })), gxTlVazio: !tl.length, gxTlH: "height: " + (64 + Math.max(1, lanes.length) * 34) + "px",
             };
@@ -14032,7 +14041,7 @@ class Component extends DCLogic {
             const gs = {
               gsVcTit: emp ? "Receita contratada × atualizada" : "Valor contratado × custo atualizado",
               gsVc: { tag: (G.variacao >= 0 ? "▲ " : "▼ ") + pc(Math.abs(G.variacao)), tagCls: "gx-tag " + (G.variacao > 0.15 ? (emp ? "ok" : "at") : "ok"), nota: "Diferença: " + brlC(G.custo - G.original) + " em reajustes, revisões, aditivos e prorrogações.",
-                barras: [["Contratado", G.original, "#C9C4B8"], ["Atualizado", G.custo, "linear-gradient(90deg, #0FA36B, #E5675B)"]].map(([rot, v, c]) => ({ rot, v: brlC(v), larg: "width: " + (v / Math.max(1, G.original, G.custo) * 100).toFixed(1) + "%; background: " + c })) },
+                barras: [["Contratado", G.original, "#A3B1AD"], ["Atualizado", G.custo, "#0FA36B"]].map(([rot, v, c]) => ({ rot, v: brlC(v), larg: "width: " + (v / Math.max(1, G.original, G.custo) * 100).toFixed(1) + "%; background: " + c })) },
               gsSpTit: emp ? "Receita mensal · 12 meses" : "Gasto mensal · 12 meses",
               gsSp: { linha: linhaS, area: linhaS ? linhaS + " L300 90 L0 90 Z" : "", atual: brlC(pas.length ? pas[pas.length - 1].t : 0) + "/mês", ini: pas.length ? ymS(pas[0].m) : "", fim: pas.length ? ymS(pas[pas.length - 1].m) : "",
                 nota: pas.length > 1 ? "Variação em 12 meses: " + ((pas[pas.length - 1].t / Math.max(1, pas[0].t) - 1) >= 0 ? "+" : "") + pc(pas[pas.length - 1].t / Math.max(1, pas[0].t) - 1) + ". Contratos globais entram rateados." : "Sem histórico suficiente." },
@@ -14043,7 +14052,7 @@ class Component extends DCLogic {
               gsConcTit: emp ? "Concentração · 5 maiores clientes" : "Concentração · 5 maiores fornecedores",
               gsConc: { v: pc(G.conc5), u: "do valor", seg: gxRosca([top5, Math.max(0, G.custo - top5)], ["#0FA36B", "#E6E3DA"], 42), leg: [["5 maiores", brlC(top5), "#0FA36B"], ["Demais", brlC(Math.max(0, G.custo - top5)), "#E6E3DA"]].map(([rot, n, c]) => ({ rot, n, cor: "background: " + c })) },
               gsDirTit: emp ? "Contratos por regime" : "Forma de contratação",
-              gsDir: emp ? { v: String(G.porReg.length), u: "regimes", seg: gxRosca(G.porReg.map((g) => g.n), GX_PALETA, 42), leg: G.porReg.map((g, i) => ({ rot: g.k, n: String(g.n), cor: "background: " + GX_PALETA[i % GX_PALETA.length] })) }
+              gsDir: emp ? { v: String(G.porReg.length), u: "regimes", seg: gxRosca(G.porReg.map((g) => g.n), G.porReg.map((g) => gxCor(GX_COR_REG, g.k)), 42), leg: G.porReg.map((g, i) => ({ rot: g.k, n: String(g.n), cor: "background: " + gxCor(GX_COR_REG, g.k) })) }
                 : { v: pc(G.n ? dirN / G.n : 0), u: "diretas", seg: gxRosca([compN, dirN], ["#0FA36B", "#E5675B"], 42), leg: [["Licitação e adesão", compN, "#0FA36B"], ["Dispensa e inexigibilidade", dirN, "#E5675B"]].map(([rot, n, c]) => ({ rot, n: String(n), cor: "background: " + c })) },
               gsCmp: cmpRaw.map(([k, a, b, f]) => { const na = Number(a) || 0, nb = Number(b) || 0, m = Math.max(1e-9, na, nb), d = a == null || b == null || !na ? "—" : (nb / na - 1 >= 0 ? "+" : "") + pc(nb / na - 1);
                 return { k, a: f(a), b: f(b), ha: "height: " + (na / m * 100).toFixed(1) + "%", hb: "height: " + (nb / m * 100).toFixed(1) + "%", d, cls: d === "—" ? "" : (nb >= na) !== (k === "Tempo do reajuste") ? "gp-up" : "gp-down" }; }),
@@ -14079,7 +14088,7 @@ class Component extends DCLogic {
               gpRetNota: "Retroativo: diferença mensal multiplicada pelos meses entre a anualidade e o registro, sem juros nem correção. " + (emp ? "Em atrasos longos, avalie pedir também a correção monetária e os juros." : "Atrasos longos aumentam o risco de cobrança de juros e de questionamento pelo controle."),
               gpPendTit: emp ? "Reajustes a pedir" : "Reajustes pendentes (passivo)", gpPendV: brl(somaPend) + "/mês",
               gpPendSub: E.pend.length ? (emp ? "a receber a mais por mês · " : "a pagar a mais por mês · ") + brl(acumPend) + " acumulados desde as anualidades" : "nenhum reajuste pendente",
-              gpTemPend: E.pend.length > 0, gpPend: E.pend.slice(0, 6).map((x) => ({ v: x.global ? brlC(x.valorGlobal) : brlC(x.acum), larg: "width: " + Math.max(3, (x.global ? x.valorGlobal : x.acum) / Math.max(1, ...E.pend.map((y) => y.global ? y.valorGlobal : y.acum)) * 100).toFixed(1) + "%; background: linear-gradient(90deg, #E5675B, #D9534A)", t: E.nomeC(x.p.c), ir: () => this.ctUsar(x.p.c.id, "reajuste"),
+              gpTemPend: E.pend.length > 0, gpPend: E.pend.slice(0, 6).map((x) => ({ v: x.global ? brlC(x.valorGlobal) : brlC(x.acum), larg: "width: " + Math.max(3, (x.global ? x.valorGlobal : x.acum) / Math.max(1, ...E.pend.map((y) => y.global ? y.valorGlobal : y.acum)) * 100).toFixed(1) + "%; background: #D9534A", t: E.nomeC(x.p.c), ir: () => this.ctUsar(x.p.c.id, "reajuste"),
                 d: (x.global ? "valor global · reajuste estimado de " + brl(x.valorGlobal) : brl(x.mes) + "/mês desde " + ymE(x.p.direitoN) + " (" + x.meses + (x.meses === 1 ? " mês)" : " meses)")) + " · " + (x.p.ix ? x.p.ix.nome + " " + pc(x.r) : "índice indisponível") })),
               gpPendNota: (emp ? "Clique no contrato para calcular o reajuste e gerar o pedido. " : "Clique no contrato para calcular o reajuste. ") + "Estimativa pelo índice do contrato nos últimos 12 meses; o cálculo definitivo usa a anualidade exata.",
               gpQualV: Math.round(E.qual.pct * 100) + "%", gpQualDash: (E.qual.pct * 157.08).toFixed(1) + " 157.08", gpQualCor: E.qual.pct >= 0.9 ? "#0FA36B" : E.qual.pct >= 0.7 ? "#E3A72F" : "#D9534A", gpQualCls: "gp-qual-n " + (E.qual.pct >= 0.9 ? "ok" : E.qual.pct >= 0.7 ? "at" : "lim"), gpQualLarg: "width: " + (E.qual.pct * 100).toFixed(1) + "%",

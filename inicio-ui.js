@@ -97,16 +97,19 @@
   function montarCalculadora(G, tela, D) {
     var BASE = 6630, MAX = Math.max(0.3, Math.max.apply(null, D.series.map(function (s) { return Math.max.apply(null, s.v.map(Math.abs)); })) * 1.08);
     var abas = D.series.map(function (x, i) { return '<span class="lvu-seg' + (i ? "" : " on") + '">' + x.nome + "</span>"; }).join("");
-    var barras = D.rotulos.map(function (m, i) { return '<div class="lvu-col"><span class="lvu-bar' + (i === 11 ? " atual" : "") + '"><i></i></span><small>' + m + "</small></div>"; }).join("");
+    // positivo sobe da linha de base; negativo (ex.: deflação do IGP-M) desce abaixo dela
+    var barras = D.rotulos.map(function (m, i) { return '<div class="lvu-col"><span class="lvu-bar' + (i === 11 ? " atual" : "") + '"><i></i></span><span class="lvu-neg"><i></i></span><small>' + m + "</small></div>"; }).join("");
     tela.innerHTML = janela("Reajuste por índice", "Contrato 052/2025 · Transporte escolar",
       '<div class="lvu-segs"><span class="lvu-seg-ind"></span>' + abas + "</div>" +
       '<div class="lvu-kpis"><div><small>Acumulado em 12 meses' + (D.ate ? " até " + D.ate : "") + '</small><b class="lvu-acum">0,00%</b><em class="lvu-fonte">' + D.series[0].fonte + "</em></div>" +
       '<div><small>Valor reajustado</small><b class="lvu-novo">' + brl(BASE) + '</b><em>de ' + brl(BASE) + "/mês</em></div></div>" +
       '<div class="lvu-graf"><span class="lvu-media"><em>média</em></span>' + barras + "</div>" +
       '<div class="lvu-pe"><span class="lvu-chip">Anualidade conferida · art. 25, § 7º</span><span class="lvu-doc">Nota técnica · Excel · PDF</span><span class="lvu-carimbo">Calculado</span></div>');
-    var bars = qa(tela, ".lvu-bar i"), segs = qa(tela, ".lvu-seg"), ind = q(tela, ".lvu-seg-ind"), acum = q(tela, ".lvu-acum"), novo = q(tela, ".lvu-novo"), media = q(tela, ".lvu-media"), fonte = q(tela, ".lvu-fonte");
+    var bars = qa(tela, ".lvu-bar i"), negs = qa(tela, ".lvu-neg i"), segs = qa(tela, ".lvu-seg"), ind = q(tela, ".lvu-seg-ind"), acum = q(tela, ".lvu-acum"), novo = q(tela, ".lvu-novo"), media = q(tela, ".lvu-media"), fonte = q(tela, ".lvu-fonte");
     var carimbo = q(tela, ".lvu-carimbo"), doc = q(tela, ".lvu-doc"), graf = q(tela, ".lvu-graf");
     G.set(bars, { scaleY: 0, transformOrigin: "50% 100%" });
+    G.set(negs, { scaleY: 0, transformOrigin: "50% 0%" });
+    var NEG = MAX * 0.25; // a faixa de baixo tem 1/4 da altura da de cima: mesma escala
     G.set(ind, { transformOrigin: "0 50%" });
     var tl = G.timeline({ repeat: -1, repeatDelay: 0.6, defaults: { ease: "power3.out" } });
     tl.set([doc, carimbo], { autoAlpha: 0 }, 0);
@@ -115,11 +118,12 @@
     D.series.forEach(function (s, k) {
       var a = acumulado(s.v), med = s.v.reduce(function (t, v) { return t + v; }, 0) / 12, valor = BASE * (1 + a / 100), rot = "i" + k;
       tl.addLabel(rot);
-      tl.call(function () { segs.forEach(function (x, j) { x.classList.toggle("on", j === k); }); txt(fonte, s.fonte); bars.forEach(function (b, i) { b.parentNode.classList.toggle("neg", s.v[i] < 0); }); }, null, rot);
+      tl.call(function () { segs.forEach(function (x, j) { x.classList.toggle("on", j === k); }); txt(fonte, s.fonte); }, null, rot);
       // o indicador da aba anda e muda de largura só com transform (largura base: 100px)
       tl.to(ind, { x: function () { return segs[k].offsetLeft; }, scaleX: function () { return segs[k].offsetWidth / 100; }, duration: 0.45 }, rot);
-      tl.to(bars, { scaleY: function (i) { return Math.max(0.04, Math.abs(s.v[i]) / MAX); }, duration: 0.8, stagger: 0.03 }, rot + "+=0.1");
-      tl.to(media, { y: function () { return -(graf.clientHeight - 16) * (Math.max(0, med) / MAX); }, duration: 0.8 }, rot + "+=0.1");
+      tl.to(bars, { scaleY: function (i) { return s.v[i] > 0 ? Math.max(0.03, s.v[i] / MAX) : 0; }, duration: 0.8, stagger: 0.03 }, rot + "+=0.1");
+      tl.to(negs, { scaleY: function (i) { return s.v[i] < 0 ? Math.min(1, Math.max(0.12, -s.v[i] / NEG)) : 0; }, duration: 0.8, stagger: 0.03 }, rot + "+=0.1");
+      tl.to(media, { y: function () { return -bars[0].parentNode.clientHeight * (Math.max(0, med) / MAX); }, duration: 0.8 }, rot + "+=0.1");
       contar(G, tl, acum, antes, a, function (v) { return pct(v); }, 0.9, rot + "+=0.2");
       contar(G, tl, novo, valorAntes, valor, brl, 0.9, rot + "+=0.2");
       if (k === D.series.length - 1) {

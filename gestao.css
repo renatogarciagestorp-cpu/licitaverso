@@ -79,3 +79,52 @@
 #dc-root .gx-hbar { background: rgba(15,52,49,0.1); }
 #dc-root .gx-leg-f { background: repeating-linear-gradient(90deg, #5E8F84 0 3px, transparent 3px 6px); }
 #dc-root .gx-hspark .a { fill: rgba(15,163,107,0.12); }
+
+/* ---------- revisão de gráficos (skill dataviz) ----------
+   números grandes com algarismos proporcionais (os de largura fixa ficam para tabelas e eixos); rosca virou barra
+   segmentada fina sobre a lista; colunas finas (≤ 24px) com cantos só no topo; ênfase nos vencimentos próximos;
+   linhas com 2px; mapa de prazos com letra em cada tipo (não depende só da cor). */
+#dc-root .gx-hd > b, #dc-root .gx-ros-g b, #dc-root .ct-rosca b { font-variant-numeric: proportional-nums; }
+#dc-root .gx-ros { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+#dc-root .gx-ros-g { width: auto; height: auto; display: grid; gap: 8px; }
+#dc-root .gx-ros-g > span:first-child { position: static; display: flex; align-items: baseline; gap: 8px; place-content: start; text-align: left; font-size: 13px; }
+#dc-root .gx-ros-g b { font-size: 32px; line-height: 1; letter-spacing: -0.03em; }
+#dc-root .gx-seg { display: flex; gap: 2px; height: 8px; }
+#dc-root .gx-seg > i { display: block; min-width: 2px; height: 100%; border-radius: 2px; }
+#dc-root .gx-seg > i:first-child { border-radius: 99px 2px 2px 99px; } #dc-root .gx-seg > i:last-child { border-radius: 2px 99px 99px 2px; }
+#dc-root .gx-seg > i:only-child { border-radius: 99px; }
+#dc-root .gx-ln { stroke-width: 2px; }
+#dc-root .gx-col-b { justify-content: center; }
+#dc-root .gx-col-b > i { width: 100%; max-width: 24px; border-radius: 4px 4px 0 0; background: #A3B1AD; }
+#dc-root .gx-col.perto .gx-col-b > i { background: #0B7A52; }
+#dc-root .gx-col.zero .gx-col-b > i { background: transparent; }
+#dc-root .gx-col-b { border-bottom: 1px solid #C9D4D1; border-radius: 0; }
+#dc-root .gx-cel { position: relative; }
+#dc-root .gx-cel.pend::after, #dc-root .gx-cel.aniv::after, #dc-root .gx-cel.cct::after, #dc-root .gx-cel.pror::after, #dc-root .gx-cel.fim::after {
+  position: absolute; inset: 0; display: grid; place-items: center; font-size: 10.5px; font-weight: 800; font-style: normal; color: #fff; }
+#dc-root .gx-cel.pend::after { content: "!"; color: #B8433A; } #dc-root .gx-cel.aniv::after { content: "A"; } #dc-root .gx-cel.cct::after { content: "C"; }
+#dc-root .gx-cel.pror::after { content: "P"; } #dc-root .gx-cel.fim::after { content: "F"; }
+#dc-root .gx-leg-m > i.gx-cel { width: 18px; height: 18px; border-radius: 5px; }
+/* painel do contrato: a vigência decorrida é uma razão contra um limite, então vira medidor */
+#dc-root .ct-medidor { width: auto; height: auto; border-radius: 0; margin: 14px 0 8px; display: grid; gap: 8px; place-items: stretch; background: none !important; }
+#dc-root .ct-medidor > div { width: auto; height: auto; border-radius: 0; box-shadow: none; background: none; display: flex; align-items: baseline; gap: 8px; place-content: start; }
+#dc-root .ct-medidor b { font-size: 32px; }
+#dc-root .ct-medidor small { max-width: none; margin: 0; }
+#dc-root .ct-med { display: block; height: 10px; border-radius: 99px; background: #E6EEEC; overflow: hidden; }
+#dc-root .ct-med > i { display: block; height: 100%; border-radius: 99px; }
+#dc-root .gx-ros-g > .gx-seg { position: static; inset: auto; display: flex; place-content: initial; }
+/* cores sólidas com significado no lugar dos degradês decorativos (dataviz) */
+#dc-root .gp-bar-t i, #dc-root .gx-aba .gp-bar-t i, #dc-root .gx-aba .gp-rank-l i, #dc-root .gx-aba .gp-pes-l i,
+#dc-root .gx-pg > i > b, #dc-root .gx-aba .pca-s-c, #dc-root .gx-c .ct-ag-col i { background: #0FA36B; }
+#dc-root .gx-aba .pca-s.quase .pca-s-c { background: #E3A72F; }
+#dc-root .gx-c .ct-ag-m.atr .ct-ag-col i { background: #D9534A; }
+#dc-root .gx-aba .pca-s-p { background: #E3E9E7; border-color: #CBD5D2; }
+#dc-root .gx-cb { --bc: #E7F5EE; } #dc-root .gx-cb.a { --bc: #EDF1F0; } #dc-root .gx-cb.b { --bc: #E7F5EE; }
+#dc-root .gx-aba .gp-card:hover { border-color: #CBD5D2; }
+/* comparação entre exercícios: ano anterior em cinza (contexto), atual em verde (ênfase); colunas finas */
+#dc-root .gx-smc-g { justify-items: center; }
+#dc-root .gx-smc-c { width: 100%; align-items: center; }
+#dc-root .gx-smc-c > i { width: 100%; max-width: 24px; border-radius: 4px 4px 0 0; }
+#dc-root .gx-smc-c.a > i { background: #A3B1AD; }
+#dc-root .gx-smc-c.b > i { background: #0FA36B; }
+#dc-root .gx-smc { border-color: #E3E9E7; }

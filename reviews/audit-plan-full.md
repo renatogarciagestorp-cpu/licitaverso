@@ -422,3 +422,33 @@ Os quatro foram corrigidos e testados no navegador (ver "Correções aplicadas")
 | Indicadores | Fundos pelas classes `ok`/`at`/`er`; neutros sem classe |
 | Calculadora | Série real até set/2026, do `indices.json` (fontes do Banco Central exibidas na tela) |
 | Console | Sem erros novos |
+
+---
+
+# Revisão de gráficos e indicadores (skill dataviz, 09/11/2026)
+
+O procedimento da skill (forma, cor pelo papel, validação com `validate_palette.js`, especificações de marca, interação, acessibilidade, olhar o resultado) foi aplicado aos painéis da Gestão Contratual, ao painel de cada contrato e às telas vivas da página inicial.
+
+| # | Problema encontrado (anti-padrão da skill) | Onde | Correção |
+|---|---|---|---|
+| 1 | Paleta categórica reprovada no validador (3 cores abaixo do piso de croma, uma fora da faixa de luminosidade, vizinhas indistinguíveis: ΔE 7,9) | `GX_PALETA` | Paleta nova com tons da marca, ordem escolhida pelo validador entre 5.040: daltonismo ΔE 15,6 (alvo ≥ 8), visão normal ΔE 19,8 (≥ 15); âmbar abaixo de 3:1 só com rótulo escrito |
+| 2 | Cor pela posição no ranking (filtrar repintava as categorias) | modalidades, regimes | Cor fixa por categoria (`GX_COR_MOD`, `GX_COR_REG`); raras em cinza "outras" |
+| 3 | Mapa de valor com 8 cores ciclando | natureza do objeto | Um tom só; a área diz o tamanho, o rótulo diz o nome |
+| 4 | Rosquinhas (donut) para partes de um todo | 6 painéis + painel do contrato | Barra segmentada fina sobre a lista com nomes e valores; a vigência decorrida (razão contra um limite) virou medidor |
+| 5 | Etapas de funil com cores de categorias diferentes | funil de saúde | Escala ordinal de um tom, validada com `--ordinal` |
+| 6 | Uma série colorida coluna a coluna | alterações contratuais | Um tom só |
+| 7 | Textura listrada ligada por padrão e degradês decorativos | colunas, barras, PCA, agenda | Cores sólidas com significado; ênfase (meses próximos e ano atual) em verde-escuro, contexto em cinza |
+| 8 | Colunas largas | vencimentos, comparação entre exercícios, Calculadora | Até 24px, cantos de 4px só no topo, base reta e eixo sólido |
+| 9 | Áreas saturadas | custo mensal | Véus claros sob a linha de 2px |
+| 10 | Mapa de prazos só pela cor | mapa de prazos | Letra em cada tipo (A, C, P, F e "!") e legenda com as letras |
+| 11 | Algarismos de largura fixa em números grandes | indicadores, telas vivas | Algarismos proporcionais (largura fixa só em tabelas e eixos) |
+| 12 | Valores negativos desenhados para cima | Calculadora (IGP-M) | Negativo desce abaixo da linha de base (polaridade pela direção, não só pela cor) |
+
+Mantidos de propósito:
+- **Linha tracejada da projeção e da média:** o tracejado aí significa "projeção" ou "limite", não é grade.
+- **Medidores semicirculares da aba Gestão e dados.**
+- **Status (vigente, vencendo, vencido e "acima do PCA"):** usam cores de status sempre acompanhadas de rótulo.
+
+Pendente:
+- uma "visão em tabela" dedicada para cada gráfico (hoje os valores aparecem nas listas ao lado e no PDF);
+- modo escuro, que o site não tem.
