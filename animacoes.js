@@ -23,7 +23,7 @@
   // Cartões: sobem com uma leve escala.
   var CARTOES = [
     ".lvh-top-card", ".lvh-free-card", ".lvh-calc4 > button", ".lvh-ban-3 > button", ".lvh-bd-item", ".lvh-bd-mais",
-    ".lvh-bd-nums > div", ".lvh-pa-3 > div", ".lvh-pa-passos > li", ".lvh-ticket",
+    ".lvh-bd-nums > div", ".lvh-pa-3 > div", ".lvh-ticket",
     ".lvp-cards > *", ".lvp-faq-item", ".lva-card", ".lve-tri-card", ".lvf-tema-c", ".lvf-q-c",
     ".gp-card", ".gx-card", ".gcl-card", ".gcs-c", ".ct-kpi", ".lvc-kpi", ".pp-kpi", ".ptp-c",
     "[style*='grid-template-columns: repeat(auto-fit'] > *"
@@ -36,7 +36,7 @@
   var SEL_CARTAO = CARTOES.join(",");
   var SEL = CARTOES.concat(BLOCOS).join(",");
   // Nunca anima aqui dentro: cabeçalho fixo, menus, janelas e o quadro que vira imagem no PDF.
-  var FORA = "header, nav, [role='dialog'], #lvc-captura, .lvh-demo";
+  var FORA = "header, nav, [role='dialog'], #lvc-captura, .lvh-demo, .lvi-topo, .lvi-faixa, .lvi-frase-sec, .lvi-hist, .lvi-vit, .lvh-art-secoes";
 
   var vistos = new WeakSet();
   var pendentes = new Set();
@@ -151,6 +151,8 @@
     if (!alvos.length) return;
     var conjunto = new Set(alvos);
     alvos.forEach(function (el) {
+      // só a página montada (#dc-root); o modelo cru do runtime é copiado depois, com o estilo que tiver
+      if (!el.closest("#dc-root")) return;
       // um bloco dentro de outro que também vai animar: anima só o de fora
       var p = el.parentElement;
       while (p) { if (conjunto.has(p) || pendentes.has(p)) return; p = p.parentElement; }

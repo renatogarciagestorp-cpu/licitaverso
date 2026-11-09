@@ -26,7 +26,9 @@
 </script>
 <!-- animações (Motion): ver animacoes.js -->
 <script src="vendor/motion-12.23.12.js" defer></script>
-<script src="animacoes.js?v=3" defer></script>
+<script src="animacoes.js?v=5" defer></script>
+<link rel="stylesheet" href="inicio.css?v=3">
+<script src="inicio.js?v=6" defer></script>
 <script src="54d6539a-d2b1-4cc8-83cc-736f9be08894"></script>
 
 </head>
@@ -2563,14 +2565,20 @@
 
     <!-- ===================== HOME ===================== -->
     <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
-      <section class="lvh-top">
+      <section class="lvh-top lvi-topo">
+        <div class="lvi-aurora" aria-hidden="true"><i></i><i></i><i></i></div>
         <div class="lvh-top-in">
-          <span class="lvh-eyebrow">Licitações, contratos de estatais e parcerias · Leis 14.133, 13.303 e 13.019</span>
-          <h1 class="lvh-top-h1">Tudo sobre licitações e contratos. <em>Em um só lugar.</em></h1>
-          <p class="lvh-top-lead">Agentes de IA que analisam e elaboram documentos, calculadora de reajuste e planilhas de mão de obra, gestão dos contratos com os prazos e avisos, jurisprudência de todo o país, fórum, consultoria e cursos – para quem conduz, disputa, assessora ou controla contratações.</p>
-          <div class="lvh-ctas">
-            <button class="{{ ctaClasse }}" sc-camel-on-click="{{ topCta }}">{{ topCtaTxt }}</button>
-            <button class="lvh-btn-sec lvh-btn-sec-claro" sc-camel-on-click="{{ topSec }}">{{ topSecTxt }}</button>
+          <div class="lvi-hero">
+            <div class="lvi-hero-txt">
+              <span class="lvh-eyebrow">Licitações, contratos de estatais e parcerias · Leis 14.133, 13.303 e 13.019</span>
+              <h1 class="lvh-top-h1">Tudo sobre licitações e contratos. <em>Em um só lugar.</em></h1>
+              <p class="lvh-top-lead">Agentes de IA que analisam e elaboram documentos, calculadora de reajuste e planilhas de mão de obra, gestão dos contratos com os prazos e avisos, jurisprudência de todo o país, fórum, consultoria e cursos – para quem conduz, disputa, assessora ou controla contratações.</p>
+              <div class="lvh-ctas">
+                <button class="{{ ctaClasse }}" sc-camel-on-click="{{ topCta }}">{{ topCtaTxt }}</button>
+                <button class="lvh-btn-sec lvh-btn-sec-claro" sc-camel-on-click="{{ topSec }}">{{ topSecTxt }}</button>
+              </div>
+            </div>
+            <div class="lvi-demo" data-lvi="demo" aria-hidden="true"></div>
           </div>
           <div class="lvh-top-grid" role="list" aria-label="O que o Licitacon oferece">
             <sc-for list="{{ homeTopo }}" as="t" hint-placeholder-count="8">
@@ -2583,6 +2591,19 @@
             </sc-for>
           </div>
         </div>
+      </section>
+      <section class="lvi-faixa" aria-label="Decisões recentes na Biblioteca Jurídica">
+        <div class="lvi-faixa-cab">
+          <span class="lvi-pulso" aria-hidden="true"></span>
+          <b>Chegando na Biblioteca</b>
+          <span class="lvi-faixa-sub">decisões reais, coletadas nas fontes oficiais nos dias úteis</span>
+          <button type="button" class="lvi-faixa-btn" sc-camel-on-click="{{ goBiblioteca }}">Pesquisar →</button>
+        </div>
+        <div class="lvi-trilho" data-lvi="faixa" aria-hidden="true"></div>
+        <div class="lvi-trilho lvi-trilho-chips" data-lvi="fontes" aria-hidden="true"></div>
+      </section>
+      <section class="lvi-frase-sec">
+        <p class="lvi-frase" data-lvi="frase">Você envia o edital. O Parecerista encontra o problema <em>antes</em> do Tribunal de Contas. A decisão continua sua.</p>
       </section>
       <section class="lvh-ban" id="h-parecerista">
         <div class="lvh-ban-in lvh-ban-claro lvh-bd">
@@ -2625,13 +2646,22 @@
             </sc-for>
           </div>
           </div>
-          <div class="lvh-bd-dif">
-            <p class="lvh-bd-sub">Como funciona O Parecerista</p>
-            <ol class="lvh-pa-passos">
-              <sc-for list="{{ homePassos }}" as="ps" hint-placeholder-count="3">
-                <li><span>{{ ps.n }}</span><div><b>{{ ps.t }}</b><p>{{ ps.d }}</p></div></li>
-              </sc-for>
-            </ol>
+        </div>
+      </section>
+      <section class="lvi-hist" data-lvi="hist" aria-labelledby="lvi-hist-h">
+        <div class="lvi-hist-fixo">
+          <div class="lvi-hist-in">
+            <div class="lvi-hist-txt">
+              <span class="lvh-eyebrow">Como funciona O Parecerista</span>
+              <h2 id="lvi-hist-h" class="lvi-h2">Do edital ao parecer, <em>item por item</em>.</h2>
+              <ol class="lvi-passos">
+                <li data-passo="0"><span>1</span><div><b>Envie até 3 documentos</b><p>Edital, ETP, TR, matriz de riscos ou planilhas, em PDF ou Excel. Você escolhe o regime: Lei 14.133, Lei 13.303 ou Lei 13.019.</p></div></li>
+                <li data-passo="1"><span>2</span><div><b>O agente lê item a item</b><p>Cada trecho do documento passa pelo roteiro de verificação do Licitacon.</p></div></li>
+                <li data-passo="2"><span>3</span><div><b>Confere com a lei e a jurisprudência</b><p>Com o texto da lei e com as decisões da Biblioteca Jurídica, coletadas em 90 fontes oficiais.</p></div></li>
+                <li data-passo="3"><span>4</span><div><b>Receba o parecer</b><p>Em PDF e Word, no formato ABNT: cada apontamento com gravidade, fundamento, providência e redação sugerida.</p></div></li>
+              </ol>
+            </div>
+            <div class="lvi-palco" data-lvi="palco" aria-hidden="true"></div>
           </div>
         </div>
       </section>
@@ -2790,6 +2820,15 @@
             </div>
           </div>
         </div>
+      </section>
+
+      <section class="lvi-vit" aria-labelledby="lvi-vit-h">
+        <div class="lvi-vit-cab">
+          <span class="lvh-eyebrow">Tudo no mesmo lugar</span>
+          <h2 id="lvi-vit-h" class="lvi-h2">Gire a vitrine. <em>Cada cartão é uma ferramenta.</em></h2>
+          <p>Arraste para girar e toque num cartão para abrir.</p>
+        </div>
+        <div class="lvi-vit-palco" data-lvi="vitrine"></div>
       </section>
 
       <section class="lvh-final">

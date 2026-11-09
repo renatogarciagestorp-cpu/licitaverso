@@ -80,6 +80,10 @@ def extrair_pacote() -> None:
 
 
 def main() -> int:
+    # faixa de decisões reais da página inicial (inicio-destaques.json)
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("destaques", RAIZ / "scripts" / "gerar-destaques.py")
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m); m.main()
     if not MAPA.exists():
         extrair_pacote()
     mapa = json.loads(MAPA.read_text(encoding="utf-8"))
