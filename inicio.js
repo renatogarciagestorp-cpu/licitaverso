@@ -402,12 +402,13 @@
     }, p);
   }
 
-  // ---------------------------------------------------------------- história presa na tela
+  // ---------------------------------------------------------------- como funciona: passos em sequência
+  // A página rola normalmente; cada passo toca a sua animação quando entra na tela e a linha verde
+  // à esquerda vai enchendo conforme a rolagem.
   function montarHist(sec) {
-    var palco = sec.querySelector("[data-lvi=palco]"), ol = sec.querySelector(".lvi-passos");
-    var lis = sec.querySelectorAll(".lvi-passos li");
-    if (!palco || !ol || !lis.length) return;
-    palco.setAttribute("data-lvi-ok", "1");
+    var ol = sec.querySelector(".lvi-passos");
+    var lis = sec.querySelectorAll(".lvi-passos > li"), palcos = sec.querySelectorAll(".lvi-palco");
+    if (!ol || lis.length < 4 || palcos.length < 4) return;
     var prog = el("i", "lvi-passos-prog"); ol.appendChild(prog);
 
     // etapa 1: arquivos
@@ -438,19 +439,22 @@
       achadosHtml() + '<div class="lvi-par-pe"><span>Baixar em PDF</span><span>Abrir no Word</span></div></div><div class="lvi-carimbo">Com a lei e a juris&shy;prudência</div>';
     var achs = e4.querySelectorAll(".lvi-ach"), carimbo = e4.querySelector(".lvi-carimbo"), par = e4.querySelector(".lvi-par");
     var etapas = [e1, e2, e3, e4];
-    etapas.forEach(function (e) { palco.appendChild(e); });
+    etapas.forEach(function (e, i) { palcos[i].appendChild(e); });
 
     function posicionarRede() {
-      var w = palco.clientWidth, h = palco.clientHeight, rx = Math.min(w * 0.36, 230), ry = Math.min(h * 0.36, 175);
+      var palco = palcos[2], w = palco.clientWidth, h = palco.clientHeight, rx = Math.min(w * 0.36, 230), ry = Math.min(h * 0.36, 175);
       Array.prototype.forEach.call(nosEl, function (n, i) {
         var a = (i / nosEl.length) * Math.PI * 2 - Math.PI / 2, x = Math.cos(a) * rx, y = Math.sin(a) * ry;
-        n.dataset.x = x - n.offsetWidth / 2; n.dataset.y = y - n.offsetHeight / 2;
+        // a etiqueta inteira dentro do quadro, com 8px de folga
+        var nw = n.offsetWidth, nh = n.offsetHeight;
+        n.dataset.x = Math.min(w / 2 - 8 - nw, Math.max(-w / 2 + 8, x - nw / 2));
+        n.dataset.y = Math.min(h / 2 - 8 - nh, Math.max(-h / 2 + 8, y - nh / 2));
         var f = fios[i], d = Math.sqrt(x * x + y * y);
         f.style.width = d + "px"; f.dataset.a = Math.atan2(y, x) * 180 / Math.PI;
       });
     }
 
-    // aplica o estado de uma etapa com o avanço p (0 a 1) dentro dela — chamado a cada quadro da rolagem
+    // aplica o estado de uma etapa com o avanço p (0 a 1) — chamado a cada quadro da animação do passo
     function pintar(i, p) {
       var q = Math.min(1, Math.max(0, p));
       if (i === 0) {
@@ -481,33 +485,30 @@
       }
     }
 
-    var atual = -1;
-    function mostrar(i) {
-      if (i === atual) return;
-      var velha = etapas[atual], nova = etapas[i];
-      Array.prototype.forEach.call(lis, function (l, k) { l.classList.toggle("on", k === i); l.classList.toggle("feito", k < i); });
-      if (velha) { velha.classList.remove("on"); anima(velha, { opacity: [1, 0], scale: [1, 0.96] }, { duration: 0.3 }).then(function () { velha.style.transform = ""; velha.style.opacity = ""; }); }
-      nova.classList.add("on");
-      if (i === 2) posicionarRede();
-      anima(nova, { opacity: [0, 1], scale: [1.04, 1] }, { duration: 0.45, ease: SUAVE }).then(function () { nova.style.transform = ""; nova.style.opacity = ""; });
-      atual = i;
-    }
+    posicionarRede();
+    window.addEventListener("resize", function () { if (sec.isConnected) { posicionarRede(); pintar(2, feitos[2] ? 1 : 0); } });
+    var feitos = [false, false, false, false];
 
-    if (REDUZ || !scroll) {
-      Array.prototype.forEach.call(lis, function (l) { l.classList.add("on"); });
-      e4.classList.add("on"); pintar(3, 1);
+    if (REDUZ || !inView) {
+      Array.prototype.forEach.call(lis, function (l, i) { l.classList.add("on"); feitos[i] = true; pintar(i, 1); });
       return;
     }
-    posicionarRede();
-    window.addEventListener("resize", function () { if (palco.isConnected) posicionarRede(); });
-    mostrar(0); pintar(0, 0);
+    var DUR = [1.5, 2.2, 1.9, 2.1];
+    Array.prototype.forEach.call(lis, function (li, i) {
+      pintar(i, 0);
+      uma(li, function () {
+        li.classList.add("on");
+        if (i === 2) posicionarRede();
+        try {
+          animate(0, 1, { duration: DUR[i], ease: "easeInOut", onUpdate: function (v) { pintar(i, v); } })
+            .finished.then(function () { feitos[i] = true; pintar(i, 1); });
+        } catch (e) { feitos[i] = true; pintar(i, 1); }
+      }, { amount: 0.45 });
+    });
+    // linha verde que acompanha a rolagem
     rolagem(function () {
-      if (!palco.isConnected) return;
-      var r = sec.getBoundingClientRect(), p = -r.top / Math.max(1, r.height - innerHeight);
-      var x = Math.min(0.9999, Math.max(0, p)) * 4, i = Math.floor(x);
-      mostrar(i);
-      pintar(i, (x - i) / 0.85);
-      prog.style.transform = "scaleY(" + Math.min(1, Math.max(0, p) * 1.05) + ")";
+      var r = ol.getBoundingClientRect(), p = (innerHeight * 0.6 - r.top) / Math.max(1, r.height);
+      prog.style.transform = "scaleY(" + Math.min(1, Math.max(0, p)) + ")";
     }, sec);
   }
 
