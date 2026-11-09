@@ -4,12 +4,8 @@
  * scripts/3d/montar.mjs com o Three.js e só com as partes usadas. O inicio.js baixa o pacote quando a primeira
  * cena chega perto da tela e chama montar(elemento, tipo) para cada lugar marcado com data-lv3d="…":
  *   parecer     — tomografia (coral): páginas do edital empilhadas, cortadas por um plano; achados viram alvos com mira
- *   elaborador  — letras de luz (azul): partículas soltas se juntam formando ETP, TR e Projeto Básico
- *   calculadora — lingotes de ouro: empilham mês a mês na altura do IPCA, até o reajuste do posto
- *   gestao      — espiral do tempo (ciano): 12 meses em hélice, contratos com rastro acendendo os portais de prazo
  *   biblioteca  — 90 fontes oficiais em volta do acervo, com decisões viajando até ele (menta)
- *   comunidade  — fios de conversa (violeta): perguntas sobem e a resposta oficial desce por todos os fios
- * Cada cena tem cor, material e movimento próprios; o painel de cada uma também muda de tom (inicio.css).
+ * Elaborador, Calculadora, Gestão e Comunidade usam telas vivas em GSAP (inicio-ui.js), não 3D.
  *
  * Um só WebGLRenderer para a página inteira (o celular aguenta poucos contextos): cada cena é desenhada num
  * pedaço da tela dele e copiada para o canvas 2D da sua seção. Só desenha o que está na tela e com a aba aberta.
@@ -20,10 +16,8 @@ import {
   MeshBasicMaterial, PlaneGeometry, BoxGeometry, SphereGeometry, CylinderGeometry, ConeGeometry, TorusGeometry,
   CapsuleGeometry, IcosahedronGeometry, TubeGeometry, CatmullRomCurve3, InstancedMesh, LineSegments,
   LineBasicMaterial, BufferGeometry, Float32BufferAttribute, Object3D, Vector3, Color, CanvasTexture,
-  SRGBColorSpace, AdditiveBlending, HemisphereLight, Points, PointsMaterial, BufferAttribute, Line, PMREMGenerator, DirectionalLight, PointLight, ACESFilmicToneMapping, DoubleSide
+  SRGBColorSpace, AdditiveBlending, HemisphereLight, Points, PointsMaterial, BufferAttribute, Line, DirectionalLight, PointLight, ACESFilmicToneMapping, DoubleSide
 } from "three";
-import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 
 // ------------------------------------------------------------------ cores da marca
 const COR = {
@@ -143,7 +137,7 @@ function mirar(cam, p, raio, alvo, op) {
 }
 
 // ------------------------------------------------------------------ peças comuns
-let TEX_PONTO = null, TEX_ANEL = null, AMBIENTE = null;
+let TEX_PONTO = null, TEX_ANEL = null;
 function texPonto() {
   if (TEX_PONTO) return TEX_PONTO;
   TEX_PONTO = textura(64, 64, (g, w) => {
@@ -299,189 +293,6 @@ function cenaParecer() {
   };
 }
 
-// ------------------------------------------------------------------ 2. Elaborador — letras de luz (azul)
-// Milhares de partículas giram soltas (as respostas) e se juntam formando o documento da vez: ETP, TR, Projeto Básico.
-function amostrarTexto(texto, n, alturaMundo, larguraMax, rnd) {
-  const fs = 150, c = document.createElement("canvas"), g = c.getContext("2d");
-  g.font = "800 " + fs + "px " + FONTE;
-  const wpx = Math.ceil(g.measureText(texto).width) + 20, hpx = Math.round(fs * 1.25);
-  c.width = wpx; c.height = hpx;
-  g.font = "800 " + fs + "px " + FONTE; g.fillStyle = "#fff"; g.textBaseline = "middle"; g.fillText(texto, 10, hpx / 2);
-  const d = g.getImageData(0, 0, wpx, hpx).data, cand = [];
-  for (let y = 0; y < hpx; y += 3) for (let x = 0; x < wpx; x += 3) if (d[(y * wpx + x) * 4 + 3] > 140) cand.push([x, y]);
-  const esc = Math.min(alturaMundo / fs, larguraMax / wpx), out = [];
-  for (let i = 0; i < n; i++) {
-    const q = cand[Math.floor(rnd() * cand.length)] || [wpx / 2, hpx / 2];
-    out.push(new Vector3((q[0] - wpx / 2) * esc + (rnd() - 0.5) * 0.02, (hpx / 2 - q[1]) * esc + (rnd() - 0.5) * 0.02, (rnd() - 0.5) * 0.18));
-  }
-  return out;
-}
-function cenaElaborador() {
-  const { scene, camera } = base(34);
-  const AZUL = 0x6ea8ff;
-  const N = TOQUE ? 1500 : 2400, rnd = aleatorio(5);
-  const DOCS = [["ETP", "Estudo Técnico Preliminar"], ["TR", "Termo de Referência"], ["Projeto Básico", "obras e serviços de engenharia"]];
-  const alvos = DOCS.map(([w]) => amostrarTexto(w, N, w.length > 4 ? 1.25 : 2.1, 5.6, rnd));
-  const pontos = nuvem(N, 0.085);
-  const P = pontos.geometry.attributes.position.array, C = pontos.geometry.attributes.color.array;
-  const solto = [];
-  for (let i = 0; i < N; i++) solto.push({ r: 0.6 + rnd() * 2.4, a: rnd() * Math.PI * 2, y: (rnd() - 0.5) * 2.6, v: 0.25 + rnd() * 0.5, atraso: rnd() * 0.5, tom: rnd() });
-  scene.add(pontos);
-  const subs = DOCS.map(([, s]) => { const e = hud(s, "#9cc3ff", { altura: 0.36 }); e.position.set(0, -1.3, 0.4); e.material.opacity = 0; scene.add(e); return e; });
-  const FASE = 3.6, ciclo = FASE * DOCS.length;
-  const sp = new Vector3();
-  return {
-    scene, camera, tParado: 2.6,
-    update(t, dt, p) {
-      const c = t % ciclo, k = Math.floor(c / FASE), u = c - k * FASE, ant = (k + DOCS.length - 1) % DOCS.length;
-      for (let i = 0; i < N; i++) {
-        const s = solto[i], ang = s.a + t * s.v;
-        sp.set(Math.cos(ang) * s.r, s.y + 0.15 * Math.sin(t * 0.7 + i), Math.sin(ang) * s.r * 0.55);
-        const ida = saiCubica(lim((u - 0.0) / 0.8, 0, 1));           // a palavra anterior se desfaz
-        const volta = saiCubica(lim((u - 0.9 - s.atraso) / 1.0, 0, 1)); // e a nova se forma
-        const a = alvos[ant][i], b = alvos[k][i];
-        let x = a.x + (sp.x - a.x) * ida, y = a.y + (sp.y - a.y) * ida, z = a.z + (sp.z - a.z) * ida;
-        x += (b.x - x) * volta; y += (b.y - y) * volta; z += (b.z - z) * volta;
-        P[i * 3] = x; P[i * 3 + 1] = y + 0.15; P[i * 3 + 2] = z;
-        const brilhoP = 1.0 + 1.5 * volta;
-        pintar(C, i, s.tom > 0.85 ? 0xffffff : AZUL, brilhoP);
-      }
-      pontos.geometry.attributes.position.needsUpdate = true;
-      pontos.geometry.attributes.color.needsUpdate = true;
-      subs.forEach((e, j) => { e.material.opacity = j === k ? suave(1.7, 2.2, u) * (1 - suave(FASE - 0.4, FASE, u)) : 0; });
-      pontos.rotation.y = 0.12 * Math.sin(t * 0.4) + p.tx * 0.25;
-      pontos.rotation.x = p.ty * 0.12;
-      camera.position.set(0, 0, 7.4); camera.lookAt(0, 0, 0);
-    }
-  };
-}
-
-// ------------------------------------------------------------------ 3. Calculadora — lingotes de ouro (dourado)
-// Mês a mês, lingotes caem e empilham na altura do IPCA do mês; no fim, o reajuste aplicado ao valor do posto.
-function cenaCalculadora() {
-  const { scene, camera } = base(30);
-  if (!AMBIENTE) { const pm = new PMREMGenerator(R); AMBIENTE = pm.fromScene(new RoomEnvironment(), 0.04).texture; pm.dispose(); }
-  scene.environment = AMBIENTE;
-  const IPCA = [0.42, 0.31, 0.38, 0.43, 0.26, 0.24, 0.21, 0.44, 0.48, 0.56, 0.62, 0.39];
-  const MESES = ["out", "nov", "dez", "jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set"];
-  const LH = 0.13, colX = (i) => -2.48 + i * 0.45;
-  const pilhas = IPCA.map((v) => Math.max(2, Math.round(v * 14)));
-  const total = pilhas.reduce((a, b) => a + b, 0);
-  const ouro = new InstancedMesh(new RoundedBoxGeometry(0.36, LH * 0.9, 0.22, 2, 0.025), new MeshStandardMaterial({ color: 0xe8b04a, metalness: 1, roughness: 0.26, envMapIntensity: 1.3 }), total);
-  const quem = [];
-  pilhas.forEach((n, i) => { for (let j = 0; j < n; j++) quem.push([i, j]); });
-  ouro.frustumCulled = false;
-  scene.add(ouro);
-  // reflexo dourado no chão, sem piso sólido
-  const reflexo = brilho(0xf2b544, 1, 0.22); reflexo.scale.set(7, 1.1, 1); reflexo.position.set(0, -0.12, 0); scene.add(reflexo);
-  scene.add(segmentos((() => { const o = []; for (let i = 0; i < 12; i++) o.push(colX(i) - 0.2, -LH / 2 + 0.002, 0.2, colX(i) + 0.2, -LH / 2 + 0.002, 0.2); return o; })(), 0xf2b544, 0.5));
-  const meses = [0, 3, 6, 9, 11].map((i) => { const e = rotulo(MESES[i], { altura: 0.22, fundo: "rgba(20,14,4,0.75)", cor: "#F2D49A", peso: 700 }); e.position.set(colX(i), -0.35, 0.45); scene.add(e); return e; });
-  void meses;
-  const etIdx = hud("IPCA · 12 meses", "#F2B544", { altura: 0.36 }); etIdx.position.set(-1.9, 1.75, 0); scene.add(etIdx);
-  const etFim = hud("+4,87%", "#F2B544", { sub: "posto: R$ 6.952,66", altura: 0.62 }); scene.add(etFim);
-  const brilhoTopo = brilho(0xffd27a, 1.4, 0); scene.add(brilhoTopo);
-  const o = new Object3D(), ciclo = 9, T0 = 0.3, PASSO = 0.32;
-  return {
-    scene, camera, tParado: 6.5,
-    update(t, dt, p) {
-      const c = t % ciclo, some = suave(8.1, 8.8, c);
-      let topoUlt = 0;
-      quem.forEach(([i, j], k) => {
-        const t0 = T0 + i * PASSO + j * 0.05;
-        const v = lim((c - t0) / 0.45, 0, 1);
-        const y = j * LH + (1 - quique(v)) * 2.2 + some * 0.0;
-        o.position.set(colX(i) + (j % 2 ? 0.015 : -0.015), v > 0 ? y : -50, 0);
-        o.rotation.set(0, (j % 2 ? 0.06 : -0.04) + (1 - v) * 0.8, 0);
-        o.scale.setScalar(Math.max(0.001, 1 - some));
-        o.updateMatrix();
-        ouro.setMatrixAt(k, o.matrix);
-        if (i === 11 && v > 0) topoUlt = Math.max(topoUlt, y);
-      });
-      ouro.instanceMatrix.needsUpdate = true;
-      const fim = suave(T0 + 12 * PASSO + 0.5, T0 + 12 * PASSO + 1.0, c) * (1 - some);
-      etFim.material.opacity = fim;
-      etFim.position.set(1.35, 1.7 + 0.12 * (1 - fim), 0.2);
-      etIdx.material.opacity = 1 - some;
-      brilhoTopo.position.set(colX(11), topoUlt + 0.25, 0.1);
-      brilhoTopo.material.opacity = 0.7 * fim;
-      mirar(camera, p, 9.4, new Vector3(0, 0.55, 0), { alt: 0.3, ang: -0.32 + 0.12 * Math.sin(t * 0.25), rolagem: 0.3 });
-    }
-  };
-}
-
-// ------------------------------------------------------------------ 4. Gestão Contratual — espiral do tempo (ciano)
-// Os 12 meses sobem em hélice. Cada contrato percorre a espiral deixando rastro; ao chegar a um portal de prazo,
-// o portal acende e mostra o que vence.
-function cenaGestao() {
-  const { scene, camera } = base(34);
-  const CIANO = 0x5bd6f0;
-  const R0 = 1.75, VOLTAS = 1.15, Y0 = -1.25, Y1 = 1.45;
-  const ponto = (u, v) => { const a = u * Math.PI * 2 * VOLTAS - 0.6; return (v || new Vector3()).set(Math.cos(a) * R0, Y0 + u * (Y1 - Y0), Math.sin(a) * R0); };
-  const amostras = []; for (let i = 0; i <= 120; i++) amostras.push(ponto(i / 120));
-  const helice = new Group();
-  const curva = new CatmullRomCurve3(amostras);
-  helice.add(new Mesh(new TubeGeometry(curva, 240, 0.022, 8, false), new MeshBasicMaterial({ color: CIANO, transparent: true, opacity: 0.55, toneMapped: false })));
-  // eixo e meses
-  helice.add(segmentos([0, Y0 - 0.2, 0, 0, Y1 + 0.2, 0], CIANO, 0.18));
-  const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"], marcas = [];
-  MESES.forEach((m, i) => {
-    const q = ponto((i + 0.5) / 12);
-    marcas.push(0, q.y, 0, q.x, q.y, q.z);
-    if (i % 3 === 0) { const e = rotulo(m, { altura: 0.2, fundo: "rgba(4,18,24,0.75)", cor: "#A9E6F4", peso: 700 }); e.position.copy(q).multiplyScalar(1.18); e.position.y = q.y; helice.add(e); }
-  });
-  helice.add(segmentos(marcas, CIANO, 0.12));
-  // portais de prazo
-  const PORTAIS = [[0.22, COR.media, "Reajuste", "Vigilância · 018/2024", CSS.media], [0.55, COR.baixa, "Repactuação", "Limpeza · 025/2025", CSS.baixa], [0.84, COR.menta, "Prorrogação", "Manutenção · 007/2023", CSS.menta]].map(([u, cor, nome, sub, css]) => {
-    const pos = ponto(u), tan = curva.getTangentAt(u);
-    const anel = new Mesh(new TorusGeometry(0.24, 0.025, 10, 40), new MeshBasicMaterial({ color: cor, transparent: true, opacity: 0.7, toneMapped: false }));
-    anel.position.copy(pos); anel.lookAt(pos.clone().add(tan));
-    const luz = brilho(cor, 1.1, 0); luz.position.copy(pos);
-    helice.add(anel, luz);
-    const et = hud(nome, css, { sub, altura: 0.48 }); et.material.opacity = 0; scene.add(et);
-    return { u, anel, luz, et, calor: 0, pos, mundo: new Vector3() };
-  });
-  // contratos com rastro
-  const RASTRO = 26, CONTR = [[0.0, 0.085, CIANO], [0.36, 0.07, COR.media], [0.7, 0.078, COR.alta]];
-  const rastro = nuvem(CONTR.length * RASTRO, 0.13);
-  const RP = rastro.geometry.attributes.position.array, RC = rastro.geometry.attributes.color.array;
-  helice.add(rastro);
-  const cabecas = CONTR.map(([, , cor]) => { const s = brilho(cor, 0.5, 0.95); helice.add(s); return s; });
-  scene.add(helice);
-  const tmp = new Vector3();
-  return {
-    scene, camera, tParado: 3.1,
-    update(t, dt, p) {
-      PORTAIS.forEach((g) => { g.alvo = 0; });
-      CONTR.forEach(([u0, vel, cor], k) => {
-        const u = (u0 + t * vel) % 1;
-        ponto(u, cabecas[k].position);
-        cabecas[k].material.opacity = suave(0, 0.03, u) * (1 - suave(0.97, 1, u));
-        for (let j = 0; j < RASTRO; j++) {
-          const uj = u - j * 0.006, idx = k * RASTRO + j;
-          ponto(Math.max(0, uj), tmp);
-          RP[idx * 3] = tmp.x; RP[idx * 3 + 1] = tmp.y; RP[idx * 3 + 2] = tmp.z;
-          pintar(RC, idx, cor, uj < 0 ? 0 : Math.pow(1 - j / RASTRO, 1.6) * 1.1 * cabecas[k].material.opacity);
-        }
-        PORTAIS.forEach((g) => { const d = u - g.u; if (d > -0.015 && d < 0.09) g.alvo = 1; });
-      });
-      rastro.geometry.attributes.position.needsUpdate = true;
-      rastro.geometry.attributes.color.needsUpdate = true;
-      helice.rotation.y = t * 0.16 + p.tx * 0.4;
-      helice.updateMatrixWorld();
-      PORTAIS.forEach((g, i) => {
-        g.calor = REDUZ ? (i === 0 ? 1 : 0) : aprox(g.calor, g.alvo, dt || 1, 5);
-        g.anel.scale.setScalar(1 + g.calor * 0.6);
-        g.luz.material.opacity = g.calor * 0.9;
-        g.mundo.copy(g.pos); helice.localToWorld(g.mundo);
-        g.et.position.set(g.mundo.x + (g.mundo.x > 0 ? 1.0 : -1.0), g.mundo.y + 0.35, g.mundo.z + 0.4);
-        dentro(g.et, camera);
-        g.et.material.opacity = g.calor;
-      });
-      mirar(camera, p, 8.6, new Vector3(0, 0.05, 0), { alt: 0.2, giroX: 0.1, rolagem: 0.2 });
-    }
-  };
-}
-
 // ------------------------------------------------------------------ 5. Biblioteca Jurídica
 function cenaBiblioteca() {
   const { scene, camera } = base(34);
@@ -539,76 +350,7 @@ function cenaBiblioteca() {
   };
 }
 
-// ------------------------------------------------------------------ 6. Comunidade — fios de conversa (violeta)
-// Cada pessoa puxa um fio; as perguntas sobem por eles, que se entrelaçam até o especialista. De tempos em tempos
-// a resposta oficial desce em verde por todos os fios ao mesmo tempo: fica para todo mundo.
-function cenaComunidade() {
-  const { scene, camera } = base(34);
-  const VIOL = 0xb69cff, ROSA = 0xff9ad5;
-  const NF = TOQUE ? 6 : 8, SEG = 56;
-  const topo = new Vector3(0, 1.45, 0);
-  const bases = [];
-  for (let i = 0; i < NF; i++) bases.push(new Vector3(-2.7 + (i * 5.4) / (NF - 1), -1.45, 0.55 * Math.cos(i * 1.7)));
-  const fios = bases.map(() => {
-    const g = new BufferGeometry();
-    g.setAttribute("position", new BufferAttribute(new Float32Array((SEG + 1) * 3), 3));
-    const cor = new Float32Array((SEG + 1) * 3);
-    for (let s = 0; s <= SEG; s++) { const f = s / SEG; tmpC.set(VIOL).lerp(new Color(ROSA), f * 0.7); cor.set([tmpC.r * (0.35 + 0.5 * f), tmpC.g * (0.35 + 0.5 * f), tmpC.b * (0.35 + 0.5 * f)], s * 3); }
-    g.setAttribute("color", new BufferAttribute(cor, 3));
-    const l = new Line(g, new LineBasicMaterial({ vertexColors: true, transparent: true, blending: AdditiveBlending, depthWrite: false, toneMapped: false }));
-    scene.add(l);
-    return l;
-  });
-  const pessoas = bases.map((b) => { const s = brilho(0xe9ddff, 0.5, 0.9); s.position.copy(b); scene.add(s); return s; });
-  const esp = brilho(COR.menta, 1.5, 0.9); esp.position.copy(topo); scene.add(esp);
-  const aro = new Sprite(new SpriteMaterial({ map: texAnel(), color: COR.menta, transparent: true, depthWrite: false, blending: AdditiveBlending, toneMapped: false }));
-  aro.position.copy(topo); scene.add(aro);
-  const etEsp = hud("Especialista", CSS.menta, { sub: "resposta oficial", altura: 0.46 }); etEsp.position.set(1.25, 1.65, 0.4); scene.add(etEsp);
-  const etPerg = hud("Perguntas", "#CDBBFF", { altura: 0.34 }); etPerg.position.set(-2.35, -0.95, 0.5); scene.add(etPerg);
-  // pontos que viajam: 3 perguntas por fio subindo e 1 resposta por fio descendo
-  const NQ = NF * 3, viaj = nuvem(NQ + NF, 0.17);
-  const VP = viaj.geometry.attributes.position.array, VC = viaj.geometry.attributes.color.array;
-  scene.add(viaj);
-  const q = new Vector3();
-  function noFio(i, s, t, v) {
-    const b = bases[i], e = s * s * (3 - 2 * s);
-    const fase = t * 0.8 + i * 0.85 + s * 5.5, amp = 4 * s * (1 - s) * 0.55;
-    return (v || q).set(b.x + (topo.x - b.x) * e + Math.cos(fase) * amp, b.y + (topo.y - b.y) * s, b.z + (topo.z - b.z) * e + Math.sin(fase) * amp);
-  }
-  const ONDA = 3.2;
-  return {
-    scene, camera, tParado: 1.0,
-    update(t, dt, p) {
-      fios.forEach((l, i) => {
-        const A = l.geometry.attributes.position.array;
-        for (let s = 0; s <= SEG; s++) { noFio(i, s / SEG, t); A[s * 3] = q.x; A[s * 3 + 1] = q.y; A[s * 3 + 2] = q.z; }
-        l.geometry.attributes.position.needsUpdate = true;
-      });
-      for (let k = 0; k < NQ; k++) {
-        const i = k % NF, s = (t * 0.17 + i * 0.37 + Math.floor(k / NF) / 3) % 1;
-        noFio(i, s, t);
-        VP.set([q.x, q.y, q.z], k * 3);
-        pintar(VC, k, 0xf1e9ff, 0.9 * suave(0, 0.08, s) * (1 - suave(0.9, 1, s)));
-      }
-      const w = (t % ONDA) / 1.7;
-      for (let i = 0; i < NF; i++) {
-        const k = NQ + i;
-        if (w <= 1) { noFio(i, 1 - w, t); VP.set([q.x, q.y, q.z], k * 3); pintar(VC, k, COR.menta, 1.6 * (1 - suave(0.85, 1, w))); }
-        else { VP.set([0, -50, 0], k * 3); pintar(VC, k, 0, 0); }
-      }
-      viaj.geometry.attributes.position.needsUpdate = true;
-      viaj.geometry.attributes.color.needsUpdate = true;
-      const flash = Math.max(0, 1 - (t % ONDA) / 0.6);
-      esp.scale.setScalar(1.5 * (1 + 0.5 * flash));
-      aro.scale.setScalar(0.4 + saiCubica(1 - flash) * 1.6);
-      aro.material.opacity = flash * 0.9;
-      pessoas.forEach((s, i) => { s.material.opacity = 0.65 + 0.3 * Math.sin(t * 2 + i); });
-      mirar(camera, p, 8.2, new Vector3(0, 0.05, 0), { alt: 0.08, giroX: 0.25 });
-    }
-  };
-}
-
-const CENAS = { parecer: cenaParecer, elaborador: cenaElaborador, calculadora: cenaCalculadora, gestao: cenaGestao, biblioteca: cenaBiblioteca, comunidade: cenaComunidade };
+const CENAS = { parecer: cenaParecer, biblioteca: cenaBiblioteca };
 
 // ------------------------------------------------------------------ motor: um renderer para todas as cenas
 let R = null, bufW = 0, bufH = 0, raf = 0, ult = 0, perdido = false;

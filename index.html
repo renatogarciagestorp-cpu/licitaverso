@@ -52,8 +52,11 @@
 <!-- animações (Motion): ver animacoes.js -->
 <script src="vendor/motion-12.23.12.js" defer></script>
 <script src="animacoes.js?v=5" defer></script>
-<link rel="stylesheet" href="inicio.css?v=21">
-<script src="inicio.js?v=21" defer></script>
+<link rel="stylesheet" href="inicio.css?v=24">
+<script src="inicio.js?v=22" defer></script>
+<!-- telas vivas da página inicial (GSAP): ver inicio-ui.js -->
+<script src="vendor/gsap-3.15.1.min.js" defer></script>
+<script src="inicio-ui.js?v=1" defer></script>
 <script src="assets/dc-runtime-8fe7df7440.js"></script>
 
 </head>
@@ -2686,7 +2689,7 @@
             <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goElaborar }}">Criar um documento</button></div>
             <p class="lvh-ban-micro">Pago por documento, com desconto de assinante · no Pro, 2 por semana incluídos (somados ao Parecerista).</p>
           </div>
-          <div class="lvh-art" aria-hidden="true" data-lv3d="elaborador">
+          <div class="lvh-art" aria-hidden="true" data-lvui="elaborador">
             <div class="lvh-art-doc">
               <div class="lvh-art-top"><span class="lvh-dot"></span><b>Estudo Técnico Preliminar</b><span class="lvh-art-sel">Minuta</span></div>
               <ol class="lvh-art-secoes">
@@ -2723,7 +2726,7 @@
             <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goCalcReajuste }}">Abrir a Calculadora</button></div>
             <p class="lvh-ban-micro">Reajuste grátis com a sua conta · planilhas e comparação nos planos pagos e no teste de 7 dias · no Pro, o agente de IA lê a convenção coletiva e preenche as planilhas.</p>
           </div>
-          <div class="lvh-art" aria-hidden="true" data-lv3d="calculadora">
+          <div class="lvh-art" aria-hidden="true" data-lvui="calculadora">
             <div class="lvh-art-doc">
               <div class="lvh-art-abas"><span>Reajuste</span><span class="on">Planilha</span><span>Repactuação</span><span>Proposta</span></div>
               <div class="lvh-art-top"><span class="lvh-dot"></span><b>Vigilante 12x36 diurno</b><span class="lvh-art-sel">Por posto</span></div>
@@ -2755,7 +2758,7 @@
             <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goGestaoInicio }}">Conhecer a Gestão Contratual</button></div>
             <p class="lvh-ban-micro">Em todos os planos pagos e no teste de 7 dias · nos planos para equipes, contratos compartilhados para consulta · reajuste e reequilíbrio da Calculadora registrados com um clique.</p>
           </div>
-          <div class="lvh-art" aria-hidden="true" data-lv3d="gestao">
+          <div class="lvh-art" aria-hidden="true" data-lvui="gestao">
             <div class="lvh-art-doc lvh-gc">
               <div class="lvh-art-top"><span class="lvh-dot"></span><b>Meus contratos</b><span class="lvh-art-sel">3 contratos</span></div>
               <div class="lvh-gc-c v"><div><small>Vigente</small><b>Contrato 025/2025 · Limpeza</b></div><span>até 12/12/2027</span><i style="--p: 56%"></i></div>
@@ -2812,7 +2815,7 @@
             <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goForum }}">Ver as discussões</button></div>
             <p class="lvh-ban-micro">Leitura do fórum grátis com a sua conta · perguntar e responder nos planos e no teste de 7 dias · consultoria e cursos com desconto de assinante.</p>
           </div>
-          <div class="lvh-art" aria-hidden="true" data-lv3d="comunidade">
+          <div class="lvh-art" aria-hidden="true" data-lvui="comunidade">
             <div class="lvh-art-doc">
               <div class="lvh-art-top"><span class="lvh-dot"></span><b>Fórum · Reajuste e repactuação</b><span class="lvh-art-sel">12 respostas</span></div>
               <div class="lvh-art-perg">
