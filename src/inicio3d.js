@@ -3,12 +3,13 @@
  * Fonte deste arquivo: src/inicio3d.js. O site carrega o pacote gerado na raiz (inicio3d.js), montado por
  * scripts/3d/montar.mjs com o Three.js e só com as partes usadas. O inicio.js baixa o pacote quando a primeira
  * cena chega perto da tela e chama montar(elemento, tipo) para cada lugar marcado com data-lv3d="…":
- *   parecer     — folha do edital lida por um feixe de luz; três trechos acendem com os alfinetes ALTA/MÉDIA/BAIXA
- *   elaborador  — as seções do ETP caem uma a uma e montam o documento; no fim saem Word e PDF
- *   calculadora — o valor do posto como uma coluna dos 6 módulos da IN 05/2017, que se abre e se junta
- *   gestao      — trilho do tempo com os contratos passando pelos portais de reajuste, repactuação e prorrogação
+ *   parecer     — o edital como matriz de pontos; o feixe lê, três trechos acendem ALTA/MÉDIA/BAIXA e avisam o parecer
+ *   elaborador  — a nuvem de respostas se organiza seção por seção na minuta; o PNCP alimenta a estimativa do valor
+ *   calculadora — superfície de dados com as 12 colunas do IPCA e a curva acumulada até o reajuste
+ *   gestao      — radar da carteira: cada anel é um contrato, o ponteiro é o tempo e os marcos avisam o núcleo
  *   biblioteca  — 90 fontes oficiais em volta do acervo, com decisões viajando até ele
- *   comunidade  — balões de pergunta subindo das pessoas, com a resposta oficial em destaque
+ *   comunidade  — rede de pessoas; perguntas vão ao especialista e a resposta oficial volta para todos
+ * Todas no mesmo estilo: pontos de luz, linhas finas, núcleo facetado e pulsos, nas cores da marca.
  *
  * Um só WebGLRenderer para a página inteira (o celular aguenta poucos contextos): cada cena é desenhada num
  * pedaço da tela dele e copiada para o canvas 2D da sua seção. Só desenha o que está na tela e com a aba aberta.
@@ -19,9 +20,8 @@ import {
   MeshBasicMaterial, PlaneGeometry, BoxGeometry, SphereGeometry, CylinderGeometry, ConeGeometry, TorusGeometry,
   CapsuleGeometry, IcosahedronGeometry, TubeGeometry, CatmullRomCurve3, InstancedMesh, LineSegments,
   LineBasicMaterial, BufferGeometry, Float32BufferAttribute, Object3D, Vector3, Color, CanvasTexture,
-  SRGBColorSpace, AdditiveBlending, HemisphereLight, DirectionalLight, PointLight, ACESFilmicToneMapping, DoubleSide
+  SRGBColorSpace, AdditiveBlending, HemisphereLight, Points, PointsMaterial, BufferAttribute, Line, DirectionalLight, PointLight, ACESFilmicToneMapping, DoubleSide
 } from "three";
-import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 
 // ------------------------------------------------------------------ cores da marca
 const COR = {
@@ -140,313 +140,483 @@ function mirar(cam, p, raio, alvo, op) {
   cam.lookAt(alvo);
 }
 
-// ------------------------------------------------------------------ 1. Parecerista
-function cenaParecer() {
-  const { scene, camera } = base(32);
-  const W = 3.0, H = 3.9, LINHAS = 15, y0 = 1.25, passo = 0.165;
-  const larguras = [0.92, 0.84, 0.95, 0.7, 0.9, 0.82, 0.96, 0.62, 0.88, 0.93, 0.76, 0.9, 0.85, 0.94, 0.58];
-  const texPag = textura(600, 780, (g, w, h) => {
-    g.fillStyle = "#F7FAF9"; g.fillRect(0, 0, w, h);
-    g.fillStyle = "#0F3431"; g.fillRect(0, 0, w, 74);
-    g.font = "800 26px " + FONTE; g.fillStyle = "#6FE0AE"; g.textBaseline = "middle";
-    g.fillText("EDITAL · PREGÃO ELETRÔNICO", 34, 38);
-    g.fillStyle = "#C9D6D2";
-    for (let i = 0; i < LINHAS; i++) {
-      const py = Math.round(((H / 2 - (y0 - i * passo)) / H) * h);
-      caixa(g, 34, py - 7, (w - 68) * larguras[i], 14, 7); g.fill();
-    }
-    g.fillStyle = "#E3EBE8"; caixa(g, 34, h - 96, w - 68, 50, 10); g.fill();
+// ------------------------------------------------------------------ peças comuns do estilo (pontos de luz, núcleo, pulsos)
+let TEX_PONTO = null, TEX_ANEL = null;
+function texPonto() {
+  if (TEX_PONTO) return TEX_PONTO;
+  TEX_PONTO = textura(64, 64, (g, w) => {
+    const r = g.createRadialGradient(w / 2, w / 2, 0, w / 2, w / 2, w / 2);
+    r.addColorStop(0, "rgba(255,255,255,1)");
+    r.addColorStop(0.32, "rgba(255,255,255,0.85)");
+    r.addColorStop(0.6, "rgba(255,255,255,0.18)");
+    r.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = r; g.fillRect(0, 0, w, w);
   });
-  const pagina = new Group();
-  const folha = new Mesh(new PlaneGeometry(W, H), new MeshStandardMaterial({ map: texPag, roughness: 0.75, metalness: 0 }));
-  pagina.add(folha);
-  // folhas de trás: o edital tem volume
-  for (let i = 1; i <= 2; i++) {
-    const f = new Mesh(new PlaneGeometry(W, H), new MeshStandardMaterial({ color: 0xdfe8e5, roughness: 0.9 }));
-    f.position.set(i * 0.09, -i * 0.07, -i * 0.06);
-    pagina.add(f);
+  return TEX_PONTO;
+}
+function texAnel() {
+  if (TEX_ANEL) return TEX_ANEL;
+  TEX_ANEL = textura(128, 128, (g, w) => {
+    g.beginPath(); g.arc(w / 2, w / 2, w / 2 - 6, 0, Math.PI * 2);
+    g.lineWidth = 5; g.strokeStyle = "rgba(255,255,255,1)"; g.shadowColor = "rgba(255,255,255,1)"; g.shadowBlur = 8; g.stroke();
+  });
+  return TEX_ANEL;
+}
+// Nuvem de pontos com cor por ponto (soma luz: quanto mais perto, mais brilha).
+function nuvem(n, tam) {
+  const g = new BufferGeometry();
+  g.setAttribute("position", new BufferAttribute(new Float32Array(n * 3), 3));
+  g.setAttribute("color", new BufferAttribute(new Float32Array(n * 3), 3));
+  return new Points(g, new PointsMaterial({ size: tam, map: texPonto(), vertexColors: true, transparent: true, depthWrite: false, blending: AdditiveBlending, sizeAttenuation: true, toneMapped: false }));
+}
+function segmentos(pontos, cor, opac) {
+  const g = new BufferGeometry();
+  g.setAttribute("position", new Float32BufferAttribute(pontos, 3));
+  return new LineSegments(g, new LineBasicMaterial({ color: cor, transparent: true, opacity: opac, blending: AdditiveBlending, depthWrite: false, toneMapped: false }));
+}
+function circulo(r, seg) {
+  const out = [];
+  for (let i = 0; i < seg; i++) {
+    const a = (i / seg) * Math.PI * 2, b = ((i + 1) / seg) * Math.PI * 2;
+    out.push(Math.cos(a) * r, 0, Math.sin(a) * r, Math.cos(b) * r, 0, Math.sin(b) * r);
   }
+  return out;
+}
+// Núcleo facetado com casca em arame e halo, como o acervo da Biblioteca.
+function nucleo(r, cor) {
+  const g = new Group();
+  const n = new Mesh(new IcosahedronGeometry(r, 1), new MeshStandardMaterial({ color: COR.verde, emissive: cor || COR.mentaForte, emissiveIntensity: 0.5, roughness: 0.3, flatShading: true }));
+  const c = new Mesh(new IcosahedronGeometry(r * 1.24, 1), new MeshBasicMaterial({ color: COR.menta, wireframe: true, transparent: true, opacity: 0.35 }));
+  const h = brilho(cor || COR.menta, r * 5.2, 0.5);
+  g.add(n, c, h);
+  g.userData = { n, c, h };
+  return g;
+}
+function girarNucleo(nu, t, extra) {
+  nu.userData.n.rotation.x = t * 0.2;
+  nu.userData.c.rotation.y = -t * 0.3;
+  const s = 1 + 0.05 * Math.sin(t * 3) + (extra || 0) * 0.18;
+  nu.userData.n.scale.setScalar(s);
+  nu.userData.h.material.opacity = 0.5 + (extra || 0) * 0.4;
+}
+// Pulsos de luz que viajam de um ponto a outro (decisões, avisos, perguntas, respostas).
+function criarPulsos(pai, n, tam) {
+  const lista = [];
+  for (let i = 0; i < n; i++) {
+    const s = brilho(0xffffff, tam, 0);
+    s.visible = false;
+    pai.add(s);
+    lista.push({ s, ativo: false, de: new Vector3(), para: new Vector3() });
+  }
+  return {
+    disparar(de, para, dur, cor, t, fim) {
+      const k = lista.find((x) => !x.ativo);
+      if (!k) return;
+      k.ativo = true; k.de.copy(de); k.para.copy(para); k.t0 = t; k.dur = dur; k.fim = fim;
+      k.s.material.color.set(cor); k.s.visible = true; k.s.position.copy(de);
+    },
+    atualizar(t) {
+      lista.forEach((k) => {
+        if (!k.ativo) return;
+        const u = (t - k.t0) / k.dur;
+        if (u >= 1 || u < 0) { k.ativo = false; k.s.visible = false; if (u >= 1 && k.fim) k.fim(t); return; }
+        const e = u < 0.5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+        k.s.position.lerpVectors(k.de, k.para, e);
+        k.s.material.opacity = 0.15 + 0.85 * Math.sin(Math.PI * Math.min(1, u * 1.15));
+      });
+    },
+    apagar() { lista.forEach((k) => { k.ativo = false; k.s.visible = false; }); }
+  };
+}
+// Onda que se abre a partir de um ponto (aviso, achado, resposta).
+function criarOndas(pai, n) {
+  const lista = [];
+  for (let i = 0; i < n; i++) {
+    const s = new Sprite(new SpriteMaterial({ map: texAnel(), color: 0xffffff, blending: AdditiveBlending, transparent: true, depthWrite: false, opacity: 0 }));
+    s.visible = false; pai.add(s); lista.push({ s, ativo: false });
+  }
+  return {
+    disparar(pos, cor, t, tam) {
+      const k = lista.find((x) => !x.ativo) || lista[0];
+      k.ativo = true; k.t0 = t; k.tam = tam || 1; k.s.position.copy(pos); k.s.material.color.set(cor); k.s.visible = true;
+    },
+    atualizar(t) {
+      lista.forEach((k) => {
+        if (!k.ativo) return;
+        const u = (t - k.t0) / 1.1;
+        if (u >= 1 || u < 0) { k.ativo = false; k.s.visible = false; return; }
+        k.s.scale.setScalar(k.tam * (0.15 + saiCubica(u) * 1.0));
+        k.s.material.opacity = (1 - u) * 0.9;
+      });
+    }
+  };
+}
+// Legenda em pílula no pé da cena, igual à da Biblioteca.
+function legenda(scene, texto, y) {
+  const et = rotulo(texto, { altura: 0.34, borda: CSS.menta, depthTest: false });
+  et.position.set(0, y, 0.6);
+  et.renderOrder = 10;
+  scene.add(et);
+  return et;
+}
+const tmpC = new Color();
+function pintar(cores, i, hex, k) { tmpC.set(hex); cores[i * 3] = tmpC.r * k; cores[i * 3 + 1] = tmpC.g * k; cores[i * 3 + 2] = tmpC.b * k; }
+
+// ------------------------------------------------------------------ 1. Parecerista — varredura do edital
+// O edital é uma matriz de pontos (cada linha do texto, uma fileira de luz). O feixe lê de cima a baixo; três
+// trechos acendem com a gravidade, sobem os marcadores e mandam pulsos ao núcleo do parecer.
+function cenaParecer() {
+  const { scene, camera } = base(34);
+  const mesa = new Group(), doc = new Group();
+  const LIN = 16, W = 3.3, H = 2.9, PX = 0.082;
+  const larg = [0.55, 0.95, 0.88, 0.92, 0.7, 0.96, 0.84, 0.9, 0.62, 0.94, 0.86, 0.91, 0.74, 0.95, 0.83, 0.5];
+  const pts = [];
+  for (let l = 0; l < LIN; l++) {
+    const y = H / 2 - 0.25 - l * (H - 0.5) / (LIN - 1);
+    const n = Math.floor(((W - 0.4) * larg[l]) / PX);
+    for (let i = 0; i < n; i++) pts.push({ x: -W / 2 + 0.2 + i * PX, y, l, i });
+  }
+  const N = pts.length;
+  const pontos = nuvem(N, 0.12);
+  const P = pontos.geometry.attributes.position.array, C = pontos.geometry.attributes.color.array;
+  pts.forEach((q, k) => { P[k * 3] = q.x; P[k * 3 + 1] = q.y; P[k * 3 + 2] = 0; });
+  doc.add(pontos);
+  // moldura com cantos de mira (HUD)
+  const c = 0.32, x0 = -W / 2, x1 = W / 2, y0 = -H / 2, y1 = H / 2;
+  doc.add(segmentos([
+    x0, y1, 0, x0 + c, y1, 0, x0, y1, 0, x0, y1 - c, 0, x1, y1, 0, x1 - c, y1, 0, x1, y1, 0, x1, y1 - c, 0,
+    x0, y0, 0, x0 + c, y0, 0, x0, y0, 0, x0, y0 + c, 0, x1, y0, 0, x1 - c, y0, 0, x1, y0, 0, x1, y0 + c, 0
+  ], COR.menta, 0.7));
+  doc.add(segmentos([x0, y1, 0, x1, y1, 0, x1, y1, 0, x1, y0, 0, x1, y0, 0, x0, y0, 0, x0, y0, 0, x0, y1, 0], COR.menta, 0.12));
   // feixe de leitura
-  const feixe = new Group();
-  const barra = new Mesh(new BoxGeometry(W + 0.24, 0.035, 0.035), new MeshBasicMaterial({ color: COR.menta }));
-  const halo = new Mesh(new PlaneGeometry(W + 0.5, 0.7), new MeshBasicMaterial({
-    map: textura(16, 128, (g, w, h) => {
-      const r = g.createLinearGradient(0, 0, 0, h);
-      r.addColorStop(0, "rgba(111,224,174,0)"); r.addColorStop(0.5, "rgba(111,224,174,0.75)"); r.addColorStop(1, "rgba(111,224,174,0)");
-      g.fillStyle = r; g.fillRect(0, 0, w, h);
-    }), transparent: true, blending: AdditiveBlending, depthWrite: false
-  }));
-  halo.position.z = 0.02;
-  feixe.add(barra, halo);
-  feixe.position.z = 0.05;
-  pagina.add(feixe);
+  const feixe = segmentos([x0 - 0.15, 0, 0.01, x1 + 0.15, 0, 0.01], COR.menta, 0.95);
+  const brilhoFeixe = brilho(COR.menta, 1.2, 0.5); brilhoFeixe.scale.set(W + 0.6, 0.5, 1);
+  const grupoFeixe = new Group(); grupoFeixe.add(feixe, brilhoFeixe); doc.add(grupoFeixe);
   // achados
-  const achados = [[2, COR.alta, "ALTA", CSS.alta, -0.55], [7, COR.media, "MÉDIA", CSS.media, 0.55], [12, COR.baixa, "BAIXA", CSS.baixa, -0.15]].map(([linha, cor, nome, css, px], k) => {
-    const y = y0 - linha * passo;
-    const marca = new Mesh(new PlaneGeometry(W - 0.3, 0.13), new MeshBasicMaterial({ color: cor, transparent: true, opacity: 0, depthWrite: false }));
-    marca.position.set(0, y, 0.006);
-    const pino = new Group();
-    const haste = new Mesh(new CylinderGeometry(0.012, 0.012, 0.55, 8), new MeshStandardMaterial({ color: 0xffffff, roughness: 0.4 }));
-    haste.rotation.x = Math.PI / 2; haste.position.z = 0.275;
-    const bola = new Mesh(new SphereGeometry(0.1, 24, 16), new MeshStandardMaterial({ color: cor, emissive: cor, emissiveIntensity: 0.45, roughness: 0.3 }));
-    bola.position.z = 0.56;
-    const luz = brilho(cor, 0.7, 0.55); luz.position.z = 0.56;
-    const et = rotulo(nome, { cor: css, borda: css, altura: 0.4, depthTest: false });
-    et.position.set(0.62, 0.0, 0.66);
-    pino.add(haste, bola, luz, et);
-    pino.position.set(px, y, 0);
-    pino.scale.setScalar(0.001);
-    pagina.add(marca, pino);
-    return { y, marca, pino };
+  const ACH = [[3, 2, 13, COR.alta, "ALTA", CSS.alta], [8, 20, 31, COR.media, "MÉDIA", CSS.media], [13, 10, 21, COR.baixa, "BAIXA", CSS.baixa]].map(([l, a, b, cor, nome, css]) => {
+    const meus = []; pts.forEach((q, k) => { if (q.l === l && q.i >= a && q.i <= b) meus.push(k); });
+    const cx = pts[meus[Math.floor(meus.length / 2)]].x, y = pts[meus[0]].y;
+    const haste = segmentos([cx, y, 0, cx, y, 1.0], cor, 0.8);
+    const no = brilho(cor, 0.55, 0.9); no.position.set(cx, y, 1.0);
+    const et = rotulo(nome, { cor: css, borda: css, altura: 0.36, depthTest: false });
+    et.position.set(cx + 0.55, y, 1.05); et.renderOrder = 10;
+    const g = new Group(); g.add(haste, no, et); g.scale.set(1, 1, 0.001); g.visible = false;
+    doc.add(g);
+    return { l, y, cor, meus, g, no, topo: new Vector3(), disparou: false };
   });
-  // a folha fica deitada sobre a "mesa" e os alfinetes ficam em pé
-  pagina.rotation.x = -1.02;
-  const mesa = new Group();
-  mesa.add(pagina);
-  mesa.rotation.y = 0.38;
-  mesa.position.set(-0.35, 0.2, 0);
+  doc.rotation.x = -1.0;
+  mesa.add(doc);
+  mesa.rotation.y = 0.3;
+  mesa.position.set(-0.6, -0.1, 0);
   scene.add(mesa);
-  const ciclo = 7.2, topo = H / 2 - 0.25, fundo = -H / 2 + 0.35;
+  const parecer = nucleo(0.32); parecer.position.set(2.55, 0.8, 0.2); scene.add(parecer);
+  const etP = rotulo("Parecer", { altura: 0.32, borda: CSS.menta, depthTest: false }); etP.position.set(2.55, 0.17, 0.3); etP.renderOrder = 10; scene.add(etP);
+  const fios = segmentos(new Array(18).fill(0), COR.menta, 0.25); scene.add(fios);
+  const pulsos = criarPulsos(scene, 8, 0.36), ondas = criarOndas(scene, 4);
+  legenda(scene, "Edital lido item a item → parecer", -1.75);
+  const ciclo = 8.5, topo = H / 2 - 0.1, fundo = -H / 2 + 0.1, LEITURA = 3.6;
+  let ultC = 99, flash = 0;
   return {
-    scene, camera, tParado: 4.5,
+    scene, camera, tParado: 5.2,
     update(t, dt, p) {
       const c = t % ciclo;
-      const yScan = topo + (fundo - topo) * suave(0, 3.4, c);
-      feixe.position.y = yScan;
-      const some = suave(6.3, 7.0, c);
-      feixe.visible = c < 3.6;
-      achados.forEach((a, k) => {
-        const tAcende = 3.4 * (topo - a.y) / (topo - fundo);
-        const v = lim((c - tAcende) / 0.55, 0, 1);
-        a.marca.material.opacity = 0.42 * saiCubica(v) * (1 - some);
-        const s = Math.max(0.001, saiVolta(v) * (1 - some));
-        a.pino.scale.setScalar(s);
-        a.pino.position.z = 0.04 * Math.sin(t * 2 + k);
+      if (c < ultC) { ACH.forEach((a) => { a.disparou = false; }); pulsos.apagar(); }
+      ultC = c;
+      const ys = topo + (fundo - topo) * suave(0, LEITURA, c);
+      grupoFeixe.position.y = ys;
+      grupoFeixe.visible = c < LEITURA + 0.2;
+      const some = suave(7.4, 8.2, c);
+      mesa.updateMatrixWorld();
+      ACH.forEach((a, k) => {
+        const tA = LEITURA * (topo - a.y) / (topo - fundo);
+        const v = lim((c - tA) / 0.5, 0, 1) * (1 - some);
+        a.v = v;
+        a.g.visible = v > 0.001;
+        a.g.scale.set(1, 1, Math.max(0.001, saiVolta(v)));
+        a.no.scale.setScalar(0.55 * (1 + 0.15 * Math.sin(t * 4 + k)));
+        a.topo.set(pts[a.meus[Math.floor(a.meus.length / 2)]].x, a.y, 1.0);
+        doc.localToWorld(a.topo);
+        if (!a.disparou && c > LEITURA + 0.4 + k * 0.35 && c < 7) {
+          a.disparou = true;
+          pulsos.disparar(a.topo, parecer.position, 1.0, a.cor, t, (tt) => { flash = 1; ondas.disparar(parecer.position, COR.menta, tt, 1.6); });
+        }
       });
-      mesa.position.y = 0.2 + 0.06 * Math.sin(t * 0.9);
-      mirar(camera, p, 8.6, new Vector3(0, 0.1, 0), { ang: 0.05, alt: 0.2 });
-    }
-  };
-}
-
-// ------------------------------------------------------------------ 2. Elaborador
-function cenaElaborador() {
-  const { scene, camera } = base(30);
-  const secoes = ["Descrição da necessidade", "Requisitos da contratação", "Estimativa das quantidades", "Estimativa do valor", "Justificativa do parcelamento"];
-  const grupo = new Group();
-  const LW = 2.9, LD = 1.75, LH = 0.07, VAO = 0.13;
-  const geo = new RoundedBoxGeometry(LW, LH, LD, 2, 0.03);
-  const laterais = new MeshStandardMaterial({ color: COR.papel, roughness: 0.7 });
-  const folhas = secoes.map((titulo, i) => {
-    const tex = textura(640, 386, (g, w, h) => {
-      g.fillStyle = "#F7FAF9"; g.fillRect(0, 0, w, h);
-      g.beginPath(); g.arc(70, 78, 34, 0, Math.PI * 2); g.fillStyle = "#0FA36B"; g.fill();
-      g.font = "800 36px " + FONTE; g.fillStyle = "#fff"; g.textAlign = "center"; g.textBaseline = "middle";
-      g.fillText(String(i + 1), 70, 80);
-      g.textAlign = "left"; g.fillStyle = "#0F3431"; g.font = "800 34px " + FONTE;
-      g.fillText(titulo, 124, 80);
-      g.fillStyle = "#CFDCD8";
-      [0.86, 0.74, 0.9, 0.6].forEach((f, k) => { caixa(g, 40, 150 + k * 50, (w - 80) * f, 16, 8); g.fill(); });
-    });
-    const topoMat = new MeshStandardMaterial({ map: tex, roughness: 0.7 });
-    const m = new Mesh(geo, [laterais, laterais, topoMat, laterais, laterais, laterais]);
-    const borda = new Mesh(new BoxGeometry(LW + 0.04, 0.012, LD + 0.04), new MeshBasicMaterial({ color: COR.menta, transparent: true, opacity: 0 }));
-    borda.position.y = -LH / 2 - 0.004;
-    m.add(borda);
-    m.userData = { borda, alvoY: i * VAO };
-    grupo.add(m);
-    return m;
-  });
-  // caneta: escreve na folha de cima
-  const caneta = new Group();
-  const corpo = new Mesh(new CylinderGeometry(0.06, 0.06, 1.0, 20), new MeshStandardMaterial({ color: 0x0f3431, roughness: 0.35, metalness: 0.2 }));
-  const anel = new Mesh(new CylinderGeometry(0.065, 0.065, 0.12, 20), new MeshStandardMaterial({ color: COR.menta, roughness: 0.3, metalness: 0.4 }));
-  anel.position.y = -0.38;
-  const ponta = new Mesh(new ConeGeometry(0.06, 0.2, 20), new MeshStandardMaterial({ color: 0xd9e4e0, metalness: 0.7, roughness: 0.25 }));
-  ponta.position.y = -0.6; ponta.rotation.x = Math.PI;
-  caneta.add(corpo, anel, ponta);
-  caneta.rotation.set(0.35, 0, -0.45);
-  grupo.add(caneta);
-  // saídas: Word e PDF
-  const saidas = [["W", COR.word, -1], ["PDF", COR.pdf, 1]].map(([txt, cor, lado]) => {
-    const tex = textura(256, 320, (g, w, h) => {
-      g.fillStyle = "#fff"; caixa(g, 0, 0, w, h, 26); g.fill();
-      g.fillStyle = "#" + new Color(cor).getHexString(); caixa(g, 0, 0, w, 120, 26); g.fill(); g.fillRect(0, 60, w, 60);
-      g.fillStyle = "#fff"; g.font = "800 64px " + FONTE; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(txt, w / 2, 64);
-      g.fillStyle = "#D5DFDC"; [0.8, 0.65, 0.75].forEach((f, k) => { caixa(g, 30, 160 + k * 40, (w - 60) * f, 14, 7); g.fill(); });
-    });
-    const m = new Mesh(new PlaneGeometry(0.62, 0.78), new MeshStandardMaterial({ map: tex, transparent: true, side: DoubleSide, roughness: 0.6 }));
-    m.userData.lado = lado;
-    m.scale.setScalar(0.001);
-    grupo.add(m);
-    return m;
-  });
-  grupo.position.set(0, 0.25, 0);
-  scene.add(grupo);
-  const ciclo = 8.5;
-  return {
-    scene, camera, tParado: 6.0,
-    update(t, dt, p) {
-      const c = t % ciclo;
-      const sobe = suave(7.6, 8.4, c);
-      let topoY = -0.2;
-      folhas.forEach((f, i) => {
-        const t0 = 0.25 + i * 0.75;
-        const v = lim((c - t0) / 0.7, 0, 1);
-        const y = f.userData.alvoY + (1 - quique(v)) * 2.4 + sobe * (1.2 + i * 0.25);
-        f.position.y = y;
-        f.rotation.y = (1 - saiCubica(v)) * 0.6 * (i % 2 ? 1 : -1);
-        f.visible = v > 0;
-        const brilhoBorda = lim((c - t0 - 0.6) / 0.3, 0, 1) * (1 - suave(t0 + 1.2, t0 + 2.4, c) * 0.7);
-        f.userData.borda.material.opacity = brilhoBorda * (1 - sobe);
-        if (v > 0) topoY = Math.max(topoY, y);
-      });
-      // a caneta segue a folha de cima e rabisca
-      caneta.position.set(0.55 + 0.35 * Math.sin(t * 5.2), topoY + 0.72 + 0.05 * Math.abs(Math.sin(t * 10.4)), 0.1 + 0.18 * Math.cos(t * 2.6));
-      caneta.visible = c < 4.6 && c > 0.3;
-      saidas.forEach((s, k) => {
-        const v = lim((c - 4.6 - k * 0.25) / 0.6, 0, 1) * (1 - suave(7.3, 7.9, c));
-        s.scale.setScalar(Math.max(0.001, saiVolta(v)));
-        s.position.set(s.userData.lado * (1.95 + 0.05 * Math.sin(t * 1.4 + k)), 0.55 + v * 0.35 + 0.05 * Math.sin(t * 1.7 + k), 0.2);
-        s.rotation.set(-0.15, -s.userData.lado * 0.35 + 0.08 * Math.sin(t + k), 0);
-      });
-      grupo.rotation.y = -0.35 + 0.06 * Math.sin(t * 0.5);
-      mirar(camera, p, 8.4, new Vector3(0, 0.5, 0), { alt: 0.42, ang: 0.15 });
-    }
-  };
-}
-
-// ------------------------------------------------------------------ 3. Calculadora
-// A planilha do posto como uma coluna dos 6 módulos da IN 05/2017: um módulo por vez sai como uma gaveta,
-// com o nome e o valor; no alto, o valor mensal e o arco do reajuste pelo IPCA.
-function cenaCalculadora() {
-  const { scene, camera } = base(32);
-  const mods = [["Módulo 1 · Remuneração", 2512.4], ["Módulo 2 · Encargos", 2268.13], ["Módulo 3 · Rescisão", 196.07], ["Módulo 4 · Reposição", 412.55], ["Módulo 5 · Insumos", 318.9], ["Módulo 6 · Indiretos e tributos", 1244.61]];
-  const total = mods.reduce((t, m) => t + m[1], 0);
-  const ALT = 2.5, LADO = 1.1, X0 = -1.15;
-  const brl = (v) => "R$ " + v.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  const coluna = new Group();
-  const cores = [0x0b6b4b, 0x0f8a5f, 0x14a873, 0x2fbf86, 0x55d29d, 0x8be3bb];
-  let acc = 0;
-  const camadas = mods.map(([nome, v], i) => {
-    const h = Math.max(0.09, ALT * v / total);
-    const m = new Mesh(new RoundedBoxGeometry(LADO, h - 0.012, LADO, 2, Math.min(0.05, h / 2.4)), new MeshStandardMaterial({ color: cores[i], roughness: 0.38, metalness: 0.08, emissive: COR.menta, emissiveIntensity: 0 }));
-    const y = acc + h / 2;
-    acc += h;
-    m.position.y = y;
-    const et = rotulo(nome + "  " + brl(v), { altura: 0.42, ponto: "#" + new Color(cores[i]).getHexString(), depthTest: false });
-    et.material.opacity = 0;
-    coluna.add(m);
-    scene.add(et);
-    return { m, et, y, h };
-  });
-  coluna.position.set(X0, -0.75, 0);
-  // piso em grade de planilha
-  const linhas = [];
-  for (let i = -5; i <= 5; i++) linhas.push(-4, 0, i * 0.5, 4, 0, i * 0.5);
-  for (let i = -8; i <= 8; i++) linhas.push(i * 0.5, 0, -2.5, i * 0.5, 0, 2.5);
-  const gGrade = new BufferGeometry(); gGrade.setAttribute("position", new Float32BufferAttribute(linhas, 3));
-  const grade = new LineSegments(gGrade, new LineBasicMaterial({ color: COR.menta, transparent: true, opacity: 0.16 }));
-  grade.position.y = coluna.position.y - 0.01;
-  // arco do reajuste no alto da coluna
-  const anelFundo = new Mesh(new TorusGeometry(0.88, 0.025, 8, 80), new MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.14 }));
-  const anelArco = new Mesh(new TorusGeometry(0.88, 0.05, 10, 80, 0.001), new MeshBasicMaterial({ color: COR.menta }));
-  const anel = new Group(); anel.add(anelFundo, anelArco);
-  anel.rotation.x = Math.PI / 2;
-  anel.position.set(X0, coluna.position.y + ALT + 0.12, 0);
-  const valor = rotulo("Valor do posto  R$ 6.952,66", { altura: 0.44, fundo: "rgba(7,30,28,0.92)", borda: CSS.menta, depthTest: false });
-  valor.position.set(X0 + 0.2, coluna.position.y + ALT + 0.62, 0);
-  const reaj = rotulo("IPCA  +4,87%", { altura: 0.4, cor: "#0A2826", fundo: CSS.menta, depthTest: false });
-  reaj.position.set(X0 - 1.55, coluna.position.y + ALT - 0.1, 0);
-  scene.add(grade, coluna, anel, valor, reaj);
-  const PASSO = 1.25, ciclo = PASSO * 6 + 1.2;
-  let arcoAtual = -1;
-  return {
-    scene, camera, tParado: 1.0 + PASSO * 0.55,
-    update(t, dt, p) {
-      const c = t % ciclo;
-      camadas.forEach((k, i) => {
-        const t0 = 0.6 + i * PASSO;
-        const v = suave(t0, t0 + 0.35, c) * (1 - suave(t0 + PASSO - 0.3, t0 + PASSO, c));
-        k.m.position.x = v * 0.75;
-        k.m.position.z = v * 0.55;
-        k.m.material.emissiveIntensity = v * 0.35;
-        k.et.material.opacity = v;
-        k.et.position.set(X0 + 0.75 + LADO / 2 + 0.25 + k.et.scale.x / 2, coluna.position.y + k.y, 0.55);
-      });
-      const arco = Math.max(0.001, Math.PI * 2 * 0.62 * saiCubica(suave(0.1, 1.2, c)) * (1 - suave(ciclo - 0.7, ciclo - 0.1, c)));
-      if (Math.abs(arco - arcoAtual) > 0.01) {
-        anelArco.geometry.dispose();
-        anelArco.geometry = new TorusGeometry(0.88, 0.05, 10, 80, arco);
-        arcoAtual = arco;
+      // brilho de cada ponto: base fraca, o feixe acende ao passar, o achado fica na cor da gravidade
+      const marca = new Map(); ACH.forEach((a) => a.meus.forEach((k) => marca.set(k, a)));
+      for (let k = 0; k < N; k++) {
+        const q = pts[k], d = (q.y - ys) / 0.13, f = c < LEITURA + 0.2 ? Math.exp(-d * d) : 0;
+        const a = marca.get(k);
+        if (a && a.v > 0) { pintar(C, k, a.cor, 0.8 + 0.8 * a.v); P[k * 3 + 2] = 0.05 * a.v * (1 + Math.sin(t * 3 + q.i * 0.4)); }
+        else { pintar(C, k, COR.menta, 0.55 + 1.1 * f + (q.y > ys && c < LEITURA ? 0 : 0.2)); P[k * 3 + 2] = 0; }
       }
-      reaj.material.opacity = suave(0.6, 1.1, c) * (1 - suave(ciclo - 0.8, ciclo - 0.3, c));
-      coluna.rotation.y = 0.18 * Math.sin(t * 0.4);
-      mirar(camera, p, 10.6, new Vector3(0.55, 0.95, 0), { alt: 0.24, ang: -0.12 });
+      pontos.geometry.attributes.color.needsUpdate = true;
+      pontos.geometry.attributes.position.needsUpdate = true;
+      // fios dos marcadores ao núcleo
+      const F = fios.geometry.attributes.position.array;
+      ACH.forEach((a, k) => { F.set([a.topo.x, a.topo.y, a.topo.z, parecer.position.x, parecer.position.y, parecer.position.z], k * 6); });
+      fios.geometry.attributes.position.needsUpdate = true;
+      fios.material.opacity = 0.28 * Math.max(...ACH.map((a) => a.v));
+      flash = Math.max(0, flash - (dt || 0) * 1.5);
+      girarNucleo(parecer, t, flash);
+      pulsos.atualizar(t); ondas.atualizar(t);
+      mesa.position.y = -0.1 + 0.05 * Math.sin(t * 0.9);
+      mirar(camera, p, 7.8, new Vector3(0.25, 0.1, 0), { ang: 0.0, alt: 0.24 });
     }
   };
 }
 
-// ------------------------------------------------------------------ 4. Gestão Contratual
+// ------------------------------------------------------------------ 2. Elaborador — do questionário à minuta
+// Uma nuvem solta (as respostas) se organiza seção por seção até virar a minuta; o PNCP alimenta a estimativa do valor.
+function cenaElaborador() {
+  const { scene, camera } = base(34);
+  const doc = new Group();
+  const SEC = 5, ROWS = 3, PX = 0.085, RY = 0.115, GAP = 0.2, W = 2.9;
+  const larg = [[0.9, 0.82, 0.6], [0.94, 0.7, 0.86], [0.8, 0.92, 0.55], [0.88, 0.95, 0.72], [0.93, 0.66, 0.84]];
+  const alvos = [], secoes = [];
+  const altura = SEC * (ROWS * RY + GAP);
+  for (let s = 0; s < SEC; s++) {
+    const yS = altura / 2 - s * (ROWS * RY + GAP) - 0.05;
+    secoes.push({ y: yS, ini: alvos.length });
+    for (let r = 0; r < ROWS; r++) {
+      const n = Math.floor(((W - 0.45) * larg[s][r]) / PX);
+      for (let i = 0; i < n; i++) alvos.push({ x: -W / 2 + 0.45 + i * PX, y: yS - r * RY, s });
+    }
+    secoes[s].fim = alvos.length;
+  }
+  const N = alvos.length, AMB = TOQUE ? 140 : 260;
+  const pontos = nuvem(N + AMB, 0.12);
+  const P = pontos.geometry.attributes.position.array, C = pontos.geometry.attributes.color.array;
+  // posição solta de cada ponto: uma nuvem à esquerda que gira devagar
+  const solto = [];
+  let semente = 7;
+  const rnd = () => { semente = (semente * 16807) % 2147483647; return semente / 2147483647; };
+  for (let k = 0; k < N + AMB; k++) {
+    const r = 0.5 + rnd() * 1.6, a = rnd() * Math.PI * 2, y = (rnd() - 0.5) * 2.4;
+    solto.push({ r, a, y, vel: 0.15 + rnd() * 0.25, atraso: rnd() * 0.45 });
+  }
+  doc.add(pontos);
+  // número de cada seção: um nó que acende quando a seção fecha
+  const nos = secoes.map((s, i) => {
+    const n = brilho(COR.menta, 0.42, 0); n.position.set(-W / 2 + 0.15, s.y - RY, 0);
+    const et = rotulo(String(i + 1), { altura: 0.3, fundo: "rgba(7,30,28,0.9)", borda: CSS.menta, depthTest: false });
+    et.position.set(-W / 2 + 0.15, s.y - RY, 0.02); et.material.opacity = 0; et.renderOrder = 10;
+    doc.add(n, et);
+    return { n, et };
+  });
+  // moldura da minuta
+  const x0 = -W / 2 - 0.1, x1 = W / 2 + 0.1, y0 = -altura / 2 - 0.15, y1 = altura / 2 + 0.15, c = 0.28;
+  const moldura = segmentos([
+    x0, y1, 0, x0 + c, y1, 0, x0, y1, 0, x0, y1 - c, 0, x1, y1, 0, x1 - c, y1, 0, x1, y1, 0, x1, y1 - c, 0,
+    x0, y0, 0, x0 + c, y0, 0, x0, y0, 0, x0, y0 + c, 0, x1, y0, 0, x1 - c, y0, 0, x1, y0, 0, x1, y0 + c, 0
+  ], COR.menta, 0);
+  doc.add(moldura);
+  doc.position.set(0.85, 0.2, 0);
+  doc.rotation.y = -0.28;
+  scene.add(doc);
+  // PNCP em órbita, alimentando a seção 4 (estimativa do valor)
+  const pncp = nucleo(0.17, COR.media); scene.add(pncp);
+  const etPncp = rotulo("PNCP", { altura: 0.28, cor: CSS.media, borda: CSS.media, depthTest: false }); etPncp.renderOrder = 10; scene.add(etPncp);
+  const pulsos = criarPulsos(scene, 10, 0.3);
+  const saida = rotulo("Word · PDF", { altura: 0.34, cor: "#0A2826", fundo: CSS.menta, depthTest: false }); saida.renderOrder = 10; scene.add(saida);
+  legenda(scene, "Respostas do questionário → minuta do ETP", -1.85);
+  const ciclo = 10, T0 = 0.6, PASSO = 0.85, DUR = 1.1;
+  let proxPncp = 0, ultC = 99;
+  const alvoV = new Vector3();
+  return {
+    scene, camera, tParado: 6.6,
+    update(t, dt, p) {
+      const c = t % ciclo;
+      if (c < ultC) proxPncp = 0;
+      ultC = c;
+      const volta = suave(8.6, 9.6, c);
+      for (let k = 0; k < N + AMB; k++) {
+        const s = solto[k], ang = s.a + t * s.vel;
+        const sx = -1.6 + Math.cos(ang) * s.r * 0.75, sz = Math.sin(ang) * s.r * 0.6, sy = s.y + 0.08 * Math.sin(t + k);
+        // nuvem em coordenadas do documento (o grupo do documento está deslocado e girado)
+        let x = sx - doc.position.x, y = sy - doc.position.y, z = sz;
+        let brilhoP = 0.2;
+        if (k < N) {
+          const q = alvos[k];
+          const v = saiCubica(lim((c - T0 - q.s * PASSO - s.atraso) / DUR, 0, 1)) * (1 - volta);
+          x += (q.x - x) * v; y += (q.y - y) * v; z += (0 - z) * v;
+          brilhoP = 0.7 + 0.8 * v;
+          pintar(C, k, v > 0.98 ? 0xd9fff0 : COR.menta, brilhoP);
+        } else pintar(C, k, COR.menta, 0.42);
+        P[k * 3] = x; P[k * 3 + 1] = y; P[k * 3 + 2] = z;
+      }
+      pontos.geometry.attributes.position.needsUpdate = true;
+      pontos.geometry.attributes.color.needsUpdate = true;
+      nos.forEach((n, i) => {
+        const v = lim((c - T0 - i * PASSO - DUR - 0.2) / 0.4, 0, 1) * (1 - volta);
+        n.n.material.opacity = v * 0.9; n.et.material.opacity = v;
+      });
+      moldura.material.opacity = 0.75 * suave(T0 + 4 * PASSO + DUR, T0 + 4 * PASSO + DUR + 0.6, c) * (1 - volta);
+      // PNCP: orbita e manda preços para a seção 4 enquanto ela se forma
+      const ang = t * 0.9;
+      pncp.position.set(2.75 + 0.25 * Math.cos(ang), 1.2 + 0.25 * Math.sin(ang), 0.3);
+      etPncp.position.set(pncp.position.x, pncp.position.y + 0.42, 0.4);
+      girarNucleo(pncp, t, 0);
+      const t4 = T0 + 3 * PASSO;
+      if (c > t4 - 0.6 && c < t4 + 1.4 && c >= proxPncp) {
+        proxPncp = c + 0.28;
+        alvoV.set(0.6 * (Math.random() - 0.2), secoes[3].y - RY, 0); doc.localToWorld(alvoV);
+        pulsos.disparar(pncp.position, alvoV, 0.7, COR.media, t);
+      }
+      pulsos.atualizar(t);
+      const vs = suave(T0 + 4 * PASSO + DUR + 0.3, T0 + 4 * PASSO + DUR + 0.9, c) * (1 - volta);
+      saida.material.opacity = vs;
+      saida.position.set(doc.position.x + 0.2, doc.position.y + altura / 2 + 0.5 + 0.1 * (1 - vs), 0.3);
+      doc.rotation.y = -0.28 + 0.06 * Math.sin(t * 0.4);
+      mirar(camera, p, 8.8, new Vector3(0.35, 0.05, 0), { alt: 0.08, ang: 0.05 });
+    }
+  };
+}
+
+// ------------------------------------------------------------------ 3. Calculadora — superfície de índices
+// Uma superfície de dados ondula; 12 colunas de luz sobem com o IPCA de cada mês e a curva acumulada se desenha
+// até o reajuste aplicado ao valor do posto.
+function cenaCalculadora() {
+  const { scene, camera } = base(34);
+  const GX = TOQUE ? 34 : 46, GZ = TOQUE ? 16 : 20, LX = 6.6, LZ = 3.0;
+  const sup = nuvem(GX * GZ, 0.09);
+  const S = sup.geometry.attributes.position.array, SC = sup.geometry.attributes.color.array;
+  const mundo = new Group(); mundo.add(sup);
+  const IPCA = [0.42, 0.31, 0.38, 0.43, 0.26, 0.24, 0.21, 0.44, 0.48, 0.56, 0.62, 0.39];
+  const MESES = ["out", "nov", "dez", "jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set"];
+  const ESC = 2.1, ALT = 14, colX = (i) => -2.75 + i * 0.5;
+  const col = nuvem(12 * ALT, 0.12);
+  const CP = col.geometry.attributes.position.array, CC = col.geometry.attributes.color.array;
+  mundo.add(col);
+  const topos = IPCA.map((v, i) => { const n = brilho(COR.menta, 0.38, 0); n.position.set(colX(i), 0, 0.3); mundo.add(n); return n; });
+  // curva acumulada
+  let acc = 1; const acum = IPCA.map((v) => (acc *= 1 + v / 100) - 1);
+  const curvaPts = acum.map((a, i) => new Vector3(colX(i), 0.35 + a * 100 * 0.42, -0.6));
+  const curva = new Line(new BufferGeometry().setFromPoints(curvaPts), new LineBasicMaterial({ color: COR.menta, transparent: true, opacity: 0.95, blending: AdditiveBlending, toneMapped: false }));
+  mundo.add(curva);
+  const nosCurva = curvaPts.map((q) => { const s = brilho(COR.menta, 0.26, 0); s.position.copy(q); mundo.add(s); return s; });
+  const etIdx = rotulo("IPCA · 12 meses", { altura: 0.32, borda: CSS.menta, depthTest: false }); etIdx.renderOrder = 10;
+  etIdx.position.set(-2.6, 1.55, -0.6); mundo.add(etIdx);
+  const etFim = rotulo("+4,87%  →  R$ 6.952,66", { altura: 0.36, cor: "#0A2826", fundo: CSS.menta, depthTest: false }); etFim.renderOrder = 10;
+  mundo.add(etFim);
+  const etMeses = [0, 3, 6, 9, 11].map((i) => { const e = rotulo(MESES[i], { altura: 0.22, fundo: "rgba(7,30,28,0.7)", cor: "#C3D9D3", peso: 700 }); e.position.set(colX(i), -0.32, 0.75); mundo.add(e); return e; });
+  void etMeses;
+  mundo.position.y = -0.55;
+  scene.add(mundo);
+  legenda(scene, "Índice oficial → reajuste calculado", -1.95);
+  const ciclo = 9, T0 = 0.4, PASSO = 0.24;
+  return {
+    scene, camera, tParado: 5.5,
+    update(t, dt, p) {
+      const c = t % ciclo, some = suave(8.0, 8.8, c);
+      for (let ix = 0; ix < GX; ix++) for (let iz = 0; iz < GZ; iz++) {
+        const k = ix * GZ + iz, x = -LX / 2 + (ix / (GX - 1)) * LX, z = -LZ / 2 + (iz / (GZ - 1)) * LZ;
+        const y = 0.09 * Math.sin(x * 1.3 + t * 0.9) + 0.07 * Math.cos(z * 2.1 - t * 0.7);
+        S[k * 3] = x; S[k * 3 + 1] = y - 0.12; S[k * 3 + 2] = z;
+        pintar(SC, k, COR.menta, 0.42 + (y + 0.16) * 2.4);
+      }
+      sup.geometry.attributes.position.needsUpdate = true;
+      sup.geometry.attributes.color.needsUpdate = true;
+      IPCA.forEach((v, i) => {
+        const g = saiCubica(lim((c - T0 - i * PASSO) / 0.55, 0, 1)) * (1 - some);
+        const h = v * ESC * g;
+        for (let j = 0; j < ALT; j++) {
+          const k = i * ALT + j, f = j / (ALT - 1);
+          CP[k * 3] = colX(i); CP[k * 3 + 1] = f * h; CP[k * 3 + 2] = 0.3;
+          pintar(CC, k, i === 10 ? COR.media : COR.menta, g > 0 ? 0.6 + 1.0 * f : 0);
+        }
+        topos[i].position.y = h; topos[i].material.opacity = g * 0.85;
+      });
+      col.geometry.attributes.position.needsUpdate = true;
+      col.geometry.attributes.color.needsUpdate = true;
+      const prog = lim((c - T0 - 0.3) / (12 * PASSO + 0.3), 0, 1) * (1 - some);
+      const nCurva = Math.max(0, Math.min(12, Math.floor(prog * 12) + 1));
+      curva.geometry.setDrawRange(0, prog > 0 ? nCurva : 0);
+      nosCurva.forEach((s, i) => { s.material.opacity = i < nCurva && prog > 0 ? 0.9 : 0; });
+      const fim = suave(T0 + 12 * PASSO + 0.4, T0 + 12 * PASSO + 1.0, c) * (1 - some);
+      etFim.material.opacity = fim;
+      etFim.position.set(colX(11) - 0.4, curvaPts[11].y + 0.5 + 0.1 * (1 - fim), -0.6);
+      etIdx.material.opacity = 1 - some;
+      mundo.rotation.y = 0.05 * Math.sin(t * 0.35);
+      mirar(camera, p, 9.2, new Vector3(0, 0.1, 0), { alt: 0.42, ang: -0.18 });
+    }
+  };
+}
+
+// ------------------------------------------------------------------ 4. Gestão Contratual — radar de prazos
+// Cada anel é um contrato da carteira e o ponteiro é o tempo (uma volta, 12 meses). Quando passa por um marco,
+// o ponto acende, solta uma onda e o aviso viaja até o núcleo da carteira, que o envia por e-mail.
 function cenaGestao() {
   const { scene, camera } = base(34);
-  const curva = new CatmullRomCurve3([
-    new Vector3(-4.2, -0.6, 1.4), new Vector3(-2.2, -0.2, 0.2), new Vector3(0, 0.1, -0.4),
-    new Vector3(2.0, 0.5, -1.2), new Vector3(4.0, 1.0, -2.6)
-  ]);
-  const trilho = new Mesh(new TubeGeometry(curva, 160, 0.035, 10, false), new MeshBasicMaterial({ color: COR.menta, transparent: true, opacity: 0.55 }));
-  scene.add(trilho);
-  // meses
-  const MESES = ["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"];
-  const geoMes = new BoxGeometry(0.16, 0.04, 0.16);
-  const matMes = new MeshStandardMaterial({ color: 0xffffff, roughness: 0.5 });
-  MESES.forEach((m, i) => { void m;
-    const u = (i + 0.5) / 12, pos = curva.getPointAt(u);
-    const cubo = new Mesh(geoMes, matMes); cubo.position.copy(pos); scene.add(cubo);
+  const disco = new Group();
+  const RAIOS = [0.85, 1.3, 1.75, 2.2], STATUS = [COR.menta, COR.menta, COR.media, COR.alta];
+  RAIOS.forEach((r, i) => disco.add(segmentos(circulo(r, 96), STATUS[i], i < 2 ? 0.35 : 0.45)));
+  // meses na borda
+  const marcas = [];
+  for (let m = 0; m < 12; m++) {
+    const a = (m / 12) * Math.PI * 2, r0 = 2.42, r1 = m % 3 === 0 ? 2.68 : 2.55;
+    marcas.push(Math.cos(a) * r0, 0, Math.sin(a) * r0, Math.cos(a) * r1, 0, Math.sin(a) * r1);
+  }
+  disco.add(segmentos(marcas, COR.menta, 0.5));
+  disco.add(segmentos(circulo(2.42, 120), COR.menta, 0.12));
+  // ponteiro com rastro
+  const RASTRO = 26, rastro = [];
+  for (let k = 0; k < RASTRO; k++) { const d = -k * 0.035; rastro.push(0, 0, 0, Math.cos(d) * 2.42, 0, Math.sin(d) * 2.42); }
+  const gR = new BufferGeometry(); gR.setAttribute("position", new Float32BufferAttribute(rastro, 3));
+  const coresR = []; for (let k = 0; k < RASTRO; k++) { const f = Math.pow(1 - k / RASTRO, 2.2) * (k === 0 ? 1.4 : 0.55); coresR.push(0, 0, 0, 0.44 * f, 0.88 * f, 0.68 * f); }
+  gR.setAttribute("color", new Float32BufferAttribute(coresR, 3));
+  const ponteiro = new LineSegments(gR, new LineBasicMaterial({ vertexColors: true, transparent: true, blending: AdditiveBlending, depthWrite: false, toneMapped: false }));
+  disco.add(ponteiro);
+  // marcos de cada contrato
+  const MARCOS = [
+    [0, 0.7, COR.media, "Reajuste · Vigilância", CSS.media], [1, 2.2, COR.menta, "Prorrogação · Limpeza", CSS.menta],
+    [2, 3.6, COR.baixa, "Repactuação · Manutenção", CSS.baixa], [3, 5.0, COR.alta, "Fim da vigência · Impressão", CSS.alta],
+    [1, 4.3, COR.media, "Reajuste · Limpeza", CSS.media], [2, 0.2, COR.menta, "Prorrogação · Manutenção", CSS.menta]
+  ].map(([anel, a, cor, nome, css]) => {
+    const r = RAIOS[anel], pos = new Vector3(Math.cos(a) * r, 0, Math.sin(a) * r);
+    const no = brilho(cor, 0.36, 0.75); no.position.copy(pos); disco.add(no);
+    const et = rotulo(nome, { altura: 0.3, cor: css, borda: css, depthTest: false }); et.renderOrder = 10; et.material.opacity = 0; scene.add(et);
+    return { a, cor, pos, no, et, calor: 0, mundo: new Vector3() };
   });
-  // portais: reajuste, repactuação, prorrogação
-  const portais = [[0.3, COR.media, "Reajuste", CSS.media], [0.6, COR.baixa, "Repactuação", CSS.baixa], [0.86, COR.menta, "Prorrogação", CSS.menta]].map(([u, cor, nome, css]) => {
-    const pos = curva.getPointAt(u), tan = curva.getTangentAt(u);
-    const anel = new Mesh(new TorusGeometry(0.42, 0.04, 12, 48), new MeshStandardMaterial({ color: cor, emissive: cor, emissiveIntensity: 0.3, roughness: 0.3 }));
-    anel.position.copy(pos);
-    anel.lookAt(pos.clone().add(tan));
-    const luz = brilho(cor, 1.4, 0.0); luz.position.copy(pos);
-    const et = rotulo(nome, { altura: 0.4, borda: css, cor: css });
-    et.position.copy(pos).add(new Vector3(0, 0.82, 0));
-    scene.add(anel, luz, et);
-    return { u, anel, luz, cor };
-  });
-  // contratos
-  const contratos = [[COR.verde, 0.0, 0.055], [COR.media, 0.38, 0.045], [COR.alta, 0.7, 0.05]].map(([cor, u0, vel]) => {
-    const g = new Group();
-    const m = new Mesh(new CapsuleGeometry(0.13, 0.36, 6, 16), new MeshStandardMaterial({ color: cor, emissive: cor, emissiveIntensity: 0.25, roughness: 0.3 }));
-    m.rotation.z = Math.PI / 2;
-    const l = brilho(cor, 0.9, 0.5);
-    g.add(m, l);
-    scene.add(g);
-    return { g, u0, vel };
-  });
-  const tmp = new Vector3();
+  disco.rotation.x = 0.42;
+  disco.position.y = -0.15;
+  scene.add(disco);
+  const carteira = nucleo(0.3); carteira.position.copy(disco.position); scene.add(carteira);
+  const pulsos = criarPulsos(scene, 10, 0.34), ondas = criarOndas(scene, 6);
+  legenda(scene, "Carteira em 12 meses · aviso antes do prazo", -2.05);
+  const VOLTA = 8;
+  let angAnt = null, flash = 0;
+  const cima = new Vector3();
   return {
-    scene, camera, tParado: 3.0,
+    scene, camera, tParado: 2.6,
     update(t, dt, p) {
-      portais.forEach((pt) => { pt.calor = 0; });
-      contratos.forEach((k) => {
-        const u = (k.u0 + t * k.vel) % 1;
-        const pos = curva.getPointAt(u);
-        k.g.position.copy(pos).add(tmp.set(0, 0.16, 0));
-        k.g.lookAt(tmp.copy(pos).add(curva.getTangentAt(u)).add(new Vector3(0, 0.16, 0)));
-        k.g.rotateY(Math.PI / 2);
-        const s = suave(0, 0.04, u) * (1 - suave(0.96, 1, u));
-        k.g.scale.setScalar(Math.max(0.001, s));
-        portais.forEach((pt) => { pt.calor = Math.max(pt.calor, 1 - lim(Math.abs(u - pt.u) / 0.06, 0, 1)); });
+      const ang = ((t / VOLTA) * Math.PI * 2) % (Math.PI * 2);
+      ponteiro.rotation.y = -ang;
+      disco.updateMatrixWorld();
+      MARCOS.forEach((m) => {
+        m.mundo.copy(m.pos); disco.localToWorld(m.mundo);
+        // o ponteiro gira no sentido do ângulo crescente (em x/z): passou pelo marco?
+        if (angAnt !== null) {
+          const passou = (angAnt <= m.a && ang >= m.a) || (angAnt > ang && (m.a >= angAnt || m.a <= ang));
+          if (passou) {
+            m.calor = 1;
+            ondas.disparar(m.mundo, m.cor, t, 1.3);
+            pulsos.disparar(m.mundo, carteira.position, 0.9, m.cor, t, (tt) => {
+              flash = 1;
+              cima.copy(carteira.position); cima.y += 1.9;
+              pulsos.disparar(carteira.position, cima, 0.9, COR.menta, tt);
+            });
+          }
+        }
+        m.calor = Math.max(0, m.calor - (dt || 0) * 0.55);
+        m.no.scale.setScalar(0.36 * (1 + m.calor * 1.4));
+        m.et.material.opacity = REDUZ ? (m.a < 2.4 ? 1 : 0) : lim(m.calor * 1.6, 0, 1);
+        m.et.position.copy(m.mundo).add(new Vector3(0, 0.42, 0));
       });
-      portais.forEach((pt, i) => {
-        pt.anel.material.emissiveIntensity = 0.25 + pt.calor * 1.4;
-        pt.luz.material.opacity = pt.calor * 0.85;
-        pt.anel.scale.setScalar(1 + pt.calor * 0.12 + 0.02 * Math.sin(t * 2 + i));
-      });
-      mirar(camera, p, 9.6, new Vector3(0, 0.15, -0.4), { alt: 0.32, ang: 0.08, rolagem: 0.5 });
+      angAnt = ang;
+      flash = Math.max(0, flash - (dt || 0) * 1.4);
+      girarNucleo(carteira, t, flash);
+      pulsos.atualizar(t); ondas.atualizar(t);
+      mirar(camera, p, 8.4, new Vector3(0, -0.05, 0), { alt: 0.32, ang: 0, rolagem: 0.25 });
     }
   };
 }
@@ -508,72 +678,71 @@ function cenaBiblioteca() {
   };
 }
 
-// ------------------------------------------------------------------ 6. Comunidade
+// ------------------------------------------------------------------ 6. Comunidade — rede de conhecimento
+// Pessoas são nós de uma rede. As perguntas viajam até o especialista no centro; a resposta oficial volta em verde
+// para quem perguntou e para os vizinhos, porque fica no fórum para todos.
 function cenaComunidade() {
-  const { scene, camera } = base(32);
-  const pessoas = [-2.1, -0.7, 0.7, 2.1].map((x, i) => {
-    const g = new Group();
-    const cab = new Mesh(new SphereGeometry(0.2, 24, 16), new MeshStandardMaterial({ color: [0x9fe7c6, 0xffffff, 0x6fe0ae, 0xc3d9d3][i], roughness: 0.5 }));
-    cab.position.y = 0.32;
-    const corpo = new Mesh(new CapsuleGeometry(0.22, 0.2, 6, 16), new MeshStandardMaterial({ color: [0x0f8a5f, 0x14504a, 0x0fa36b, 0x1d6b5f][i], roughness: 0.5 }));
-    corpo.scale.set(1, 0.7, 0.75);
-    g.add(cab, corpo);
-    g.position.set(x, -0.9, 0);
-    scene.add(g);
-    return g;
-  });
-  const texLinhas = (oficial) => textura(512, 170, (g, w) => {
-    if (oficial) {
-      g.fillStyle = "#0A2826"; g.font = "800 50px " + FONTE; g.textBaseline = "middle"; g.fillText("✓ Resposta oficial", 30, 58);
-      g.fillStyle = "rgba(10,40,38,0.4)";
-      [0.86, 0.62].forEach((f, k) => { caixa(g, 30, 104 + k * 30, (w - 60) * f, 13, 7); g.fill(); });
-    } else {
-      g.fillStyle = "#C9D6D2";
-      [0.9, 0.72, 0.5].forEach((f, k) => { caixa(g, 28, 38 + k * 40, (w - 56) * f, 16, 8); g.fill(); });
-    }
-  });
-  const tPerg = texLinhas(false), tOfi = texLinhas(true);
-  const geoB = new RoundedBoxGeometry(1.5, 0.5, 0.14, 3, 0.1);
-  const geoF = new PlaneGeometry(1.42, 0.47);
-  const geoRabo = new ConeGeometry(0.09, 0.2, 12);
-  const N = 6, baloes = [];
+  const { scene, camera } = base(34);
+  const rede = new Group();
+  const N = TOQUE ? 34 : 46, nos = [];
+  let semente = 11;
+  const rnd = () => { semente = (semente * 16807) % 2147483647; return semente / 2147483647; };
   for (let i = 0; i < N; i++) {
-    const oficial = i % 3 === 2;
-    const g = new Group();
-    const matB = new MeshStandardMaterial({ color: oficial ? COR.menta : 0xffffff, roughness: 0.45, transparent: true, emissive: oficial ? COR.mentaForte : 0x000000, emissiveIntensity: oficial ? 0.25 : 0 });
-    const b = new Mesh(geoB, matB);
-    const f = new Mesh(geoF, new MeshBasicMaterial({ map: oficial ? tOfi : tPerg, transparent: true, depthWrite: false }));
-    f.position.z = 0.075;
-    const rabo = new Mesh(geoRabo, matB);
-    rabo.rotation.z = Math.PI; rabo.position.set(-0.45, -0.3, 0);
-    g.add(b, f, rabo);
-    const mats = [matB, f.material];
-    if (oficial) {
-      const l = brilho(COR.menta, 2.2, 0.35); l.position.z = -0.1; g.add(l);
-    }
-    g.userData = { oficial, de: i % 4, fase: i / N, mats };
-    scene.add(g);
-    baloes.push(g);
+    const y = 1 - (i / (N - 1)) * 2, r = Math.sqrt(1 - y * y), th = i * Math.PI * (3 - Math.sqrt(5));
+    const k = 0.75 + rnd() * 0.35;
+    nos.push(new Vector3(Math.cos(th) * r * 2.7 * k, y * 1.25 * k, Math.sin(th) * r * 1.5 * k));
   }
-  const DUR = 7;
+  const pontos = nuvem(N, 0.2);
+  const P = pontos.geometry.attributes.position.array, C = pontos.geometry.attributes.color.array;
+  nos.forEach((v, i) => { P.set([v.x, v.y, v.z], i * 3); });
+  rede.add(pontos);
+  // ligações: cada pessoa com as 2 mais próximas, e algumas direto com o especialista
+  const lig = [];
+  nos.forEach((v, i) => {
+    const perto = nos.map((w, j) => [j, v.distanceToSquared(w)]).filter((x) => x[0] !== i).sort((a, b) => a[1] - b[1]).slice(0, 2);
+    perto.forEach(([j]) => { if (j > i) lig.push(v.x, v.y, v.z, nos[j].x, nos[j].y, nos[j].z); });
+    if (i % 4 === 0) lig.push(v.x, v.y, v.z, 0, 0, 0);
+  });
+  rede.add(segmentos(lig, COR.menta, 0.22));
+  const esp = nucleo(0.3); rede.add(esp);
+  scene.add(rede);
+  const etEsp = rotulo("Especialista", { altura: 0.3, borda: CSS.menta, depthTest: false }); etEsp.renderOrder = 10; scene.add(etEsp);
+  const pulsos = criarPulsos(rede, 22, 0.3), ondas = criarOndas(rede, 5);
+  legenda(scene, "Perguntas → resposta oficial do especialista", -1.95);
+  const calor = new Float32Array(N);
+  const centro = new Vector3();
+  let prox = 0.3, flash = 0, quem = 0;
   return {
-    scene, camera, tParado: 3.3,
+    scene, camera, tParado: 2.4,
     update(t, dt, p) {
-      baloes.forEach((g, i) => {
-        const u = ((t / DUR) + g.userData.fase) % 1;
-        const quem = pessoas[g.userData.de];
-        const oficial = g.userData.oficial;
-        const x = (oficial ? 0.2 : quem.position.x * 0.75) + 0.25 * Math.sin(t * 0.8 + i * 2);
-        g.position.set(x, -0.35 + u * 3.1, -0.3 - (i % 3) * 0.45);
-        const sc = (oficial ? 1.15 : 0.92) * saiVolta(suave(0, 0.12, u) * 1.0);
-        g.scale.setScalar(Math.max(0.001, sc));
-        const op = 1 - suave(0.62, 0.88, u);
-        g.userData.mats.forEach((m) => { m.opacity = op; });
-        g.rotation.y = 0.18 * Math.sin(t * 0.7 + i);
-        g.rotation.z = 0.04 * Math.sin(t * 1.1 + i);
-      });
-      pessoas.forEach((g, i) => { g.position.y = -0.9 + 0.04 * Math.sin(t * 2 + i * 1.3); });
-      mirar(camera, p, 8.6, new Vector3(0, 0.55, 0), { alt: 0.1, ang: 0.0 });
+      if (t + 5 < prox) prox = t;
+      while (t >= prox) {
+        quem = (quem * 7 + 13) % N;
+        const i = quem, de = nos[i];
+        calor[i] = Math.max(calor[i], 0.6);
+        pulsos.disparar(de, centro, 1.1, 0xffffff, prox, (tt) => {
+          flash = 1;
+          ondas.disparar(centro, COR.menta, tt, 2.4);
+          // a resposta volta para quem perguntou e para dois vizinhos
+          const viz = nos.map((w, j) => [j, de.distanceToSquared(w)]).sort((a, b) => a[1] - b[1]).slice(0, 3);
+          viz.forEach(([j], n) => pulsos.disparar(centro, nos[j], 0.9 + n * 0.15, COR.menta, tt, () => { calor[j] = 1; }));
+        });
+        prox += 1.35;
+      }
+      for (let i = 0; i < N; i++) {
+        calor[i] = Math.max(0, calor[i] - (dt || 0) * 0.6);
+        const base = 0.95 + 0.2 * Math.sin(t * 1.3 + i);
+        pintar(C, i, calor[i] > 0.05 ? COR.menta : 0xcfe9df, base + calor[i] * 0.9);
+      }
+      pontos.geometry.attributes.color.needsUpdate = true;
+      flash = Math.max(0, flash - (dt || 0) * 1.3);
+      girarNucleo(esp, t, flash);
+      pulsos.atualizar(t); ondas.atualizar(t);
+      rede.rotation.y = t * 0.12 + p.tx * 0.4;
+      rede.rotation.x = 0.12 + p.ty * 0.2 + (p.prog - 0.5) * 0.3;
+      etEsp.position.set(0, -0.62, 0.9);
+      camera.position.set(0, 0.2, 8.4);
+      camera.lookAt(0, -0.1, 0);
     }
   };
 }
@@ -632,7 +801,7 @@ function descartar(p) {
   p.cena.scene.traverse((o) => {
     if (o.geometry) o.geometry.dispose();
     const ms = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : [];
-    ms.forEach((m) => { if (m.map && m.map !== TEX_BRILHO) m.map.dispose(); m.dispose(); });
+    ms.forEach((m) => { if (m.map && m.map !== TEX_BRILHO && m.map !== TEX_PONTO && m.map !== TEX_ANEL) m.map.dispose(); m.dispose(); });
   });
 }
 
@@ -692,7 +861,7 @@ export async function montar(el, tipo) {
 
   const p = {
     el, palco, cv, ctx: cv.getContext("2d"), cena, t: REDUZ ? cena.tParado : 0, vis: false, prog: 0.5,
-    mx: 0, my: 0, tx: 0, ty: 0, desloca: el.classList.contains("lvh-art") ? 0.13 : 0, cartao: TOQUE || REDUZ ? null : el.querySelector(".lvh-demo, .lvh-art-doc"), ultCartao: ""
+    mx: 0, my: 0, tx: 0, ty: 0, desloca: 0, cartao: null, ultCartao: ""
   };
   palcos.push(p);
 
