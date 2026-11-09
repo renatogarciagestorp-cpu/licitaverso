@@ -1,4 +1,4 @@
-/* Licitacon — cenas 3D da página inicial (Three.js), uma por ferramenta.
+/* Licitacon — cenas 3D da página inicial (Three.js): Parecerista e Biblioteca Jurídica.
  *
  * Fonte deste arquivo: src/inicio3d.js. O site carrega o pacote gerado na raiz (inicio3d.js), montado por
  * scripts/3d/montar.mjs com o Three.js e só com as partes usadas. O inicio.js baixa o pacote quando a primeira
@@ -9,20 +9,20 @@
  *
  * Um só WebGLRenderer para a página inteira (o celular aguenta poucos contextos): cada cena é desenhada num
  * pedaço da tela dele e copiada para o canvas 2D da sua seção. Só desenha o que está na tela e com a aba aberta.
- * Com "reduzir movimento", cada cena aparece parada no seu quadro mais completo. Sem WebGL, nada muda na página.
+ * Com "reduzir movimento", cada cena aparece parada no seu quadro mais completo. O botão "Pausar animação" (o mesmo das
+ * telas vivas, inicio-ui.js) para todas. Sem WebGL, nada muda na página.
  */
 import {
   WebGLRenderer, Scene, PerspectiveCamera, Group, Mesh, Sprite, SpriteMaterial, MeshStandardMaterial,
-  MeshBasicMaterial, PlaneGeometry, BoxGeometry, SphereGeometry, CylinderGeometry, ConeGeometry, TorusGeometry,
-  CapsuleGeometry, IcosahedronGeometry, TubeGeometry, CatmullRomCurve3, InstancedMesh, LineSegments,
+  MeshBasicMaterial, PlaneGeometry, SphereGeometry, IcosahedronGeometry, InstancedMesh, LineSegments,
   LineBasicMaterial, BufferGeometry, Float32BufferAttribute, Object3D, Vector3, Color, CanvasTexture,
-  SRGBColorSpace, AdditiveBlending, HemisphereLight, Points, PointsMaterial, BufferAttribute, Line, DirectionalLight, PointLight, ACESFilmicToneMapping, DoubleSide
+  SRGBColorSpace, AdditiveBlending, HemisphereLight, DirectionalLight, PointLight, ACESFilmicToneMapping, DoubleSide
 } from "three";
 
 // ------------------------------------------------------------------ cores da marca
 const COR = {
-  fundo: 0x0a2826, verde: 0x0fa36b, menta: 0x6fe0ae, mentaForte: 0x3fd49a, papel: 0xf4f7f6,
-  alta: 0xf0716b, media: 0xf2b544, baixa: 0x5bc0da, word: 0x3b7be8, pdf: 0xe5484d
+  fundo: 0x0a2826, verde: 0x0fa36b, menta: 0x6fe0ae, mentaForte: 0x3fd49a,
+  alta: 0xf0716b, media: 0xf2b544, baixa: 0x5bc0da
 };
 const CSS = { alta: "#F0716B", media: "#F2B544", baixa: "#5BC0DA", menta: "#6FE0AE", fundo: "#0A2826" };
 const FONTE = "Manrope, system-ui, -apple-system, 'Segoe UI', sans-serif";
@@ -31,21 +31,11 @@ let REDUZ = false;
 try { REDUZ = matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { /* segue */ }
 let TOQUE = false;
 try { TOQUE = matchMedia("(pointer: coarse)").matches; } catch (e) { /* segue */ }
-const DPR = Math.min(window.devicePixelRatio || 1, TOQUE ? 1.5 : 1.75);
+const DPR = Math.min(window.devicePixelRatio || 1, TOQUE ? 1.25 : 1.75);
 
 // ------------------------------------------------------------------ utilidades
 const lim = (v, a, b) => Math.max(a, Math.min(b, v));
 const suave = (a, b, v) => { const t = lim((v - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
-const saiCubica = (t) => 1 - Math.pow(1 - lim(t, 0, 1), 3);
-const saiVolta = (t) => { t = lim(t, 0, 1); const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
-const quique = (t) => {
-  t = lim(t, 0, 1);
-  const n = 7.5625, d = 2.75;
-  if (t < 1 / d) return n * t * t;
-  if (t < 2 / d) return n * (t -= 1.5 / d) * t + 0.75;
-  if (t < 2.5 / d) return n * (t -= 2.25 / d) * t + 0.9375;
-  return n * (t -= 2.625 / d) * t + 0.984375;
-};
 const aprox = (atual, alvo, dt, k) => atual + (alvo - atual) * (1 - Math.exp(-k * dt));
 
 function textura(w, h, desenhar) {
@@ -158,20 +148,11 @@ function texAnel() {
   });
   return TEX_ANEL;
 }
-function nuvem(n, tam) {
-  const g = new BufferGeometry();
-  g.setAttribute("position", new BufferAttribute(new Float32Array(n * 3), 3));
-  g.setAttribute("color", new BufferAttribute(new Float32Array(n * 3), 3));
-  return new Points(g, new PointsMaterial({ size: tam, map: texPonto(), vertexColors: true, transparent: true, depthWrite: false, blending: AdditiveBlending, sizeAttenuation: true, toneMapped: false }));
-}
 function segmentos(pontos, cor, opac) {
   const g = new BufferGeometry();
   g.setAttribute("position", new Float32BufferAttribute(pontos, 3));
   return new LineSegments(g, new LineBasicMaterial({ color: cor, transparent: true, opacity: opac, blending: AdditiveBlending, depthWrite: false, toneMapped: false }));
 }
-const tmpC = new Color();
-function pintar(cores, i, hex, k) { tmpC.set(hex); cores[i * 3] = tmpC.r * k; cores[i * 3 + 1] = tmpC.g * k; cores[i * 3 + 2] = tmpC.b * k; }
-function aleatorio(semente) { let s = semente; return () => { s = (s * 16807) % 2147483647; return s / 2147483647; }; }
 
 // Etiqueta de painel (HUD): texto com cantos de mira, sem fundo cheio. Linha de baixo opcional, menor.
 function hud(texto, cor, op) {
@@ -356,6 +337,26 @@ const CENAS = { parecer: cenaParecer, biblioteca: cenaBiblioteca };
 let R = null, bufW = 0, bufH = 0, raf = 0, ult = 0, perdido = false;
 const palcos = [];
 
+// pausa compartilhada com as telas vivas (inicio-ui.js): botão "Pausar animação", lembrado neste navegador
+const CHAVE_PAUSA = "lv-anim-pausa";
+function pausado() { try { return localStorage.getItem(CHAVE_PAUSA) === "1"; } catch (e) { return false; } }
+function parado() { return REDUZ || pausado(); }
+function pausar(v) {
+  if (window.LV_PAUSA) { window.LV_PAUSA.pausar(v); return; }
+  try { if (v) localStorage.setItem(CHAVE_PAUSA, "1"); else localStorage.removeItem(CHAVE_PAUSA); } catch (e) { /* segue */ }
+  window.dispatchEvent(new CustomEvent("lv-pausa", { detail: v }));
+}
+window.addEventListener("lv-pausa", () => {
+  palcos.forEach((p) => { atualizarBotao(p); if (p.vis) desenhar(p, 0); });
+  if (!parado()) acordar();
+});
+function atualizarBotao(p) {
+  const v = pausado();
+  p.botao.setAttribute("aria-pressed", v ? "true" : "false");
+  p.botao.setAttribute("aria-label", v ? "Retomar animação" : "Pausar animação");
+  p.botao.title = v ? "Retomar animação" : "Pausar animação";
+}
+
 function criarRenderer() {
   if (R) return !perdido;
   try {
@@ -367,6 +368,8 @@ function criarRenderer() {
     r.toneMappingExposure = 1.05;
     r.outputColorSpace = SRGBColorSpace;
     c.addEventListener("webglcontextlost", (e) => { e.preventDefault(); perdido = true; });
+    // a placa de vídeo voltou: o three.js refaz os recursos; volta a desenhar
+    c.addEventListener("webglcontextrestored", () => { perdido = false; palcos.forEach((p) => { if (p.vis) desenhar(p, 0); }); acordar(); });
     R = r;
     return true;
   } catch (e) {
@@ -392,11 +395,6 @@ function desenhar(p, dt) {
   R.render(p.cena.scene, p.cena.camera);
   p.ctx.clearRect(0, 0, w, h);
   p.ctx.drawImage(R.domElement, 0, bufH - h, w, h, 0, 0, w, h);
-  if (p.cartao) {
-    const rx = (-p.ty * 3.5).toFixed(2), ry = (p.tx * 4.5).toFixed(2);
-    const s = "perspective(1100px) rotateX(" + rx + "deg) rotateY(" + ry + "deg)";
-    if (s !== p.ultCartao) { p.cartao.style.transform = Math.abs(p.tx) + Math.abs(p.ty) < 0.002 ? "" : s; p.ultCartao = s; }
-  }
 }
 
 function descartar(p) {
@@ -407,24 +405,28 @@ function descartar(p) {
     ms.forEach((m) => { if (m.map && m.map !== TEX_BRILHO && m.map !== TEX_PONTO && m.map !== TEX_ANEL) m.map.dispose(); m.dispose(); });
   });
 }
+// palcos de páginas que o runtime já tirou da tela (o inicio.js chama a cada troca de página)
+export function limpar() {
+  for (let i = palcos.length - 1; i >= 0; i--) if (!palcos[i].el.isConnected) { descartar(palcos[i]); palcos.splice(i, 1); }
+}
 
 function laco(agora) {
   raf = 0;
   const dt = Math.min(0.05, Math.max(0, (agora - ult) / 1000));
   ult = agora;
+  limpar();
+  if (parado()) return;
   let algum = false;
-  for (let i = palcos.length - 1; i >= 0; i--) {
-    const p = palcos[i];
-    if (!p.el.isConnected) { descartar(p); palcos.splice(i, 1); continue; }
-    if (!p.vis || document.hidden) continue;
+  palcos.forEach((p) => {
+    if (!p.vis || document.hidden) return;
     algum = true;
     p.t += dt;
     desenhar(p, dt);
-  }
-  if (algum && !REDUZ) raf = requestAnimationFrame(laco);
+  });
+  if (algum) raf = requestAnimationFrame(laco);
 }
 function acordar() {
-  if (REDUZ || raf) return;
+  if (parado() || raf) return;
   ult = performance.now();
   raf = requestAnimationFrame(laco);
 }
@@ -440,14 +442,14 @@ function medir(p) {
   // em telas estreitas a câmera se afasta: os rótulos crescem na mesma medida para continuar legíveis
   const f = 1 + (1 - p.cena.camera.zoom) * 1.4;
   p.cena.scene.traverse((o) => { if (o.isSprite && o.userData.base) o.scale.copy(o.userData.base).multiplyScalar(f); });
-  if (p.desloca) p.cena.camera.setViewOffset(r.width, r.height, 0, r.height * p.desloca, r.width, r.height);
   p.cena.camera.updateProjectionMatrix();
-  if (REDUZ) desenhar(p, 0);
+  if (parado()) desenhar(p, 0);
 }
 
 export async function montar(el, tipo) {
   if (!el || el.__lv3d || !CENAS[tipo]) return;
   el.__lv3d = true;
+  limpar();
   if (!criarRenderer()) return;
   try { await Promise.race([document.fonts && document.fonts.ready, new Promise((r) => setTimeout(r, 1200))]); } catch (e) { /* segue */ }
   if (!el.isConnected) return;
@@ -459,14 +461,20 @@ export async function montar(el, tipo) {
   palco.setAttribute("aria-hidden", "true");
   const cv = document.createElement("canvas");
   palco.appendChild(cv);
+  const botao = document.createElement("button");
+  botao.type = "button";
+  botao.className = "lv3d-pausa";
+  botao.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path class="p" d="M5 3.5v9M11 3.5v9"/><path class="r" d="M5 3.2l8 4.8-8 4.8z"/></svg>';
+  botao.addEventListener("click", () => pausar(!pausado()));
   el.insertBefore(palco, el.firstChild);
+  palco.insertAdjacentElement("afterend", botao);
   el.classList.add("lv3d-on", "lv3d-" + tipo);
 
-  const p = {
-    el, palco, cv, ctx: cv.getContext("2d"), cena, t: REDUZ ? cena.tParado : 0, vis: false, prog: 0.5,
-    mx: 0, my: 0, tx: 0, ty: 0, desloca: 0, cartao: null, ultCartao: ""
-  };
+  // com "reduzir movimento", a cena começa no quadro mais completo; pausada, para onde estiver
+  const p = { el, palco, cv, botao, ctx: cv.getContext("2d"), cena, t: REDUZ ? cena.tParado : (pausado() ? cena.tParado : 0), vis: false, prog: 0.5, mx: 0, my: 0, tx: 0, ty: 0 };
   palcos.push(p);
+  atualizarBotao(p);
+  if (REDUZ) botao.hidden = true;
 
   const M = window.Motion;
   if (M && M.scroll) {
@@ -493,7 +501,7 @@ export async function montar(el, tipo) {
       }
     }
     p.vis = v;
-    if (v) { if (REDUZ) desenhar(p, 0); else acordar(); }
+    if (v) { if (parado()) desenhar(p, 0); else acordar(); }
   }, { rootMargin: "60px 0px" });
   p.io.observe(palco);
 }

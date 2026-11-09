@@ -8,7 +8,8 @@
  *   frase   — frase grande que acende palavra por palavra com a rolagem
  *   hist    — "Como funciona O Parecerista", preso na tela enquanto os passos avançam com a rolagem
  *   vitrine — leque com as ferramentas: passa sozinho, dá para arrastar e tocar para abrir
- *   data-lv3d — cenas 3D (Three.js) de cada ferramenta, em inicio3d.js, baixado só quando a primeira chega perto
+ *   data-lv3d — cenas 3D (Three.js) do Parecerista e da Biblioteca, em inicio3d.js, baixado só quando a primeira chega perto
+ *   (Elaborador, Calculadora, Gestão e Comunidade usam telas vivas em GSAP: inicio-ui.js e o atributo data-lvui)
  * Também conta os números e enche as barras dos exemplos das seções.
  * Só anima transform e opacity. Com "reduzir movimento", mostra tudo parado e completo.
  */
@@ -887,11 +888,11 @@
 
   // ---------------------------------------------------------------- exemplos das seções: números e barras
   function montarExemplos(raiz) {
-    Array.prototype.forEach.call(raiz.querySelectorAll(".lvh-art-tab > div > b"), function (b) { contar(b, brl, 1.2); });
+    Array.prototype.forEach.call(raiz.querySelectorAll(":not([data-lvui]) > .lvh-art-doc .lvh-art-tab > div > b"), function (b) { contar(b, brl, 1.2); });
     Array.prototype.forEach.call(raiz.querySelectorAll(".lvh-bd-nums > div > strong"), function (s) { contar(s, null, 1.6); });
     var preco = raiz.querySelector(".lvh-art-preco-v b");
     if (preco) contar(preco, brl, 1.2);
-    Array.prototype.forEach.call(raiz.querySelectorAll(".lvh-gc"), function (g) {
+    Array.prototype.forEach.call(raiz.querySelectorAll(":not([data-lvui]) > .lvh-gc"), function (g) {
       var barras = g.querySelectorAll(".lvh-gc-c i");
       if (REDUZ || !barras.length) return;
       Array.prototype.forEach.call(barras, function (b) { b.style.transformOrigin = "0 50%"; b.style.transform = "scaleX(0)"; });
@@ -900,7 +901,7 @@
           .then(function () { Array.prototype.forEach.call(barras, function (b) { b.style.transform = ""; }); });
       });
     });
-    Array.prototype.forEach.call(raiz.querySelectorAll(".lvh-art-secoes"), function (ol) {
+    Array.prototype.forEach.call(raiz.querySelectorAll(":not([data-lvui]) > .lvh-art-doc > .lvh-art-secoes"), function (ol) {
       var lis = ol.querySelectorAll("li");
       if (REDUZ || !lis.length) return;
       Array.prototype.forEach.call(lis, function (l) { l.style.opacity = "0"; });
@@ -927,6 +928,8 @@
       x.setAttribute("data-lvi-ok", "1");
       if (f) { try { f(x); } catch (e) { if (window.console) console.warn("inicio.js", e); } }
     });
+    // cenas 3D de páginas que o runtime já tirou da tela: libera GPU e observadores
+    if (pacote3d) pacote3d.then(function (m) { if (m && m.limpar) m.limpar(); });
     Array.prototype.forEach.call(document.querySelectorAll("#dc-root [data-lv3d]:not([data-lv3d-ok])"), function (x) {
       x.setAttribute("data-lv3d-ok", "1");
       vigiar3d(x);
@@ -942,7 +945,7 @@
     var io = new IntersectionObserver(function (es) {
       if (!es[es.length - 1].isIntersecting) return;
       io.disconnect();
-      if (!pacote3d) pacote3d = import("./inicio3d.js?v=4").catch(function (e) { if (window.console) console.warn("inicio3d", e); return null; });
+      if (!pacote3d) pacote3d = import("./inicio3d.js?v=5").catch(function (e) { if (window.console) console.warn("inicio3d", e); return null; });
       pacote3d.then(function (m) { if (m && alvo.isConnected) m.montar(alvo, alvo.getAttribute("data-lv3d")); });
     }, { rootMargin: "700px 0px" });
     io.observe(alvo);

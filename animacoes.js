@@ -36,7 +36,8 @@
   var SEL_CARTAO = CARTOES.join(",");
   var SEL = CARTOES.concat(BLOCOS).join(",");
   // Nunca anima aqui dentro: cabeçalho fixo, menus, janelas e o quadro que vira imagem no PDF.
-  var FORA = "header, nav, [role='dialog'], #lvc-captura, .lvh-demo, .lvi-topo, .lvi-faixa, .lvi-frase-sec, .lvi-hist, .lvi-vit, .lvh-art-secoes";
+  // .gx, .gp-grade e .gp-acoes: painéis da Gestão, montados pelo gestao-anim.js (uma só biblioteca por cartão)
+  var FORA = "header, nav, [role='dialog'], #lvc-captura, .lvh-demo, .lvi-topo, .lvi-faixa, .lvi-frase-sec, .lvi-hist, .lvi-vit, .lvh-art-secoes, .gx, .gp-grade, .gp-acoes";
 
   var vistos = new WeakSet();
   var pendentes = new Set();

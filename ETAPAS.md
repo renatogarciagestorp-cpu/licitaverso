@@ -45,7 +45,7 @@ Lembrar de atualizar SITE_URL no Supabase e os endereços de retorno do login.
 ## Como editar o site
 O código fica em `src/site.html`. Depois de mudar: `python3 scripts/empacotar-site.py` (gera o `index.html`).
 Biblioteca: `python3 scripts/atualizar-biblioteca.py` reaplica o shim e a barra.
-Cenas 3D da página inicial: o código fica em `src/inicio3d.js`. Depois de mudar: `cd scripts/3d && npm install && npm run montar` (gera o `inicio3d.js` com o Three.js) e suba o `?v=` do `import("./inicio3d.js?v=…")` no `inicio.js`.
+Cenas 3D da página inicial: o código fica em `src/inicio3d.js`. Depois de mudar: `cd scripts/3d && npm ci && npm run montar` (gera o `inicio3d.js` com o Three.js) e suba o `?v=` do `import("./inicio3d.js?v=…")` no `inicio.js`.
 
 ## Fórum: aviso por e-mail e perguntas iniciais (27/10/2026)
 - Ao criar uma pergunta, o site pergunta se a pessoa quer receber e-mail quando alguém responder (Sim/Não, obrigatório). Dá para ligar/desligar depois, na própria pergunta.
@@ -73,7 +73,12 @@ Cenas 3D da página inicial: o código fica em `src/inicio3d.js`. Depois de muda
 - Medição de visitas: Cloudflare Web Analytics, carregada só com consentimento "todos" (falta o token em config.js).
 - E-mails: boas-vindas no primeiro acesso (função boas-vindas), dica no 3º dia do teste e aviso na véspera do fim (avisos).
 
-## Página inicial em 3D (09/11/2026)
-- Referência estudada: profitize.com.br/build (loja de prompts de landing page para Claude Code e Codex). Os sites 3D de lá usam Three.js (cena 3D em WebGL), GSAP com ScrollTrigger (seção presa enquanto rola) e Lenis (rolagem suave).
-- No Licitacon: Three.js + Motion (já usado no site, no lugar do GSAP). Uma cena por ferramenta, num painel acima do exemplo de cada seção, cada uma com cor, material e movimento próprios: Parecerista (tomografia coral: páginas do edital empilhadas cortadas por um plano; achados viram alvos com mira ALTA/MÉDIA/BAIXA), Elaborador (letras de luz azuis formando ETP, TR e Projeto Básico), Calculadora (lingotes de ouro empilhando mês a mês pelo IPCA até o reajuste), Gestão Contratual (espiral do tempo ciano com contratos acendendo os portais de prazo), Biblioteca (90 fontes alimentando o acervo, menta) e Comunidade (fios de conversa violeta; perguntas sobem e a resposta oficial desce por todos).
-- Um só WebGL para a página toda; só desenha a cena que está na tela; pacote 3D (~150 KB comprimido) baixado só quando a primeira cena chega perto; nada com "economia de dados". Sem WebGL a página fica como era; com "reduzir movimento" as cenas aparecem paradas no quadro completo. O cartão de exemplo inclina um pouco com o mouse.
+## Página inicial animada e painéis da Gestão (09/11/2026)
+- Referências estudadas: profitize.com.br/build (sites 3D feitos com Three.js, GSAP e Lenis) e codeandchill.store (dashboards animados: GSAP + SVG, sem framework).
+- Parecerista e Biblioteca: cenas 3D (Three.js) em `src/inicio3d.js` → pacote `inicio3d.js` (`cd scripts/3d && npm ci && npm run montar`), baixado só quando a primeira cena chega perto. Parecerista: tomografia do edital com alvos ALTA/MÉDIA/BAIXA. Biblioteca: 90 fontes alimentando o acervo.
+- Elaborador, Calculadora, Gestão e Comunidade: telas vivas em GSAP (`inicio-ui.js`, atributo `data-lvui` no modelo), a própria ferramenta trabalhando: ETP redigido com a pesquisa de preços; reajuste com a série real de `indices.json` (IPCA, IGP-M, INCC, IPCA-E); carteira com prazos e aviso por e-mail; fórum com resposta oficial.
+- Painéis da Gestão Contratual: acabamento no padrão Code and Chill em `gestao.css` (prefixo `#dc-root`; a cor de cada indicador segue a situação ok/at/er) e montagem animada em `gestao-anim.js` (conta os números só no nó de texto do runtime). Os painéis ficam fora do `animacoes.js` (lista FORA).
+- GSAP (`vendor/gsap-3.15.1.min.js`, licença gratuita "no charge") é baixado sob demanda por `inicio-ui.js` e `gestao-anim.js`; o Motion continua nas demais animações do site.
+- Acessibilidade: botão "Pausar animação" em cada tela viva e cena 3D (WCAG 2.2.2; a escolha fica em `localStorage` `lv-anim-pausa`); "reduzir movimento" e "economia de dados" mostram o quadro final parado; sem WebGL ou sem GSAP, a página fica como era.
+- A cada mudança nesses arquivos, subir o `?v=` correspondente em `src/site.html` e rodar `python3 scripts/empacotar-site.py`.
+- Auditoria completa (10 lentes) em `reviews/audit-plan-full.md`.

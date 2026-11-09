@@ -7,20 +7,18 @@
 /* indicadores do topo: um cartão para cada, com tom próprio */
 #dc-root .gx-head { gap: 12px; background: transparent; border: 0; border-radius: 0; overflow: visible; }
 #dc-root .gx-hd { border: 1px solid #E3E9E7; border-radius: 16px; padding: 14px 16px 16px; gap: 4px; align-content: start; background: #fff; box-shadow: 0 1px 0 rgba(15,42,39,0.03); }
-#dc-root .gx-hd:nth-child(1) { background: #E9F6EF; border-color: #D3EBDF; }
-#dc-root .gx-hd:nth-child(2) { background: #EAF3F8; border-color: #D5E7F0; }
-#dc-root .gx-hd:nth-child(3) { background: #F3F6F5; }
-#dc-root .gx-hd:nth-child(4) { background: #FBF4E4; border-color: #F1E3BF; }
-#dc-root .gx-hd:nth-child(5) { background: #FCEDEA; border-color: #F4D6D0; }
-#dc-root .gx-hd:nth-child(6) { background: #0F3431; border-color: #0F3431; }
-#dc-root .gx-hd:nth-child(6) > small, #dc-root .gx-hd:nth-child(6) > em { color: #A9CFC3; }
-#dc-root .gx-hd:nth-child(6) > b { color: #fff; }
+/* a cor do cartão diz a situação (classes do site: ok, at = atenção, er = pendência); sem classe, neutro */
+#dc-root .gx-hd.ok { background: #EAF6F0; border-color: #D3EBDF; }
+#dc-root .gx-hd.at { background: #FBF4E4; border-color: #F1E3BF; }
+#dc-root .gx-hd.er { background: #FCEDEA; border-color: #F4D6D0; }
+#dc-root .gx-hd.ok > em { color: #0B7A52; } #dc-root .gx-hd.at > em { color: #8A5A0E; } #dc-root .gx-hd.er > em { color: #B8433A; }
 #dc-root .gx-hd > small { font-size: 12.5px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--gx-mut); }
-#dc-root .gx-hd > b { font-size: clamp(18px, 1.55vw, 23px); letter-spacing: -0.03em; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-#dc-root .gx-hd > em { justify-self: start; align-self: start; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11.5px; font-weight: 700; background: rgba(255,255,255,0.75); border-radius: 99px; padding: 2px 8px; }
-#dc-root .gx-hd:nth-child(6) > em { background: rgba(255,255,255,0.08); }
+#dc-root .gx-hd > b { font-size: clamp(17px, 1.4vw, 22px); letter-spacing: -0.03em; line-height: 1.15; overflow-wrap: anywhere; }
+#dc-root .gx-hd > em { justify-self: start; align-self: start; max-width: 100%; font-size: 11.5px; font-weight: 700; background: rgba(255,255,255,0.75); border-radius: 99px; padding: 2px 8px; }
 #dc-root .gx-hd::after { display: none; }
-#dc-root .gx-hd > em, #dc-root .gx-hd:has(.gx-hbar) > em, #dc-root .gx-hd:has(.gx-hspark) > em { flex: 0 0 auto; }
+#dc-root .gx-hd > em { flex: 0 0 auto; }
+#dc-root .gx-hd:has(.gx-hbar) > em { flex: 0 0 auto; }
+#dc-root .gx-hd:has(.gx-hspark) > em { flex: 0 0 auto; }
 #dc-root .gx-hbar { height: 6px; margin-top: 10px; background: rgba(15,52,49,0.08); }
 /* cartões dos gráficos */
 #dc-root .gx-c { border-radius: 18px; padding: 18px 20px; gap: 12px; border-color: #E3E9E7; box-shadow: 0 1px 0 rgba(15,42,39,0.03), 0 14px 30px -26px rgba(15,52,49,0.35); }
@@ -29,7 +27,7 @@
 #dc-root .gx-leg { font-size: 12px; }
 /* área do custo mensal: linha verde e marcador "hoje" escuro */
 #dc-root .gx-ln { stroke: #0B7A52; stroke-width: 2.6; }
-#dc-root .gx-ln-f { stroke: #8FB8AC; }
+#dc-root .gx-ln-f { stroke: #5E8F84; }
 #dc-root .gx-hoje { stroke: #0F3431; }
 #dc-root .gx-pin { background: #0F3431; border-radius: 8px; padding: 4px 9px; box-shadow: 0 10px 22px -10px rgba(7,30,28,0.6); }
 #dc-root .gx-hp:hover { border-color: #0B7A52; box-shadow: 0 0 0 4px rgba(15,163,107,0.18); }
@@ -57,18 +55,27 @@
 #dc-root button.gx-tr:hover { background: #F7F9F8; }
 /* abas, filtros e cartões das outras visões */
 #dc-root .gp-abas { border-radius: 16px; padding: 6px; border-color: #E3E9E7; box-shadow: 0 10px 24px -22px rgba(15,52,49,0.4); }
-#dc-root .gp-aba { border-radius: 11px; color: #4C625D; }
-#dc-root .gp-aba.ativo { background: #0F3431; box-shadow: 0 8px 18px -10px rgba(7,30,28,0.6); }
+#dc-root .gp-aba { border-radius: 11px; }
+#dc-root .gp-aba.ativo { color: #fff; background: #0F3431; box-shadow: 0 8px 18px -10px rgba(7,30,28,0.6); }
 #dc-root .gp-filtros { border-radius: 16px; border-color: #E3E9E7; }
 #dc-root .gp-card { border-radius: 18px; padding: 18px 20px; border-color: #E3E9E7; box-shadow: 0 1px 0 rgba(15,42,39,0.03), 0 14px 30px -26px rgba(15,52,49,0.35); }
 #dc-root .gp-card h3, #dc-root .gp-tec .gp-card h3 { font-size: 15px; font-weight: 800; letter-spacing: -0.01em; text-transform: none; color: #0F2A27; }
-#dc-root .gp-kpi { background: #0F3431; border-radius: 16px; padding: 16px 18px; }
-#dc-root .gp-acoes { border-radius: 20px; border-color: #E3E9E7; border-left: 1px solid #E3E9E7; padding: 20px 22px; box-shadow: 0 18px 36px -30px rgba(15,52,49,0.45); }
+#dc-root .gp-acoes { border-radius: 20px; border-color: #E3E9E7; padding: 20px 22px; box-shadow: 0 18px 36px -30px rgba(15,52,49,0.45); }
 #dc-root .gp-pz { border-radius: 14px; }
 @media (max-width: 760px) {
   #dc-root .gx { padding: 12px; gap: 12px; border-radius: 18px; }
-  #dc-root .gx-hd > b { font-size: 22px; }
+  #dc-root .gx-hd > b { font-size: 18px; }
   #dc-root .gx-c, #dc-root .gp-card { padding: 16px; }
 }
 /* cabeçalhos de tabela das outras abas em letra normal */
 #dc-root .gp-rank-cab, #dc-root .gp-pes-cab, #dc-root .gp-pen-cab, #dc-root .gp-cmp-cab, #dc-root .gp-acoes-cab { text-transform: none; letter-spacing: 0; font-size: 12px; }
+/* contraste: mapa de prazos (≥ 3:1 contra a célula vazia), ladrilhos do mapa de valor e contorno de foco */
+#dc-root .gx-cel.aniv { background: #0B7A52; } #dc-root .gx-cel.cct { background: #0F6B7E; }
+#dc-root .gx-cel.pror { background: #9A6B12; } #dc-root .gx-cel.fim { background: #B8433A; }
+#dc-root .gx-tile > small { opacity: 1; }
+#dc-root .gx :focus-visible { outline-color: #0B7A52; }
+#dc-root .gx-sl:focus-visible, #dc-root .gx-hbr:focus-visible, #dc-root button.gx-ml:focus-visible, #dc-root button.gx-tr:focus-visible { background: #F4F6F5; }
+/* restos da paleta antiga (índigo e bege) */
+#dc-root .gx-hbar { background: rgba(15,52,49,0.1); }
+#dc-root .gx-leg-f { background: repeating-linear-gradient(90deg, #5E8F84 0 3px, transparent 3px 6px); }
+#dc-root .gx-hspark .a { fill: rgba(15,163,107,0.12); }
