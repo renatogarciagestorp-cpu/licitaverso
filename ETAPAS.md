@@ -60,11 +60,12 @@ Cenas 3D da página inicial: o código fica em `src/inicio3d.js`. Depois de muda
 - Textos: consultoria técnica, não jurídica (Lei 8.906/1994, art. 1º, II); perfil do especialista atualizado.
 
 ## Assistente de dúvidas (27/10/2026)
-- `chatbot.js` (widget) + `chatbot-base.js` (63 respostas, 10 temas) no site e na Biblioteca; sem custo de IA.
+- `chatbot.js` (widget) + `chatbot-base.js` (63 respostas, 10 temas na primeira versão) no site e na Biblioteca; sem custo de IA.
 - Busca por palavras com peso pela raridade; em dúvida, oferece opções; sem resposta, encaminha à equipe (grava em contatos).
 - Respostas personalizadas para quem está logado (plano e validade, cupom dos cursos).
 - Registro de perguntas e avaliações 👍/👎 em `chatbot_registros`; Painel → Assistente mostra o que falta responder.
 - Testes: 68/68 perguntas da base e 30/30 perguntas novas.
+- **Reestruturado em 09/11/2026:** janela nova no visual da página inicial (verde-floresta, Manrope), classes com prefixo `lvq-` (o prefixo antigo `lvc-` colidia com a Calculadora e com a tela do Parecerista, onde o botão "Analisar 3 documentos" ficava preso na tela). Busca ao vivo: as perguntas parecidas da base aparecem enquanto a pessoa digita, com as palavras coincidentes marcadas (setas e Enter escolhem). Respostas em ficha com listas e passos numerados, botão principal, "Veja também" e "Esta resposta ajudou?". Tela inicial com as perguntas do assunto da página aberta e 14 assuntos por ferramenta; o botão diz "Dúvidas sobre a Calculadora?" etc. Janela inteira no celular (o site arredondava toda janela de diálogo). Base com 95 respostas, revista com os fatos do site: Parecerista, Elaborador, Pesquisa de preços, as 6 ferramentas da Calculadora (`f` abre a ferramenta direto), Gestão Contratual, PCA, planos para equipes, renovação automática opcional, CPGF, verificação em duas etapas. Bateria: `node scripts/testes/chatbot/testar.js` (com o servidor local na porta 8765): 95/95 da base e 61/61 perguntas novas.
 
 ## Revisão para o lançamento (27/10/2026)
 - Retiradas promessas sem lastro: SICAF, certidões, nota fiscal, faturamento mensal, "+40 fontes", classificador com curadoria humana, instrutores/especialistas parceiros, backups diários e meta de disponibilidade.

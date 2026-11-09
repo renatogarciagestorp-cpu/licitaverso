@@ -101,7 +101,8 @@
     return String(texto).split(/(\s+)/).map(function (w) {
       if (/^\s+$/.test(w)) return w;
       var f = fichas(w)[0];
-      var bate = f && qf.some(function (q) { return casa(q, f); });
+      // para marcar, aceita também variações da mesma palavra ("reajustar" e "reajuste")
+      var bate = f && qf.some(function (q) { return casa(q, f) || (q.length >= 6 && f.length >= 6 && q.slice(0, 6) === f.slice(0, 6)); });
       return bate ? "<mark>" + esc(w) + "</mark>" : esc(w);
     }).join("");
   }
@@ -313,7 +314,7 @@
     painel.hidden = false; btn.hidden = true;
     painel.setAttribute("aria-modal", telaCheia() ? "true" : "false");
     if (!REDUZ && silencioso !== true) { painel.classList.remove("lvq-entra"); void painel.offsetWidth; painel.classList.add("lvq-entra"); }
-    rolar(true);
+    if (estado.msgs.length) rolar(true); else lista.scrollTop = 0;
     if (silencioso !== true || !telaCheia()) campo.focus({ preventScroll: true });
   }
   function criarPainel() {
@@ -329,7 +330,7 @@
       "<form class='lvq-f'><input type='text' maxlength='300' placeholder='Escreva sua dúvida' aria-label='Escreva sua dúvida' autocomplete='off' enterkeyhint='send'" +
       " role='combobox' aria-autocomplete='list' aria-expanded='false' aria-controls='lvq-sug'>" +
       "<button class='lvq-env' type='submit' aria-label='Enviar pergunta'>" + SVG.enviar + "</button></form>" +
-      "<div class='lvq-rod'>Respostas automáticas. Se não resolver, a equipe responde por e-mail.</div></div>";
+      "<div class='lvq-rod'>Respostas automáticas, com a base do site</div></div>";
     document.body.appendChild(painel);
     lista = painel.querySelector(".lvq-m"); campo = painel.querySelector("input"); sug = painel.querySelector(".lvq-sug");
     painel.querySelector(".lvq-x").onclick = fechar;
@@ -371,7 +372,7 @@
     if (no.getBoundingClientRect().bottom - ancora.getBoundingClientRect().top > lista.clientHeight - 24) alvo = lista.scrollTop + no.getBoundingClientRect().top - topo - 12;
     lista.scrollTop = Math.max(0, alvo);
   }
-  function recomecar() { estado.msgs = []; gravar(); redesenharTudo(); campo.focus(); }
+  function recomecar() { estado.msgs = []; gravar(); redesenharTudo(); lista.scrollTop = 0; campo.focus(); }
   function redesenharTudo() {
     lista.innerHTML = "";
     if (!estado.msgs.length) { lista.appendChild(telaInicial()); return; }
