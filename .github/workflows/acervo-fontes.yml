@@ -1,0 +1,60 @@
+name: Acervo — ler fontes oficiais para as coletas
+# As coletas agendadas do Acervo rodam com a rede filtrada. Elas enviam ao ramo coleta-fontes um arquivo
+# pedidos/<nome>.txt com os endereços oficiais que precisam ler; esta automação baixa cada um (respeitando o
+# robots.txt), extrai o texto (PDF com OCR quando digitalizado) e devolve em lidas/<nome>/ no mesmo ramo.
+# Leituras com mais de 14 dias são apagadas. Não toca no main nem no site.
+on:
+  push:
+    branches: [coleta-fontes]
+    paths: ["pedidos/**"]
+  workflow_dispatch:
+concurrency:
+  group: acervo-fontes
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  ler:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: coleta-fontes
+      # o código vem sempre do main (o ramo coleta-fontes só guarda pedidos e leituras)
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: .codigo
+          sparse-checkout: scripts/agente
+      - name: Ferramentas de PDF
+        run: |
+          sudo apt-get update -qq >/dev/null
+          sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-por >/dev/null
+      - name: Ler os pedidos
+        run: |
+          shopt -s nullglob
+          for p in pedidos/*.txt; do
+            nome=$(basename "$p" .txt)
+            case "$nome" in *[!a-z0-9_-]*) echo "nome inválido: $nome"; git rm -q "$p"; continue;; esac
+            rm -rf "lidas/$nome"
+            python3 .codigo/scripts/agente/ler-fontes.py "$p" "lidas/$nome" || echo "::warning::falha no pedido $nome"
+            git rm -q "$p"
+          done
+          # leituras antigas
+          if [ -d lidas ]; then
+            for d in lidas/*/; do
+              [ -d "$d" ] || continue
+              idade=$(( ( $(date +%s) - $(git log -1 --format=%ct -- "$d" 2>/dev/null || date +%s) ) / 86400 ))
+              [ "$idade" -gt 14 ] && git rm -rq "$d" || true
+            done
+          fi
+      - name: Devolver as leituras
+        run: |
+          git config user.name "Licitacon — leitor de fontes"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A lidas pedidos 2>/dev/null || true
+          if git diff --cached --quiet; then echo "Nada a devolver."; exit 0; fi
+          git commit -q -m "Leituras para a coleta"
+          for i in 1 2 3; do git pull -q --rebase origin coleta-fontes && git push -q origin HEAD:coleta-fontes && exit 0; sleep 5; done
+          exit 1
