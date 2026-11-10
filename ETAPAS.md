@@ -91,3 +91,13 @@ Cenas 3D da página inicial: o código fica em `src/inicio3d.js`. Depois de muda
 - **Análise grátis só pelo teste de 7 dias:** o teste tem a franquia do Pro (2 por semana, somando Parecerista e Elaborador). A "primeira análise grátis por CPF" foi desligada (`cortesia_ativa()` = false; para religar, trocar para true); as já liberadas continuam valendo.
 - **Biblioteca exige conta (grátis, sem plano):** sem sessão, `biblioteca.html` mostra só a apresentação e os botões de criar conta e entrar (`scripts/biblioteca-shim.js`). É um bloqueio da página: os arquivos `acervo.json` e `acervo-completo.json` continuam públicos no GitHub Pages.
 - **Aba Assinatura:** mostra a situação real da renovação automática.
+
+## Painel da Organização revisado (10/11/2026, skills dashboard-design e dataviz)
+- **Honestidade dos gráficos:** o mapa de valor por natureza agora tem área proporcional (`gxTreemap`, algoritmo "squarified"; fatias abaixo de 2% viram "Outras" e os ladrilhos sem rótulo ganham legenda); eixo do custo mensal com números redondos (`gxEixo`); o indicador "Gasto mensal" usa o mesmo valor do mês atual do gráfico; variação zero aparece como "sem variação".
+- **Linha do tempo de 120 dias:** cada rótulo ocupa um intervalo e vai para a primeira faixa livre (antes havia limite de 6 faixas e rótulos por cima uns dos outros); no celular vira lista com "em N d".
+- **Medidores em arco** viraram número + barra com faixa de referência (bullet); a qualidade do cadastro ficou só com a barra.
+- **Comparação entre exercícios:** valores em duas linhas (sem colidir), variação em cinza para volume e colorida só onde há lado bom (diretas e tempo do reajuste); contagem com base menor que 5 mostra "eram N".
+- **Calmo:** indicador saudável em branco (cor só para atenção e pendência); células do mapa de prazos depois do fim da vigência em branco; rótulos do funil e da tabela sem reticências.
+- **Estados vazios:** alterações contratuais sem registro e PCA sem itens mostram orientação (o PCA sem itens não aparece mais como "0% executado" em vermelho).
+- **Dicas:** `gestao-dicas.js` troca o title nativo por uma dica escura própria (mouse, teclado e toque) e põe linha-guia no gráfico de área; a dica fica no body, fora da árvore do runtime.
+- Conferência: `gasto mensal` igual no indicador, no gráfico e na aba Gestão e dados; área dos ladrilhos = participação; 0 rótulos sobrepostos; sem rolagem lateral no celular.

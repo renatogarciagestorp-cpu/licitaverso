@@ -128,3 +128,73 @@
 #dc-root .gx-smc-c.a > i { background: #A3B1AD; }
 #dc-root .gx-smc-c.b > i { background: #0FA36B; }
 #dc-root .gx-smc { border-color: #E3E9E7; }
+
+/* ---------- revisão do painel (skill dashboard-design) ----------
+   calmo: indicador saudável é branco e a cor fica para atenção e pendência; mapa de valor com área proporcional;
+   tempos médios em barra com faixa de referência (no lugar do arco); comparação com os valores em duas linhas;
+   rótulos sem reticências; estado vazio com orientação; dica escura própria (gestao-dicas.js). */
+#dc-root .gx-hd.ok { background: #fff; border-color: #E3E9E7; }
+#dc-root .gx-hd.ok > em { background: #EAF6F0; }
+/* mapa de valor: ladrilhos posicionados pelo cálculo (área = participação) */
+#dc-root .gx-tree { position: relative; display: block; height: 232px; min-height: 0; }
+#dc-root .gx-tile { position: absolute; min-height: 0; flex-basis: auto; border: 1px solid #fff; background-clip: padding-box; border-radius: 7px; padding: 8px 10px; overflow: hidden; }
+#dc-root .gx-tile > b { text-transform: none; font-size: 12.5px; line-height: 1.25; }
+#dc-root .gx-tile > small { font-size: 11.5px; white-space: nowrap; }
+#dc-root .gx-tile.p { padding: 5px 7px; } #dc-root .gx-tile.p > b { font-size: 11.5px; } #dc-root .gx-tile.p > small { display: none; }
+#dc-root .gx-tile.pp > b { display: none; }
+/* linha do tempo: o "em N d" só aparece na lista do celular */
+#dc-root .gx-tl-e > em { display: none; font-style: normal; font-weight: 600; color: var(--gx-mut); }
+/* tempo médio contra a faixa de referência */
+#dc-root .gx-bul { display: grid; gap: 10px; padding: 4px 0 2px; }
+#dc-root .gx-bul-n { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+#dc-root .gx-bul-n > b { font-size: 28px; line-height: 1; letter-spacing: -0.03em; color: #0F2A27; font-variant-numeric: proportional-nums; }
+#dc-root .gx-bul-n > em { font-style: normal; }
+#dc-root .gx-tag.ne { background: #EEF2F1; color: #5B6F6A; }
+#dc-root .gx-bul-t { position: relative; display: block; height: 14px; border-radius: 3px; background: #EEF2F1; }
+#dc-root .gx-bul-t > u { position: absolute; left: 0; top: 0; bottom: 0; background: #D9E2DF; border-radius: 3px 0 0 3px; }
+#dc-root .gx-bul-t > i { position: absolute; left: 0; top: 4px; bottom: 4px; border-radius: 0 3px 3px 0; }
+#dc-root .gx-bul-t > s { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: #0F2A27; }
+#dc-root .gx-bul-e { position: relative; display: flex; justify-content: space-between; font-size: 11px; color: var(--gx-mut); font-variant-numeric: tabular-nums; }
+#dc-root .gx-bul-e > span:nth-child(2) { position: absolute; top: 0; padding-left: 5px; white-space: nowrap; }
+/* qualidade do cadastro: só a barra (o percentual está no título) */
+#dc-root .gp-qual-b { margin: 6px 0 2px; }
+/* comparação entre exercícios */
+#dc-root .gx-smc { grid-template-rows: 30px 92px auto auto; }
+#dc-root .gx-smc-c { height: 92px; }
+#dc-root .gx-smc-v { display: grid; gap: 1px; justify-items: center; font-size: 11px; font-variant-numeric: tabular-nums; color: #0F2A27; }
+#dc-root .gx-smc-v > em { font-style: normal; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+#dc-root .gx-smc-v > em::before { content: ""; width: 7px; height: 7px; border-radius: 2px; background: #A3B1AD; }
+#dc-root .gx-smc-v > em.b { font-weight: 800; } #dc-root .gx-smc-v > em.b::before { background: #0FA36B; }
+#dc-root .gx-smc > b.gp-neu { color: var(--gx-mut); font-weight: 700; }
+/* estado vazio dentro do cartão */
+#dc-root .gx-vazio { margin: 0; align-self: center; max-width: 38ch; font-size: 13px; line-height: 1.5; color: var(--gx-mut); }
+/* rótulos inteiros: funil e maiores contratos */
+#dc-root .gx-fu { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) 26px 44px; }
+#dc-root .gx-fu-k { white-space: normal; overflow: visible; line-height: 1.25; }
+#dc-root .gx-tr { grid-template-columns: minmax(0, 1.5fr) 104px 52px 128px; white-space: normal; }
+#dc-root .gx-tr > span:first-child small { white-space: normal; overflow: visible; }
+#dc-root .gx-tr > span:nth-child(2) { white-space: nowrap; }
+#dc-root .gx-pill { text-transform: none; letter-spacing: 0; font-size: 11.5px; font-weight: 700; }
+/* mapa de prazos: depois do fim da vigência a célula fica em branco, só com o contorno */
+#dc-root .gx-cel.fora { background: none; box-shadow: inset 0 0 0 1px #E6ECEA; }
+@media (max-width: 760px) {
+  #dc-root .gx-tree { height: 300px; }
+  #dc-root .gx-tl { height: auto !important; border-top: 0; margin-top: 4px; display: grid; gap: 6px; }
+  #dc-root .gx-tl-m, #dc-root .gx-tl-hoje { display: none; }
+  #dc-root .gx-tl-e { position: static; transform: none !important; white-space: normal; width: 100%; padding: 7px 10px 7px 8px; }
+  #dc-root .gx-tl-e > em { display: inline; margin-left: auto; white-space: nowrap; }
+  #dc-root .gx-tr { grid-template-columns: minmax(0, 1fr) 116px; }
+}
+/* dica escura (fica no body, fora do painel) e linha-guia do gráfico de área */
+.gx-dica { position: fixed; left: 0; top: 0; z-index: 2147482000; max-width: 300px; pointer-events: none; background: #0F2A27; color: #fff; font: 700 13px/1.4 Manrope, system-ui, sans-serif; padding: 7px 10px; border-radius: 9px; box-shadow: 0 12px 28px -10px rgba(7,30,28,0.55); opacity: 0; transition: opacity .12s; }
+.gx-dica.on { opacity: 1; }
+.gx-dica > small { display: block; font-size: 11.5px; font-weight: 600; color: #B5CEC6; }
+.gx-guia { position: fixed; z-index: 2147481999; width: 1px; background: #0F3431; opacity: .4; pointer-events: none; display: none; }
+@media (prefers-reduced-motion: reduce) { .gx-dica { transition: none; } }
+@media print { .gx-dica, .gx-guia { display: none !important; } }
+#dc-root .gx-tree-r { margin: 8px 0 0; font-size: 12px; line-height: 1.45; color: var(--gx-mut); }
+#dc-root .gp-qual-b > i { background: #0FA36B; }
+@media (max-width: 760px) {
+  #dc-root .gx-tile > small { white-space: normal; }
+  #dc-root .gx-tile > b { overflow-wrap: anywhere; }
+}

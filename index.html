@@ -57,8 +57,9 @@
 <!-- telas vivas da página inicial (GSAP, baixado sob demanda): ver inicio-ui.js -->
 <script src="inicio-ui.js?v=7" defer></script>
 <!-- painéis da Gestão Contratual: acabamento (gestao.css) e montagem animada com GSAP sob demanda (gestao-anim.js) -->
-<link rel="stylesheet" href="gestao.css?v=10">
+<link rel="stylesheet" href="gestao.css?v=11">
 <script src="gestao-anim.js?v=3" defer></script>
+<script src="gestao-dicas.js?v=1" defer></script>
 <script src="assets/dc-runtime-8fe7df7440.js"></script>
 
 </head>
@@ -5153,8 +5154,9 @@
             <div class="gx-fun"><sc-for list="{{ gxFun }}" as="f" hint-placeholder-count="5"><div class="gx-fu"><span class="gx-fu-k">{{ f.k }}</span><span class="gx-fu-b"><i style="{{ f.larg }}"></i></span><b>{{ f.n }}</b><em>{{ f.p }}</em></div></sc-for></div>
           </div>
           <div class="gx-c gx-4">
-            <div class="gx-t"><h3>Alterações contratuais</h3><span class="gx-tag">{{ gxAltTot }} registros</span></div>
-            <div class="gx-cols gx-cols-6"><sc-for list="{{ gxAlt }}" as="v" hint-placeholder-count="6"><button type="button" class="gx-col gx-col-b2" title="{{ v.tit }}" sc-camel-on-click="{{ v.ir }}"><span class="gx-col-v">{{ v.n }}</span><span class="gx-col-b"><i style="{{ v.h }}"></i></span><small>{{ v.rot }}</small></button></sc-for></div>
+            <div class="gx-t"><h3>Alterações contratuais</h3><sc-if value="{{ gxTemAlt }}" hint-placeholder-val="{{ true }}"><span class="gx-tag">{{ gxAltTot }} registros</span></sc-if></div>
+            <sc-if value="{{ gxAltVazio }}" hint-placeholder-val="{{ false }}"><p class="gx-vazio">Nenhuma alteração registrada. Reajustes, aditivos e prorrogações aparecem aqui quando entram na linha do tempo de cada contrato.</p></sc-if>
+            <sc-if value="{{ gxTemAlt }}" hint-placeholder-val="{{ true }}"><div class="gx-cols gx-cols-6"><sc-for list="{{ gxAlt }}" as="v" hint-placeholder-count="6"><button type="button" class="gx-col gx-col-b2" title="{{ v.tit }}" sc-camel-on-click="{{ v.ir }}"><span class="gx-col-v">{{ v.n }}</span><span class="gx-col-b"><i style="{{ v.h }}"></i></span><small>{{ v.rot }}</small></button></sc-for></div></sc-if>
           </div>
           <sc-if value="{{ gxTemMapa }}" hint-placeholder-val="{{ true }}">
           <div class="gx-c gx-7">
@@ -5180,7 +5182,7 @@
           <div class="gx-c gx-12">
           <div class="gx-t"><h3>Linha do tempo · próximos 120 dias</h3><span class="gx-leg gx-leg-m"><i style="background: #D9534A"></i>prazo processual<i style="background: #E5675B"></i>fim da vigência<i style="background: #E3A72F"></i>iniciar prorrogação<i style="background: #0FA36B"></i>anualidade<i style="background: #3E9CC0"></i>pedido ao órgão</span></div>
           <div class="gx-tl" style="{{ gxTlH }}"><sc-for list="{{ gxTlMarcas }}" as="m" hint-placeholder-count="5"><span class="{{ m.cls }}" style="left: {{ m.l }}"><b>{{ m.rot }}</b></span></sc-for><span class="gx-tl-hoje">hoje</span>
-            <sc-for list="{{ gxTl }}" as="e" hint-placeholder-count="6"><button type="button" class="gx-tl-e" style="{{ e.st }}" title="{{ e.tit }}" sc-camel-on-click="{{ e.ir }}"><i></i><span>{{ e.rot }}</span></button></sc-for></div>
+            <sc-for list="{{ gxTl }}" as="e" hint-placeholder-count="6"><button type="button" class="gx-tl-e" style="{{ e.st }}" title="{{ e.tit }}" sc-camel-on-click="{{ e.ir }}"><i></i><span>{{ e.rot }}</span><em>{{ e.q }}</em></button></sc-for></div>
           <sc-if value="{{ gxTlVazio }}" hint-placeholder-val="{{ false }}"><p class="gp-sub">Nenhum prazo nos próximos 120 dias.</p></sc-if>
           </div>
         <div class="gp-grade">
@@ -5240,7 +5242,8 @@
               <div class="gx-ros-l"><sc-for list="{{ gxModL }}" as="x" hint-placeholder-count="4"><button type="button" class="gx-sl" sc-camel-on-click="{{ x.ir }}"><span class="gx-sl-t"><i style="{{ x.cor }}"></i>{{ x.rot }}<b>{{ x.n }}</b><em>{{ x.p }}</em></span></button></sc-for></div></div>
           </div>
           <div class="gp-card gx-card gp-largo"><h3>Natureza do objeto · mapa de valor</h3>
-            <div class="gx-tree"><sc-for list="{{ gxTree }}" as="t" hint-placeholder-count="6"><button type="button" class="gx-tile" style="{{ t.st }}" title="{{ t.tit }}" sc-camel-on-click="{{ t.ir }}"><b>{{ t.rot }}</b><small>{{ t.v }} · {{ t.p }}</small></button></sc-for></div>
+            <div class="gx-tree"><sc-for list="{{ gxTree }}" as="t" hint-placeholder-count="6"><button type="button" class="{{ t.cls }}" style="{{ t.st }}" title="{{ t.tit }}" sc-camel-on-click="{{ t.ir }}"><b>{{ t.rot }}</b><small>{{ t.v }} · {{ t.p }}</small></button></sc-for></div>
+            <sc-if value="{{ gxTreeTemResto }}" hint-placeholder-val="{{ false }}"><p class="gx-tree-r">{{ gxTreeResto }}</p></sc-if>
           </div>
           <div class="gp-card"><h3>Por regime legal</h3>
             <div class="gp-barras"><sc-for list="{{ gpReg }}" as="b" hint-placeholder-count="3"><button type="button" class="gp-bar gp-clic" title="Ver estes contratos" sc-camel-on-click="{{ b.ir }}"><span class="gp-bar-r">{{ b.rot }}</span><span class="gp-bar-t"><i style="{{ b.larg }}"></i></span><span class="gp-bar-v">{{ b.n }} · {{ b.v }}</span></button></sc-for></div></div>
@@ -5269,12 +5272,12 @@
               <span class="gx-sp-x"><em>{{ gsSp.ini }}</em><em>{{ gsSp.fim }}</em></span></div>
             <small class="gx-sub">{{ gsSp.nota }}</small></div>
           <div class="gx-c gx-4c"><div class="gx-t"><h3>{{ gsRespTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><span><b>{{ gsResp.v }}</b>{{ gsResp.u }}</span><span class="gx-seg" aria-hidden="true"><sc-for list="{{ gsResp.seg }}" as="r" hint-placeholder-count="2"><i style="flex-grow: {{ r.v }}; background: {{ r.cor }}"></i></sc-for></span></div><ul class="gx-dz-l"><sc-for list="{{ gsResp.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
-          <div class="gx-c gx-3c"><div class="gx-t"><h3>Do orçamento à assinatura</h3></div><div class="gx-gz"><svg sc-camel-view-box="0 0 120 70" aria-hidden="true"><path d="M10 62 A50 50 0 0 1 110 62" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round"></path><path d="M10 62 A50 50 0 0 1 110 62" fill="none" sc-camel-stroke="{{ gsG1.cor }}" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round" sc-camel-stroke-dasharray="{{ gsG1.dash }}"></path></svg><b>{{ gsG1.v }}</b><small>{{ gsG1.d }}</small></div></div>
-          <div class="gx-c gx-3c"><div class="gx-t"><h3>Tempo para conceder o reajuste</h3></div><div class="gx-gz"><svg sc-camel-view-box="0 0 120 70" aria-hidden="true"><path d="M10 62 A50 50 0 0 1 110 62" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round"></path><path d="M10 62 A50 50 0 0 1 110 62" fill="none" sc-camel-stroke="{{ gsG2.cor }}" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round" sc-camel-stroke-dasharray="{{ gsG2.dash }}"></path></svg><b>{{ gsG2.v }}</b><small>{{ gsG2.d }}</small></div></div>
+          <div class="gx-c gx-3c"><div class="gx-t"><h3>Do orçamento à assinatura</h3></div><div class="gx-bul" title="{{ gsG1.tit }}"><span class="gx-bul-n"><b>{{ gsG1.v }}</b><em class="{{ gsG1.stCls }}">{{ gsG1.st }}</em></span><span class="gx-bul-t" aria-hidden="true"><u style="{{ gsG1.faixa }}"></u><i style="{{ gsG1.larg }}"></i><s style="{{ gsG1.metaL }}"></s></span><span class="gx-bul-e" aria-hidden="true"><span>0</span><span style="{{ gsG1.metaL }}">{{ gsG1.metaT }}</span><span>{{ gsG1.maxT }}</span></span></div></div>
+          <div class="gx-c gx-3c"><div class="gx-t"><h3>Tempo para conceder o reajuste</h3></div><div class="gx-bul" title="{{ gsG2.tit }}"><span class="gx-bul-n"><b>{{ gsG2.v }}</b><em class="{{ gsG2.stCls }}">{{ gsG2.st }}</em></span><span class="gx-bul-t" aria-hidden="true"><u style="{{ gsG2.faixa }}"></u><i style="{{ gsG2.larg }}"></i><s style="{{ gsG2.metaL }}"></s></span><span class="gx-bul-e" aria-hidden="true"><span>0</span><span style="{{ gsG2.metaL }}">{{ gsG2.metaT }}</span><span>{{ gsG2.maxT }}</span></span></div></div>
           <div class="gx-c gx-3c"><div class="gx-t"><h3>{{ gsConcTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><span><b>{{ gsConc.v }}</b>{{ gsConc.u }}</span><span class="gx-seg" aria-hidden="true"><sc-for list="{{ gsConc.seg }}" as="r" hint-placeholder-count="2"><i style="flex-grow: {{ r.v }}; background: {{ r.cor }}"></i></sc-for></span></div><ul class="gx-dz-l"><sc-for list="{{ gsConc.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
           <div class="gx-c gx-3c"><div class="gx-t"><h3>{{ gsDirTit }}</h3></div><div class="gx-dz"><div class="gx-ros-g gx-ros-p"><span><b>{{ gsDir.v }}</b>{{ gsDir.u }}</span><span class="gx-seg" aria-hidden="true"><sc-for list="{{ gsDir.seg }}" as="r" hint-placeholder-count="2"><i style="flex-grow: {{ r.v }}; background: {{ r.cor }}"></i></sc-for></span></div><ul class="gx-dz-l"><sc-for list="{{ gsDir.leg }}" as="l" hint-placeholder-count="2"><li><i style="{{ l.cor }}"></i>{{ l.rot }}<b>{{ l.n }}</b></li></sc-for></ul></div></div>
           <div class="gx-c gx-8c"><div class="gx-t"><h3>{{ gpCmpTit }}</h3><span class="gx-leg"><i style="background: #A3B1AD"></i>{{ gpCmpAnt }}<i style="background: #0FA36B"></i>{{ gpCmpAt }}</span></div>
-            <div class="gx-sm"><sc-for list="{{ gsCmp }}" as="c" hint-placeholder-count="6"><div class="gx-smc"><small>{{ c.k }}</small><div class="gx-smc-g"><span class="gx-smc-c a"><em>{{ c.a }}</em><i style="{{ c.ha }}"></i></span><span class="gx-smc-c b"><em>{{ c.b }}</em><i style="{{ c.hb }}"></i></span></div><b class="{{ c.cls }}">{{ c.d }}</b></div></sc-for></div>
+            <div class="gx-sm"><sc-for list="{{ gsCmp }}" as="c" hint-placeholder-count="6"><div class="gx-smc" title="{{ c.tit }}"><small>{{ c.k }}</small><div class="gx-smc-g"><span class="gx-smc-c a"><i style="{{ c.ha }}"></i></span><span class="gx-smc-c b"><i style="{{ c.hb }}"></i></span></div><span class="gx-smc-v"><em class="a">{{ c.a }}</em><em class="b">{{ c.b }}</em></span><b class="{{ c.cls }}">{{ c.d }}</b></div></sc-for></div>
             <small class="gx-sub">{{ gpCmpNota }}</small></div>
           <div class="gp-card gx-4c"><h3>{{ gpPesTit }}</h3><p class="gp-nota">{{ gpPesSub }}</p>
             <sc-if value="{{ gpTemPes }}" hint-placeholder-val="{{ true }}"><div class="gp-pes"><div class="gp-pes-l gp-pes-cab"><span>{{ gpPesCol }}</span><span>Contratos</span><span>Papéis</span></div><sc-for list="{{ gpPes }}" as="x" hint-placeholder-count="4"><button type="button" class="{{ x.cls }}" sc-camel-on-click="{{ x.ir }}"><span>{{ x.nome }}<i style="{{ x.larg }}"></i></span><span>{{ x.n }}</span><span>{{ x.papeis }}</span></button></sc-for></div></sc-if>
@@ -5282,7 +5285,7 @@
             <sc-if value="{{ gpTemSemFiscal }}" hint-placeholder-val="{{ false }}"><button type="button" class="gp-alerta-b" sc-camel-on-click="{{ gpSemFiscalIr }}">{{ gpSemFiscalTxt }}</button></sc-if>
           </div>
           <div class="gp-card gp-cheio"><h3>Qualidade do cadastro <b class="{{ gpQualCls }}">{{ gpQualV }}</b></h3><p class="gp-nota">{{ gpQualSub }}</p>
-            <div class="gx-gauge-w"><div class="gx-gauge"><svg sc-camel-view-box="0 0 120 68" aria-hidden="true"><path d="M10 62 A50 50 0 0 1 110 62" fill="none" stroke="#EEF0F4" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round"></path><path d="M10 62 A50 50 0 0 1 110 62" fill="none" sc-camel-stroke="{{ gpQualCor }}" sc-camel-stroke-width="12" sc-camel-stroke-linecap="round" sc-camel-stroke-dasharray="{{ gpQualDash }}"></path></svg><b>{{ gpQualV }}</b><small>dos campos preenchidos</small></div><div class="gp-qual-b"><i style="{{ gpQualLarg }}"></i></div></div>
+            <div class="gp-qual-b"><i style="{{ gpQualLarg }}"></i></div>
             <sc-if value="{{ gpTemQual }}" hint-placeholder-val="{{ true }}"><ul class="gp-lista gp-qual"><sc-for list="{{ gpQual }}" as="x" hint-placeholder-count="3"><li><span><b>{{ x.t }}</b><span>falta: {{ x.d }}</span></span><button type="button" class="lve-voltar" sc-camel-on-click="{{ x.ir }}">Completar</button></li></sc-for></ul></sc-if>
           </div>
         </div>
@@ -5324,7 +5327,7 @@
                   <div class="pca-bts"><button type="button" class="lmo-btn" sc-camel-on-click="{{ pcaSalvar }}">Salvar item</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ pcaCancelar }}">Cancelar</button></div>
                 </div>
               </sc-if>
-              <sc-if value="{{ pcaVazio }}" hint-placeholder-val="{{ false }}"><div class="gp-card"><h3>Nenhum item no PCA {{ pcaAno }}</h3><p class="gp-sub">Cadastre os itens aprovados no Plano de Contratações Anual, ou cole a lista do Excel, para acompanhar quanto cada secretaria já contratou e quanto ainda pode contratar. Vincule cada contrato ao item do PCA no cadastro do contrato; sem vínculo, o contrato entra pelo setor requisitante.</p></div></sc-if>
+              <sc-if value="{{ pcaVazio }}" hint-placeholder-val="{{ false }}"><div class="gp-card"><h3>Nenhum item no PCA {{ pcaAno }}</h3><p class="gp-sub">Cadastre os itens aprovados no Plano de Contratações Anual, ou cole a lista do Excel, para acompanhar quanto cada secretaria já contratou e quanto ainda pode contratar. Vincule cada contrato ao item do PCA no cadastro do contrato; sem vínculo, o contrato entra pelo setor requisitante.</p><p class="gp-sub"><b>{{ pcaVazioFora }}</b></p></div></sc-if>
               <sc-if value="{{ pcaTem }}" hint-placeholder-val="{{ true }}">
                 <div class="gx gx-aba">
                 <div class="gx-head gx-head-4"><sc-for list="{{ pcaHead }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em><sc-if value="{{ h.temBar }}" hint-placeholder-val="{{ false }}"><span class="gx-hbar"><span style="{{ h.barSt }}"></span></span></sc-if><sc-if value="{{ h.temSpark }}" hint-placeholder-val="{{ false }}"><svg class="gx-hspark" sc-camel-view-box="0 0 100 24" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><path sc-camel-d="{{ h.sparkArea }}" class="a"></path><path sc-camel-d="{{ h.spark }}" class="l"></path></svg></sc-if></div></sc-for></div>
@@ -9247,6 +9250,28 @@ function gxHB(h, p, spark) {
   const v = p == null || !isFinite(p) ? null : Math.max(0, Math.min(1, p));
   return { ...h, temBar: v != null && !spark, barSt: v != null ? "width: " + Math.max(2, v * 100).toFixed(1) + "%" : "", temSpark: !!spark, spark: spark || "", sparkArea: spark ? spark + " L100 24 L0 24 Z" : "" };
 }
+// eixo com números redondos: passo de 1, 2, 2,5 ou 5 × 10^n, até cobrir o máximo com folga
+function gxEixo(max) {
+  const m = Math.max(1, max), alvo = m / 4, p = Math.pow(10, Math.floor(Math.log10(alvo))), f = alvo / p;
+  const passo = (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p, n = Math.max(1, Math.ceil(m * 1.04 / passo));
+  return { passo, n, max: passo * n };
+}
+// mapa de valor proporcional ("squarified treemap"): a área de cada ladrilho é a participação no total.
+// Recebe os valores em ordem decrescente e devolve x, y, w, h em % de um quadro W × H.
+function gxTreemap(vals, W, H) {
+  const tot = vals.reduce((a, v) => a + v, 0) || 1, area = vals.map((v) => v / tot * W * H), out = [];
+  const pior = (linha, lado) => { const sm = linha.reduce((a, v) => a + v, 0), mx = Math.max(...linha), mn = Math.min(...linha); return Math.max(lado * lado * mx / (sm * sm), sm * sm / (lado * lado * mn)); };
+  let x = 0, y = 0, w = W, h = H, i = 0;
+  while (i < area.length) {
+    const lado = Math.min(w, h), linha = [area[i]]; let j = i + 1;
+    while (j < area.length && pior(linha.concat(area[j]), lado) <= pior(linha, lado)) { linha.push(area[j]); j++; }
+    const sm = linha.reduce((a, v) => a + v, 0);
+    if (w >= h) { const lw = sm / h; let yy = y; linha.forEach((a) => { out.push({ x, y: yy, w: lw, h: a / lw }); yy += a / lw; }); x += lw; w -= lw; }
+    else { const lh = sm / w; let xx = x; linha.forEach((a) => { out.push({ x: xx, y, w: a / lh, h: lh }); xx += a / lh; }); y += lh; h -= lh; }
+    i = j;
+  }
+  return out.map((r) => ({ x: r.x / W * 100, y: r.y / H * 100, w: r.w / W * 100, h: r.h / H * 100 }));
+}
 function gxSuave(pts) {
   if (!pts.length) return ""; let d = "M" + pts[0][0].toFixed(1) + " " + pts[0][1].toFixed(1);
   for (let i = 0; i < pts.length - 1; i++) { const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
@@ -9262,11 +9287,11 @@ function ctVisual(G, E, emp, brlC) {
   const hoje = new Date(), agoraN = hoje.getFullYear() * 12 + hoje.getMonth(), ym = (n) => ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"][n % 12] + "/" + String(Math.floor(n / 12)).slice(2);
   const pc = (v) => (v * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%";
   // 1) área empilhada: valor original + ajustes, 24 meses
-  const W = 640, H = 220, T = 12, B = 216, M = E.meses, mx = Math.max(1, ...M.map((m) => m.t)) * 1.12, X = (i) => (i / (M.length - 1)) * W, Y = (v) => B - (v / mx) * (B - T);
+  const W = 640, H = 220, T = 12, B = 216, M = E.meses, eixo = gxEixo(Math.max(1, ...M.map((m) => m.t))), mx = eixo.max, X = (i) => (i / (M.length - 1)) * W, Y = (v) => B - (v / mx) * (B - T);
   const iHoje = M.findIndex((m) => m.m === agoraN), ptsT = M.map((m, i) => [X(i), Y(m.t)]), ptsB = M.map((m, i) => [X(i), Y(m.b)]);
   const areaT = gxSuave(ptsT) + " L" + W + " " + B + " L0 " + B + " Z", areaB = gxSuave(ptsB) + " L" + W + " " + B + " L0 " + B + " Z";
   const passado = gxSuave(ptsT.slice(0, iHoje + 1)), futuro = gxSuave(ptsT.slice(iHoje));
-  const ticks = [0, 0.25, 0.5, 0.75, 1].map((f) => ({ y: (B - f * (B - T)).toFixed(1), top: ((B - f * (B - T)) / H * 100).toFixed(2) + "%", rot: brlC(mx * f) }));
+  const ticks = Array.from({ length: eixo.n + 1 }, (_, i) => i / eixo.n).map((f) => ({ y: (B - f * (B - T)).toFixed(1), top: ((B - f * (B - T)) / H * 100).toFixed(2) + "%", rot: f ? brlC(mx * f) : "0" }));
   const area = { areaT, areaB, passado, futuro, hojeX: X(iHoje).toFixed(1), hojeY: Y(M[iHoje] ? M[iHoje].t : 0).toFixed(1), hojeL: (X(iHoje) / W * 100).toFixed(2) + "%", hojeV: brlC(M[iHoje] ? M[iHoje].t : 0),
     futX: X(iHoje).toFixed(1), futW: (W - X(iHoje)).toFixed(1), ticks, xs: M.map((m, i) => ({ rot: ym(m.m), l: (X(i) / W * 100).toFixed(2) + "%", ver: i % 3 === 0 || i === iHoje, cls: "gx-xl" + (i === iHoje ? " hoje" : "") })).filter((x) => x.ver),
     pontos: M.map((m, i) => ({ x: X(i).toFixed(1), y: Y(m.t).toFixed(1), l: (X(i) / W * 100).toFixed(2) + "%", t: (Y(m.t) / H * 100).toFixed(2) + "%", tit: ym(m.m) + ": " + brlC(m.t) + (m.aj > 0 ? " (ajustes " + brlC(m.aj) + ")" : "") + (m.fut ? " · projeção" : "") })) };
@@ -11626,7 +11651,7 @@ class Component extends DCLogic {
     const pcaF = {}; Object.keys(PCA_FORM).forEach((k) => { const nome = "pcaF" + k.charAt(0).toUpperCase() + k.slice(1); pcaF[nome] = f[k] == null ? "" : String(f[k]); pcaF["on" + nome.charAt(0).toUpperCase() + nome.slice(1)] = campo(k); });
     return { ...pcaF,
       pcaVer: !!q.carregado, pcaAno: String(ano), pcaAnos: anos.map((a) => ({ id: String(a), nome: "PCA " + a, sel: a === ano })), onPcaAno: (e) => set({ ano: Number(e.target.value), setor: "", todos: false }),
-      pcaVazio: !P.nItens && !P.doAno.length, pcaTem: P.nItens > 0 || P.doAno.length > 0, pcaMsg: q.msg || "", pcaErro: q.erro || "",
+      pcaVazio: !P.nItens, pcaTem: P.nItens > 0, pcaVazioFora: !P.nItens && P.doAno.length ? (P.doAno.length === 1 ? "Há 1 contrato assinado em " : "Há " + P.doAno.length + " contratos assinados em ") + ano + " aguardando o vínculo com um item do plano." : "", pcaMsg: q.msg || "", pcaErro: q.erro || "",
       pcaNovo: () => set({ form: { ...PCA_FORM, ano: String(ano), setor: setorSel ? (P.lista.find((g) => g.k === setorSel) || {}).nome || "" : "" }, colar: null, msg: "", erro: "" }),
       pcaColarAbrir: () => set({ colar: q.colar == null ? "" : null, form: null, msg: "", erro: "" }), pcaColarAberto: q.colar != null, pcaColar: q.colar || "", onPcaColar: (e) => set({ colar: e.target.value }),
       pcaImportar: () => this.pcaImportar(),
@@ -13975,8 +14000,8 @@ class Component extends DCLogic {
             const gx = {
               gxHead: [[emp ? "Contratos" : "Contratações", String(G.n), (G.cnt.vig + G.cnt.ven) + " vigentes", "ok"],
                 [emp ? "Receita contratada" : "Valor contratado", brlC(G.original), "vigência inicial", ""],
-                [emp ? "Receita atualizada" : "Custo atualizado", brlC(G.custo), (G.variacao >= 0 ? "▲ " : "▼ ") + pc(Math.abs(G.variacao)), G.variacao > 0 ? (emp ? "ok" : "at") : "ok"],
-                [emp ? "Receita mensal" : "Gasto mensal", brlC(G.mensal), G.cnt.ven ? G.cnt.ven + " vencendo" : "sem vencimentos próximos", G.cnt.ven ? "at" : "ok"],
+                [emp ? "Receita atualizada" : "Custo atualizado", brlC(G.custo), Math.abs(G.variacao) < 0.0005 ? "sem variação" : (G.variacao >= 0 ? "▲ " : "▼ ") + pc(Math.abs(G.variacao)), G.variacao > 0.0005 ? (emp ? "ok" : "at") : "ok"],
+                [emp ? "Receita mensal" : "Gasto mensal", brlC(E.meses[12] ? E.meses[12].t : G.mensal), G.cnt.ven ? G.cnt.ven + " vencendo" : "sem vencimentos próximos", G.cnt.ven ? "at" : "ok"],
                 [emp ? "Reajustes a pedir" : "Reajustes pendentes", String(G.pend), G.pend ? brlC(E.pend.reduce((a, x) => a + x.mes, 0)) + "/mês" : "em dia", G.pend ? "er" : "ok"],
                 [(emp ? "Receita prevista " : "Previsão ") + E.prev.A, brlC(E.prev.v), (E.prev.v - E.prev.sem >= 0 ? "+" : "") + brlC(E.prev.v - E.prev.sem) + " de reajustes", ""]].map(([k, v, d, c]) => ({ k, v, d, cls: "gx-hd " + c })),
               gxAreaTit: emp ? "Receita mensal da carteira" : "Custo mensal da carteira", gxA: V.area,
@@ -14002,32 +14027,45 @@ class Component extends DCLogic {
               const pr = new Date(f + "T12:00:00Z"); pr.setUTCMonth(pr.getUTCMonth() - 4); tlE.push({ d: dd(pr.toISOString()), cor: "#E3A72F", rot: "Prorrogação · " + x.c.numero, tit: "Iniciar a prorrogação · " + E.nomeC(x.c), id: x.c.id });
               if (x.proxN != null && !x.pend) tlE.push({ d: dd(Math.floor(x.proxN / 12) + "-" + String(x.proxN % 12 + 1).padStart(2, "0") + "-01"), cor: "#0FA36B", rot: "Anualidade · " + x.c.numero, tit: "Anualidade do reajuste · " + E.nomeC(x.c), id: x.c.id }); });
             const tl = tlE.filter((e) => e.d >= 0 && e.d <= 120).sort((a, b) => a.d - b.d), lanes = [];
-            tl.forEach((e) => { let k = lanes.findIndex((u) => e.d - u >= 16); if (k < 0) { k = lanes.length; lanes.push(e.d); } else lanes[k] = e.d; e.lane = Math.min(k, 5); });
+            tl.forEach((e) => { const larg = (e.rot.length * 6.4 + 36) / 7, ini = e.d > 96 ? e.d - larg : e.d, fim = ini + larg + 1.5;
+              let k = lanes.findIndex((u) => u.every(([a, b]) => fim <= a || ini >= b)); if (k < 0) { k = lanes.length; lanes.push([]); } lanes[k].push([ini, fim]); e.lane = k; });
             const gx2 = {
               gxAlt: Object.keys(evRotC).map((k, i) => ({ rot: evRotC[k], n: String(G.evT[k][1]), h: "height: " + (G.evT[k][1] ? Math.max(6, (G.evT[k][1] / evMxC) * 100) : 0).toFixed(1) + "%; background: " + evCor[i], tit: G.evT[k][0] + " contrato(s) com " + evRotC[k].toLowerCase(), ir: drill("contratos com " + evRotC[k].toLowerCase(), G.idsEv[k]) })),
-              gxAltTot: String(Object.keys(evRotC).reduce((a, k) => a + G.evT[k][1], 0)),
+              gxAltTot: String(Object.keys(evRotC).reduce((a, k) => a + G.evT[k][1], 0)), gxAltVazio: !Object.keys(evRotC).some((k) => G.evT[k][1]), gxTemAlt: Object.keys(evRotC).some((k) => G.evT[k][1]),
               gxModR: gxRosca(G.porMod.map((g) => g.v), G.porMod.map((g) => gxCor(GX_COR_MOD, g.k)), 42), gxModN: String(G.porMod.length),
               gxModL: G.porMod.slice(0, 7).map((g, i) => ({ rot: g.k, n: String(g.n), p: pc(g.v / modTot), cor: "background: " + gxCor(GX_COR_MOD, g.k), ir: drill("modalidade " + g.k, g.ids) })),
-              gxTree: G.porNat.map((g, i) => ({ rot: g.k, v: brlC(g.v), p: pc(g.v / natTot), tit: g.n + " contrato(s) · " + brlC(g.v), st: "flex-grow: " + Math.max(1, Math.round((g.v / natTot) * 1000)) + "; background: " + GX_TILE + "; min-width: " + (g.v / natTot > 0.3 ? 220 : 110) + "px", ir: drill("natureza " + g.k, g.ids) })),
-              gxTl: tl.map((e) => ({ rot: e.rot, tit: e.tit + " · " + (e.d === 0 ? "hoje" : "em " + e.d + " dias"), st: "left: " + (e.d / 120 * 100).toFixed(2) + "%; top: " + (34 + e.lane * 34) + "px; --c: " + e.cor + (e.d > 96 ? "; transform: translateX(calc(-100% + 3px))" : ""), ir: verC(e.id) })),
+              gxTree: (() => { const pos = G.porNat.filter((g) => g.v > 0), peq = pos.filter((g) => g.v / natTot < 0.02);
+                const itens = peq.length > 1 ? pos.filter((g) => g.v / natTot >= 0.02).concat([{ k: "Outras (" + peq.length + ")", v: peq.reduce((a, g) => a + g.v, 0), n: peq.reduce((a, g) => a + g.n, 0), ids: peq.reduce((a, g) => a.concat(g.ids), []), det: peq.map((g) => g.k + " " + brlC(g.v)).join("; ") }]) : pos;
+                const R = gxTreemap(itens.map((g) => g.v), 3, 1);
+                return itens.map((g, i) => ({ semRot: R[i].w < 8 || R[i].h < 22, rot: g.k.charAt(0).toUpperCase() + g.k.slice(1), v: brlC(g.v), p: pc(g.v / natTot), tit: g.k + " · " + brlC(g.v) + " · " + pc(g.v / natTot) + " · " + g.n + " contrato(s)" + (g.det ? " · " + g.det : ""),
+                  cls: "gx-tile" + (R[i].w < 14 || R[i].h < 36 ? " p" : "") + (R[i].w < 8 || R[i].h < 22 ? " pp" : ""),
+                  st: "left: " + R[i].x.toFixed(2) + "%; top: " + R[i].y.toFixed(2) + "%; width: " + R[i].w.toFixed(2) + "%; height: " + R[i].h.toFixed(2) + "%; background: " + GX_TILE, ir: drill("natureza " + g.k, g.ids) })); })(),
+              gxTreeResto: "", gxTreeTemResto: false,
+              gxTl: tl.map((e) => ({ rot: e.rot, q: e.d === 0 ? "hoje" : "em " + e.d + " d", tit: e.tit + " · " + (e.d === 0 ? "hoje" : "em " + e.d + " dias"), st: "left: " + (e.d / 120 * 100).toFixed(2) + "%; top: " + (34 + e.lane * 34) + "px; --c: " + e.cor + (e.d > 96 ? "; transform: translateX(calc(-100% + 3px))" : ""), ir: verC(e.id) })),
               gxTlMarcas: [0, 30, 60, 90, 120].map((d) => ({ rot: d ? "+" + d + " dias" : "", l: (d / 120 * 100) + "%", cls: d === 120 ? "gx-tl-m fim" : "gx-tl-m" })), gxTlVazio: !tl.length, gxTlH: "height: " + (64 + Math.max(1, lanes.length) * 34) + "px",
             };
+            { const resto = gx2.gxTree.filter((t) => t.semRot).map((t) => t.rot + " " + t.v + " (" + t.p + ")"); gx2.gxTreeResto = "Menores, da esquerda para a direita e de cima para baixo: " + resto.join(" · "); gx2.gxTreeTemResto = resto.length > 0; }
             const hd = (k, v, d, c) => ({ k, v, d, cls: "gx-hd " + (c || "") });
             const urg = E.prazos.filter((x) => x.dias <= 5).length, atrP = E.pedidos.filter((x) => x.dias < 0).length, maxUso = E.a125[0];
             const gx3 = {
               gxHPrazos: [hd(emp ? "Prazos a cumprir" : "Prazos em curso", String(E.prazos.length), urg ? urg + " em até 5 dias" : "nenhum urgente", urg ? "er" : "ok"),
                 hd(emp ? "Pedidos aguardando" : "Pedidos a decidir", String(E.pedidos.length), atrP ? atrP + " com prazo vencido" : "dentro do prazo", atrP ? "er" : "ok"),
                 hd("Vencem em 6 meses", brlC(E.risco.reduce((a, x) => a + x.v, 0)), E.risco.length + (E.risco.length === 1 ? " contrato" : " contratos"), E.risco.length ? "at" : "ok"),
-                hd(emp ? "Reajustes a pedir" : "Reajustes pendentes", brlC(E.pend.reduce((a, x) => a + x.mes, 0)) + "/mês", brlC(E.pend.reduce((a, x) => a + x.acum, 0)) + " acumulados", E.pend.length ? "er" : "ok"),
-                hd("Retroativos", brlC(E.atrasos.reduce((a, x) => a + x.retro, 0)), E.atrasos.length + " reajuste(s) com atraso", E.atrasos.length ? "at" : "ok"),
+                hd(emp ? "Reajustes a pedir" : "Reajustes pendentes", brlC(E.pend.reduce((a, x) => a + x.mes, 0)), E.pend.length ? "por mês · " + brlC(E.pend.reduce((a, x) => a + x.acum, 0)) + " no total" : "em dia", E.pend.length ? "er" : "ok"),
+                hd("Retroativos", brlC(E.atrasos.reduce((a, x) => a + x.retro, 0)), E.atrasos.length ? E.atrasos.length + (E.atrasos.length === 1 ? " reajuste com atraso" : " reajustes com atraso") : "nenhum com atraso", E.atrasos.length ? "at" : "ok"),
                 hd("Maior uso do art. 125", maxUso ? pc(maxUso.uso) : "—", maxUso ? "Contrato " + maxUso.p.c.numero : "sem aditivos de valor", maxUso && maxUso.uso >= 0.8 ? "at" : "ok")],
               gxHContr: [hd("Modalidades", String(G.porMod.length), G.porMod[0] ? "maior: " + G.porMod[0].k : "—"),
                 hd(emp ? "Clientes" : "Fornecedores", String(G.nPartes), G.partes[0] ? G.partes[0].k + " · " + pc(G.custo ? G.partes[0].v / G.custo : 0) : "—"),
-                hd("Concentração · 5 maiores", pc(G.conc5), G.nPartes > 5 && G.conc5 > 0.6 ? "dependência alta" : "participação no valor", G.nPartes > 5 && G.conc5 > 0.6 ? "at" : "ok"),
+                hd("Concentração · top 5", pc(G.conc5), G.nPartes > 5 && G.conc5 > 0.6 ? "dependência alta" : "participação no valor", G.nPartes > 5 && G.conc5 > 0.6 ? "at" : "ok"),
                 emp ? hd("Receita média", brlC(G.n ? G.custo / G.n : 0), "por contrato") : hd("Contratações diretas", pc(G.n ? G.diretas / G.n : 0), G.diretas + " de " + G.n + " contratos", G.n && G.diretas / G.n > 0.4 ? "at" : "ok"),
                 hd(emp ? "Equipes" : "Setores", String(G.porSetor.filter((g) => g.k !== "(sem setor)").length), G.porSetor[0] ? "maior: " + G.porSetor[0].k : "—"),
-                hd(emp ? "Penalidades recebidas" : "Penalidades", String(E.nPen), E.somaMulta ? "multas de " + brlC(E.somaMulta) : E.nOc + " ocorrência(s)", E.nPen ? "er" : "ok")],
+                hd(emp ? "Penalidades recebidas" : "Penalidades", String(E.nPen), E.somaMulta ? "multas de " + brlC(E.somaMulta) : E.nOc ? E.nOc + (E.nOc === 1 ? " ocorrência" : " ocorrências") : "nenhuma ocorrência", E.nPen ? "er" : "ok")],
             };
+            // tempo médio contra uma faixa de referência: barra do valor, faixa "bom" em cinza e marca no limite
+            const bul = (v, max, bom, atencao, semDado) => { const nv = v == null ? "" : v <= bom ? "ok" : v <= atencao ? "at" : "er";
+              return { v: v == null ? "—" : Math.round(v) + (Math.round(v) === 1 ? " dia" : " dias"), st: v == null ? semDado : nv === "ok" ? "dentro da referência" : nv === "at" ? "acima da referência" : "muito acima", stCls: "gx-tag " + (nv || "ne"),
+                larg: "width: " + (v == null ? 0 : Math.max(1.5, Math.min(100, v / max * 100))).toFixed(1) + "%; background: " + ({ ok: "#0B7A52", at: "#B7791F", er: "#C2453B" }[nv] || "#B9C3C9"),
+                faixa: "width: " + (bom / max * 100).toFixed(1) + "%", metaL: "left: " + (bom / max * 100).toFixed(1) + "%", metaT: "até " + bom + " dias", maxT: max + " dias", tit: "Faixa de referência: até " + bom + " dias. Escala de 0 a " + max + " dias." }; };
             const gauge = (frac, cor, v, d) => ({ dash: (Math.max(0, Math.min(1, frac)) * 157.08).toFixed(1) + " 157.08", cor, v, d });
             const pas = E.meses.filter((m) => !m.fut), mxS = Math.max(1, ...pas.map((m) => m.t)), ptsS = pas.map((m, i) => [i / Math.max(1, pas.length - 1) * 300, 86 - (m.t / mxS) * 78]);
             // minigráficos das faixas do topo (Geral, Prazos e riscos, Contratações e fornecedores)
@@ -14044,22 +14082,26 @@ class Component extends DCLogic {
               .concat(emp ? [] : [["Contratações diretas", C.ant.dir, C.atual.dir, (v) => (v == null ? "—" : pc(v))]]).concat([["Reajustes registrados", C.ant.nAj, C.atual.nAj, (v) => String(v)], ["Tempo do reajuste", C.ant.tReaj, C.atual.tReaj, (v) => (v == null ? "—" : Math.round(v) + " d")]]);
             const gs = {
               gsVcTit: emp ? "Receita contratada × atualizada" : "Valor contratado × custo atualizado",
-              gsVc: { tag: (G.variacao >= 0 ? "▲ " : "▼ ") + pc(Math.abs(G.variacao)), tagCls: "gx-tag " + (G.variacao > 0.15 ? (emp ? "ok" : "at") : "ok"), nota: "Diferença: " + brlC(G.custo - G.original) + " em reajustes, revisões, aditivos e prorrogações.",
+              gsVc: { tag: Math.abs(G.variacao) < 0.0005 ? "sem variação" : (G.variacao >= 0 ? "▲ " : "▼ ") + pc(Math.abs(G.variacao)), tagCls: "gx-tag " + (G.variacao > 0.15 ? (emp ? "ok" : "at") : "ok"), nota: "Diferença: " + brlC(G.custo - G.original) + " em reajustes, revisões, aditivos e prorrogações.",
                 barras: [["Contratado", G.original, "#A3B1AD"], ["Atualizado", G.custo, "#0FA36B"]].map(([rot, v, c]) => ({ rot, v: brlC(v), larg: "width: " + (v / Math.max(1, G.original, G.custo) * 100).toFixed(1) + "%; background: " + c })) },
               gsSpTit: emp ? "Receita mensal · 12 meses" : "Gasto mensal · 12 meses",
               gsSp: { linha: linhaS, area: linhaS ? linhaS + " L300 90 L0 90 Z" : "", atual: brlC(pas.length ? pas[pas.length - 1].t : 0) + "/mês", ini: pas.length ? ymS(pas[0].m) : "", fim: pas.length ? ymS(pas[pas.length - 1].m) : "",
                 nota: pas.length > 1 ? "Variação em 12 meses: " + ((pas[pas.length - 1].t / Math.max(1, pas[0].t) - 1) >= 0 ? "+" : "") + pc(pas[pas.length - 1].t / Math.max(1, pas[0].t) - 1) + ". Contratos globais entram rateados." : "Sem histórico suficiente." },
               gsRespTit: emp ? "Contratos com preposto" : "Contratos com fiscal designado",
               gsResp: { v: vigG.length ? pc(comR / vigG.length) : "—", u: "dos vigentes", seg: gxRosca([comR, vigG.length - comR], ["#0FA36B", "#E5675B"], 42), leg: [["Com " + (emp ? "preposto" : "fiscal"), comR, "#0FA36B"], ["Sem " + (emp ? "preposto" : "fiscal"), vigG.length - comR, "#E5675B"]].map(([rot, n, c]) => ({ rot, n: String(n), cor: "background: " + c })) },
-              gsG1: gauge(G.tOrcAss == null ? 0 : G.tOrcAss / 365, G.tOrcAss == null ? "#B9C3C9" : G.tOrcAss <= 120 ? "#0FA36B" : G.tOrcAss <= 240 ? "#E3A72F" : "#D9534A", G.tOrcAss == null ? "—" : Math.round(G.tOrcAss) + " dias", G.tOrcAss == null ? "informe a data do orçamento e da assinatura" : "escala de 0 a 365 dias"),
-              gsG2: gauge(G.tReaj == null ? 0 : G.tReaj / 180, G.tReaj == null ? "#B9C3C9" : G.tReaj <= 30 ? "#0FA36B" : G.tReaj <= 90 ? "#E3A72F" : "#D9534A", G.tReaj == null ? "—" : Math.round(G.tReaj) + " dias", G.tReaj == null ? "nenhum reajuste registrado" : "escala de 0 a 180 dias"),
+              gsG1: bul(G.tOrcAss, 365, 120, 240, "informe as datas do orçamento e da assinatura"),
+              gsG2: bul(G.tReaj, 180, 30, 90, "nenhum reajuste registrado"),
               gsConcTit: emp ? "Concentração · 5 maiores clientes" : "Concentração · 5 maiores fornecedores",
               gsConc: { v: pc(G.conc5), u: "do valor", seg: gxRosca([top5, Math.max(0, G.custo - top5)], ["#0FA36B", "#E6E3DA"], 42), leg: [["5 maiores", brlC(top5), "#0FA36B"], ["Demais", brlC(Math.max(0, G.custo - top5)), "#E6E3DA"]].map(([rot, n, c]) => ({ rot, n, cor: "background: " + c })) },
               gsDirTit: emp ? "Contratos por regime" : "Forma de contratação",
               gsDir: emp ? { v: String(G.porReg.length), u: "regimes", seg: gxRosca(G.porReg.map((g) => g.n), G.porReg.map((g) => gxCor(GX_COR_REG, g.k)), 42), leg: G.porReg.map((g, i) => ({ rot: g.k, n: String(g.n), cor: "background: " + gxCor(GX_COR_REG, g.k) })) }
                 : { v: pc(G.n ? dirN / G.n : 0), u: "diretas", seg: gxRosca([compN, dirN], ["#0FA36B", "#E5675B"], 42), leg: [["Licitação e adesão", compN, "#0FA36B"], ["Dispensa e inexigibilidade", dirN, "#E5675B"]].map(([rot, n, c]) => ({ rot, n: String(n), cor: "background: " + c })) },
-              gsCmp: cmpRaw.map(([k, a, b, f]) => { const na = Number(a) || 0, nb = Number(b) || 0, m = Math.max(1e-9, na, nb), d = a == null || b == null || !na ? "—" : (nb / na - 1 >= 0 ? "+" : "") + pc(nb / na - 1);
-                return { k, a: f(a), b: f(b), ha: "height: " + (na / m * 100).toFixed(1) + "%", hb: "height: " + (nb / m * 100).toFixed(1) + "%", d, cls: d === "—" ? "" : (nb >= na) !== (k === "Tempo do reajuste") ? "gp-up" : "gp-down" }; }),
+              // volume (contratações, valor, custo, registros) é neutro: variação em cinza. Só "diretas" e "tempo do reajuste"
+              // têm lado bom (menor é melhor). Contagem com base menor que 5 não vira percentual: mostra de quanto era.
+              gsCmp: cmpRaw.map(([k, a, b, f]) => { const na = Number(a) || 0, nb = Number(b) || 0, m = Math.max(1e-9, na, nb), conta = k === "Novas contratações" || k === "Reajustes registrados", menorMelhor = k === "Tempo do reajuste" || k === "Contratações diretas";
+                const d = a == null || b == null || !na ? "—" : conta && na < 5 ? (na === 1 ? "era 1" : "eram " + na) : (nb / na - 1 >= 0 ? "+" : "") + pc(nb / na - 1);
+                return { k, a: f(a), b: f(b), ha: "height: " + (na / m * 100).toFixed(1) + "%", hb: "height: " + (nb / m * 100).toFixed(1) + "%", d, tit: k + ": " + f(a) + " em " + (C.anoAt - 1) + " e " + f(b) + " em " + C.anoAt + " (mesmo período)",
+                  cls: d === "—" || !menorMelhor || nb === na || /^era/.test(d) ? "gp-neu" : nb < na ? "gp-up" : "gp-down" }; }),
             };
             const EX = { ...gx, ...gx2, ...gx3, ...gs,
               gpAcoesTit: emp ? "O que fazer agora" : "O que fazer esta semana", gpAcoesSub: E.acoes.length ? E.acoes.length + (E.acoes.length === 1 ? " providência" : " providências") + " em toda a carteira, da mais urgente para a menos urgente" : "toda a carteira",
