@@ -334,6 +334,12 @@ Deno.serve(async (req) => {
         return resposta({ url: pre.init_point, referencia: ref, valor, renovacao: true });
       }
 
+      // um pedido de troca com crédito por vez: os anteriores ainda não pagos deixam de valer (o crédito é um só)
+      if (credito > 0) {
+        const { error: eAnt } = await admin.from("assinaturas").update({ status: "cancelada", observacao: "trocado por um novo pedido de troca de plano" })
+          .eq("usuario_id", usuario.id).in("status", ["pendente", "recusada"]).gt("credito", 0);
+        if (eAnt) throw eAnt;
+      }
       const { data: nova, error } = await admin.from("assinaturas").insert({
         usuario_id: usuario.id, plano, ciclo, status: "pendente", valor, parcelas, contratante, metodo, fundador,
         credito, substitui: substitui.length ? substitui : null,

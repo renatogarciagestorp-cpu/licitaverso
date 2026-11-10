@@ -121,6 +121,7 @@ export async function aplicarPagamento(admin: SupabaseClient, pagamento: any): P
     if (error) throw error;
     if (String(data) === "consultoria_paga") await avisarEquipeNovaConsultoria(admin, ref.split(":")[1]);
     if (String(data) === "assinatura_ativada") await encerrarRenovacoesSubstituidas(admin, ref.split(":")[1]);
+    if (String(data) === "credito_indisponivel") await avisarCreditoIndisponivel(admin, ref, pagamento);
     return String(data);
   }
   // Cartão recusado não encerra o pedido: a pessoa pode tentar de novo no mesmo checkout.
@@ -131,6 +132,25 @@ export async function aplicarPagamento(admin: SupabaseClient, pagamento: any): P
     return "recusado:" + data;
   }
   return "aguardando:" + status;
+}
+
+/** Troca de plano paga com um crédito que já não existe (pedido trocado por outro, ou plano antigo já encerrado):
+ *  o plano não é ativado e a equipe recebe uma mensagem no Painel para estornar ou ajustar. Uma por pagamento. */
+async function avisarCreditoIndisponivel(admin: SupabaseClient, ref: string, pagamento: any): Promise<void> {
+  try {
+    const mpId = String(pagamento?.id ?? "");
+    const { data: ja } = await admin.from("contatos").select("id").eq("detalhes->>mp_pagamento", mpId).limit(1).maybeSingle();
+    if (ja) return;
+    const { data: a } = await admin.from("assinaturas").select("usuario_id, plano, ciclo, valor, credito").eq("id", ref.split(":")[1]).maybeSingle();
+    const { data: p } = a ? await admin.from("perfis").select("nome, email").eq("id", a.usuario_id).maybeSingle() : { data: null };
+    await admin.from("contatos").insert({
+      usuario_id: a?.usuario_id ?? null, nome: p?.nome || "Assinante", email: p?.email || "sem-email@licitacon.invalid", assunto: "Assinatura e cobrança",
+      mensagem: `Pagamento de troca de plano recebido, mas o crédito do plano anterior não está mais disponível (pedido trocado por outro ou plano antigo já encerrado). O plano NÃO foi ativado. Conferir no Mercado Pago (operação ${mpId}, R$ ${Number(pagamento?.transaction_amount ?? 0).toFixed(2).replace(".", ",")}) e estornar ou ajustar o plano manualmente.`,
+      detalhes: { tipo: "credito_indisponivel", referencia: ref, mp_pagamento: mpId, plano: a?.plano ?? null, ciclo: a?.ciclo ?? null, valor: a?.valor ?? null, credito: a?.credito ?? null },
+    });
+  } catch (e) {
+    console.error("troca de plano: não avisou a equipe do crédito indisponível", ref, e);
+  }
 }
 
 /** Troca de plano: a renovação automática dos planos substituídos é cancelada no Mercado Pago, para não cobrar

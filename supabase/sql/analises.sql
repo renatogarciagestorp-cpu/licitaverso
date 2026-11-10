@@ -113,6 +113,17 @@ begin
     if not found then return 'assinatura_inexistente'; end if;
     if a.status = 'ativa' then return 'ja_ativa'; end if;
     if p_valor + 0.01 < a.valor then return 'valor_divergente'; end if;
+    -- Troca de plano com crédito (zz-ze-upgrade-e-teste.sql): o desconto só vale se este pedido não foi trocado por
+    -- outro e se todos os planos abatidos ainda estão ativos. Sem isso, o mesmo crédito seria usado em vários pedidos.
+    -- O pagamento não é registrado: a equipe é avisada para estornar ou ajustar (aplicarPagamento, em comum.ts).
+    if coalesce(a.credito, 0) > 0 then
+      if a.status = 'cancelada' then return 'credito_indisponivel'; end if;
+      perform 1 from public.assinaturas x where x.id = any(a.substitui) for update;
+      if (select count(*) from public.assinaturas x where x.id = any(a.substitui) and x.usuario_id = a.usuario_id
+            and x.status = 'ativa' and x.fim > now()) <> coalesce(array_length(a.substitui, 1), 0) then
+        return 'credito_indisponivel';
+      end if;
+    end if;
     select greatest(now(), coalesce(max(x.fim), now())) into inicio_novo
       from public.assinaturas x
       where x.usuario_id = a.usuario_id and x.status = 'ativa' and x.plano = a.plano and x.fim > now();
