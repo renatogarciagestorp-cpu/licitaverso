@@ -169,7 +169,7 @@ button.lvi-campo-btn:focus-visible { outline: 2px solid var(--lvi-menta); outlin
 
 /* cena: fórum */
 .lvi-perg { display: grid; grid-template-columns: 32px minmax(0, 1fr); gap: 10px; margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,0.05); }
-.lvi-av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: #2E8FA8; color: #fff; font-size: 11px; font-weight: 900; flex: none; }
+.lvi-av { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: #1F7F96; color: #fff; font-size: 11px; font-weight: 900; flex: none; }
 .lvi-av.esp { width: 22px; height: 22px; background: var(--lvi-verde); color: #06251A; }
 .lvi-perg small { font-size: 10.5px; color: var(--lvi-texto-2); }
 .lvi-perg b { display: block; font-size: 12.5px; line-height: 1.4; margin-top: 2px; }
@@ -180,7 +180,7 @@ button.lvi-campo-btn:focus-visible { outline: 2px solid var(--lvi-menta); outlin
 .lvi-resp { position: relative; margin-top: -24px; padding: 11px 12px; border-radius: 12px; background: #fff; color: #0B1F2A; box-shadow: 0 18px 40px -18px rgba(0,0,0,0.6); }
 .lvi-oficial { display: inline-block; font-size: 10.5px; font-weight: 800; color: #0A7A50; background: #E3F5EC; padding: 3px 8px; border-radius: 999px; }
 .lvi-resp p { margin: 6px 0 4px; font-size: 12px; line-height: 1.45; color: #26393F; }
-.lvi-resp small { font-size: 10.5px; color: #6A7B82; }
+.lvi-resp small { font-size: 10.5px; color: #5F7077; }
 
 /* cena: consultoria */
 .lvi-mods { display: grid; gap: 6px; margin-top: 12px; }
@@ -279,12 +279,12 @@ button.lvi-campo-btn:focus-visible { outline: 2px solid var(--lvi-menta); outlin
 .lvi-arq { position: absolute; display: flex; align-items: center; gap: 10px; padding: 10px 14px 10px 10px; border-radius: 14px; background: #fff; color: #0B1F2A; font-size: 13px; font-weight: 800; box-shadow: 0 20px 40px -18px rgba(0,0,0,0.7); white-space: nowrap; }
 .lvi-arq > i { width: 32px; height: 38px; border-radius: 6px; display: grid; place-items: center; font-style: normal; font-size: 9.5px; font-weight: 900; color: #fff; background: #C24A43; }
 .lvi-arq.docx > i { background: #2B6CB0; } .lvi-arq.xlsx > i { background: #0F7B45; }
-.lvi-arq small { display: block; font-size: 11px; font-weight: 600; color: #6A7B82; }
+.lvi-arq small { display: block; font-size: 11px; font-weight: 600; color: #5F7077; }
 /* etapa 2: leitura */
 .lvi-folha { position: relative; width: min(400px, 92%); border-radius: 16px; background: #fff; color: #0B1F2A; padding: 20px 22px; box-shadow: 0 30px 60px -24px rgba(0,0,0,0.7); overflow: hidden; }
 .lvi-folha h4 { margin: 0; padding-right: 92px; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: #3D5058; }
 .lvi-folha .cl { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 8px; margin-top: 10px; align-items: start; }
-.lvi-folha .cl > em { font-style: normal; font-size: 11px; font-weight: 800; color: #6A7B82; padding-top: 1px; }
+.lvi-folha .cl > em { font-style: normal; font-size: 11px; font-weight: 800; color: #5F7077; padding-top: 1px; }
 .lvi-folha .cl > div { display: grid; gap: 5px; }
 .lvi-folha .cl span { display: block; height: 6px; border-radius: 4px; background: #E3EAE8; }
 .lvi-folha .cl.alvo { position: relative; }
@@ -302,7 +302,7 @@ button.lvi-campo-btn:focus-visible { outline: 2px solid var(--lvi-menta); outlin
 .lvi-par { width: min(420px, 94%); border-radius: 18px; background: #fff; color: #0B1F2A; padding: 18px 18px 14px; box-shadow: 0 30px 60px -24px rgba(0,0,0,0.75); }
 .lvi-par-cab { display: flex; align-items: center; gap: 10px; }
 .lvi-par-cab > i { width: 36px; height: 36px; border-radius: 10px; background: #0A1F2A; color: var(--lvi-menta); display: grid; place-items: center; font-style: normal; font-weight: 900; }
-.lvi-par-cab b { display: block; font-size: 14px; } .lvi-par-cab small { font-size: 11.5px; color: #6A7B82; }
+.lvi-par-cab b { display: block; font-size: 14px; } .lvi-par-cab small { font-size: 11.5px; color: #5F7077; }
 .lvi-par .lvi-ach { background: #F6F8F7; color: #26393F; margin-top: 8px; font-size: 12.5px; }
 .lvi-par .lvi-ach.alta { --c: #D64545; } .lvi-par .lvi-ach.media { --c: #C88A0A; } .lvi-par .lvi-ach.baixa { --c: #2E8FA8; }
 .lvi-par-pe { display: flex; gap: 8px; margin-top: 12px; }
@@ -421,7 +421,7 @@ button.lvi-campo-btn:focus-visible { outline: 2px solid var(--lvi-menta); outlin
 .lvi-pt-rolo { padding: 16px 18px; }
 .lvi-pt-b { opacity: 0; }
 .lvi-pt-b h5 { margin: 0; font-size: 14px; letter-spacing: .06em; text-transform: uppercase; color: #0B1F2A; text-align: center; }
-.lvi-pt-b > small { display: block; text-align: center; font-size: 10.5px; color: #6A7B82; margin-top: 2px; padding-bottom: 8px; border-bottom: 1px solid #E8EEEC; }
+.lvi-pt-b > small { display: block; text-align: center; font-size: 10.5px; color: #5F7077; margin-top: 2px; padding-bottom: 8px; border-bottom: 1px solid #E8EEEC; }
 .lvi-pt-b h6 { margin: 10px 0 4px; font-size: 12px; color: #0B1F2A; }
 .lvi-pt-b p { margin: 0; font-size: 11.5px; line-height: 1.45; }
 .lvi-pt-ap { margin-top: 6px; padding: 7px 10px; border-radius: 9px; border-left: 3px solid var(--c); background: #F6F8F7; }

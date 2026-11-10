@@ -1,0 +1,108 @@
+/* Licitacon — sistema de design: tokens e padrões comuns às páginas. Documentação em DESIGN.md.
+ *
+ * 1) Tokens (:root): a fonte única de cores, tipografia, raios, sombras, espaços e movimento. Estilo novo usa
+ *    var(--lv-…); os valores antigos escritos à mão no modelo foram reduzidos a estes (ver DESIGN.md → Migração).
+ * 2) Padrões: o que precisa ser igual em toda página — cabeçalho da página, largura da coluna, rótulos e campos de
+ *    formulário, foco do teclado. Carregado depois dos estilos do site, por isso o prefixo #dc-root e, onde o modelo
+ *    usa style="" na própria etiqueta, !important.
+ * A página inicial (inicio.css) e o Painel da Organização (gestao.css) têm camadas próprias sobre estes tokens.
+ */
+:root {
+  /* marca */
+  --lv-floresta: #0F3431;      /* fundo escuro da página inicial, botão do assistente, abas ativas */
+  --lv-navy: #0A1F2A;          /* barra do topo, rodapé, texto principal */
+  --lv-verde: #0FA36B;         /* ação principal (texto escuro por cima) */
+  --lv-verde-claro: #14B978;   /* ação principal: hover */
+  --lv-verde-escuro: #0A7A50;  /* verde como texto sobre fundo claro (7:1) */
+  --lv-menta: #6FE0AE;         /* destaque sobre fundo escuro, anel de foco em fundo escuro */
+  --lv-petroleo: #0F6B7E;      /* links e rótulos de campo */
+
+  /* texto (sobre branco: 16,7:1 · 8,4:1 · 5,2:1) */
+  --lv-tinta: #0A1F2A;
+  --lv-texto: #3D5058;
+  --lv-mudo: #5F7077;
+  --lv-sobre-verde: #06251A;
+  --lv-sobre-escuro: #C3D9D3;
+
+  /* superfícies e linhas */
+  --lv-branco: #fff;
+  --lv-papel: #F6F8F7;
+  --lv-preenchimento: #EEF2F1;
+  --lv-linha: #E3E9E8;
+  --lv-linha-forte: #DDE4E3;
+
+  /* situação (sempre com rótulo ou ícone, nunca só a cor) */
+  --lv-ok: #0A7A50;        --lv-ok-fundo: #E3F5EC;
+  --lv-atencao: #8A5A0E;   --lv-atencao-fundo: #FBF4E4;
+  --lv-erro: #B8433A;      --lv-erro-fundo: #FCEDEA;
+  --lv-neutro: #5F7077;    --lv-neutro-fundo: #EEF2F1;
+
+  /* tipografia: uma família; escala de 8 passos */
+  --lv-fonte: Manrope, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --lv-t-nota: 12px;
+  --lv-t-apoio: 13px;
+  --lv-t-corpo: 14.5px;
+  --lv-t-lead: 16.5px;
+  --lv-t-h3: 18px;
+  --lv-t-h2: 24px;
+  --lv-t-titulo: clamp(30px, 1.5vw + 20px, 42px);
+  --lv-t-vitrine: clamp(38px, 3vw + 16px, 58px);   /* só a página inicial */
+  --lv-peso-titulo: 700;
+
+  /* raios */
+  --lv-r-1: 6px;    /* etiquetas, células */
+  --lv-r-2: 10px;   /* campos, botões pequenos */
+  --lv-r-3: 12px;   /* botões, itens de lista */
+  --lv-r-4: 16px;   /* cartões */
+  --lv-r-5: 20px;   /* painéis e janelas */
+  --lv-r-pilula: 999px;
+
+  /* elevação */
+  --lv-s-1: 0 1px 0 rgba(15, 42, 39, 0.04);
+  --lv-s-2: 0 1px 0 rgba(15, 42, 39, 0.03), 0 14px 30px -26px rgba(15, 52, 49, 0.35);
+  --lv-s-3: 0 30px 80px rgba(6, 18, 25, 0.38);
+
+  /* espaço (múltiplos de 4) */
+  --lv-e-1: 4px; --lv-e-2: 8px; --lv-e-3: 12px; --lv-e-4: 16px; --lv-e-5: 24px; --lv-e-6: 32px; --lv-e-7: 48px; --lv-e-8: 64px;
+
+  /* medidas e movimento */
+  --lv-coluna: 1240px;
+  --lv-campo-altura: 44px;
+  --lv-rapido: 0.15s;
+  --lv-curva: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* ---------------------------------------------------------------- cabeçalho da página
+   Um título por página, sempre no mesmo tamanho, peso e margem esquerda (a da barra do topo). */
+#dc-root .lvc-hero-in, #dc-root .lvc-corpo, #dc-root .lva-hero-in, #dc-root .lva-corpo { max-width: var(--lv-coluna); }
+#dc-root h1:not(.lvh-top-h1) { font-weight: var(--lv-peso-titulo) !important; letter-spacing: -0.025em !important; text-wrap: balance; }
+#dc-root .lvx-ph h1, #dc-root h1.lva-h1, #dc-root h1.lvf-h1, #dc-root h1.lvp-h1 { font-size: var(--lv-t-titulo) !important; line-height: 1.1 !important; }
+#dc-root .lvx-ph .lva-lead, #dc-root .lvx-ph .lvf-lead, #dc-root .lvx-ph .lvx-ph-lead { font-size: var(--lv-t-lead) !important; line-height: 1.6; color: var(--lv-texto); max-width: 64ch !important; }
+/* a linha acima do título diz a seção: caixa normal, sem letras espaçadas */
+#dc-root .lvx-ph .lvh-eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--lv-verde-escuro); }
+
+/* ---------------------------------------------------------------- rótulos
+   Rótulo de campo e de seção em caixa normal (maiúsculas ficam só para siglas e situações curtas). */
+#dc-root .lvc-campo > span, #dc-root .pp-rot, #dc-root .lvf-temas-t, #dc-root .lvf-rk-h, #dc-root .lvc-res-rot,
+#dc-root .lmo-h2, #dc-root .lve-etapa-cab small, #dc-root .ct-dados small, #dc-root .ct-graf-t, #dc-root .lvc-ci-h,
+#dc-root .lva-am-l dt, #dc-root .gp-ac-q, #dc-root .ptp-r { text-transform: none; letter-spacing: 0; }
+#dc-root .ptp-r { font-size: var(--lv-t-apoio); font-weight: 700; color: var(--lv-petroleo); }
+#dc-root .lvc-campo > span, #dc-root .pp-rot { font-size: var(--lv-t-apoio); font-weight: 700; }
+
+/* ---------------------------------------------------------------- campos
+   O texto de exemplo dos campos usa o cinza de apoio (5,2:1), legível para quem tem baixa visão. */
+#dc-root ::placeholder { color: var(--lv-mudo); opacity: 1; }
+
+/* ---------------------------------------------------------------- foco do teclado
+   Em fundo escuro o anel é menta (o verde da marca some sobre o navy). */
+#dc-root header :focus-visible, #dc-root footer :focus-visible, #dc-root .lvh-top :focus-visible, #dc-root .lvh-final :focus-visible { outline-color: var(--lv-menta); }
+
+/* ---------------------------------------------------------------- texto corrido
+   Parágrafos longos não passam de ~75 caracteres por linha. */
+#dc-root .lvx-ph p { max-width: 75ch; }
+
+/* ---------------------------------------------------------------- contraste
+   Correções apontadas pela varredura automática (texto pequeno precisa de 4,5:1). */
+#dc-root .lve-doc > .lve-doc-sig { color: var(--lv-menta); }            /* a sigla herdava o cinza do texto do cartão */
+#dc-root .lvh-art-oficial { color: var(--lv-sobre-verde); }              /* branco sobre o verde da marca dá 3,2:1 */
+#dc-root .lvh-gc-c.v small { color: var(--lv-ok); } #dc-root .lvh-gc-c.a small { color: var(--lv-atencao); } #dc-root .lvh-gc-c.x small { color: var(--lv-erro); }

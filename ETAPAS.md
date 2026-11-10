@@ -101,3 +101,10 @@ Cenas 3D da página inicial: o código fica em `src/inicio3d.js`. Depois de muda
 - **Estados vazios:** alterações contratuais sem registro e PCA sem itens mostram orientação (o PCA sem itens não aparece mais como "0% executado" em vermelho).
 - **Dicas:** `gestao-dicas.js` troca o title nativo por uma dica escura própria (mouse, teclado e toque) e põe linha-guia no gráfico de área; a dica fica no body, fora da árvore do runtime.
 - Conferência: `gasto mensal` igual no indicador, no gráfico e na aba Gestão e dados; área dos ladrilhos = participação; 0 rótulos sobrepostos; sem rolagem lateral no celular.
+
+## Sistema de design (10/11/2026, skills design-system e frontend-design)
+- `sistema.css`: tokens em `:root` (`--lv-…`: cor, tipografia, raio, elevação, espaço, movimento) e os padrões comuns às páginas (cabeçalho da página, coluna de 1240px, rótulos em caixa normal, contraste). Documentação e auditoria em `DESIGN.md`.
+- Consolidação no modelo: 2 azuis-escuros viraram 1; 9 cinzas de texto viraram 3, todos com contraste AA; 2 mentas viraram 1; raios de 22 para 15 valores; 46 rótulos de campo saíram das MAIÚSCULAS.
+- Títulos de página com o mesmo peso (700), a mesma escala e a mesma margem esquerda em todas as páginas internas (antes: 3 pesos, 6 tamanhos, 2 colunas). A página inicial não mudou.
+- Varredura automática de contraste: `node scripts/testes/design/contraste.js` (servidor local na porta 8765) percorre 15 páginas; resultado atual: 0 textos abaixo do mínimo.
+- Pendências registradas no `DESIGN.md`: escala de tamanhos de letra (40 valores), sombras (81), `biblioteca.html` fora do sistema, `style=""` na marcação e ícones em emoji.
