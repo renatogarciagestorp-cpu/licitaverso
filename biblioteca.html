@@ -1123,11 +1123,14 @@ function renderPainel(list,L){
 }
 
 /* ===== Situação da coleta ===== */
-const AGENDA=[["coleta","TCU, CGU, STF, STJ, PGE-RJ, TJ-RJ e normas",7,7,false],["coleta_tcerj","TCE-RJ",8,23,true],["coleta_tcmrj","TCM-RJ",8,41,true]];
-function ultimoPrevisto(h,mi){const agora=new Date();for(let i=0;i<10;i++){const t=new Date(Date.UTC(agora.getUTCFullYear(),agora.getUTCMonth(),agora.getUTCDate()-i,h+3,mi));const wd=new Date(t.getTime()-3*36e5).getUTCDay();
-  if(wd>0&&wd<6&&t.getTime()<=agora.getTime()-60*6e4)return t}return null}
+/* [chave em meta, nome, hora, minuto, usa o computador, dia da semana (1=seg…5=sex; vazio = todo dia útil)] */
+const AGENDA=[["coleta","TCU, CGU, STF, STJ, PGE-RJ, TJ-RJ e normas",7,7,false],["coleta_tcerj","TCE-RJ",8,23,true],["coleta_tcmrj","TCM-RJ",8,41,true],
+  ["coleta_norte","Região Norte (semanal)",7,37,false,1],["coleta_nordestei","Região Nordeste I (semanal)",7,37,false,2],["coleta_nordesteii","Região Nordeste II (semanal)",7,37,false,3],
+  ["coleta_sudeste","Região Sudeste (semanal)",7,37,false,4],["coleta_sulecentrooeste","Regiões Sul e Centro-Oeste (semanal)",7,37,false,5]];
+function ultimoPrevisto(h,mi,dia){const agora=new Date();for(let i=0;i<10;i++){const t=new Date(Date.UTC(agora.getUTCFullYear(),agora.getUTCMonth(),agora.getUTCDate()-i,h+3,mi));const wd=new Date(t.getTime()-3*36e5).getUTCDay();
+  if((dia?wd===dia:wd>0&&wd<6)&&t.getTime()<=agora.getTime()-60*6e4)return t}return null}
 function renderStatus(){
-  const box=$("statusBox");box.innerHTML=AGENDA.map(([k,nome,h,mi,pc])=>{const m=S.meta[k]||{};const ult=m.ultima_execucao?new Date(m.ultima_execucao):null;const prev=ultimoPrevisto(h,mi);
+  const box=$("statusBox");box.innerHTML=AGENDA.map(([k,nome,h,mi,pc,dia])=>{const m=S.meta[k]||{};const ult=m.ultima_execucao?new Date(m.ultima_execucao):null;const prev=ultimoPrevisto(h,mi,dia);
     const atrasada=prev&&(!ult||ult.getTime()<prev.getTime()-40*6e4);
     return `<div class="${atrasada?"late":"ok"}">${atrasada?"⚠":"✓"} ${esc(nome)}: ${atrasada?`atrasada — não rodou em ${prev.toLocaleDateString("pt-BR")}${ult?"; última em "+ult.toLocaleDateString("pt-BR"):""}`:`em dia${ult?" · "+ult.toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"}):""}`}</div>`}).join("")
     +`<span class="note">Coletas atrasadas são recuperadas na próxima execução: elas buscam tudo o que entrou desde o último item gravado.</span>`;

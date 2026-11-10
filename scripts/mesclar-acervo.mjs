@@ -1,5 +1,6 @@
 // Junta ao acervo do site os documentos novos deixados pelas coletas em acervo-novos/<id>.json
-// (o mesmo objeto gravado na coleção "decisoes" do Acervo; aceita também {id, data}).
+// (o mesmo objeto gravado na coleção "decisoes" do Acervo; aceita também {id, data}) e a situação das coletas
+// em acervo-novos/_meta/<id>.json (coleção "meta", mostrada no quadro "Situação da coleta" da Biblioteca).
 // Valida cada um (órgão do catálogo, número, título e fonte oficial), regenera acervo.json e
 // acervo-completo.json com scripts/gerar-acervo.mjs e move os recusados para acervo-recusados/.
 // Uso: node scripts/mesclar-acervo.mjs   (rodado pela automação .github/workflows/acervo-mesclar.yml)
@@ -8,8 +9,10 @@ import "../orgaos.js";
 const ORG = globalThis.LV_ORG;
 const raiz = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const pastaNovos = path.join(raiz, "acervo-novos"), pastaRec = path.join(raiz, "acervo-recusados");
+const pastaMeta = path.join(pastaNovos, "_meta");
 const arquivos = fs.existsSync(pastaNovos) ? fs.readdirSync(pastaNovos).filter((f) => f.endsWith(".json")) : [];
-if (!arquivos.length) { console.log("Nada novo em acervo-novos/."); process.exit(0); }
+const arqMeta = fs.existsSync(pastaMeta) ? fs.readdirSync(pastaMeta).filter((f) => f.endsWith(".json")) : [];
+if (!arquivos.length && !arqMeta.length) { console.log("Nada novo em acervo-novos/."); process.exit(0); }
 
 const completo = JSON.parse(fs.readFileSync(path.join(raiz, "acervo-completo.json"), "utf8"));
 const docs = new Map(completo.decisoes.map(([id, d]) => [id, d]));
@@ -27,11 +30,20 @@ for (const f of arquivos) {
   if (docs.has(id)) atualizados++; else novos++;
   docs.set(id, d);
 }
+// situação das coletas: substitui a ficha inteira (é só texto de acompanhamento, sem validação de fonte)
+const metas = new Map(completo.meta || []); let metasNovas = 0;
+for (const f of arqMeta) {
+  const id = f.slice(0, -5); let m;
+  try { m = JSON.parse(fs.readFileSync(path.join(pastaMeta, f), "utf8")); } catch (e) { recusados.push(["_meta/" + f, "JSON inválido"]); continue; }
+  if (!/^[a-z0-9_-]{2,60}$/.test(id) || !m || typeof m !== "object" || Array.isArray(m)) { recusados.push(["_meta/" + f, "situação inválida"]); continue; }
+  if (fs.statSync(path.join(pastaMeta, f)).size > 200000) { recusados.push(["_meta/" + f, "maior que 200 KB"]); continue; }
+  metas.set(id, m); metasNovas++;
+}
 // pastas temporárias no formato de gerar-acervo.mjs
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "acervo-"));
 fs.mkdirSync(path.join(tmp, "decisoes")); fs.mkdirSync(path.join(tmp, "meta"));
 for (const [id, d] of docs) fs.writeFileSync(path.join(tmp, "decisoes", id + ".json"), JSON.stringify(d));
-for (const [id, m] of completo.meta || []) fs.writeFileSync(path.join(tmp, "meta", id + ".json"), JSON.stringify(m));
+for (const [id, m] of metas) fs.writeFileSync(path.join(tmp, "meta", id + ".json"), JSON.stringify(m));
 execFileSync("node", [path.join(raiz, "scripts", "gerar-acervo.mjs"), path.join(tmp, "decisoes"), path.join(raiz, "acervo.json"), path.join(tmp, "meta")], { stdio: "inherit" });
 // limpa a pasta de entrada; recusados ficam para conferência
 if (recusados.length) fs.mkdirSync(pastaRec, { recursive: true });
@@ -39,7 +51,12 @@ for (const f of arquivos) {
   const r = recusados.find((x) => x[0] === f);
   if (r) fs.renameSync(path.join(pastaNovos, f), path.join(pastaRec, f)); else fs.unlinkSync(path.join(pastaNovos, f));
 }
+for (const f of arqMeta) {
+  const r = recusados.find((x) => x[0] === "_meta/" + f);
+  if (r) fs.renameSync(path.join(pastaMeta, f), path.join(pastaRec, "meta-" + f)); else fs.unlinkSync(path.join(pastaMeta, f));
+}
+if (fs.existsSync(pastaMeta) && !fs.readdirSync(pastaMeta).length) fs.rmdirSync(pastaMeta);
 if (recusados.length) fs.appendFileSync(path.join(pastaRec, "LEIA.txt"), recusados.map(([f, m]) => new Date().toISOString().slice(0, 10) + " " + f + ": " + m).join("\n") + "\n");
-const resumo = `${docs.size} itens (${novos} novos, ${atualizados} atualizados${recusados.length ? ", " + recusados.length + " recusados" : ""})`;
+const resumo = `${docs.size} itens (${novos} novos, ${atualizados} atualizados${metasNovas ? ", " + metasNovas + " situações de coleta" : ""}${recusados.length ? ", " + recusados.length + " recusados" : ""})`;
 fs.writeFileSync(path.join(os.tmpdir(), "acervo-resumo.txt"), resumo);
 console.log(resumo); recusados.forEach(([f, m]) => console.log("recusado:", f, "-", m));

@@ -108,3 +108,10 @@ Cenas 3D da página inicial: o código fica em `src/inicio3d.js`. Depois de muda
 - Títulos de página com o mesmo peso (700), a mesma escala e a mesma margem esquerda em todas as páginas internas (antes: 3 pesos, 6 tamanhos, 2 colunas). A página inicial não mudou.
 - Varredura automática de contraste: `node scripts/testes/design/contraste.js` (servidor local na porta 8765) percorre 15 páginas; resultado atual: 0 textos abaixo do mínimo.
 - Pendências registradas no `DESIGN.md`: escala de tamanhos de letra (40 valores), sombras (81), `biblioteca.html` fora do sistema, `style=""` na marcação e ícones em emoji.
+
+## Biblioteca se atualiza sozinha: reconciliação diária (10/11/2026)
+- Diagnóstico: a base do Acervo tinha 1815 documentos e o site 1810. Faltavam 4 itens do TCE-RJ (a coleta do TCE-RJ não tem passo de envio ao site) e 1 do TCU (a coleta diária gravou na base, mas o GitHub recusou o envio naquela execução). As fichas de situação das coletas nunca chegavam ao site: a mesclagem só mantinha as que já estavam lá, e 4 regionais nem apareciam.
+- `scripts/sincronizar-acervo.mjs <cópia>`: compara a cópia da base (coleções `decisoes` e `meta`, gravadas pela ArtifactData com `out_dir`) com `acervo-completo.json` e põe em `acervo-novos/` só o que falta ou mudou (decisões em `acervo-novos/<id>.json`, situação das coletas em `acervo-novos/_meta/<id>.json`). Se a cópia vier muito menor que o site (leitura incompleta), não envia nada. Rodar de novo sem novidade não gera arquivo.
+- `scripts/mesclar-acervo.mjs` passa a juntar também `acervo-novos/_meta/` (ficha inteira substituída; até 200 KB).
+- A tarefa agendada "Atualizar site Licitaverso" (dias úteis, 9h03) ganhou o passo de reconciliação: copia a base, roda o script e envia o que faltar. Qualquer coleta que grave na base chega ao site no mesmo dia útil, mesmo que o envio dela falhe.
+- Biblioteca: o quadro "Situação da coleta" passa a mostrar as 5 coletas regionais semanais (cada uma no seu dia), além da diária, TCE-RJ e TCM-RJ.

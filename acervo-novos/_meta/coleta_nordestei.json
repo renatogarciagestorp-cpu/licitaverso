@@ -1,0 +1,328 @@
+{
+ "observacao": "Execução de 10/11/2026: 39 itens (TCE-PB 5, TCE-PE 13, TJ-PE 2, TCE-PI 19). Acesso web muito restrito (Firecrawl sem créditos, permissões do WebFetch expiradas, proxy 403).",
+ "orgaos": {
+  "PGE-CE": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): Firecrawl sem créditos, proxy recusou curl e pedidos de permissão do WebFetch expiraram. O robots.txt de pge.ce.gov.br bloqueia o WebFetch (robots_disallowed em /licitacoes/documentos/). O WebSearch não achou parecer referencial nem enunciado da PGE-CE a partir de 2024. Nenhum item foi captado.",
+   "fontes": [],
+   "pendentes": [],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 0,
+   "ultimo": ""
+  },
+  "PGE-MA": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): proxy recusou (403) tcema.tc.br, apps.tcema.tc.br, tjma.jus.br e pge.ma.gov.br; WebFetch sem permissão; Firecrawl sem créditos. Nada lido. Anterior: A página inicial (www.pge.ma.gov.br) não pôde ser aberta (permissão não concedida). As buscas não acharam banco público de pareceres referenciais, enunciados ou orientações da PGE-MA sobre licitações e contratos. Os PDFs abertos (normas internas de 2020 e extratos do DOE de 2024/2025) não trazem nenhum ato pertinente.",
+   "fontes": [
+    "https://pge.ma.gov.br/uploads/pge/docs/NORMAS-INTERNAS-DA-PROCURADORIA-GERAL-DO-ESTADO-DO-MARANH%C3%83O-JULHO.pdf",
+    "https://pge.ma.gov.br/uploads/pge/docs/doema_20251017025220_(1).pdf",
+    "https://www.pge.ma.gov.br/uploads/pge/docs/doema_20241112113333_(1)_(1).pdf"
+   ],
+   "pendentes": [],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 0,
+   "ultimo": ""
+  },
+  "PGE-PB": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): Firecrawl sem créditos, proxy recusou curl e pedidos de permissão do WebFetch expiraram. portal.pge.pb.gov.br bloqueado por robots/erro de túnel.",
+   "fontes": [],
+   "pendentes": [
+    "Parecer Referencial 0004/2025 – PGE (PDF em portal.pge.pb.gov.br/wp-content/uploads/2025/10/parecer_n.004-2025.pdf): só o título foi visto na busca, conteúdo bloqueado",
+    "Parecer referencial sobre Termo de Execução Descentralizada (notícia da PGE-PB): bloqueado; provavelmente fora do escopo (descentralização, não contrato)",
+    "Orientação Normativa Conjunta PGE/CGE/SEAD nº 0001/2025 (paraiba.pb.gov.br/diretas/controladoria-geral-do-estado/arquivos/downloads/ORIENTAONORMATIVACONJUNTAPGECGESEADn0001.2025.pdf) – não lida"
+   ],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 0,
+   "ultimo": ""
+  },
+  "PGE-PE": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): Firecrawl sem créditos, proxy recusou curl e pedidos de permissão do WebFetch expiraram. O pge.pe.gov.br bloqueia por robots.txt as páginas de súmulas (consultivasumulas.aspx) e de instrumentos (consultivainstrumentos.aspx), então o WebFetch não leu nada. As buscas acharam só PDFs antigos (Parecer Padrão 005/2020 e check list de dispensa da Lei 8.666), de antes de 2024. Não foi encontrado nenhum enunciado ou parecer referencial público de 2024 em diante.",
+   "fontes": [],
+   "pendentes": [],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 0,
+   "ultimo": ""
+  },
+  "PGE-PI": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): Firecrawl sem créditos, proxy recusou curl e pedidos de permissão do WebFetch expiraram. Busca não achou parecer referencial de licitação da PGE-PI. Página de pareceres referenciais lista apenas pareceres da Consultoria Jurídica (pessoal/previdência) e da PPI (patrimônio); seção da Procuradoria de Licitações e Contratos mostra só categorias, sem pareceres individuais ou links. Súmulas administrativas visíveis (61 a 66, 2024) tratam de dispensa recursal/patrimônio, não de licitações. Nada pertinente e verificável.",
+   "fontes": [
+    "https://www.pge.pi.gov.br/publicacoes/",
+    "https://www.pge.pi.gov.br/pareceres-referenciais/",
+    "https://www.pge.pi.gov.br/sumulas/"
+   ],
+   "pendentes": [],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 0,
+   "ultimo": ""
+  },
+  "PGE-RN": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): não pesquisado por bloqueio de acesso (permissão/proxy/Firecrawl). Anterior: Nenhum repositório público de pareceres referenciais, enunciados ou orientações normativas da PGE-RN sobre licitações foi localizado; buscas restritas a pge.rn.gov.br retornaram apenas sistemas de dívida ativa e páginas antigas. Nada incluído.",
+   "fontes": [],
+   "pendentes": [],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 0,
+   "ultimo": ""
+  },
+  "TCE-CE": {
+   "carga_ate": "2026-09-23",
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): Firecrawl sem créditos, proxy recusou curl e pedidos de permissão do WebFetch expiraram. WebSearch quase não indexa tce.ce.gov.br; nenhum informativo/súmula com número a partir de 2024 encontrado.",
+   "fontes": [
+    "https://www.tce.ce.gov.br/comunicacao/noticias/7207-tce-ceara-aprova-modelo-de-concessao-da-cagece-para-esgotamento-sanitario-em-104-municipios"
+   ],
+   "pendentes": [
+    "Acórdão nº 2321/2026 (TCE-CE, Pleno): apreciou a modelagem original da concessão do esgotamento sanitário da Cagece (Processo 03159/2026-9). Foi citado na notícia 7207, mas o inteiro teor e a data não foram confirmados."
+   ],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 0,
+   "ultimo": "Processo 19982/2026-6, 2026-09-23 (data da notícia)"
+  },
+  "TCE-MA": {
+   "carga_ate": "2025-10-01",
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): proxy recusou (403) tcema.tc.br, apps.tcema.tc.br, tjma.jus.br e pge.ma.gov.br; WebFetch sem permissão; Firecrawl sem créditos. Nada lido. Anterior: Portal de Precedentes (precedentes.apps.tcema.tc.br) e Mural de Prejulgados (publicacao.apps.tcema.tc.br/#/muralprejulgados) não puderam ser abertos (permissão de acesso não concedida a tempo). Não há informativo de jurisprudência nem página de súmulas no site; os itens vieram do Diário Oficial Eletrônico do TCE-MA, e o WebFetch leu só as páginas iniciais de cada edição (texto truncado).",
+   "fontes": [
+    "https://diario.apps.tcema.tc.br/publicacao/pdf/9549",
+    "https://diario.apps.tcema.tc.br/publicacao/pdf/9545",
+    "https://diario.apps.tcema.tc.br/publicacao/pdf/9532",
+    "https://diario.apps.tcema.tc.br/publicacao/pdf/9537",
+    "https://diario.apps.tcema.tc.br/publicacao/pdf/9375"
+   ],
+   "pendentes": [
+    "Processo 1278/2023 (CPL de Santa Helena): representação sobre licitação, multa solidária de R$ 15.000,00, julgada na sessão de 18/03/2026; número do acórdão não consta da ata (DOE 3052/2026)",
+    "Processo 2515/2023 (CPL de Coroatá): representação parcialmente procedente, multa de R$ 5.000,00, sessão de 18/03/2026; número do acórdão não consta da ata (DOE 3052/2026)",
+    "Processo 2410/2024 (COSAMA): representação sobre licitação, sessão de 18/03/2026; número não consta da ata",
+    "Acórdão PL-TCE nº 539/2025 (Processo 8093/2019, SEGEP, Pregão Presencial 120/2018, multa por envio intempestivo ao SACOP) e Acórdãos PL-TCE nº 411/2026, 412/2026 e 506/2026 (contas com falhas em licitações e SACOP): verificados, mas não incluídos por causa do limite de itens e do foco em contas",
+    "Decisão PL-TCE nº 415/2026 (Processo 637/2026, consulta de São Mateus do Maranhão sobre contrato híbrido de livros, ISS e imunidade): não incluída porque é predominantemente tributária",
+    "Notícia (O Imparcial, jun/2026): TCE-MA negou suspender licitação de mais de R$ 1,3 mi em Presidente Médici – número não confirmado"
+   ],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 0,
+   "ultimo": "Decisão PL-TCE nº 416/2026, 2026-07-01 (DOE TCE-MA nº 3064/2026, de 04/08/2026)"
+  },
+  "TCE-PB": {
+   "carga_ate": "2024-03-26",
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): Firecrawl sem créditos, proxy recusou curl e pedidos de permissão do WebFetch expiraram. Listagem publicacao.tce.pb.gov.br/decisao.php e páginas 2+ das notícias não abriram. Sem informativo/súmulas; notícias não trazem número do acórdão (número = processo).",
+   "fontes": [
+    "https://tce.pb.gov.br/noticias/colegiado-do-tce-aprova-contas-de-duas-camaras-municipais-e-julga-pela-irregularidade-de-licitacao/",
+    "https://tce.pb.gov.br/noticias/camara-do-tce-impoe-debito-alem-de-r-25-milhoes-por-irregularidades-em-contrato-de-limpeza-publica-em-bayeux/",
+    "https://publicacao.tce.pb.gov.br/decisao.php",
+    "https://tce.pb.gov.br/noticias/category/noticias/",
+    "https://tce.pb.gov.br/noticias/camara-do-tce-reprova-termos-aditivos-e-impoe-ao-gestor-do-der-debito-superior-a-r-25-milhoes/",
+    "https://tce.pb.gov.br/noticias/camara-desaprova-os-aditivos-contratuais-e-impoe-a-gestor-do-der-debito-de-r-512-mil/",
+    "https://tce.pb.gov.br/noticias/camara-do-tce-determina-a-recuperacao-de-valores-imputados-a-dois-servidores-do-detran/",
+    "https://tce.pb.gov.br/noticias/primeira-camara-do-tce-reprova-contrato-e-impoe-debito-alem-de-r-5-milhoes-a-ex-prefeita-de-bayeux/",
+    "https://tce.pb.gov.br/noticias/camara-do-tce-desaprova-a-dispensa-de-licitacao-efetuada-pela-emlur-para-limpeza-e-manejo-de-lixo/"
+   ],
+   "pendentes": [
+    "Prefeitura de Serra Branca – suspensão cautelar do Pregão Eletrônico 01/2025 (combustíveis), Cons. Antonio Gomes Vieira Filho, notícia de 03/04/2025: sem número de processo/decisão na fonte",
+    "Detran-PB – Inspeção Especial de Acompanhamento do contrato da Dispensa 030/2023 (Uniplacas), 2ª Câmara, pauta virtual de 21/04/2025: sem número de processo nem resultado na fonte",
+    "Parecer Normativo PN-TC 011/2026 (Processo 06692/25) – tema de pessoal/contratação temporária, fora do escopo",
+    "Emlur, Licitação 61001/21: irregular, multa R$ 4 mil, 1ª Câmara, 2025-09-25 – falta nº do processo",
+    "FPGS, Chamamentos 003/2025 e 008/2025: irregulares, 2026-03-12 – falta nº do processo",
+    "Casos set–nov/2026 só em imprensa (Santa Rita, Damião, sede da Câmara de João Pessoa, Guarabira) – confirmar em fonte oficial"
+   ],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 5,
+   "ultimo": "Processo 06083/24, 2026-04-30"
+  },
+  "TCE-PE": {
+   "carga_ate": "2024-07-04",
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): Firecrawl sem créditos, proxy recusou curl e pedidos de permissão do WebFetch expiraram. Boletim560.pdf = 404; boletins 527–559 não testados. Boletins 505/510/513/515 lidos só até 100 mil caracteres. Sem súmulas/informativo localizados.",
+   "fontes": [
+    "https://www.tcepe.tc.br/internet/docs/tce/Boletim526.pdf",
+    "https://www.tcepe.tc.br/internet/docs/tce/Boletim525.pdf",
+    "https://www.tcepe.tc.br/internet/docs/tce/Boletim524.pdf",
+    "https://www.tcepe.tc.br/internet/docs/tce/Boletim522.pdf",
+    "https://www.tcepe.tc.br/internet/docs/tce/Boletim517.pdf",
+    "https://www.tcepe.tc.br/internet/docs/tce/Boletim515.pdf",
+    "https://www.tcepe.tc.br/internet/docs/tce/Boletim513.pdf",
+    "https://www.tcepe.tc.br/internet/docs/tce/Boletim510.pdf",
+    "https://www.tcepe.tc.br/internet/docs/tce/Boletim505.pdf"
+   ],
+   "pendentes": [
+    "Consulta do Pleno abr/2025 (agentes de contratação/pregoeiros): blogs citam Acórdão 584/2025, Câmara de São José da Coroa Grande, proc. 24100118 – não confirmado",
+    "Notícia ago/2026 licitação DER-PE: número não confirmado",
+    "Acórdão 1628/2024 (Proc. 19100428-5, Garanhuns): faltam relator e data",
+    "Boletins 527+ (2025/2026) não localizados; restante truncado dos boletins 505–515 e edições jan–jun/2024 (485, 492, 496)"
+   ],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 13,
+   "ultimo": "Boletim Semanal nº 526 (03/12 a 07/12/2024); Processo 24101114-0 / Acórdão 2107/2024 e Processo 1921490-0 / Acórdão 2117/2024, 2024-12-03"
+  },
+  "TCE-PI": {
+   "carga_ate": "2025-01-31",
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): Firecrawl sem créditos, proxy recusou curl e pedidos de permissão do WebFetch expiraram. Boletins jan–ago/2026, out/2026 e 2024–2025 (exceto jan e nov/2025) não lidos. DOEs lidos só até 100 mil caracteres. Boletim set/2026 sem data de sessão (usada 2026-09-30).",
+   "fontes": [
+    "https://www.tcepi.tc.br/wp-content/uploads/2026/10/Boletim-Setembro-2026.pdf",
+    "https://www.tcepi.tc.br/publicacoes/boletins-de-jurisprudencia/",
+    "https://www.tcepi.tc.br/wp-content/uploads/2025/12/Boletim-Novembro-2025.pdf",
+    "https://www.tcepi.tc.br/publicacao/484224.pdf",
+    "https://www.tcepi.tc.br/publicacao/484128.pdf",
+    "https://www.tcepi.tc.br/category/legislacao/consultas/",
+    "https://www.tcepi.tc.br/publicacao/484197.pdf",
+    "https://www.tcepi.tc.br/publicacao/474086.pdf",
+    "https://www.tcepi.tc.br/publicacao/464035.pdf",
+    "https://tcepi.tc.br/publicacao/464000.pdf",
+    "https://www.tcepi.tc.br/wp-content/uploads/2025/02/boletim-janeiro-2025.pdf"
+   ],
+   "pendentes": [
+    "Consulta TCE-PI de 25/08/2026 – Licitação. Ata de Registro de Preço. Termo Aditivo (prorrogação de vigência e renovação de quantitativos, arts. 84 e 86 da Lei 14.133/2021; consulente MPPI) – sem número de processo/acórdão confirmado",
+    "Consulta TCE-PI de 03/08/2026 – Licitação. Alienação direta de bens móveis inservíveis/sucata irrecuperável. Doação. Requisitos – sem número confirmado",
+    "Consulta TCE-PI de 13/01/2026 – Contrato. Fundação pública autárquica. Impossibilidade de contrato com unidades da mesma estrutura – sem número confirmado",
+    "Acórdão 445/2025 – 2ª Câmara (TC/012946/2024, Francisco Ayres): planejamento imprescindível inclusive na adesão a ARP – no Boletim nov/2025, sem data de sessão (não incluído para limitar a 10 itens)",
+    "Do Boletim set/2026 ainda não gravados: Acórdãos 326/2026-2C (PCA), 349/2026-2C, 280/2026-1C, 395-A/2026-2C",
+    "Boletins jan–ago/2026, out/2026 e mensais de 2024–2025"
+   ],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 19,
+   "ultimo": "Boletim de Jurisprudência set/2026 – Acórdão 292/2026-1ª Câmara (TC/003105/2026), DOE/TCE-PI 182/2026"
+  },
+  "TCE-RN": {
+   "carga_ate": "2024-01-30",
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): tce.rn.gov.br e jurisprudencia.tce.rn.gov.br sem permissão no WebFetch, proxy 403 no curl, Firecrawl sem créditos. Nenhum boletim lido.",
+   "fontes": [
+    "https://www.tce.rn.gov.br/as/InformativoJurisprudencia/105/TCE_RN__BOLETIM_02__2025_nova_id_(1).pdf",
+    "https://www.tce.rn.gov.br/as/InformativoJurisprudencia/104/TCERN_BOLETIM_01_2025.pdf",
+    "https://www.tce.rn.gov.br/as/InformativoJurisprudencia/96/Informativo_n%C2%BA_02_2024__TCE_RN.pdf",
+    "https://www.tce.rn.gov.br/as/InformativoJurisprudencia/95/Informativo_nº_01_2024__TCE_RN.pdf",
+    "https://www.tce.rn.gov.br/as/NoticiasTCE/7890/QW5leG8yMDI2MDQwNzEwMzkyNzE4NV8=.pdf",
+    "https://www.tce.rn.gov.br/Noticias/NoticiaDetalhada/8125",
+    "https://www.tce.rn.gov.br/Noticias/NoticiaDetalhada/8129"
+   ],
+   "pendentes": [
+    "Processo 304561/2023-TC (2ª Câmara, Rel. Cons. Subst. Antonio Ed Souza Santana, 2024-04-02) - exigência justificada de preposto tecnicamente habilitado no local; informativo 02/2024 não indica número do acórdão com segurança",
+    "Decisão Administrativa nº 14/2025-TC (Pleno) - consulta sobre pregão presencial e eletrônico; boletim 02/2025 traz apenas o título, sem conteúdo",
+    "Não incluídos por limite de 10 itens (verificados no informativo/boletim oficial): Acórdão 15/2025-TC 1ª Câmara (proc. 004557/2022, 2025-02-06, incompetência do TCE para controvérsias estritamente contratuais, salvo ordem cronológica); Acórdão 130/2024-TC 2ª Câmara (proc. 303185/2021, 2024-04-30, mesma tese); Acórdão 112/2024 2ª Câmara (proc. 12093/2016, 2024-04-16, cautelar de ofício para retomada de obra paralisada)",
+    "Acórdãos 15/2025-1C, 130/2024-2C e 112/2024-2C: conferir em qual boletim saíram (URL exata) e o relator antes de gravar",
+    "Ler boletins ids 97–103 e >105"
+   ],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 0,
+   "ultimo": "Processo 300258/2026-TC (notícia oficial de 2026-10-23)"
+  },
+  "TJ-CE": {
+   "carga_ate": "2025-11-05",
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): Firecrawl sem créditos, proxy recusou curl e pedidos de permissão do WebFetch expiraram. Informativos 13/2025 e 15/2025 lidos, sem item pertinente. Demais PDFs (nº 18, 20, 21, 22, 14, 12, 11, 10, 9, 8, 7 e 1 a 5/2024) bloqueados por permissão; edições 23–26 não aparecem na página institucional.",
+   "fontes": [
+    "https://www.tjce.jus.br/institucional/informativo-de-jurisprudencia/",
+    "https://www.tjce.jus.br/?p=858285",
+    "https://www.tjce.jus.br/informativo-jurisprudencia/",
+    "https://www.tjce.jus.br/informativo-jurisprudencia/jurisprudencia/858285/",
+    "https://portal.tjce.jus.br/uploads/2025/12/8.-Informativo-de-Jurisprudencia-no16-novembro-2025-1.pdf",
+    "https://portal.tjce.jus.br/uploads/2026/02/9.-Informativo-de-Jurisprudencia-no17-dezembro-2025-2.pdf",
+    "https://portal.tjce.jus.br/uploads/2026/03/11.-Informativo-de-Jurisprudencia-no19-fev-2026.pdf",
+    "https://portal.tjce.jus.br/uploads/2025/06/Informativo-de-Jurisprudencia-no-06-janeiro-de-2025.pdf",
+    "https://portal.tjce.jus.br/uploads/2025/10/Informativo_de_Jurisprudencia_no13_agosto_2025.pdf",
+    "https://portal.tjce.jus.br/uploads/2025/12/7.-Informativo-de-Jurisprudencia-no15-outubro-2025.pdf"
+   ],
+   "pendentes": [
+    "Julgados com os títulos 'Mandado de segurança contra inabilitação em processo licitatório' e 'Mandado de Segurança – licitação – propriedade industrial – ausência de registro de patente' aparecem na lista de assuntos do informativo, mas o número e o link não foram obtidos.",
+    "Ler informativos 18, 20, 21, 22, 14, 12, 11, 10, 9, 8, 7 e 1 a 5 (2024) listados em tjce.jus.br/institucional/informativo-de-jurisprudencia/"
+   ],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 0,
+   "ultimo": "Informativo 24/2026 – Processo 3002394-94.2025.8.06.0070, 2026-07-01"
+  },
+  "TJ-MA": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): proxy recusou (403) tcema.tc.br, apps.tcema.tc.br, tjma.jus.br e pge.ma.gov.br; WebFetch sem permissão; Firecrawl sem créditos. Nada lido. Anterior: Os Informativos de Jurisprudência do TJMA (NUGEPNAC) 2026/03, 2026/05 e 2026/08 e o informativo 2024 das Câmaras de Direito Público foram lidos, sem nenhum item sobre licitações ou contratos administrativos. Nos PDFs de 2026 o WebFetch leu só parte do texto, e a seção de Direito Público da edição 2026/05 (fl. 278) ficou inacessível. As páginas de IRDR/IAC não foram consultadas porque o orçamento de buscas acabou.",
+   "fontes": [
+    "https://www.tjma.jus.br/midia/nugepnac/pagina/hotsite/508621",
+    "https://novogerenciador.tjma.jus.br/storage/arquivos/site_nugepnac/inf_jurisp_tjma_2026_03_06_04_2026_15_11_49.pdf",
+    "https://novogerenciador.tjma.jus.br/storage/arquivos/site_nugepnac/inf_jurisp_tjma_2026_05_01_06_2026_15_36_26.pdf",
+    "https://novogerenciador.tjma.jus.br/storage/arquivos/site_nugepnac/inf_jurisp_tjma_2026_08_04_09_2026_09_05_51.pdf",
+    "https://novogerenciador.tjma.jus.br/storage/arquivos/site_nugepnac/jurisprudencia_camaras_direito_publico_2024_20_03_2025_11_24_08.txt"
+   ],
+   "pendentes": [
+    "Mandado de Segurança 0878876-74.2023.8.10.0001 (Vara de Interesses Difusos e Coletivos de São Luís, Juiz Douglas de Melo Martins): nulidade da Concorrência Pública nº 009/2023 de Imperatriz (saneamento) por falta de autorização do Colegiado Microrregional (LC estadual 239/2021). Só há notícia do TJMA de 18/09/2024; data da decisão não confirmada e decisão de 1º grau."
+   ],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 0,
+   "ultimo": "Informativo de Jurisprudência TJMA 2026/08 (sem itens pertinentes)"
+  },
+  "TJ-PB": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): Firecrawl sem créditos, proxy recusou curl e pedidos de permissão do WebFetch expiraram. tjpb.jus.br continua com client_error.",
+   "fontes": [],
+   "pendentes": [
+    "Notícia 'TJPB mantém decisão que determina reanálise de habilitação em licitação do Tá na Mesa' – não abriu; sem número/data confirmados",
+    "Notícia 'Ricardo Porto extingue MS que impugnava licitação do Sebrae' – não abriu"
+   ],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 0,
+   "ultimo": ""
+  },
+  "TJ-PE": {
+   "carga_ate": "2024-09-27",
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): Firecrawl sem créditos, proxy recusou curl e pedidos de permissão do WebFetch expiraram. Informativo 09/2026 (view_file/11268979) não lido; páginas view_file só trazem metadados; PDF 02/2024 lido só em parte.",
+   "fontes": [
+    "https://portal.tjpe.jus.br/documents/d/jurisprudencia/informativo-de-jurisprudencia-ed-2026-08-pdf?download=true",
+    "https://portal.tjpe.jus.br/documents/d/jurisprudencia/informativo-de-jurisprudencia-ed-2025-12-pdf?download=true",
+    "https://portal.tjpe.jus.br/documents/d/jurisprudencia/informativo-de-jurisprudencia-ed-2025-11-pdf?download=true",
+    "https://portal.tjpe.jus.br/documents/d/jurisprudencia/informativo-de-jurisprudencia-ed-2025-07-pdf?download=true",
+    "https://portal.tjpe.jus.br/documents/d/jurisprudencia/informativo-de-jurisprudencia-ed-2025-06-pdf?download=true",
+    "https://portal.tjpe.jus.br/documents/d/jurisprudencia/informativo-de-jurisprudencia-ed-2025-04-pdf?download=true",
+    "https://portal.tjpe.jus.br/documents/d/jurisprudencia/informativo-de-jurisprudencia-ed-2025-03-pdf?download=true",
+    "https://portal.tjpe.jus.br/pt/web/portal/servicos/consulta/sumulas",
+    "https://portal.tjpe.jus.br/documents/d/jurisprudencia/informativo-de-jurisprudencia-ed-2025-05-pdf?download=true",
+    "https://portal.tjpe.jus.br/documents/d/jurisprudencia/informativo-de-jurisprudencia-ed-24-09?download=true",
+    "https://portal.tjpe.jus.br/documents/d/jurisprudencia/informativo-de-jurisprudencia-ed-2024-02?download=true",
+    "https://portal.tjpe.jus.br/web/jurisprudencia/informativo-de-jurisprudencia"
+   ],
+   "pendentes": [
+    "Informativo 07/2025: 'Crime contra licitação. Art. 89 da Lei 8.666/1993. Revogação pela Lei 14.133/2021. Inexistência de situação emergencial' – só aparece no índice, número do processo não captado",
+    "Informativo 03/2025: 'Rescisão contratual por descumprimento de obrigações. Decisão administrativa' – só aparece no índice, número não captado",
+    "Informativo 03/2025: Ap 0012697-54.2010.8.17.0810 (COMPESA/Município de Jaboatão, responsabilidade subsidiária do poder concedente por omissão na fiscalização, 2025-03-25) – não incluído por ser essencialmente responsabilidade civil por dano moral",
+    "Informativo 09/2026 – verificar julgados de licitação",
+    "Edições 2024-01 a 2024-08 e 2024-10 a 2024-12 (pasta 2024, view/6053925; ex. view_file 6902041, 6798696, 6676441)"
+   ],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 2,
+   "ultimo": "Informativo de Jurisprudência nº 08/2026 (Ap 0060031-85.2019.8.17.2001, 2026-08-29)"
+  },
+  "TJ-PI": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): Firecrawl sem créditos, proxy recusou curl e pedidos de permissão do WebFetch expiraram. Não pesquisado de novo por falta de orçamento. Portal do TJPI (páginas de Súmulas, NUGEP/IRDR e teses fixadas) retornou erro de cliente no WebFetch; buscas no domínio tjpi.jus.br retornaram apenas documentos administrativos do SEI (licitações próprias do tribunal), sem informativo de jurisprudência. Nenhum acórdão com número confirmado em fonte oficial.",
+   "fontes": [],
+   "pendentes": [],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 0,
+   "ultimo": ""
+  },
+  "TJ-RN": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Nesta execução (10/11/2026): não pesquisado por bloqueio de acesso (permissão/proxy/Firecrawl). Anterior: Páginas do tjrn.jus.br (consulta de precedentes, notícias, notícia 21686) retornaram erro do site (client_error) no WebFetch; não foi localizado informativo/ementário de jurisprudência público do TJRN indexado. Nada incluído.",
+   "fontes": [],
+   "pendentes": [
+    "Notícia TJRN 21686 - Câmara mantém sentença que indeferiu cobrança de empresa dessalinizadora contra município (número do processo e data não confirmados: página oficial inacessível)"
+   ],
+   "ultima_execucao": "2026-11-10T13:00:00Z",
+   "ultima_qtd": 0,
+   "ultimo": ""
+  }
+ },
+ "proximo_orgao": "TCE-CE",
+ "total_gravado": 39,
+ "ultima_execucao": "2026-11-10T13:00:00Z"
+}
