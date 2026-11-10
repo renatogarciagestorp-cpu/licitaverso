@@ -33,10 +33,10 @@
 <script src="inicio-ui.js?v=7" defer></script>
 <!-- painéis da Gestão Contratual: acabamento (gestao.css) e montagem animada com GSAP sob demanda (gestao-anim.js) -->
 <!-- sistema de design: tokens e padrões comuns (DESIGN.md); vem antes do acabamento do painel -->
-<link rel="stylesheet" href="sistema.css?v=1">
+<link rel="stylesheet" href="sistema.css?v=2">
 <link rel="stylesheet" href="gestao.css?v=11">
 <script src="gestao-anim.js?v=3" defer></script>
-<script src="gestao-dicas.js?v=1" defer></script>
+<script src="gestao-dicas.js?v=2" defer></script>
 <script src="54d6539a-d2b1-4cc8-83cc-736f9be08894"></script>
 
 </head>
@@ -1983,8 +1983,6 @@
   .gx-tl-e > i { width: 8px; height: 8px; border-radius: 50%; background: var(--c); } .gx-tl-e:hover { border-color: var(--c); z-index: 2; }
   .gx-tl-e::before { content: ""; position: absolute; left: -3px; top: -100vh; height: 100vh; border-left: 1px solid var(--c); opacity: .0; }
   .gx-cb { background: linear-gradient(90deg, var(--bc, #E3E6F6) var(--w, 0%), transparent var(--w, 0%)); border-radius: 4px; padding: 2px 6px !important; } .gx-cb.a { --bc: #ECEAE4; } .gx-cb.b { --bc: #DCE0F6; }
-  .gx-gauge-w { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 16px; align-items: center; }
-  .gx-gauge { position: relative; width: 180px; height: 104px; } .gx-gauge > svg { width: 100%; height: 100%; } .gx-gauge > b { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font-size: 26px; color: #0F3431; } .gx-gauge > small { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 10.5px; color: #5F7077; }
   .gx-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; height: 180px; } .gx-cols-4 .gx-col > small, .gx-cols-4 .gx-col-v { font-size: 11.5px; } .gx-cols-4 .gx-col-b > i { background: none; }
   .gx-tl-m.fim > b { left: auto; right: 4px; }
   /* abas no mesmo conceito da visão geral: quadro creme, faixa de indicadores e cartões de gráfico */
@@ -2029,8 +2027,6 @@
   .gx-dz { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; align-items: center; } .gx-ros-p { width: 112px; height: 112px; } .gx-ros-p b { font-size: 17px !important; } .gx-ros-p > span { font-size: 10px; }
   .gx-dz-l { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; font-size: 12px; color: #3D5058; } .gx-dz-l li { display: flex; align-items: center; gap: 7px; } .gx-dz-l i { width: 9px; height: 9px; border-radius: 50%; flex: none; } .gx-dz-l b { margin-left: auto; color: #0F3431; }
   .gx-3c .gx-dz { grid-template-columns: 1fr; justify-items: center; } .gx-3c .gx-dz-l { width: 100%; }
-  .gx-gz { position: relative; width: 100%; max-width: 220px; margin: 4px auto 0; aspect-ratio: 120 / 76; } .gx-gz > svg { width: 100%; height: auto; display: block; }
-  .gx-gz > b { position: absolute; left: 0; right: 0; top: 50%; text-align: center; font-size: 24px; color: #0F3431; } .gx-gz > small { position: absolute; left: 0; right: 0; bottom: 0; text-align: center; font-size: 11px; color: #5F7077; }
   .gx-sm { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
   .gx-smc { display: grid; grid-template-rows: 30px 130px auto; gap: 6px; text-align: center; border: 1px solid #EEF2F1; border-radius: 10px; padding: 8px 6px; } .gx-smc > small { font-size: 10.5px; font-weight: 700; color: #3D5058; line-height: 1.3; }
   .gx-smc-g { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: end; } .gx-smc-c { display: flex; flex-direction: column; justify-content: flex-end; height: 130px; }
@@ -5304,7 +5300,7 @@
                   <div class="pca-bts"><button type="button" class="lmo-btn" sc-camel-on-click="{{ pcaSalvar }}">Salvar item</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ pcaCancelar }}">Cancelar</button></div>
                 </div>
               </sc-if>
-              <sc-if value="{{ pcaVazio }}" hint-placeholder-val="{{ false }}"><div class="gp-card"><h3>Nenhum item no PCA {{ pcaAno }}</h3><p class="gp-sub">Cadastre os itens aprovados no Plano de Contratações Anual, ou cole a lista do Excel, para acompanhar quanto cada secretaria já contratou e quanto ainda pode contratar. Vincule cada contrato ao item do PCA no cadastro do contrato; sem vínculo, o contrato entra pelo setor requisitante.</p><p class="gp-sub"><b>{{ pcaVazioFora }}</b></p></div></sc-if>
+              <sc-if value="{{ pcaVazio }}" hint-placeholder-val="{{ false }}"><div class="gp-card"><h3>Nenhum item no PCA {{ pcaAno }}</h3><p class="gp-sub">Cadastre os itens aprovados no Plano de Contratações Anual, ou cole a lista do Excel, para acompanhar quanto cada secretaria já contratou e quanto ainda pode contratar. Vincule cada contrato ao item do PCA no cadastro do contrato; sem vínculo, o contrato entra pelo setor requisitante.</p><p class="gp-sub"><b>{{ pcaVazioFora }}</b></p><sc-if value="{{ pcaTemFora }}" hint-placeholder-val="{{ false }}"><ul class="gp-lista"><sc-for list="{{ pcaFora }}" as="x" hint-placeholder-count="3"><li class="gp-n-at"><button type="button" class="gp-li-b" sc-camel-on-click="{{ x.ir }}"><b>{{ x.t }}</b><span>{{ x.d }}</span></button></li></sc-for></ul></sc-if></div></sc-if>
               <sc-if value="{{ pcaTem }}" hint-placeholder-val="{{ true }}">
                 <div class="gx gx-aba">
                 <div class="gx-head gx-head-4"><sc-for list="{{ pcaHead }}" as="h" hint-placeholder-count="6"><div class="{{ h.cls }}"><small>{{ h.k }}</small><b>{{ h.v }}</b><em>{{ h.d }}</em><sc-if value="{{ h.temBar }}" hint-placeholder-val="{{ false }}"><span class="gx-hbar"><span style="{{ h.barSt }}"></span></span></sc-if><sc-if value="{{ h.temSpark }}" hint-placeholder-val="{{ false }}"><svg class="gx-hspark" sc-camel-view-box="0 0 100 24" sc-camel-preserve-aspect-ratio="none" aria-hidden="true"><path sc-camel-d="{{ h.sparkArea }}" class="a"></path><path sc-camel-d="{{ h.spark }}" class="l"></path></svg></sc-if></div></sc-for></div>
@@ -9685,7 +9681,7 @@ const PLANO_BENEFICIOS = {
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "14";
+const CHAT_VERSAO = "15";
 // versão da Biblioteca no endereço: força o navegador a buscar a página nova depois de cada mudança (o GitHub Pages guarda em cache por 10 minutos)
 const BIB_URL = "biblioteca.html?v=2";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
@@ -14004,7 +14000,8 @@ class Component extends DCLogic {
               const pr = new Date(f + "T12:00:00Z"); pr.setUTCMonth(pr.getUTCMonth() - 4); tlE.push({ d: dd(pr.toISOString()), cor: "#E3A72F", rot: "Prorrogação · " + x.c.numero, tit: "Iniciar a prorrogação · " + E.nomeC(x.c), id: x.c.id });
               if (x.proxN != null && !x.pend) tlE.push({ d: dd(Math.floor(x.proxN / 12) + "-" + String(x.proxN % 12 + 1).padStart(2, "0") + "-01"), cor: "#0FA36B", rot: "Anualidade · " + x.c.numero, tit: "Anualidade do reajuste · " + E.nomeC(x.c), id: x.c.id }); });
             const tl = tlE.filter((e) => e.d >= 0 && e.d <= 120).sort((a, b) => a.d - b.d), lanes = [];
-            tl.forEach((e) => { const larg = (e.rot.length * 6.4 + 36) / 7, ini = e.d > 96 ? e.d - larg : e.d, fim = ini + larg + 1.5;
+            tl.forEach((e) => { const larg = (e.rot.length * 6.4 + 36) / 5.5, // px por dia com o quadro a partir de ~660px (abaixo de 760px vira lista)
+                ini = e.d > 96 ? e.d - larg : e.d, fim = ini + larg + 1.5;
               let k = lanes.findIndex((u) => u.every(([a, b]) => fim <= a || ini >= b)); if (k < 0) { k = lanes.length; lanes.push([]); } lanes[k].push([ini, fim]); e.lane = k; });
             const gx2 = {
               gxAlt: Object.keys(evRotC).map((k, i) => ({ rot: evRotC[k], n: String(G.evT[k][1]), h: "height: " + (G.evT[k][1] ? Math.max(6, (G.evT[k][1] / evMxC) * 100) : 0).toFixed(1) + "%; background: " + evCor[i], tit: G.evT[k][0] + " contrato(s) com " + evRotC[k].toLowerCase(), ir: drill("contratos com " + evRotC[k].toLowerCase(), G.idsEv[k]) })),
@@ -14043,7 +14040,6 @@ class Component extends DCLogic {
               return { v: v == null ? "—" : Math.round(v) + (Math.round(v) === 1 ? " dia" : " dias"), st: v == null ? semDado : nv === "ok" ? "dentro da referência" : nv === "at" ? "acima da referência" : "muito acima", stCls: "gx-tag " + (nv || "ne"),
                 larg: "width: " + (v == null ? 0 : Math.max(1.5, Math.min(100, v / max * 100))).toFixed(1) + "%; background: " + ({ ok: "#0B7A52", at: "#B7791F", er: "#C2453B" }[nv] || "#B9C3C9"),
                 faixa: "width: " + (bom / max * 100).toFixed(1) + "%", metaL: "left: " + (bom / max * 100).toFixed(1) + "%", metaT: "até " + bom + " dias", maxT: max + " dias", tit: "Faixa de referência: até " + bom + " dias. Escala de 0 a " + max + " dias." }; };
-            const gauge = (frac, cor, v, d) => ({ dash: (Math.max(0, Math.min(1, frac)) * 157.08).toFixed(1) + " 157.08", cor, v, d });
             const pas = E.meses.filter((m) => !m.fut), mxS = Math.max(1, ...pas.map((m) => m.t)), ptsS = pas.map((m, i) => [i / Math.max(1, pas.length - 1) * 300, 86 - (m.t / mxS) * 78]);
             // minigráficos das faixas do topo (Geral, Prazos e riscos, Contratações e fornecedores)
             { const fr = (a, b) => (b ? a / b : 0), ult = pas.slice(-12), mxOC = Math.max(G.original, G.custo) || 1, modT = G.porMod.reduce((a, g) => a + g.v, 0), setT = G.porSetor.reduce((a, g) => a + g.v, 0);
@@ -14114,7 +14110,7 @@ class Component extends DCLogic {
               gpTemPend: E.pend.length > 0, gpPend: E.pend.slice(0, 6).map((x) => ({ v: x.global ? brlC(x.valorGlobal) : brlC(x.acum), larg: "width: " + Math.max(3, (x.global ? x.valorGlobal : x.acum) / Math.max(1, ...E.pend.map((y) => y.global ? y.valorGlobal : y.acum)) * 100).toFixed(1) + "%; background: #D9534A", t: E.nomeC(x.p.c), ir: () => this.ctUsar(x.p.c.id, "reajuste"),
                 d: (x.global ? "valor global · reajuste estimado de " + brl(x.valorGlobal) : brl(x.mes) + "/mês desde " + ymE(x.p.direitoN) + " (" + x.meses + (x.meses === 1 ? " mês)" : " meses)")) + " · " + (x.p.ix ? x.p.ix.nome + " " + pc(x.r) : "índice indisponível") })),
               gpPendNota: (emp ? "Clique no contrato para calcular o reajuste e gerar o pedido. " : "Clique no contrato para calcular o reajuste. ") + "Estimativa pelo índice do contrato nos últimos 12 meses; o cálculo definitivo usa a anualidade exata.",
-              gpQualV: Math.round(E.qual.pct * 100) + "%", gpQualDash: (E.qual.pct * 157.08).toFixed(1) + " 157.08", gpQualCor: E.qual.pct >= 0.9 ? "#0FA36B" : E.qual.pct >= 0.7 ? "#E3A72F" : "#D9534A", gpQualCls: "gp-qual-n " + (E.qual.pct >= 0.9 ? "ok" : E.qual.pct >= 0.7 ? "at" : "lim"), gpQualLarg: "width: " + (E.qual.pct * 100).toFixed(1) + "%",
+              gpQualV: Math.round(E.qual.pct * 100) + "%", gpQualCls: "gp-qual-n " + (E.qual.pct >= 0.9 ? "ok" : E.qual.pct >= 0.7 ? "at" : "lim"), gpQualLarg: "width: " + (E.qual.pct * 100).toFixed(1) + "%",
               gpQualSub: E.qual.falt.length ? E.qual.falt.length + (E.qual.falt.length === 1 ? " contrato com dados faltando" : " contratos com dados faltando") + ". Quanto mais completo o cadastro, mais precisos os indicadores, a agenda e os avisos." : "Todos os contratos com o cadastro completo.",
               gpTemQual: E.qual.falt.length > 0, gpQual: E.qual.falt.slice(0, 8).map((q) => ({ t: E.nomeC(q.p.c), d: q.f.join(", "), ir: () => { this.ctVer([q.p.c.id]); setTimeout(() => this.ctEditar(q.p.c), 120); } })),
               gpPdf: () => this.ctPainelPdf(G, E),

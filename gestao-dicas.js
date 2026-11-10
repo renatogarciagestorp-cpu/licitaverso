@@ -3,8 +3,8 @@
  * Os gráficos do painel já trazem o valor de cada marca no atributo title. Aqui esse texto vira uma dica escura
  * própria (aparece na hora, com o mouse ou o teclado) e, no gráfico de área, uma linha-guia acompanha o mês mais
  * próximo do cursor. A dica e a guia ficam no <body>, fora da árvore do runtime: nada dentro do painel é criado
- * ou removido. O title é só guardado em data-dica enquanto a dica própria está no ar (evita as duas ao mesmo tempo);
- * se o runtime atualizar o title, vale o novo.
+ * ou removido. O title fica em data-dica enquanto a dica própria está no ar (evita as duas ao mesmo tempo)
+ * e volta ao elemento quando ela some; se o runtime atualizar o title, vale o novo.
  */
 (function () {
   "use strict";
@@ -40,22 +40,22 @@
   function mostrar(el, x, y) {
     var t = texto(el); if (!t) { esconder(); return; }
     criar();
-    if (alvo !== el) { alvo = el; montar(t); }
+    if (alvo !== el) { if (alvo) esconder(); alvo = el; montar(t); }
     dica.classList.add("on");
     if (x == null) { var r = el.getBoundingClientRect(); x = r.left + r.width / 2; y = r.top; }
     posicionar(x, y);
   }
   function esconder() {
+    // devolve o title ao elemento: leitores de tela e quem não usa mouse continuam com o texto
+    if (alvo && alvo.hasAttribute("data-dica") && !alvo.hasAttribute("title")) alvo.setAttribute("title", alvo.getAttribute("data-dica"));
     if (dica) dica.classList.remove("on");
     if (guia) guia.style.display = "none";
     alvo = null;
   }
+  // a marca com dica mais próxima, só dentro dos painéis (uma subida na árvore por evento)
   function comDica(no) {
-    while (no && no.nodeType === 1 && no !== document.body) {
-      if ((no.hasAttribute("title") || no.hasAttribute("data-dica")) && no.closest(ZONA)) return no;
-      no = no.parentNode;
-    }
-    return null;
+    var el = no && no.closest && no.closest("[title], [data-dica]");
+    return el && el.closest(ZONA) ? el : null;
   }
   // gráfico de área: o mês mais próximo do cursor, com a linha-guia
   function naArea(area, e) {
@@ -69,8 +69,9 @@
   }
 
   document.addEventListener("mousemove", function (e) {
-    var t = e.target; if (!t || t.nodeType !== 1) return;
-    var area = t.closest && t.closest("#dc-root .gx-area");
+    var t = e.target; if (!t || t.nodeType !== 1 || !t.closest) return;
+    if (!t.closest(ZONA)) { if (alvo) esconder(); return; }
+    var area = t.closest(".gx-area");
     if (area && naArea(area, e)) return;
     if (guia) guia.style.display = "none";
     var el = comDica(t);

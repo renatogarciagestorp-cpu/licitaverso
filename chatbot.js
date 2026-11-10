@@ -376,11 +376,11 @@
   function redesenharTudo() {
     lista.innerHTML = "";
     if (!estado.msgs.length) { lista.appendChild(telaInicial()); return; }
-    estado.msgs.forEach(function (m) { desenhar(m, true); });
+    estado.msgs.forEach(function (m, i) { desenhar(m, true, i === estado.msgs.length - 1); });
   }
 
   // ------------------------------------------------------------ tela inicial
-  function botaoPergunta(id, extra) {
+  function botaoPergunta(id) {
     var it = ITENS[id]; if (!it) return null;
     var b = el("button"); b.type = "button"; b.textContent = it.p;
     b.onclick = function () { abrirResposta(it, it.p); };
@@ -422,7 +422,7 @@
     lista.appendChild(d); rolar();
     setTimeout(function () { d.remove(); var n = desenhar(m); mostrar(n); }, atraso);
   }
-  function desenhar(m, antigo) {
+  function desenhar(m, antigo, ultimo) {
     var no;
     if (m.de === "eu") { no = el("div", "lvq-eu"); no.textContent = m.t; }
     else if (m.titulo || m.id) no = cartaoResposta(m);
@@ -432,7 +432,7 @@
     }
     if (!antigo) no.classList.add("lvq-novo");
     lista.appendChild(no);
-    if (m.form && !antigo) formulario(m.form, m.q);
+    if (m.form && (!antigo || ultimo)) formulario(m.form, m.q);
     return no;
   }
   function listaEscolhas(ch) {

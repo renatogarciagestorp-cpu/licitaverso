@@ -506,7 +506,7 @@ const TELAS = {
     const ruins = lista.filter((r) => r.util === false);
     const boas = lista.filter((r) => r.util === true).length;
     const perguntas = lista.filter((r) => r.pergunta && r.util === null);
-    const cont = {}; perguntas.filter((r) => r.resposta_id && !r.resposta_id.startsWith("?")).forEach((r) => cont[r.resposta_id] = (cont[r.resposta_id] || 0) + 1);
+    const cont = {}; perguntas.filter((r) => r.resposta_id && !r.resposta_id.startsWith("?")).forEach((r) => cont[r.resposta_id.replace(/^~/, "")] = (cont[r.resposta_id.replace(/^~/, "")] || 0) + 1);
     const top = Object.entries(cont).sort((a, b) => b[1] - a[1]).slice(0, 12);
     const linha = (r) => "<tr><td>" + dataHora(r.criado_em) + "</td><td>" + esc(r.pergunta || "—") + '</td><td class="fraco">' + esc(r.resposta_id || "sem resposta") + '</td><td class="fraco">' + esc(r.pagina) + "</td></tr>";
     const tabela = (rows, vazio) => rows.length ? '<table><thead><tr><th>Quando</th><th>Pergunta</th><th>Resposta dada</th><th>Página</th></tr></thead><tbody>' + rows.slice(0, 200).map(linha).join("") + "</tbody></table>" : '<p class="fraco">' + vazio + "</p>";

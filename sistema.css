@@ -91,7 +91,7 @@
 
 /* ---------------------------------------------------------------- campos
    O texto de exemplo dos campos usa o cinza de apoio (5,2:1), legível para quem tem baixa visão. */
-#dc-root ::placeholder { color: var(--lv-mudo); opacity: 1; }
+:where(#dc-root) ::placeholder { color: var(--lv-mudo); opacity: 1; }
 
 /* ---------------------------------------------------------------- foco do teclado
    Em fundo escuro o anel é menta (o verde da marca some sobre o navy). */
