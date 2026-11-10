@@ -59,8 +59,8 @@
 <!-- painéis da Gestão Contratual: acabamento (gestao.css) e montagem animada com GSAP sob demanda (gestao-anim.js) -->
 <!-- sistema de design: tokens e padrões comuns (DESIGN.md); vem antes do acabamento do painel -->
 <link rel="stylesheet" href="sistema.css?v=2">
-<link rel="stylesheet" href="gestao.css?v=11">
-<script src="gestao-anim.js?v=3" defer></script>
+<link rel="stylesheet" href="gestao.css?v=12">
+<script src="gestao-anim.js?v=4" defer></script>
 <script src="gestao-dicas.js?v=2" defer></script>
 <script src="assets/dc-runtime-8fe7df7440.js"></script>
 
@@ -9243,7 +9243,8 @@ const GX_COR_MOD = { "Pregão": 0, "Concorrência": 1, "Dispensa em razão do va
 const GX_COR_REG = { "Lei 14.133/2021": 0, "Lei 13.303/2016": 3, "Lei 13.019/2014": 2 };
 function gxCor(mapa, rot) { const i = mapa[rot]; return i == null ? GX_OUTRAS : GX_PALETA[i]; }
 // mapa de valor (ladrilhos com texto branco): um tom só, a área diz o tamanho e o rótulo diz o nome
-const GX_TILE = "#0B7A52";
+// mapa de valor: do maior para o menor, do verde-escuro ao verde-claro (texto escuro a partir do 3º, contraste AA)
+const GX_TONS = ["#0A6B47", "#0E7A52", "#6FC6A0", "#A3DABF", "#C9EAD9"];
 // curva suave (Catmull-Rom → Bézier) por uma lista de pontos [x, y]
 // minigráfico das faixas do topo das abas: barra de proporção (0 a 1) e/ou linha de tendência (path em 100×24)
 function gxHB(h, p, spark) {
@@ -14059,8 +14060,8 @@ class Component extends DCLogic {
                 const itens = peq.length > 1 ? pos.filter((g) => g.v / natTot >= 0.02).concat([{ k: "Outras (" + peq.length + ")", v: peq.reduce((a, g) => a + g.v, 0), n: peq.reduce((a, g) => a + g.n, 0), ids: peq.reduce((a, g) => a.concat(g.ids), []), det: peq.map((g) => g.k + " " + brlC(g.v)).join("; ") }]) : pos;
                 const R = gxTreemap(itens.map((g) => g.v), 3, 1);
                 return itens.map((g, i) => ({ semRot: R[i].w < 8 || R[i].h < 22, rot: g.k.charAt(0).toUpperCase() + g.k.slice(1), v: brlC(g.v), p: pc(g.v / natTot), tit: g.k + " · " + brlC(g.v) + " · " + pc(g.v / natTot) + " · " + g.n + " contrato(s)" + (g.det ? " · " + g.det : ""),
-                  cls: "gx-tile" + (R[i].w < 14 || R[i].h < 36 ? " p" : "") + (R[i].w < 8 || R[i].h < 22 ? " pp" : ""),
-                  st: "left: " + R[i].x.toFixed(2) + "%; top: " + R[i].y.toFixed(2) + "%; width: " + R[i].w.toFixed(2) + "%; height: " + R[i].h.toFixed(2) + "%; background: " + GX_TILE, ir: drill("natureza " + g.k, g.ids) })); })(),
+                  cls: "gx-tile" + (R[i].w < 14 || R[i].h < 36 ? " p" : "") + (R[i].w < 8 || R[i].h < 22 ? " pp" : "") + (i >= 2 ? " claro" : ""),
+                  st: "left: " + R[i].x.toFixed(2) + "%; top: " + R[i].y.toFixed(2) + "%; width: " + R[i].w.toFixed(2) + "%; height: " + R[i].h.toFixed(2) + "%; background: " + GX_TONS[Math.min(i, GX_TONS.length - 1)], ir: drill("natureza " + g.k, g.ids) })); })(),
               gxTreeResto: "", gxTreeTemResto: false,
               gxTl: tl.map((e) => ({ rot: e.rot, q: e.d === 0 ? "hoje" : "em " + e.d + " d", tit: e.tit + " · " + (e.d === 0 ? "hoje" : "em " + e.d + " dias"), st: "left: " + (e.d / 120 * 100).toFixed(2) + "%; top: " + (34 + e.lane * 34) + "px; --c: " + e.cor + (e.d > 96 ? "; transform: translateX(calc(-100% + 3px))" : ""), ir: verC(e.id) })),
               gxTlMarcas: [0, 30, 60, 90, 120].map((d) => ({ rot: d ? "+" + d + " dias" : "", l: (d / 120 * 100) + "%", cls: d === 120 ? "gx-tl-m fim" : "gx-tl-m" })), gxTlVazio: !tl.length, gxTlH: "height: " + (64 + Math.max(1, lanes.length) * 34) + "px",
@@ -14154,7 +14155,7 @@ class Component extends DCLogic {
               gpRetNota: "Retroativo: diferença mensal multiplicada pelos meses entre a anualidade e o registro, sem juros nem correção. " + (emp ? "Em atrasos longos, avalie pedir também a correção monetária e os juros." : "Atrasos longos aumentam o risco de cobrança de juros e de questionamento pelo controle."),
               gpPendTit: emp ? "Reajustes a pedir" : "Reajustes pendentes (passivo)", gpPendV: brl(somaPend) + "/mês",
               gpPendSub: E.pend.length ? (emp ? "a receber a mais por mês · " : "a pagar a mais por mês · ") + brl(acumPend) + " acumulados desde as anualidades" : "nenhum reajuste pendente",
-              gpTemPend: E.pend.length > 0, gpPend: E.pend.slice(0, 6).map((x) => ({ v: x.global ? brlC(x.valorGlobal) : brlC(x.acum), larg: "width: " + Math.max(3, (x.global ? x.valorGlobal : x.acum) / Math.max(1, ...E.pend.map((y) => y.global ? y.valorGlobal : y.acum)) * 100).toFixed(1) + "%; background: #D9534A", t: E.nomeC(x.p.c), ir: () => this.ctUsar(x.p.c.id, "reajuste"),
+              gpTemPend: E.pend.length > 0, gpPend: E.pend.slice(0, 6).map((x) => ({ v: x.global ? brlC(x.valorGlobal) : brlC(x.acum), larg: "width: " + Math.max(3, (x.global ? x.valorGlobal : x.acum) / Math.max(1, ...E.pend.map((y) => y.global ? y.valorGlobal : y.acum)) * 100).toFixed(1) + "%; background: " + (x.global ? "#E3A72F" : x.meses > 12 ? "#D9534A" : x.meses > 6 ? "#E5675B" : "#E3A72F"), t: E.nomeC(x.p.c), ir: () => this.ctUsar(x.p.c.id, "reajuste"),
                 d: (x.global ? "valor global · reajuste estimado de " + brl(x.valorGlobal) : brl(x.mes) + "/mês desde " + ymE(x.p.direitoN) + " (" + x.meses + (x.meses === 1 ? " mês)" : " meses)")) + " · " + (x.p.ix ? x.p.ix.nome + " " + pc(x.r) : "índice indisponível") })),
               gpPendNota: (emp ? "Clique no contrato para calcular o reajuste e gerar o pedido. " : "Clique no contrato para calcular o reajuste. ") + "Estimativa pelo índice do contrato nos últimos 12 meses; o cálculo definitivo usa a anualidade exata.",
               gpQualV: Math.round(E.qual.pct * 100) + "%", gpQualCls: "gp-qual-n " + (E.qual.pct >= 0.9 ? "ok" : E.qual.pct >= 0.7 ? "at" : "lim"), gpQualLarg: "width: " + (E.qual.pct * 100).toFixed(1) + "%",
