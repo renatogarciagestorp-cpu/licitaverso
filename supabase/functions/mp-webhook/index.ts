@@ -3,7 +3,7 @@
 // a autenticidade vem da assinatura x-signature (MP_WEBHOOK_SECRET) e, sobretudo,
 // de a função sempre buscar o pagamento direto na API do Mercado Pago antes de agir.
 
-import { aplicarPagamento, clienteServico, conferirRenovacao, CORS, mp, resposta, segredoConfere } from "../_shared/comum.ts";
+import { aplicarPagamento, cancelarRenovacoesPendentes, clienteServico, conferirRenovacao, CORS, mp, resposta, segredoConfere } from "../_shared/comum.ts";
 
 async function hmacHex(segredo: string, mensagem: string): Promise<string> {
   const chave = await crypto.subtle.importKey(
@@ -48,10 +48,12 @@ Deno.serve(async (req) => {
   // Conferência periódica das renovações automáticas (chamada pelo agendamento do GitHub, com o segredo interno)
   if (corpo?.acao === "conferir_renovacoes" && segredoConfere(req)) {
     const admin = clienteServico();
+    // primeiro, as renovações de planos trocados que ainda precisam ser canceladas no Mercado Pago
+    const trocas = await cancelarRenovacoesPendentes(admin).catch((e) => { console.error("renovacoes a cancelar", e); return { canceladas: 0, pendentes: -1 }; });
     const { data: lista } = await admin.from("renovacoes").select("id, status, mp_preapproval").in("status", ["pendente", "ativa", "pausada"]).limit(500);
     let n = 0;
     for (const ren of lista ?? []) { try { await conferirRenovacao(admin, ren); n++; } catch (e) { console.error("renovacao", ren.id, e); } }
-    return resposta({ ok: true, conferidas: n });
+    return resposta({ ok: true, conferidas: n, trocas_canceladas: trocas.canceladas, trocas_pendentes: trocas.pendentes });
   }
   const tipo = String(corpo?.type ?? corpo?.topic ?? url.searchParams.get("type") ?? url.searchParams.get("topic") ?? "");
   const dataId = String(url.searchParams.get("data.id") ?? corpo?.data?.id ?? url.searchParams.get("id") ?? "");

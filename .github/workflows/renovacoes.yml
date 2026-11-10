@@ -1,10 +1,11 @@
 name: Renovações automáticas — conferência
 
-# Confere no Mercado Pago as assinaturas recorrentes (renovação automática) e registra as cobranças aprovadas,
-# mesmo que alguma notificação do Mercado Pago não chegue. Não imprime dados de clientes.
+# Confere no Mercado Pago, a cada hora, as assinaturas recorrentes (renovação automática) e registra as cobranças
+# aprovadas, mesmo que alguma notificação do Mercado Pago não chegue. Também tenta de novo cancelar a renovação do plano
+# antigo depois de uma troca de plano, quando o Mercado Pago falhou na hora. Não imprime dados de clientes.
 on:
   schedule:
-    - cron: "17 */3 * * *"
+    - cron: "17 * * * *"
   workflow_dispatch:
 
 jobs:

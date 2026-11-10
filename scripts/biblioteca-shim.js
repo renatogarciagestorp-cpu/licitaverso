@@ -38,32 +38,53 @@
     + "#lvPortao a.pri:hover{background:#14B978}"
     + "#lvPortao a.sec{color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:4px;padding:13px 6px}"
     + "#lvPortao a:focus-visible{outline:3px solid #6FE0AE;outline-offset:3px}"
-    + "#lvPortao small{display:block;margin-top:22px;color:#9FBDB4;font-size:13.5px}";
+    + "#lvPortao small{display:block;margin-top:22px;color:#9FBDB4;font-size:13.5px}"
+    + "#lvPortao button.pri{border:0;font:inherit;background:#0FA36B;color:#04261A;border-radius:12px;padding:13px 20px;font-weight:800;cursor:pointer}"
+    + "#lvPortao button.pri:hover{background:#14B978}#lvPortao button:focus-visible{outline:3px solid #6FE0AE;outline-offset:3px}";
   document.head.appendChild(estilo);
-  const liberar = () => raizDoc.classList.remove("lv-verificando", "lv-portao");
-  Promise.all([contas, sessao]).then(([sb, s]) => {
-    if (!sb || s) { liberar(); return; }
-    const mostrar = () => {
-      raizDoc.classList.remove("lv-verificando");
-      raizDoc.classList.add("lv-portao");
-      if (document.getElementById("lvPortao")) return;
-      const d = document.createElement("section");
-      d.id = "lvPortao"; d.setAttribute("aria-labelledby", "lvPortaoTit");
-      d.innerHTML = '<div class="in"><h1 id="lvPortaoTit">A Biblioteca Jurídica é gratuita para quem tem conta.</h1>'
-        + '<p>Crie sua conta grátis, sem cartão e sem plano, para pesquisar decisões e normas sobre licitações e contratos das fontes oficiais de todo o país.</p>'
-        + '<ul><li>TCU, CGU, STF, STJ, tribunais de contas, tribunais de justiça e procuradorias dos estados, além de leis e decretos.</li>'
-        + '<li>Filtros por órgão, tema, tipo, lei, artigo e período, com a citação pronta em ABNT ou para a peça.</li>'
-        + '<li>Anotações, marcadores e dossiês salvos na sua conta, em qualquer aparelho.</li></ul>'
-        + '<div class="ac"><a class="pri" href="index.html?p=cadastro&amp;volta=biblioteca">Criar conta grátis</a>'
-        + '<a class="sec" href="index.html?p=login&amp;volta=biblioteca">Já tenho conta: entrar</a></div>'
-        + '<small>A coleta nas fontes oficiais é automática, nos dias úteis.</small></div>';
+  const liberar = () => { raizDoc.classList.remove("lv-verificando", "lv-portao"); const q = document.getElementById("lvPortao"); if (q) q.remove(); };
+  const quandoPronto = (fn) => document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", fn) : fn();
+  // painel no lugar do acervo (apresentação para quem não entrou, ou aviso de que a conta ainda está sendo conferida)
+  const painel = (tipo, html) => quandoPronto(() => {
+    raizDoc.classList.remove("lv-verificando");
+    raizDoc.classList.add("lv-portao");
+    let d = document.getElementById("lvPortao");
+    if (d && d.dataset.tipo === tipo) return;
+    if (!d) {
+      d = document.createElement("section");
+      d.id = "lvPortao"; d.setAttribute("aria-labelledby", "lvPortaoTit"); d.setAttribute("aria-live", "polite");
       const barra = document.querySelector(".lvbar");
       if (barra && barra.parentNode) barra.parentNode.insertBefore(d, barra.nextSibling); else document.body.prepend(d);
-    };
-    document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", mostrar) : mostrar();
-  }).catch(liberar);
-  // se algo travar na conferência da sessão, o acervo não fica escondido para sempre
-  setTimeout(() => { if (raizDoc.classList.contains("lv-verificando")) liberar(); }, 8000);
+    }
+    d.dataset.tipo = tipo;
+    d.innerHTML = html;
+    const b = d.querySelector("[data-recarregar]");
+    if (b) b.onclick = () => location.reload();
+  });
+  const portao = () => painel("portao", '<div class="in"><h1 id="lvPortaoTit">A Biblioteca Jurídica é gratuita para quem tem conta.</h1>'
+    + '<p>Crie sua conta grátis, sem cartão e sem plano, para pesquisar decisões e normas sobre licitações e contratos das fontes oficiais de todo o país.</p>'
+    + '<ul><li>TCU, CGU, STF, STJ, tribunais de contas, tribunais de justiça e procuradorias dos estados, além de leis e decretos.</li>'
+    + '<li>Filtros por órgão, tema, tipo, lei, artigo e período, com a citação pronta em ABNT ou para a peça.</li>'
+    + '<li>Anotações, marcadores e dossiês salvos na sua conta, em qualquer aparelho.</li></ul>'
+    + '<div class="ac"><a class="pri" href="index.html?p=cadastro&amp;volta=biblioteca">Criar conta grátis</a>'
+    + '<a class="sec" href="index.html?p=login&amp;volta=biblioteca">Já tenho conta: entrar</a></div>'
+    + '<small>A coleta nas fontes oficiais é automática, nos dias úteis.</small></div>');
+  const aguardando = (falhou) => painel(falhou ? "falha" : "aguardando", '<div class="in"><h1 id="lvPortaoTit">'
+    + (falhou ? "Não conseguimos conferir sua conta agora." : "Conferindo sua conta…") + '</h1>'
+    + '<p>' + (falhou ? "Pode ser a conexão. Confira a internet e tente de novo." : "A conexão está lenta. O acervo abre assim que a conferência terminar.") + '</p>'
+    + '<div class="ac"><button class="pri" type="button" data-recarregar>Tentar de novo</button>'
+    + '<a class="sec" href="index.html?p=login&amp;volta=biblioteca">Entrar de novo</a></div></div>');
+  let decidido = false;
+  Promise.all([contas, sessao]).then(([sb, s]) => {
+    decidido = true;
+    // sem cliente: só libera se as contas não estão configuradas (demonstração local); configuradas e sem cliente
+    // é falha ao carregar o login, e o acervo continua fechado
+    const cfg = window.LICITAVERSO_CONFIG || {};
+    if (!sb) { if (cfg.supabaseUrl && cfg.supabaseAnonKey) aguardando(true); else liberar(); return; }
+    if (s) liberar(); else portao();
+  }).catch(() => { decidido = true; aguardando(true); });
+  // conferência demorada: avisa e espera (o acervo não é liberado sem a conta)
+  setTimeout(() => { if (!decidido) aguardando(false); }, 8000);
 
   // Coleção pessoal guardada no Supabase (tabela biblioteca_pessoal), com cache local
   function colecaoNaConta(sb, uid){
@@ -156,6 +177,5 @@
     entrar.hidden = logado; cad.hidden = logado; conta.hidden = !logado; sair.hidden = !logado;
     sair.onclick = async (e) => { e.preventDefault(); const sb = await contas; if (sb) await sb.auth.signOut(); location.href = "index.html"; };
   }
-  const quandoPronto = f => document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", f) : f();
   sessao.then(s => quandoPronto(() => ajustarBarra(s)));
 })();

@@ -7248,6 +7248,7 @@ const INSTITUCIONAL = {
         "Órgão público: não há cobrança recorrente automática em cartão. A contratação exige empenho prévio (art. 60 da Lei nº 4.320/1964), cabendo ao órgão o enquadramento e a instrução do processo (por exemplo, dispensa por valor, art. 75, II, da Lei nº 14.133/2021), com base na proposta enviada pelo Licitacon. A continuidade depende de novo pedido do órgão.",
         "Upgrade vale imediatamente, com cobrança proporcional: o valor não utilizado do plano em curso, calculado pelos dias restantes do ciclo, é abatido do preço do novo plano, que inicia um ciclo completo na data da troca; o plano anterior se encerra e sua renovação automática, se houver, é cancelada.",
         "Downgrade e cancelamento passam a valer no fim do ciclo já pago, sem novas cobranças.",
+        "Teste grátis de 7 dias: sem cartão e sem cobrança ao final, uma vez por CPF. Para começar, a conta precisa ter o e-mail confirmado e um CPF válido no perfil; o mesmo CPF não libera o teste em outra conta.",
         "Direito de arrependimento: reembolso integral se solicitado em até 7 dias da primeira contratação, para qualquer contratante (pessoa física, empresa ou órgão), conforme o art. 49 do Código de Defesa do Consumidor.",
         "Reajustes de preço são comunicados com no mínimo 30 dias de antecedência e nunca retroagem ao ciclo vigente."
       ] },
@@ -9681,7 +9682,7 @@ const PLANO_BENEFICIOS = {
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "15";
+const CHAT_VERSAO = "16";
 // versão da Biblioteca no endereço: força o navegador a buscar a página nova depois de cada mudança (o GitHub Pages guarda em cache por 10 minutos)
 const BIB_URL = "biblioteca.html?v=2";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
@@ -16411,7 +16412,7 @@ class Component extends DCLogic {
           destaque: k === "pro", cta: s.equipeAcessos > EQ_MAX ? "Pedir proposta" : "Contratar " + n + " acessos", btnBg: k === "pro" ? "#0FA36B" : "#0A1F2A", btnColor: k === "pro" ? "#06251A" : "#fff",
           chave: k, itens: EQ_INCLUI[k].concat(["Gestor da equipe inclui e troca as pessoas", "Acesso pelo navegador, sem instalação"]) };
       })) : this.comPlanos([
-        { nome: "Gratuito", base: 0, publico: "Para pesquisar, calcular e acompanhar a comunidade sem pagar nada.", preco: "R$ 0", unidade: "para sempre", nota: "", detalhePreco: "Basta criar a conta, sem cartão. O teste de 7 dias também não pede cartão e não cobra nada ao final.", destaque: false,
+        { nome: "Gratuito", base: 0, publico: "Para pesquisar, calcular e acompanhar a comunidade sem pagar nada.", preco: "R$ 0", unidade: "para sempre", nota: "", detalhePreco: "Basta criar a conta, sem cartão. O teste de 7 dias também não pede cartão e não cobra nada ao final: só e-mail confirmado e CPF no perfil (um teste por CPF).", destaque: false,
           cta: !s.usuario ? "Criar conta grátis" : s.plano ? "Você já tem acesso" : "Começar o teste de 7 dias", btnBg: "#F1F6F5", btnColor: "#0A1F2A",
           itens: ["Biblioteca Jurídica completa: jurisprudência de todo o país, com anotações, marcadores e dossiês salvos na sua conta", "Calculadora de reajuste por índice, com a nota técnica em PDF", "Leitura do fórum da comunidade", "Teste de 7 dias, sem cartão: perguntar e responder no fórum, usar as planilhas de mão de obra da IN 05/2017 e o reequilíbrio, cadastrar contratos na Gestão Contratual, fazer pesquisas de preços e usar O Parecerista e O Elaborador (2 por semana sem custo, somados)"] },
         { nome: "Básico", base: 119.9, publico: "Profissionais individuais iniciantes.", preco: precoPlano(119.9), unidade: unidadePlano, nota: notaPlano(119.9), detalhePreco: detalhePlano(119.9), destaque: destaque === "Básico", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
@@ -16543,7 +16544,7 @@ class Component extends DCLogic {
         ["O que a Gestão Contratual faz e quem pode usar?", "Você cadastra cada contrato (vigência, valor, índice, data do orçamento estimado e regime legal) e registra reajustes, repactuações, reequilíbrios, aditivos e prorrogações. O site calcula o valor vigente, a próxima anualidade, o limite de acréscimos do art. 125 e a data recomendada para iniciar a prorrogação, mostra a situação de cada contrato por cor (vigente, vencendo ou vencido), monta a agenda de prazos dos próximos 12 meses e avisa por e-mail. O Painel da Organização reúne a carteira inteira em indicadores e gráficos: quantidade e valor das contratações, distribuição por modalidade, custo total, contratos vencendo e no prazo, tempo médio entre o orçamento e a assinatura e entre a anualidade e a concessão do reajuste, alterações registradas e as empresas com mais contratos, com filtros por ano, modalidade e situação; para empresas privadas, a mesma leitura é feita por órgão contratante. Também gera o PDF de cada contrato, o relatório completo da carteira e a agenda em Excel. Está em todos os planos pagos e no teste de 7 dias; nos planos para equipes, cada contrato pode ser compartilhado com a equipe, para consulta."],
         ["Quantas análises de planilha pelo agente de IA eu tenho?", "No Pro, por semana: 1 elaboração de planilha de custos, 1 análise de repactuação e 1 análise de proposta, renovando na segunda-feira. A franquia é por assinatura: na equipe, é compartilhada entre os membros. Análise que falhar por problema técnico não consome a franquia, e a planilha pode sempre ser preenchida manualmente, sem limite."],
         ["O que o plano Gratuito inclui?", "Com a conta grátis, sem cartão e sem prazo, você usa a Biblioteca Jurídica completa (com anotações, marcadores e dossiês), a calculadora de reajuste por índice com a nota técnica em PDF e lê todas as perguntas e respostas do fórum. Para perguntar e responder no fórum, usar as planilhas de mão de obra e o reequilíbrio, cadastrar contratos na Gestão Contratual e usar O Parecerista e O Elaborador (2 por semana sem custo no teste), faça o teste de 7 dias ou assine um plano."],
-        ["Posso usar O Parecerista e O Elaborador de graça?", "Sim, no teste grátis de 7 dias: você tem a mesma franquia do plano Pro, 2 por semana sem custo, somando análises do Parecerista e documentos do Elaborador. O teste não pede cartão, não cobra nada ao final e pode ser usado uma vez por conta. Se a análise não puder ser concluída por falha técnica, ela não consome a franquia. Depois da franquia, cada análise ou documento sai por R$ 290,00, ou com o desconto do plano que você assinar."],
+        ["Posso usar O Parecerista e O Elaborador de graça?", "Sim, no teste grátis de 7 dias: você tem a mesma franquia do plano Pro, 2 por semana sem custo, somando análises do Parecerista e documentos do Elaborador. O teste não pede cartão e não cobra nada ao final; pede e-mail confirmado e CPF válido no perfil, e pode ser usado uma vez por CPF. Se a análise não puder ser concluída por falha técnica, ela não consome a franquia. Depois da franquia, cada análise ou documento sai por R$ 290,00, ou com o desconto do plano que você assinar."],
         ["Posso mudar de plano depois?", "Sim. Na troca para um plano maior, a cobrança é proporcional: o valor que você ainda não usou do plano atual (pelos dias que faltam) é descontado do novo plano, que começa um ciclo inteiro na data da troca, e o plano antigo termina. Exemplo: no Básico mensal, faltando 15 dias, o Pro mensal sai por R$ 479,90 − R$ 59,95 = R$ 419,95. Na troca, o pagamento é único; a renovação automática do plano antigo é cancelada. Se for o mesmo plano, o tempo que ainda falta é somado ao novo período."]
       ].map(([q, a], i) => ({ q, a, aberta: s.faqAberta === i, sinal: s.faqAberta === i ? "−" : "+", alternar: () => this.setState((x) => ({ faqAberta: x.faqAberta === i ? -1 : i })) })),
       modos: [[false, "para mim"], [true, "para a minha equipe"]].map(([k, label]) => ({ label, ativo: !!s.modoEquipe === k,
@@ -16593,7 +16594,7 @@ class Component extends DCLogic {
         { label: "Nome completo", valor: s.perfil.nome, onInput: this.onPerfil("nome"), ajuda: "Exibido no fórum." },
         { label: "Celular", valor: s.perfil.celular, onInput: this.onPerfil("celular"), ajuda: "Com DDD. Usado só para contato sobre a sua conta." },
         { label: "E-mail", valor: s.perfil.email, onInput: this.onPerfil("email"), ajuda: "Usado para login e avisos. Trocar exige confirmar o novo endereço." },
-        { label: "CPF / CNPJ", valor: s.perfil.doc, onInput: this.onPerfil("doc"), ajuda: "Opcional. Para empresas, informe o CNPJ." },
+        { label: "CPF / CNPJ", valor: s.perfil.doc, onInput: this.onPerfil("doc"), ajuda: "Opcional. O teste grátis de 7 dias pede um CPF válido (um teste por CPF). Para nota de empresa, informe o CNPJ." },
         { label: "Órgão ou empresa", valor: s.perfil.orgao, onInput: this.onPerfil("orgao"), ajuda: "Aparece junto do seu nome no fórum." },
         { label: "Cargo ou função", valor: s.perfil.cargo, onInput: this.onPerfil("cargo"), ajuda: "Ajuda a comunidade a calibrar as respostas." }
       ],
@@ -16728,7 +16729,7 @@ class Component extends DCLogic {
         total: s.checkoutPlano.base === 0 ? "R$ 0,00" : brl(totalCk),
         botao: s.pagando ? "Aguarde…" : (s.checkoutPlano.base === 0 ? "Ativar teste grátis" : (metodoSel.checkout ? "Pagar com Mercado Pago" : "Solicitar cobrança")),
         obs: s.checkoutPlano.base === 0
-          ? "Sem cartão e sem cobrança. O teste pode ser usado uma vez por conta."
+          ? "Sem cartão e sem cobrança. Pede e-mail confirmado e CPF válido em Minha conta → Perfil; um teste por CPF."
           : credMaior
             ? (anual ? "O crédito do seu plano atual cobre todo o plano novo. Fale com a equipe para fazer a troca." : "O crédito do seu plano atual é maior que um mês do plano novo. Escolha o ciclo de 12 meses para aproveitar todo o crédito.")
           : credUp > 0 && metodoSel.checkout

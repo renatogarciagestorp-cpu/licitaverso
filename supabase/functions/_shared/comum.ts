@@ -154,7 +154,8 @@ async function avisarCreditoIndisponivel(admin: SupabaseClient, ref: string, pag
 }
 
 /** Troca de plano: a renovação automática dos planos substituídos é cancelada no Mercado Pago, para não cobrar
- *  de novo o plano antigo. Falha aqui não desfaz a ativação: fica registrada no log para conferência. */
+ *  de novo o plano antigo. Falha aqui não desfaz a ativação: o pedido fica em renovacoes.cancelar_desde e a
+ *  conferência das renovações tenta de novo (cancelarRenovacoesPendentes). */
 async function encerrarRenovacoesSubstituidas(admin: SupabaseClient, assinaturaId: string): Promise<void> {
   try {
     const { data: a } = await admin.from("assinaturas").select("usuario_id, plano, substitui").eq("id", assinaturaId).maybeSingle();
@@ -167,7 +168,11 @@ async function encerrarRenovacoesSubstituidas(admin: SupabaseClient, assinaturaI
     for (const r of rens ?? []) {
       if (r.mp_preapproval) {
         try { await mp(`/preapproval/${encodeURIComponent(r.mp_preapproval)}`, { method: "PUT", body: JSON.stringify({ status: "cancelled" }) }); }
-        catch (e) { console.error("troca de plano: não cancelou a renovação no Mercado Pago", r.id, e); continue; }
+        catch (e) {
+          console.error("troca de plano: não cancelou a renovação no Mercado Pago; nova tentativa na próxima conferência", r.id, e);
+          await admin.from("renovacoes").update({ cancelar_desde: new Date().toISOString() }).eq("id", r.id).is("cancelar_desde", null);
+          continue;
+        }
       }
       const agora = new Date().toISOString();
       await admin.from("renovacoes").update({ status: "cancelada", cancelado_em: agora, atualizado_em: agora }).eq("id", r.id);
@@ -175,6 +180,47 @@ async function encerrarRenovacoesSubstituidas(admin: SupabaseClient, assinaturaI
   } catch (e) {
     console.error("troca de plano: falha ao encerrar renovações", assinaturaId, e);
   }
+}
+
+/** Renovações de planos trocados que o Mercado Pago não deixou cancelar na hora: tenta de novo a cada conferência.
+ *  Passados 3 dias sem sucesso, avisa a equipe no Painel (uma vez) e continua tentando. */
+export async function cancelarRenovacoesPendentes(admin: SupabaseClient): Promise<{ canceladas: number; pendentes: number }> {
+  const { data: lista } = await admin.from("renovacoes").select("id, usuario_id, plano, ciclo, valor, mp_preapproval, cancelar_desde, cancelar_avisado")
+    .not("cancelar_desde", "is", null).in("status", ["pendente", "ativa", "pausada"]).limit(200);
+  let canceladas = 0, pendentes = 0;
+  for (const r of lista ?? []) {
+    let ok = !r.mp_preapproval;
+    if (!ok) {
+      try { await mp(`/preapproval/${encodeURIComponent(r.mp_preapproval)}`, { method: "PUT", body: JSON.stringify({ status: "cancelled" }) }); ok = true; }
+      catch (e) {
+        // pode já ter sido cancelada por outro caminho (pela pessoa ou pela equipe no Mercado Pago)
+        const pre = await mp(`/preapproval/${encodeURIComponent(r.mp_preapproval)}`).catch(() => null);
+        ok = pre?.status === "cancelled";
+        if (!ok) console.error("troca de plano: nova tentativa de cancelar a renovação falhou", r.id, e);
+      }
+    }
+    const agora = new Date().toISOString();
+    if (ok) {
+      await admin.from("renovacoes").update({ status: "cancelada", cancelado_em: agora, atualizado_em: agora, cancelar_desde: null }).eq("id", r.id);
+      canceladas++;
+      continue;
+    }
+    pendentes++;
+    if (!r.cancelar_avisado && Date.now() - new Date(r.cancelar_desde).getTime() > 3 * 864e5) {
+      try {
+        const { data: p } = await admin.from("perfis").select("nome, email").eq("id", r.usuario_id).maybeSingle();
+        await admin.from("contatos").insert({
+          usuario_id: r.usuario_id, nome: p?.nome || "Assinante", email: p?.email || "sem-email@licitacon.invalid", assunto: "Assinatura e cobrança",
+          mensagem: `A pessoa trocou de plano, mas a renovação automática do plano anterior (${r.plano}, ${r.ciclo}, R$ ${Number(r.valor).toFixed(2).replace(".", ",")}) não pôde ser cancelada no Mercado Pago em 3 dias de tentativas. Cancelar à mão a assinatura recorrente ${r.mp_preapproval} no Mercado Pago e, se houve nova cobrança do plano antigo, estornar.`,
+          detalhes: { tipo: "renovacao_nao_cancelada", renovacao: r.id, mp_preapproval: r.mp_preapproval, plano: r.plano, ciclo: r.ciclo, valor: r.valor },
+        });
+        await admin.from("renovacoes").update({ cancelar_avisado: true }).eq("id", r.id);
+      } catch (e) {
+        console.error("troca de plano: não avisou a equipe da renovação não cancelada", r.id, e);
+      }
+    }
+  }
+  return { canceladas, pendentes };
 }
 
 /** Atualiza a renovação automática pelo Mercado Pago: situação da assinatura recorrente e cobranças aprovadas. */
