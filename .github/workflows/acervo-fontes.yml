@@ -45,7 +45,8 @@ jobs:
           if [ -d lidas ]; then
             for d in lidas/*/; do
               [ -d "$d" ] || continue
-              idade=$(( ( $(date +%s) - $(git log -1 --format=%ct -- "$d" 2>/dev/null || date +%s) ) / 86400 ))
+              quando=$(git log -1 --format=%ct -- "$d" 2>/dev/null); quando=${quando:-$(date +%s)}  # pasta nova: ainda sem histórico
+              idade=$(( ( $(date +%s) - quando ) / 86400 ))
               [ "$idade" -gt 14 ] && git rm -rq "$d" || true
             done
           fi
