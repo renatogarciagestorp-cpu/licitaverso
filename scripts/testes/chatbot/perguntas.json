@@ -1,63 +1,273 @@
 [
-  { "q": "como calcular reajuste do contrato pelo ipca", "id": "calc-reajuste" },
-  { "q": "quero reajustar meu contrato pelo IGP-M", "id": "calc-reajuste" },
-  { "q": "quais índices vocês têm?", "id": "calc-indices" },
-  { "q": "tem INCC?", "id": "calc-indices" },
-  { "q": "como montar planilha de custos de vigilância", "id": "calc-planilha" },
-  { "q": "planilha da IN 05/2017", "id": "calc-planilha" },
-  { "q": "saiu a nova convenção coletiva, como repactuo?", "id": "calc-repactuacao" },
-  { "q": "cálculo do retroativo da repactuação", "id": "calc-repactuacao" },
-  { "q": "a proposta da licitante é inexequível?", "id": "calc-proposta" },
-  { "q": "reequilíbrio pela reforma tributária CBS e IBS", "id": "reequilibrio" },
-  { "q": "pedido de reequilíbrio por fato superveniente", "id": "reequilibrio", "modo": "duvida" },
-  { "q": "a IA preenche a planilha pra mim?", "id": "calc-agente" },
-  { "q": "o que é o elaborador", "id": "elaborador-o-que" },
-  { "q": "quero fazer um ETP", "id": "elaborador-o-que" },
-  { "q": "vocês fazem termo de referência?", "id": "elaborador-o-que" },
-  { "q": "quanto custa gerar um ETP", "id": "elaborador-preco" },
-  { "q": "posso usar o papel timbrado do meu órgão no documento?", "id": "elaborador-modelo" },
-  { "q": "como analisar meu edital", "id": "agente" },
-  { "q": "o que o parecerista faz", "id": "agente" },
-  { "q": "qual o tamanho máximo do arquivo pro parecerista", "id": "parecerista-enviar" },
-  { "q": "posso mandar só o link do PNCP?", "id": "parecerista-enviar" },
-  { "q": "quanto custa a análise do parecerista", "id": "agente-preco" },
-  { "q": "tenho direito a uma análise grátis?", "id": "parecerista-gratis" },
-  { "q": "quanto tempo demora o parecer", "id": "parecerista-receber" },
-  { "q": "o parecer é vinculante?", "id": "agente-opinativo" },
-  { "q": "vocês usam meus documentos para treinar a IA?", "id": "ia-dados" },
-  { "q": "como fazer pesquisa de preços", "id": "precos-o-que" },
-  { "q": "a pesquisa usa o painel de preços e a mediana?", "id": "precos-fontes" },
-  { "q": "pesquisa de preço de obra com BDI", "id": "precos-mao-obra" },
-  { "q": "versão sem valores para orçamento sigiloso", "id": "precos-relatorio" },
-  { "q": "como cadastrar meus contratos", "id": "meus-contratos" },
-  { "q": "dá pra importar contrato do PNCP?", "id": "gestao-pncp" },
-  { "q": "vou receber aviso do fim da vigência?", "id": "gestao-avisos" },
-  { "q": "modelo de pedido de repactuação para a empresa", "id": "gestao-pecas" },
-  { "q": "termo de apostilamento", "id": "gestao-pecas" },
-  { "q": "onde fica o painel da organização", "id": "gestao-painel" },
-  { "q": "como cadastrar o PCA", "id": "gestao-pca" },
-  { "q": "qual a diferença entre básico premium e pro", "id": "planos-diferenca" },
-  { "q": "quanto custa o plano pro", "id": "planos-preco", "modo": "duvida" },
-  { "q": "o teste grátis inclui a gestão contratual?", "id": "teste-gratis", "modo": "duvida" },
-  { "q": "quero assinar para 5 pessoas da minha equipe", "id": "varias-licencas" },
-  { "q": "a assinatura é renovada automaticamente?", "id": "renovacao" },
-  { "q": "como desligo a renovação automática", "id": "cancelar" },
-  { "q": "posso pagar com pix", "id": "formas-pagamento" },
-  { "q": "paguei o pix e não liberou", "id": "pagamento-nao-liberou" },
-  { "q": "parcelar em 12x", "id": "parcelar" },
-  { "q": "quero meu dinheiro de volta", "id": "reembolso" },
-  { "q": "sou prefeitura, posso pagar com CPGF?", "id": "orgao-plano" },
-  { "q": "esqueci minha senha", "id": "login-problema" },
-  { "q": "onde ficam meus ETPs e pareceres", "id": "meus-documentos" },
-  { "q": "como ativar autenticação em dois fatores", "id": "dois-fatores" },
-  { "q": "não quero receber o resumo mensal da carteira", "id": "notificacoes", "modo": "duvida" },
-  { "q": "como pesquisar acórdão do TCU", "id": "biblioteca-busca", "modo": "duvida" },
-  { "q": "como copiar a citação em ABNT", "id": "biblioteca-citacao" },
-  { "q": "como funcionam os pontos do fórum", "id": "forum-ranking" },
-  { "q": "como seguir uma pergunta do fórum", "id": "forum-aviso-email" },
-  { "q": "como uso o cupom do curso", "id": "cursos-cupom" },
-  { "q": "quanto custa a consultoria por escrito", "id": "consultoria-precos" },
-  { "q": "como remarcar a reunião com o especialista", "id": "consultoria-reuniao" },
-  { "q": "tem app para iphone", "id": "app-instalar" },
-  { "q": "quero falar com um atendente", "id": "falar-equipe" }
+  {
+    "q": "como calcular reajuste do contrato pelo ipca",
+    "id": "calc-reajuste"
+  },
+  {
+    "q": "quero reajustar meu contrato pelo IGP-M",
+    "id": "calc-reajuste"
+  },
+  {
+    "q": "quais índices vocês têm?",
+    "id": "calc-indices"
+  },
+  {
+    "q": "tem INCC?",
+    "id": "calc-indices"
+  },
+  {
+    "q": "como montar planilha de custos de vigilância",
+    "id": "calc-planilha"
+  },
+  {
+    "q": "planilha da IN 05/2017",
+    "id": "calc-planilha"
+  },
+  {
+    "q": "saiu a nova convenção coletiva, como repactuo?",
+    "id": "calc-repactuacao"
+  },
+  {
+    "q": "cálculo do retroativo da repactuação",
+    "id": "calc-repactuacao"
+  },
+  {
+    "q": "a proposta da licitante é inexequível?",
+    "id": "calc-proposta"
+  },
+  {
+    "q": "reequilíbrio pela reforma tributária CBS e IBS",
+    "id": "reequilibrio"
+  },
+  {
+    "q": "pedido de reequilíbrio por fato superveniente",
+    "id": "reequilibrio",
+    "modo": "duvida"
+  },
+  {
+    "q": "a IA preenche a planilha pra mim?",
+    "id": "calc-agente"
+  },
+  {
+    "q": "o que é o elaborador",
+    "id": "elaborador-o-que"
+  },
+  {
+    "q": "quero fazer um ETP",
+    "id": "elaborador-o-que"
+  },
+  {
+    "q": "vocês fazem termo de referência?",
+    "id": "elaborador-o-que"
+  },
+  {
+    "q": "quanto custa gerar um ETP",
+    "id": "elaborador-preco"
+  },
+  {
+    "q": "posso usar o papel timbrado do meu órgão no documento?",
+    "id": "elaborador-modelo"
+  },
+  {
+    "q": "como analisar meu edital",
+    "id": "agente"
+  },
+  {
+    "q": "o que o parecerista faz",
+    "id": "agente"
+  },
+  {
+    "q": "qual o tamanho máximo do arquivo pro parecerista",
+    "id": "parecerista-enviar"
+  },
+  {
+    "q": "posso mandar só o link do PNCP?",
+    "id": "parecerista-enviar"
+  },
+  {
+    "q": "quanto custa a análise do parecerista",
+    "id": "agente-preco"
+  },
+  {
+    "q": "tenho direito a uma análise grátis?",
+    "id": "parecerista-gratis"
+  },
+  {
+    "q": "quanto tempo demora o parecer",
+    "id": "parecerista-receber"
+  },
+  {
+    "q": "o parecer é vinculante?",
+    "id": "agente-opinativo"
+  },
+  {
+    "q": "vocês usam meus documentos para treinar a IA?",
+    "id": "ia-dados"
+  },
+  {
+    "q": "como fazer pesquisa de preços",
+    "id": "precos-o-que"
+  },
+  {
+    "q": "a pesquisa usa o painel de preços e a mediana?",
+    "id": "precos-fontes"
+  },
+  {
+    "q": "pesquisa de preço de obra com BDI",
+    "id": "precos-mao-obra"
+  },
+  {
+    "q": "versão sem valores para orçamento sigiloso",
+    "id": "precos-relatorio"
+  },
+  {
+    "q": "como cadastrar meus contratos",
+    "id": "meus-contratos"
+  },
+  {
+    "q": "dá pra importar contrato do PNCP?",
+    "id": "gestao-pncp"
+  },
+  {
+    "q": "vou receber aviso do fim da vigência?",
+    "id": "gestao-avisos"
+  },
+  {
+    "q": "modelo de pedido de repactuação para a empresa",
+    "id": "gestao-pecas"
+  },
+  {
+    "q": "termo de apostilamento",
+    "id": "gestao-pecas"
+  },
+  {
+    "q": "onde fica o painel da organização",
+    "id": "gestao-painel"
+  },
+  {
+    "q": "como cadastrar o PCA",
+    "id": "gestao-pca"
+  },
+  {
+    "q": "qual a diferença entre básico premium e pro",
+    "id": "planos-diferenca"
+  },
+  {
+    "q": "quanto custa o plano pro",
+    "id": "planos-preco",
+    "modo": "duvida"
+  },
+  {
+    "q": "o teste grátis inclui a gestão contratual?",
+    "id": "teste-gratis",
+    "modo": "duvida"
+  },
+  {
+    "q": "quero assinar para 5 pessoas da minha equipe",
+    "id": "varias-licencas"
+  },
+  {
+    "q": "a assinatura é renovada automaticamente?",
+    "id": "renovacao"
+  },
+  {
+    "q": "como desligo a renovação automática",
+    "id": "cancelar"
+  },
+  {
+    "q": "posso pagar com pix",
+    "id": "formas-pagamento"
+  },
+  {
+    "q": "paguei o pix e não liberou",
+    "id": "pagamento-nao-liberou"
+  },
+  {
+    "q": "parcelar em 12x",
+    "id": "parcelar"
+  },
+  {
+    "q": "quero meu dinheiro de volta",
+    "id": "reembolso"
+  },
+  {
+    "q": "sou prefeitura, posso pagar com CPGF?",
+    "id": "orgao-plano"
+  },
+  {
+    "q": "esqueci minha senha",
+    "id": "login-problema"
+  },
+  {
+    "q": "onde ficam meus ETPs e pareceres",
+    "id": "meus-documentos"
+  },
+  {
+    "q": "como ativar autenticação em dois fatores",
+    "id": "dois-fatores"
+  },
+  {
+    "q": "não quero receber o resumo mensal da carteira",
+    "id": "notificacoes",
+    "modo": "duvida"
+  },
+  {
+    "q": "como pesquisar acórdão do TCU",
+    "id": "biblioteca-busca",
+    "modo": "duvida"
+  },
+  {
+    "q": "como copiar a citação em ABNT",
+    "id": "biblioteca-citacao"
+  },
+  {
+    "q": "como funcionam os pontos do fórum",
+    "id": "forum-ranking"
+  },
+  {
+    "q": "como seguir uma pergunta do fórum",
+    "id": "forum-aviso-email"
+  },
+  {
+    "q": "como uso o cupom do curso",
+    "id": "cursos-cupom"
+  },
+  {
+    "q": "quanto custa a consultoria por escrito",
+    "id": "consultoria-precos"
+  },
+  {
+    "q": "como remarcar a reunião com o especialista",
+    "id": "consultoria-reuniao"
+  },
+  {
+    "q": "tem app para iphone",
+    "id": "app-instalar"
+  },
+  {
+    "q": "quero falar com um atendente",
+    "id": "falar-equipe"
+  },
+  {
+    "q": "a biblioteca precisa de cadastro?",
+    "id": "biblioteca-acesso"
+  },
+  {
+    "q": "posso usar o parecerista de graça?",
+    "id": "parecerista-gratis"
+  },
+  {
+    "q": "se eu mudar do básico para o pro pago a diferença proporcional?",
+    "id": "trocar-plano"
+  },
+  {
+    "q": "empresa tem direito de arrependimento de 7 dias?",
+    "id": "reembolso",
+    "modo": "duvida"
+  },
+  {
+    "q": "o teste grátis inclui o elaborador?",
+    "id": "teste-gratis",
+    "modo": "duvida"
+  }
 ]

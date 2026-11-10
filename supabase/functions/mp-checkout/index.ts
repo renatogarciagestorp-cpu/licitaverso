@@ -289,9 +289,26 @@ Deno.serve(async (req) => {
       // preço de fundador encerrado (nov/2026): todos pagam o preço de tabela, inclusive nas renovações
       const fundador = false;
       valor = precoPlano(plano, ciclo, fundador);
+      // Troca para um plano maior: desconta o valor não usado dos planos menores ainda ativos (proporcional aos dias
+      // que faltam); o plano novo começa um ciclo inteiro na data da troca e os antigos terminam quando ele é ativado.
+      const { data: cred, error: eCred } = await admin.rpc("credito_upgrade", { uid: usuario.id, p_plano: plano });
+      if (eCred) throw eCred;
+      const credito = Math.round(Number(cred?.credito ?? 0) * 100) / 100;
+      const substitui: string[] = credito > 0 && Array.isArray(cred?.ids) ? cred.ids.map(String) : [];
+      if (credito > 0) {
+        if (credito >= valor) {
+          return erro(ciclo === "mensal"
+            ? "O crédito do seu plano atual é maior que um mês do plano novo. Escolha o ciclo de 12 meses para aproveitar todo o crédito."
+            : "O crédito do seu plano atual cobre todo o plano novo. Fale com a equipe para fazer a troca.");
+        }
+        if (corpo.renovacao_auto === true) {
+          return erro("Na troca de plano, o pagamento é único, já com o crédito do plano atual. Escolha \"Não, pagar só este período\".");
+        }
+        valor = Math.max(1, Math.round((valor - credito) * 100) / 100);
+      }
       const cartao = metodo === "cartao" || metodo === "cpgf";
       parcelas = ciclo === "anual" && cartao ? Math.max(1, Math.min(12, Number(corpo.parcelas) || 1)) : 1;
-      titulo = `Licitacon · Plano ${PLANOS[plano].nome} · ${ciclo === "anual" ? "12 meses" : "1 mês"}${fundador ? " · preço de fundador" : ""}`;
+      titulo = `Licitacon · Plano ${PLANOS[plano].nome} · ${ciclo === "anual" ? "12 meses" : "1 mês"}${fundador ? " · preço de fundador" : ""}${credito > 0 ? " · troca de plano com crédito" : ""}`;
 
       // Renovação automática: assinatura recorrente do Mercado Pago (só cartão de crédito; cobra o valor cheio a cada ciclo).
       // O cartão fica guardado no Mercado Pago, nunca no Licitacon.
@@ -319,7 +336,8 @@ Deno.serve(async (req) => {
 
       const { data: nova, error } = await admin.from("assinaturas").insert({
         usuario_id: usuario.id, plano, ciclo, status: "pendente", valor, parcelas, contratante, metodo, fundador,
-        observacao: fundador ? "preço de fundador" : "",
+        credito, substitui: substitui.length ? substitui : null,
+        observacao: credito > 0 ? `troca de plano: crédito de R$ ${credito.toFixed(2).replace(".", ",")} do plano atual` : (fundador ? "preço de fundador" : ""),
       }).select("id").single();
       if (error) throw error;
       referencia = `assinatura:${nova.id}`;
@@ -433,7 +451,8 @@ Deno.serve(async (req) => {
         }
       }
       let franquia = false;
-      if (vigente === "pro" && !orgPro) {
+      // teste de 7 dias: a mesma franquia do Pro (2 por semana, somando análises e documentos)
+      if ((vigente === "pro" || vigente === "teste") && !orgPro) {
         // reaproveita uma análise da cota ainda sem documentos, para não consumir a cota duas vezes
         const { data: pendente } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
           .eq("status", "aguardando_documentos").eq("cobranca", "franquia_pro").eq("tipo", base.tipo).eq("documento", base.documento).limit(1).maybeSingle();

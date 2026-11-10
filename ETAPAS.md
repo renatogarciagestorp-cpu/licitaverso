@@ -84,3 +84,10 @@ Cenas 3D da página inicial: o código fica em `src/inicio3d.js`. Depois de muda
 - Acessibilidade: botão "Pausar animação" em cada tela viva e cena 3D (WCAG 2.2.2; a escolha fica em `localStorage` `lv-anim-pausa`); "reduzir movimento" e "economia de dados" mostram o quadro final parado; sem WebGL ou sem GSAP, a página fica como era.
 - A cada mudança nesses arquivos, subir o `?v=` correspondente em `src/site.html` e rodar `python3 scripts/empacotar-site.py`.
 - Auditoria completa (10 lentes) em `reviews/audit-plan-full.md`.
+
+## Regras decididas pelo Renato (10/11/2026)
+- **Desistência em 7 dias:** vale para todos os contratantes na primeira contratação (Termos, Planos e assistente).
+- **Troca de plano com cobrança proporcional (crédito do tempo):** o valor não usado dos planos menores ainda ativos (dias restantes) é descontado do plano novo, que começa um ciclo inteiro; o antigo termina ao ativar (`status = 'substituida'`) e a renovação automática dele é cancelada no Mercado Pago. `supabase/sql/zz-ze-upgrade-e-teste.sql` (`credito_upgrade`, `meu_credito_upgrade`, gatilho `assinaturas_upgrade`), `mp-checkout` (calcula no servidor; na troca não há renovação automática; crédito maior que o preço pede o ciclo anual) e a tela de pagamento (linha "Crédito do plano atual"). Recomprar o mesmo plano continua somando o tempo.
+- **Análise grátis só pelo teste de 7 dias:** o teste tem a franquia do Pro (2 por semana, somando Parecerista e Elaborador). A "primeira análise grátis por CPF" foi desligada (`cortesia_ativa()` = false; para religar, trocar para true); as já liberadas continuam valendo.
+- **Biblioteca exige conta (grátis, sem plano):** sem sessão, `biblioteca.html` mostra só a apresentação e os botões de criar conta e entrar (`scripts/biblioteca-shim.js`). É um bloqueio da página: os arquivos `acervo.json` e `acervo-completo.json` continuam públicos no GitHub Pages.
+- **Aba Assinatura:** mostra a situação real da renovação automática.

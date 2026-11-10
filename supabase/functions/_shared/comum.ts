@@ -120,6 +120,7 @@ export async function aplicarPagamento(admin: SupabaseClient, pagamento: any): P
     });
     if (error) throw error;
     if (String(data) === "consultoria_paga") await avisarEquipeNovaConsultoria(admin, ref.split(":")[1]);
+    if (String(data) === "assinatura_ativada") await encerrarRenovacoesSubstituidas(admin, ref.split(":")[1]);
     return String(data);
   }
   // Cartão recusado não encerra o pedido: a pessoa pode tentar de novo no mesmo checkout.
@@ -130,6 +131,30 @@ export async function aplicarPagamento(admin: SupabaseClient, pagamento: any): P
     return "recusado:" + data;
   }
   return "aguardando:" + status;
+}
+
+/** Troca de plano: a renovação automática dos planos substituídos é cancelada no Mercado Pago, para não cobrar
+ *  de novo o plano antigo. Falha aqui não desfaz a ativação: fica registrada no log para conferência. */
+async function encerrarRenovacoesSubstituidas(admin: SupabaseClient, assinaturaId: string): Promise<void> {
+  try {
+    const { data: a } = await admin.from("assinaturas").select("usuario_id, plano, substitui").eq("id", assinaturaId).maybeSingle();
+    if (!a || !Array.isArray(a.substitui) || !a.substitui.length) return;
+    const { data: antigos } = await admin.from("assinaturas").select("plano").in("id", a.substitui);
+    const planos = [...new Set((antigos ?? []).map((x: any) => String(x.plano)))].filter((p) => p !== a.plano);
+    if (!planos.length) return;
+    const { data: rens } = await admin.from("renovacoes").select("id, mp_preapproval").eq("usuario_id", a.usuario_id)
+      .in("plano", planos).in("status", ["pendente", "ativa", "pausada"]);
+    for (const r of rens ?? []) {
+      if (r.mp_preapproval) {
+        try { await mp(`/preapproval/${encodeURIComponent(r.mp_preapproval)}`, { method: "PUT", body: JSON.stringify({ status: "cancelled" }) }); }
+        catch (e) { console.error("troca de plano: não cancelou a renovação no Mercado Pago", r.id, e); continue; }
+      }
+      const agora = new Date().toISOString();
+      await admin.from("renovacoes").update({ status: "cancelada", cancelado_em: agora, atualizado_em: agora }).eq("id", r.id);
+    }
+  } catch (e) {
+    console.error("troca de plano: falha ao encerrar renovações", assinaturaId, e);
+  }
 }
 
 /** Atualiza a renovação automática pelo Mercado Pago: situação da assinatura recorrente e cobranças aprovadas. */

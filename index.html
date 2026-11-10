@@ -2779,7 +2779,7 @@
             <div>
               <span class="lvh-ban-eye">⌕ Biblioteca Jurídica · aberta e gratuita</span>
               <h2 class="lvh-ban-h">Jurisprudência de todo o país, <em>sem pagar nada</em>.</h2>
-              <p class="lvh-ban-lead">Pesquise sem cadastro decisões do TCU, dos Tribunais de Contas, das Procuradorias-Gerais e dos Tribunais de Justiça, com filtros por órgão, estado, tema e ano e o link oficial em cada decisão. Com a conta grátis, anotações, marcadores e dossiês ficam salvos.</p>
+              <p class="lvh-ban-lead">Com a conta grátis, sem plano, pesquise decisões do TCU, dos Tribunais de Contas, das Procuradorias-Gerais e dos Tribunais de Justiça, com filtros por órgão, estado, tema e ano e o link oficial em cada decisão. Anotações, marcadores e dossiês ficam salvos na conta.</p>
               <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goBiblioteca }}">Pesquisar na Biblioteca</button></div>
             </div>
             <div>
@@ -7270,9 +7270,9 @@ const INSTITUCIONAL = {
         "Renovação automática (opcional, só no cartão de crédito): com a autorização do assinante no Mercado Pago, o plano é cobrado no início de cada novo ciclo, pelo valor vigente do ciclo, até o cancelamento, que pode ser feito a qualquer momento na Área do Assinante e vale para as cobranças seguintes. O cartão fica guardado no Mercado Pago, não no Licitacon.",
         "Empresa privada (CNPJ): Pix, cartão corporativo ou boleto pelo Mercado Pago, sem renovação automática; para equipes, planos com desconto por quantidade (aba Planos → Para minha equipe).",
         "Órgão público: não há cobrança recorrente automática em cartão. A contratação exige empenho prévio (art. 60 da Lei nº 4.320/1964), cabendo ao órgão o enquadramento e a instrução do processo (por exemplo, dispensa por valor, art. 75, II, da Lei nº 14.133/2021), com base na proposta enviada pelo Licitacon. A continuidade depende de novo pedido do órgão.",
-        "Upgrade vale imediatamente, com cobrança proporcional ao ciclo em curso.",
+        "Upgrade vale imediatamente, com cobrança proporcional: o valor não utilizado do plano em curso, calculado pelos dias restantes do ciclo, é abatido do preço do novo plano, que inicia um ciclo completo na data da troca; o plano anterior se encerra e sua renovação automática, se houver, é cancelada.",
         "Downgrade e cancelamento passam a valer no fim do ciclo já pago, sem novas cobranças.",
-        "Direito de arrependimento: reembolso integral se solicitado em até 7 dias da primeira contratação, conforme o art. 49 do Código de Defesa do Consumidor.",
+        "Direito de arrependimento: reembolso integral se solicitado em até 7 dias da primeira contratação, para qualquer contratante (pessoa física, empresa ou órgão), conforme o art. 49 do Código de Defesa do Consumidor.",
         "Reajustes de preço são comunicados com no mínimo 30 dias de antecedência e nunca retroagem ao ciclo vigente."
       ] },
       { titulo: "5. Conduta no fórum", texto: "O fórum é um ambiente profissional. É proibido publicar dados pessoais de terceiros, informação sigilosa, documento sob restrição de acesso, conteúdo ofensivo, discriminatório, publicidade não autorizada ou qualquer pedido de auxílio para fraudar procedimento licitatório. Moderadores podem editar a classificação de tópicos, mesclar conversas, remover conteúdo e suspender contas reincidentes. Você mantém a titularidade do que escreve e nos concede licença não exclusiva para exibir esse conteúdo na plataforma.", itens: [] },
@@ -9675,7 +9675,7 @@ const EQ_INCLUI = {
   pro: ["Tudo do Pro para cada acesso", "O Parecerista e O Elaborador: 6 por acesso por mês, somados para a equipe, entre analisar documentos e criar ETP, TR ou Projeto Básico", "Agente das planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana para a equipe", "1 consultoria por escrito por mês para a organização; as demais com 30% de desconto"]
 };
 const PLANO_BENEFICIOS = {
-  teste: ["Leitura do fórum da comunidade", "Calculadora, planilhas de mão de obra e comparação de planilhas (sem o agente de IA)", "Biblioteca Jurídica (pesquisa grátis; anotações na conta)", "Sem cobrança automática ao final"],
+  teste: ["Leitura do fórum da comunidade", "O Parecerista e O Elaborador: 2 por semana sem custo, somados, como no Pro", "Calculadora, planilhas de mão de obra e comparação de planilhas (o agente de IA das planilhas é do Pro)", "Biblioteca Jurídica completa (grátis com a conta)", "Sem cobrança automática ao final"],
   basico: ["Fórum: leitura e participação", "Calculadora: reajuste por índice, planilhas de mão de obra (IN 05/2017) e comparação de planilhas", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "O Parecerista: análise com 10% de desconto (R$ 261,00)"],
   premium: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "O Parecerista: análise com 15% de desconto (R$ 246,50)", "Prioridade na agenda do especialista"],
   pro: ["Tudo do Premium", "Agente de IA nas planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "O Parecerista e O Elaborador: 2 por semana sem custo, entre analisar documentos e criar ETP, TR ou Projeto Básico; a partir do 3º, 30% de desconto (R$ 203,00)", "Suporte prioritário"]
@@ -9798,7 +9798,7 @@ class Component extends DCLogic {
     institTab: "sobre",
     comprador: "fisica",
     metodo: "pix", renovacaoAuto: false, renovacoes: [],
-    checkoutPlano: null,
+    checkoutPlano: null, creditoUpgrade: null,
     pagamentoFeito: false,
     pagamentoMsg: "",
     pagamentoErro: "",
@@ -11585,10 +11585,13 @@ class Component extends DCLogic {
   }
 
   // ------------------------------------------------------------ análise de documentos
+  // franquia semanal de análises e documentos: Pro e teste de 7 dias (2 por semana, somados); equipes Pro: por mês
+  temFranquia() { const s = this.state; return (s.plano === "pro" || s.plano === "teste") && !!s.cotaAnalise; }
+  temFranquiaLivre() { const c = this.state.cotaAnalise; return this.temFranquia() && Number(c.usadas) < Number(c.limite); }
   precoAnalise() {
     const s = this.state, c = s.cotaAnalise;
     if (s.admin) return 0; // administrador: sem cobrança
-    if (s.plano === "pro" && c && Number(c.usadas) < Number(c.limite)) return 0;
+    if (this.temFranquiaLivre()) return 0;
     if (s.usuario && this.cortesiaAnalise()) return 0; // primeira análise grátis
     return Math.round(AN_PRECO * (1 - (AN_DESCONTO[s.plano] || 0)) * 100) / 100;
   }
@@ -14549,7 +14552,7 @@ class Component extends DCLogic {
   precoGeracao() {
     const s = this.state, c = s.cotaAnalise;
     if (s.admin) return 0;
-    if (s.plano === "pro" && c && Number(c.usadas) < Number(c.limite)) return 0;
+    if (this.temFranquiaLivre()) return 0;
     return Math.round(AN_PRECO * (1 - (AN_DESCONTO[s.plano] || 0)) * 100) / 100;
   }
 
@@ -14896,7 +14899,13 @@ class Component extends DCLogic {
         return;
       }
       if (this.sb && !this.u) { this.setState({ volta: "planos" }); this.irPara("cadastro"); return; }
-      this.setState({ checkoutPlano: pl, pagamentoFeito: false, pagamentoMsg: "", pagamentoErro: "" });
+      this.setState({ checkoutPlano: pl, pagamentoFeito: false, pagamentoMsg: "", pagamentoErro: "", creditoUpgrade: null });
+      const chave = PLANO_CHAVE[pl.nome];
+      if (this.sb && this.u && pl.base > 0 && chave) {
+        this.sb.rpc("meu_credito_upgrade", { p_plano: chave }).then(({ data }) => {
+          if (data && this.state.checkoutPlano === pl) this.setState({ creditoUpgrade: { plano: chave, valor: Number(data.credito) || 0 } });
+        }, () => {});
+      }
     }
   }));
 
@@ -14923,7 +14932,7 @@ class Component extends DCLogic {
       const { error } = await this.sb.rpc("iniciar_teste");
       if (error) { this.setState({ pagando: false, pagamentoErro: error.message || "Não foi possível iniciar o teste." }); return; }
       await this.carregarDados();
-      this.setState({ pagando: false, pagamentoFeito: true, pagamentoMsg: "✓ Teste de 7 dias ativado. Aproveite para perguntar e responder no fórum, usar as planilhas de mão de obra e cadastrar seus contratos na Gestão Contratual." });
+      this.setState({ pagando: false, pagamentoFeito: true, pagamentoMsg: "✓ Teste de 7 dias ativado. Aproveite para analisar documentos no Parecerista e criar um ETP ou TR no Elaborador (2 por semana sem custo), perguntar e responder no fórum, usar as planilhas de mão de obra e cadastrar seus contratos na Gestão Contratual." });
       return;
     }
 
@@ -14945,7 +14954,7 @@ class Component extends DCLogic {
       body: {
         acao: "criar", tipo: "plano", plano: PLANO_CHAVE[pl.nome], ciclo: s.anual ? "anual" : "mensal",
         parcelas: s.anual ? s.parcelas : 1, contratante: s.comprador, metodo: metodo.id, retorno: baseSite() + "index.html",
-        renovacao_auto: metodo.id === "cartao" && !!s.renovacaoAuto
+        renovacao_auto: metodo.id === "cartao" && !!s.renovacaoAuto && !(s.creditoUpgrade && s.creditoUpgrade.valor > 0 && s.creditoUpgrade.plano === PLANO_CHAVE[pl.nome])
       }
     });
     if (error || !data || !data.url) {
@@ -15263,6 +15272,12 @@ class Component extends DCLogic {
         ? "Pago de uma vez no Pix ou boleto, ou em até 12x no cartão."
         : "Mês a mês sai " + brl(base) + ". No anual você paga " + brl(mesAnual(base)) + " por mês e economiza " + brl(economia(base)) + ".");
     const parcelaCartao = metodoSel.id === "cartao" || metodoSel.id === "cpgf";
+    // troca para um plano maior: o valor não usado do plano atual é descontado (o servidor recalcula ao pagar)
+    const cpl = s.checkoutPlano;
+    const credUp = cpl && cpl.base > 0 && s.creditoUpgrade && s.creditoUpgrade.plano === PLANO_CHAVE[cpl.nome] ? s.creditoUpgrade.valor : 0;
+    const cheioCk = cpl && cpl.base > 0 ? (anual ? anualTotal(cpl.base) : avulso(cpl.base)) : 0;
+    const credMaior = credUp > 0 && credUp >= cheioCk;
+    const totalCk = credUp > 0 ? Math.max(1, r2(cheioCk - credUp)) : cheioCk;
 
     // ---------------------------------------------------------------- conta
     const agora = Date.now();
@@ -15279,8 +15294,8 @@ class Component extends DCLogic {
         ? {
             nome: PLANO_NOME[vig.plano],
             detalhe: vig.plano === "teste"
-              ? "Teste gratuito de 7 dias: perguntar e responder no fórum, usar as planilhas de mão de obra da IN 05/2017 e o reequilíbrio e cadastrar contratos na Gestão Contratual. Depois do teste você continua no plano Gratuito (Biblioteca Jurídica, calculadora de reajuste e leitura do fórum). Nada é cobrado ao final."
-              : "Ciclo de " + (vig.ciclo === "anual" ? "12 meses" : "1 mês") + " contratado em " + dataBR(vig.inicio) + (vig.metodo ? " · " + vig.metodo : "") + (vig.parcelas > 1 ? " em " + vig.parcelas + "x" : "") + ". Sem renovação automática: avisamos antes do fim do período.",
+              ? "Teste gratuito de 7 dias: perguntar e responder no fórum, usar as planilhas de mão de obra da IN 05/2017 e o reequilíbrio, cadastrar contratos na Gestão Contratual e usar O Parecerista e O Elaborador (2 por semana sem custo, somados). Depois do teste você continua no plano Gratuito (Biblioteca Jurídica, calculadora de reajuste e leitura do fórum). Nada é cobrado ao final."
+              : "Ciclo de " + (vig.ciclo === "anual" ? "12 meses" : "1 mês") + " contratado em " + dataBR(vig.inicio) + (vig.metodo ? " · " + vig.metodo : "") + (vig.parcelas > 1 ? " em " + vig.parcelas + "x" : "") + ". " + (this.renovacaoAtiva() ? "Renovação automática ativa no cartão de crédito: o próximo ciclo é cobrado sozinho, e você pode cancelar a renovação quando quiser." : "Renovação automática desligada: avisamos antes do fim do período. No cartão de crédito, você pode ativá-la."),
             preco: vig.plano === "teste" ? "Grátis" : brl(Number(vig.valor || 0)),
             rotulo: "acesso até", proxima: dataBR(vig.fim)
           }
@@ -15416,9 +15431,9 @@ class Component extends DCLogic {
         const cota = s.cotaAnalise;
         const condicao = s.admin ? "Conta de administrador: sem cobrança."
           : (s.analises || []).some((a) => a.tipo === "geracao" && a.documento === el.doc && a.status === "aguardando_documentos") ? "Pagamento confirmado: é só enviar."
-          : (s.plano === "pro" && cota) ? (Math.max(0, Number(cota.limite) - Number(cota.usadas)) > 0
-              ? "Usa 1 da sua franquia do Pro (" + Math.max(0, Number(cota.limite) - Number(cota.usadas)) + " de " + cota.limite + " disponíveis, somando análises e documentos)."
-              : "Franquia usada: este documento sai por R$ 203,00 (30% de desconto).")
+          : this.temFranquia() ? (Math.max(0, Number(cota.limite) - Number(cota.usadas)) > 0
+              ? "Usa 1 da sua franquia " + (s.plano === "teste" ? "do teste" : "do Pro") + " (" + Math.max(0, Number(cota.limite) - Number(cota.usadas)) + " de " + cota.limite + " disponíveis, somando análises e documentos)."
+              : (s.plano === "teste" ? "Franquia do teste usada: este documento sai por R$ 290,00." : "Franquia usada: este documento sai por R$ 203,00 (30% de desconto)."))
           : s.plano === "premium" ? "Valor: R$ 246,50 (15% de desconto do Premium)." : s.plano === "basico" ? "Valor: R$ 261,00 (10% de desconto do Básico)." : "Valor: R$ 290,00 por documento. Assinantes têm desconto; o Pro tem franquia.";
         const EX = { etp: [["Limpeza predial", "Serviços contínuos de limpeza dos prédios da sede administrativa"], ["Notebooks", "Aquisição de notebooks para as escolas municipais"], ["Locação de veículos", "Locação de veículos com motorista para a Secretaria de Saúde"], ["Merenda escolar", "Aquisição de gêneros alimentícios para a merenda escolar"]],
           tr: [["Limpeza predial", "Serviços contínuos de limpeza dos prédios da sede administrativa"], ["Material de escritório", "Aquisição de material de escritório para o exercício"], ["Vigilância", "Serviços de vigilância patrimonial armada nas unidades de saúde"], ["Manutenção de ar-condicionado", "Manutenção preventiva e corretiva dos aparelhos de ar-condicionado"]],
@@ -15457,8 +15472,8 @@ class Component extends DCLogic {
               elPlanoTexto: !s.usuario ? "Valor por documento: R$ 290,00. Assinantes Básico e Premium têm desconto; o Pro inclui 2 por semana, somando análises e documentos."
                 : lib ? "Você já tem uma elaboração liberada aguardando as informações. Siga para o preenchimento."
                 : s.admin ? "Conta de administrador: elaboração sem cobrança."
-                : (s.plano === "pro" && c) ? (resta > 0 ? "Você tem " + resta + " de " + c.limite + (c.equipe ? " neste mês (equipe " + c.organizacao + ")" : " nesta semana") + ", somando análises e documentos, sem custo adicional."
-                    : "A franquia já foi usada. Este documento sai com 30% de desconto: " + brlSimples(preco) + ".")
+                : this.temFranquia() ? (resta > 0 ? "Você tem " + resta + " de " + c.limite + (c.equipe ? " neste mês (equipe " + c.organizacao + ")" : " nesta semana") + ", somando análises e documentos, sem custo adicional" + (s.plano === "teste" ? ", durante o teste grátis." : ".")
+                    : "A franquia já foi usada. Este documento sai " + (s.plano === "teste" ? "por " : "com 30% de desconto: ") + brlSimples(preco) + ".")
                 : (s.plano === "basico" || s.plano === "premium") ? "Valor por documento com o desconto do seu plano: " + brlSimples(preco) + ", pago antes do preenchimento."
                 : "Valor por documento: R$ 290,00, pago antes do preenchimento.",
               elTabelaPrecos: [["Gratuito", "R$ 290,00 por documento"], ["Básico", brlSimples(AN_PRECO * 0.9) + " por documento (10% de desconto)"],
@@ -15886,7 +15901,7 @@ class Component extends DCLogic {
       ],
       goAgente: this.nav("agente"), goElaborar: this.nav("elaborar"),
       heroCta: this.cortesiaAnalise() ? "Fazer minha primeira análise grátis" : "Analisar um documento",
-      heroMicro: this.cortesiaAnalise() ? "1 análise grátis por CPF · sem cartão · parecer em PDF e Word" : "Parecer em PDF e Word · até 3 documentos por análise",
+      heroMicro: this.cortesiaAnalise() ? "1 análise grátis por CPF · sem cartão · parecer em PDF e Word" : "Grátis no teste de 7 dias (2 por semana) · parecer em PDF e Word",
       heroAchados: [
         ["alta", "Gravidade alta", "Julgamento por lote em registro de preços sem a justificativa do art. 82, § 1º."],
         ["media", "Gravidade média", "Ata municipal admitindo adesão de órgãos federais e estaduais (art. 86, § 8º)."],
@@ -15912,7 +15927,7 @@ class Component extends DCLogic {
         this.cortesiaAnalise()
           ? { icon: "✦", selo: "1 por CPF", t: "Primeira análise grátis", d: "Envie até 3 documentos da contratação ao Parecerista e receba o parecer técnico em PDF e Word, sem pagar.", cta: "Fazer minha análise grátis", go: this.nav("agente") }
           : { icon: "%", selo: "Grátis com conta", t: "Calculadora de reajuste", d: "Reajuste por índice com conferência da anualidade, memória de cálculo mês a mês e nota técnica em PDF. Com a conta grátis você também lê o fórum.", cta: "Conhecer a Calculadora", go: this.nav("calculadora") },
-        { icon: "◍", selo: "Sem cartão", t: "Teste de 7 dias", d: "Pergunte e responda no fórum, use as planilhas de mão de obra da IN 05/2017 e cadastre seus contratos na Gestão Contratual antes de escolher um plano.", cta: "Começar o teste", go: this.nav("planos") }
+        { icon: "◍", selo: "Sem cartão", t: "Teste de 7 dias", d: "Analise documentos no Parecerista e crie documentos no Elaborador (2 por semana sem custo), pergunte e responda no fórum, use as planilhas de mão de obra da IN 05/2017 e cadastre seus contratos na Gestão Contratual antes de escolher um plano.", cta: "Começar o teste", go: this.nav("planos") }
       ],
       fundTextoCurto: s.oferta && s.oferta.sou_fundador ? "Seu desconto está garantido enquanto a assinatura continuar ativa." : "Para os primeiros " + ((s.oferta && s.oferta.limite) || 100) + " assinantes, travado enquanto a assinatura continuar ativa. Vale no Básico, no Premium e no Pro.",
       fundTicketTitulo: s.oferta && s.oferta.sou_fundador ? "Você é fundador do Licitacon" : "Assine agora e trave 30% de desconto",
@@ -16161,7 +16176,7 @@ class Component extends DCLogic {
       anIrIniciar: () => { const el = document.getElementById("an-iniciar"); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); },
       anHeroCta: this.creditoAnalise() ? "Ir para o envio dos documentos" : (this.cortesiaAnalise() && (!s.usuario || this.precoAnalise() === 0) ? "Fazer minha análise grátis" : (this.precoAnalise() === 0 && s.usuario ? "Começar uma análise (sem custo)" : "Começar uma análise")),
       ...((n) => ({ anTemMeus: n > 0, anMeusTxt: "Ver meus pareceres (" + n + ")", anIrMeus: () => { this.setState({ contaTab: "documentos", docsFiltro: "analisados" }); this.irPara("conta"); } }))((s.analises || []).filter((x) => x.tipo !== "geracao" && x.status !== "cancelada" && x.status !== "aguardando_documentos").length),
-      anHeroMicro: this.cortesiaAnalise() ? "Primeira análise grátis, uma por CPF · parecer em PDF e Word" : (s.plano === "pro" ? "Plano Pro: 2 por semana incluídas, entre analisar e criar documentos" : "R$ 290,00 por análise · assinantes têm desconto · o Pro inclui 2 por semana"),
+      anHeroMicro: this.cortesiaAnalise() ? "Primeira análise grátis, uma por CPF · parecer em PDF e Word" : (s.plano === "pro" ? "Plano Pro: 2 por semana incluídas, entre analisar e criar documentos" : s.plano === "teste" ? "Teste grátis: 2 por semana incluídas, entre analisar e criar documentos" : "R$ 290,00 por análise · grátis no teste de 7 dias (2 por semana) · assinantes têm desconto"),
       anAmostra: [
         ["Constatação", "O termo de referência exige atestado de execução de 100% do quantitativo do objeto."],
         ["Texto legal", "Lei 14.133/2021, art. 67, § 2º: a exigência de quantidades mínimas em atestados é limitada a 50% das parcelas de maior relevância."],
@@ -16211,13 +16226,14 @@ class Component extends DCLogic {
         if (!s.usuario) return "Entre na sua conta para ver as condições do seu plano.";
         if (s.admin) return "Administrador";
         if (s.plano === "pro") return "Plano Pro";
+        if (s.plano === "teste") return "Teste grátis de 7 dias";
         if (s.plano === "basico") return "Plano Básico";
         if (s.plano === "premium") return "Plano Premium";
         return "Sem plano de assinatura";
       })(),
       anPlanoTexto: (() => {
         const c = s.cotaAnalise;
-        if (!s.usuario) return (this.cortesiaAnalise() ? "Crie sua conta e faça a primeira análise grátis (uma por CPF). Depois, o valor por análise é de R$ 290,00." : "Valor por análise: R$ 290,00.") + " Assinantes Básico e Premium têm desconto; o Pro inclui 2 análises por semana.";
+        if (!s.usuario) return (this.cortesiaAnalise() ? "Crie sua conta e faça a primeira análise grátis (uma por CPF). Depois, o valor por análise é de R$ 290,00." : "Valor por análise: R$ 290,00.") + " No teste grátis de 7 dias, 2 por semana saem sem custo. Assinantes Básico e Premium têm desconto; o Pro inclui 2 análises por semana.";
         if (this.creditoAnalise()) return "Você já tem uma análise liberada aguardando os documentos. Siga para a página de envio.";
         if (s.admin) return "Conta de administrador: análises sem limite e sem cobrança.";
         if (s.plano === "pro" && c && c.equipe) {
@@ -16225,10 +16241,10 @@ class Component extends DCLogic {
           return resta > 0 ? "Plano da equipe (" + c.organizacao + "): restam " + resta + " de " + c.limite + " neste mês, entre análises e documentos criados, sem custo adicional (renova no dia 1º)."
             : "A equipe já usou as " + c.limite + " análises do mês. Esta análise sai com 30% de desconto: " + brlSimples(this.precoAnalise()) + ".";
         }
-        if (s.plano === "pro" && c) {
+        if (this.temFranquia()) {
           const resta = Math.max(0, Number(c.limite) - Number(c.usadas));
-          return resta > 0 ? "Você tem " + resta + " de " + c.limite + " disponíveis nesta semana, entre análises e documentos criados, sem custo adicional (renova na segunda-feira)."
-            : "Você já usou as " + c.limite + " análises desta semana. Esta análise sai com 30% de desconto: " + brlSimples(this.precoAnalise()) + ".";
+          return resta > 0 ? "Você tem " + resta + " de " + c.limite + " disponíveis nesta semana, entre análises e documentos criados, sem custo adicional (" + (s.plano === "teste" ? "durante o teste grátis de 7 dias" : "renova na segunda-feira") + ")."
+            : "Você já usou as " + c.limite + " análises desta semana. Esta análise sai " + (s.plano === "teste" ? "por " : "com 30% de desconto: ") + brlSimples(this.precoAnalise()) + ".";
         }
         if (this.cortesiaAnalise() && this.precoAnalise() === 0) {
           const o = s.oferta || {}, hoje = new Date(Date.now() - 3 * 3600000).toISOString().slice(0, 10);
@@ -16236,7 +16252,7 @@ class Component extends DCLogic {
           return "Sua primeira análise é grátis, sem pagamento. Envie até 3 documentos da contratação e receba o parecer técnico. A partir da segunda, vale o preço do seu plano."
             + (adiada ? " As análises grátis de hoje já se esgotaram: a sua entra na fila e é processada a partir de " + String(o.cortesia_proximo_dia).split("-").reverse().join("/") + ", com prioridade." : "");
         }
-        const semCpf = s.oferta && s.oferta.cortesia_situacao === "sem_cpf" && !s.admin && !(s.plano === "pro" && s.cotaAnalise && Number(s.cotaAnalise.usadas) < Number(s.cotaAnalise.limite));
+        const semCpf = s.oferta && s.oferta.cortesia_situacao === "sem_cpf" && !s.admin && !this.temFranquiaLivre();
         if (semCpf) return "Sua primeira análise pode ser grátis: informe um CPF válido em Minha conta → Perfil (uma análise grátis por CPF). Ou siga com a análise paga: " + brlSimples(this.precoAnalise()) + ".";
         if (s.plano === "basico" || s.plano === "premium") return "Valor por análise com o desconto do seu plano: " + brlSimples(this.precoAnalise()) + ". O pagamento é feito antes de seguir para o envio dos documentos.";
         return "Valor por análise: R$ 290,00, pago antes de seguir para o envio dos documentos.";
@@ -16250,7 +16266,7 @@ class Component extends DCLogic {
       voltarInfo: () => this.setState({ an: { ...this.state.an, etapa: "info", erro: "" } }),
       anPaga: this.precoAnalise() > 0 && !this.creditoAnalise(),
       anBotaoInicio: s.an.iniciando ? "Aguarde…" : (!s.usuario && s.sb ? "Entrar para continuar" : (this.creditoAnalise() ? "Ir para o envio dos documentos"
-        : (this.precoAnalise() > 0 ? "Pagar " + brlSimples(this.precoAnalise()) + " e continuar" : (this.cortesiaAnalise() && !(s.plano === "pro" && s.cotaAnalise && Number(s.cotaAnalise.usadas) < Number(s.cotaAnalise.limite)) ? "Fazer minha análise grátis" : "Continuar para o envio (sem custo)")))),
+        : (this.precoAnalise() > 0 ? "Pagar " + brlSimples(this.precoAnalise()) + " e continuar" : (this.cortesiaAnalise() && !this.temFranquiaLivre() ? "Fazer minha análise grátis" : "Continuar para o envio (sem custo)")))),
       iniciarAnalise: () => { if (!s.an.iniciando) this.iniciarAnalise(); },
       // página 2: envio
       anRegimes: AN_REGIMES.map(([id, nome, sub]) => ({ nome, sub, ativo: s.an.regime === id, ...corBotao(s.an.regime === id),
@@ -16382,7 +16398,7 @@ class Component extends DCLogic {
       })) : this.comPlanos([
         { nome: "Gratuito", base: 0, publico: "Para pesquisar, calcular e acompanhar a comunidade sem pagar nada.", preco: "R$ 0", unidade: "para sempre", nota: "", detalhePreco: "Basta criar a conta, sem cartão. O teste de 7 dias também não pede cartão e não cobra nada ao final.", destaque: false,
           cta: !s.usuario ? "Criar conta grátis" : s.plano ? "Você já tem acesso" : "Começar o teste de 7 dias", btnBg: "#F1F6F5", btnColor: "#0A1F2A",
-          itens: ["Biblioteca Jurídica completa: jurisprudência de todo o país, com anotações, marcadores e dossiês salvos na sua conta", "Calculadora de reajuste por índice, com a nota técnica em PDF", "Leitura do fórum da comunidade", "Teste de 7 dias, sem cartão: perguntar e responder no fórum, usar as planilhas de mão de obra da IN 05/2017 e o reequilíbrio, cadastrar contratos na Gestão Contratual e fazer pesquisas de preços"] },
+          itens: ["Biblioteca Jurídica completa: jurisprudência de todo o país, com anotações, marcadores e dossiês salvos na sua conta", "Calculadora de reajuste por índice, com a nota técnica em PDF", "Leitura do fórum da comunidade", "Teste de 7 dias, sem cartão: perguntar e responder no fórum, usar as planilhas de mão de obra da IN 05/2017 e o reequilíbrio, cadastrar contratos na Gestão Contratual, fazer pesquisas de preços e usar O Parecerista e O Elaborador (2 por semana sem custo, somados)"] },
         { nome: "Básico", base: 119.9, publico: "Profissionais individuais iniciantes.", preco: precoPlano(119.9), unidade: unidadePlano, nota: notaPlano(119.9), detalhePreco: detalhePlano(119.9), destaque: destaque === "Básico", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
           itens: ["Fórum da comunidade: leitura e participação", "Calculadora: reajuste por índice com nota técnica, planilhas de mão de obra da IN 05/2017 (planilha de custos, repactuação e análise de proposta, com várias categorias num relatório único), comparação de planilhas em linha do tempo (planejamento × contratação × repactuações, por categoria) e reequilíbrio econômico-financeiro", "Gestão Contratual: Painel da Organização estilo Power BI (visão do órgão ou da empresa), contratos com linha do tempo, painel do valor e do limite de acréscimos (art. 125), situação por cor, agenda de prazos em 12 meses, avisos por e-mail, PDF de cada contrato, relatório da carteira e agenda em Excel", "Pesquisa de preços no Elaborador: Painel de Preços e contratações similares do PNCP, tratamento estatístico, ratificação da planilha de mão de obra, análise do orçamento de obras e relatório em PDF, Word e Excel", "O Parecerista e O Elaborador com 10% de desconto", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto"] },
         { nome: "Premium", base: 199.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(199.9), unidade: unidadePlano, nota: notaPlano(199.9), detalhePreco: detalhePlano(199.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
@@ -16414,7 +16430,7 @@ class Component extends DCLogic {
           ["Forma de pagamento", METODO_NOME[vig.metodo] || vig.metodo || "—"],
           ["Renovação", (() => { const r = this.renovacaoAtiva(); return r ? "Automática no cartão (Mercado Pago)" + (r.status === "pausada" ? " · pausada" : "") + (r.proxima_cobranca ? " · próxima cobrança em " + dataBR(r.proxima_cobranca) : "") : "Manual: avisamos por e-mail antes do fim do período"; })()]
         ];
-        if (vig.plano === "pro" && cota && !cota.equipe) linhas.push(["O Parecerista nesta semana", Math.max(0, Number(cota.limite) - Number(cota.usadas)) + " de " + cota.limite + " análises disponíveis (renova na segunda-feira)"]);
+        if ((vig.plano === "pro" || vig.plano === "teste") && cota && !cota.equipe) linhas.push(["O Parecerista e O Elaborador nesta semana", Math.max(0, Number(cota.limite) - Number(cota.usadas)) + " de " + cota.limite + " análises disponíveis (renova na segunda-feira)"]);
         else if (vig.plano !== "teste") linhas.push(["O Parecerista", brlSimples(this.precoAnalise()) + " por análise, com o desconto do plano"]);
         return linhas.map(([rot, val]) => ({ rot, val }));
       })(),
@@ -16481,7 +16497,7 @@ class Component extends DCLogic {
       compLinhas: (() => {
         const eq = !!s.modoEquipe;
         const L = [
-          ["Biblioteca Jurídica nacional", ["Pesquisa aberta; anotações na conta", "Pesquisa aberta; anotações na conta", "Pesquisa aberta; anotações na conta"]],
+          ["Biblioteca Jurídica nacional", ["Completa, com anotações na conta", "Completa, com anotações na conta", "Completa, com anotações na conta"]],
           ["Fórum da comunidade", ["Ler e participar", "Ler e participar", "Ler, participar e selo de resposta oficial"]],
           ["Calculadora de reajuste por índice, com nota técnica", ["Sim", "Sim", "Sim"]],
           ["Planilhas de mão de obra (IN 05/2017): planilha de custos, repactuação e análise de proposta, com várias categorias e Excel e PDF", ["Sim", "Sim", "Sim"]],
@@ -16497,8 +16513,8 @@ class Component extends DCLogic {
         return L.map(([rot, vals]) => ({ rot, vals: vals.map((t, i) => ({ txt: t, cls: t === "—" ? "lvp-nao" : (i === 2 && !/^Completa|^Grátis|^Pesquisa aberta|^Ler e participar|^Sim$/.test(t) ? "lvp-forte" : (t === "Sim" ? "lvp-sim" : "")) })) }));
       })(),
       garantiasPlanos: [
-        { t: "Sem fidelidade", d: "Sem renovação automática, a não ser que você ative no cartão. Cancele quando quiser." },
-        { t: "7 dias para desistir", d: "Na primeira contratação como pessoa física, com reembolso integral (art. 49 do CDC)." },
+        { t: "Sem fidelidade", d: "Renovação automática no cartão de crédito, que você cancela quando quiser." },
+        { t: "7 dias para desistir", d: "Na primeira contratação, para todos os contratantes, com reembolso integral (art. 49 do CDC)." },
         { t: "Pagamento seguro", d: "Mercado Pago: Pix, cartão em até 12x no anual, boleto. Órgãos públicos por empenho." },
         { t: "Dados protegidos", d: "Conforme a LGPD, com verificação em duas etapas para a sua conta." }
       ],
@@ -16511,9 +16527,9 @@ class Component extends DCLogic {
         ["O que a Pesquisa de preços faz e quem pode usar?", "Fica no Elaborador e estima o valor da contratação na fase de planejamento. Você escolhe o regime (Lei 14.133, com a IN SEGES/ME 65/2021; Lei 13.303, pelo regulamento interno da estatal, que a IA pode ler; ou Lei 13.019) e o tipo de objeto. Para bens e serviços, o site coleta preços no Painel de Preços do Compras.gov.br e em contratações similares do PNCP, aceita cotações e outras fontes, desconsidera os preços mais de 25% abaixo ou acima da mediana e escolhe entre média e mediana pelo coeficiente de variação (menor preço em mercado restrito). Na mão de obra exclusiva, ratifica o valor da planilha da IN 5/2017; em obras, analisa a planilha de orçamento enviada (fontes, aritmética, curva ABC, BDI pelo Acórdão 2.622/2013 do TCU, encargos e data-base). O relatório sai em PDF, Word e Excel, e o resultado vai para o Termo de Referência com um clique. Está nos planos Básico, Premium e Pro e no teste de 7 dias; o filtro de itens semelhantes com IA tem limite diário."],
         ["O que a Gestão Contratual faz e quem pode usar?", "Você cadastra cada contrato (vigência, valor, índice, data do orçamento estimado e regime legal) e registra reajustes, repactuações, reequilíbrios, aditivos e prorrogações. O site calcula o valor vigente, a próxima anualidade, o limite de acréscimos do art. 125 e a data recomendada para iniciar a prorrogação, mostra a situação de cada contrato por cor (vigente, vencendo ou vencido), monta a agenda de prazos dos próximos 12 meses e avisa por e-mail. O Painel da Organização reúne a carteira inteira em indicadores e gráficos: quantidade e valor das contratações, distribuição por modalidade, custo total, contratos vencendo e no prazo, tempo médio entre o orçamento e a assinatura e entre a anualidade e a concessão do reajuste, alterações registradas e as empresas com mais contratos, com filtros por ano, modalidade e situação; para empresas privadas, a mesma leitura é feita por órgão contratante. Também gera o PDF de cada contrato, o relatório completo da carteira e a agenda em Excel. Está em todos os planos pagos e no teste de 7 dias; nos planos para equipes, cada contrato pode ser compartilhado com a equipe, para consulta."],
         ["Quantas análises de planilha pelo agente de IA eu tenho?", "No Pro, por semana: 1 elaboração de planilha de custos, 1 análise de repactuação e 1 análise de proposta, renovando na segunda-feira. A franquia é por assinatura: na equipe, é compartilhada entre os membros. Análise que falhar por problema técnico não consome a franquia, e a planilha pode sempre ser preenchida manualmente, sem limite."],
-        ["O que o plano Gratuito inclui?", "Com a conta grátis, sem cartão e sem prazo, você usa a Biblioteca Jurídica completa (com anotações, marcadores e dossiês), a calculadora de reajuste por índice com a nota técnica em PDF e lê todas as perguntas e respostas do fórum. Para perguntar e responder no fórum, usar as planilhas de mão de obra e o reequilíbrio e cadastrar contratos na Gestão Contratual, faça o teste de 7 dias ou assine um plano."],
-        ["A primeira análise do Parecerista é grátis mesmo?", "Sim. Cada CPF tem direito a uma análise grátis, com até 3 documentos, assinante ou não: basta informar o CPF no perfil e confirmar o e-mail. Se a análise não puder ser concluída por falha técnica, a cortesia continua disponível. Quando o limite diário de análises grátis é atingido, a sua entra na fila e é processada no dia seguinte, com prioridade."],
-        ["Posso mudar de plano depois?", "Sim. Basta contratar o novo plano; se for o mesmo plano, o tempo que ainda falta é somado ao novo período."]
+        ["O que o plano Gratuito inclui?", "Com a conta grátis, sem cartão e sem prazo, você usa a Biblioteca Jurídica completa (com anotações, marcadores e dossiês), a calculadora de reajuste por índice com a nota técnica em PDF e lê todas as perguntas e respostas do fórum. Para perguntar e responder no fórum, usar as planilhas de mão de obra e o reequilíbrio, cadastrar contratos na Gestão Contratual e usar O Parecerista e O Elaborador (2 por semana sem custo no teste), faça o teste de 7 dias ou assine um plano."],
+        ["Posso usar O Parecerista e O Elaborador de graça?", "Sim, no teste grátis de 7 dias: você tem a mesma franquia do plano Pro, 2 por semana sem custo, somando análises do Parecerista e documentos do Elaborador. O teste não pede cartão, não cobra nada ao final e pode ser usado uma vez por conta. Se a análise não puder ser concluída por falha técnica, ela não consome a franquia. Depois da franquia, cada análise ou documento sai por R$ 290,00, ou com o desconto do plano que você assinar."],
+        ["Posso mudar de plano depois?", "Sim. Na troca para um plano maior, a cobrança é proporcional: o valor que você ainda não usou do plano atual (pelos dias que faltam) é descontado do novo plano, que começa um ciclo inteiro na data da troca, e o plano antigo termina. Exemplo: no Básico mensal, faltando 15 dias, o Pro mensal sai por R$ 479,90 − R$ 59,95 = R$ 419,95. Na troca, o pagamento é único; a renovação automática do plano antigo é cancelada. Se for o mesmo plano, o tempo que ainda falta é somado ao novo período."]
       ].map(([q, a], i) => ({ q, a, aberta: s.faqAberta === i, sinal: s.faqAberta === i ? "−" : "+", alternar: () => this.setState((x) => ({ faqAberta: x.faqAberta === i ? -1 : i })) })),
       modos: [[false, "para mim"], [true, "para a minha equipe"]].map(([k, label]) => ({ label, ativo: !!s.modoEquipe === k,
         escolher: () => this.setState((x) => ({ modoEquipe: k, equipeMsg: "", equipeErro: "", comprador: k && x.comprador === "fisica" ? "privada" : x.comprador })),
@@ -16562,7 +16578,7 @@ class Component extends DCLogic {
         { label: "Nome completo", valor: s.perfil.nome, onInput: this.onPerfil("nome"), ajuda: "Exibido no fórum." },
         { label: "Celular", valor: s.perfil.celular, onInput: this.onPerfil("celular"), ajuda: "Com DDD. Usado só para contato sobre a sua conta." },
         { label: "E-mail", valor: s.perfil.email, onInput: this.onPerfil("email"), ajuda: "Usado para login e avisos. Trocar exige confirmar o novo endereço." },
-        { label: "CPF / CNPJ", valor: s.perfil.doc, onInput: this.onPerfil("doc"), ajuda: "Opcional. Com um CPF válido, você ganha uma análise grátis do Parecerista. Para empresas, informe o CNPJ." },
+        { label: "CPF / CNPJ", valor: s.perfil.doc, onInput: this.onPerfil("doc"), ajuda: "Opcional. Para empresas, informe o CNPJ." },
         { label: "Órgão ou empresa", valor: s.perfil.orgao, onInput: this.onPerfil("orgao"), ajuda: "Aparece junto do seu nome no fórum." },
         { label: "Cargo ou função", valor: s.perfil.cargo, onInput: this.onPerfil("cargo"), ajuda: "Ajuda a comunidade a calibrar as respostas." }
       ],
@@ -16670,7 +16686,7 @@ class Component extends DCLogic {
       }),
       metodoAtual: metodoSel,
       mostrarCartaoOpcoes: !!s.checkoutPlano && s.checkoutPlano.base > 0 && (metodoSel.id === "cartao" || metodoSel.id === "debito"),
-      mostrarRenovacao: !!s.checkoutPlano && s.checkoutPlano.base > 0 && metodoSel.id === "cartao",
+      mostrarRenovacao: !!s.checkoutPlano && s.checkoutPlano.base > 0 && metodoSel.id === "cartao" && !credUp,
       renovacaoOpcoes: [[true, "Sim, renovar automaticamente"], [false, "Não, pagar só este período"]].map(([v, nome]) => ({ nome, ativo: !!s.renovacaoAuto === v,
         escolher: () => this.setState({ renovacaoAuto: v, parcelas: v ? 1 : s.parcelas, pagamentoFeito: false }), ...corBotao(!!s.renovacaoAuto === v) })),
       renovacaoTexto: s.renovacaoAuto
@@ -16680,10 +16696,10 @@ class Component extends DCLogic {
         ? "Salvar o cartão: se você pagar logado na sua conta do Mercado Pago, pode salvar o cartão lá para as próximas compras. O Licitacon não guarda dados de cartão. A renovação automática não está disponível no débito: avisamos por e-mail antes do fim do período."
         : "Salvar o cartão: se você pagar logado na sua conta do Mercado Pago, pode salvar o cartão lá para as próximas compras. O Licitacon não guarda dados de cartão (o pagamento é processado pelo Mercado Pago, em ambiente PCI-DSS).",
       checkoutAberto: !!s.checkoutPlano,
-      mostrarParcelas: !!s.checkoutPlano && anual && s.checkoutPlano.base > 0 && parcelaCartao && !(s.renovacaoAuto && metodoSel.id === "cartao"),
+      mostrarParcelas: !!s.checkoutPlano && anual && s.checkoutPlano.base > 0 && parcelaCartao && !(s.renovacaoAuto && metodoSel.id === "cartao" && !credUp),
       opcoesParcelas: (s.checkoutPlano && s.checkoutPlano.base > 0 ? [1, 3, 6, 12] : []).map((n) => {
         const ativo = s.parcelas === n;
-        const total = anualTotal(s.checkoutPlano.base);
+        const total = totalCk;
         return {
           label: n === 1 ? "À vista" : "até " + n + "x",
           sub: n === 1 ? brl(total) : brl(total / n) + " por mês",
@@ -16692,12 +16708,16 @@ class Component extends DCLogic {
         };
       }),
       parcelasObs: "Parcelamento no cartão de crédito, em uma única autorização. O Mercado Pago mostra as condições finais antes de você confirmar.",
-      checkout: s.checkoutPlano ? (() => { const auto = !!s.renovacaoAuto && metodoSel.id === "cartao" && s.checkoutPlano.base > 0; return {
+      checkout: s.checkoutPlano ? (() => { const auto = !!s.renovacaoAuto && metodoSel.id === "cartao" && s.checkoutPlano.base > 0 && !credUp; return {
         titulo: s.checkoutPlano.base === 0 ? "Teste grátis de 7 dias" : "Plano " + s.checkoutPlano.nome + " · " + (s.checkoutPlano.base === 0 ? "teste de 7 dias" : (auto ? (anual ? "anual com renovação automática" : "mensal com renovação automática") : (anual ? "12 meses" : "1 mês avulso"))),
-        total: s.checkoutPlano.base === 0 ? "R$ 0,00" : brl(anual ? anualTotal(s.checkoutPlano.base) : avulso(s.checkoutPlano.base)),
+        total: s.checkoutPlano.base === 0 ? "R$ 0,00" : brl(totalCk),
         botao: s.pagando ? "Aguarde…" : (s.checkoutPlano.base === 0 ? "Ativar teste grátis" : (metodoSel.checkout ? "Pagar com Mercado Pago" : "Solicitar cobrança")),
         obs: s.checkoutPlano.base === 0
           ? "Sem cartão e sem cobrança. O teste pode ser usado uma vez por conta."
+          : credMaior
+            ? (anual ? "O crédito do seu plano atual cobre todo o plano novo. Fale com a equipe para fazer a troca." : "O crédito do seu plano atual é maior que um mês do plano novo. Escolha o ciclo de 12 meses para aproveitar todo o crédito.")
+          : credUp > 0 && metodoSel.checkout
+            ? "Troca de plano: descontamos " + brl(credUp) + ", o valor que você ainda não usou do plano atual. O plano " + s.checkoutPlano.nome + " começa hoje, com o ciclo inteiro, e o plano atual termina; a renovação automática dele, se houver, é cancelada. Você será levado ao ambiente seguro do Mercado Pago para concluir."
           : metodoSel.checkout
             ? "Você será levado ao ambiente seguro do Mercado Pago para concluir. " + (auto ? "Renovação automática: nova cobrança no início de cada " + (anual ? "ano" : "mês") + ", até você cancelar na Área do Assinante." : (anual ? "Acesso garantido por 12 meses; ao fim do período avisamos antes de qualquer nova cobrança." : "Nenhuma cobrança automática depois deste pagamento."))
             : "Esta forma de pagamento não passa pelo checkout: nossa equipe envia a proposta e os documentos para o seu setor responsável.",
@@ -16708,7 +16728,8 @@ class Component extends DCLogic {
           fund && s.checkoutPlano.base > 0
             ? { label: "Desconto de fundador", valor: anual ? brl(economia(s.checkoutPlano.base)) + " no ano" : brl(s.checkoutPlano.base - avulso(s.checkoutPlano.base)) + " por mês" }
             : { label: anual ? "Sua economia" : "Economia no anual", valor: s.checkoutPlano.base === 0 ? "—" : brl(economia(s.checkoutPlano.base)) },
-          { label: "Pagamento", valor: s.checkoutPlano.base === 0 ? "Sem cobrança" : (auto ? (anual ? "Anual recorrente, à vista" : "Mensal recorrente") : (anual ? (parcelaCartao && s.parcelas > 1 ? "até " + s.parcelas + "x de " + brl(anualTotal(s.checkoutPlano.base) / s.parcelas) : "À vista") : "Cobrança única")) },
+          ...(credUp > 0 ? [{ label: "Crédito do plano atual", valor: "− " + brl(credUp) }] : []),
+          { label: "Pagamento", valor: s.checkoutPlano.base === 0 ? "Sem cobrança" : (auto ? (anual ? "Anual recorrente, à vista" : "Mensal recorrente") : (anual ? (parcelaCartao && s.parcelas > 1 ? "até " + s.parcelas + "x de " + brl(totalCk / s.parcelas) : "À vista") : "Cobrança única")) },
           { label: "Contratante", valor: COMPRADORES[s.comprador].label },
           { label: "Forma de pagamento", valor: metodoSel.nome },
           { label: "Documento fiscal", valor: s.comprador === "fisica" ? "Recibo no CPF" : "Nota no CNPJ" }

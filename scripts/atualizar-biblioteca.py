@@ -44,7 +44,7 @@ if "chatbot.js" not in html:
 
 # 4) busca e compartilhamento
 SITE = "https://renatogarciagestorp-cpu.github.io/licitaverso/"
-DESC = "Biblioteca Jurídica gratuita do Licitacon: decisões do TCU, CGU, STF, STJ, Tribunais de Contas, Procuradorias e Tribunais de Justiça de todos os estados sobre licitações e contratos, com tema, tese e link para a fonte oficial."
+DESC = "Biblioteca Jurídica do Licitacon, gratuita para quem tem conta: decisões do TCU, CGU, STF, STJ, Tribunais de Contas, Procuradorias e Tribunais de Justiça de todos os estados sobre licitações e contratos, com tema, tese e link para a fonte oficial."
 SEO = ('<!-- seo --><meta name="description" content="' + DESC + '">'
        '<link rel="canonical" href="' + SITE + 'biblioteca.html">'
        '<meta property="og:type" content="website"><meta property="og:site_name" content="Licitacon"><meta property="og:locale" content="pt_BR">'

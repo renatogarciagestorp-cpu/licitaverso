@@ -1,7 +1,7 @@
 /* Faz a página do Acervo Licitacon funcionar no site público, sem o Claude:
    - "decisoes" e "meta" vêm de acervo-completo.json (atualizado nos dias úteis);
-   - com as contas ativas (config.js preenchido), a pesquisa é aberta a visitantes e as anotações,
-     marcadores, dossiês e preferências ficam salvos na conta da pessoa (Supabase),
+   - com as contas ativas (config.js preenchido), a Biblioteca é para quem tem conta (gratuita, sem plano) e as
+     anotações, marcadores, dossiês e preferências ficam salvos na conta da pessoa (Supabase),
      disponíveis em qualquer aparelho; sem contas, ficam no navegador (localStorage);
    - recursos que dependem do Claude (perguntar ao acervo, síntese, minuta, conferência de divergência) ficam ocultos. */
 (function(){
@@ -18,23 +18,52 @@
   const LV = window.LV;
   const contas = LV ? LV.pronto : Promise.resolve(null);
   const sessao = contas.then(sb => sb ? sb.auth.getSession().then(r => (r && r.data && r.data.session) || null) : null).catch(() => null);
-  // Visitantes sem cadastro pesquisam e leem o acervo à vontade (como nas demais plataformas de jurisprudência);
-  // anotações, marcadores e dossiês ficam só neste navegador até a pessoa criar a conta (e vão para ela no 1º acesso)
+  // A Biblioteca é gratuita para quem tem conta (sem plano pago). Sem sessão, a página mostra a apresentação e os
+  // botões de criar conta e entrar; o acervo fica oculto. Enquanto a sessão é conferida, o acervo não aparece.
+  // Sem as contas configuradas (config.js vazio, como na demonstração local), a página continua aberta.
+  const raizDoc = document.documentElement;
+  raizDoc.classList.add("lv-verificando");
+  const estilo = document.createElement("style");
+  estilo.textContent = "html.lv-verificando body>.wrap{visibility:hidden}"
+    + "html.lv-portao body>.wrap{display:none!important}"
+    + "#lvPortao{margin-left:calc(-1*max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1*max(16px,env(safe-area-inset-right,0px)));background:#0F3431;color:#E6F1ED;font:400 16px/1.6 Manrope,system-ui,sans-serif;padding:72px 20px 88px}"
+    + "#lvPortao .in{max-width:760px;margin:0 auto}"
+    + "#lvPortao h1{font:800 clamp(30px,5vw,46px)/1.12 Manrope,system-ui,sans-serif;letter-spacing:-.02em;color:#fff;margin:0 0 16px}"
+    + "#lvPortao p{margin:0 0 14px;max-width:62ch;color:#C3D9D3}"
+    + "#lvPortao ul{list-style:none;margin:26px 0 30px;padding:0;display:grid;gap:12px}"
+    + "#lvPortao li{display:grid;grid-template-columns:22px 1fr;gap:10px;color:#E6F1ED}"
+    + "#lvPortao li::before{content:'';width:9px;height:9px;margin-top:9px;border-radius:50%;background:#6FE0AE}"
+    + "#lvPortao .ac{display:flex;flex-wrap:wrap;gap:12px;align-items:center}"
+    + "#lvPortao a.pri{background:#0FA36B;color:#04261A;border-radius:12px;padding:13px 20px;font-weight:800;text-decoration:none}"
+    + "#lvPortao a.pri:hover{background:#14B978}"
+    + "#lvPortao a.sec{color:#fff;font-weight:700;text-decoration:underline;text-underline-offset:4px;padding:13px 6px}"
+    + "#lvPortao a:focus-visible{outline:3px solid #6FE0AE;outline-offset:3px}"
+    + "#lvPortao small{display:block;margin-top:22px;color:#9FBDB4;font-size:13.5px}";
+  document.head.appendChild(estilo);
+  const liberar = () => raizDoc.classList.remove("lv-verificando", "lv-portao");
   Promise.all([contas, sessao]).then(([sb, s]) => {
-    if (!sb || s) return;
+    if (!sb || s) { liberar(); return; }
     const mostrar = () => {
-      if (document.getElementById("lvVisitante")) return;
-      const d = document.createElement("div");
-      d.id = "lvVisitante"; d.setAttribute("role", "note");
-      d.style.cssText = "position:relative;margin-left:calc(-1*max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1*max(16px,env(safe-area-inset-right,0px)));display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;padding:9px 16px;background:#E7F7EF;border-bottom:1px solid #BFE6D2;font:600 13.5px/1.4 Manrope,system-ui,sans-serif;color:#0B3B2A;text-align:center";
-      d.innerHTML = '<span>Você está pesquisando como visitante. Crie sua conta grátis para guardar anotações, marcadores e dossiês e abri-los em qualquer aparelho.</span>'
-        + '<a href="index.html?p=cadastro&amp;volta=biblioteca" style="background:#0FA36B;color:#06251A;border-radius:9px;padding:6px 12px;text-decoration:none;font-weight:800">Criar conta grátis</a>'
-        + '<a href="index.html?p=login&amp;volta=biblioteca" style="color:#0F6B7E;font-weight:800">Já tenho conta</a>';
+      raizDoc.classList.remove("lv-verificando");
+      raizDoc.classList.add("lv-portao");
+      if (document.getElementById("lvPortao")) return;
+      const d = document.createElement("section");
+      d.id = "lvPortao"; d.setAttribute("aria-labelledby", "lvPortaoTit");
+      d.innerHTML = '<div class="in"><h1 id="lvPortaoTit">A Biblioteca Jurídica é gratuita para quem tem conta.</h1>'
+        + '<p>Crie sua conta grátis, sem cartão e sem plano, para pesquisar decisões e normas sobre licitações e contratos das fontes oficiais de todo o país.</p>'
+        + '<ul><li>TCU, CGU, STF, STJ, tribunais de contas, tribunais de justiça e procuradorias dos estados, além de leis e decretos.</li>'
+        + '<li>Filtros por órgão, tema, tipo, lei, artigo e período, com a citação pronta em ABNT ou para a peça.</li>'
+        + '<li>Anotações, marcadores e dossiês salvos na sua conta, em qualquer aparelho.</li></ul>'
+        + '<div class="ac"><a class="pri" href="index.html?p=cadastro&amp;volta=biblioteca">Criar conta grátis</a>'
+        + '<a class="sec" href="index.html?p=login&amp;volta=biblioteca">Já tenho conta: entrar</a></div>'
+        + '<small>A coleta nas fontes oficiais é automática, nos dias úteis.</small></div>';
       const barra = document.querySelector(".lvbar");
       if (barra && barra.parentNode) barra.parentNode.insertBefore(d, barra.nextSibling); else document.body.prepend(d);
     };
     document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", mostrar) : mostrar();
-  });
+  }).catch(liberar);
+  // se algo travar na conferência da sessão, o acervo não fica escondido para sempre
+  setTimeout(() => { if (raizDoc.classList.contains("lv-verificando")) liberar(); }, 8000);
 
   // Coleção pessoal guardada no Supabase (tabela biblioteca_pessoal), com cache local
   function colecaoNaConta(sb, uid){
