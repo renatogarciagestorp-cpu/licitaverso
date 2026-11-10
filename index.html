@@ -7301,6 +7301,7 @@ const INSTITUCIONAL = {
         "Conteúdo publicado no fórum: execução de contrato e legítimo interesse na moderação da comunidade.",
         "Registros de acesso (data, hora e IP): obrigação legal (art. 15 do Marco Civil da Internet) e legítimo interesse em segurança.",
         "Medição de visitas (Cloudflare Web Analytics, sem cookies de rastreamento): consentimento, só se você aceitar os cookies de análise.",
+        "Verificação contra robôs no cadastro, no login e na recuperação de senha (Cloudflare Turnstile, que analisa sinais técnicos do navegador, como endereço IP e características do aparelho, sem identificar você): legítimo interesse e prevenção a fraudes (art. 7º, IX, e art. 11, II, g, da LGPD).",
         "E-mails de aviso sobre a conta, o plano e os seus pedidos: execução de contrato. Novidades e marketing: só com o seu consentimento, revogável a qualquer momento."
       ] },
       { titulo: "3. Documentos enviados ao Parecerista", texto: "Editais, estudos, termos de referência e planilhas podem conter dados pessoais — às vezes sensíveis — de terceiros. Você é responsável por só enviar documento que possa legitimamente compartilhar e por retirar dados pessoais desnecessários (por exemplo, documentos de habilitação, CPF e dados de saúde). Os arquivos ficam em armazenamento privado, acessível só a você e à equipe técnica; são lidos por programa e pelo provedor de inteligência artificial pela API comercial, que não usa o conteúdo para treinar modelos; e são apagados automaticamente 30 dias depois do fim da análise. O parecer gerado fica na sua conta até você excluí-la. O parecer é produzido de forma automatizada e tem caráter opinativo: você pode pedir a revisão por pessoa e a explicação dos critérios usados (art. 20 da LGPD) pelo Fale Conosco.", itens: [] },
@@ -7311,7 +7312,7 @@ const INSTITUCIONAL = {
         "Mercado Pago (pagamentos e renovação automática) — Brasil; trata os dados de cobrança e antifraude também como controlador, sob a própria política.",
         "Brevo (envio de e-mails transacionais) — União Europeia.",
         "Google (login com conta Google, se você escolher) — recebemos só nome, e-mail e foto do perfil.",
-        "Cloudflare (medição de visitas, se você consentir) — sem cookies de rastreamento.",
+        "Cloudflare (medição de visitas, se você consentir, e verificação contra robôs no cadastro e no login) — sem cookies de rastreamento.",
         "Especialista da consultoria — recebe somente o material do seu atendimento.",
         "Autoridades, quando houver ordem judicial ou requisição legal."
       ] },
@@ -9737,6 +9738,17 @@ function carregarScript(src) {
   });
 }
 const baseSite = () => location.origin + location.pathname.replace(/[^/]*$/, "");
+// Verificação contra robôs (Cloudflare Turnstile, captcha.js) antes de entrar, cadastrar, reenviar a confirmação e
+// recuperar a senha. Devolve { token } (null sem chave no config.js) ou { erro } com a mensagem para a pessoa.
+async function tokenCaptcha() {
+  if (!(window.LICITAVERSO_CONFIG || {}).turnstileSiteKey) return { token: null };
+  try {
+    if (!window.LV_CAPTCHA) await carregarScript(baseSite() + "captcha.js?v=1");
+    return { token: await window.LV_CAPTCHA.token() };
+  } catch (e) {
+    return { erro: window.LV_CAPTCHA ? window.LV_CAPTCHA.mensagem(e) : "Não foi possível carregar a verificação de segurança. Confira a conexão e tente de novo." };
+  }
+}
 const soDigitos = (v) => String(v || "").replace(/\D/g, "");
 function mascaraCelular(v) {
   const d = soDigitos(v).slice(0, 11);
@@ -9778,6 +9790,7 @@ function traduzErroAuth(e) {
   if (/invalid email|unable to validate email/i.test(m)) return "Confira o e-mail digitado.";
   if (/same password|different from the old/i.test(m)) return "A nova senha precisa ser diferente da anterior.";
   if (/failed to fetch|network/i.test(m)) return "Sem conexão com o servidor. Verifique a internet e tente de novo.";
+  if (/captcha/i.test(m)) return "A verificação de segurança não foi aceita. Recarregue a página e tente de novo.";
   return m || "Algo deu errado. Tente de novo.";
 }
 async function erroDaFuncao(error) {
@@ -11279,7 +11292,9 @@ class Component extends DCLogic {
     if (!this.sb) { this.setState({ auth: { ...a, erro: "As contas ainda não foram ativadas neste site (modo demonstração)." } }); return; }
     if (!emailValido(a.email) || !a.senha) { this.setState({ auth: { ...a, erro: "Informe e-mail e senha." } }); return; }
     this.setState({ auth: { ...a, enviando: true, erro: "" } });
-    const { data, error } = await this.sb.auth.signInWithPassword({ email: a.email.trim(), password: a.senha });
+    const cap = await tokenCaptcha();
+    if (cap.erro) { this.setState({ auth: { ...this.state.auth, enviando: false, erro: cap.erro } }); return; }
+    const { data, error } = await this.sb.auth.signInWithPassword({ email: a.email.trim(), password: a.senha, options: cap.token ? { captchaToken: cap.token } : undefined });
     if (!error && data && data.user) this.u = data.user;
     if (error) {
       this.setState({ auth: { ...this.state.auth, enviando: false, erro: traduzErroAuth(error), reenviar: /not confirmed/i.test(error.message || "") } });
@@ -11306,9 +11321,11 @@ class Component extends DCLogic {
     if (a.senha !== a.senha2) return erro("As duas senhas não conferem.");
     if (!a.aceite) return erro("Para criar a conta, aceite os Termos de Uso e a Política de Privacidade.");
     this.setState({ auth: { ...a, enviando: true, erro: "" } });
+    const cap = await tokenCaptcha();
+    if (cap.erro) { this.setState({ auth: { ...this.state.auth, enviando: false, erro: cap.erro } }); return; }
     const { data, error } = await this.sb.auth.signUp({
       email: a.email.trim(), password: a.senha,
-      options: { data: { nome, celular: mascaraCelular(cel), setor: a.tipo === "priv" ? "Setor Privado" : "Setor Público", vinculo: a.tipo === "priv" ? a.vinculo : "servidor", orgao: a.orgao.trim().slice(0, 160) }, emailRedirectTo: baseSite() + "index.html?p=conta" }
+      options: { ...(cap.token ? { captchaToken: cap.token } : {}), data: { nome, celular: mascaraCelular(cel), setor: a.tipo === "priv" ? "Setor Privado" : "Setor Público", vinculo: a.tipo === "priv" ? a.vinculo : "servidor", orgao: a.orgao.trim().slice(0, 160) }, emailRedirectTo: baseSite() + "index.html?p=conta" }
     });
     if (error) { this.setState({ auth: { ...this.state.auth, enviando: false, erro: traduzErroAuth(error) } }); return; }
     if (data && data.session) {
@@ -11325,7 +11342,9 @@ class Component extends DCLogic {
   async reenviarConfirmacao() {
     const a = this.state.auth;
     if (!this.sb || !emailValido(a.email)) return;
-    const { error } = await this.sb.auth.resend({ type: "signup", email: a.email.trim(), options: { emailRedirectTo: baseSite() + "index.html?p=conta" } });
+    const cap = await tokenCaptcha();
+    if (cap.erro) { this.setState({ auth: { ...this.state.auth, erro: cap.erro } }); return; }
+    const { error } = await this.sb.auth.resend({ type: "signup", email: a.email.trim(), options: { emailRedirectTo: baseSite() + "index.html?p=conta", ...(cap.token ? { captchaToken: cap.token } : {}) } });
     this.setState({ auth: { ...a, erro: error ? traduzErroAuth(error) : "", msg: error ? "" : "Enviamos um novo link de confirmação para " + a.email.trim() + ".", reenviar: false } });
   }
 
@@ -11334,7 +11353,9 @@ class Component extends DCLogic {
     if (!this.sb) { this.setState({ auth: { ...a, erro: "As contas ainda não foram ativadas neste site (modo demonstração)." } }); return; }
     if (!emailValido(a.email)) { this.setState({ auth: { ...a, erro: "Informe o e-mail da sua conta." } }); return; }
     this.setState({ auth: { ...a, enviando: true, erro: "" } });
-    const { error } = await this.sb.auth.resetPasswordForEmail(a.email.trim(), { redirectTo: baseSite() + "index.html?p=nova-senha" });
+    const cap = await tokenCaptcha();
+    if (cap.erro) { this.setState({ auth: { ...this.state.auth, enviando: false, erro: cap.erro } }); return; }
+    const { error } = await this.sb.auth.resetPasswordForEmail(a.email.trim(), { redirectTo: baseSite() + "index.html?p=nova-senha", ...(cap.token ? { captchaToken: cap.token } : {}) });
     this.setState({ auth: { ...AUTH_VAZIO, email: a.email, erro: error ? traduzErroAuth(error) : "", msg: error ? "" : "Se houver uma conta com " + a.email.trim() + ", você vai receber um link para criar uma nova senha." } });
   }
 

@@ -126,3 +126,10 @@ Cenas 3D da página inicial: o código fica em `src/inicio3d.js`. Depois de muda
 - Solução: `.github/workflows/acervo-fontes.yml` + `scripts/agente/ler-fontes.py`. A coleta envia ao ramo `coleta-fontes` um arquivo `pedidos/<nome>.txt` com os endereços oficiais; o GitHub Actions (rede livre) baixa cada um, extrai o texto (PDF com OCR quando digitalizado; HTML sem marcação e com a lista de links) e devolve em `lidas/<nome>/` em 1 a 3 minutos. Só domínios oficiais, um endereço por segundo, respeita o robots.txt e se identifica como LicitaconColeta. Leituras com mais de 14 dias são apagadas; o ramo nunca vai para o main.
 - Roteiro para as coletas: `coletas/acesso-aos-sites.md`. As 5 coletas regionais e a diária passaram a começar por ele; sem o arquivo no main, voltam ao WebSearch/WebFetch.
 - Não muda: TCE-RJ e TCM-RJ continuam pelo navegador do computador; páginas com CAPTCHA ou login continuam fora; caminhos que o robots.txt do órgão proíbe continuam sem leitura automática.
+
+## Verificação contra robôs (Cloudflare Turnstile, 10/11/2026)
+- `captcha.js` (carregado só ao enviar): desafio do Turnstile, invisível na maioria das vezes; quando a Cloudflare desconfia, aparece uma caixa para marcar. Cada envio de cadastro, login, reenvio da confirmação e "esqueci a senha" leva um token novo (`captchaToken`), que o Supabase confere no servidor.
+- Chave pública em `config.js` (`turnstileSiteKey`); a chave secreta fica só no Supabase (Authentication → Attack Protection → Captcha protection → Turnstile). Ligar no Supabase só depois de publicar o site; enquanto estiver desligado, o token é ignorado. Para desligar a verificação no site, deixe `turnstileSiteKey` vazio (e desligue no Supabase antes).
+- Se o desafio não carrega (bloqueador, rede), a pessoa vê o aviso e o envio não acontece. Login com o Google não passa pelo desafio.
+- Política de Privacidade: Turnstile incluído entre as finalidades e os operadores.
+- Fale Conosco ainda sem o desafio (precisa de uma função no servidor com a chave secreta); continua com o limite de envios por origem.
