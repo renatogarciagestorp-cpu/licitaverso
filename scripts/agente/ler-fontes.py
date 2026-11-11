@@ -41,15 +41,21 @@ class Texto(html.parser.HTMLParser):
         return re.sub(r"\n\s*\n+", "\n\n", t).strip()
 
 robots = {}
+mortos = {}  # host -> motivo: site que não respondeu (timeout/conexão); os outros endereços dele são pulados
+class SemResposta(Exception): pass
 def permitido(url):
     p = urllib.parse.urlsplit(url); casa = f"{p.scheme}://{p.netloc}"
     if casa not in robots:
         rp = urllib.robotparser.RobotFileParser()
         try:
-            with urllib.request.urlopen(urllib.request.Request(casa + "/robots.txt", headers={"User-Agent": UA}), timeout=20) as r:
+            with urllib.request.urlopen(urllib.request.Request(casa + "/robots.txt", headers={"User-Agent": UA}), timeout=15) as r:
                 rp.parse(r.read(200_000).decode("utf-8", "replace").splitlines())
-        except Exception:
-            rp.parse([])  # sem robots.txt legível: tudo permitido
+        except urllib.error.HTTPError:
+            rp.parse([])  # sem robots.txt: tudo permitido
+        except Exception as e:
+            # nem o robots.txt respondeu: o site está fora do ar ou bloqueia o GitHub; não espera de novo por ele
+            mortos[p.hostname] = f"{type(e).__name__}"[:80]
+            raise SemResposta(f"o site não respondeu ({mortos[p.hostname]})")
         robots[casa] = rp
     return robots[casa].can_fetch(UA, url)
 
@@ -57,10 +63,19 @@ def ler(url, destino):
     host = (urllib.parse.urlsplit(url).hostname or "").lower()
     if not url.startswith(("http://", "https://")) or not OFICIAL.search(host):
         return {"erro": "fora dos domínios oficiais (.gov.br, .tc.br, .jus.br, .leg.br)"}
+    if host in mortos:
+        return {"erro": f"pulado: o site não respondeu a um endereço anterior deste pedido ({mortos[host]})"}
     if not permitido(url):
         return {"erro": "o robots.txt do site não permite leitura automática deste endereço"}
     req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "text/html,application/pdf,*/*;q=0.8", "Accept-Language": "pt-BR,pt;q=0.9"})
-    with urllib.request.urlopen(req, timeout=90) as r:
+    try:
+        r0 = urllib.request.urlopen(req, timeout=45)
+    except urllib.error.HTTPError:
+        raise
+    except Exception as e:
+        mortos[host] = f"{type(e).__name__}"[:80]
+        raise SemResposta(f"o site não respondeu ({mortos[host]})")
+    with r0 as r:
         corpo = r.read(MAX_BYTES + 1)
         tipo = (r.headers.get("Content-Type") or "").lower()
         final = r.geturl()
@@ -102,6 +117,8 @@ def main():
             r = ler(url, arq)
         except urllib.error.HTTPError as e:
             r = {"status": e.code, "erro": f"o site respondeu {e.code}"}
+        except SemResposta as e:
+            r = {"erro": str(e)}
         except Exception as e:
             r = {"erro": f"{type(e).__name__}: {e}"[:200]}
         r = {"url": url, "arquivo": arq.name if arq.exists() else None, **r}
