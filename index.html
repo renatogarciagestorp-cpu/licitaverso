@@ -13113,7 +13113,7 @@ class Component extends DCLogic {
       c.font = { name: "Calibri", size: o.size || 10, bold: !!o.bold, italic: !!o.italic, color: { argb: o.cor || X.texto } }; c.alignment = { wrapText: true, vertical: "middle" }; if (o.fundo) c.fill = fill(o.fundo);
       row.height = o.alt || altura(txt, totalLarg * (o.size && o.size > 11 ? 0.8 : 1.05), (o.size || 10) * 1.35); return row; };
     faixa(doc0.titulo, { size: 16, bold: true, cor: X.branco, fundo: X.navy, alt: 30 });
-    faixa(doc0.sub || (titulo + "  ·  " + (this.state.mo.d.categoria || "Profissional") + (this.state.mo.d.municipio ? "  ·  " + this.state.mo.d.municipio + "/" + (this.state.mo.d.uf || "") : "")), { size: 11, cor: "FFB9CBD2", fundo: X.navy, alt: 20 });
+    faixa(doc0.sub || (titulo + "  ·  " + (this.state.mo.d.categoria || "Profissional") + (this.state.mo.d.municipio ? "  ·  " + this.state.mo.d.municipio + (this.state.mo.d.uf ? "/" + this.state.mo.d.uf : "") : "")), { size: 11, cor: "FFB9CBD2", fundo: X.navy, alt: 20 });
     faixa((doc0.selo || "IN SEGES/MP nº 5/2017, Anexo VII-D") + " · gerado no Licitacon em " + hoje, { size: 9, cor: "FF7FE3B6", fundo: X.navy, alt: 16 });
     ws.addRow([]);
     const num = (t) => { const m = String(t == null ? "" : t).replace("R$", "").replace("%", "").replace("+", "").trim().replace(/\./g, "").replace(",", "."); const n = Number(m); return m !== "" && /^-?[\d.]+$/.test(m) && isFinite(n) ? n : null; };
@@ -13192,6 +13192,8 @@ class Component extends DCLogic {
     const { jsPDF } = window.jspdf, pais = !!doc0.paisagem;
     const doc = new jsPDF({ unit: "mm", format: "a4", orientation: pais ? "landscape" : "portrait" });
     const W = pais ? 297 : 210, H = pais ? 210 : 297, ML = 14, MR = 14, LARG = W - ML - MR;
+    // corta o texto numa linha que cabe na largura (com reticências), para não invadir o que está ao lado
+    const umaLinha = (s, larg) => { s = moPdfTxt(s); if (doc.getTextWidth(s) <= larg) return s; while (s.length > 1 && doc.getTextWidth(s + "…") > larg) s = s.slice(0, -1); return s.trimEnd() + "…"; };
     const C = { navy: [10, 31, 42], teal: [15, 107, 126], verde: [15, 163, 107], fraco: [102, 117, 127], texto: [11, 31, 42], cinza: [238, 243, 242], cinza2: [246, 248, 247], ambar: [255, 244, 220], tot: [227, 242, 234], linha: [221, 229, 228], alerta: [255, 241, 204] };
     const d = this.state.mo.d;
     const cabE = this.cabDoc();
@@ -13200,13 +13202,14 @@ class Component extends DCLogic {
         doc.setFont("helvetica", "bold"); doc.setFontSize(9.5); doc.setTextColor(...C.navy);
         const ln = cabE.nome ? doc.splitTextToSize(moPdfTxt(cabE.nome), larg).slice(0, 2) : []; ln.forEach((t, i) => doc.text(t, x, 8.5 + i * 4));
         doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.fraco); if (cabE.linha2) doc.text(doc.splitTextToSize(moPdfTxt(cabE.linha2), larg)[0], x, 8.5 + Math.max(1, ln.length) * 4 + 0.8);
-        doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(...C.teal); doc.text(moPdfTxt(doc0.titulo), W - MR, 9.5, { align: "right", maxWidth: W - MR - meio });
-        doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(...C.fraco); doc.text(moPdfTxt(doc0.sub || titulo || ""), W - MR, 14, { align: "right", maxWidth: W - MR - meio }); doc.text("Gerado em " + hoje, W - MR, 18, { align: "right" });
+        doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(...C.teal); doc.text(umaLinha(doc0.titulo, W - MR - meio), W - MR, 9.5, { align: "right" });
+        doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(...C.fraco); doc.text(umaLinha(doc0.sub || titulo || "", W - MR - meio), W - MR, 14, { align: "right" }); doc.text("Gerado em " + hoje, W - MR, 18, { align: "right" });
         doc.setDrawColor(...C.teal); doc.setLineWidth(0.5); doc.line(0, 22, W, 22); doc.setLineWidth(0.2); doc.setTextColor(...C.texto); return; }
       doc.setFillColor(...C.navy); doc.rect(0, 0, W, 22, "F");
-      doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text(doc0.titulo, ML, 10);
-      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(185, 203, 210); doc.text(moPdfTxt(doc0.sub || (titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + "/" + (d.uf || "") : ""))), ML, 16);
-      doc.setTextColor(127, 227, 182); doc.setFontSize(7.5); doc.text(moPdfTxt(doc0.selo || "IN SEGES/MP nº 5/2017 · Anexo VII-D"), W - MR, 10, { align: "right" }); doc.text("Gerado em " + hoje, W - MR, 16, { align: "right" }); doc.setTextColor(...C.texto); };
+      doc.setTextColor(127, 227, 182); doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); const selo = moPdfTxt(doc0.selo || "IN SEGES/MP nº 5/2017 · Anexo VII-D"), ladoD = Math.max(doc.getTextWidth(selo), doc.getTextWidth("Gerado em " + hoje)) + 6;
+      doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text(umaLinha(doc0.titulo, LARG - ladoD), ML, 10);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(185, 203, 210); doc.text(umaLinha(doc0.sub || (titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + (d.uf ? "/" + d.uf : "") : "")), LARG - ladoD), ML, 16);
+      doc.setTextColor(127, 227, 182); doc.setFontSize(7.5); doc.text(selo, W - MR, 10, { align: "right" }); doc.text("Gerado em " + hoje, W - MR, 16, { align: "right" }); doc.setTextColor(...C.texto); };
     const limpo = moPdfTxt;
     const base = { margin: { left: ML, right: MR, top: 28, bottom: 14 }, didDrawPage: () => { cab(); }, styles: { font: "helvetica", textColor: C.texto, lineColor: C.linha, overflow: "linebreak" },
       didParseCell: (dt) => { dt.cell.text = (dt.cell.text || []).map(limpo); } };
@@ -13217,37 +13220,44 @@ class Component extends DCLogic {
       if (b.t === "quebra") { doc.addPage(); cab(); y = 30; return; }
       if (b.t === "secao") { if (y > H - 60) { doc.addPage(); cab(); y = 30; }
         doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.setTextColor(...C.navy); doc.text(moPdfTxt(b.titulo), ML, y + 4);
-        if (b.sub) { doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...C.fraco); doc.text(moPdfTxt(b.sub), ML, y + 10, { maxWidth: LARG }); }
-        doc.setDrawColor(...C.verde); doc.setLineWidth(0.6); doc.line(ML, y + (b.sub ? 13 : 7), ML + 30, y + (b.sub ? 13 : 7)); doc.setLineWidth(0.2); doc.setTextColor(...C.texto); doc.setFont("helvetica", "normal");
-        y += b.sub ? 19 : 13; return; }
+        let extra = 0; if (b.sub) { doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...C.fraco); const ls = doc.splitTextToSize(moPdfTxt(b.sub), LARG); ls.forEach((t, i) => doc.text(t, ML, y + 10 + i * 4)); extra = (ls.length - 1) * 4; }
+        doc.setDrawColor(...C.verde); doc.setLineWidth(0.6); doc.line(ML, y + (b.sub ? 13 + extra : 7), ML + 30, y + (b.sub ? 13 + extra : 7)); doc.setLineWidth(0.2); doc.setTextColor(...C.texto); doc.setFont("helvetica", "normal");
+        y += (b.sub ? 19 : 13) + extra; return; }
       if (b.t === "cascata") { const AH = 46, top = y + 9; if (top + AH + 14 > H - 15) { doc.addPage(); cab(); y = 30; }
         const t0 = y + 9; doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(...C.fraco); doc.text("EVOLUÇÃO DO VALOR (CASCATA DOS AJUSTES)", ML, y + 3);
-        const n = b.passos.length, cw = LARG / n, base0 = t0 + AH; doc.setDrawColor(...C.linha); doc.line(ML, base0, ML + LARG, base0);
+        const n = b.passos.length, cw = LARG / n, base0 = t0 + AH; let maxRot = 1; doc.setDrawColor(...C.linha); doc.line(ML, base0, ML + LARG, base0);
         b.passos.forEach((w, i) => { const x = ML + i * cw, bw = cw * 0.56, bx = x + (cw - bw) / 2, yb = base0 - (Number(w.b) / 100) * AH, h = Math.max(0.6, (Number(w.h) / 100) * AH);
           doc.setFillColor(...hexRgb(w.cor)); doc.rect(bx, yb - h, bw, h, "F");
           if (w.temCon) { doc.setDrawColor(150, 165, 170); doc.setLineDashPattern([0.8, 0.8], 0); const yc = base0 - (Number(w.con) / 100) * AH; doc.line(bx + bw, yc, bx + bw + cw - bw, yc); doc.setLineDashPattern([], 0); }
           doc.setFont("helvetica", "bold"); doc.setFontSize(7.6); doc.setTextColor(...C.texto); doc.text(moPdfTxt(w.val), x + cw / 2, yb - h - (w.pct ? 4.6 : 1.4), { align: "center" });
           if (w.pct) { doc.setFontSize(6.6); doc.setTextColor(10, 122, 81); doc.text(moPdfTxt(w.pct), x + cw / 2, yb - h - 1.4, { align: "center" }); }
-          doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...C.texto); doc.text(moPdfTxt(w.rot), x + cw / 2, base0 + 4, { align: "center", maxWidth: cw - 1 });
-          doc.setFont("helvetica", "normal"); doc.setFontSize(6.6); doc.setTextColor(...C.fraco); doc.text(moPdfTxt(w.sub), x + cw / 2, base0 + 7.6, { align: "center" }); });
-        doc.setTextColor(...C.texto); y = base0 + 13; return; }
+          doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...C.texto); const lr = doc.splitTextToSize(moPdfTxt(w.rot), cw - 1).slice(0, 3); lr.forEach((t, k) => doc.text(t, x + cw / 2, base0 + 4 + k * 3, { align: "center" }));
+          doc.setFont("helvetica", "normal"); doc.setFontSize(6.6); doc.setTextColor(...C.fraco); doc.text(umaLinha(w.sub, cw - 1), x + cw / 2, base0 + 4.6 + lr.length * 3, { align: "center" }); maxRot = Math.max(maxRot, lr.length); });
+        doc.setTextColor(...C.texto); y = base0 + 10 + maxRot * 3; return; }
       if (b.t === "destaques") { const n = b.itens.length, cw = (LARG - (n - 1) * 4) / n;
-        b.itens.forEach(([k, v], i) => { const x = ML + i * (cw + 4); doc.setFillColor(...(i ? C.cinza2 : C.tot)); doc.roundedRect(x, y, cw, 20, 2.5, 2.5, "F"); if (!i) { doc.setFillColor(...C.verde); doc.rect(x, y + 3, 1.2, 14, "F"); }
-          doc.setFontSize(7); doc.setTextColor(...C.fraco); doc.setFont("helvetica", "bold"); doc.text(moPdfTxt(String(k).toUpperCase()), x + 4, y + 6.5, { maxWidth: cw - 6 });
-          doc.setFontSize(i ? 11 : 13); doc.setTextColor(...(i ? C.texto : C.teal)); doc.text(moPdfTxt(v), x + 4, y + 15, { maxWidth: cw - 6 }); });
-        doc.setFont("helvetica", "normal"); doc.setTextColor(...C.texto); y += 27; return; }
+        // rótulo em até 2 linhas e valor reduzido até caber: o cartão cresce junto, sem sobrepor
+        doc.setFont("helvetica", "bold"); doc.setFontSize(7); const rots = b.itens.map(([k]) => doc.splitTextToSize(moPdfTxt(String(k).toUpperCase()), cw - 6).slice(0, 2));
+        const nl = Math.max(1, ...rots.map((r) => r.length)), hc = 20 + (nl - 1) * 3;
+        b.itens.forEach(([k, v], i) => { const x = ML + i * (cw + 4); doc.setFillColor(...(i ? C.cinza2 : C.tot)); doc.roundedRect(x, y, cw, hc, 2.5, 2.5, "F"); if (!i) { doc.setFillColor(...C.verde); doc.rect(x, y + 3, 1.2, hc - 6, "F"); }
+          doc.setFontSize(7); doc.setTextColor(...C.fraco); doc.setFont("helvetica", "bold"); rots[i].forEach((t, k2) => doc.text(t, x + 4, y + 6.5 + k2 * 3));
+          let fs = i ? 11 : 13; doc.setFontSize(fs); while (fs > 7 && doc.getTextWidth(moPdfTxt(v)) > cw - 6) { fs -= 0.5; doc.setFontSize(fs); }
+          doc.setTextColor(...(i ? C.texto : C.teal)); doc.text(umaLinha(v, cw - 6), x + 4, y + 15 + (nl - 1) * 3); });
+        doc.setFont("helvetica", "normal"); doc.setTextColor(...C.texto); y += hc + 7; return; }
       if (b.t === "barra") { if (!b.tot) return; doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(...C.fraco); doc.text("COMPOSIÇÃO DO PREÇO POR EMPREGADO", ML, y); y += 3;
         let x = ML; b.comp.forEach(([, v, c]) => { const w = (v / b.tot) * LARG; if (w > 0) { doc.setFillColor(...c); doc.rect(x, y, w, 5, "F"); x += w; } });
         y += 9; doc.setFont("helvetica", "normal"); doc.setFontSize(7.3);
-        b.comp.forEach(([k, v, c], i) => { const col = i % 3, lin = Math.floor(i / 3), x2 = ML + col * (LARG / 3), y2 = y + lin * 5; doc.setFillColor(...c); doc.rect(x2, y2 - 2.4, 2.6, 2.6, "F"); doc.setTextColor(...C.texto);
-          doc.text(moPdfTxt(k) + "  " + (v / b.tot * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%", x2 + 4, y2); });
-        y += 12; return; }
+        // legenda em 3 colunas; se algum texto não couber, passa para 2 colunas (e, em último caso, corta com reticências)
+        const rotB = b.comp.map(([k, v]) => moPdfTxt(k) + "  " + (v / b.tot * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%");
+        const ncB = rotB.some((s) => doc.getTextWidth(s) > LARG / 3 - 6) ? 2 : 3, cwB = LARG / ncB;
+        b.comp.forEach(([k, v, c], i) => { const col = i % ncB, lin = Math.floor(i / ncB), x2 = ML + col * cwB, y2 = y + lin * 5; doc.setFillColor(...c); doc.rect(x2, y2 - 2.4, 2.6, 2.6, "F"); doc.setTextColor(...C.texto);
+          doc.text(umaLinha(rotB[i], cwB - 6), x2 + 4, y2); });
+        y += Math.ceil(b.comp.length / ncB) * 5 + 2; return; }
       if (b.t === "pares") { const pares = []; for (let i = 0; i < b.pares.length; i += 2) pares.push([b.pares[i][0], String(b.pares[i][1]), b.pares[i + 1] ? b.pares[i + 1][0] : "", b.pares[i + 1] ? String(b.pares[i + 1][1]) : ""]);
         doc.autoTable({ ...base, startY: y, head: [[{ content: b.titulo.toUpperCase(), colSpan: 4, styles: { fillColor: C.teal, textColor: 255, fontSize: 8, fontStyle: "bold" } }]], body: pares, theme: "plain",
           styles: { ...base.styles, fontSize: 8, cellPadding: { top: 1.4, bottom: 1.4, left: 2, right: 2 }, lineWidth: { bottom: 0.1 } },
           columnStyles: { 0: { textColor: C.fraco, fontStyle: "bold", cellWidth: LARG * 0.22 }, 1: { cellWidth: LARG * 0.28 }, 2: { textColor: C.fraco, fontStyle: "bold", cellWidth: LARG * 0.22 } } });
         y = fimY() + 5; return; }
-      if (b.t === "legenda") { doc.setFillColor(...C.ambar); doc.rect(ML, y - 2.6, 3.4, 3.4, "F"); doc.setFontSize(7.3); doc.setTextColor(...C.fraco); doc.text(moPdfTxt(b.texto), ML + 5, y, { maxWidth: LARG - 5 }); doc.setTextColor(...C.texto); y += 5; return; }
+      if (b.t === "legenda") { doc.setFillColor(...C.ambar); doc.rect(ML, y - 2.6, 3.4, 3.4, "F"); doc.setFontSize(7.3); doc.setTextColor(...C.fraco); const ll = doc.splitTextToSize(moPdfTxt(b.texto), LARG - 5); ll.forEach((t, i) => doc.text(t, ML + 5, y + i * 3.2)); doc.setTextColor(...C.texto); y += 5 + (ll.length - 1) * 3.2; return; }
       if (b.t === "texto") { doc.autoTable({ ...base, startY: y, head: [[{ content: b.titulo, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }]], body: b.paragrafos.map((t) => [t]), theme: "plain",
           rowPageBreak: "avoid", styles: { ...base.styles, fontSize: 8.4, cellPadding: { top: 1.6, bottom: 1.6, left: 2, right: 2 } } }); y = fimY() + 5; return; }
       // tabela
