@@ -739,7 +739,7 @@
     var io = new IntersectionObserver(function (es) {
       if (!es[es.length - 1].isIntersecting) return;
       io.disconnect();
-      if (!pacote3d) pacote3d = import("./inicio3d.js?v=7").catch(function (e) { if (window.console) console.warn("inicio3d", e); return null; });
+      if (!pacote3d) pacote3d = import("./inicio3d.js?v=6").catch(function (e) { if (window.console) console.warn("inicio3d", e); return null; });
       pacote3d.then(function (m) { if (m && alvo.isConnected) m.montar(alvo, alvo.getAttribute("data-lv3d")); });
     }, { rootMargin: "700px 0px" });
     io.observe(alvo);

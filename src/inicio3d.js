@@ -1,9 +1,4 @@
-/* Licitacon — cena 3D da Biblioteca Jurídica (Three.js): o "Índice vivo".
- *
- * Uma coluna de cinco placas cristalinas, uma para cada tipo de fonte (Tribunais de Contas, Cortes superiores e
- * controle, Procuradorias, Tribunais de Justiça e Normas). Em volta de cada placa, um trilho em órbita com as fontes
- * daquele tipo, como fichas. Decisões saem das fichas, fazem a curva pelo trilho e assentam na placa do seu tipo, que
- * acende de leve: a classificação acontecendo. As camadas se deslocam em profundidades diferentes com o mouse.
+/* Licitacon — cena 3D da Biblioteca Jurídica (Three.js): 90 fontes oficiais em volta do acervo, com decisões viajando até ele.
  *
  * Fonte deste arquivo: src/inicio3d.js. O site carrega o pacote gerado na raiz (inicio3d.js), montado por
  * scripts/3d/montar.mjs com o Three.js e só com as partes usadas. O inicio.js baixa o pacote quando a cena chega perto
@@ -12,18 +7,23 @@
  * (inicio-ui.js), que mostram a própria ferramenta trabalhando.
  *
  * Um só WebGLRenderer; a cena é desenhada num pedaço da tela dele e copiada para o canvas 2D do palco. Só desenha com
- * o palco à vista e a aba aberta. Com "reduzir movimento", aparece parada no quadro completo. O botão "Pausar
+ * o palco à vista e a aba aberta. Com "reduzir movimento", aparece parada no quadro mais completo. O botão "Pausar
  * animação" (o mesmo das telas vivas) para a cena. Sem WebGL, nada muda na página.
  */
 import {
   WebGLRenderer, Scene, PerspectiveCamera, Group, Mesh, Sprite, SpriteMaterial, MeshStandardMaterial,
-  MeshBasicMaterial, CylinderGeometry, BoxGeometry, EdgesGeometry, InstancedMesh, LineSegments, LineLoop,
-  LineBasicMaterial, BufferGeometry, Float32BufferAttribute, Object3D, Color, CanvasTexture,
+  MeshBasicMaterial, SphereGeometry, IcosahedronGeometry, InstancedMesh, LineSegments,
+  LineBasicMaterial, BufferGeometry, Float32BufferAttribute, Object3D, Vector3, Color, CanvasTexture,
   SRGBColorSpace, AdditiveBlending, HemisphereLight, DirectionalLight, PointLight, ACESFilmicToneMapping
 } from "three";
 
-// ------------------------------------------------------------------ cores da marca (sistema.css)
-const COR = { floresta: 0x0f3431, verde: 0x0fa36b, verdeEscuro: 0x0a7a50, menta: 0x6fe0ae, mentaForte: 0x3fd49a, petroleo: 0x0f6b7e };
+// ------------------------------------------------------------------ cores da marca
+const COR = {
+  fundo: 0x0a2826, verde: 0x0fa36b, menta: 0x6fe0ae, mentaForte: 0x3fd49a,
+  alta: 0xf0716b, media: 0xf2b544, baixa: 0x5bc0da
+};
+const CSS = { alta: "#F0716B", media: "#F2B544", baixa: "#5BC0DA", menta: "#6FE0AE", fundo: "#0A2826" };
+const FONTE = "Manrope, system-ui, -apple-system, 'Segoe UI', sans-serif";
 
 let REDUZ = false;
 try { REDUZ = matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { /* segue */ }
@@ -39,10 +39,16 @@ const aprox = (atual, alvo, dt, k) => atual + (alvo - atual) * (1 - Math.exp(-k 
 function textura(w, h, desenhar) {
   const c = document.createElement("canvas");
   c.width = w; c.height = h;
-  desenhar(c.getContext("2d"), w, h);
+  const g = c.getContext("2d");
+  desenhar(g, w, h);
   const t = new CanvasTexture(c);
   t.colorSpace = SRGBColorSpace;
+  t.anisotropy = 4;
   return t;
+}
+function caixa(g, x, y, w, h, r) {
+  g.beginPath();
+  if (g.roundRect) g.roundRect(x, y, w, h, r); else g.rect(x, y, w, h);
 }
 
 let TEX_BRILHO = null;
@@ -63,131 +69,104 @@ function brilho(cor, tam, opac) {
   return s;
 }
 
-function luzes(cena) {
-  cena.add(new HemisphereLight(0xe6fff4, 0x061a18, 1.1));
-  const d = new DirectionalLight(0xffffff, 2.2);
-  d.position.set(2.5, 6, 5);
+// Etiqueta em pílula, sempre de frente para a câmera.
+function rotulo(texto, op) {
+  op = op || {};
+  const tam = 40, pad = 22, peso = op.peso || 800;
+  const medir = document.createElement("canvas").getContext("2d");
+  medir.font = peso + " " + tam + "px " + FONTE;
+  const larg = Math.ceil(medir.measureText(texto).width) + pad * 2 + (op.ponto ? 30 : 0);
+  const alt = Math.round(tam * 1.75);
+  const tex = textura(larg, alt, (g, w, h) => {
+    caixa(g, 1, 1, w - 2, h - 2, h / 2);
+    g.fillStyle = op.fundo || "rgba(7,30,28,0.88)"; g.fill();
+    if (op.borda) { g.lineWidth = 3; g.strokeStyle = op.borda; g.stroke(); }
+    let x = pad;
+    if (op.ponto) { g.beginPath(); g.arc(x + 9, h / 2, 9, 0, Math.PI * 2); g.fillStyle = op.ponto; g.fill(); x += 30; }
+    g.font = peso + " " + tam + "px " + FONTE;
+    g.fillStyle = op.cor || "#fff"; g.textBaseline = "middle";
+    g.fillText(texto, x, h / 2 + 2);
+  });
+  const s = new Sprite(new SpriteMaterial({ map: tex, transparent: true, depthWrite: false, depthTest: op.depthTest !== false }));
+  const a = op.altura || 0.3;
+  s.scale.set(a * larg / alt, a, 1);
+  s.userData.base = s.scale.clone();
+  return s;
+}
+
+function luzes(cena, forca) {
+  forca = forca || 1;
+  cena.add(new HemisphereLight(0xe6fff4, 0x0a2826, 1.25 * forca));
+  const d = new DirectionalLight(0xffffff, 2.1 * forca);
+  d.position.set(3, 5, 6);
   cena.add(d);
-  const p = new PointLight(COR.mentaForte, 18, 12, 2);
-  p.position.set(-3.5, 1.2, 2.5);
+  const p = new PointLight(COR.mentaForte, 22 * forca, 14, 2);
+  p.position.set(-4, 1.5, 3);
   cena.add(p);
 }
 
-// ------------------------------------------------------------------ Biblioteca Jurídica: o Índice vivo
-// de baixo para cima: Tribunais de Contas, Cortes superiores e controle, Procuradorias, Tribunais de Justiça, Normas
-const CAMADAS = [
-  { fichas: 22, raioPlaca: 1.02, raioTrilho: 1.92, vel: 0.06 },
-  { fichas: 20, raioPlaca: 0.95, raioTrilho: 1.78, vel: -0.075 },
-  { fichas: 18, raioPlaca: 0.88, raioTrilho: 1.64, vel: 0.09 },
-  { fichas: 16, raioPlaca: 0.81, raioTrilho: 1.5, vel: -0.105 },
-  { fichas: 14, raioPlaca: 0.74, raioTrilho: 1.36, vel: 0.12 }
-];
-const PASSO = 0.36;            // distância entre as placas
-const ENTRADA = 1.6;           // segundos da montagem inicial
-
-function circulo(raio, n) {
-  const pts = [];
-  for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2; pts.push(Math.cos(a) * raio, 0, Math.sin(a) * raio); }
-  const g = new BufferGeometry(); g.setAttribute("position", new Float32BufferAttribute(pts, 3));
-  return g;
+function base(fov) {
+  const scene = new Scene();
+  const camera = new PerspectiveCamera(fov || 34, 2, 0.1, 60);
+  camera.position.set(0, 0, 9);
+  luzes(scene);
+  return { scene, camera };
 }
 
+
+// ------------------------------------------------------------------ Biblioteca Jurídica
 function cenaBiblioteca() {
-  const scene = new Scene();
-  const camera = new PerspectiveCamera(32, 2, 0.1, 60);
-  luzes(scene);
+  const { scene, camera } = base(34);
   const mundo = new Group();
-  scene.add(mundo);
-
-  // eixo de luz que atravessa a coluna e o brilho de fundo
-  const halo = brilho(COR.menta, 4.2, 0.22);
-  halo.position.set(0, 0.1, -0.6);
-  const eixo = new Mesh(new CylinderGeometry(0.03, 0.03, PASSO * 5.6, 8, 1, true), new MeshBasicMaterial({ color: COR.menta, transparent: true, opacity: 0.55, depthWrite: false }));
-  mundo.add(halo, eixo);
-  // anel de base, que assenta a coluna
-  const base = new LineLoop(circulo(2.15, 96), new LineBasicMaterial({ color: COR.menta, transparent: true, opacity: 0.1 }));
-  base.position.y = -PASSO * 2.9;
-  mundo.add(base);
-
-  const cartao = new BoxGeometry(0.105, 0.07, 0.01);
-  const camadas = CAMADAS.map((c, i) => {
-    const y = (i - 2) * PASSO;
-    const g = new Group(); g.position.y = y;
-    // placa cristalina sextavada, translúcida, com as arestas em menta
-    const geo = new CylinderGeometry(c.raioPlaca, c.raioPlaca, 0.075, 6, 1);
-    const mat = new MeshStandardMaterial({ color: i === 4 ? COR.petroleo : COR.verdeEscuro, emissive: COR.mentaForte, emissiveIntensity: 0.06, roughness: 0.22, metalness: 0.15, transparent: true, opacity: 0.5, depthWrite: false });
-    const placa = new Mesh(geo, mat);
-    placa.renderOrder = 2 + i;
-    const arestas = new LineSegments(new EdgesGeometry(geo), new LineBasicMaterial({ color: COR.menta, transparent: true, opacity: 0.6 }));
-    arestas.renderOrder = 8 + i;
-    const luzPlaca = brilho(COR.menta, 0.9, 0);
-    g.add(placa, arestas, luzPlaca);
-    // trilho em órbita com as fontes do tipo
-    const orbita = new Group();
-    const trilho = new LineLoop(circulo(c.raioTrilho, 128), new LineBasicMaterial({ color: COR.menta, transparent: true, opacity: 0.22 }));
-    const fichas = new InstancedMesh(cartao, new MeshStandardMaterial({ color: 0xdff5ec, emissive: COR.menta, emissiveIntensity: 0.16, roughness: 0.5 }), c.fichas);
-    const o = new Object3D(), ang = [];
-    for (let k = 0; k < c.fichas; k++) {
-      const a = (k / c.fichas) * Math.PI * 2 + i * 0.37;
-      ang.push(a);
-      o.position.set(Math.cos(a) * c.raioTrilho, 0, Math.sin(a) * c.raioTrilho);
-      o.lookAt(0, 0, 0);
-      o.updateMatrix();
-      fichas.setMatrixAt(k, o.matrix);
-      fichas.setColorAt(k, new Color(k % 6 === 0 ? COR.menta : (k % 2 ? 0xb9d8ce : 0xffffff)));
-    }
-    fichas.instanceMatrix.needsUpdate = true;
-    orbita.add(trilho, fichas);
-    g.add(orbita);
-    mundo.add(g);
-    return { c, g, y, placa, arestas, luzPlaca, orbita, ang, aceso: 0 };
-  });
-
-  // decisões: saem de uma ficha, fazem a curva pelo trilho e assentam na placa do seu tipo
-  const P = TOQUE ? 10 : 16;
+  const nucleo = new Mesh(new IcosahedronGeometry(0.5, 1), new MeshStandardMaterial({ color: COR.verde, emissive: COR.mentaForte, emissiveIntensity: 0.5, roughness: 0.3, flatShading: true }));
+  const casca = new Mesh(new IcosahedronGeometry(0.62, 1), new MeshBasicMaterial({ color: COR.menta, wireframe: true, transparent: true, opacity: 0.35 }));
+  const halo = brilho(COR.menta, 2.6, 0.55);
+  mundo.add(nucleo, casca, halo);
+  const N = 90, R = 2.15, nos = [];
+  const inst = new InstancedMesh(new SphereGeometry(0.055, 12, 8), new MeshStandardMaterial({ color: 0xffffff, emissive: COR.menta, emissiveIntensity: 0.35, roughness: 0.4 }), N);
+  const o = new Object3D(), linhas = [];
+  for (let i = 0; i < N; i++) {
+    const y = 1 - (i / (N - 1)) * 2, r = Math.sqrt(1 - y * y), th = i * Math.PI * (3 - Math.sqrt(5));
+    const v = new Vector3(Math.cos(th) * r * R, y * R * 0.82, Math.sin(th) * r * R);
+    nos.push(v);
+    o.position.copy(v); o.scale.setScalar(i % 9 === 0 ? 1.6 : 1); o.updateMatrix();
+    inst.setMatrixAt(i, o.matrix);
+    inst.setColorAt(i, new Color(i % 9 === 0 ? COR.menta : 0xffffff));
+    linhas.push(v.x, v.y, v.z, v.x * 0.25, v.y * 0.25, v.z * 0.25);
+  }
+  inst.instanceMatrix.needsUpdate = true;
+  const gl = new BufferGeometry(); gl.setAttribute("position", new Float32BufferAttribute(linhas, 3));
+  const raios = new LineSegments(gl, new LineBasicMaterial({ color: COR.menta, transparent: true, opacity: 0.13 }));
+  mundo.add(inst, raios);
+  // decisões chegando ao acervo
+  const P = TOQUE ? 14 : 22;
   const pulsos = [];
   for (let i = 0; i < P; i++) {
-    const L = camadas[(i * 3) % 5];
-    const s = brilho(i % 5 === 0 ? 0xffffff : COR.menta, 0.38, 0);
-    L.orbita.add(s);
-    pulsos.push({ s, L, a0: L.ang[(i * 7) % L.ang.length], fase: i / P, vel: 0.17 + (i % 4) * 0.025, ultimo: 0 });
+    const s = brilho(i % 4 === 0 ? COR.media : COR.menta, 0.32, 0.95);
+    mundo.add(s);
+    pulsos.push({ s, de: nos[(i * 37) % N], fase: i / P, vel: 0.28 + (i % 5) * 0.04 });
   }
-
+  scene.add(mundo);
+  const et = rotulo("90 fontes → o acervo, nos dias úteis", { altura: 0.36, borda: CSS.menta, depthTest: false });
+  et.position.set(0, -2.15, 0.6);
+  scene.add(et);
   return {
-    scene, camera, tParado: 7.5,
+    scene, camera, tParado: 2.0,
     update(t, dt, p) {
-      const ent = REDUZ ? 1 : suave(0, ENTRADA, t);
-      // a coluna gira devagar; o mouse inclina o conjunto e desloca cada camada numa profundidade diferente
-      mundo.rotation.y = 0.35 + t * 0.045 + p.tx * 0.28;
-      mundo.rotation.x = p.ty * 0.08;
-      mundo.position.y = (0.5 - p.prog) * 0.18;
-      camadas.forEach((L, i) => {
-        const nivel = i - 2;
-        L.g.position.y = L.y * (1 + (1 - ent) * 1.6);
-        L.g.position.x = p.tx * nivel * 0.05;
-        L.g.position.z = p.ty * nivel * 0.04;
-        L.orbita.rotation.y = t * L.c.vel;
-        L.orbita.scale.setScalar(0.86 + 0.14 * ent);
-        L.placa.rotation.y = -t * L.c.vel * 0.5;
-        L.arestas.rotation.y = L.placa.rotation.y;
-        L.placa.material.opacity = 0.5 * ent;
-        L.arestas.material.opacity = 0.6 * ent;
-        L.aceso = dt ? L.aceso * Math.exp(-dt * 2.2) : L.aceso;
-        L.placa.material.emissiveIntensity = 0.06 + L.aceso * 0.55;
-        L.luzPlaca.material.opacity = L.aceso * 0.7;
-      });
+      mundo.rotation.y = t * 0.16 + p.tx * 0.5;
+      mundo.rotation.x = -0.12 + p.ty * 0.25 + (p.prog - 0.5) * 0.4;
+      casca.rotation.y = -t * 0.3;
+      nucleo.rotation.x = t * 0.2;
+      const pul = 1 + 0.06 * Math.sin(t * 3);
+      nucleo.scale.setScalar(pul);
       pulsos.forEach((k) => {
         const f = (k.fase + t * k.vel) % 1;
-        const e = f < 0.5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2;
-        const r = k.L.c.raioTrilho * (1 - e * 0.94), a = k.a0 + e * 1.35;
-        k.s.position.set(Math.cos(a) * r, 0.02, Math.sin(a) * r);
-        k.s.material.opacity = ent * suave(0, 0.1, f) * (1 - suave(0.9, 1, f)) * 0.95;
-        // chegou à placa: ela acende (só com a animação andando)
-        if (dt && k.ultimo < 0.93 && f >= 0.93) k.L.aceso = 1;
-        k.ultimo = f;
+        const e = f * f;
+        k.s.position.copy(k.de).multiplyScalar(1 - e * 0.85);
+        k.s.material.opacity = suave(0, 0.15, f) * (1 - suave(0.85, 1, f)) * 0.95;
       });
-      camera.position.set(0, 1.9, 6.2);
-      camera.lookAt(0, -0.22, 0);
+      camera.position.set(0, 0.2, 8.2);
+      camera.lookAt(0, -0.05, 0);
     }
   };
 }
@@ -355,6 +334,12 @@ export async function montar(el, tipo) {
   medir(p);
   p.io = new IntersectionObserver((es) => {
     const v = es[es.length - 1].isIntersecting;
+    if (v && !p.vis && !p.entrou) {
+      p.entrou = true;
+      if (M && M.animate && !REDUZ) {
+        try { M.animate(palco, { opacity: [0, 1], scale: [0.97, 1] }, { duration: 0.9, ease: [0.22, 1, 0.36, 1] }); } catch (e) { /* segue */ }
+      }
+    }
     p.vis = v;
     if (v) { if (parado()) desenhar(p, 0); else acordar(); }
   }, { rootMargin: "60px 0px" });
