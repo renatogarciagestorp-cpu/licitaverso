@@ -1299,6 +1299,10 @@
   .lmo-seta { width: 26px; height: 26px; border: 1px solid #D5DEDC; border-radius: 8px; background: #fff; color: #0F6B7E; font-size: 10px; line-height: 1; cursor: pointer; padding: 0; }
   .lmo-seta:hover:not(:disabled) { background: #EAF4F2; } .lmo-seta:disabled { opacity: .3; cursor: default; }
   .lmo-cmp-quadro { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; margin: 0 0 14px; padding: 12px 14px; border: 1px solid #E3E9E8; border-radius: 12px; background: #F8FBFA; }
+  .lmo-cmp-cats { margin-bottom: 14px; } .lmo-cmp-cats .lmo-cmp-acoes { margin: 8px 0; }
+  .lmo-cmp-catlista { margin: 8px 0; padding: 0; list-style: none; display: grid; gap: 6px; counter-reset: cat; }
+  .lmo-cmp-catlista li { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 12px; border: 1px solid #E3E9E8; border-radius: 10px; background: #fff; }
+  .lmo-cmp-catlista li div { display: grid; gap: 2px; min-width: 0; } .lmo-cmp-catlista li small { color: #66757F; font-size: 12px; }
   .lmo-cmp-quadro .lmo-campo { flex: 1 1 320px; margin: 0; } .lmo-cmp-quadro > small { flex: 1 1 100%; margin: 0; }
   .lmo-cmpc.mudou { background: #FFF6DE !important; } [data-calc="true"].lmo-cmpc b, .lmo-cmp-r[data-calc="true"] { font-weight: 800; color: #0A1F2A; }
   .lmo-passos { display: grid; gap: 12px; margin-top: 14px; }
@@ -4483,6 +4487,15 @@
           <div class="lmo lmo-cmpp">
             <div class="lmo-cmp-topo"><span></span>
               <div class="lmo-cmp-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpAdd }}">+ Adicionar planilha de repactuação</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpRecomecar }}">Recomeçar</button><button type="button" class="lmo-btn" sc-camel-on-click="{{ cmpPdf }}">Relatório da comparação (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpExcel }}">Excel</button></div></div>
+            <section class="lmo-bloco lmo-cmp-cats">
+              <h2 class="lmo-h2">Contrato com várias categorias</h2>
+              <p class="lmo-nota" style="margin-top: 0">Para um relatório único do contrato, monte a comparação de cada categoria (supervisor, vigilante armado, desarmado, CFTV…) e inclua-a aqui. O relatório traz o quadro consolidado com as diferenças mensal e anual de cada categoria e do contrato, a comparação completa de cada categoria e as inconsistências de todas as planilhas.</p>
+              <div class="lmo-cmp-acoes"><button type="button" class="lmo-btn" sc-camel-on-click="{{ cmpCatIncluir }}">Incluir esta comparação no relatório do contrato</button><sc-if value="{{ cmpTemQuadroRep }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpCatsDoQuadro }}">Incluir todas as categorias do quadro da Repactuação</button></sc-if></div>
+              <sc-if value="{{ cmpTemCats }}" hint-placeholder-val="{{ false }}">
+              <ol class="lmo-cmp-catlista"><sc-for list="{{ cmpCats }}" as="k" hint-placeholder-count="2"><li><div><b>{{ k.nome }}</b><small>{{ k.det }}</small></div><span class="lmo-cmp-hb"><button type="button" class="lve-voltar" disabled="{{ k.naoSobe }}" aria-label="Subir" sc-camel-on-click="{{ k.subir }}">↑</button><button type="button" class="lve-voltar" disabled="{{ k.naoDesce }}" aria-label="Descer" sc-camel-on-click="{{ k.descer }}">↓</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ k.abrir }}">Abrir</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ k.excluir }}">Excluir</button></span></li></sc-for></ol>
+              <div class="lmo-cmp-acoes"><button type="button" class="lmo-btn" sc-camel-on-click="{{ cmpTodasPdf }}">Relatório de todas as categorias (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpTodasExcel }}">Excel</button></div>
+              </sc-if>
+            </section>
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Linha do tempo: planejamento × contratação × repactuações</h2>
               <p class="lmo-nota" style="margin-top: 0">Cada coluna é uma planilha completa, com a mesma estrutura e os mesmos cálculos das planilhas da Calculadora (IN 05/2017): a da fase de planejamento, a da contratação e as de cada repactuação. Edite os valores ou use o botão de cada coluna para trazer a planilha já preenchida na Planilha de custos, na Análise de proposta ou na Repactuação. O aviso prévio trabalhado (Módulo 3, D), custo não renovável, fica destacado quando muda. O relatório da comparação detalha todas as alterações. Role o quadro para os lados para ver todas.</p>
@@ -12626,8 +12639,8 @@ class Component extends DCLogic {
   }
   cmpRecomecar() { try { localStorage.removeItem("lv-cmp"); } catch (e) {} this.setState({ cmp: { cols: [], info: {}, ok: "", erro: "" } }, () => this.cmpIniciar()); }
   // dados da comparação para a tela e o relatório
-  moCmpDados() {
-    const cols = (this.state.cmp.cols || []).map((c) => ({ ...c, r: moCmpCalc(c) }));
+  moCmpDados(colsIn) {
+    const cols = (colsIn || this.state.cmp.cols || []).map((c) => ({ ...c, r: moCmpCalc(c) }));
     const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const fmt = (u, v) => u === "R$" ? brl(moNum(v)) : u === "%" ? String(v == null || v === "" ? "0" : v) + "%" : String(v == null || v === "" ? "—" : v);
     const val = (c, [t, k, , u]) => t === "c" ? Number(c.r[k]) || 0 : k === "apt" && c.tipo !== "contratacao" ? (c.r.apt_p || 0) * 100 : u === "t" ? String(c.d[k] ?? "") : moNum(c.d[k] ?? MO_PADRAO[k]);
@@ -12636,9 +12649,10 @@ class Component extends DCLogic {
       return (L[0] === "c" || L[3] === "R$" ? (dv > 0 ? "+" : "−") + brl(Math.abs(dv)).replace("R$ ", "R$ ") : (dv > 0 ? "+" : "−") + Math.abs(dv).toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + (L[3] === "%" ? " p.p." : "")) + (pc != null && L[3] !== "%" ? " (" + (pc > 0 ? "+" : "") + (pc * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%)" : ""); };
     return { cols, brl, val, txt, varia };
   }
-  async moCmpRelatorio(formato) {
-    const { cols, brl, val, txt, varia } = this.moCmpDados(), inf = this.state.cmp.info || {};
-    if (cols.length < 2) return;
+  async moCmpRelatorio(formato, opc) {
+    // opc.montar: devolve os blocos de uma categoria para o relatório de todas as categorias (opc.cols e opc.info)
+    const { cols, brl, val, txt, varia } = this.moCmpDados(opc && opc.cols), inf = (opc && opc.info) || this.state.cmp.info || {};
+    if (cols.length < 2) { if (!opc) this.setState((x) => ({ cmp: { ...x.cmp, ok: "", erro: "Para o relatório, a comparação precisa de pelo menos duas planilhas." } })); return null; }
     const hoje = new Date().toLocaleDateString("pt-BR"), nC = cols.length, lr = Math.max(22, 40 - nC * 3), lc = (100 - lr) / nC;
     const linhas = [];
     MO_CMP_LINHAS.forEach((L) => {
@@ -12647,12 +12661,21 @@ class Component extends DCLogic {
       linhas.push({ c: [L[2]].concat(cols.map((c) => txt(c, L))), total: L[0] === "c" && ["total", "mensal", "global"].includes(L[1]), forte: L[0] === "c", alerta });
     });
     // valores do contrato em cada planilha, considerada a quantidade de empregados (empregados por posto × postos)
-    const empDe = (c) => Math.max(0, moNum(c.d.emp_posto) * moNum(c.d.postos)), anualDe = (c) => moT2((Number(c.r.mensal) || 0) * 12);
+    const empDe = (c) => Math.max(0, moNum(c.d.emp_posto) * moNum(c.d.postos)), mensalDe = (c) => Number(c.r.mensal) || 0, anualDe = (c) => moT2((Number(c.r.mensal) || 0) * 12);
     const sinal = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + brl(Math.abs(v)), pctV = (dv, base) => (base ? " (" + (dv > 0 ? "+" : "") + (dv / base * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%)" : "");
-    const linVal = cols.map((c, i) => { const a = i ? cols[i - 1] : null, dm = a ? c.r.mensal - a.r.mensal : 0, da = a ? anualDe(c) - anualDe(a) : 0;
-      return { c: [c.nome, brl(c.r.total), String(empDe(c) || "—"), brl(c.r.mensal), brl(anualDe(c)), a ? sinal(dm) + pctV(dm, a.r.mensal) : "—", a ? sinal(da) : "—"], alerta: a && Math.abs(dm) >= 0.005 ? [5, 6] : [] }; });
-    const pri = cols[0], ult = cols[nC - 1], dmT = ult.r.mensal - pri.r.mensal, daT = anualDe(ult) - anualDe(pri);
-    linVal.push({ c: ["Variação acumulada (" + pri.nome + " → " + ult.nome + ")", sinal(ult.r.total - pri.r.total), "", sinal(dmT) + pctV(dmT, pri.r.mensal), sinal(daT), "", ""], total: true });
+    // quadro lado a lado: uma coluna por planilha (contratação, 1ª repactuação, 2ª repactuação…), valores mensal e anual embaixo
+    const pri = cols[0];
+    const dif = (fn, rel) => cols.map((c, i) => { if (!i) return "—"; const b0 = rel === "pri" ? pri : cols[i - 1], dv = fn(c) - fn(b0); return sinal(dv) + (fn === mensalDe ? " (" + pctV(dv, fn(b0)).trim().replace(/^\(|\)$/g, "") + ")" : ""); });
+    const altD = (rel) => cols.map((c, i) => (i && Math.abs(c.r.mensal - (rel === "pri" ? pri : cols[i - 1]).r.mensal) >= 0.005 ? i + 1 : -1)).filter((i) => i > 0);
+    const linVal = [
+      { c: ["Preço por empregado"].concat(cols.map((c) => brl(c.r.total))) },
+      { c: ["Empregados"].concat(cols.map((c) => String(empDe(c) || "—"))), alerta: cols.map((c, i) => (i && empDe(c) !== empDe(cols[i - 1]) ? i + 1 : -1)).filter((i) => i > 0) },
+      { c: ["Valor mensal"].concat(cols.map((c) => brl(c.r.mensal))), total: true },
+      { c: ["Valor anual (12 meses)"].concat(cols.map((c) => brl(anualDe(c)))), total: true },
+      { c: ["Diferença mensal (em relação à anterior)"].concat(dif(mensalDe)), forte: true, alerta: altD() },
+      { c: ["Diferença anual (em relação à anterior)"].concat(dif(anualDe)), forte: true, alerta: altD() },
+    ];
+    if (nC > 2) linVal.push({ c: ["Diferença mensal acumulada (desde " + pri.nome + ")"].concat(dif(mensalDe, "pri")), fraco: true }, { c: ["Diferença anual acumulada (desde " + pri.nome + ")"].concat(dif(anualDe, "pri")), fraco: true });
     const qtdMuda = cols.some((c) => empDe(c) !== empDe(pri));
     // inconsistências no preenchimento de cada planilha: a mesma conferência automática da Repactuação e da Análise de proposta,
     // mais as falhas apontadas pelo agente que estiverem guardadas na planilha
@@ -12666,8 +12689,8 @@ class Component extends DCLogic {
     const blocos = [
       { t: "pares", titulo: "Contrato", pares: [["Contrato", inf.contrato || "—"], ["Contratante", inf.contratante || "—"], ["Contratada", inf.contratada || "—"], ["Categoria", inf.categoria || "—"]] },
       { t: "destaques", itens: cols.map((c) => [c.nome + " · " + (empDe(c) || "—") + " empregado(s)", brl(c.r.mensal) + " por mês"]) },
-      { t: "tabela", titulo: "Valores do contrato em cada planilha", sub: "Considerada a quantidade de empregados. Diferenças em relação à planilha anterior; o valor anual corresponde a 12 meses.",
-        cab: ["Planilha", "Preço por empregado", "Empregados", "Valor mensal", "Valor anual (12 meses)", "Diferença mensal", "Diferença anual"], larg: [24, 13, 9, 13, 14, 15, 12], alin: "lrrrrrr", linhas: linVal, fonte: 7.4 },
+      { t: "tabela", titulo: "Valores do contrato em cada planilha", sub: "Considerada a quantidade de empregados. O valor anual corresponde a 12 meses; em amarelo, o que mudou em relação à planilha anterior.",
+        cab: [""].concat(cols.map((c) => c.nome)), larg: [lr + 6].concat(cols.map(() => (94 - lr) / nC)), alin: "l" + "r".repeat(nC), linhas: linVal, fonte: nC > 4 ? 7 : 7.8 },
     ];
     if (qtdMuda) blocos.push({ t: "legenda", texto: "A quantidade de empregados não é a mesma em todas as planilhas: as diferenças mensais e anuais refletem tanto a variação do preço por empregado quanto a mudança de quantidade." });
     blocos.push(
@@ -12683,6 +12706,7 @@ class Component extends DCLogic {
         + (moNum(b.d.meses) && moNum(b.d.meses) !== 12 ? " Pelo prazo de " + moNum(b.d.meses) + " meses informado na planilha, o valor global passou de " + brl(a.r.global) + " para " + brl(b.r.global) + "." : "") + (b.tipo === "repactuacao" && a.tipo !== "repactuacao" && (a.r.apt_p || 0) > (b.r.apt_p || 0) ? " O aviso prévio trabalhado foi reduzido por ser custo não renovável (TCU, Acórdão 1.186/2017-Plenário)." : "")] });
       blocos.push(mud.length ? { t: "tabela", titulo: "Rubricas alteradas", cab: ["Rubrica", a.nome, b.nome, "Variação"], larg: [34, 20, 20, 26], alin: "lrrr", linhas: mud } : { t: "legenda", texto: "Nenhuma rubrica foi alterada." });
     }
+    if (opc && opc.montar) return { blocos, incons, cols, empDe, anualDe };
     // inconsistências no preenchimento (todas as planilhas), ao final
     blocos.push({ t: "quebra" }, { t: "secao", titulo: "Inconsistências no preenchimento das planilhas", sub: "Conferência com a legislação e com o modelo da IN 05/2017, a mesma feita na Repactuação e na Análise de proposta. Gravidade: alta, média ou baixa." });
     blocos.push(incons.length ? { t: "tabela", titulo: "DIVERGÊNCIAS E INCONSISTÊNCIAS NA ELABORAÇÃO DAS PLANILHAS", sub: incons.length + " apontamento(s)", cab: ["Planilha", "Rubrica (gravidade)", "Como está", "O correto", "Fundamento"], larg: [15, 19, 20, 26, 20], alin: "lllll", fonte: 7.2,
@@ -12694,6 +12718,93 @@ class Component extends DCLogic {
         "Valor mensal = preço por empregado × empregados por posto × postos; valor anual = valor mensal × 12. As diferenças comparam cada planilha com a anterior.",
         incons.length ? incons.length + " inconsistência(s) de preenchimento apontada(s): ver a seção “Inconsistências no preenchimento das planilhas”." : ""] };
     try { if (formato === "xlsx") await this.moDocExcel(doc0, doc0.titulo, hoje); else await this.moDocPdf(doc0, doc0.titulo, hoje); }
+    catch (e) { console.error(e); this.setState((x) => ({ cmp: { ...x.cmp, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
+  }
+  // contrato com várias categorias: cada categoria guarda a sua linha do tempo; o relatório junta todas num documento só
+  cmpCatsLer() { try { const l = JSON.parse(localStorage.getItem("lv-cmp-cats") || "[]"); return Array.isArray(l) ? l.filter((x) => x && Array.isArray(x.cols)) : []; } catch (e) { return []; } }
+  cmpCatsGravar(l) { try { localStorage.setItem("lv-cmp-cats", JSON.stringify(l)); } catch (e) {} this.setState((x) => ({ cmp: { ...x.cmp, catsV: (x.cmp.catsV || 0) + 1 } })); }
+  cmpCatIncluir() {
+    const c = this.state.cmp, cols = c.cols || [], info = c.info || {}, nome = String(info.categoria || "").trim();
+    if (!nome) { this.setState((x) => ({ cmp: { ...x.cmp, ok: "", erro: "Preencha o campo Categoria antes de incluir a comparação no relatório do contrato." } })); return; }
+    if (cols.length < 2) { this.setState((x) => ({ cmp: { ...x.cmp, ok: "", erro: "A comparação precisa de pelo menos duas planilhas." } })); return; }
+    const l = this.cmpCatsLer(), i = l.findIndex((x) => String(x.nome).trim().toLowerCase() === nome.toLowerCase()), item = { id: i >= 0 ? l[i].id : "k" + Date.now().toString(36), nome, info: { ...info }, cols: cols.map((x) => ({ ...x, d: { ...x.d } })), em: new Date().toISOString() };
+    if (i >= 0) l[i] = item; else l.push(item);
+    this.cmpCatsGravar(l);
+    this.setState((x) => ({ cmp: { ...x.cmp, erro: "", ok: "✓ “" + nome + "” " + (i >= 0 ? "atualizada" : "incluída") + " no relatório do contrato (" + l.length + " categoria(s)). Para a próxima categoria, troque a categoria acima (ou use uma do quadro), confira as planilhas e inclua de novo." } }));
+  }
+  cmpCatAbrir(i) { const it = this.cmpCatsLer()[i]; if (!it) return; this.cmpGravar({ ...this.state.cmp, cols: it.cols, info: { ...(this.state.cmp.info || {}), ...it.info } });
+    this.setState((x) => ({ cmp: { ...x.cmp, erro: "", ok: "✓ “" + it.nome + "” aberta. Depois de alterar, inclua de novo para atualizar o relatório do contrato." } })); }
+  cmpCatDel(i) { const l = this.cmpCatsLer(); l.splice(i, 1); this.cmpCatsGravar(l); }
+  cmpCatMover(i, dir) { const l = this.cmpCatsLer(), j = i + dir; if (j < 0 || j >= l.length) return; [l[i], l[j]] = [l[j], l[i]]; this.cmpCatsGravar(l); }
+  // todas as categorias do quadro da Repactuação de uma vez: contratação (guardada no quadro) × repactuada
+  cmpCatsDoQuadro() {
+    const q = this.moListaLer("repactuacao"), l = this.cmpCatsLer(), semAnt = []; let n = 0;
+    q.forEach((it) => { if (!it || !it.d) return;
+      const info = { contrato: it.d.rp_contrato || "", contratante: it.d.rp_orgao || "", contratada: it.d.rp_empresa || "", categoria: it.nome };
+      const cols = []; if (it.ant) cols.push({ id: "c0", tipo: "contratacao", nome: "Contratação", d: moSnap({ ...MO_PADRAO, ...moDerivado(it.ant) }) }); else semAnt.push(it.nome);
+      cols.push({ id: "r1", tipo: "repactuacao", nome: "Repactuação", d: moSnap({ ...MO_PADRAO, ...moDerivado(it.d) }) });
+      if (cols.length < 2) return;
+      const i = l.findIndex((x) => String(x.nome).trim().toLowerCase() === String(it.nome).trim().toLowerCase()), item = { id: i >= 0 ? l[i].id : "k" + Date.now().toString(36) + n, nome: it.nome, info, cols, em: new Date().toISOString() };
+      if (i >= 0) l[i] = item; else l.push(item); n++; });
+    this.cmpCatsGravar(l);
+    this.setState((x) => ({ cmp: { ...x.cmp, erro: n ? "" : "Nenhuma categoria do quadro da Repactuação tem a planilha da contratação guardada.", ok: n ? "✓ " + n + " categoria(s) do quadro da Repactuação incluída(s) no relatório do contrato (contratação × repactuação)." + (semAnt.length ? " Sem a planilha da contratação (inclua pela comparação acima): " + semAnt.join(", ") + "." : "") : "" } }));
+  }
+  async moCmpRelatorioTodas(formato) {
+    const cats = this.cmpCatsLer();
+    if (!cats.length) { this.setState((x) => ({ cmp: { ...x.cmp, ok: "", erro: "Inclua ao menos uma categoria no relatório do contrato." } })); return; }
+    const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const sinal = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + brl(Math.abs(v)), pctV = (dv, b) => (b ? (dv > 0 ? "+" : "") + (dv / b * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%" : "—");
+    const partes = [], fora = [];
+    for (const k of cats) { const m = await this.moCmpRelatorio(formato, { montar: true, cols: k.cols, info: k.info }); if (m) partes.push({ k, m }); else fora.push(k.nome); }
+    if (!partes.length) { this.setState((x) => ({ cmp: { ...x.cmp, ok: "", erro: "Nenhuma categoria tem ao menos duas planilhas para comparar." } })); return; }
+    const hoje = new Date().toLocaleDateString("pt-BR"), inf = { ...(partes[0].k.info || {}) };
+    // quadro 1: primeira × última planilha de cada categoria
+    let tI = 0, tF = 0, tE = 0;
+    const lin1 = partes.map(({ k, m }) => { const a = m.cols[0], b = m.cols[m.cols.length - 1], dm = b.r.mensal - a.r.mensal; tI += a.r.mensal; tF += b.r.mensal; tE += m.empDe(b);
+      return { c: [k.nome, a.nome + " → " + b.nome, String(m.empDe(b) || "—"), brl(a.r.mensal), brl(b.r.mensal), sinal(dm) + " (" + pctV(dm, a.r.mensal) + ")", sinal(m.anualDe(b) - m.anualDe(a))], alerta: Math.abs(dm) >= 0.005 ? [5, 6] : [] }; });
+    lin1.push({ c: ["Total do contrato (" + partes.length + " categoria(s))", "", String(tE), brl(tI), brl(tF), sinal(tF - tI) + " (" + pctV(tF - tI, tI) + ")", sinal(moT2(tF * 12) - moT2(tI * 12))], total: true });
+    const blocos = [
+      { t: "pares", titulo: "Contrato", pares: [["Contrato", inf.contrato || "—"], ["Contratante", inf.contratante || "—"], ["Contratada", inf.contratada || "—"], ["Categorias", String(partes.length)]] },
+      { t: "destaques", itens: [["Valor mensal inicial", brl(tI)], ["Valor mensal final", brl(tF)], ["Diferença mensal", sinal(tF - tI)], ["Diferença anual (12 meses)", sinal(moT2(tF * 12) - moT2(tI * 12))]] },
+      { t: "tabela", titulo: "Quadro consolidado do contrato", sub: "Primeira e última planilha de cada categoria, considerada a quantidade de empregados. Valor anual = 12 meses.",
+        cab: ["Categoria", "Planilhas", "Empregados", "Mensal inicial", "Mensal final", "Diferença mensal", "Diferença anual"], larg: [20, 16, 10, 13, 13, 16, 12], alin: "llrrrrr", linhas: lin1, fonte: 7.2 },
+    ];
+    // quadro lado a lado: colunas = planilhas (pelo nome: contratação, 1ª repactuação…); em cada categoria, as linhas do valor mensal e do anual
+    const nomes = []; partes.forEach(({ m }) => m.cols.forEach((c) => { if (!nomes.includes(c.nome)) nomes.push(c.nome); }));
+    if (nomes.length <= 7) {
+      const tot = nomes.map(() => 0), falta = nomes.map(() => false), lin2 = [];
+      partes.forEach(({ k, m }) => { const cel = (fn) => nomes.map((nm, j) => { const c = m.cols.find((x) => x.nome === nm); if (!c) { falta[j] = true; return "—"; } return brl(fn(c)); });
+        nomes.forEach((nm, j) => { const c = m.cols.find((x) => x.nome === nm); if (c) tot[j] += c.r.mensal; });
+        lin2.push({ c: [k.nome + " (" + (m.empDe(m.cols[m.cols.length - 1]) || "—") + " empregado(s))"].concat(nomes.map(() => "")), span: true },
+          { c: ["Valor mensal"].concat(cel((c) => c.r.mensal)) }, { c: ["Valor anual (12 meses)"].concat(cel((c) => m.anualDe(c))), fraco: true }); });
+      const ast = (j) => (falta[j] ? "*" : "");
+      lin2.push({ c: ["Total do contrato"].concat(nomes.map(() => "")), span: true, total: true },
+        { c: ["Valor mensal"].concat(tot.map((v, j) => brl(v) + ast(j))), total: true }, { c: ["Valor anual (12 meses)"].concat(tot.map((v, j) => brl(moT2(v * 12)) + ast(j))), total: true },
+        { c: ["Diferença mensal (em relação à anterior)"].concat(tot.map((v, j) => (!j ? "—" : falta[j] || falta[j - 1] ? "não comparável*" : sinal(v - tot[j - 1]) + " (" + pctV(v - tot[j - 1], tot[j - 1]) + ")"))), forte: true, alerta: tot.map((v, j) => (j && !falta[j] && !falta[j - 1] && Math.abs(v - tot[j - 1]) >= 0.005 ? j + 1 : -1)).filter((j) => j > 0) },
+        { c: ["Diferença anual (em relação à anterior)"].concat(tot.map((v, j) => (!j ? "—" : falta[j] || falta[j - 1] ? "não comparável*" : sinal(moT2(v * 12) - moT2(tot[j - 1] * 12))))), forte: true, alerta: tot.map((v, j) => (j && !falta[j] && !falta[j - 1] && Math.abs(v - tot[j - 1]) >= 0.005 ? j + 1 : -1)).filter((j) => j > 0) });
+      blocos.splice(2, 0, { t: "tabela", titulo: "Valores mensal e anual de cada categoria em cada planilha", sub: "Considerada a quantidade de empregados; valor anual = 12 meses." + (falta.some(Boolean) ? " * Total sem as categorias que não têm essa planilha." : ""),
+        cab: [""].concat(nomes), larg: [30].concat(nomes.map(() => 70 / nomes.length)), alin: "l" + "r".repeat(nomes.length), linhas: lin2, fonte: nomes.length > 4 ? 7 : 7.8 });
+    }
+    if (fora.length) blocos.push({ t: "legenda", texto: "Ficaram de fora por terem menos de duas planilhas: " + fora.join(", ") + "." });
+    const incons = [];
+    partes.forEach(({ k, m }, i) => {
+      blocos.push({ t: "quebra" }, { t: "secao", titulo: "Categoria " + (i + 1) + " – " + k.nome, sub: m.cols.map((c) => c.nome).join(" → ") });
+      m.blocos.forEach((b) => blocos.push(b));
+      m.incons.forEach((x) => incons.push({ ...x, col: k.nome + " – " + x.col }));
+    });
+    const gravN = { alta: "alta", media: "média", baixa: "baixa" }, ordG = { alta: 0, media: 1, baixa: 2 };
+    incons.sort((x, y) => (ordG[x.f.gravidade] ?? 1) - (ordG[y.f.gravidade] ?? 1));
+    blocos.push({ t: "quebra" }, { t: "secao", titulo: "Inconsistências no preenchimento das planilhas", sub: "Todas as categorias. Conferência com a legislação e com o modelo da IN 05/2017, a mesma feita na Repactuação e na Análise de proposta. Gravidade: alta, média ou baixa." });
+    blocos.push(incons.length ? { t: "tabela", titulo: "DIVERGÊNCIAS E INCONSISTÊNCIAS NA ELABORAÇÃO DAS PLANILHAS", sub: incons.length + " apontamento(s)", cab: ["Categoria – planilha", "Rubrica (gravidade)", "Como está", "O correto", "Fundamento"], larg: [17, 18, 19, 26, 20], alin: "lllll", fonte: 7.2,
+        linhas: incons.map(({ col, f }) => ({ c: [col, (f.rubrica || "") + (f.gravidade ? " (" + (gravN[f.gravidade] || f.gravidade) + ")" : ""), f.problema || "", f.correcao || "", f.fundamento || ""], alerta: f.gravidade === "alta" ? [1] : [] })) }
+      : { t: "legenda", texto: "Nenhuma inconsistência identificada na conferência automática das planilhas." });
+    const doc0 = { id: "comparacao", titulo: "Comparação das planilhas – todas as categorias", sub: (inf.contrato ? "Contrato " + inf.contrato + " · " : "") + partes.length + " categoria(s)", selo: leiDe(partes[0].m.cols[0].d || {}).selo, paisagem: partes.some(({ m }) => m.cols.length > 3),
+      arquivo: "comparacao-das-planilhas-todas-as-categorias" + (inf.contrato ? "-contrato-" + String(inf.contrato).replace(/[^\w-]+/g, "-") : ""), blocos,
+      notas: ["Cada planilha segue o modelo da IN 05/2017 (Anexo VII-D) e os mesmos cálculos da Calculadora. Nas repactuações, o aviso prévio trabalhado é considerado custo não renovável (no máximo 0,194% por ano de prorrogação; TCU, Acórdão 1.186/2017-Plenário).",
+        "Valor mensal = preço por empregado × empregados por posto × postos; valor anual = valor mensal × 12. O total do contrato soma as categorias.",
+        incons.length ? incons.length + " inconsistência(s) de preenchimento apontada(s): ver a seção “Inconsistências no preenchimento das planilhas”." : ""] };
+    try { if (formato === "xlsx") await this.moDocExcel(doc0, doc0.titulo, hoje); else await this.moDocPdf(doc0, doc0.titulo, hoje);
+      this.setState((x) => ({ cmp: { ...x.cmp, erro: "", ok: "✓ Relatório do contrato com " + partes.length + " categoria(s) gerado." + (fora.length ? " Ficaram de fora: " + fora.join(", ") + "." : "") } })); }
     catch (e) { console.error(e); this.setState((x) => ({ cmp: { ...x.cmp, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
   }
   async moQuadroRelatorio(formato) {
@@ -13975,6 +14086,12 @@ class Component extends DCLogic {
       moCompInfo: comp ? "Planilha da contratação " + comp.origem + (comp.em ? " em " + new Date(comp.em).toLocaleString("pt-BR") : "") + ", recalculada com as regras da IN: " + brl(comp.rA.total) + " por empregado."
         + (r.vigente && Math.abs(comp.rA.total - r.vigente) > 0.05 ? " O preço vigente informado é " + brl(r.vigente) + ": diferença de " + brl(Math.abs(comp.rA.total - r.vigente)) + ", que pode indicar falha de cálculo na planilha da contratação ou repactuação anterior não registrada." : "") : "",
       cmpAdd: () => this.moCmpAdd(), cmpPdf: () => this.moCmpRelatorio("pdf"), cmpExcel: () => this.moCmpRelatorio("xlsx"), cmpRecomecar: () => this.cmpRecomecar(),
+      ...(() => { const cats = this.cmpCatsLer(), brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return { cmpTemCats: cats.length > 0, cmpCatsN: cats.length, cmpTemQuadroRep: this.moListaLer("repactuacao").length > 0,
+          cmpCats: cats.map((k, i) => { let mens = 0; try { const u = k.cols[k.cols.length - 1]; mens = moCmpCalc(u).mensal; } catch (e) {}
+            return { nome: k.nome, det: k.cols.length + " planilha(s): " + k.cols.map((c) => c.nome).join(" → ") + " · última: " + brl(mens) + " por mês", naoSobe: i === 0, naoDesce: i === cats.length - 1,
+              subir: () => this.cmpCatMover(i, -1), descer: () => this.cmpCatMover(i, 1), abrir: () => this.cmpCatAbrir(i), excluir: () => this.cmpCatDel(i) }; }),
+          cmpCatIncluir: () => this.cmpCatIncluir(), cmpCatsDoQuadro: () => this.cmpCatsDoQuadro(), cmpTodasPdf: () => this.moCmpRelatorioTodas("pdf"), cmpTodasExcel: () => this.moCmpRelatorioTodas("xlsx") }; })(),
       cmpEsq: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: -510 }); } catch (e) {} }, cmpDir: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: 510 }); } catch (e) {} },
       cmpOk: (s.cmp && s.cmp.ok) || "", cmpErro: (s.cmp && s.cmp.erro) || "",
       ...(() => { const q = this.cmpQuadros(), sel = (s.cmp && s.cmp.quadroSel) || (q[0] && q[0].id) || "";
