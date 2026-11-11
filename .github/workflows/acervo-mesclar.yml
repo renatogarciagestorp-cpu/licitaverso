@@ -21,12 +21,15 @@ jobs:
           node-version: "20"
       - name: Juntar ao acervo
         run: node scripts/mesclar-acervo.mjs
+      # faixa "Chegando na Biblioteca" da página inicial: refeita com o que acabou de entrar
+      - name: Atualizar a faixa da página inicial
+        run: python3 scripts/gerar-destaques.py
       - name: Publicar
         run: |
           git config user.name "Licitacon — acervo"
           git config user.email "actions@users.noreply.github.com"
           # o git add falha por inteiro se um dos caminhos não existir; a pasta de recusados só existe quando há recusa
-          git add -A acervo.json acervo-completo.json acervo-novos
+          git add -A acervo.json acervo-completo.json acervo-novos inicio-destaques.json
           if [ -d acervo-recusados ]; then git add -A acervo-recusados; fi
           if git diff --cached --quiet; then
             # o script anunciou documentos novos mas nada foi gravado: é falha, não "sem mudanças"

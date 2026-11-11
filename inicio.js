@@ -96,7 +96,7 @@
   // ---------------------------------------------------------------- dados
   var cacheJson = {};
   function json(url) {
-    if (!cacheJson[url]) cacheJson[url] = fetch(url).then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); });
+    if (!cacheJson[url]) cacheJson[url] = fetch(url, { cache: "no-cache" }).then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); });
     return cacheJson[url];
   }
   var MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Gera inicio-destaques.json: decisões reais e recentes do acervo para a faixa animada da página inicial.
 
-Pega as mais recentes de cada órgão (no máximo 3 por órgão), para a faixa mostrar a variedade de fontes.
-Roda sozinho dentro de scripts/empacotar-site.py; à mão: python3 scripts/gerar-destaques.py
+Mostra o que chegou por último na Biblioteca (data de inclusão, depois a do julgamento), no máximo 3 por órgão,
+para a faixa mostrar a variedade de fontes. Roda dentro de scripts/empacotar-site.py e na automação
+acervo-mesclar (a cada coleta que entra no site); à mão: python3 scripts/gerar-destaques.py
 """
 import json
 import pathlib
@@ -23,8 +24,8 @@ def main() -> None:
     if not ACERVO.exists():
         return
     itens = json.loads(ACERVO.read_text(encoding="utf-8")).get("itens", [])
-    itens = [x for x in itens if x.get("natureza") == "decisoes" and x.get("numero") and x.get("titulo") and x.get("data") and x.get("tema") not in ("Outros", "")]
-    itens.sort(key=lambda x: x["data"], reverse=True)
+    itens = [x for x in itens if x.get("natureza") in ("decisoes", "orientacoes") and x.get("numero") and x.get("titulo") and x.get("data") and x.get("tema") not in ("Outros", "")]
+    itens.sort(key=lambda x: ((x.get("verificado_em") or "")[:10], x["data"]), reverse=True)
     conta, saida = {}, []
     for x in itens:
         o = x.get("orgao") or ""
