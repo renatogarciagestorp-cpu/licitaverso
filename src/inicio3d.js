@@ -1,4 +1,4 @@
-/* Licitacon — cena 3D da Biblioteca Jurídica (Three.js): o "Índice vivo".
+/* Licitacon — cenas 3D (Three.js): o "Índice vivo" da Biblioteca Jurídica e a balança da Calculadora.
  *
  * Uma coluna de cinco placas cristalinas, uma para cada tipo de fonte (Tribunais de Contas, Cortes superiores e
  * controle, Procuradorias, Tribunais de Justiça e Normas). Em volta de cada placa, um trilho em órbita com as fontes
@@ -8,8 +8,10 @@
  * Fonte deste arquivo: src/inicio3d.js. O site carrega o pacote gerado na raiz (inicio3d.js), montado por
  * scripts/3d/montar.mjs com o Three.js e só com as partes usadas. O inicio.js baixa o pacote quando a cena chega perto
  * da tela e chama montar(elemento, tipo) para o lugar marcado com data-lv3d="biblioteca".
- * As outras ferramentas (Parecerista, Elaborador, Calculadora, Gestão e Comunidade) usam telas vivas em GSAP
- * (inicio-ui.js), que mostram a própria ferramenta trabalhando.
+ * Calculadora (topo da página, só em telas largas): uma balança de placas cristalinas. De um lado, o preço do
+ * contrato; do outro, os custos. Uma ficha de índice cai sobre os custos, a balança pende para eles e o reajuste
+ * acrescenta ao preço o que devolve o equilíbrio econômico-financeiro (art. 124, II, "d", da Lei 14.133/2021).
+ * Na página inicial, as ferramentas usam telas vivas em GSAP (inicio-ui.js), que mostram a ferramenta trabalhando.
  *
  * Um só WebGLRenderer; a cena é desenhada num pedaço da tela dele e copiada para o canvas 2D do palco. Só desenha com
  * o palco à vista e a aba aberta. Com "reduzir movimento", aparece parada no quadro completo. O botão "Pausar
@@ -17,7 +19,7 @@
  */
 import {
   WebGLRenderer, Scene, PerspectiveCamera, Group, Mesh, Sprite, SpriteMaterial, MeshStandardMaterial,
-  MeshBasicMaterial, CylinderGeometry, BoxGeometry, EdgesGeometry, InstancedMesh, LineSegments, LineLoop,
+  MeshBasicMaterial, CylinderGeometry, BoxGeometry, EdgesGeometry, InstancedMesh, LineSegments, LineLoop, Line,
   LineBasicMaterial, BufferGeometry, Float32BufferAttribute, Object3D, Color, CanvasTexture,
   SRGBColorSpace, AdditiveBlending, HemisphereLight, DirectionalLight, PointLight, ACESFilmicToneMapping
 } from "three";
@@ -192,7 +194,94 @@ function cenaBiblioteca() {
   };
 }
 
-const CENAS = { biblioteca: cenaBiblioteca };
+
+// ------------------------------------------------------------------ Calculadora: o equilíbrio do contrato
+// Ciclo de 9 s: equilíbrio → o índice cai sobre os custos e a balança pende → o reajuste entra no preço e ela
+// volta ao nível → as duas placas novas se apagam juntas (a balança segue nivelada) e o ciclo recomeça.
+const CICLO = 9;
+function cenaCalculadora() {
+  const scene = new Scene();
+  const camera = new PerspectiveCamera(30, 2, 0.1, 60);
+  luzes(scene);
+  const mundo = new Group();
+  scene.add(mundo);
+  const halo = brilho(COR.menta, 4.4, 0.2);
+  halo.position.set(0, 0.25, -0.8);
+  mundo.add(halo);
+
+  const vidro = (cor, op) => new MeshStandardMaterial({ color: cor, emissive: COR.mentaForte, emissiveIntensity: 0.06, roughness: 0.22, metalness: 0.15, transparent: true, opacity: op, depthWrite: false });
+  const aresta = (geo, op) => new LineSegments(new EdgesGeometry(geo), new LineBasicMaterial({ color: COR.menta, transparent: true, opacity: op }));
+  const peca = (geo, cor, op) => { const g = new Group(); g.add(new Mesh(geo, vidro(cor, op)), aresta(geo, 0.6)); return g; };
+
+  // pé sextavado, coluna de luz e o fiel
+  const pe = peca(new CylinderGeometry(0.62, 0.78, 0.12, 6), COR.verdeEscuro, 0.5);
+  pe.position.y = -1.2;
+  const coluna = new Mesh(new CylinderGeometry(0.035, 0.035, 2.0, 8), new MeshBasicMaterial({ color: COR.menta, transparent: true, opacity: 0.5, depthWrite: false }));
+  coluna.position.y = -0.2;
+  const fiel = brilho(COR.menta, 0.5, 0.75);
+  fiel.position.y = 0.82;
+  mundo.add(pe, coluna, fiel);
+
+  const braco = new Group();
+  braco.position.y = 0.8;
+  mundo.add(braco);
+  braco.add(peca(new BoxGeometry(3.3, 0.05, 0.12), COR.verdeEscuro, 0.7));
+
+  const placaG = (i) => new BoxGeometry(0.66 - i * 0.06, 0.07, 0.44 - i * 0.04);
+  const pratos = [-1, 1].map((ld) => {
+    const prato = new Group();
+    prato.position.set(ld * 1.5, -0.8, 0);
+    braco.add(prato);
+    const fio = new BufferGeometry();
+    fio.setAttribute("position", new Float32BufferAttribute([-0.42, 0.06, 0, 0, 0.8, 0, 0.42, 0.06, 0], 3));
+    prato.add(new Line(fio, new LineBasicMaterial({ color: COR.menta, transparent: true, opacity: 0.35 })));
+    const cor = ld < 0 ? COR.verdeEscuro : COR.petroleo;
+    prato.add(peca(new CylinderGeometry(0.6, 0.6, 0.04, 6), cor, 0.5));
+    for (let k = 0; k < 3; k++) { const pl = peca(placaG(k), cor, 0.62); pl.position.y = 0.07 + k * 0.1; prato.add(pl); }
+    // a placa que chega: o reajuste (preço) ou o índice (custos)
+    const nova = peca(placaG(3), ld < 0 ? COR.verde : COR.petroleo, 0.75);
+    nova.position.y = 0.07 + 3 * 0.1;
+    prato.add(nova);
+    const luz = brilho(COR.menta, 0.95, 0);
+    luz.position.y = 0.4;
+    prato.add(luz);
+    return { prato, nova, luz };
+  });
+  const [preco, custos] = pratos;
+  const ficha = brilho(0xffffff, 0.34, 0);
+  custos.prato.add(ficha);
+
+  const vis = (g, v) => { g.visible = v > 0.01; g.children.forEach((m) => { m.material.opacity = (m.isLineSegments ? 0.6 : 0.75) * v; }); };
+  return {
+    scene, camera, tParado: 6.9,
+    update(t, dt, p) {
+      const c = t % CICLO;
+      // índice: cai de cima até o prato dos custos (1,2 s a 2,4 s) e vira placa
+      const queda = suave(1.2, 2.4, c);
+      ficha.position.y = 1.5 - queda * 1.1;
+      ficha.material.opacity = suave(0.9, 1.3, c) * (1 - suave(2.3, 2.6, c));
+      const pesoCustos = suave(2.3, 2.7, c), pesoPreco = suave(4.6, 5.2, c), some = 1 - suave(7.8, 8.6, c);
+      vis(custos.nova, pesoCustos * some);
+      vis(preco.nova, pesoPreco * some);
+      custos.nova.position.y = 0.37 + (1 - pesoCustos) * 0.25;
+      preco.nova.position.y = 0.37 + (1 - pesoPreco) * 0.25;
+      custos.luz.material.opacity = (suave(2.3, 2.6, c) - suave(2.9, 3.6, c)) * 0.8;
+      preco.luz.material.opacity = (suave(4.6, 5.0, c) - suave(5.3, 6.0, c)) * 0.8;
+      // o lado mais pesado desce: custos a mais pendem para a direita; o reajuste no preço nivela de novo
+      const desnivel = pesoCustos * some - pesoPreco * some;
+      const alvo = -0.11 * desnivel;
+      braco.rotation.z = REDUZ ? 0 : alvo;
+      pratos.forEach((x) => { x.prato.rotation.z = -braco.rotation.z; });
+      mundo.rotation.y = -0.28 + p.tx * 0.22 + Math.sin(t * 0.25) * 0.05;
+      mundo.rotation.x = p.ty * 0.06;
+      mundo.position.y = (0.5 - p.prog) * 0.12;
+      camera.position.set(0, 1.25, 6.4);
+      camera.lookAt(0, -0.1, 0);
+    }
+  };
+}
+
+const CENAS = { biblioteca: cenaBiblioteca, calculadora: cenaCalculadora };
 
 // ------------------------------------------------------------------ motor: um renderer para todas as cenas
 let R = null, bufW = 0, bufH = 0, raf = 0, ult = 0, perdido = false;
