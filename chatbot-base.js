@@ -329,7 +329,7 @@ window.LV_CHAT_BASE = {
       a: [{ t: "Abrir a Biblioteca", ir: "biblioteca" }], rel: ["biblioteca-busca"] },
     { id: "biblioteca-atualizacao", p: "A Biblioteca é atualizada?",
       k: ["atualizada", "atualizacao", "atualiza", "decisoes novas", "novidades", "mais recente", "desatualizada"],
-      r: "Sim, **automaticamente**: as fontes oficiais são consultadas toda semana (cada região num dia útil) e os novos itens entram sozinhos. Se uma coleta atrasar, a próxima busca tudo o que entrou desde o último item gravado.",
+      r: "Sim, **automaticamente**: as fontes oficiais são consultadas automaticamente e os novos itens entram sozinhos. Se uma coleta atrasar, a próxima busca tudo o que entrou desde o último item gravado.",
       a: [{ t: "Abrir a Biblioteca", ir: "biblioteca" }], rel: ["biblioteca-erro"] },
     { id: "biblioteca-erro", p: "Encontrei um erro numa decisão da Biblioteca",
       k: ["erro numa decisao", "erro na decisao", "decisao errada", "erro na biblioteca", "informacao errada", "classificacao errada", "link quebrado", "corrigir decisao", "correcao"],

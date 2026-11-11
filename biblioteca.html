@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head><meta charset="utf-8"><style>html{overflow-x:hidden}@supports (overflow-x:clip){html,body{overflow-x:clip}}</style><meta name="referrer" content="strict-origin-when-cross-origin"><script>/* impede que o site seja aberto dentro de outro site (clickjacking) */if(window.top!==window.self){try{window.top.location=window.self.location}catch(e){document.documentElement.style.display="none"}}</script><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0A1F2A"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><link rel="icon" type="image/png" href="icones/icone-192.png"><script src="licitaverso-auth.js?v=7"></script><script src="chatbot.js?v=16" defer></script>
 <script>
 /* Faz a página do Acervo Licitacon funcionar no site público, sem o Claude:
-   - "decisoes" e "meta" vêm de acervo-completo.json (atualizado toda semana);
+   - "decisoes" e "meta" vêm de acervo-completo.json (atualizado automaticamente);
    - com as contas ativas (config.js preenchido), a Biblioteca é para quem tem conta (gratuita, sem plano) e as
      anotações, marcadores, dossiês e preferências ficam salvos na conta da pessoa (Supabase),
      disponíveis em qualquer aparelho; sem contas, ficam no navegador (localStorage);
@@ -71,7 +71,7 @@
     + '<li>Anotações, marcadores e dossiês salvos na sua conta, em qualquer aparelho.</li></ul>'
     + '<div class="ac"><a class="pri" href="index.html?p=cadastro&amp;volta=biblioteca">Criar conta grátis</a>'
     + '<a class="sec" href="index.html?p=login&amp;volta=biblioteca">Já tenho conta: entrar</a></div>'
-    + '<small>A coleta nas fontes oficiais é automática, toda semana.</small></div>');
+    + '<small>A coleta nas fontes oficiais é automática.</small></div>');
   const aguardando = (falhou) => painel(falhou ? "falha" : "aguardando", '<div class="in"><h1 id="lvPortaoTit">'
     + (falhou ? "Não conseguimos conferir sua conta agora." : "Conferindo sua conta…") + '</h1>'
     + '<p>' + (falhou ? "Pode ser a conexão. Confira a internet e tente de novo." : "A conexão está lenta. O acervo abre assim que a conferência terminar.") + '</p>'
@@ -431,7 +431,7 @@ dialog.notes::backdrop{background:rgba(10,16,22,.35)}
     <div>
       <div class="eyebrow">Licitacon · Biblioteca jurídica</div>
       <h1>Acervo de decisões e normas</h1>
-      <p>TCU, CGU, STF, STJ, Tribunais de Contas de todos os estados e do DF, TCMs, Procuradorias-Gerais e Tribunais de Justiça estaduais, e normas federais e estaduais, captados automaticamente toda semana. Organizados por órgão, estado, esfera, natureza, tema, lei, artigo, tipo e data.</p>
+      <p>TCU, CGU, STF, STJ, Tribunais de Contas de todos os estados e do DF, TCMs, Procuradorias-Gerais e Tribunais de Justiça estaduais, e normas federais e estaduais, captados automaticamente. Organizados por órgão, estado, esfera, natureza, tema, lei, artigo, tipo e data.</p>
     </div>
     <div class="stamp" id="stamp">Carregando acervo…</div>
   </header>
@@ -522,7 +522,7 @@ dialog.notes::backdrop{background:rgba(10,16,22,.35)}
         <button class="ghost" id="expCsv" type="button" style="width:100%;margin-top:6px">Exportar acervo (CSV)</button>
         <span class="note" id="expMsg" aria-live="polite"></span>
       </div>
-      <p class="note">A coleta roda toda semana, cada região num dia útil. TCE-RJ e TCM-RJ são lidos direto dos portais de jurisprudência; STF e STJ, dos informativos semanais; TCU, de dados abertos; CGU, PGE-RJ e TJ-RJ, de publicações oficiais. Cada item traz o link da fonte.</p>
+      <p class="note">TCE-RJ e TCM-RJ são lidos direto dos portais de jurisprudência; STF e STJ, dos informativos semanais; TCU, de dados abertos; CGU, PGE-RJ e TJ-RJ, de publicações oficiais. Cada item traz o link da fonte.</p>
     </aside>
 
     <main>
@@ -1145,9 +1145,9 @@ function renderPainel(list,L){
 /* ===== Situação da coleta ===== */
 /* [chave em meta, nome, hora, minuto, usa o computador, dia da semana (1=seg…5=sex; vazio = todo dia útil)] */
 const AGENDA=[
-  ["coleta","Nacional e RJ: TCU, STF, STJ, CGU, PGE-RJ, TJ-RJ e normas (semanal)",8,7,false,1],["coleta_tcerj","TCE-RJ (semanal)",8,37,false,1],["coleta_tcmrj","TCM-RJ (semanal)",8,37,false,1],
-  ["coleta_norte","Região Norte (semanal)",7,37,false,1],["coleta_nordestei","Região Nordeste I (semanal)",7,37,false,2],["coleta_nordesteii","Região Nordeste II (semanal)",7,37,false,3],
-  ["coleta_sudeste","Região Sudeste (semanal)",7,37,false,4],["coleta_sulecentrooeste","Regiões Sul e Centro-Oeste (semanal)",7,37,false,5]];
+  ["coleta","Nacional e RJ: TCU, STF, STJ, CGU, PGE-RJ, TJ-RJ e normas",8,7,false,1],["coleta_tcerj","TCE-RJ",8,37,false,1],["coleta_tcmrj","TCM-RJ",8,37,false,1],
+  ["coleta_norte","Região Norte",7,37,false,1],["coleta_nordestei","Região Nordeste I",7,37,false,2],["coleta_nordesteii","Região Nordeste II",7,37,false,3],
+  ["coleta_sudeste","Região Sudeste",7,37,false,4],["coleta_sulecentrooeste","Regiões Sul e Centro-Oeste",7,37,false,5]];
 function ultimoPrevisto(h,mi,dia){const agora=new Date();for(let i=0;i<10;i++){const t=new Date(Date.UTC(agora.getUTCFullYear(),agora.getUTCMonth(),agora.getUTCDate()-i,h+3,mi));const wd=new Date(t.getTime()-3*36e5).getUTCDay();
   if((dia?wd===dia:wd>0&&wd<6)&&t.getTime()<=agora.getTime()-60*6e4)return t}return null}
 function renderStatus(){
