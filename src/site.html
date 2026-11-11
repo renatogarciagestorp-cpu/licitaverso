@@ -12621,22 +12621,53 @@ class Component extends DCLogic {
       const alerta = []; cols.forEach((c, i) => { if (i > 0 && varia(val(cols[i - 1], L), val(c, L), L)) alerta.push(i + 1); });
       linhas.push({ c: [L[2]].concat(cols.map((c) => txt(c, L))), total: L[0] === "c" && ["total", "mensal", "global"].includes(L[1]), forte: L[0] === "c", alerta });
     });
+    // valores do contrato em cada planilha, considerada a quantidade de empregados (empregados por posto × postos)
+    const empDe = (c) => Math.max(0, moNum(c.d.emp_posto) * moNum(c.d.postos)), anualDe = (c) => moT2((Number(c.r.mensal) || 0) * 12);
+    const sinal = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + brl(Math.abs(v)), pctV = (dv, base) => (base ? " (" + (dv > 0 ? "+" : "") + (dv / base * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%)" : "");
+    const linVal = cols.map((c, i) => { const a = i ? cols[i - 1] : null, dm = a ? c.r.mensal - a.r.mensal : 0, da = a ? anualDe(c) - anualDe(a) : 0;
+      return { c: [c.nome, brl(c.r.total), String(empDe(c) || "—"), brl(c.r.mensal), brl(anualDe(c)), a ? sinal(dm) + pctV(dm, a.r.mensal) : "—", a ? sinal(da) : "—"], alerta: a && Math.abs(dm) >= 0.005 ? [5, 6] : [] }; });
+    const pri = cols[0], ult = cols[nC - 1], dmT = ult.r.mensal - pri.r.mensal, daT = anualDe(ult) - anualDe(pri);
+    linVal.push({ c: ["Variação acumulada (" + pri.nome + " → " + ult.nome + ")", sinal(ult.r.total - pri.r.total), "", sinal(dmT) + pctV(dmT, pri.r.mensal), sinal(daT), "", ""], total: true });
+    const qtdMuda = cols.some((c) => empDe(c) !== empDe(pri));
+    // inconsistências no preenchimento de cada planilha: a mesma conferência automática da Repactuação e da Análise de proposta,
+    // mais as falhas apontadas pelo agente que estiverem guardadas na planilha
+    const gravN = { alta: "alta", media: "média", baixa: "baixa" }, ordG = { alta: 0, media: 1, baixa: 2 };
+    const incons = [];
+    cols.forEach((c) => { const modo = (CMP_TIPOS[c.tipo] || CMP_TIPOS.repactuacao)[1], dc = { ...MO_PADRAO, ...(c.d || {}), fontes: {} };
+      let auto = []; try { auto = moConferir({ ...dc, reforma: dc.reforma || "antes" }, c.r, modo) || []; } catch (e) { auto = []; }
+      const vistas = new Set(); (modo === "planejamento" ? [] : (c.d.falhas || [])).concat(auto).forEach((f) => { const k = (f.rubrica || "") + "|" + (f.problema || ""); if (vistas.has(k)) return; vistas.add(k);
+        incons.push({ col: c.nome, f }); }); });
+    incons.sort((x, y) => (ordG[x.f.gravidade] ?? 1) - (ordG[y.f.gravidade] ?? 1));
     const blocos = [
       { t: "pares", titulo: "Contrato", pares: [["Contrato", inf.contrato || "—"], ["Contratante", inf.contratante || "—"], ["Contratada", inf.contratada || "—"], ["Categoria", inf.categoria || "—"]] },
-      { t: "destaques", itens: cols.map((c) => [c.nome, brl(c.r.total) + " por empregado"]) },
-      { t: "tabela", titulo: "Linha do tempo das planilhas", sub: "Em amarelo, o que mudou em relação à planilha anterior.", cab: ["Rubrica"].concat(cols.map((c) => c.nome)), larg: [lr].concat(cols.map(() => lc)), alin: "l" + "r".repeat(nC), linhas, fonte: nC > 4 ? 7 : 8 },
+      { t: "destaques", itens: cols.map((c) => [c.nome + " · " + (empDe(c) || "—") + " empregado(s)", brl(c.r.mensal) + " por mês"]) },
+      { t: "tabela", titulo: "Valores do contrato em cada planilha", sub: "Considerada a quantidade de empregados. Diferenças em relação à planilha anterior; o valor anual corresponde a 12 meses.",
+        cab: ["Planilha", "Preço por empregado", "Empregados", "Valor mensal", "Valor anual (12 meses)", "Diferença mensal", "Diferença anual"], larg: [24, 13, 9, 13, 14, 15, 12], alin: "lrrrrrr", linhas: linVal, fonte: 7.4 },
     ];
+    if (qtdMuda) blocos.push({ t: "legenda", texto: "A quantidade de empregados não é a mesma em todas as planilhas: as diferenças mensais e anuais refletem tanto a variação do preço por empregado quanto a mudança de quantidade." });
+    blocos.push(
+      { t: "tabela", titulo: "Linha do tempo das planilhas", sub: "Em amarelo, o que mudou em relação à planilha anterior.", cab: ["Rubrica"].concat(cols.map((c) => c.nome)), larg: [lr].concat(cols.map(() => lc)), alin: "l" + "r".repeat(nC), linhas, fonte: nC > 4 ? 7 : 8 });
     for (let i = 1; i < nC; i++) {
       const a = cols[i - 1], b = cols[i], mud = [];
       MO_CMP_LINHAS.forEach((L) => { if (L[0] === "s") return; const va = val(a, L), vb = val(b, L), v = varia(va, vb, L); if (v) mud.push({ c: [L[2], txt(a, L), txt(b, L), v], forte: L[0] === "c" }); });
       const dt = b.r.total - a.r.total, pt = a.r.total ? dt / a.r.total : 0;
       blocos.push({ t: "quebra" }, { t: "secao", titulo: "O que mudou: de " + a.nome + " para " + b.nome });
-      blocos.push({ t: "texto", paragrafos: ["O preço por empregado passou de " + brl(a.r.total) + " para " + brl(b.r.total) + " (" + (dt >= 0 ? "+" : "−") + brl(Math.abs(dt)) + "; " + (pt >= 0 ? "+" : "") + (pt * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%). O valor mensal passou de " + brl(a.r.mensal) + " para " + brl(b.r.mensal) + " e o global, de " + brl(a.r.global) + " para " + brl(b.r.global) + "." + (b.tipo === "repactuacao" && a.tipo !== "repactuacao" && (a.r.apt_p || 0) > (b.r.apt_p || 0) ? " O aviso prévio trabalhado foi reduzido por ser custo não renovável (TCU, Acórdão 1.186/2017-Plenário)." : "")] });
+      const ea = empDe(a), eb = empDe(b), dmI = b.r.mensal - a.r.mensal, daI = anualDe(b) - anualDe(a);
+      blocos.push({ t: "texto", paragrafos: ["O preço por empregado passou de " + brl(a.r.total) + " para " + brl(b.r.total) + " (" + (dt >= 0 ? "+" : "−") + brl(Math.abs(dt)) + "; " + (pt >= 0 ? "+" : "") + (pt * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%). "
+        + (ea === eb ? "Considerados " + eb + " empregado(s), o" : "Considerados " + ea + " empregado(s) em " + a.nome + " e " + eb + " em " + b.nome + ", o") + " valor mensal passou de " + brl(a.r.mensal) + " para " + brl(b.r.mensal) + " (diferença de " + sinal(dmI) + " por mês) e o valor anual (12 meses), de " + brl(anualDe(a)) + " para " + brl(anualDe(b)) + " (diferença de " + sinal(daI) + " por ano)."
+        + (moNum(b.d.meses) && moNum(b.d.meses) !== 12 ? " Pelo prazo de " + moNum(b.d.meses) + " meses informado na planilha, o valor global passou de " + brl(a.r.global) + " para " + brl(b.r.global) + "." : "") + (b.tipo === "repactuacao" && a.tipo !== "repactuacao" && (a.r.apt_p || 0) > (b.r.apt_p || 0) ? " O aviso prévio trabalhado foi reduzido por ser custo não renovável (TCU, Acórdão 1.186/2017-Plenário)." : "")] });
       blocos.push(mud.length ? { t: "tabela", titulo: "Rubricas alteradas", cab: ["Rubrica", a.nome, b.nome, "Variação"], larg: [34, 20, 20, 26], alin: "lrrr", linhas: mud } : { t: "legenda", texto: "Nenhuma rubrica foi alterada." });
     }
+    // inconsistências no preenchimento (todas as planilhas), ao final
+    blocos.push({ t: "quebra" }, { t: "secao", titulo: "Inconsistências no preenchimento das planilhas", sub: "Conferência com a legislação e com o modelo da IN 05/2017, a mesma feita na Repactuação e na Análise de proposta. Gravidade: alta, média ou baixa." });
+    blocos.push(incons.length ? { t: "tabela", titulo: "DIVERGÊNCIAS E INCONSISTÊNCIAS NA ELABORAÇÃO DAS PLANILHAS", sub: incons.length + " apontamento(s)", cab: ["Planilha", "Rubrica (gravidade)", "Como está", "O correto", "Fundamento"], larg: [15, 19, 20, 26, 20], alin: "lllll", fonte: 7.2,
+        linhas: incons.map(({ col, f }) => ({ c: [col, (f.rubrica || "") + (f.gravidade ? " (" + (gravN[f.gravidade] || f.gravidade) + ")" : ""), f.problema || "", f.correcao || "", f.fundamento || ""], alerta: f.gravidade === "alta" ? [1] : [] })) }
+      : { t: "legenda", texto: "Nenhuma inconsistência identificada na conferência automática das planilhas." });
     const doc0 = { id: "comparacao", titulo: "Comparação das planilhas: do planejamento às repactuações", sub: (inf.contrato ? "Contrato " + inf.contrato + " · " : "") + (inf.categoria || "") + " · " + nC + " planilhas", selo: leiDe(cols[0].d || {}).selo, paisagem: nC > 3,
       arquivo: "comparacao-das-planilhas" + (inf.contrato ? "-contrato-" + String(inf.contrato).replace(/[^\w-]+/g, "-") : ""), blocos,
-      notas: ["Cada planilha segue o modelo da IN 05/2017 (Anexo VII-D) e os mesmos cálculos da Calculadora. Nas repactuações, o aviso prévio trabalhado é considerado custo não renovável (no máximo 0,194% por ano de prorrogação; TCU, Acórdão 1.186/2017-Plenário)."] };
+      notas: ["Cada planilha segue o modelo da IN 05/2017 (Anexo VII-D) e os mesmos cálculos da Calculadora. Nas repactuações, o aviso prévio trabalhado é considerado custo não renovável (no máximo 0,194% por ano de prorrogação; TCU, Acórdão 1.186/2017-Plenário).",
+        "Valor mensal = preço por empregado × empregados por posto × postos; valor anual = valor mensal × 12. As diferenças comparam cada planilha com a anterior.",
+        incons.length ? incons.length + " inconsistência(s) de preenchimento apontada(s): ver a seção “Inconsistências no preenchimento das planilhas”." : ""] };
     try { if (formato === "xlsx") await this.moDocExcel(doc0, doc0.titulo, hoje); else await this.moDocPdf(doc0, doc0.titulo, hoje); }
     catch (e) { console.error(e); this.setState((x) => ({ cmp: { ...x.cmp, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
   }
