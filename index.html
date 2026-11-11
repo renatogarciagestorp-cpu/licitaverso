@@ -1183,6 +1183,7 @@
   .lmo-campos { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px 14px; }
   .lmo-campo { display: grid; gap: 5px; font-size: 12.5px; font-weight: 700; color: #3D5058; }
   .lmo-campo input, .lmo-tabela input { font: inherit; font-size: 14px; font-weight: 600; color: #0A1F2A; border: 1px solid #D6DEDD; border-radius: 10px; padding: 8px 10px; background: #FBFDF6; min-width: 0; }
+  .lmo-lin[data-manual="true"] .lmo-val input { border-color: #E3A72F; background: #FFF8EC; }  /* valor digitado à mão, no lugar do cálculo */
   .lmo-campo input:focus, .lmo-tabela input:focus { outline: 2px solid #0FA36B; border-color: #0FA36B; }
   .lmo-cct { display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-top: 14px; padding-top: 14px; border-top: 1px solid #EDF2F1; }
   .lmo-cct b { display: block; font-size: 14.5px; } .lmo-cct small { font-size: 12.5px; color: #5F7077; }
@@ -4160,11 +4161,11 @@
                 <div class="lmo-tabela" role="table">
                   <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
                   <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
-                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
+                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-manual="{{ l.manual }}">
                       <span class="lmo-cod">{{ l.cod }}</span>
                       <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
                       <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
-                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" placeholder="{{ l.valPh }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                     </div>
                   </sc-for>
                   <div class="lmo-lin lmo-tot" role="row"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
@@ -4187,11 +4188,11 @@
                 <div class="lmo-tabela" role="table">
                   <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
                   <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
-                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
+                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-manual="{{ l.manual }}">
                       <span class="lmo-cod">{{ l.cod }}</span>
                       <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
                       <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
-                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" placeholder="{{ l.valPh }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                     </div>
                   </sc-for>
                   <div class="lmo-lin lmo-tot" role="row"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
@@ -4216,11 +4217,11 @@
                 <div class="lmo-tabela" role="table">
                   <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
                   <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
-                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
+                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-manual="{{ l.manual }}">
                       <span class="lmo-cod">{{ l.cod }}</span>
                       <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
                       <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
-                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" placeholder="{{ l.valPh }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                     </div>
                   </sc-for>
                   <div class="lmo-lin lmo-tot" role="row"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
@@ -4261,11 +4262,11 @@
                 <div class="lmo-tabela" role="table">
                   <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
                   <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
-                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
+                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-manual="{{ l.manual }}">
                       <span class="lmo-cod">{{ l.cod }}</span>
                       <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
                       <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
-                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" placeholder="{{ l.valPh }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                     </div>
                   </sc-for>
                   <div class="lmo-lin lmo-tot" role="row"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
@@ -4306,11 +4307,11 @@
                 <div class="lmo-tabela" role="table">
                   <div class="lmo-lin lmo-cab" role="row"><span></span><span>Rubrica</span><span>%</span><span>Valor (R$)</span></div>
                   <sc-for list="{{ md.linhas }}" as="l" hint-placeholder-count="4">
-                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}">
+                    <div class="lmo-lin" role="row" data-auto="{{ l.auto }}" data-manual="{{ l.manual }}">
                       <span class="lmo-cod">{{ l.cod }}</span>
                       <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
                       <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
-                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                      <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" placeholder="{{ l.valPh }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                     </div>
                   </sc-for>
                   <div class="lmo-lin lmo-tot" role="row"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
@@ -4595,7 +4596,7 @@
                               <span class="lmo-cod">{{ l.cod }}</span>
                               <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
                               <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
-                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" placeholder="{{ l.valPh }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                             </div>
                           </sc-for>
                           <div class="lmo-lin lmo-tot" role="row" data-mudou="{{ md.mudouTot }}"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
@@ -4621,7 +4622,7 @@
                               <span class="lmo-cod">{{ l.cod }}</span>
                               <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
                               <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
-                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" placeholder="{{ l.valPh }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                             </div>
                           </sc-for>
                           <div class="lmo-lin lmo-tot" role="row" data-mudou="{{ md.mudouTot }}"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
@@ -4639,7 +4640,7 @@
                               <span class="lmo-cod">{{ l.cod }}</span>
                               <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
                               <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
-                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" placeholder="{{ l.valPh }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                             </div>
                           </sc-for>
                           <div class="lmo-lin lmo-tot" role="row" data-mudou="{{ md.mudouTot }}"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
@@ -4684,7 +4685,7 @@
                               <span class="lmo-cod">{{ l.cod }}</span>
                               <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
                               <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
-                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" placeholder="{{ l.valPh }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                             </div>
                           </sc-for>
                           <div class="lmo-lin lmo-tot" role="row" data-mudou="{{ md.mudouTot }}"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
@@ -4732,7 +4733,7 @@
                               <span class="lmo-cod">{{ l.cod }}</span>
                               <span class="lmo-rot">{{ l.rot }}<sc-if value="{{ l.nota }}" hint-placeholder-val="{{ false }}"><small>{{ l.nota }}</small></sc-if></span>
                               <span class="lmo-pct"><sc-if value="{{ l.pctEdit }}" hint-placeholder-val="{{ true }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (%)" value="{{ l.pctK }}" placeholder="{{ l.pctPh }}" sc-camel-on-input="{{ l.onPct }}"></sc-if>{{ l.pctTxt }}</span>
-                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
+                              <span class="lmo-val"><sc-if value="{{ l.valEdit }}" hint-placeholder-val="{{ false }}"><input type="text" inputmode="decimal" aria-label="{{ l.rot }} (R$)" value="{{ l.valK }}" placeholder="{{ l.valPh }}" sc-camel-on-input="{{ l.onVal }}"></sc-if>{{ l.valTxt }}</span>
                             </div>
                           </sc-for>
                           <div class="lmo-lin lmo-tot" role="row" data-mudou="{{ md.mudouTot }}"><span></span><span>{{ md.total.rot }}</span><span>{{ md.total.pctTxt }}</span><span>{{ md.total.valTxt }}</span></div>
@@ -4845,6 +4846,12 @@
                   <label class="lmo-campo"><span>ISS fora do DAS (%, só na 6ª faixa)</span><input type="text" inputmode="decimal" value="{{ rqIss }}" sc-camel-on-input="{{ onRqIss }}" placeholder="Ex.: 5"></label>
                 </div>
                 <sc-if value="{{ rqSimplesTxt }}" hint-placeholder-val="{{ false }}"><p class="lmo-nota">{{ rqSimplesTxt }}</p></sc-if>
+                <div class="lmo-campos" style="margin-top: 8px">
+                  <label class="lmo-campo"><span>PIS no DAS (%)</span><input type="text" inputmode="decimal" value="{{ rqSpPis }}" sc-camel-on-input="{{ onRqSpPis }}" placeholder="{{ rqSimpPh.pis }}"></label>
+                  <label class="lmo-campo"><span>COFINS no DAS (%)</span><input type="text" inputmode="decimal" value="{{ rqSpCofins }}" sc-camel-on-input="{{ onRqSpCofins }}" placeholder="{{ rqSimpPh.cofins }}"></label>
+                  <label class="lmo-campo"><span>ISS no DAS (%)</span><input type="text" inputmode="decimal" value="{{ rqSpIss }}" sc-camel-on-input="{{ onRqSpIss }}" placeholder="{{ rqSimpPh.iss }}"></label>
+                </div>
+                <p class="lmo-nota">Em branco, valem as parcelas calculadas pela receita. Se a proposta usou outros percentuais, digite-os: o cálculo passa a usá-los e a diferença aparece nos alertas do resultado.</p>
               </sc-if>
               <sc-if value="{{ rqRegular }}" hint-placeholder-val="{{ false }}">
                 <div class="lmo-campos" style="margin-top: 10px">
@@ -4862,6 +4869,13 @@
                 <label class="lmo-campo"><span>Alíquota de referência do IBS (%, estimativa)</span><input type="text" inputmode="decimal" value="{{ rqRfIbs }}" sc-camel-on-input="{{ onRqRfIbs }}"></label>
               </div>
               <p class="lmo-nota">CBS: 11,3% é a referência calculada pelo TCU para 2027. IBS: 18,7% é estimativa. Atualize os dois campos quando as alíquotas forem publicadas.</p>
+              <sc-if value="{{ rqAnoEdit }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-campos" style="margin-top: 8px">
+                  <label class="lmo-campo"><span>CBS no ano analisado (%)</span><input type="text" inputmode="decimal" value="{{ rqAnoCbs }}" sc-camel-on-input="{{ onRqAnoCbs }}" placeholder="{{ rqAnoPh.cbs }}"></label>
+                  <label class="lmo-campo"><span>IBS no ano analisado (%)</span><input type="text" inputmode="decimal" value="{{ rqAnoIbs }}" sc-camel-on-input="{{ onRqAnoIbs }}" placeholder="{{ rqAnoPh.ibs }}"></label>
+                </div>
+                <p class="lmo-nota">Em branco, vale a regra de transição da LC 214/2025 para o ano escolhido. Um valor digitado vale só para esse ano; se fugir da regra, aparece nos alertas.</p>
+              </sc-if>
               <sc-if value="{{ rqRegular }}" hint-placeholder-val="{{ false }}">
                 <p class="lmo-nota"><b>Não cumulatividade (opcional).</b> Com o crédito da CBS e do IBS, os tributos embutidos nos insumos comprados de fornecedores deixam de ser custo. Informe quanto do preço são insumos com crédito e quanto o custo deles deve cair. Mão de obra não gera crédito; deixe em branco se não souber.</p>
                 <div class="lmo-campos" style="margin-top: 8px">
@@ -4876,6 +4890,7 @@
               <sc-if value="{{ rqPronto }}" hint-placeholder-val="{{ false }}">
                 <div class="lmo-kpis" style="margin-top: 0"><sc-for list="{{ rqKpis }}" as="k" hint-placeholder-count="6"><div><small>{{ k.k }}</small><b>{{ k.v }}</b></div></sc-for></div>
                 <p class="{{ rqVereditoCls }}" style="margin-top: 12px">{{ rqVeredito }}</p>
+                <sc-if value="{{ rqTemAlertas }}" hint-placeholder-val="{{ false }}"><div class="rq-al sobe" style="margin-top: 10px" role="note"><b>Percentuais digitados fora da legislação</b><ul style="margin: 6px 0 0 18px; padding: 0"><sc-for list="{{ rqAlertas }}" as="a" hint-placeholder-count="1"><li>{{ a.t }}</li></sc-for></ul></div></sc-if>
                 <div class="lmo-tabela" style="margin-top: 12px" role="table" aria-label="Transição da reforma">
                   <div class="lmo-lin lmo-trans lmo-cab" role="row"><span>Ano</span><span>PIS e COFINS</span><span>CBS</span><span>IBS</span><span>ISS</span><span>Carga no preço</span><span>Valor mensal</span><span>Diferença</span></div>
                   <sc-for list="{{ rqAnosTab }}" as="t" hint-placeholder-count="8">
@@ -8022,12 +8037,29 @@ function moConferirM3(d, r, modo) {
   if (tem("inf_multa_apt") && dif(v("inf_multa_apt"), 0.4 * fg / 100 * apt)) F("Módulo 3, F – Multa do FGTS sobre o aviso prévio trabalhado", "A planilha da empresa usa " + p4(v("inf_multa_apt")) + ".", fundMulta + ".", "40% do FGTS sobre o aviso prévio trabalhado: " + p4(0.4 * fg / 100 * apt) + (Math.abs(v("inf_multa_apt") - 0.5 * fg / 100 * apt) < 0.0006 ? ". A planilha soma a contribuição social de 10%, extinta desde 1º/1/2020." : "."), "media");
   return out;
 }
+// Valores digitados à mão viram o percentual equivalente sobre a base da rubrica, para a conferência com a lei usar as
+// mesmas regras dos percentuais (ex.: 13º digitado em reais → % do Módulo 1, comparado com 8,33%).
+const MO_OV_PCT = { peric: "peric", insal: "insal", p13: "p13", pfa: "pfa", ferias: "ferias", aus: "aus", pat: "pat", acid: "acid", mat: "mat", outros41: "outros41", intra: "intra",
+  g_inss: "inss", g_saled: "saled", g_sesc: "sesc", g_senac: "senac", g_sebrae: "sebrae", g_incra: "incra", g_fgts: "fgts",
+  r_api: "api", r_fgts_api: "m3_fgts_api", r_multa_api: "m3_multa_api", r_inc_apt: "m3_inc_apt", r_multa_apt: "m3_multa_apt", ci: "ci", lucro: "lucro", pis: "pis", cofins: "cofins", iss: "iss" };
+function moEfetivo(d, r, modo) {
+  if (!r || !r.imp || !Object.keys(r.imp).length) return d;
+  const e = { ...d }, f = (x) => String(Math.round(x * 1000000) / 10000).replace(".", ",");
+  Object.entries(r.imp).forEach(([id, x]) => {
+    if (id === "r_apt") e[modo === "repactuacao" ? "apt_rep" : "apt"] = f(x);
+    else if (id === "g_sat") e.rat = f(x / (moNum(d.fap) || 1));
+    else if (MO_OV_PCT[id]) e[MO_OV_PCT[id]] = f(x);
+  });
+  return e;
+}
 function moConferir(d, r, modo) {
+  d = moEfetivo(d, r, modo);
   const n = (k) => moNum(d[k]), out = [], simples = d.regime === "simples";
   if (!(n("salario") > 0)) return out;
   const F = (rubrica, problema, fundamento, correcao, gravidade, impacto) => out.push({ rubrica, problema, fundamento, correcao, gravidade, impacto: impacto || "" });
   const pctB = (v) => String(v).replace(".", ",") + "%";
-  if (modo && modo !== "planejamento") moConferirM3(d, r, modo).forEach((x) => out.push(x));
+  const m3Manual = ["m3_fgts_api", "m3_multa_api", "m3_inc_apt", "m3_multa_apt"].some((k) => String(d[k] == null ? "" : d[k]).trim());
+  if ((modo && modo !== "planejamento") || m3Manual) moConferirM3(d, r, modo).forEach((x) => out.push(x));
   if (d.gt_tipo === "cv" && moNum(d.gt_multa) > 4.005) F("Conta-depósito vinculada – multa do FGTS", "Retenção de " + pctB(moNum(d.gt_multa)) + " para a multa do FGTS.", "Lei 13.932/2019, art. 12 (extinção da contribuição social de 10% a partir de 1º/1/2020); IN 05/2017, Anexo XII.", "4% sobre o Módulo 1: os 5% do Anexo XII incluíam a contribuição social extinta.", "media");
   if (n("inss") !== 20) F("Submódulo 2.2, A – INSS", "INSS de " + pctB(n("inss")) + ".", "Lei 8.212/1991, art. 22, I.", "Contribuição patronal de 20% sobre a remuneração (também no Simples, Anexo IV).", "alta");
   if (n("fgts") !== 8) F("Submódulo 2.2, H – FGTS", "FGTS de " + pctB(n("fgts")) + ".", "Lei 8.036/1990, art. 15.", "Depósito de 8% sobre a remuneração.", "alta");
@@ -8054,6 +8086,29 @@ function moConferir(d, r, modo) {
   if (!(n("ci") > 0) || !(n("lucro") > 0)) F("Módulo 6, A e B – Custos indiretos e lucro", "Custos indiretos ou lucro zerados.", "IN 05/2017, Anexo VII-D.", "Informar os percentuais adotados na estimativa, com base na pesquisa de preços ou em contratações similares.", "baixa");
   if (d.dim === "vigilancia" && /n$/.test(d.vg_escala || "") && d.vg_calc !== "sim" && !(n("noturno") > 0)) F("Módulo 1, D – Adicional noturno", "Escala noturna sem adicional noturno.", "CLT, art. 73.", "Calcular o adicional noturno e a hora noturna reduzida (marque o cálculo pelo caderno de vigilância).", "alta");
   if (/limp|vigil/i.test(d.tipo_servico || "") && !(n("unif") > 0) && !(Array.isArray(d.mem_unif) && d.mem_unif.length)) F("Módulo 5, A – Uniformes e EPI", "Uniformes e EPI não informados.", "Cadernos técnicos de limpeza e vigilância; NR-6.", "Incluir o custo mensal dos uniformes e EPI (use a memória de cálculo).", "baixa");
+  // percentuais destravados: aviso prévio trabalhado na repactuação, tabela do Simples e alíquotas da transição da reforma
+  const temK = (k) => String(d[k] == null ? "" : d[k]).trim() !== "", p4 = (x) => (Math.round(x * 10000) / 10000).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
+  if (modo === "repactuacao" && temK("apt_rep") && n("apt_rep") > 0.194 + 0.0005) F("Módulo 3, D – Aviso prévio trabalhado", "Percentual de " + p4(n("apt_rep")) + " depois do primeiro ano.", "TCU, Acórdão 1.186/2017-Plenário (aviso prévio trabalhado é custo não renovável); CLT, art. 488.", "No máximo 0,194% por ano de prorrogação (1,94% ÷ 10).", "alta");
+  if (r && r.simp) [["sp_pis", "PIS", r.simp.pis], ["sp_cofins", "COFINS", r.simp.cofins], ["sp_iss", "ISS", r.simp.iss]].forEach(([k, rot, ref]) => {
+    if (temK(k) && Math.abs(n(k) / 100 - ref) > 0.00005) F("Módulo 6 – " + rot + " (Simples Nacional)", "Percentual de " + p4(n(k)) + " digitado na planilha.", "LC 123/2006, art. 18 e Anexo IV (alíquota efetiva pela receita bruta dos últimos 12 meses).", "Pela receita informada, a parcela do " + rot + " é de " + p4(ref * 100) + ".", "media"); });
+  if (r && r.tr && !r.tr.antigos && !r.simp) [["tr_cbs", "CBS", r.tr.cbs], ["tr_ibs", "IBS", r.tr.ibs]].forEach(([k, rot, ref]) => {
+    if (temK(k) && Math.abs(n(k) / 100 - ref) > 0.00005) F("Módulo 6 – " + rot, "Alíquota de " + p4(n(k)) + " em " + r.tr.ano + ".", "LC 214/2025 (alíquotas de referência e regras de transição de 2026 a 2033).", "Para " + r.tr.ano + ", a alíquota da transição é de " + p4(ref * 100) + ".", "media"); });
+  // valores digitados que não têm percentual legal: aponta quando fogem do cálculo pela regra
+  const brlF = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (r && r.man) [["vt", "Submódulo 2.3, A – Transporte", "Lei 7.418/1985, art. 4º, parágrafo único (o empregador custeia o que passar de 6% do salário-base).", "alta"],
+    ["aux", "Submódulo 2.3, B – Auxílio-alimentação", "Convenção coletiva da categoria (valor por dia × dias trabalhados, menos a participação do empregado).", "media"],
+    ["ref", "Submódulo 2.3, C – Auxílio-refeição", "Convenção coletiva da categoria (valor por dia × dias trabalhados, menos a participação do empregado).", "media"],
+    ["noturno", "Módulo 1, D – Adicional noturno", "CLT, art. 73 (adicional de no mínimo 20% sobre a hora diurna, ou o da convenção).", "media"],
+    ["hnr", "Módulo 1, E – Hora noturna reduzida", "CLT, art. 73, § 1º (hora noturna de 52 minutos e 30 segundos).", "media"],
+    ["he_feriado", "Módulo 1, F – Feriado trabalhado", "Lei 605/1949, art. 9º (feriado trabalhado pago em dobro, salvo folga compensatória).", "media"],
+    ["unif", "Módulo 5, A – Uniformes e EPI", "IN 05/2017, Anexo VII-D (custo demonstrado na memória de cálculo); NR-6.", "baixa"],
+    ["materiais", "Módulo 5, B – Materiais", "IN 05/2017, Anexo VII-D (custo demonstrado na memória de cálculo).", "baixa"],
+    ["equip", "Módulo 5, C – Equipamentos", "IN 05/2017, Anexo VII-D (depreciação demonstrada na memória de cálculo).", "baixa"]].forEach(([k, rub, fund, grav]) => {
+    if (r.man[k] == null || r.calc[k] == null) return;
+    const c = r.calc[k], x = r.man[k];
+    if (Math.abs(x - c) > Math.max(0.01, Math.abs(c) * 0.005) && (c > 0 || k === "vt")) F(rub, "Valor digitado de " + brlF(x) + "; pela regra, " + brlF(c) + ".", fund, "Confira o valor digitado ou demonstre a origem (convenção, memória de cálculo ou documento).", grav); });
+  // tributos digitados em reais: o percentual equivalente sobre o preço já passou pela conferência do ISS acima; avisa a mudança de base
+  if (r && r.man && ["pis", "cofins", "iss", "cbs", "ibs"].some((k) => r.man[k] != null && Math.abs(r.man[k] - r.calc[k]) > 0.01)) F("Módulo 6, C – Tributos", "Tributos digitados em reais, diferentes do cálculo pela alíquota (" + ["pis", "cofins", "iss", "cbs", "ibs"].filter((k) => r.man[k] != null).map((k) => k.toUpperCase() + " " + brlF(r.man[k]) + " × " + brlF(r.calc[k])).join("; ") + ").", "IN 05/2017, Anexo VII-D (tributos calculados sobre o faturamento, \"por dentro\"); LC 214/2025, art. 12, § 2º, para a CBS e o IBS.", "Confira as alíquotas da empresa: o tributo deve corresponder à alíquota sobre o preço.", "media");
   return out;
 }
 const MO_MODS = [["M1", "Módulo 1 – Remuneração"], ["M2", "Módulo 2 – Encargos e benefícios"], ["M3", "Módulo 3 – Rescisão"], ["M4", "Módulo 4 – Reposição do ausente"], ["M5", "Módulo 5 – Insumos"], ["M6", "Módulo 6 – CI, tributos e lucro"], ["total", "Preço por empregado"]];
@@ -9423,7 +9478,17 @@ function rqCalcular(d) {
   const simp = d.regime === "simples" ? moSimples(moNum(/^\s*[1-9]\d{0,2}(\.\d{3})+\s*$/.test(String(d.rbt12 || "")) ? String(d.rbt12).replace(/\./g, "") : d.rbt12)) : null;
   if (d.regime === "simples" && !simp) return { pronto: false, falta: "Informe a receita bruta dos últimos 12 meses (RBT12) para calcular a alíquota efetiva do Simples Nacional." };
   let aPis = pc("pis"), aCof = pc("cofins"), aIss = pc("iss");
-  if (simp) { aPis = simp.pis; aCof = simp.cofins; aIss = simp.issFora ? pc("iss") : simp.iss; }
+  const tem = (k) => String(d[k] == null ? "" : d[k]).trim() !== "", alertas = [];
+  const p4 = (x) => (Math.round(x * 1e6) / 1e4).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
+  if (simp) {
+    aPis = simp.pis; aCof = simp.cofins; aIss = simp.issFora ? pc("iss") : simp.iss;
+    // parcelas do DAS digitadas (ex.: as da proposta): valem no cálculo; diferença da tabela vira alerta
+    [["sp_pis", "PIS", simp.pis], ["sp_cofins", "COFINS", simp.cofins]].concat(simp.issFora ? [] : [["sp_iss", "ISS", simp.iss]]).forEach(([k, rot, ref]) => {
+      if (!tem(k)) return; const v = pc(k);
+      if (k === "sp_pis") aPis = v; else if (k === "sp_cofins") aCof = v; else aIss = v;
+      if (Math.abs(v - ref) > 0.0000005) alertas.push(rot + " de " + p4(v) + " digitado; pela receita informada, a parcela do Simples é de " + p4(ref) + " (LC 123/2006, art. 18 e Anexo IV).");
+    });
+  }
   if (!simp && !(aIss > 0)) return { pronto: false, falta: "Informe a alíquota do ISS da proposta (de 2% a 5%)." };
   const a0 = aPis + aCof + aIss;
   if (!(a0 < 0.5)) return { pronto: false, falta: "Confira as alíquotas da proposta." };
@@ -9431,7 +9496,9 @@ function rqCalcular(d) {
   const red = simp ? 0 : P0 * pc("ins") * pc("ins_red");      // insumos que ficam mais baratos com a não cumulatividade
   const cbsRef = pc("rf_cbs"), ibsRef = pc("rf_ibs");
   const anos = MO_ANOS_REFORMA.map((ano) => {
-    const tr = moTransicao(ano, cbsRef, ibsRef);
+    const tr = { ...moTransicao(ano, cbsRef, ibsRef) };
+    // alíquotas do ano analisado digitadas: substituem as da transição (só para esse ano)
+    if (!simp && !tr.antigos && String(ano) === String(d.ano || "2027")) { if (tem("ano_cbs")) tr.cbs = pc("ano_cbs"); if (tem("ano_ibs")) tr.ibs = pc("ano_ibs"); }
     let P1, cbs = 0, ibs = 0, iss = 0, pis = 0, PoY = Po;
     if (tr.antigos) { P1 = P0; pis = (aPis + aCof) * P0; iss = aIss * P0; }
     else if (simp) { const aCbs = aPis + aCof, aIssT = aIss * tr.issF, aIbs = aIss - aIssT; P1 = Po / (1 - (aCbs + aIssT + aIbs)); cbs = aCbs * P1; ibs = aIbs * P1; iss = aIssT * P1; }
@@ -9441,7 +9508,13 @@ function rqCalcular(d) {
     return { ano, tr, P1, dif, pct: dif / P0, carga: P1 ? (P1 - PoY) / P1 : 0, cbs, ibs, iss, pis, PoY };
   });
   const sel = anos.find((x) => String(x.ano) === String(d.ano)) || anos[1];
-  return { pronto: true, P0, a0, Po, red, simp, aPis, aCof, aIss, anos, sel, meses: n("meses") };
+  const ref = moTransicao(sel.ano, cbsRef, ibsRef);
+  if (!simp && !ref.antigos) [["ano_cbs", "CBS", ref.cbs], ["ano_ibs", "IBS", ref.ibs]].forEach(([k, rot, v]) => {
+    if (tem(k) && Math.abs(pc(k) - v) > 0.0000005) alertas.push(rot + " de " + p4(pc(k)) + " digitada para " + sel.ano + "; pela transição da LC 214/2025 (ADCT, arts. 125 a 133), com as referências informadas, seria " + p4(v) + "."); });
+  if (!simp && d.regime === "presumido" && ((tem("pis") && Math.abs(aPis - 0.0065) > 0.0000005) || (tem("cofins") && Math.abs(aCof - 0.03) > 0.0000005)))
+    alertas.push("No Lucro Presumido, o PIS e a COFINS cumulativos são de 0,65% e 3% (Lei 9.718/1998, art. 8º; Lei 10.637/2002, art. 8º; Lei 10.833/2003, art. 10). Confira se a proposta usou esses percentuais.");
+  if (!simp && (aIss > 0.05 + 0.0000005 || aIss < 0.02 - 0.0000005)) alertas.push("ISS de " + p4(aIss) + ": fora do intervalo de 2% a 5% (LC 116/2003, art. 8º, II, e art. 8º-A).");
+  return { pronto: true, P0, a0, Po, red, simp, aPis, aCof, aIss, anos, sel, meses: n("meses"), alertas, ref };
 }
 // APT nas repactuações e prorrogações: o aviso prévio trabalhado é custo não renovável (1,94% só no 1º ano);
 // a partir do 2º ano, no máximo 0,194% por ano de prorrogação (TCU, Acórdão 1.186/2017-Plenário)
@@ -9460,36 +9533,44 @@ function moTarifaZero(d) {
 // exposto para os testes automáticos da Calculadora (função pura, sem dados do usuário)
 try { window.lvMoCalcular = (...a) => moCalcular(...a); window.lvMoDerivado = (...a) => moDerivado(...a); window.lvMoConferir = (...a) => moConferir(...a); } catch (e) {}
 function moCalcular(d, modo, rj) {
-  const n = (k) => moNum(d[k]), pc = (k) => moNum(d[k]) / 100;
+  const n = (k) => moNum(d[k]), pc = (k) => moNum(d[k]) / 100, tem = (k) => String(d[k] == null ? "" : d[k]).trim() !== "";
   const r = {}, S = n("salario");
-  r.salario = S; r.peric = S * pc("peric"); r.insal = S * pc("insal");
-  r.noturno = n("noturno"); r.hnr = n("hnr"); r.he_feriado = n("he_feriado"); r.outros1 = n("outros1");
+  // valores digitados à mão (vx_<rubrica>): em branco, vale a fórmula; preenchido, vale o valor digitado.
+  // r.calc guarda o valor da fórmula (sugestão em cinza), r.man o digitado e r.imp o percentual equivalente sobre a base,
+  // que a conferência compara com a lei (moEfetivo).
+  r.calc = {}; r.man = {}; r.imp = {};
+  const O = (id, val, base) => { r.calc[id] = val; if (!tem("vx_" + id)) return val; const x = n("vx_" + id); r.man[id] = x; if (base) r.imp[id] = x / base; return x; };
+  r.salario = S; r.peric = O("peric", S * pc("peric"), S); r.insal = O("insal", S * pc("insal"), S);
+  r.noturno = O("noturno", n("noturno")); r.hnr = O("hnr", n("hnr")); r.he_feriado = O("he_feriado", n("he_feriado")); r.outros1 = n("outros1");
   r.M1 = moT2(S + r.peric + r.insal + r.noturno + r.hnr + r.he_feriado + r.outros1);
-  r.p13 = r.M1 * pc("p13"); r.pfa = r.M1 * pc("pfa"); r.M21p = moT4(pc("p13") + pc("pfa")); r.M21 = moT2(r.p13 + r.pfa);
+  r.p13 = O("p13", r.M1 * pc("p13"), r.M1); r.pfa = O("pfa", r.M1 * pc("pfa"), r.M1); r.M21 = moT2(r.p13 + r.pfa);
+  r.M21p = r.man.p13 != null || r.man.pfa != null ? (r.M1 ? r.M21 / r.M1 : 0) : moT4(pc("p13") + pc("pfa"));
   // benefícios (submódulo 2.3)
   r.vtGratis = moTarifaZero(d);
   // dias de tarifa zero na escala (ex.: domingos gratuitos): saem dos dias de transporte pago; o desconto de 6% do salário-base continua inteiro
   r.vtDiasZero = Math.min(n("dias"), Math.max(0, n("vt_dias_zero"))); r.vtDiasPagos = Math.max(0, n("dias") - r.vtDiasZero);
-  r.vt = r.vtGratis ? 0 : Math.max(0, n("vt_tarifa") * n("vt_viagens") * r.vtDiasPagos - 0.06 * S);
-  r.aux = n("aux_dia") * n("dias") * (1 - pc("aux_part"));
-  r.ref = n("ref_dia") * n("dias") * (1 - pc("ref_part")); // auxílio-refeição, quando a convenção prevê os dois
+  r.vt = O("vt", r.vtGratis ? 0 : Math.max(0, n("vt_tarifa") * n("vt_viagens") * r.vtDiasPagos - 0.06 * S));
+  r.aux = O("aux", n("aux_dia") * n("dias") * (1 - pc("aux_part")));
+  r.ref = O("ref", n("ref_dia") * n("dias") * (1 - pc("ref_part"))); // auxílio-refeição, quando a convenção prevê os dois
   r.assist = n("assist"); r.seguro = n("seguro"); r.outros23 = n("outros23");
   r.M23 = moT2(r.vt + r.aux + r.ref + r.assist + r.seguro + r.outros23);
-  // módulo 4 (entra na base do 2.2)
-  r.ferias = r.M1 * pc("ferias"); r.aus = r.M1 * pc("aus"); r.pat = r.M1 * pc("pat"); r.acid = r.M1 * pc("acid");
-  r.base_mat = r.p13 + r.pfa + r.assist + r.seguro; r.mat = r.base_mat * pc("mat"); r.outros41 = r.M1 * pc("outros41");
-  r.M41p = moT4(pc("ferias") + pc("aus") + pc("pat") + pc("acid") + pc("mat") + pc("outros41"));
+  // módulo 4 (desde a IN 07/2018, fora da base do 2.2)
+  ["ferias", "aus", "pat", "acid"].forEach((k) => { r[k] = O(k, r.M1 * pc(k), r.M1); });
+  r.base_mat = r.p13 + r.pfa + r.assist + r.seguro; r.mat = O("mat", r.base_mat * pc("mat"), r.base_mat); r.outros41 = O("outros41", r.M1 * pc("outros41"), r.M1);
   r.M41 = moT2(r.ferias + r.aus + r.pat + r.acid + r.mat + r.outros41);
-  r.intra = r.M1 * pc("intra"); r.M42 = moT2(r.intra); r.M4 = moT2(r.M41 + r.M42);
-  // submódulo 2.2: base = módulo 1 + submódulo 2.1 + módulo 4
-  r.base22 = r.M1 + r.M21 + r.M4;
+  r.M41p = ["ferias", "aus", "pat", "acid", "mat", "outros41"].some((k) => r.man[k] != null) ? (r.M1 ? r.M41 / r.M1 : 0) : moT4(pc("ferias") + pc("aus") + pc("pat") + pc("acid") + pc("mat") + pc("outros41"));
+  r.intra = O("intra", r.M1 * pc("intra"), r.M1); r.M42 = moT2(r.intra); r.M4 = moT2(r.M41 + r.M42);
+  // submódulo 2.2: base = módulo 1 + submódulo 2.1 (IN 05/2017, Anexo VII-D, Submódulo 2.2, Nota 3, na redação da IN 07/2018,
+  // que também retirou do Módulo 4 a linha de incidência do 2.2)
+  r.base22 = r.M1 + r.M21;
   const p22 = { inss: pc("inss"), saled: pc("saled"), sat: pc("rat") * n("fap"), sesc: pc("sesc"), senac: pc("senac"), sebrae: pc("sebrae"), incra: pc("incra"), fgts: pc("fgts") };
   r.p22 = p22; r.M22p = Object.values(p22).reduce((a, b) => a + b, 0);
-  Object.entries(p22).forEach(([k, v]) => { r["g_" + k] = v * r.base22; });
+  Object.entries(p22).forEach(([k, v]) => { r["g_" + k] = O("g_" + k, v * r.base22, r.base22); });
   r.M22 = moT2(Object.keys(p22).reduce((a, k) => a + r["g_" + k], 0));
   r.M2 = moT2(r.M21 + r.M22 + r.M23);
   // módulo 3: provisão para rescisão
-  r.apt_p = modo === "repactuacao" ? MO_APT_PRORROGACAO / 100 : pc("apt");
+  // na repactuação, o aviso prévio trabalhado parte de 0,194% (custo não renovável), mas pode ser digitado (apt_rep); acima disso, vira falha
+  r.apt_p = modo === "repactuacao" ? (tem("apt_rep") ? pc("apt_rep") : MO_APT_PRORROGACAO / 100) : pc("apt");
   // multa rescisória de 40% (a contribuição social de 10% da LC 110/2001 foi extinta pela Lei 13.932/2019 a partir de 2020).
   // C segue os cadernos técnicos da SEGES: multa sobre todos os depósitos do contrato (remuneração, 13º, férias e 1/3),
   // para os 90% de empregados que não pedem demissão: 8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168) ≈ 3,48%
@@ -9497,19 +9578,22 @@ function moCalcular(d, modo, rj) {
   r.m3f = { fgts_api: pc("fgts") * pc("api"), multa_api: pc("fgts") * 0.4 * 0.9 * (1 + 5 / 56 + 5 / 56 + 5 / 168), inc_apt: r.M22p * r.apt_p, multa_apt: 0.4 * pc("fgts") * r.apt_p };
   const m3ov = (k) => !String(d["m3_" + k] == null ? "" : d["m3_" + k]).trim() ? r.m3f[k] : moNum(d["m3_" + k]) / 100;
   r.m3p = { api: pc("api"), fgts_api: m3ov("fgts_api"), multa_api: m3ov("multa_api"), apt: r.apt_p, inc_apt: m3ov("inc_apt"), multa_apt: m3ov("multa_apt") };
-  Object.entries(r.m3p).forEach(([k, v]) => { r["r_" + k] = r.M1 * v; });
-  r.M3p = moT4(Object.values(r.m3p).reduce((a, b) => a + b, 0));
+  Object.entries(r.m3p).forEach(([k, v]) => { r["r_" + k] = O("r_" + k, r.M1 * v, r.M1); });
   r.M3 = moT2(Object.keys(r.m3p).reduce((a, k) => a + r["r_" + k], 0));
+  if (Object.keys(p22).some((k) => r.man["g_" + k] != null) && r.base22) r.M22p = r.M22 / r.base22; // total do 2.2 pelo que foi digitado
+  r.M3p = Object.keys(r.m3p).some((k) => r.man["r_" + k] != null) ? (r.M1 ? r.M3 / r.M1 : 0) : moT4(Object.values(r.m3p).reduce((a, b) => a + b, 0));
   const fIns = (k) => (rj && rj.pronto && modo === "repactuacao" && d["rj_" + k] === "sim" ? rj.fator : 1);
-  MO_INSUMOS.forEach(([k]) => { r["orig_" + k] = n(k); r[k] = moT2(n(k) * fIns(k)); r["rj_" + k] = fIns(k) !== 1 && n(k) > 0; });
+  MO_INSUMOS.forEach(([k]) => { r["orig_" + k] = n(k); r[k] = moT2(O(k, n(k) * fIns(k))); r["rj_" + k] = fIns(k) !== 1 && n(k) > 0; });
   r.M5 = moT2(r.unif + r.materiais + r.equip + r.outros5);
   r.sub = moT2(r.M1 + r.M2 + r.M3 + r.M4 + r.M5);
-  r.ci = moT2(pc("ci") * r.sub); r.lucro = moT2(pc("lucro") * (r.ci + r.sub));
+  r.ci = moT2(O("ci", pc("ci") * r.sub, r.sub)); r.lucro = moT2(O("lucro", pc("lucro") * (r.ci + r.sub), r.ci + r.sub));
   r.Po = moT2(r.sub + r.ci + r.lucro);
   // tributos: regime da empresa (Lucro Real, Presumido ou Simples Nacional) e, se escolhido, a reforma tributária
   const simp = d.regime === "simples" ? moSimples(moNum(/^\s*[1-9]\d{0,2}(\.\d{3})+\s*$/.test(String(d.rbt12 || "")) ? String(d.rbt12).replace(/\./g, "") : d.rbt12)) : null;
   let aPis = pc("pis"), aCof = pc("cofins"), aIss = pc("iss");
   if (simp) { aPis = simp.pis; aCof = simp.cofins; if (!simp.issFora) aIss = simp.iss; }
+  // percentuais do Simples digitados à mão (sp_*): substituem os da tabela do Anexo IV; a conferência aponta a diferença
+  if (simp) { if (tem("sp_pis")) aPis = pc("sp_pis"); if (tem("sp_cofins")) aCof = pc("sp_cofins"); if (!simp.issFora && tem("sp_iss")) aIss = pc("sp_iss"); }
   const tr = d.reforma === "depois" ? moTransicao(n("rf_ano") || new Date().getFullYear(), pc("rf_cbs"), pc("rf_ibs")) : null;
   r.simp = simp; r.tr = tr; r.aPis = aPis; r.aCof = aCof; r.aIss = aIss; r.aCbs = 0; r.aIbs = 0; r.aIssT = aIss; r.cbs = 0; r.ibs = 0; r.porFora = false;
   if (!tr || tr.antigos) {
@@ -9518,17 +9602,21 @@ function moCalcular(d, modo, rj) {
     r.pis = moT2(aPis * r.P1); r.cofins = moT2(aCof * r.P1); r.iss = moT2(aIss * r.P1);
   } else if (simp) {
     // Simples Nacional: CBS e IBS dentro do DAS, sobre a receita; a parcela de PIS/COFINS passa à CBS e a do ISS migra ao IBS na transição
-    r.aCbs = aPis + aCof; r.aIssT = aIss * tr.issF; r.aIbs = aIss - r.aIssT;
+    r.aCbs = tem("tr_cbs") ? pc("tr_cbs") : aPis + aCof; r.aIssT = aIss * tr.issF; r.aIbs = tem("tr_ibs") ? pc("tr_ibs") : aIss - r.aIssT;
     r.To = moT4(r.aCbs + r.aIssT + r.aIbs); r.P1 = r.To < 1 ? moT2(r.Po / (1 - r.To)) : 0;
     r.pis = 0; r.cofins = 0; r.cbs = moT2(r.aCbs * r.P1); r.ibs = moT2(r.aIbs * r.P1); r.iss = moT2(r.aIssT * r.P1);
   } else {
     // regime regular da reforma: ISS (enquanto existir) "por dentro"; CBS e IBS "por fora", sobre o valor sem eles e sem o ISS
     // (LC 214/2025, art. 12, § 2º); PIS e COFINS extintos a partir de 2027
-    r.porFora = true; r.aCbs = tr.cbs; r.aIbs = tr.ibs; r.aIssT = aIss * tr.issF;
+    r.porFora = true; r.aCbs = tem("tr_cbs") ? pc("tr_cbs") : tr.cbs; r.aIbs = tem("tr_ibs") ? pc("tr_ibs") : tr.ibs; r.aIssT = aIss * tr.issF;
     const pIss = r.aIssT < 1 ? moT2(r.Po / (1 - r.aIssT)) : 0;
     r.pis = 0; r.cofins = 0; r.iss = moT2(pIss - r.Po); r.cbs = moT2(r.aCbs * r.Po); r.ibs = moT2(r.aIbs * r.Po);
     r.P1 = moT2(r.Po + r.iss + r.cbs + r.ibs); r.To = r.P1 ? moT4((r.P1 - r.Po) / r.P1) : 0;
   }
+  // tributos digitados em reais: entram como estão e o preço passa a ser Po + tributos
+  let trMan = false;
+  ["pis", "cofins", "iss", "cbs", "ibs"].forEach((k) => { r.calc[k] = r[k]; if (tem("vx_" + k)) { r[k] = n("vx_" + k); r.man[k] = r[k]; trMan = true; } });
+  if (trMan) { r.P1 = moT2(r.Po + r.pis + r.cofins + r.iss + r.cbs + r.ibs); r.To = r.P1 ? moT4((r.P1 - r.Po) / r.P1) : 0; ["pis", "cofins", "iss"].forEach((k) => { if (r.man[k] != null && r.P1) r.imp[k] = r[k] / r.P1; }); }
   r.trib = moT2(r.P1 - r.Po);
   r.M6p = pc("ci") + pc("lucro") + r.To; r.M6 = moT2(r.ci + r.lucro + r.pis + r.cofins + r.iss + r.cbs + r.ibs);
   r.total = moT2(r.sub + r.M6); r.fatorK = S ? r.total / S : 0;
@@ -12349,19 +12437,20 @@ class Component extends DCLogic {
       "Pedido da contratada durante a vigência e antes da prorrogação, instruído com os cálculos (art. 376); decisão fundamentada em até 90 dias, prorrogáveis uma vez (art. 376, § 1º); recomposição provisória possível (art. 376, §§ 4º e 5º); revisão de ofício quando a carga diminuir (art. 375).",
       "Lei 14.133/2021, arts. 124, II, d, e 134, e Lei 13.303/2016, aplicadas subsidiariamente (LC 214/2025, art. 377). " + leiDe(d).tribForm,
       "Alíquotas de referência: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa). Confira as alíquotas publicadas e o texto oficial da LC 214/2025 antes de juntar ao processo."];
+    const alertasB = r.alertas.length ? [{ t: "texto", titulo: "PERCENTUAIS DIGITADOS FORA DA LEGISLAÇÃO", paragrafos: r.alertas }] : [];
     const base0 = "reequilibrio-tributario" + (d.contrato ? "-contrato-" + String(d.contrato).replace(/[^0-9a-z]+/gi, "-") : "");
     const sub = "Reequilíbrio tributário · " + (d.contratada || "Contrato") + (d.contrato ? " · contrato " + d.contrato : "");
     const destaques = { t: "destaques", itens: [["Valor de equilíbrio em " + s.ano, brl(s.P1)], ["Valor atual", brl(r.P0)], ["Diferença mensal", sinal(s.dif)], [r.meses ? "Até o fim da vigência (" + r.meses + " meses)" : "Em 12 meses", sinal(s.dif * (r.meses || 12))]] };
     const docs = {
       memoria: { titulo: "Memória de cálculo do reequilíbrio tributário", arquivo: base0 + "-memoria-de-calculo", paisagem: true, sub, selo: "LC 214/2025 · arts. 373 a 377", blocos: [
-        destaques, { t: "pares", titulo: "Dados do contrato e da proposta", pares: ident }, tab, { t: "texto", titulo: "METODOLOGIA", paragrafos: metodo }], notas: fund },
+        destaques, { t: "pares", titulo: "Dados do contrato e da proposta", pares: ident }, tab, { t: "texto", titulo: "METODOLOGIA", paragrafos: metodo }].concat(alertasB), notas: fund },
       nota: { titulo: "Nota técnica · reequilíbrio tributário", arquivo: base0 + "-nota-tecnica", sub, selo: "LC 214/2025 · arts. 373 a 377", blocos: [
         { t: "texto", titulo: "1. OBJETO", paragrafos: ["Análise do impacto da reforma tributária do consumo (EC 132/2023 e LC 214/2025) no valor do " + (d.contrato ? "contrato " + d.contrato : "contrato") + (d.contratada ? ", firmado com " + d.contratada : "") + (d.objeto ? ", cujo objeto é " + d.objeto : "") + ", para fins de reequilíbrio econômico-financeiro, com referência ao ano de " + s.ano + "."] },
         destaques,
         { t: "texto", titulo: "2. PREMISSAS", paragrafos: ["Valor mensal atual: " + brl(r.P0) + ". Regime da contratada: " + regNome + ". Tributos sobre o faturamento considerados na proposta: PIS e COFINS de " + pct(r.aPis + r.aCof) + " e ISS de " + pct(r.aIss) + ", carga de " + pct(r.a0) + "." + (d.proposta ? " Data da proposta: " + d.proposta + "." : "") + (d.origem ? " Valores extraídos da " + d.origem + "." : "")].concat(metodo) },
         tab,
         { t: "texto", titulo: "3. CONCLUSÃO", paragrafos: ["Em " + s.ano + ", a carga sobre o preço passa de " + pct(r.a0) + " para " + pct(s.carga) + ", e o valor mensal que mantém o equilíbrio é de " + brl(s.P1) + " (" + sinal(s.dif) + " por mês, " + (s.dif > 0 ? "+" : "") + pct(s.pct) + ").", quem,
-          "A recomposição deve ser formalizada por termo aditivo, após análise da área técnica e manifestação jurídica, e pode ser revista quando forem publicadas as alíquotas definitivas e a regulamentação da metodologia (LC 214/2025, art. 376, § 3º)."] }],
+          "A recomposição deve ser formalizada por termo aditivo, após análise da área técnica e manifestação jurídica, e pode ser revista quando forem publicadas as alíquotas definitivas e a regulamentação da metodologia (LC 214/2025, art. 376, § 3º)."] }].concat(alertasB),
         notas: fund }
     };
     const doc0 = docs[tipo]; doc0.id = tipo;
@@ -12811,9 +12900,11 @@ class Component extends DCLogic {
     const modulos = P.moModulos.map((md) => {
       const [cab, ...resto] = md.titulo.split(" – ");
       return { cab, nome: resto.join(" – "), sub: md.sub || "", linhas: md.linhas.map((l) => {
-        const valTxt = l.valEdit ? (l.valTxt.indexOf("→") === 0 ? l.valTxt.slice(2) : brlTxt(moNum(l.valK))) : l.valTxt;
+        // valor digitado à mão vale; em branco, o do cálculo (valCalc); o percentual mostrado é o equivalente ao valor digitado
+        const valTxt = l.valEdit ? (l.valTxt.indexOf("→") === 0 ? l.valTxt.slice(2) : brlTxt(String(l.valK == null ? "" : l.valK).trim() ? moNum(l.valK) : (l.valCalc || 0))) : l.valTxt;
         const ehFap = l.rot.indexOf("FAP") === 0;
-        const pctTxt = l.pctEdit ? (ehFap ? String(l.pctK || "") : (String(String(l.pctK || "").trim() || l.pctPh || "0") + "%")) : l.pctTxt;
+        const pctTxt = l.pctImp != null ? (l.pctImp * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%"
+          : l.pctEdit ? (ehFap ? String(l.pctK || "") : (String(String(l.pctK || "").trim() || l.pctPh || "0") + "%")) : l.pctTxt;
         return { cod: l.cod, rot: l.rot, nota: l.nota || "", auto: !!l.auto, pctTxt, pctNum: ehFap ? null : num(pctTxt), ehFap, fapNum: ehFap ? num(l.pctK) : null, valTxt, valNum: num(valTxt) };
       }), total: { rot: md.total.rot, pctTxt: md.total.pctTxt, pctNum: num(md.total.pctTxt), valTxt: md.total.valTxt, valNum: num(md.total.valTxt) } };
     });
@@ -12933,7 +13024,7 @@ class Component extends DCLogic {
       const blocos = [], n = [], du = U.dUsado || d, nu = (k) => moNum(du[k]);
       const f2b = (x) => (Number(x) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       blocos.push(T("ENCARGOS E BENEFÍCIOS – BASES DE CÁLCULO (POR EMPREGADO)", ["Item", "Cálculo", "Valor"], [
-        { c: ["Base do Submódulo 2.2", "Módulo 1 (" + brlTxt(r.M1) + ") + Submódulo 2.1 (" + brlTxt(r.M21) + ") + Módulo 4 (" + brlTxt(r.M4) + ")", brlTxt(r.base22)] },
+        { c: ["Base do Submódulo 2.2", "Módulo 1 (" + brlTxt(r.M1) + ") + Submódulo 2.1 (" + brlTxt(r.M21) + ")", brlTxt(r.base22)] },
         { c: ["Encargos do Submódulo 2.2", "Base × " + (r.M22p * 100).toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + "%", brlTxt(r.M22)] },
         r.vtGratis ? { c: ["Transporte", r.vtGratis + ": sem custo de vale-transporte (Lei 7.418/1985, art. 1º)", brlTxt(0)] } : { c: ["Transporte", "R$ " + f2b(nu("vt_tarifa")) + " × " + f2b(nu("vt_viagens")) + " viagens × " + f2b(r.vtDiasPagos) + " dias" + (r.vtDiasZero > 0 ? " com transporte pago (" + f2b(nu("dias")) + " trabalhados − " + f2b(r.vtDiasZero) + " de tarifa zero)" : "") + " − 6% de " + brlTxt(nu("salario")) + " (Lei 7.418/1985)", brlTxt(r.vt)] },
         { c: ["Auxílio-alimentação", "R$ " + f2b(nu("aux_dia")) + " × " + f2b(nu("dias")) + " dias × (1 − " + f2b(nu("aux_part")) + "% de participação)", brlTxt(r.aux)] },
@@ -12951,7 +13042,7 @@ class Component extends DCLogic {
            { c: ["Tributos", "P1 - Po", brlTxt(r.trib)] }, { c: ["Preço por empregado", "Po + custos indiretos e lucro já incluídos + tributos", brlTxt(r.total)], total: true }];
       blocos.push(T("TRIBUTOS – MÓDULO 6", ["Item", "Cálculo", "Valor"], trib, { alin: "llr", larg: [34, 48, 16] }));
       n.push(r.porFora ? "Depois da reforma: ISS (enquanto existir) por dentro; CBS e IBS por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º)." : "Tributos por dentro: P1 = Po ÷ (1 - tributos), em que Po é o subtotal dos Módulos 1 a 5 com custos indiretos e lucro (IN 05/2017, Anexo VII-D)." + (r.tr && r.tr.teste ? " Em 2026, a CBS (0,9%) e o IBS (0,1%) destacados na nota são compensados com PIS/COFINS, sem custo adicional (LC 214/2025, arts. 343, 346 e 348)." : ""));
-      n.push("Transporte: o empregador custeia o que passar de 6% do salário-base (Lei 7.418/1985, art. 4º, parágrafo único). Encargos do Submódulo 2.2 sobre o Módulo 1 + Submódulo 2.1 + Módulo 4 (IN 05/2017, Anexo VII-D).");
+      n.push("Transporte: o empregador custeia o que passar de 6% do salário-base (Lei 7.418/1985, art. 4º, parágrafo único). Encargos do Submódulo 2.2 sobre o Módulo 1 + Submódulo 2.1 (IN 05/2017, Anexo VII-D, Submódulo 2.2, Nota 3, na redação da IN 07/2018).");
       if (dims.length) { blocos.push(T("DIMENSIONAMENTO DA EQUIPE – IN 05/2017, ANEXO VI-B", ["Tipo de área", "Área (m²)", "Produtividade", "Frequência (h/mês)", "Profissionais", "Preço por m²"],
         dims.map((v) => ({ c: [v[1], v[2], v[3], v[4], v[5], v[6]] })).concat([{ c: [P.moDimResumo], span: true, forte: true }]), { alin: "lrrrrr", larg: [40, 12, 14, 14, 12, 14] }));
         n.push("Dimensionamento: área ÷ produtividade por servente (IN 05/2017, Anexo VI-B, item 3); esquadrias e fachadas pela frequência mensal ÷ 188,76 h; 1 encarregado para cada 30 serventes (fachadas: 1 para cada 4)."); }
@@ -13456,12 +13547,17 @@ class Component extends DCLogic {
     const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const pct = (v) => ((Number(v) || 0) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
     const fontes = d.fontes || {};
-    const L = (cod, rot, o) => ({ cod, rot, auto: !!o.auto || !!fontes[o.k || o.kv],
-      nota: [o.nota || "", fontes[o.k || o.kv] && (o.k || o.kv) !== "iss" ? "Agente: " + fontes[o.k || o.kv] : ""].filter(Boolean).join(" · "),
-      pctEdit: !!o.k, pctK: o.k ? d[o.k] : "", pctPh: o.ph || "", onPct: o.k ? setK(o.k) : null, pctTxt: o.k ? "" : (o.p == null ? "" : (o.p === "-" ? "—" : pct(o.p))),
-      valEdit: !!o.kv, valK: o.kv ? d[o.kv] : "", onVal: o.kv ? setK(o.kv) : null, valTxt: o.kv ? "" : (o.v === null ? "—" : brl(o.v)) });
+    // o.ov: rubrica calculada que aceita valor digitado (vx_<ov>); em branco, o cálculo aparece em cinza e vale
+    const num2 = (v) => (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const L = (cod, rot, o) => { const man = !!(o.ov && r.man && r.man[o.ov] != null), imp = o.ov && r.imp && r.imp[o.ov] != null ? r.imp[o.ov] : null;
+      return { cod, rot, auto: !!o.auto || !!fontes[o.k || o.kv], manual: man,
+      nota: [o.nota || "", fontes[o.k || o.kv] && (o.k || o.kv) !== "iss" ? "Agente: " + fontes[o.k || o.kv] : "",
+        man ? "Valor digitado" + (imp != null ? ": equivale a " + pct(imp) : "") + " (pelo cálculo, " + brl(r.calc[o.ov]) + "). Apague o valor para voltar ao cálculo." : ""].filter(Boolean).join(" · "),
+      pctEdit: !!o.k, pctK: o.k ? d[o.k] : "", pctPh: o.ph || "", onPct: o.k ? setK(o.k) : null, pctTxt: o.k ? "" : (o.p == null ? "" : (o.p === "-" ? "—" : pct(o.p))), pctImp: imp,
+      valEdit: !!o.kv || !!o.ov, valK: o.kv ? d[o.kv] : o.ov ? (d["vx_" + o.ov] || "") : "", valPh: o.ov && r.calc ? num2(r.calc[o.ov]) : "", valCalc: o.ov && r.calc ? r.calc[o.ov] : null,
+      onVal: o.kv ? setK(o.kv) : o.ov ? setK("vx_" + o.ov) : null, valTxt: o.kv || o.ov ? "" : (o.v === null ? "—" : brl(o.v)) }; };
     const T = (rot, p, v) => ({ rot, pctTxt: p == null ? "" : pct(p), valTxt: brl(v) });
-    const naoRen = rep ? "Custo não renovável: o aviso prévio trabalhado (1,94%) é devido só no 1º ano; nas prorrogações e repactuações, no máximo 0,194% por ano (TCU, Acórdão 1.186/2017-Plenário). Preenchido automaticamente." : "";
+    const naoRen = rep ? "Custo não renovável: o aviso prévio trabalhado (1,94%) é devido só no 1º ano; nas prorrogações e repactuações, no máximo 0,194% por ano (TCU, Acórdão 1.186/2017-Plenário). Em branco, vale 0,194%; acima disso, entra na lista de falhas." : "";
     const ph3 = (x) => (Math.round((Number(x) || 0) * 1000000) / 10000).toLocaleString("pt-BR", { maximumFractionDigits: 4 });
     const notaOv = "Em branco, vale a fórmula (o número em cinza); digite o percentual da planilha da empresa para usá-lo.";
     const notaAptRep = rep ? " Depois do 1º ano, a fórmula usa o aviso prévio trabalhado de 0,194%; percentual calculado sobre 1,94% é custo não renovável e entra na lista de falhas (TCU, Acórdão 1.186/2017-Plenário)." : "";
@@ -13469,70 +13565,70 @@ class Component extends DCLogic {
     const issMun = "Alíquota do município (LC 116/2003).";
     const notaSimp = simp ? "Simples Nacional, Anexo IV." : "";
     const trib6 = (!tr || tr.antigos) ? [
-      simp ? L("C.1", "PIS", { p: r.aPis, v: r.pis, auto: true, nota: notaSimp }) : L("C.1", "PIS", { k: "pis", v: r.pis, nota: d.regime === "real" ? "Alíquota efetiva (Lucro Real)." : "" }),
-      simp ? L("C.2", "COFINS", { p: r.aCof, v: r.cofins, auto: true, nota: notaSimp }) : L("C.2", "COFINS", { k: "cofins", v: r.cofins }),
-      simp && !simp.issFora ? L("C.3", "ISS", { p: r.aIss, v: r.iss, auto: true, nota: notaSimp }) : L("C.3", "ISS", { k: "iss", v: r.iss, nota: issMun })
+      simp ? L("C.1", "PIS", { k: "sp_pis", ph: ph3(r.simp.pis), v: r.pis, ov: "pis", nota: notaSimp }) : L("C.1", "PIS", { k: "pis", v: r.pis, ov: "pis", nota: d.regime === "real" ? "Alíquota efetiva (Lucro Real)." : "" }),
+      simp ? L("C.2", "COFINS", { k: "sp_cofins", ph: ph3(r.simp.cofins), v: r.cofins, ov: "cofins", nota: notaSimp }) : L("C.2", "COFINS", { k: "cofins", v: r.cofins, ov: "cofins" }),
+      simp && !simp.issFora ? L("C.3", "ISS", { k: "sp_iss", ph: ph3(r.simp.iss), v: r.iss, ov: "iss", nota: notaSimp }) : L("C.3", "ISS", { k: "iss", v: r.iss, ov: "iss", nota: issMun })
     ] : [
       L("C.1", "PIS e COFINS", { p: "-", v: 0, nota: "Extintos a partir de 2027." }),
-      L("C.2", "CBS – Contribuição sobre Bens e Serviços", { p: r.aCbs, v: r.cbs, auto: true, nota: simp ? "Dentro do DAS (Simples Nacional)." : "Por fora, sobre o valor sem tributos." }),
-      L("C.3", "IBS – Imposto sobre Bens e Serviços", { p: r.aIbs, v: r.ibs, auto: true, nota: simp ? "Dentro do DAS (Simples Nacional)." : tr.ano <= 2028 ? "0,1% em 2027 e 2028." : "Referência × " + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + "." }),
-      L("C.4", "ISS" + (tr.issF < 1 ? " (" + Math.round(tr.issF * 100) + "% da alíquota em " + tr.ano + ")" : ""), simp ? { p: r.aIssT, v: r.iss, auto: true, nota: notaSimp } : { k: "iss", v: r.iss, nota: tr.issF === 0 ? "Extinto em 2033." : issMun })
+      L("C.2", "CBS – Contribuição sobre Bens e Serviços", { k: "tr_cbs", ph: ph3(simp ? r.simp.pis + r.simp.cofins : tr.cbs), v: r.cbs, ov: "cbs", nota: simp ? "Dentro do DAS (Simples Nacional)." : "Por fora, sobre o valor sem tributos." }),
+      L("C.3", "IBS – Imposto sobre Bens e Serviços", { k: "tr_ibs", ph: ph3(simp ? r.simp.iss * (1 - tr.issF) : tr.ibs), v: r.ibs, ov: "ibs", nota: simp ? "Dentro do DAS (Simples Nacional)." : tr.ano <= 2028 ? "0,1% em 2027 e 2028." : "Referência × " + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + "." }),
+      L("C.4", "ISS" + (tr.issF < 1 ? " (" + Math.round(tr.issF * 100) + "% da alíquota em " + tr.ano + ")" : ""), simp ? { p: r.aIssT, v: r.iss, auto: true, ov: "iss", nota: notaSimp } : { k: "iss", v: r.iss, ov: "iss", nota: tr.issF === 0 ? "Extinto em 2033." : issMun })
     ];
     const modulos = [
       { titulo: "Módulo 1 – Composição da remuneração", linhas: [
         L("A", "Salário-base", { kv: "salario" }),
-        L("B", "Adicional de periculosidade", { k: "peric", v: r.peric }),
-        L("C", "Adicional de insalubridade", { k: "insal", v: r.insal, nota: "Calculado sobre o salário-base, como no modelo. Confira a base prevista na convenção (salário mínimo ou salário-base)." }),
-        vg ? L("D", "Adicional noturno", { p: "-", v: r.noturno, auto: true, nota: vg.notas.noturno }) : L("D", "Adicional noturno", { kv: "noturno" }),
-        vg ? L("E", "Adicional de hora noturna reduzida", { p: "-", v: r.hnr, auto: true, nota: vg.notas.hnr }) : L("E", "Adicional de hora noturna reduzida", { kv: "hnr" }),
-        vg ? L("F", "Adicional de hora extra no feriado trabalhado", { p: "-", v: r.he_feriado, auto: true, nota: vg.notas.he }) : L("F", "Adicional de hora extra no feriado trabalhado", { kv: "he_feriado" }),
+        L("B", "Adicional de periculosidade", { k: "peric", v: r.peric, ov: "peric" }),
+        L("C", "Adicional de insalubridade", { k: "insal", v: r.insal, ov: "insal", nota: "Calculado sobre o salário-base, como no modelo. Confira a base prevista na convenção (salário mínimo ou salário-base)." }),
+        vg ? L("D", "Adicional noturno", { p: "-", v: r.noturno, auto: true, ov: "noturno", nota: vg.notas.noturno }) : L("D", "Adicional noturno", { kv: "noturno" }),
+        vg ? L("E", "Adicional de hora noturna reduzida", { p: "-", v: r.hnr, auto: true, ov: "hnr", nota: vg.notas.hnr }) : L("E", "Adicional de hora noturna reduzida", { kv: "hnr" }),
+        vg ? L("F", "Adicional de hora extra no feriado trabalhado", { p: "-", v: r.he_feriado, auto: true, ov: "he_feriado", nota: vg.notas.he }) : L("F", "Adicional de hora extra no feriado trabalhado", { kv: "he_feriado" }),
         L("G", "Outros (especificar)", { kv: "outros1" })], total: T("Total do Módulo 1", null, r.M1) },
       { titulo: "Submódulo 2.1 – 13º salário, férias e adicional de férias", linhas: [
-        L("A", "13º (décimo terceiro) salário", { k: "p13", v: r.p13 }),
-        L("B", "Férias e adicional de férias", { k: "pfa", v: r.pfa })], total: T("Total do Submódulo 2.1", r.M21p, r.M21) },
-      { titulo: "Submódulo 2.2 – GPS, FGTS e outras contribuições", sub: "Base de cálculo: Módulo 1 + Submódulo 2.1 + Módulo 4 = " + brl(r.base22), linhas: [
-        L("A", "INSS", { k: "inss", v: r.g_inss }),
-        L("B", "Salário-Educação", { k: "saled", v: r.g_saled }),
-        L("C", "SAT/RAT (alíquota RAT)", { k: "rat", v: r.g_sat, nota: "Multiplicado pelo FAP informado abaixo: " + String(d.fap || "1").replace(".", ",") + " → " + pct(r.p22.sat) }),
+        L("A", "13º (décimo terceiro) salário", { k: "p13", v: r.p13, ov: "p13" }),
+        L("B", "Férias e adicional de férias", { k: "pfa", v: r.pfa, ov: "pfa" })], total: T("Total do Submódulo 2.1", r.M21p, r.M21) },
+      { titulo: "Submódulo 2.2 – GPS, FGTS e outras contribuições", sub: "Base de cálculo: Módulo 1 + Submódulo 2.1 = " + brl(r.base22) + " (IN 07/2018)", linhas: [
+        L("A", "INSS", { k: "inss", v: r.g_inss, ov: "g_inss" }),
+        L("B", "Salário-Educação", { k: "saled", v: r.g_saled, ov: "g_saled" }),
+        L("C", "SAT/RAT (alíquota RAT)", { k: "rat", v: r.g_sat, ov: "g_sat", nota: "Multiplicado pelo FAP informado abaixo: " + String(d.fap || "1").replace(".", ",") + " → " + pct(r.p22.sat) }),
         L("", "FAP (Fator Acidentário de Prevenção da empresa)", { k: "fap", v: null, nota: "Fator, não percentual (ex.: 0,8430). Valor já incluído no SAT." }),
-        L("D", "SESC ou SESI", { k: "sesc", v: r.g_sesc }),
-        L("E", "SENAI ou SENAC", { k: "senac", v: r.g_senac }),
-        L("F", "SEBRAE", { k: "sebrae", v: r.g_sebrae }),
-        L("G", "INCRA", { k: "incra", v: r.g_incra }),
-        L("H", "FGTS", { k: "fgts", v: r.g_fgts })], total: T("Total do Submódulo 2.2", r.M22p, r.M22) },
+        L("D", "SESC ou SESI", { k: "sesc", v: r.g_sesc, ov: "g_sesc" }),
+        L("E", "SENAI ou SENAC", { k: "senac", v: r.g_senac, ov: "g_senac" }),
+        L("F", "SEBRAE", { k: "sebrae", v: r.g_sebrae, ov: "g_sebrae" }),
+        L("G", "INCRA", { k: "incra", v: r.g_incra, ov: "g_incra" }),
+        L("H", "FGTS", { k: "fgts", v: r.g_fgts, ov: "g_fgts" })], total: T("Total do Submódulo 2.2", r.M22p, r.M22) },
       { titulo: "Submódulo 2.3 – Benefícios mensais e diários", linhas: [
-        L("A", "Transporte", { p: "-", v: r.vt, nota: r.vtGratis ? r.vtGratis + ": sem custo de vale-transporte (Lei 7.418/1985, art. 1º)." : r.vtDiasZero > 0 ? "Tarifa × viagens por dia × " + r.vtDiasPagos.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " dias com transporte pago (" + r.vtDiasZero.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " dia(s) de tarifa zero na escala excluídos), menos 6% do salário-base (Lei 7.418/1985; AGU, Parecer 32/2014/DECOR: a mudança na tarifa entra na repactuação, a partir da data em que ocorre)." : "Tarifa × viagens por dia × dias trabalhados, menos 6% do salário-base (Lei 7.418/1985)." }),
-        L("B", "Auxílio-alimentação", { p: "-", v: r.aux, nota: "Valor por dia × dias trabalhados, menos a participação do empregado." }),
-        L("C", "Auxílio-refeição", { p: "-", v: r.ref, nota: "Quando a convenção prevê também o auxílio-refeição: valor por dia × dias trabalhados, menos a participação do empregado." }),
+        L("A", "Transporte", { p: "-", v: r.vt, ov: "vt", nota: r.vtGratis ? r.vtGratis + ": sem custo de vale-transporte (Lei 7.418/1985, art. 1º)." : r.vtDiasZero > 0 ? "Tarifa × viagens por dia × " + r.vtDiasPagos.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " dias com transporte pago (" + r.vtDiasZero.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " dia(s) de tarifa zero na escala excluídos), menos 6% do salário-base (Lei 7.418/1985; AGU, Parecer 32/2014/DECOR: a mudança na tarifa entra na repactuação, a partir da data em que ocorre)." : "Tarifa × viagens por dia × dias trabalhados, menos 6% do salário-base (Lei 7.418/1985)." }),
+        L("B", "Auxílio-alimentação", { p: "-", v: r.aux, ov: "aux", nota: "Valor por dia × dias trabalhados, menos a participação do empregado." }),
+        L("C", "Auxílio-refeição", { p: "-", v: r.ref, ov: "ref", nota: "Quando a convenção prevê também o auxílio-refeição: valor por dia × dias trabalhados, menos a participação do empregado." }),
         L("D", "Assistência médica e familiar", { kv: "assist" }),
         L("E", "Seguro de vida", { kv: "seguro" }),
         L("F", "Outros (especificar)", { kv: "outros23" })], total: T("Total do Submódulo 2.3", null, r.M23) },
       { titulo: "Módulo 3 – Provisão para rescisão", linhas: [
-        L("A", "Aviso prévio indenizado", { k: "api", v: r.r_api }),
-        L("B", "Incidência do FGTS sobre o aviso prévio indenizado", { k: "m3_fgts_api", ph: ph3(r.m3f.fgts_api), v: r.r_fgts_api, nota: notaOv }),
-        L("C", "Multa do FGTS (40%) sobre os depósitos do contrato", { k: "m3_multa_api", ph: ph3(r.m3f.multa_api), v: r.r_multa_api, nota: notaOv + " Fórmula: " + "8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168): multa rescisória sobre os depósitos de remuneração, 13º, férias e 1/3, para os 90% de empregados que não pedem demissão (cadernos técnicos da SEGES; Lei 8.036/1990, art. 18, § 1º). Sem a contribuição social de 10%, extinta pela Lei 13.932/2019." }),
-        rep ? L("D", "Aviso prévio trabalhado", { p: r.m3p.apt, v: r.r_apt, auto: true, nota: naoRen }) : L("D", "Aviso prévio trabalhado", { k: "apt", v: r.r_apt }),
-        L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { k: "m3_inc_apt", ph: ph3(r.m3f.inc_apt), v: r.r_inc_apt, nota: notaOv + notaAptRep }),
-        L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { k: "m3_multa_apt", ph: ph3(r.m3f.multa_apt), v: r.r_multa_apt, nota: notaOv + notaAptRep })], total: T("Total do Módulo 3", r.M3p, r.M3) },
+        L("A", "Aviso prévio indenizado", { k: "api", v: r.r_api, ov: "r_api" }),
+        L("B", "Incidência do FGTS sobre o aviso prévio indenizado", { k: "m3_fgts_api", ph: ph3(r.m3f.fgts_api), v: r.r_fgts_api, ov: "r_fgts_api", nota: notaOv }),
+        L("C", "Multa do FGTS (40%) sobre os depósitos do contrato", { k: "m3_multa_api", ph: ph3(r.m3f.multa_api), v: r.r_multa_api, ov: "r_multa_api", nota: notaOv + " Fórmula: " + "8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168): multa rescisória sobre os depósitos de remuneração, 13º, férias e 1/3, para os 90% de empregados que não pedem demissão (cadernos técnicos da SEGES; Lei 8.036/1990, art. 18, § 1º). Sem a contribuição social de 10%, extinta pela Lei 13.932/2019." }),
+        rep ? L("D", "Aviso prévio trabalhado", { k: "apt_rep", ph: "0,194", v: r.r_apt, ov: "r_apt", nota: naoRen }) : L("D", "Aviso prévio trabalhado", { k: "apt", v: r.r_apt, ov: "r_apt" }),
+        L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { k: "m3_inc_apt", ph: ph3(r.m3f.inc_apt), v: r.r_inc_apt, ov: "r_inc_apt", nota: notaOv + notaAptRep }),
+        L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { k: "m3_multa_apt", ph: ph3(r.m3f.multa_apt), v: r.r_multa_apt, ov: "r_multa_apt", nota: notaOv + notaAptRep })], total: T("Total do Módulo 3", r.M3p, r.M3) },
       { titulo: "Submódulo 4.1 – Ausências legais", linhas: [
-        L("A", "Férias", { k: "ferias", v: r.ferias }),
-        L("B", "Ausências legais", { k: "aus", v: r.aus }),
-        L("C", "Licença-paternidade", { k: "pat", v: r.pat }),
-        L("D", "Ausência por acidente de trabalho", { k: "acid", v: r.acid }),
-        L("E", "Afastamento maternidade", { k: "mat", v: r.mat, nota: "Base: 13º + férias e adicional + assistência médica + seguro de vida = " + brl(r.base_mat) }),
-        L("F", "Outros (especificar)", { k: "outros41", v: r.outros41 })], total: T("Total do Submódulo 4.1", r.M41p, r.M41) },
+        L("A", "Férias", { k: "ferias", v: r.ferias, ov: "ferias" }),
+        L("B", "Ausências legais", { k: "aus", v: r.aus, ov: "aus" }),
+        L("C", "Licença-paternidade", { k: "pat", v: r.pat, ov: "pat" }),
+        L("D", "Ausência por acidente de trabalho", { k: "acid", v: r.acid, ov: "acid" }),
+        L("E", "Afastamento maternidade", { k: "mat", v: r.mat, ov: "mat", nota: "Base: 13º + férias e adicional + assistência médica + seguro de vida = " + brl(r.base_mat) }),
+        L("F", "Outros (especificar)", { k: "outros41", v: r.outros41, ov: "outros41" })], total: T("Total do Submódulo 4.1", r.M41p, r.M41) },
       { titulo: "Submódulo 4.2 – Intrajornada", linhas: [
-        vg && vg.intraVal ? L("A", "Intervalo para repouso ou alimentação", { p: moNum(d.intra) / 100, v: r.intra, auto: true, nota: vg.notas.intra }) : L("A", "Intervalo para repouso ou alimentação", { k: "intra", v: r.intra })], total: T("Total do Submódulo 4.2", moNum(d.intra) / 100, r.M42) },
+        vg && vg.intraVal ? L("A", "Intervalo para repouso ou alimentação", { p: moNum(d.intra) / 100, v: r.intra, auto: true, ov: "intra", nota: vg.notas.intra }) : L("A", "Intervalo para repouso ou alimentação", { k: "intra", v: r.intra, ov: "intra" })], total: T("Total do Submódulo 4.2", moNum(d.intra) / 100, r.M42) },
       { titulo: "Módulo 5 – Insumos diversos", linhas: [
         ...[["A", "unif", "Uniformes e EPI", "Custo mensal por empregado (custo anual ÷ 12)."], ["B", "materiais", "Materiais", ""], ["C", "equip", "Equipamentos", "Depreciação mensal por empregado."], ["D", "outros5", "Outros (especificar)", ""]]
           .map(([cod, k, rot, nota]) => mem[k] && mem[k].ativo
-            ? { ...L(cod, rot, { p: "-", v: r[k], auto: true, nota: "Memória de cálculo (" + mem[k].linhas.filter((l) => l.mensal > 0).length + " item(ns))." + (r["rj_" + k] ? " Reajustado pelo índice do contrato." : "") }) }
+            ? { ...L(cod, rot, { p: "-", v: r[k], auto: true, ov: k, nota: "Memória de cálculo (" + mem[k].linhas.filter((l) => l.mensal > 0).length + " item(ns))." + (r["rj_" + k] ? " Reajustado pelo índice do contrato." : "") }) }
             : r["rj_" + k]
             ? { ...L(cod, rot, { kv: k, nota: "Reajustado pelo índice do contrato (contratação: " + brl(r["orig_" + k]) + ")." }), auto: true, valTxt: "→ " + brl(r[k]) }
             : L(cod, rot, { kv: k, nota }))], total: T("Total do Módulo 5", null, r.M5) },
       { titulo: "Módulo 6 – Custos indiretos, tributos e lucro", linhas: [
-        L("A", "Custos indiretos", { k: "ci", v: r.ci, nota: "Sobre o subtotal dos Módulos 1 a 5." }),
-        L("B", "Lucro", { k: "lucro", v: r.lucro, nota: "Sobre o subtotal + custos indiretos." }),
+        L("A", "Custos indiretos", { k: "ci", v: r.ci, ov: "ci", nota: "Sobre o subtotal dos Módulos 1 a 5." }),
+        L("B", "Lucro", { k: "lucro", v: r.lucro, ov: "lucro", nota: "Sobre o subtotal + custos indiretos." }),
         ...trib6], total: T("Total do Módulo 6", r.M6p, r.M6) }
     ];
     return modulos;
@@ -13559,12 +13655,17 @@ class Component extends DCLogic {
     const pct = (v) => ((Number(v) || 0) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
     // linha: percentual editável (k) ou calculado (p), valor calculado (v) ou editável (kv)
     const fontes = d.fontes || {};
-    const L = (cod, rot, o) => ({ cod, rot, auto: !!o.auto || !!fontes[o.k || o.kv],
-      nota: [o.nota || "", fontes[o.k || o.kv] && (o.k || o.kv) !== "iss" ? "Agente: " + fontes[o.k || o.kv] : ""].filter(Boolean).join(" · "),
-      pctEdit: !!o.k, pctK: o.k ? d[o.k] : "", pctPh: o.ph || "", onPct: o.k ? SET(o.k) : null, pctTxt: o.k ? "" : (o.p == null ? "" : (o.p === "-" ? "—" : pct(o.p))),
-      valEdit: !!o.kv, valK: o.kv ? d[o.kv] : "", onVal: o.kv ? SET(o.kv) : null, valTxt: o.kv ? "" : (o.v === null ? "—" : brl(o.v)) });
+    // o.ov: rubrica calculada que aceita valor digitado (vx_<ov>); em branco, o cálculo aparece em cinza e vale
+    const num2 = (v) => (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const L = (cod, rot, o) => { const man = !!(o.ov && r.man && r.man[o.ov] != null), imp = o.ov && r.imp && r.imp[o.ov] != null ? r.imp[o.ov] : null;
+      return { cod, rot, auto: !!o.auto || !!fontes[o.k || o.kv], manual: man,
+      nota: [o.nota || "", fontes[o.k || o.kv] && (o.k || o.kv) !== "iss" ? "Agente: " + fontes[o.k || o.kv] : "",
+        man ? "Valor digitado" + (imp != null ? ": equivale a " + pct(imp) : "") + " (pelo cálculo, " + brl(r.calc[o.ov]) + "). Apague o valor para voltar ao cálculo." : ""].filter(Boolean).join(" · "),
+      pctEdit: !!o.k, pctK: o.k ? d[o.k] : "", pctPh: o.ph || "", onPct: o.k ? SET(o.k) : null, pctTxt: o.k ? "" : (o.p == null ? "" : (o.p === "-" ? "—" : pct(o.p))), pctImp: imp,
+      valEdit: !!o.kv || !!o.ov, valK: o.kv ? d[o.kv] : o.ov ? (d["vx_" + o.ov] || "") : "", valPh: o.ov && r.calc ? num2(r.calc[o.ov]) : "", valCalc: o.ov && r.calc ? r.calc[o.ov] : null,
+      onVal: o.kv ? SET(o.kv) : o.ov ? SET("vx_" + o.ov) : null, valTxt: o.kv || o.ov ? "" : (o.v === null ? "—" : brl(o.v)) }; };
     const T = (rot, p, v) => ({ rot, pctTxt: p == null ? "" : pct(p), valTxt: brl(v) });
-    const naoRen = rep ? "Custo não renovável: o aviso prévio trabalhado (1,94%) é devido só no 1º ano; nas prorrogações e repactuações, no máximo 0,194% por ano (TCU, Acórdão 1.186/2017-Plenário). Preenchido automaticamente." : "";
+    const naoRen = rep ? "Custo não renovável: o aviso prévio trabalhado (1,94%) é devido só no 1º ano; nas prorrogações e repactuações, no máximo 0,194% por ano (TCU, Acórdão 1.186/2017-Plenário). Em branco, vale 0,194%; acima disso, entra na lista de falhas." : "";
     const ph3 = (x) => (Math.round((Number(x) || 0) * 1000000) / 10000).toLocaleString("pt-BR", { maximumFractionDigits: 4 });
     const notaOv = "Em branco, vale a fórmula (o número em cinza); digite o percentual da planilha da empresa para usá-lo.";
     const notaAptRep = rep ? " Depois do 1º ano, a fórmula usa o aviso prévio trabalhado de 0,194%; percentual calculado sobre 1,94% é custo não renovável e entra na lista de falhas (TCU, Acórdão 1.186/2017-Plenário)." : "";
@@ -13572,70 +13673,70 @@ class Component extends DCLogic {
     const issMun = "Alíquota do município (LC 116/2003).";
     const notaSimp = simp ? "Simples Nacional, Anexo IV." : "";
     const trib6 = (!tr || tr.antigos) ? [
-      simp ? L("C.1", "PIS", { p: r.aPis, v: r.pis, auto: true, nota: notaSimp }) : L("C.1", "PIS", { k: "pis", v: r.pis, nota: d.regime === "real" ? "Alíquota efetiva (Lucro Real)." : "" }),
-      simp ? L("C.2", "COFINS", { p: r.aCof, v: r.cofins, auto: true, nota: notaSimp }) : L("C.2", "COFINS", { k: "cofins", v: r.cofins }),
-      simp && !simp.issFora ? L("C.3", "ISS", { p: r.aIss, v: r.iss, auto: true, nota: notaSimp }) : L("C.3", "ISS", { k: "iss", v: r.iss, nota: issMun })
+      simp ? L("C.1", "PIS", { k: "sp_pis", ph: ph3(r.simp.pis), v: r.pis, ov: "pis", nota: notaSimp }) : L("C.1", "PIS", { k: "pis", v: r.pis, ov: "pis", nota: d.regime === "real" ? "Alíquota efetiva (Lucro Real)." : "" }),
+      simp ? L("C.2", "COFINS", { k: "sp_cofins", ph: ph3(r.simp.cofins), v: r.cofins, ov: "cofins", nota: notaSimp }) : L("C.2", "COFINS", { k: "cofins", v: r.cofins, ov: "cofins" }),
+      simp && !simp.issFora ? L("C.3", "ISS", { k: "sp_iss", ph: ph3(r.simp.iss), v: r.iss, ov: "iss", nota: notaSimp }) : L("C.3", "ISS", { k: "iss", v: r.iss, ov: "iss", nota: issMun })
     ] : [
       L("C.1", "PIS e COFINS", { p: "-", v: 0, nota: "Extintos a partir de 2027." }),
-      L("C.2", "CBS – Contribuição sobre Bens e Serviços", { p: r.aCbs, v: r.cbs, auto: true, nota: simp ? "Dentro do DAS (Simples Nacional)." : "Por fora, sobre o valor sem tributos." }),
-      L("C.3", "IBS – Imposto sobre Bens e Serviços", { p: r.aIbs, v: r.ibs, auto: true, nota: simp ? "Dentro do DAS (Simples Nacional)." : tr.ano <= 2028 ? "0,1% em 2027 e 2028." : "Referência × " + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + "." }),
-      L("C.4", "ISS" + (tr.issF < 1 ? " (" + Math.round(tr.issF * 100) + "% da alíquota em " + tr.ano + ")" : ""), simp ? { p: r.aIssT, v: r.iss, auto: true, nota: notaSimp } : { k: "iss", v: r.iss, nota: tr.issF === 0 ? "Extinto em 2033." : issMun })
+      L("C.2", "CBS – Contribuição sobre Bens e Serviços", { k: "tr_cbs", ph: ph3(simp ? r.simp.pis + r.simp.cofins : tr.cbs), v: r.cbs, ov: "cbs", nota: simp ? "Dentro do DAS (Simples Nacional)." : "Por fora, sobre o valor sem tributos." }),
+      L("C.3", "IBS – Imposto sobre Bens e Serviços", { k: "tr_ibs", ph: ph3(simp ? r.simp.iss * (1 - tr.issF) : tr.ibs), v: r.ibs, ov: "ibs", nota: simp ? "Dentro do DAS (Simples Nacional)." : tr.ano <= 2028 ? "0,1% em 2027 e 2028." : "Referência × " + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + "." }),
+      L("C.4", "ISS" + (tr.issF < 1 ? " (" + Math.round(tr.issF * 100) + "% da alíquota em " + tr.ano + ")" : ""), simp ? { p: r.aIssT, v: r.iss, auto: true, ov: "iss", nota: notaSimp } : { k: "iss", v: r.iss, ov: "iss", nota: tr.issF === 0 ? "Extinto em 2033." : issMun })
     ];
     const modulos = [
       { titulo: "Módulo 1 – Composição da remuneração", linhas: [
         L("A", "Salário-base", { kv: "salario" }),
-        L("B", "Adicional de periculosidade", { k: "peric", v: r.peric }),
-        L("C", "Adicional de insalubridade", { k: "insal", v: r.insal, nota: "Calculado sobre o salário-base, como no modelo. Confira a base prevista na convenção (salário mínimo ou salário-base)." }),
-        vg ? L("D", "Adicional noturno", { p: "-", v: r.noturno, auto: true, nota: vg.notas.noturno }) : L("D", "Adicional noturno", { kv: "noturno" }),
-        vg ? L("E", "Adicional de hora noturna reduzida", { p: "-", v: r.hnr, auto: true, nota: vg.notas.hnr }) : L("E", "Adicional de hora noturna reduzida", { kv: "hnr" }),
-        vg ? L("F", "Adicional de hora extra no feriado trabalhado", { p: "-", v: r.he_feriado, auto: true, nota: vg.notas.he }) : L("F", "Adicional de hora extra no feriado trabalhado", { kv: "he_feriado" }),
+        L("B", "Adicional de periculosidade", { k: "peric", v: r.peric, ov: "peric" }),
+        L("C", "Adicional de insalubridade", { k: "insal", v: r.insal, ov: "insal", nota: "Calculado sobre o salário-base, como no modelo. Confira a base prevista na convenção (salário mínimo ou salário-base)." }),
+        vg ? L("D", "Adicional noturno", { p: "-", v: r.noturno, auto: true, ov: "noturno", nota: vg.notas.noturno }) : L("D", "Adicional noturno", { kv: "noturno" }),
+        vg ? L("E", "Adicional de hora noturna reduzida", { p: "-", v: r.hnr, auto: true, ov: "hnr", nota: vg.notas.hnr }) : L("E", "Adicional de hora noturna reduzida", { kv: "hnr" }),
+        vg ? L("F", "Adicional de hora extra no feriado trabalhado", { p: "-", v: r.he_feriado, auto: true, ov: "he_feriado", nota: vg.notas.he }) : L("F", "Adicional de hora extra no feriado trabalhado", { kv: "he_feriado" }),
         L("G", "Outros (especificar)", { kv: "outros1" })], total: T("Total do Módulo 1", null, r.M1) },
       { titulo: "Submódulo 2.1 – 13º salário, férias e adicional de férias", linhas: [
-        L("A", "13º (décimo terceiro) salário", { k: "p13", v: r.p13 }),
-        L("B", "Férias e adicional de férias", { k: "pfa", v: r.pfa })], total: T("Total do Submódulo 2.1", r.M21p, r.M21) },
-      { titulo: "Submódulo 2.2 – GPS, FGTS e outras contribuições", sub: "Base de cálculo: Módulo 1 + Submódulo 2.1 + Módulo 4 = " + brl(r.base22), linhas: [
-        L("A", "INSS", { k: "inss", v: r.g_inss }),
-        L("B", "Salário-Educação", { k: "saled", v: r.g_saled }),
-        L("C", "SAT/RAT (alíquota RAT)", { k: "rat", v: r.g_sat, nota: "Multiplicado pelo FAP informado abaixo: " + String(d.fap || "1").replace(".", ",") + " → " + pct(r.p22.sat) }),
+        L("A", "13º (décimo terceiro) salário", { k: "p13", v: r.p13, ov: "p13" }),
+        L("B", "Férias e adicional de férias", { k: "pfa", v: r.pfa, ov: "pfa" })], total: T("Total do Submódulo 2.1", r.M21p, r.M21) },
+      { titulo: "Submódulo 2.2 – GPS, FGTS e outras contribuições", sub: "Base de cálculo: Módulo 1 + Submódulo 2.1 = " + brl(r.base22) + " (IN 07/2018)", linhas: [
+        L("A", "INSS", { k: "inss", v: r.g_inss, ov: "g_inss" }),
+        L("B", "Salário-Educação", { k: "saled", v: r.g_saled, ov: "g_saled" }),
+        L("C", "SAT/RAT (alíquota RAT)", { k: "rat", v: r.g_sat, ov: "g_sat", nota: "Multiplicado pelo FAP informado abaixo: " + String(d.fap || "1").replace(".", ",") + " → " + pct(r.p22.sat) }),
         L("", "FAP (Fator Acidentário de Prevenção da empresa)", { k: "fap", v: null, nota: "Fator, não percentual (ex.: 0,8430). Valor já incluído no SAT." }),
-        L("D", "SESC ou SESI", { k: "sesc", v: r.g_sesc }),
-        L("E", "SENAI ou SENAC", { k: "senac", v: r.g_senac }),
-        L("F", "SEBRAE", { k: "sebrae", v: r.g_sebrae }),
-        L("G", "INCRA", { k: "incra", v: r.g_incra }),
-        L("H", "FGTS", { k: "fgts", v: r.g_fgts })], total: T("Total do Submódulo 2.2", r.M22p, r.M22) },
+        L("D", "SESC ou SESI", { k: "sesc", v: r.g_sesc, ov: "g_sesc" }),
+        L("E", "SENAI ou SENAC", { k: "senac", v: r.g_senac, ov: "g_senac" }),
+        L("F", "SEBRAE", { k: "sebrae", v: r.g_sebrae, ov: "g_sebrae" }),
+        L("G", "INCRA", { k: "incra", v: r.g_incra, ov: "g_incra" }),
+        L("H", "FGTS", { k: "fgts", v: r.g_fgts, ov: "g_fgts" })], total: T("Total do Submódulo 2.2", r.M22p, r.M22) },
       { titulo: "Submódulo 2.3 – Benefícios mensais e diários", linhas: [
-        L("A", "Transporte", { p: "-", v: r.vt, nota: r.vtGratis ? r.vtGratis + ": sem custo de vale-transporte (Lei 7.418/1985, art. 1º)." : r.vtDiasZero > 0 ? "Tarifa × viagens por dia × " + r.vtDiasPagos.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " dias com transporte pago (" + r.vtDiasZero.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " dia(s) de tarifa zero na escala excluídos), menos 6% do salário-base (Lei 7.418/1985; AGU, Parecer 32/2014/DECOR: a mudança na tarifa entra na repactuação, a partir da data em que ocorre)." : "Tarifa × viagens por dia × dias trabalhados, menos 6% do salário-base (Lei 7.418/1985)." }),
-        L("B", "Auxílio-alimentação", { p: "-", v: r.aux, nota: "Valor por dia × dias trabalhados, menos a participação do empregado." }),
-        L("C", "Auxílio-refeição", { p: "-", v: r.ref, nota: "Quando a convenção prevê também o auxílio-refeição: valor por dia × dias trabalhados, menos a participação do empregado." }),
+        L("A", "Transporte", { p: "-", v: r.vt, ov: "vt", nota: r.vtGratis ? r.vtGratis + ": sem custo de vale-transporte (Lei 7.418/1985, art. 1º)." : r.vtDiasZero > 0 ? "Tarifa × viagens por dia × " + r.vtDiasPagos.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " dias com transporte pago (" + r.vtDiasZero.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + " dia(s) de tarifa zero na escala excluídos), menos 6% do salário-base (Lei 7.418/1985; AGU, Parecer 32/2014/DECOR: a mudança na tarifa entra na repactuação, a partir da data em que ocorre)." : "Tarifa × viagens por dia × dias trabalhados, menos 6% do salário-base (Lei 7.418/1985)." }),
+        L("B", "Auxílio-alimentação", { p: "-", v: r.aux, ov: "aux", nota: "Valor por dia × dias trabalhados, menos a participação do empregado." }),
+        L("C", "Auxílio-refeição", { p: "-", v: r.ref, ov: "ref", nota: "Quando a convenção prevê também o auxílio-refeição: valor por dia × dias trabalhados, menos a participação do empregado." }),
         L("D", "Assistência médica e familiar", { kv: "assist" }),
         L("E", "Seguro de vida", { kv: "seguro" }),
         L("F", "Outros (especificar)", { kv: "outros23" })], total: T("Total do Submódulo 2.3", null, r.M23) },
       { titulo: "Módulo 3 – Provisão para rescisão", linhas: [
-        L("A", "Aviso prévio indenizado", { k: "api", v: r.r_api }),
-        L("B", "Incidência do FGTS sobre o aviso prévio indenizado", { k: "m3_fgts_api", ph: ph3(r.m3f.fgts_api), v: r.r_fgts_api, nota: notaOv }),
-        L("C", "Multa do FGTS (40%) sobre os depósitos do contrato", { k: "m3_multa_api", ph: ph3(r.m3f.multa_api), v: r.r_multa_api, nota: notaOv + " Fórmula: " + "8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168): multa rescisória sobre os depósitos de remuneração, 13º, férias e 1/3, para os 90% de empregados que não pedem demissão (cadernos técnicos da SEGES; Lei 8.036/1990, art. 18, § 1º). Sem a contribuição social de 10%, extinta pela Lei 13.932/2019." }),
-        rep ? L("D", "Aviso prévio trabalhado", { p: r.m3p.apt, v: r.r_apt, auto: true, nota: naoRen }) : L("D", "Aviso prévio trabalhado", { k: "apt", v: r.r_apt }),
-        L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { k: "m3_inc_apt", ph: ph3(r.m3f.inc_apt), v: r.r_inc_apt, nota: notaOv + notaAptRep }),
-        L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { k: "m3_multa_apt", ph: ph3(r.m3f.multa_apt), v: r.r_multa_apt, nota: notaOv + notaAptRep })], total: T("Total do Módulo 3", r.M3p, r.M3) },
+        L("A", "Aviso prévio indenizado", { k: "api", v: r.r_api, ov: "r_api" }),
+        L("B", "Incidência do FGTS sobre o aviso prévio indenizado", { k: "m3_fgts_api", ph: ph3(r.m3f.fgts_api), v: r.r_fgts_api, ov: "r_fgts_api", nota: notaOv }),
+        L("C", "Multa do FGTS (40%) sobre os depósitos do contrato", { k: "m3_multa_api", ph: ph3(r.m3f.multa_api), v: r.r_multa_api, ov: "r_multa_api", nota: notaOv + " Fórmula: " + "8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168): multa rescisória sobre os depósitos de remuneração, 13º, férias e 1/3, para os 90% de empregados que não pedem demissão (cadernos técnicos da SEGES; Lei 8.036/1990, art. 18, § 1º). Sem a contribuição social de 10%, extinta pela Lei 13.932/2019." }),
+        rep ? L("D", "Aviso prévio trabalhado", { k: "apt_rep", ph: "0,194", v: r.r_apt, ov: "r_apt", nota: naoRen }) : L("D", "Aviso prévio trabalhado", { k: "apt", v: r.r_apt, ov: "r_apt" }),
+        L("E", "Incidência dos encargos do Submódulo 2.2 sobre o aviso prévio trabalhado", { k: "m3_inc_apt", ph: ph3(r.m3f.inc_apt), v: r.r_inc_apt, ov: "r_inc_apt", nota: notaOv + notaAptRep }),
+        L("F", "Multa do FGTS (40%) sobre o aviso prévio trabalhado", { k: "m3_multa_apt", ph: ph3(r.m3f.multa_apt), v: r.r_multa_apt, ov: "r_multa_apt", nota: notaOv + notaAptRep })], total: T("Total do Módulo 3", r.M3p, r.M3) },
       { titulo: "Submódulo 4.1 – Ausências legais", linhas: [
-        L("A", "Férias", { k: "ferias", v: r.ferias }),
-        L("B", "Ausências legais", { k: "aus", v: r.aus }),
-        L("C", "Licença-paternidade", { k: "pat", v: r.pat }),
-        L("D", "Ausência por acidente de trabalho", { k: "acid", v: r.acid }),
-        L("E", "Afastamento maternidade", { k: "mat", v: r.mat, nota: "Base: 13º + férias e adicional + assistência médica + seguro de vida = " + brl(r.base_mat) }),
-        L("F", "Outros (especificar)", { k: "outros41", v: r.outros41 })], total: T("Total do Submódulo 4.1", r.M41p, r.M41) },
+        L("A", "Férias", { k: "ferias", v: r.ferias, ov: "ferias" }),
+        L("B", "Ausências legais", { k: "aus", v: r.aus, ov: "aus" }),
+        L("C", "Licença-paternidade", { k: "pat", v: r.pat, ov: "pat" }),
+        L("D", "Ausência por acidente de trabalho", { k: "acid", v: r.acid, ov: "acid" }),
+        L("E", "Afastamento maternidade", { k: "mat", v: r.mat, ov: "mat", nota: "Base: 13º + férias e adicional + assistência médica + seguro de vida = " + brl(r.base_mat) }),
+        L("F", "Outros (especificar)", { k: "outros41", v: r.outros41, ov: "outros41" })], total: T("Total do Submódulo 4.1", r.M41p, r.M41) },
       { titulo: "Submódulo 4.2 – Intrajornada", linhas: [
-        vg && vg.intraVal ? L("A", "Intervalo para repouso ou alimentação", { p: moNum(d.intra) / 100, v: r.intra, auto: true, nota: vg.notas.intra }) : L("A", "Intervalo para repouso ou alimentação", { k: "intra", v: r.intra })], total: T("Total do Submódulo 4.2", moNum(d.intra) / 100, r.M42) },
+        vg && vg.intraVal ? L("A", "Intervalo para repouso ou alimentação", { p: moNum(d.intra) / 100, v: r.intra, auto: true, ov: "intra", nota: vg.notas.intra }) : L("A", "Intervalo para repouso ou alimentação", { k: "intra", v: r.intra, ov: "intra" })], total: T("Total do Submódulo 4.2", moNum(d.intra) / 100, r.M42) },
       { titulo: "Módulo 5 – Insumos diversos", linhas: [
         ...[["A", "unif", "Uniformes e EPI", "Custo mensal por empregado (custo anual ÷ 12)."], ["B", "materiais", "Materiais", ""], ["C", "equip", "Equipamentos", "Depreciação mensal por empregado."], ["D", "outros5", "Outros (especificar)", ""]]
           .map(([cod, k, rot, nota]) => mem[k] && mem[k].ativo
-            ? { ...L(cod, rot, { p: "-", v: r[k], auto: true, nota: "Memória de cálculo (" + mem[k].linhas.filter((l) => l.mensal > 0).length + " item(ns))." + (r["rj_" + k] ? " Reajustado pelo índice do contrato." : "") }) }
+            ? { ...L(cod, rot, { p: "-", v: r[k], auto: true, ov: k, nota: "Memória de cálculo (" + mem[k].linhas.filter((l) => l.mensal > 0).length + " item(ns))." + (r["rj_" + k] ? " Reajustado pelo índice do contrato." : "") }) }
             : r["rj_" + k]
             ? { ...L(cod, rot, { kv: k, nota: "Reajustado pelo índice do contrato (contratação: " + brl(r["orig_" + k]) + ")." }), auto: true, valTxt: "→ " + brl(r[k]) }
             : L(cod, rot, { kv: k, nota }))], total: T("Total do Módulo 5", null, r.M5) },
       { titulo: "Módulo 6 – Custos indiretos, tributos e lucro", linhas: [
-        L("A", "Custos indiretos", { k: "ci", v: r.ci, nota: "Sobre o subtotal dos Módulos 1 a 5." }),
-        L("B", "Lucro", { k: "lucro", v: r.lucro, nota: "Sobre o subtotal + custos indiretos." }),
+        L("A", "Custos indiretos", { k: "ci", v: r.ci, ov: "ci", nota: "Sobre o subtotal dos Módulos 1 a 5." }),
+        L("B", "Lucro", { k: "lucro", v: r.lucro, ov: "lucro", nota: "Sobre o subtotal + custos indiretos." }),
         ...trib6], total: T("Total do Módulo 6", r.M6p, r.M6) }
     ];
     const campo = (k, rot, ph, tipo) => ({ k, rot, ph: ph || "", valor: d[k] == null ? "" : d[k], on: SET(k), tipo: tipo || "text" });
@@ -14425,7 +14526,7 @@ class Component extends DCLogic {
         const pct = (v) => (v * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
         const sinal = (v) => (v > 0 ? "+" : "") + brl(v);
         const campos = {};
-        ["contrato", "contratada", "objeto", "valor", "proposta", "meses", "rbt12", "pis", "cofins", "iss", "rf_cbs", "rf_ibs", "ins", "ins_red", "fs_fato", "fs_data", "fs_reaj", "fs_bdi"].forEach((k) => {
+        ["contrato", "contratada", "objeto", "valor", "proposta", "meses", "rbt12", "pis", "cofins", "iss", "sp_pis", "sp_cofins", "sp_iss", "ano_cbs", "ano_ibs", "rf_cbs", "rf_ibs", "ins", "ins_red", "fs_fato", "fs_data", "fs_reaj", "fs_bdi"].forEach((k) => {
           const nome = "rq" + k.split("_").map((x) => x[0].toUpperCase() + x.slice(1)).join("");
           campos[nome] = d[k] || ""; campos["on" + nome[0].toUpperCase() + nome.slice(1)] = this.rqSet(k);
         });
@@ -14465,6 +14566,9 @@ class Component extends DCLogic {
             : d.regime === "simples" ? "Simples Nacional: a CBS e o IBS ficam dentro do DAS e a alíquota efetiva não muda na transição. Se a contratada optar pelo regime regular da CBS e do IBS (LC 214/2025, art. 41), calcule pelo Lucro Presumido ou Real." : "",
           rqAnos: MO_ANOS_REFORMA.map((ano) => ({ id: String(ano), nome: String(ano), sel: String(d.ano) === String(ano) })), onRqAno: this.rqSet("ano"),
           rqPronto: r.pronto, rqFalta: r.pronto ? "" : r.falta,
+          rqSimpPh: r.simp ? { pis: pct(r.simp.pis), cofins: pct(r.simp.cofins), iss: r.simp.issFora ? "fora do DAS" : pct(r.simp.iss) } : { pis: "", cofins: "", iss: "" },
+          rqAnoPh: r.pronto && !r.simp && !r.ref.antigos ? { cbs: pct(r.ref.cbs), ibs: pct(r.ref.ibs) } : { cbs: "—", ibs: "—" }, rqAnoEdit: !!(r.pronto && !r.simp && !r.ref.antigos),
+          rqAlertas: r.pronto ? r.alertas.map((t) => ({ t })) : [], rqTemAlertas: !!(r.pronto && r.alertas.length),
           rqKpis: !r.pronto ? [] : [["Valor atual", brl(r.P0)], ["Valor de equilíbrio em " + sel.ano, brl(sel.P1)], ["Diferença mensal", sinal(sel.dif) + " (" + (sel.dif > 0 ? "+" : "") + pct(sel.pct) + ")"],
             [r.meses ? "Até o fim da vigência (" + r.meses + " meses)" : "Em 12 meses", sinal(sel.dif * (r.meses || 12))], ["Carga no preço: proposta", pct(r.a0)], ["Carga no preço em " + sel.ano, pct(sel.carga)]].map(([k, v]) => ({ k, v })),
           rqAnosTab: !r.pronto ? [] : r.anos.map((a) => ({ ano: String(a.ano) + (a.tr.teste ? " · teste" : ""), pis: brl(a.pis), cbs: brl(a.cbs), ibs: brl(a.ibs), iss: brl(a.iss), carga: pct(a.carga), p1: brl(a.P1), dif: sinal(a.dif),
