@@ -1144,7 +1144,7 @@ function renderPainel(list,L){
 
 /* ===== Situação da coleta ===== */
 /* [chave em meta, nome, hora, minuto, usa o computador, dia da semana (1=seg…5=sex; vazio = todo dia útil)] */
-const AGENDA=[["coleta","TCU, CGU, STF, STJ, PGE-RJ, TJ-RJ e normas",7,7,false],["coleta_tcerj","TCE-RJ",8,23,true],["coleta_tcmrj","TCM-RJ",8,41,true],
+const AGENDA=[["coleta_tcerj","TCE-RJ",8,23,true],["coleta_tcmrj","TCM-RJ",8,41,true],
   ["coleta_norte","Região Norte (semanal)",7,37,false,1],["coleta_nordestei","Região Nordeste I (semanal)",7,37,false,2],["coleta_nordesteii","Região Nordeste II (semanal)",7,37,false,3],
   ["coleta_sudeste","Região Sudeste (semanal)",7,37,false,4],["coleta_sulecentrooeste","Regiões Sul e Centro-Oeste (semanal)",7,37,false,5]];
 function ultimoPrevisto(h,mi,dia){const agora=new Date();for(let i=0;i<10;i++){const t=new Date(Date.UTC(agora.getUTCFullYear(),agora.getUTCMonth(),agora.getUTCDate()-i,h+3,mi));const wd=new Date(t.getTime()-3*36e5).getUTCDay();
