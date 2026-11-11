@@ -12,7 +12,7 @@ RAIZ = pathlib.Path(__file__).resolve().parent.parent
 ACERVO = RAIZ / "acervo.json"
 SAIDA = RAIZ / "inicio-destaques.json"
 TOTAL = 28
-POR_ORGAO = 99  # sem limite: a faixa segue a ordem da Biblioteca (mais recentes primeiro)
+POR_ORGAO = 1  # um por órgão: a decisão mais recente de cada um
 
 
 def curto(t: str, n: int) -> str:
