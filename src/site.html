@@ -2872,7 +2872,7 @@
       <section style="background: #0A1F2A; color: #fff; padding: 48px 24px 28px">
         <div style="max-width: 1240px; margin: 0 auto">
           <h1 style="font-size: 40px; letter-spacing: -0.03em; font-weight: 800; margin: 0">Biblioteca Jurídica</h1>
-          <p style="font-size: 16.5px; color: #A9BEC6; margin: 10px 0 22px; max-width: 640px">Decisões, súmulas, respostas a consultas e normas sobre licitações e contratos, conferidas na fonte oficial e classificadas por órgão, esfera, tipo, tema e ano. Atualização automática toda semana.</p>
+          <p style="font-size: 16.5px; color: #A9BEC6; margin: 10px 0 22px; max-width: 640px">Decisões, súmulas, respostas a consultas e normas sobre licitações e contratos, conferidas na fonte oficial e classificadas por órgão, esfera, tipo, tema e ano. Atualização automática.</p>
           <div style="display: flex; gap: 10px; flex-wrap: wrap">
             <label style="flex: 1; min-width: 300px; display: flex; align-items: center; gap: 10px; background: #fff; border-radius: 12px; padding: 13px 16px">
               <span aria-hidden="true" style="color: #0F6B7E; font-size: 17px">⌕</span>
@@ -2883,7 +2883,7 @@
           </div>
           <div style="margin-top: 22px; border: 1px solid rgba(127,227,182,0.3); background: rgba(15,163,107,0.09); border-radius: 14px; padding: 16px 18px; display: flex; gap: 14px; align-items: flex-start">
             <span aria-hidden="true" style="color: #6FE0AE; font-weight: 800; flex: none">i</span>
-            <p style="margin: 0; font-size: 13.5px; line-height: 1.6; color: #CFDDE2; text-wrap: pretty">Fontes acompanhadas: <strong style="color: #fff">TCU, CGU, STF, STJ, Tribunais de Contas dos 26 estados e do DF, TCMs, PGEs e TJs</strong>, além de normas federais e estaduais. Cada item traz o link da fonte oficial e a data em que foi conferido; os coletores automáticos rodam toda semana e a curadoria corrige o que for preciso.</p>
+            <p style="margin: 0; font-size: 13.5px; line-height: 1.6; color: #CFDDE2; text-wrap: pretty">Fontes acompanhadas: <strong style="color: #fff">TCU, CGU, STF, STJ, Tribunais de Contas dos 26 estados e do DF, TCMs, PGEs e TJs</strong>, além de normas federais e estaduais. Cada item traz o link da fonte oficial e a data em que foi conferido; os coletores automáticos buscam os itens novos e a curadoria corrige o que for preciso.</p>
           </div>
         </div>
       </section>
@@ -7266,7 +7266,7 @@ const INSTITUCIONAL = {
         "Colaboração entre pares — setor público e setor privado no mesmo fórum, com identificação de perfil profissional.",
         "Ética e integridade na gestão pública — recusamos qualquer uso da plataforma para burlar controles ou fabricar fundamentação."
       ] },
-      { titulo: "Como a base é construída", texto: "A Biblioteca Jurídica é alimentada por coletas automáticas semanais em fontes oficiais (TCU, CGU, STF, STJ, Tribunais de Contas de todos os estados e do DF, TCMs, Procuradorias-Gerais e Tribunais de Justiça estaduais, além da legislação), usando dados abertos e as páginas públicas de cada órgão, com respeito aos termos de uso de cada portal e à Lei de Acesso à Informação (Lei nº 12.527/2011). Os documentos são organizados automaticamente por tema, e cada item traz o link para o inteiro teor na fonte oficial.", itens: [] },
+      { titulo: "Como a base é construída", texto: "A Biblioteca Jurídica é alimentada por coletas automáticas em fontes oficiais (TCU, CGU, STF, STJ, Tribunais de Contas de todos os estados e do DF, TCMs, Procuradorias-Gerais e Tribunais de Justiça estaduais, além da legislação), usando dados abertos e as páginas públicas de cada órgão, com respeito aos termos de uso de cada portal e à Lei de Acesso à Informação (Lei nº 12.527/2011). Os documentos são organizados automaticamente por tema, e cada item traz o link para o inteiro teor na fonte oficial.", itens: [] },
       { titulo: "Limites do que oferecemos", texto: "O Licitacon é uma plataforma de informação, comunidade, capacitação e consultoria técnica. Não somos escritório de advocacia e não prestamos consultoria jurídica nem emitimos parecer jurídico. Conteúdo da Biblioteca, respostas do fórum e análises geradas por inteligência artificial são material de apoio à decisão — a responsabilidade pelo ato administrativo ou pela decisão empresarial permanece integralmente com o profissional e o órgão ou empresa a que ele se vincula.", itens: [] },
       { titulo: "Quem somos", texto: "O Licitacon é mantido por Renato Garcia, graduado em Gestão Pública (FGV EBAPE) e pós-graduado em Licitações e Contratações Públicas e em Direito Administrativo e Anticorrupção. O atendimento é 100% digital, pelo Fale Conosco e pelo assistente de dúvidas do site. Renato Garcia é também o encarregado de proteção de dados. Endereço: Estrada Henfil, Maricá, Rio de Janeiro.", itens: [] }
     ]
@@ -9830,7 +9830,7 @@ const PLANO_BENEFICIOS = {
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "17";
+const CHAT_VERSAO = "18";
 // versão da Biblioteca no endereço: força o navegador a buscar a página nova depois de cada mudança (o GitHub Pages guarda em cache por 10 minutos)
 const BIB_URL = "biblioteca.html?v=2";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
@@ -16247,7 +16247,7 @@ class Component extends DCLogic {
         { icon: "▤", tag: "Capacitação", titulo: "Cursos", desc: "Cursos práticos de licitações e contratos, com até 50% de desconto no plano Pro.", cta: "Explorar cursos", go: this.nav("cursos") }
       ].map((f) => ({ ...f, classe: "lvh-f" + (f.big ? " lvh-f-big" : "") })),
       diferenciais: [
-        { icon: "↻", titulo: "Base que se atualiza sozinha", desc: "Coleta automática nos dias úteis em 90 fontes oficiais, com a data e a origem de cada documento registradas." },
+        { icon: "↻", titulo: "Base que se atualiza sozinha", desc: "Coleta automática em 90 fontes oficiais, com a data e a origem de cada documento registradas." },
         { icon: "#", titulo: "Classificação por tema, não por data", desc: "Reajuste vai para reajuste, adesão a ata vai para adesão a ata: jurisprudência e fórum organizados pelo vocabulário de licitações." },
         { icon: "⎘", titulo: "Fonte oficial em cada item", desc: "Toda decisão traz o link para o inteiro teor no portal de origem, para você conferir antes de citar." },
         { icon: "✦", titulo: "IA que cita a lei e a decisão", desc: "O agente confere o texto legal e usa a jurisprudência da Biblioteca em cada apontamento. O parecer é opinativo: a decisão é sempre sua." },
@@ -16265,7 +16265,7 @@ class Component extends DCLogic {
       ].map(([c, nivel, texto]) => ({ classe: "lvh-ach " + c, nivel, texto })),
       homeNumeros: [
         { v: "90", r: "fontes oficiais monitoradas" },
-        { v: s.acervoN > 0 ? s.acervoN.toLocaleString("pt-BR") : "Dias úteis", r: s.acervoN > 0 ? "decisões e normas, atualizadas nos dias úteis" : "coleta automática" },
+        { v: s.acervoN > 0 ? s.acervoN.toLocaleString("pt-BR") : "Automática", r: s.acervoN > 0 ? "decisões e normas, atualizadas automaticamente" : "coleta automática" },
         { v: "27", r: "estados e DF cobertos" }
       ],
       homeDores: [
