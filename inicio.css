@@ -482,7 +482,7 @@ button.lvi-campo-btn:focus-visible { outline: 2px solid var(--lvi-menta); outlin
 
 /* chamada final com brilho girando */
 .lvi-topo ~ .lvh-final { position: relative; overflow: hidden; isolation: isolate; margin-top: 0; }
-.lvi-topo ~ .lvh-final::before { content: ""; position: absolute; left: 50%; top: 50%; width: 1100px; height: 1100px; margin: -550px 0 0 -550px; z-index: -1; background: conic-gradient(from 0deg, transparent 0deg, rgba(63,212,154,0.22) 60deg, transparent 140deg, rgba(91,192,218,0.16) 220deg, transparent 300deg); animation: lvi-gira 24s linear infinite; }
+.lvi-topo ~ .lvh-final::before { content: ""; position: absolute; left: 50%; top: 50%; width: 1100px; height: 1100px; margin: -550px 0 0 -550px; z-index: -1; background: conic-gradient(from 0deg, transparent 0deg, rgba(63,212,154,0.22) 60deg, transparent 140deg, rgba(91,192,218,0.16) 220deg, transparent 300deg); border-radius: 50%; -webkit-mask-image: radial-gradient(closest-side, #000 45%, transparent 100%); mask-image: radial-gradient(closest-side, #000 45%, transparent 100%); animation: lvi-gira 24s linear infinite; }  /* círculo esmaecido: o quadrado deixava cantos retos aparecendo na faixa */
 @keyframes lvi-gira { to { transform: rotate(360deg); } }
 
 /* ---------- celular e tablet ---------- */

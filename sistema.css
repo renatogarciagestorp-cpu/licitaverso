@@ -81,6 +81,13 @@
 /* a linha acima do título diz a seção: caixa normal, sem letras espaçadas */
 #dc-root .lvx-ph .lvh-eyebrow { font-size: 14px; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--lv-verde-escuro); }
 
+/* ---------------------------------------------------------------- rótulos de seção da página inicial
+   A linha acima de cada título de seção segue o padrão das páginas internas: caixa normal, 14px, peso 700, sem letras
+   espaçadas (cada seção mantém a sua cor). Selos curtos dentro das ilustrações (ALTA, VIGENTE…) continuam em maiúsculas. */
+#dc-root .lvh-ban-eye, #dc-root .lvh-bd-sub, #dc-root .lvh-eyebrow, #dc-root .lvh-kicker, #dc-root .lvh-pa-3 small {
+  text-transform: none; letter-spacing: 0; font-size: var(--lv-t-apoio); font-weight: 700; }
+#dc-root .lvh-ban-eye, #dc-root .lvh-eyebrow, #dc-root .lvh-kicker { font-size: 14px; }
+
 /* ---------------------------------------------------------------- rótulos
    Rótulo de campo e de seção em caixa normal (maiúsculas ficam só para siglas e situações curtas). */
 #dc-root .lvc-campo > span, #dc-root .pp-rot, #dc-root .lvf-temas-t, #dc-root .lvf-rk-h, #dc-root .lvc-res-rot,
