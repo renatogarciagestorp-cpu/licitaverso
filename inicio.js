@@ -7,7 +7,7 @@
  *   fontes  — órgãos e normas, rolando no sentido contrário
  *   frase   — frase grande que acende palavra por palavra com a rolagem
  *   vitrine — leque com as ferramentas: passa sozinho, dá para arrastar e tocar para abrir
- *   data-lv3d — cenas 3D (Three.js) da Biblioteca (página inicial) e da Calculadora (topo da página), em inicio3d.js, baixado só quando a primeira chega perto
+ *   data-lv3d — cenas 3D (Three.js) do Parecerista e da Biblioteca, em inicio3d.js, baixado só quando a primeira chega perto
  *   (Elaborador, Calculadora, Gestão e Comunidade usam telas vivas em GSAP: inicio-ui.js e o atributo data-lvui)
  * Também conta os números e enche as barras dos exemplos das seções.
  * Só anima transform e opacity. Com "reduzir movimento", mostra tudo parado e completo.
@@ -739,7 +739,7 @@
     var io = new IntersectionObserver(function (es) {
       if (!es[es.length - 1].isIntersecting) return;
       io.disconnect();
-      if (!pacote3d) pacote3d = import("./inicio3d.js?v=8").catch(function (e) { if (window.console) console.warn("inicio3d", e); return null; });
+      if (!pacote3d) pacote3d = import("./inicio3d.js?v=7").catch(function (e) { if (window.console) console.warn("inicio3d", e); return null; });
       pacote3d.then(function (m) { if (m && alvo.isConnected) m.montar(alvo, alvo.getAttribute("data-lv3d")); });
     }, { rootMargin: "700px 0px" });
     io.observe(alvo);

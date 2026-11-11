@@ -548,15 +548,6 @@ button.lvi-campo-btn:focus-visible { outline: 2px solid var(--lvi-menta); outlin
 @media (max-width: 560px) {
   .lv3d-bib.lv3d-on > .lv3d-palco { height: 280px; border-radius: 18px; }
 }
-/* Calculadora: a balança à direita do título, só em telas largas (escondida, o pacote 3D nem é baixado).
-   Posicionada sem transform: o animacoes.js anima a entrada do que fica ao lado do título. */
-.lvc-hero-in { position: relative; }
-.lvc-hero-in > .lv3d-calc { display: none; }
-@media (min-width: 1000px) {
-  .lvc-hero-in > .lv3d-calc { display: block; position: absolute; top: 0; bottom: 0; right: 0; margin: auto 0; width: min(40%, 480px); height: 240px; }
-  .lvc-hero-in > .lv3d-calc.lv3d-on > .lv3d-palco { height: 100%; border-radius: 22px; }
-  #dc-root .lvc-hero-in:has(> .lv3d-calc.lv3d-on) > .lva-lead, #dc-root .lvc-hero-in:has(> .lv3d-calc.lv3d-on) > h1 { max-width: min(calc(100% - min(40%, 480px) - 48px), 64ch) !important; }
-}
 
 /* ---------- telas vivas (inicio-ui.js, GSAP) ----------
    O exemplo de cada ferramenta vira a própria tela trabalhando. Só vale quando a tela monta (classe lvu-on). */
