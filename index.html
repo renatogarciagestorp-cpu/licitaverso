@@ -8160,23 +8160,22 @@ const cmpBlocosRepac = (o) => {
   const rotP = (n) => (/^planilha/i.test(n) ? n : "planilha da " + n);
   const vig = (n) => n + (/vigente/i.test(n) ? "" : " (vigente)"), nov = (n) => n + (/nova/i.test(n) ? "" : " (nova)");
   const bl = [];
-  bl.push({ t: "destaques", itens: [["Custo mensal · " + vig(nomeA), brl(sA)], ["Custo mensal · " + nov(nomeB), brl(sB)], ["A pagar a mais por mês (repactuação)", sinal(dm)], ["A pagar a mais em 12 meses", sinal(moT2(dm * 12))]] });
+  bl.push({ t: "destaques", itens: [["Custo mensal · " + vig(nomeA), brl(sA)], ["Custo mensal · " + nov(nomeB), brl(sB)], ["Diferença mensal (repactuação)", sinal(dm)], ["Projeção de 12 meses · " + nomeB, brl(moT2(sB * 12))]] });
   if (o.porCat) {
-    bl.push({ t: "tabela", titulo: "Repactuação: " + nomeA + " × " + nomeB, sub: "Quanto o contratante passará a pagar, por categoria, considerada a quantidade de empregados.",
-      cab: ["Categoria", "Empregados", "Mensal · " + nomeA, "Mensal · " + nomeB, "A pagar a mais por mês", "A pagar a mais em 12 meses"], larg: [24, 10, 16, 16, 18, 16], alin: "lrrrrr", fonte: 7.4,
-      linhas: itens.map((x) => ({ c: [x.rot, String(x.empB || "—"), brl(x.menA), brl(x.menB), sinal(x.menB - x.menA) + " (" + pct(x.menB - x.menA, x.menA) + ")", sinal(moT2((x.menB - x.menA) * 12))], alerta: Math.abs(x.menB - x.menA) >= 0.005 ? [4, 5] : [] }))
-        .concat([{ c: ["Total do contrato", String(itens.reduce((s, x) => s + (x.empB || 0), 0)), brl(sA), brl(sB), sinal(dm) + " (" + pct(dm, sA) + ")", sinal(moT2(dm * 12))], total: true }]) });
+    bl.push({ t: "tabela", titulo: "Repactuação: " + nomeA + " × " + nomeB, sub: "Diferença mensal por categoria, considerada a quantidade de empregados.",
+      cab: ["Categoria", "Empregados", "Mensal · " + nomeA, "Mensal · " + nomeB, "Diferença mensal (repactuação)"], larg: [28, 11, 19, 19, 23], alin: "lrrrr", fonte: 7.4,
+      linhas: itens.map((x) => ({ c: [x.rot, String(x.empB || "—"), brl(x.menA), brl(x.menB), sinal(x.menB - x.menA) + " (" + pct(x.menB - x.menA, x.menA) + ")"], alerta: Math.abs(x.menB - x.menA) >= 0.005 ? [4] : [] }))
+        .concat([{ c: ["Total do contrato", String(itens.reduce((s, x) => s + (x.empB || 0), 0)), brl(sA), brl(sB), sinal(dm) + " (" + pct(dm, sA) + ")"], total: true }]) });
   } else {
     const x = itens[0], dt = x.totB - x.totA;
-    bl.push({ t: "tabela", titulo: "Repactuação: " + nomeA + " × " + nomeB, sub: "Quanto o contratante passará a pagar, considerada a quantidade de empregados.",
-      cab: ["", vig(nomeA), nov(nomeB), "A pagar a mais (repactuação)", "Variação"], larg: [28, 18, 18, 22, 14], alin: "lrrrr", fonte: 7.8, linhas: [
+    bl.push({ t: "tabela", titulo: "Repactuação: " + nomeA + " × " + nomeB, sub: "Diferença mensal, considerada a quantidade de empregados.",
+      cab: ["", vig(nomeA), nov(nomeB), "Diferença mensal (repactuação)", "Variação"], larg: [28, 18, 18, 22, 14], alin: "lrrrr", fonte: 7.8, linhas: [
         { c: ["Custo por empregado", brl(x.totA), brl(x.totB), sinal(dt), pct(dt, x.totA)], alerta: Math.abs(dt) >= 0.005 ? [3] : [] },
         { c: ["Empregados", String(x.empA || "—"), String(x.empB || "—"), x.empA === x.empB ? "—" : String((x.empB || 0) - (x.empA || 0)), ""] },
-        { c: ["Valor mensal", brl(x.menA), brl(x.menB), sinal(dm), pct(dm, sA)], total: true, alerta: Math.abs(dm) >= 0.005 ? [3] : [] },
-        { c: ["Valor em 12 meses", brl(moT2(sA * 12)), brl(moT2(sB * 12)), sinal(moT2(dm * 12)), pct(dm, sA)], total: true, alerta: Math.abs(dm) >= 0.005 ? [3] : [] }] });
+        { c: ["Valor mensal", brl(x.menA), brl(x.menB), sinal(dm), pct(dm, sA)], total: true, alerta: Math.abs(dm) >= 0.005 ? [3] : [] }] });
   }
-  bl.push({ t: "texto", titulo: "Valor a pagar a título de repactuação", paragrafos: ["A título de repactuação, considerado o custo praticado na " + rotP(nomeA) + " e o custo formulado na " + rotP(nomeB) + ", o contratante passará a pagar " + brl(Math.abs(dm)) + (dm >= 0 ? " a mais" : " a menos") + " por mês (de " + brl(sA) + " para " + brl(sB) + "; " + pct(dm, sA) + "), o que corresponde a " + brl(Math.abs(moT2(dm * 12))) + (dm >= 0 ? " a mais" : " a menos") + " em 12 meses."
-    + " Se a repactuação produzir efeitos desde a data-base da convenção coletiva, a diferença dos meses já executados também é devida (retroativo), conforme as medições efetivamente realizadas (IN 05/2017, art. 58)."] });
+  bl.push({ t: "texto", titulo: "Diferença mensal a título de repactuação", paragrafos: ["A título de repactuação, considerado o custo praticado na " + rotP(nomeA) + " e o custo formulado na " + rotP(nomeB) + ", a diferença mensal é de " + brl(Math.abs(dm)) + (dm >= 0 ? " a mais" : " a menos") + " (de " + brl(sA) + " para " + brl(sB) + "; " + pct(dm, sA) + ")."
+    + " O valor devido a título de repactuação corresponde a essa diferença mensal multiplicada pelo número de meses em que a contratada custeou o profissional com o salário defasado, contados da data-base da convenção coletiva, conforme as medições efetivamente realizadas (IN 05/2017, art. 58)."] });
   const meses = cmpMeses12(o.inicio); let ac = 0;
   bl.push({ t: "tabela", titulo: "Projeção do custo para os próximos 12 meses de vigência", sub: "Pela " + rotP(nomeB) + ", sem novos ajustes no período" + (o.inicio ? ", a partir de " + meses[0] : "") + ".",
     cab: ["Mês", "Custo pela " + nomeA, "Custo pela " + nomeB, "Acréscimo da repactuação", "Acréscimo acumulado"], larg: [16, 21, 21, 21, 21], alin: "lrrrr", fonte: 7.6,
