@@ -437,7 +437,16 @@
 </style>
 <style>
   *, *::before, *::after { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
+  /* no celular, nada pode alargar a página (faixas animadas, tabelas): o iPhone deixava deslizar para os lados */
+  @supports (overflow-x: clip) { html, body { overflow-x: clip; } }
+  .lv-voltar-barra { display: none; }
+  @media (max-width: 760px) {
+    .lv-voltar-barra { display: flex; align-items: center; gap: 8px; max-width: 1280px; margin: 0 auto; padding: 0 12px; height: 42px; border-top: 1px solid rgba(255,255,255,0.08); background: #0D2733; }
+    .lv-voltar-barra button { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px 0 8px; border: 0; border-radius: 10px; background: rgba(255,255,255,0.08); color: #E3ECEF; font: 700 14px/1 Manrope, system-ui, sans-serif; cursor: pointer; max-width: 100%; }
+    .lv-voltar-barra button:active { transform: scale(0.97); background: rgba(255,255,255,0.14); }
+    .lv-voltar-barra span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  }
   /* troca suave entre a Biblioteca Jurídica e as demais páginas (navegadores que suportam) */
   @view-transition { navigation: auto; }
   ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.16s; }
@@ -2458,6 +2467,9 @@
         </sc-for>
         <button sc-camel-on-click="{{ menuConta }}" style="text-align: left; background: none; border: 0; border-top: 1px solid rgba(255,255,255,0.09); border-radius: 0; margin-top: 6px; padding: 16px 12px 8px; color: #6FE0AE; font-size: 15px; font-weight: 700; cursor: pointer">{{ menuContaTexto }}</button>
       </nav>
+    </sc-if>
+    <sc-if value="{{ voltarMostrar }}" hint-placeholder-val="{{ false }}">
+      <div class="lv-voltar-barra"><button type="button" sc-camel-on-click="{{ voltarAnterior }}" aria-label="{{ voltarRotulo }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>{{ voltarRotulo }}</span></button></div>
     </sc-if>
   </header>
 
@@ -9791,6 +9803,8 @@ const COMPRADORES = {
 // ===================== Contas, dados e pagamentos =====================
 // O site usa o Supabase (contas e banco) e o Mercado Pago (cobrança) quando
 // config.js está preenchido. Sem configuração, roda em modo demonstração.
+const NOMES_TELA = { home: "o início", forum: "o Fórum", cursos: "os Cursos", consultoria: "a Consultoria", agente: "o Agente IA", elaborar: "o Elaborador", calculadora: "a Calculadora", gestao: "a Gestão Contratual",
+  contratos: "Meus contratos", precos: "a Pesquisa de preços", planos: "os Planos", conta: "Minha conta", institucional: "a página anterior", login: "o login", cadastro: "o cadastro", recuperar: "a recuperação de senha", "nova-senha": "a nova senha" };
 const PAGINAS = ["home", "forum", "cursos", "consultoria", "agente", "elaborar", "calculadora", "gestao", "contratos", "precos", "planos", "conta", "institucional", "login", "cadastro", "recuperar", "nova-senha"];
 // Visitantes sem cadastro navegam por todas as páginas (como nas demais plataformas do setor): veem o que cada
 // área oferece, a vitrine do fórum e o catálogo de cursos; ler as respostas do fórum, usar as ferramentas e
@@ -10083,6 +10097,7 @@ class Component extends DCLogic {
     }, 6500);
     this.aoVoltar = () => {
       const p = new URLSearchParams(window.location.search).get("p") || "home";
+      if (this.pilha.length > 1) this.pilha.pop();
       this.irPara(PAGINAS.includes(p) ? p : "home", false);
     };
     window.addEventListener("popstate", this.aoVoltar);
@@ -11362,6 +11377,9 @@ class Component extends DCLogic {
   }
 
   // ------------------------------------------------------------ navegação
+  // telas visitadas nesta visita, para a barra "Voltar" do celular
+  pilha = [];
+  voltarAnterior = () => { if (this.pilha.length > 1) history.back(); else this.irPara("home"); };
   irPara(page, registrar) {
     const s = this.state;
     let destino = page;
@@ -11376,6 +11394,8 @@ class Component extends DCLogic {
     if (this.state.menuAberto) this.setState({ menuAberto: false });
     this.setStateSuave({ page: destino, auth: { ...AUTH_VAZIO, email: s.auth.email } }, () => window.scrollTo({ top: 0, left: 0, behavior: "instant" }));
     if (registrar !== false) {
+      if (!this.pilha.length) this.pilha.push(s.page || "home");
+      if (this.pilha[this.pilha.length - 1] !== destino) this.pilha.push(destino);
       const url = destino === "home" ? location.pathname : location.pathname + "?p=" + destino;
       try { history.pushState({ p: destino }, "", url); } catch (e) { /* sem histórico */ }
     }
@@ -15676,6 +15696,8 @@ class Component extends DCLogic {
         : "Instale como aplicativo: abre direto da tela inicial, sem precisar do navegador.",
       instalarApp: () => this.instalarApp(),
       fecharInstalar: () => { lsGravar("instalar-dispensado", "1"); this.setState({ instalar: null }); },
+      voltarMostrar: s.page !== "home", voltarAnterior: this.voltarAnterior,
+      voltarRotulo: "Voltar para " + (NOMES_TELA[this.pilha.length > 1 ? this.pilha[this.pilha.length - 2] : "home"] || "a tela anterior"),
       goHome: this.nav("home"), goBiblioteca: this.nav("biblioteca"), goForum: this.nav("forum"), goPlanos: this.nav("planos"), goConsultoria: this.nav("consultoria"), goCursos: this.nav("cursos"),
       goLogin: this.nav("login"), goCadastro: this.nav("cadastro"), goRecuperar: this.nav("recuperar"),
       isHome: p("home"), isBiblioteca: p("biblioteca"), isForum: p("forum"), isCursos: p("cursos"),
