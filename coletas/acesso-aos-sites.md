@@ -43,6 +43,11 @@ Se o `git push` der 403, faça a busca e o `add_repo` de novo e tente mais uma v
      && git pull -q --rebase origin coleta-fontes; git push -q origin HEAD:coleta-fontes
    ```
 
+   Consultas que o site só atende por POST (APIs de jurisprudência, como a do TCE-RJ e o TCMJuris do TCM-RJ) vão
+   numa linha `POST <endereço> <corpo>`: corpo começando com `{` vai como JSON; senão, como formulário
+   (ex.: `POST https://etcm.tcmrio.tc.br/tcmjuris/Enunciados/AnalisesPorEnunciado enunciadoID=560`). A resposta
+   volta crua (JSON ou HTML), para você extrair os campos.
+
 3. Espere a devolução (normalmente 1 a 3 minutos; PDFs digitalizados com OCR demoram mais): a cada 30 segundos rode
    `git pull -q --rebase origin coleta-fontes` e veja se `lidas/<nome>/indice.json` existe. Desista depois de 12 minutos.
 

@@ -8,6 +8,11 @@ automação .github/workflows/acervo-fontes.yml roda este script e devolve, em l
   NN.txt        o texto de cada endereço (PDF pelo pdftotext, com OCR se for digitalizado; HTML sem marcação),
                 seguido da lista de links da página (para achar boletins, informativos e PDFs novos)
 
+Consultas que o site só responde por POST (APIs públicas de jurisprudência, como a do TCE-RJ e o TCMJuris do
+TCM-RJ) vão numa linha "POST <endereço> <corpo>": corpo começando com { é enviado como JSON; senão, como
+formulário (ex.: enunciadoID=560); sem corpo, POST vazio. A resposta é devolvida crua (JSON ou HTML), sem
+conversão, para a coleta extrair os campos.
+
 Só lê domínios oficiais (.gov.br, .tc.br, .jus.br, .leg.br), respeita o robots.txt de cada site e se identifica
 como LicitaconColeta. Uso: python3 scripts/agente/ler-fontes.py pedidos/<nome>.txt lidas/<nome>
 """
@@ -59,7 +64,7 @@ def permitido(url):
         robots[casa] = rp
     return robots[casa].can_fetch(UA, url)
 
-def ler(url, destino):
+def ler(url, destino, metodo="GET", corpo_envio=None):
     host = (urllib.parse.urlsplit(url).hostname or "").lower()
     if not url.startswith(("http://", "https://")) or not OFICIAL.search(host):
         return {"erro": "fora dos domínios oficiais (.gov.br, .tc.br, .jus.br, .leg.br)"}
@@ -67,7 +72,14 @@ def ler(url, destino):
         return {"erro": f"pulado: o site não respondeu a um endereço anterior deste pedido ({mortos[host]})"}
     if not permitido(url):
         return {"erro": "o robots.txt do site não permite leitura automática deste endereço"}
-    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "text/html,application/pdf,*/*;q=0.8", "Accept-Language": "pt-BR,pt;q=0.9"})
+    cab = {"User-Agent": UA, "Accept": "text/html,application/pdf,application/json,*/*;q=0.8", "Accept-Language": "pt-BR,pt;q=0.9"}
+    dados = None
+    if metodo == "POST":
+        b = (corpo_envio or "").strip()
+        dados = b.encode("utf-8")
+        cab["Content-Type"] = "application/json" if b.startswith(("{", "[")) else "application/x-www-form-urlencoded"
+        cab["X-Requested-With"] = "XMLHttpRequest"
+    req = urllib.request.Request(url, data=dados, headers=cab, method=metodo)
     try:
         r0 = urllib.request.urlopen(req, timeout=45)
     except urllib.error.HTTPError:
@@ -83,7 +95,11 @@ def ler(url, destino):
     if len(corpo) > MAX_BYTES:
         return {"status": status, "erro": "arquivo maior que 25 MB"}
     links = []
-    if "pdf" in tipo or corpo[:5] == b"%PDF-":
+    if metodo == "POST":
+        cs = re.search(r"charset=([\w-]+)", tipo)
+        texto = corpo.decode(cs.group(1) if cs else "utf-8", "replace")
+        tipo = "json" if "json" in tipo else "post"
+    elif "pdf" in tipo or corpo[:5] == b"%PDF-":
         with tempfile.TemporaryDirectory() as tmp:
             pdf = pathlib.Path(tmp) / "f.pdf"; pdf.write_bytes(corpo); txt = pathlib.Path(tmp) / "f.txt"
             subprocess.run([sys.executable, str(raiz / "extrair-texto.py"), str(pdf), str(txt), "--max-ocr", "30"], capture_output=True, timeout=600)
@@ -98,7 +114,7 @@ def ler(url, destino):
             tipo = "html"
         else:
             texto = bruto
-    texto = texto[:MAX_TEXTO]
+    texto = texto[:MAX_TEXTO * (8 if metodo == "POST" else 1)]
     destino.write_text(f"URL: {url}\n" + (f"URL final: {final}\n" if final != url else "") + "\n" + texto
                        + ("\n\nLINKS DA PÁGINA:\n" + "\n".join(links) if links else "") + "\n", encoding="utf-8")
     return {"status": status, "tipo": tipo, "bytes": len(corpo), "caracteres": len(texto), "links": len(links)}
@@ -110,11 +126,17 @@ def main():
     for l in pedido.read_text(encoding="utf-8", errors="replace").splitlines():
         l = l.strip()
         if l and not l.startswith("#") and l not in urls: urls.append(l)
+    def separar(linha):
+        if linha[:5].upper() == "POST ":
+            partes = linha[5:].strip().split(None, 1)
+            return partes[0], "POST", (partes[1] if len(partes) > 1 else "")
+        return linha, "GET", None
     indice = []
     for i, url in enumerate(urls[:MAX_URLS], 1):
         arq = saida / f"{i:02d}.txt"
+        alvo, metodo, corpo_envio = separar(url)
         try:
-            r = ler(url, arq)
+            r = ler(alvo, arq, metodo, corpo_envio)
         except urllib.error.HTTPError as e:
             r = {"status": e.code, "erro": f"o site respondeu {e.code}"}
         except SemResposta as e:
