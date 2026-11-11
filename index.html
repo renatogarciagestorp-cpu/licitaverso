@@ -1308,6 +1308,10 @@
   .lmo-seta { width: 26px; height: 26px; border: 1px solid #D5DEDC; border-radius: 8px; background: #fff; color: #0F6B7E; font-size: 10px; line-height: 1; cursor: pointer; padding: 0; }
   .lmo-seta:hover:not(:disabled) { background: #EAF4F2; } .lmo-seta:disabled { opacity: .3; cursor: default; }
   .lmo-cmp-quadro { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 14px; margin: 0 0 14px; padding: 12px 14px; border: 1px solid #E3E9E8; border-radius: 12px; background: #F8FBFA; }
+  .lmo-cmp-cats { margin-bottom: 14px; } .lmo-cmp-cats .lmo-cmp-acoes { margin: 8px 0; }
+  .lmo-cmp-catlista { margin: 8px 0; padding: 0; list-style: none; display: grid; gap: 6px; counter-reset: cat; }
+  .lmo-cmp-catlista li { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 12px; border: 1px solid #E3E9E8; border-radius: 10px; background: #fff; }
+  .lmo-cmp-catlista li div { display: grid; gap: 2px; min-width: 0; } .lmo-cmp-catlista li small { color: #66757F; font-size: 12px; }
   .lmo-cmp-quadro .lmo-campo { flex: 1 1 320px; margin: 0; } .lmo-cmp-quadro > small { flex: 1 1 100%; margin: 0; }
   .lmo-cmpc.mudou { background: #FFF6DE !important; } [data-calc="true"].lmo-cmpc b, .lmo-cmp-r[data-calc="true"] { font-weight: 800; color: #0A1F2A; }
   .lmo-passos { display: grid; gap: 12px; margin-top: 14px; }
@@ -4495,6 +4499,15 @@
           <div class="lmo lmo-cmpp">
             <div class="lmo-cmp-topo"><span></span>
               <div class="lmo-cmp-acoes"><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpAdd }}">+ Adicionar planilha de repactuação</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpRecomecar }}">Recomeçar</button><button type="button" class="lmo-btn" sc-camel-on-click="{{ cmpPdf }}">Relatório da comparação (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpExcel }}">Excel</button></div></div>
+            <section class="lmo-bloco lmo-cmp-cats">
+              <h2 class="lmo-h2">Contrato com várias categorias</h2>
+              <p class="lmo-nota" style="margin-top: 0">Para um relatório único do contrato, monte a comparação de cada categoria (supervisor, vigilante armado, desarmado, CFTV…) e inclua-a aqui. O relatório traz o quadro consolidado com as diferenças mensal e anual de cada categoria e do contrato, a comparação completa de cada categoria e as inconsistências de todas as planilhas.</p>
+              <div class="lmo-cmp-acoes"><button type="button" class="lmo-btn" sc-camel-on-click="{{ cmpCatIncluir }}">Incluir esta comparação no relatório do contrato</button><sc-if value="{{ cmpTemQuadroRep }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpCatsDoQuadro }}">Incluir todas as categorias do quadro da Repactuação</button></sc-if></div>
+              <sc-if value="{{ cmpTemCats }}" hint-placeholder-val="{{ false }}">
+              <ol class="lmo-cmp-catlista"><sc-for list="{{ cmpCats }}" as="k" hint-placeholder-count="2"><li><div><b>{{ k.nome }}</b><small>{{ k.det }}</small></div><span class="lmo-cmp-hb"><button type="button" class="lve-voltar" disabled="{{ k.naoSobe }}" aria-label="Subir" sc-camel-on-click="{{ k.subir }}">↑</button><button type="button" class="lve-voltar" disabled="{{ k.naoDesce }}" aria-label="Descer" sc-camel-on-click="{{ k.descer }}">↓</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ k.abrir }}">Abrir</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ k.excluir }}">Excluir</button></span></li></sc-for></ol>
+              <div class="lmo-cmp-acoes"><button type="button" class="lmo-btn" sc-camel-on-click="{{ cmpTodasPdf }}">Relatório de todas as categorias (PDF)</button><button type="button" class="lve-voltar" sc-camel-on-click="{{ cmpTodasExcel }}">Excel</button></div>
+              </sc-if>
+            </section>
             <section class="lmo-bloco">
               <h2 class="lmo-h2">Linha do tempo: planejamento × contratação × repactuações</h2>
               <p class="lmo-nota" style="margin-top: 0">Cada coluna é uma planilha completa, com a mesma estrutura e os mesmos cálculos das planilhas da Calculadora (IN 05/2017): a da fase de planejamento, a da contratação e as de cada repactuação. Edite os valores ou use o botão de cada coluna para trazer a planilha já preenchida na Planilha de custos, na Análise de proposta ou na Repactuação. O aviso prévio trabalhado (Módulo 3, D), custo não renovável, fica destacado quando muda. O relatório da comparação detalha todas as alterações. Role o quadro para os lados para ver todas.</p>
@@ -8150,6 +8163,38 @@ function moReajuste(d, indices) {
 }
 const moNum = (v) => { if (/^\s*[1-9]\d{0,2}(\.\d{3}){2,}\s*$/.test(String(v == null ? "" : v))) v = String(v).replace(/\./g, ""); const n = parseFloat(String(v == null ? "" : v).replace(/\./g, (m, i, t) => (/,/.test(t) ? "" : m)).replace(",", ".")); return isFinite(n) ? n : 0; };
 const moT2 = (x) => Math.trunc(x * 100 + 1e-7) / 100;
+// rótulos dos 12 meses da projeção a partir de "mm/aaaa" (ou "Mês 1…12" sem a data)
+const cmpMeses12 = (ini) => { const m = String(ini || "").match(/^\s*(\d{1,2})\s*[\/.-]\s*(\d{4})\s*$/); const NM = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  return Array.from({ length: 12 }, (_, i) => { if (!m || +m[1] < 1 || +m[1] > 12) return "Mês " + (i + 1); const k = +m[1] - 1 + i; return NM[k % 12] + "/" + (+m[2] + Math.floor(k / 12)); }); };
+// repactuação (penúltima × última planilha): quadro do que o contratante passará a pagar e projeção dos próximos 12 meses
+const cmpBlocosRepac = (o) => {
+  const { nomeA, nomeB, itens, brl, sinal, pct } = o, sA = itens.reduce((s, x) => s + x.menA, 0), sB = itens.reduce((s, x) => s + x.menB, 0), dm = sB - sA;
+  const rotP = (n) => (/^planilha/i.test(n) ? n : "planilha da " + n);
+  const vig = (n) => n + (/vigente/i.test(n) ? "" : " (vigente)"), nov = (n) => n + (/nova/i.test(n) ? "" : " (nova)");
+  const bl = [];
+  bl.push({ t: "destaques", itens: [["Custo mensal · " + vig(nomeA), brl(sA)], ["Custo mensal · " + nov(nomeB), brl(sB)], ["Diferença mensal (repactuação)", sinal(dm)], ["Projeção de 12 meses · " + nomeB, brl(moT2(sB * 12))]] });
+  if (o.porCat) {
+    bl.push({ t: "tabela", titulo: "Repactuação: " + nomeA + " × " + nomeB, sub: "Diferença mensal por categoria, considerada a quantidade de empregados.",
+      cab: ["Categoria", "Empregados", "Mensal · " + nomeA, "Mensal · " + nomeB, "Diferença mensal (repactuação)"], larg: [28, 11, 19, 19, 23], alin: "lrrrr", fonte: 7.4,
+      linhas: itens.map((x) => ({ c: [x.rot, String(x.empB || "—"), brl(x.menA), brl(x.menB), sinal(x.menB - x.menA) + " (" + pct(x.menB - x.menA, x.menA) + ")"], alerta: Math.abs(x.menB - x.menA) >= 0.005 ? [4] : [] }))
+        .concat([{ c: ["Total do contrato", String(itens.reduce((s, x) => s + (x.empB || 0), 0)), brl(sA), brl(sB), sinal(dm) + " (" + pct(dm, sA) + ")"], total: true }]) });
+  } else {
+    const x = itens[0], dt = x.totB - x.totA;
+    bl.push({ t: "tabela", titulo: "Repactuação: " + nomeA + " × " + nomeB, sub: "Diferença mensal, considerada a quantidade de empregados.",
+      cab: ["", vig(nomeA), nov(nomeB), "Diferença mensal (repactuação)", "Variação"], larg: [28, 18, 18, 22, 14], alin: "lrrrr", fonte: 7.8, linhas: [
+        { c: ["Custo por empregado", brl(x.totA), brl(x.totB), sinal(dt), pct(dt, x.totA)], alerta: Math.abs(dt) >= 0.005 ? [3] : [] },
+        { c: ["Empregados", String(x.empA || "—"), String(x.empB || "—"), x.empA === x.empB ? "—" : String((x.empB || 0) - (x.empA || 0)), ""] },
+        { c: ["Valor mensal", brl(x.menA), brl(x.menB), sinal(dm), pct(dm, sA)], total: true, alerta: Math.abs(dm) >= 0.005 ? [3] : [] }] });
+  }
+  bl.push({ t: "texto", titulo: "Diferença mensal a título de repactuação", paragrafos: ["A título de repactuação, considerado o custo praticado na " + rotP(nomeA) + " e o custo formulado na " + rotP(nomeB) + ", a diferença mensal é de " + brl(Math.abs(dm)) + (dm >= 0 ? " a mais" : " a menos") + " (de " + brl(sA) + " para " + brl(sB) + "; " + pct(dm, sA) + ")."
+    + " O valor devido a título de repactuação corresponde a essa diferença mensal multiplicada pelo número de meses em que a contratada custeou o profissional com o salário defasado, contados da data-base da convenção coletiva, conforme as medições efetivamente realizadas (IN 05/2017, art. 58)."] });
+  const meses = cmpMeses12(o.inicio); let ac = 0;
+  bl.push({ t: "tabela", titulo: "Projeção do custo para os próximos 12 meses de vigência", sub: "Pela " + rotP(nomeB) + ", sem novos ajustes no período" + (o.inicio ? ", a partir de " + meses[0] : "") + ".",
+    cab: ["Mês", "Custo pela " + nomeA, "Custo pela " + nomeB, "Acréscimo da repactuação", "Acréscimo acumulado"], larg: [16, 21, 21, 21, 21], alin: "lrrrr", fonte: 7.6,
+    linhas: meses.map((mm) => { ac = moT2(ac + dm); return { c: [mm, brl(sA), brl(sB), sinal(dm), sinal(ac)] }; })
+      .concat([{ c: ["Total (12 meses)", brl(moT2(sA * 12)), brl(moT2(sB * 12)), sinal(moT2(dm * 12)), ""], total: true }]) });
+  return bl;
+};
 const moT4 = (x) => Math.trunc(x * 10000 + 1e-7) / 10000;
 // Simples Nacional, Anexo IV da LC 123/2006 (serviços de vigilância, limpeza e conservação, art. 18, § 5º-C, VI):
 // [receita bruta em 12 meses até, alíquota nominal %, parcela a deduzir, repartição % (IRPJ, CSLL, COFINS, PIS, ISS)]
@@ -9011,7 +9056,7 @@ function ppDocWord(doc0, hoje) {
   doc0.blocos.forEach((b) => {
     if (b.t === "destaques") h.push("<table class=dest><tr>" + b.itens.map(([k, v]) => "<td><small>" + esc(k) + "</small><br><b>" + esc(v) + "</b></td>").join("") + "</tr></table>");
     else if (b.t === "pares") h.push("<h2>" + esc(b.titulo) + "</h2><table class=pares>" + b.pares.map(([k, v]) => "<tr><th>" + esc(k) + "</th><td>" + esc(v) + "</td></tr>").join("") + "</table>");
-    else if (b.t === "texto") h.push("<h2>" + esc(b.titulo) + "</h2>" + b.paragrafos.map((p) => "<p>" + esc(p) + "</p>").join(""));
+    else if (b.t === "texto") h.push((b.titulo ? "<h2>" + esc(b.titulo) + "</h2>" : "") + b.paragrafos.map((p) => "<p>" + esc(p) + "</p>").join(""));
     else if (b.t === "secao") h.push("<h2 class=secao>" + esc(b.titulo) + "</h2>" + (b.sub ? "<p class=sub2>" + esc(b.sub) + "</p>" : ""));
     else if (b.t === "tabela") h.push("<h3>" + esc(b.titulo) + "</h3>" + (b.sub ? "<p class=sub2>" + esc(b.sub) + "</p>" : "") + "<table class=tab><tr>" + b.cab.map((c) => "<th>" + esc(c) + "</th>").join("") + "</tr>" +
       b.linhas.map((l) => "<tr" + (l.total ? " class=tot" : "") + ">" + l.c.map((c, i) => "<td" + ((b.alin || "")[i] === "r" ? " style='text-align:right'" : "") + ">" + esc(c) + "</td>").join("") + "</tr>").join("") + "</table>");
@@ -12646,8 +12691,8 @@ class Component extends DCLogic {
   }
   cmpRecomecar() { try { localStorage.removeItem("lv-cmp"); } catch (e) {} this.setState({ cmp: { cols: [], info: {}, ok: "", erro: "" } }, () => this.cmpIniciar()); }
   // dados da comparação para a tela e o relatório
-  moCmpDados() {
-    const cols = (this.state.cmp.cols || []).map((c) => ({ ...c, r: moCmpCalc(c) }));
+  moCmpDados(colsIn) {
+    const cols = (colsIn || this.state.cmp.cols || []).map((c) => ({ ...c, r: moCmpCalc(c) }));
     const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const fmt = (u, v) => u === "R$" ? brl(moNum(v)) : u === "%" ? String(v == null || v === "" ? "0" : v) + "%" : String(v == null || v === "" ? "—" : v);
     const val = (c, [t, k, , u]) => t === "c" ? Number(c.r[k]) || 0 : k === "apt" && c.tipo !== "contratacao" ? (c.r.apt_p || 0) * 100 : u === "t" ? String(c.d[k] ?? "") : moNum(c.d[k] ?? MO_PADRAO[k]);
@@ -12656,9 +12701,10 @@ class Component extends DCLogic {
       return (L[0] === "c" || L[3] === "R$" ? (dv > 0 ? "+" : "−") + brl(Math.abs(dv)).replace("R$ ", "R$ ") : (dv > 0 ? "+" : "−") + Math.abs(dv).toLocaleString("pt-BR", { maximumFractionDigits: 4 }) + (L[3] === "%" ? " p.p." : "")) + (pc != null && L[3] !== "%" ? " (" + (pc > 0 ? "+" : "") + (pc * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%)" : ""); };
     return { cols, brl, val, txt, varia };
   }
-  async moCmpRelatorio(formato) {
-    const { cols, brl, val, txt, varia } = this.moCmpDados(), inf = this.state.cmp.info || {};
-    if (cols.length < 2) return;
+  async moCmpRelatorio(formato, opc) {
+    // opc.montar: devolve os blocos de uma categoria para o relatório de todas as categorias (opc.cols e opc.info)
+    const { cols, brl, val, txt, varia } = this.moCmpDados(opc && opc.cols), inf = (opc && opc.info) || this.state.cmp.info || {};
+    if (cols.length < 2) { if (!opc) this.setState((x) => ({ cmp: { ...x.cmp, ok: "", erro: "Para o relatório, a comparação precisa de pelo menos duas planilhas." } })); return null; }
     const hoje = new Date().toLocaleDateString("pt-BR"), nC = cols.length, lr = Math.max(22, 40 - nC * 3), lc = (100 - lr) / nC;
     const linhas = [];
     MO_CMP_LINHAS.forEach((L) => {
@@ -12666,23 +12712,154 @@ class Component extends DCLogic {
       const alerta = []; cols.forEach((c, i) => { if (i > 0 && varia(val(cols[i - 1], L), val(c, L), L)) alerta.push(i + 1); });
       linhas.push({ c: [L[2]].concat(cols.map((c) => txt(c, L))), total: L[0] === "c" && ["total", "mensal", "global"].includes(L[1]), forte: L[0] === "c", alerta });
     });
+    // valores do contrato em cada planilha, considerada a quantidade de empregados (empregados por posto × postos)
+    const empDe = (c) => Math.max(0, moNum(c.d.emp_posto) * moNum(c.d.postos)), mensalDe = (c) => Number(c.r.mensal) || 0, anualDe = (c) => moT2((Number(c.r.mensal) || 0) * 12);
+    const sinal = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + brl(Math.abs(v)), pctV = (dv, base) => (base ? " (" + (dv > 0 ? "+" : "") + (dv / base * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%)" : "");
+    // quadro lado a lado: uma coluna por planilha (contratação, 1ª repactuação, 2ª repactuação…), valores mensal e anual embaixo
+    const pri = cols[0];
+    const dif = (fn, rel) => cols.map((c, i) => { if (!i) return "—"; const b0 = rel === "pri" ? pri : cols[i - 1], dv = fn(c) - fn(b0); return sinal(dv) + (fn === mensalDe ? " (" + pctV(dv, fn(b0)).trim().replace(/^\(|\)$/g, "") + ")" : ""); });
+    const altD = (rel) => cols.map((c, i) => (i && Math.abs(c.r.mensal - (rel === "pri" ? pri : cols[i - 1]).r.mensal) >= 0.005 ? i + 1 : -1)).filter((i) => i > 0);
+    const linVal = [
+      { c: ["Preço por empregado"].concat(cols.map((c) => brl(c.r.total))) },
+      { c: ["Empregados"].concat(cols.map((c) => String(empDe(c) || "—"))), alerta: cols.map((c, i) => (i && empDe(c) !== empDe(cols[i - 1]) ? i + 1 : -1)).filter((i) => i > 0) },
+      { c: ["Valor mensal"].concat(cols.map((c) => brl(c.r.mensal))), total: true },
+      { c: ["Valor anual (12 meses)"].concat(cols.map((c) => brl(anualDe(c)))), total: true },
+      { c: ["Diferença mensal (em relação à anterior)"].concat(dif(mensalDe)), forte: true, alerta: altD() },
+      { c: ["Diferença anual (em relação à anterior)"].concat(dif(anualDe)), forte: true, alerta: altD() },
+    ];
+    if (nC > 2) linVal.push({ c: ["Diferença mensal acumulada (desde " + pri.nome + ")"].concat(dif(mensalDe, "pri")), fraco: true }, { c: ["Diferença anual acumulada (desde " + pri.nome + ")"].concat(dif(anualDe, "pri")), fraco: true });
+    const qtdMuda = cols.some((c) => empDe(c) !== empDe(pri));
+    // inconsistências no preenchimento de cada planilha: a mesma conferência automática da Repactuação e da Análise de proposta,
+    // mais as falhas apontadas pelo agente que estiverem guardadas na planilha
+    const gravN = { alta: "alta", media: "média", baixa: "baixa" }, ordG = { alta: 0, media: 1, baixa: 2 };
+    const incons = [];
+    cols.forEach((c) => { const modo = (CMP_TIPOS[c.tipo] || CMP_TIPOS.repactuacao)[1], dc = { ...MO_PADRAO, ...(c.d || {}), fontes: {} };
+      let auto = []; try { auto = moConferir({ ...dc, reforma: dc.reforma || "antes" }, c.r, modo) || []; } catch (e) { auto = []; }
+      const vistas = new Set(); (modo === "planejamento" ? [] : (c.d.falhas || [])).concat(auto).forEach((f) => { const k = (f.rubrica || "") + "|" + (f.problema || ""); if (vistas.has(k)) return; vistas.add(k);
+        incons.push({ col: c.nome, f }); }); });
+    incons.sort((x, y) => (ordG[x.f.gravidade] ?? 1) - (ordG[y.f.gravidade] ?? 1));
     const blocos = [
       { t: "pares", titulo: "Contrato", pares: [["Contrato", inf.contrato || "—"], ["Contratante", inf.contratante || "—"], ["Contratada", inf.contratada || "—"], ["Categoria", inf.categoria || "—"]] },
-      { t: "destaques", itens: cols.map((c) => [c.nome, brl(c.r.total) + " por empregado"]) },
-      { t: "tabela", titulo: "Linha do tempo das planilhas", sub: "Em amarelo, o que mudou em relação à planilha anterior.", cab: ["Rubrica"].concat(cols.map((c) => c.nome)), larg: [lr].concat(cols.map(() => lc)), alin: "l" + "r".repeat(nC), linhas, fonte: nC > 4 ? 7 : 8 },
+      ...cmpBlocosRepac({ nomeA: cols[nC - 2].nome, nomeB: cols[nC - 1].nome, inicio: inf.inicio, brl, sinal, pct: (dv, b) => pctV(dv, b).trim().replace(/^\(|\)$/g, "") || "—",
+        itens: [{ rot: inf.categoria || "", empA: empDe(cols[nC - 2]), empB: empDe(cols[nC - 1]), totA: cols[nC - 2].r.total, totB: cols[nC - 1].r.total, menA: mensalDe(cols[nC - 2]), menB: mensalDe(cols[nC - 1]) }] }),
+      { t: "tabela", titulo: "Valores do contrato em cada planilha", sub: "Considerada a quantidade de empregados. O valor anual corresponde a 12 meses; em amarelo, o que mudou em relação à planilha anterior.",
+        cab: [""].concat(cols.map((c) => c.nome)), larg: [lr + 6].concat(cols.map(() => (94 - lr) / nC)), alin: "l" + "r".repeat(nC), linhas: linVal, fonte: nC > 4 ? 7 : 7.8 },
     ];
+    if (qtdMuda) blocos.push({ t: "legenda", texto: "A quantidade de empregados não é a mesma em todas as planilhas: as diferenças mensais e anuais refletem tanto a variação do preço por empregado quanto a mudança de quantidade." });
+    blocos.push(
+      { t: "tabela", titulo: "Linha do tempo das planilhas", sub: "Em amarelo, o que mudou em relação à planilha anterior.", cab: ["Rubrica"].concat(cols.map((c) => c.nome)), larg: [lr].concat(cols.map(() => lc)), alin: "l" + "r".repeat(nC), linhas, fonte: nC > 4 ? 7 : 8 });
     for (let i = 1; i < nC; i++) {
       const a = cols[i - 1], b = cols[i], mud = [];
       MO_CMP_LINHAS.forEach((L) => { if (L[0] === "s") return; const va = val(a, L), vb = val(b, L), v = varia(va, vb, L); if (v) mud.push({ c: [L[2], txt(a, L), txt(b, L), v], forte: L[0] === "c" }); });
       const dt = b.r.total - a.r.total, pt = a.r.total ? dt / a.r.total : 0;
       blocos.push({ t: "quebra" }, { t: "secao", titulo: "O que mudou: de " + a.nome + " para " + b.nome });
-      blocos.push({ t: "texto", paragrafos: ["O preço por empregado passou de " + brl(a.r.total) + " para " + brl(b.r.total) + " (" + (dt >= 0 ? "+" : "−") + brl(Math.abs(dt)) + "; " + (pt >= 0 ? "+" : "") + (pt * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%). O valor mensal passou de " + brl(a.r.mensal) + " para " + brl(b.r.mensal) + " e o global, de " + brl(a.r.global) + " para " + brl(b.r.global) + "." + (b.tipo === "repactuacao" && a.tipo !== "repactuacao" && (a.r.apt_p || 0) > (b.r.apt_p || 0) ? " O aviso prévio trabalhado foi reduzido por ser custo não renovável (TCU, Acórdão 1.186/2017-Plenário)." : "")] });
+      const ea = empDe(a), eb = empDe(b), dmI = b.r.mensal - a.r.mensal, daI = anualDe(b) - anualDe(a);
+      blocos.push({ t: "texto", paragrafos: ["O preço por empregado passou de " + brl(a.r.total) + " para " + brl(b.r.total) + " (" + (dt >= 0 ? "+" : "−") + brl(Math.abs(dt)) + "; " + (pt >= 0 ? "+" : "") + (pt * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%). "
+        + (ea === eb ? "Considerados " + eb + " empregado(s), o" : "Considerados " + ea + " empregado(s) em " + a.nome + " e " + eb + " em " + b.nome + ", o") + " valor mensal passou de " + brl(a.r.mensal) + " para " + brl(b.r.mensal) + " (diferença de " + sinal(dmI) + " por mês) e o valor anual (12 meses), de " + brl(anualDe(a)) + " para " + brl(anualDe(b)) + " (diferença de " + sinal(daI) + " por ano)."
+        + (moNum(b.d.meses) && moNum(b.d.meses) !== 12 ? " Pelo prazo de " + moNum(b.d.meses) + " meses informado na planilha, o valor global passou de " + brl(a.r.global) + " para " + brl(b.r.global) + "." : "") + (b.tipo === "repactuacao" && a.tipo !== "repactuacao" && (a.r.apt_p || 0) > (b.r.apt_p || 0) ? " O aviso prévio trabalhado foi reduzido por ser custo não renovável (TCU, Acórdão 1.186/2017-Plenário)." : "")] });
       blocos.push(mud.length ? { t: "tabela", titulo: "Rubricas alteradas", cab: ["Rubrica", a.nome, b.nome, "Variação"], larg: [34, 20, 20, 26], alin: "lrrr", linhas: mud } : { t: "legenda", texto: "Nenhuma rubrica foi alterada." });
     }
+    if (opc && opc.montar) return { blocos: blocos.filter((b) => !(b.t === "destaques" || (b.titulo || "").startsWith("Projeção do custo"))), incons, cols, empDe, anualDe, mensalDe };
+    // inconsistências no preenchimento (todas as planilhas), ao final
+    blocos.push({ t: "quebra" }, { t: "secao", titulo: "Inconsistências no preenchimento das planilhas", sub: "Conferência com a legislação e com o modelo da IN 05/2017, a mesma feita na Repactuação e na Análise de proposta. Gravidade: alta, média ou baixa." });
+    blocos.push(incons.length ? { t: "tabela", titulo: "DIVERGÊNCIAS E INCONSISTÊNCIAS NA ELABORAÇÃO DAS PLANILHAS", sub: incons.length + " apontamento(s)", cab: ["Planilha", "Rubrica (gravidade)", "Como está", "O correto", "Fundamento"], larg: [15, 19, 20, 26, 20], alin: "lllll", fonte: 7.2,
+        linhas: incons.map(({ col, f }) => ({ c: [col, (f.rubrica || "") + (f.gravidade ? " (" + (gravN[f.gravidade] || f.gravidade) + ")" : ""), f.problema || "", f.correcao || "", f.fundamento || ""], alerta: f.gravidade === "alta" ? [1] : [] })) }
+      : { t: "legenda", texto: "Nenhuma inconsistência identificada na conferência automática das planilhas." });
     const doc0 = { id: "comparacao", titulo: "Comparação das planilhas: do planejamento às repactuações", sub: (inf.contrato ? "Contrato " + inf.contrato + " · " : "") + (inf.categoria || "") + " · " + nC + " planilhas", selo: leiDe(cols[0].d || {}).selo, paisagem: nC > 3,
       arquivo: "comparacao-das-planilhas" + (inf.contrato ? "-contrato-" + String(inf.contrato).replace(/[^\w-]+/g, "-") : ""), blocos,
-      notas: ["Cada planilha segue o modelo da IN 05/2017 (Anexo VII-D) e os mesmos cálculos da Calculadora. Nas repactuações, o aviso prévio trabalhado é considerado custo não renovável (no máximo 0,194% por ano de prorrogação; TCU, Acórdão 1.186/2017-Plenário)."] };
+      notas: ["Cada planilha segue o modelo da IN 05/2017 (Anexo VII-D) e os mesmos cálculos da Calculadora. Nas repactuações, o aviso prévio trabalhado é considerado custo não renovável (no máximo 0,194% por ano de prorrogação; TCU, Acórdão 1.186/2017-Plenário).",
+        "Valor mensal = preço por empregado × empregados por posto × postos; valor anual = valor mensal × 12. As diferenças comparam cada planilha com a anterior.",
+        incons.length ? incons.length + " inconsistência(s) de preenchimento apontada(s): ver a seção “Inconsistências no preenchimento das planilhas”." : ""] };
     try { if (formato === "xlsx") await this.moDocExcel(doc0, doc0.titulo, hoje); else await this.moDocPdf(doc0, doc0.titulo, hoje); }
+    catch (e) { console.error(e); this.setState((x) => ({ cmp: { ...x.cmp, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
+  }
+  // contrato com várias categorias: cada categoria guarda a sua linha do tempo; o relatório junta todas num documento só
+  cmpCatsLer() { try { const l = JSON.parse(localStorage.getItem("lv-cmp-cats") || "[]"); return Array.isArray(l) ? l.filter((x) => x && Array.isArray(x.cols)) : []; } catch (e) { return []; } }
+  cmpCatsGravar(l) { try { localStorage.setItem("lv-cmp-cats", JSON.stringify(l)); } catch (e) {} this.setState((x) => ({ cmp: { ...x.cmp, catsV: (x.cmp.catsV || 0) + 1 } })); }
+  cmpCatIncluir() {
+    const c = this.state.cmp, cols = c.cols || [], info = c.info || {}, nome = String(info.categoria || "").trim();
+    if (!nome) { this.setState((x) => ({ cmp: { ...x.cmp, ok: "", erro: "Preencha o campo Categoria antes de incluir a comparação no relatório do contrato." } })); return; }
+    if (cols.length < 2) { this.setState((x) => ({ cmp: { ...x.cmp, ok: "", erro: "A comparação precisa de pelo menos duas planilhas." } })); return; }
+    const l = this.cmpCatsLer(), i = l.findIndex((x) => String(x.nome).trim().toLowerCase() === nome.toLowerCase()), item = { id: i >= 0 ? l[i].id : "k" + Date.now().toString(36), nome, info: { ...info }, cols: cols.map((x) => ({ ...x, d: { ...x.d } })), em: new Date().toISOString() };
+    if (i >= 0) l[i] = item; else l.push(item);
+    this.cmpCatsGravar(l);
+    this.setState((x) => ({ cmp: { ...x.cmp, erro: "", ok: "✓ “" + nome + "” " + (i >= 0 ? "atualizada" : "incluída") + " no relatório do contrato (" + l.length + " categoria(s)). Para a próxima categoria, troque a categoria acima (ou use uma do quadro), confira as planilhas e inclua de novo." } }));
+  }
+  cmpCatAbrir(i) { const it = this.cmpCatsLer()[i]; if (!it) return; this.cmpGravar({ ...this.state.cmp, cols: it.cols, info: { ...(this.state.cmp.info || {}), ...it.info } });
+    this.setState((x) => ({ cmp: { ...x.cmp, erro: "", ok: "✓ “" + it.nome + "” aberta. Depois de alterar, inclua de novo para atualizar o relatório do contrato." } })); }
+  cmpCatDel(i) { const l = this.cmpCatsLer(); l.splice(i, 1); this.cmpCatsGravar(l); }
+  cmpCatMover(i, dir) { const l = this.cmpCatsLer(), j = i + dir; if (j < 0 || j >= l.length) return; [l[i], l[j]] = [l[j], l[i]]; this.cmpCatsGravar(l); }
+  // todas as categorias do quadro da Repactuação de uma vez: contratação (guardada no quadro) × repactuada
+  cmpCatsDoQuadro() {
+    const q = this.moListaLer("repactuacao"), l = this.cmpCatsLer(), semAnt = []; let n = 0;
+    q.forEach((it) => { if (!it || !it.d) return;
+      const info = { contrato: it.d.rp_contrato || "", contratante: it.d.rp_orgao || "", contratada: it.d.rp_empresa || "", categoria: it.nome };
+      const cols = []; if (it.ant) cols.push({ id: "c0", tipo: "contratacao", nome: "Contratação", d: moSnap({ ...MO_PADRAO, ...moDerivado(it.ant) }) }); else semAnt.push(it.nome);
+      cols.push({ id: "r1", tipo: "repactuacao", nome: "Repactuação", d: moSnap({ ...MO_PADRAO, ...moDerivado(it.d) }) });
+      if (cols.length < 2) return;
+      const i = l.findIndex((x) => String(x.nome).trim().toLowerCase() === String(it.nome).trim().toLowerCase()), item = { id: i >= 0 ? l[i].id : "k" + Date.now().toString(36) + n, nome: it.nome, info, cols, em: new Date().toISOString() };
+      if (i >= 0) l[i] = item; else l.push(item); n++; });
+    this.cmpCatsGravar(l);
+    this.setState((x) => ({ cmp: { ...x.cmp, erro: n ? "" : "Nenhuma categoria do quadro da Repactuação tem a planilha da contratação guardada.", ok: n ? "✓ " + n + " categoria(s) do quadro da Repactuação incluída(s) no relatório do contrato (contratação × repactuação)." + (semAnt.length ? " Sem a planilha da contratação (inclua pela comparação acima): " + semAnt.join(", ") + "." : "") : "" } }));
+  }
+  async moCmpRelatorioTodas(formato) {
+    const cats = this.cmpCatsLer();
+    if (!cats.length) { this.setState((x) => ({ cmp: { ...x.cmp, ok: "", erro: "Inclua ao menos uma categoria no relatório do contrato." } })); return; }
+    const brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const sinal = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + brl(Math.abs(v)), pctV = (dv, b) => (b ? (dv > 0 ? "+" : "") + (dv / b * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%" : "—");
+    const partes = [], fora = [];
+    for (const k of cats) { const m = await this.moCmpRelatorio(formato, { montar: true, cols: k.cols, info: k.info }); if (m) partes.push({ k, m }); else fora.push(k.nome); }
+    if (!partes.length) { this.setState((x) => ({ cmp: { ...x.cmp, ok: "", erro: "Nenhuma categoria tem ao menos duas planilhas para comparar." } })); return; }
+    const hoje = new Date().toLocaleDateString("pt-BR"), inf = { ...(partes[0].k.info || {}) };
+    // quadro 1: primeira × última planilha de cada categoria
+    let tI = 0, tF = 0, tE = 0;
+    const lin1 = partes.map(({ k, m }) => { const a = m.cols[0], b = m.cols[m.cols.length - 1], dm = b.r.mensal - a.r.mensal; tI += a.r.mensal; tF += b.r.mensal; tE += m.empDe(b);
+      return { c: [k.nome, a.nome + " → " + b.nome, String(m.empDe(b) || "—"), brl(a.r.mensal), brl(b.r.mensal), sinal(dm) + " (" + pctV(dm, a.r.mensal) + ")", sinal(m.anualDe(b) - m.anualDe(a))], alerta: Math.abs(dm) >= 0.005 ? [5, 6] : [] }; });
+    lin1.push({ c: ["Total do contrato (" + partes.length + " categoria(s))", "", String(tE), brl(tI), brl(tF), sinal(tF - tI) + " (" + pctV(tF - tI, tI) + ")", sinal(moT2(tF * 12) - moT2(tI * 12))], total: true });
+    const blocos = [
+      { t: "pares", titulo: "Contrato", pares: [["Contrato", inf.contrato || "—"], ["Contratante", inf.contratante || "—"], ["Contratada", inf.contratada || "—"], ["Categorias", String(partes.length)]] },
+      ...(() => { const pen = (m) => m.cols[m.cols.length - 2], ult = (m) => m.cols[m.cols.length - 1], mesmo = (f) => partes.every(({ m }) => f(m).nome === f(partes[0].m).nome);
+        return cmpBlocosRepac({ nomeA: mesmo(pen) ? pen(partes[0].m).nome : "planilha vigente", nomeB: mesmo(ult) ? ult(partes[0].m).nome : "nova planilha", inicio: inf.inicio, brl, sinal, pct: pctV, porCat: true,
+          itens: partes.map(({ k, m }) => ({ rot: k.nome, empA: m.empDe(pen(m)), empB: m.empDe(ult(m)), totA: pen(m).r.total, totB: ult(m).r.total, menA: pen(m).r.mensal, menB: ult(m).r.mensal })) }); })(),
+      { t: "tabela", titulo: "Variação acumulada: primeira × última planilha de cada categoria", sub: "Desde a primeira planilha de cada categoria (planejamento ou contratação), considerada a quantidade de empregados. Valor anual = 12 meses.",
+        cab: ["Categoria", "Planilhas", "Empregados", "Mensal inicial", "Mensal final", "Diferença mensal", "Diferença anual"], larg: [20, 16, 10, 13, 13, 16, 12], alin: "llrrrrr", linhas: lin1, fonte: 7.2 },
+    ];
+    // quadro lado a lado: colunas = planilhas (pelo nome: contratação, 1ª repactuação…); em cada categoria, as linhas do valor mensal e do anual
+    const nomes = []; partes.forEach(({ m }) => m.cols.forEach((c) => { if (!nomes.includes(c.nome)) nomes.push(c.nome); }));
+    if (nomes.length <= 7) {
+      const tot = nomes.map(() => 0), falta = nomes.map(() => false), lin2 = [];
+      partes.forEach(({ k, m }) => { const cel = (fn) => nomes.map((nm, j) => { const c = m.cols.find((x) => x.nome === nm); if (!c) { falta[j] = true; return "—"; } return brl(fn(c)); });
+        nomes.forEach((nm, j) => { const c = m.cols.find((x) => x.nome === nm); if (c) tot[j] += c.r.mensal; });
+        lin2.push({ c: [k.nome + " (" + (m.empDe(m.cols[m.cols.length - 1]) || "—") + " empregado(s))"].concat(nomes.map(() => "")), span: true },
+          { c: ["Valor mensal"].concat(cel((c) => c.r.mensal)) }, { c: ["Valor anual (12 meses)"].concat(cel((c) => m.anualDe(c))), fraco: true }); });
+      const ast = (j) => (falta[j] ? "*" : "");
+      lin2.push({ c: ["Total do contrato"].concat(nomes.map(() => "")), span: true, total: true },
+        { c: ["Valor mensal"].concat(tot.map((v, j) => brl(v) + ast(j))), total: true }, { c: ["Valor anual (12 meses)"].concat(tot.map((v, j) => brl(moT2(v * 12)) + ast(j))), total: true },
+        { c: ["Diferença mensal (em relação à anterior)"].concat(tot.map((v, j) => (!j ? "—" : falta[j] || falta[j - 1] ? "não comparável*" : sinal(v - tot[j - 1]) + " (" + pctV(v - tot[j - 1], tot[j - 1]) + ")"))), forte: true, alerta: tot.map((v, j) => (j && !falta[j] && !falta[j - 1] && Math.abs(v - tot[j - 1]) >= 0.005 ? j + 1 : -1)).filter((j) => j > 0) },
+        { c: ["Diferença anual (em relação à anterior)"].concat(tot.map((v, j) => (!j ? "—" : falta[j] || falta[j - 1] ? "não comparável*" : sinal(moT2(v * 12) - moT2(tot[j - 1] * 12))))), forte: true, alerta: tot.map((v, j) => (j && !falta[j] && !falta[j - 1] && Math.abs(v - tot[j - 1]) >= 0.005 ? j + 1 : -1)).filter((j) => j > 0) });
+      blocos.splice(5, 0, { t: "tabela", titulo: "Valores mensal e anual de cada categoria em cada planilha", sub: "Considerada a quantidade de empregados; valor anual = 12 meses." + (falta.some(Boolean) ? " * Total sem as categorias que não têm essa planilha." : ""),
+        cab: [""].concat(nomes), larg: [30].concat(nomes.map(() => 70 / nomes.length)), alin: "l" + "r".repeat(nomes.length), linhas: lin2, fonte: nomes.length > 4 ? 7 : 7.8 });
+    }
+    if (fora.length) blocos.push({ t: "legenda", texto: "Ficaram de fora por terem menos de duas planilhas: " + fora.join(", ") + "." });
+    const incons = [];
+    partes.forEach(({ k, m }, i) => {
+      blocos.push({ t: "quebra" }, { t: "secao", titulo: "Categoria " + (i + 1) + " – " + k.nome, sub: m.cols.map((c) => c.nome).join(" → ") });
+      m.blocos.forEach((b) => blocos.push(b));
+      m.incons.forEach((x) => incons.push({ ...x, col: k.nome + " – " + x.col }));
+    });
+    const gravN = { alta: "alta", media: "média", baixa: "baixa" }, ordG = { alta: 0, media: 1, baixa: 2 };
+    incons.sort((x, y) => (ordG[x.f.gravidade] ?? 1) - (ordG[y.f.gravidade] ?? 1));
+    blocos.push({ t: "quebra" }, { t: "secao", titulo: "Inconsistências no preenchimento das planilhas", sub: "Todas as categorias. Conferência com a legislação e com o modelo da IN 05/2017, a mesma feita na Repactuação e na Análise de proposta. Gravidade: alta, média ou baixa." });
+    blocos.push(incons.length ? { t: "tabela", titulo: "DIVERGÊNCIAS E INCONSISTÊNCIAS NA ELABORAÇÃO DAS PLANILHAS", sub: incons.length + " apontamento(s)", cab: ["Categoria – planilha", "Rubrica (gravidade)", "Como está", "O correto", "Fundamento"], larg: [17, 18, 19, 26, 20], alin: "lllll", fonte: 7.2,
+        linhas: incons.map(({ col, f }) => ({ c: [col, (f.rubrica || "") + (f.gravidade ? " (" + (gravN[f.gravidade] || f.gravidade) + ")" : ""), f.problema || "", f.correcao || "", f.fundamento || ""], alerta: f.gravidade === "alta" ? [1] : [] })) }
+      : { t: "legenda", texto: "Nenhuma inconsistência identificada na conferência automática das planilhas." });
+    const doc0 = { id: "comparacao", titulo: "Comparação das planilhas – todas as categorias", sub: (inf.contrato ? "Contrato " + inf.contrato + " · " : "") + partes.length + " categoria(s)", selo: leiDe(partes[0].m.cols[0].d || {}).selo, paisagem: partes.some(({ m }) => m.cols.length > 3),
+      arquivo: "comparacao-das-planilhas-todas-as-categorias" + (inf.contrato ? "-contrato-" + String(inf.contrato).replace(/[^\w-]+/g, "-") : ""), blocos,
+      notas: ["Cada planilha segue o modelo da IN 05/2017 (Anexo VII-D) e os mesmos cálculos da Calculadora. Nas repactuações, o aviso prévio trabalhado é considerado custo não renovável (no máximo 0,194% por ano de prorrogação; TCU, Acórdão 1.186/2017-Plenário).",
+        "Valor mensal = preço por empregado × empregados por posto × postos; valor anual = valor mensal × 12. O total do contrato soma as categorias.",
+        incons.length ? incons.length + " inconsistência(s) de preenchimento apontada(s): ver a seção “Inconsistências no preenchimento das planilhas”." : ""] };
+    try { if (formato === "xlsx") await this.moDocExcel(doc0, doc0.titulo, hoje); else await this.moDocPdf(doc0, doc0.titulo, hoje);
+      this.setState((x) => ({ cmp: { ...x.cmp, erro: "", ok: "✓ Relatório do contrato com " + partes.length + " categoria(s) gerado." + (fora.length ? " Ficaram de fora: " + fora.join(", ") + "." : "") } })); }
     catch (e) { console.error(e); this.setState((x) => ({ cmp: { ...x.cmp, erro: "Não foi possível gerar o arquivo. Tente de novo." } })); }
   }
   async moQuadroRelatorio(formato) {
@@ -13133,7 +13310,7 @@ class Component extends DCLogic {
       c.font = { name: "Calibri", size: o.size || 10, bold: !!o.bold, italic: !!o.italic, color: { argb: o.cor || X.texto } }; c.alignment = { wrapText: true, vertical: "middle" }; if (o.fundo) c.fill = fill(o.fundo);
       row.height = o.alt || altura(txt, totalLarg * (o.size && o.size > 11 ? 0.8 : 1.05), (o.size || 10) * 1.35); return row; };
     faixa(doc0.titulo, { size: 16, bold: true, cor: X.branco, fundo: X.navy, alt: 30 });
-    faixa(doc0.sub || (titulo + "  ·  " + (this.state.mo.d.categoria || "Profissional") + (this.state.mo.d.municipio ? "  ·  " + this.state.mo.d.municipio + "/" + (this.state.mo.d.uf || "") : "")), { size: 11, cor: "FFB9CBD2", fundo: X.navy, alt: 20 });
+    faixa(doc0.sub || (titulo + "  ·  " + (this.state.mo.d.categoria || "Profissional") + (this.state.mo.d.municipio ? "  ·  " + this.state.mo.d.municipio + (this.state.mo.d.uf ? "/" + this.state.mo.d.uf : "") : "")), { size: 11, cor: "FFB9CBD2", fundo: X.navy, alt: 20 });
     faixa((doc0.selo || "IN SEGES/MP nº 5/2017, Anexo VII-D") + " · gerado no Licitacon em " + hoje, { size: 9, cor: "FF7FE3B6", fundo: X.navy, alt: 16 });
     ws.addRow([]);
     const num = (t) => { const m = String(t == null ? "" : t).replace("R$", "").replace("%", "").replace("+", "").trim().replace(/\./g, "").replace(",", "."); const n = Number(m); return m !== "" && /^-?[\d.]+$/.test(m) && isFinite(n) ? n : null; };
@@ -13152,7 +13329,7 @@ class Component extends DCLogic {
       if (b.t === "legenda") { const row = faixa(b.texto, { size: 9, italic: true, cor: X.fraco }); row.getCell(1).fill = fill(X.ambar); ws.addRow([]); return; }
       if (b.t === "secao") { faixa(b.titulo, { bold: true, size: 13, cor: X.texto, fundo: X.tot, alt: 24 }); if (b.sub) faixa(b.sub, { size: 9.5, italic: true, cor: X.fraco }); return; }
       if (b.t === "quebra" || b.t === "cascata") return;
-      if (b.t === "texto") { faixa(b.titulo, { bold: true, cor: X.branco, fundo: X.navy, alt: 21 }); b.paragrafos.forEach((t) => faixa(t, { size: 10.5 })); ws.addRow([]); return; }
+      if (b.t === "texto") { if (b.titulo) faixa(b.titulo, { bold: true, cor: X.branco, fundo: X.navy, alt: 21 }); b.paragrafos.forEach((t) => faixa(t, { size: 10.5 })); ws.addRow([]); return; }
       // tabela
       const nc = b.cab.length, alin = b.alin || "";
       faixa(b.titulo, { bold: true, size: 11, cor: X.branco, fundo: X.navy, alt: 21 });
@@ -13212,6 +13389,8 @@ class Component extends DCLogic {
     const { jsPDF } = window.jspdf, pais = !!doc0.paisagem;
     const doc = new jsPDF({ unit: "mm", format: "a4", orientation: pais ? "landscape" : "portrait" });
     const W = pais ? 297 : 210, H = pais ? 210 : 297, ML = 14, MR = 14, LARG = W - ML - MR;
+    // corta o texto numa linha que cabe na largura (com reticências), para não invadir o que está ao lado
+    const umaLinha = (s, larg) => { s = moPdfTxt(s); if (doc.getTextWidth(s) <= larg) return s; while (s.length > 1 && doc.getTextWidth(s + "…") > larg) s = s.slice(0, -1); return s.trimEnd() + "…"; };
     const C = { navy: [10, 31, 42], teal: [15, 107, 126], verde: [15, 163, 107], fraco: [102, 117, 127], texto: [11, 31, 42], cinza: [238, 243, 242], cinza2: [246, 248, 247], ambar: [255, 244, 220], tot: [227, 242, 234], linha: [221, 229, 228], alerta: [255, 241, 204] };
     const d = this.state.mo.d;
     const cabE = this.cabDoc();
@@ -13220,13 +13399,14 @@ class Component extends DCLogic {
         doc.setFont("helvetica", "bold"); doc.setFontSize(9.5); doc.setTextColor(...C.navy);
         const ln = cabE.nome ? doc.splitTextToSize(moPdfTxt(cabE.nome), larg).slice(0, 2) : []; ln.forEach((t, i) => doc.text(t, x, 8.5 + i * 4));
         doc.setFont("helvetica", "normal"); doc.setFontSize(7); doc.setTextColor(...C.fraco); if (cabE.linha2) doc.text(doc.splitTextToSize(moPdfTxt(cabE.linha2), larg)[0], x, 8.5 + Math.max(1, ln.length) * 4 + 0.8);
-        doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(...C.teal); doc.text(moPdfTxt(doc0.titulo), W - MR, 9.5, { align: "right", maxWidth: W - MR - meio });
-        doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(...C.fraco); doc.text(moPdfTxt(doc0.sub || titulo || ""), W - MR, 14, { align: "right", maxWidth: W - MR - meio }); doc.text("Gerado em " + hoje, W - MR, 18, { align: "right" });
+        doc.setFont("helvetica", "bold"); doc.setFontSize(10); doc.setTextColor(...C.teal); doc.text(umaLinha(doc0.titulo, W - MR - meio), W - MR, 9.5, { align: "right" });
+        doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); doc.setTextColor(...C.fraco); doc.text(umaLinha(doc0.sub || titulo || "", W - MR - meio), W - MR, 14, { align: "right" }); doc.text("Gerado em " + hoje, W - MR, 18, { align: "right" });
         doc.setDrawColor(...C.teal); doc.setLineWidth(0.5); doc.line(0, 22, W, 22); doc.setLineWidth(0.2); doc.setTextColor(...C.texto); return; }
       doc.setFillColor(...C.navy); doc.rect(0, 0, W, 22, "F");
-      doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text(doc0.titulo, ML, 10);
-      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(185, 203, 210); doc.text(moPdfTxt(doc0.sub || (titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + "/" + (d.uf || "") : ""))), ML, 16);
-      doc.setTextColor(127, 227, 182); doc.setFontSize(7.5); doc.text(moPdfTxt(doc0.selo || "IN SEGES/MP nº 5/2017 · Anexo VII-D"), W - MR, 10, { align: "right" }); doc.text("Gerado em " + hoje, W - MR, 16, { align: "right" }); doc.setTextColor(...C.texto); };
+      doc.setTextColor(127, 227, 182); doc.setFont("helvetica", "normal"); doc.setFontSize(7.5); const selo = moPdfTxt(doc0.selo || "IN SEGES/MP nº 5/2017 · Anexo VII-D"), ladoD = Math.max(doc.getTextWidth(selo), doc.getTextWidth("Gerado em " + hoje)) + 6;
+      doc.setTextColor(255, 255, 255); doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.text(umaLinha(doc0.titulo, LARG - ladoD), ML, 10);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(185, 203, 210); doc.text(umaLinha(doc0.sub || (titulo + "  ·  " + (d.categoria || "Profissional") + (d.municipio ? "  ·  " + d.municipio + (d.uf ? "/" + d.uf : "") : "")), LARG - ladoD), ML, 16);
+      doc.setTextColor(127, 227, 182); doc.setFontSize(7.5); doc.text(selo, W - MR, 10, { align: "right" }); doc.text("Gerado em " + hoje, W - MR, 16, { align: "right" }); doc.setTextColor(...C.texto); };
     const limpo = moPdfTxt;
     const base = { margin: { left: ML, right: MR, top: 28, bottom: 14 }, didDrawPage: () => { cab(); }, styles: { font: "helvetica", textColor: C.texto, lineColor: C.linha, overflow: "linebreak" },
       didParseCell: (dt) => { dt.cell.text = (dt.cell.text || []).map(limpo); } };
@@ -13237,38 +13417,45 @@ class Component extends DCLogic {
       if (b.t === "quebra") { doc.addPage(); cab(); y = 30; return; }
       if (b.t === "secao") { if (y > H - 60) { doc.addPage(); cab(); y = 30; }
         doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.setTextColor(...C.navy); doc.text(moPdfTxt(b.titulo), ML, y + 4);
-        if (b.sub) { doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...C.fraco); doc.text(moPdfTxt(b.sub), ML, y + 10, { maxWidth: LARG }); }
-        doc.setDrawColor(...C.verde); doc.setLineWidth(0.6); doc.line(ML, y + (b.sub ? 13 : 7), ML + 30, y + (b.sub ? 13 : 7)); doc.setLineWidth(0.2); doc.setTextColor(...C.texto); doc.setFont("helvetica", "normal");
-        y += b.sub ? 19 : 13; return; }
+        let extra = 0; if (b.sub) { doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(...C.fraco); const ls = doc.splitTextToSize(moPdfTxt(b.sub), LARG); ls.forEach((t, i) => doc.text(t, ML, y + 10 + i * 4)); extra = (ls.length - 1) * 4; }
+        doc.setDrawColor(...C.verde); doc.setLineWidth(0.6); doc.line(ML, y + (b.sub ? 13 + extra : 7), ML + 30, y + (b.sub ? 13 + extra : 7)); doc.setLineWidth(0.2); doc.setTextColor(...C.texto); doc.setFont("helvetica", "normal");
+        y += (b.sub ? 19 : 13) + extra; return; }
       if (b.t === "cascata") { const AH = 46, top = y + 9; if (top + AH + 14 > H - 15) { doc.addPage(); cab(); y = 30; }
         const t0 = y + 9; doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(...C.fraco); doc.text("EVOLUÇÃO DO VALOR (CASCATA DOS AJUSTES)", ML, y + 3);
-        const n = b.passos.length, cw = LARG / n, base0 = t0 + AH; doc.setDrawColor(...C.linha); doc.line(ML, base0, ML + LARG, base0);
+        const n = b.passos.length, cw = LARG / n, base0 = t0 + AH; let maxRot = 1; doc.setDrawColor(...C.linha); doc.line(ML, base0, ML + LARG, base0);
         b.passos.forEach((w, i) => { const x = ML + i * cw, bw = cw * 0.56, bx = x + (cw - bw) / 2, yb = base0 - (Number(w.b) / 100) * AH, h = Math.max(0.6, (Number(w.h) / 100) * AH);
           doc.setFillColor(...hexRgb(w.cor)); doc.rect(bx, yb - h, bw, h, "F");
           if (w.temCon) { doc.setDrawColor(150, 165, 170); doc.setLineDashPattern([0.8, 0.8], 0); const yc = base0 - (Number(w.con) / 100) * AH; doc.line(bx + bw, yc, bx + bw + cw - bw, yc); doc.setLineDashPattern([], 0); }
           doc.setFont("helvetica", "bold"); doc.setFontSize(7.6); doc.setTextColor(...C.texto); doc.text(moPdfTxt(w.val), x + cw / 2, yb - h - (w.pct ? 4.6 : 1.4), { align: "center" });
           if (w.pct) { doc.setFontSize(6.6); doc.setTextColor(10, 122, 81); doc.text(moPdfTxt(w.pct), x + cw / 2, yb - h - 1.4, { align: "center" }); }
-          doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...C.texto); doc.text(moPdfTxt(w.rot), x + cw / 2, base0 + 4, { align: "center", maxWidth: cw - 1 });
-          doc.setFont("helvetica", "normal"); doc.setFontSize(6.6); doc.setTextColor(...C.fraco); doc.text(moPdfTxt(w.sub), x + cw / 2, base0 + 7.6, { align: "center" }); });
-        doc.setTextColor(...C.texto); y = base0 + 13; return; }
+          doc.setFont("helvetica", "bold"); doc.setFontSize(7); doc.setTextColor(...C.texto); const lr = doc.splitTextToSize(moPdfTxt(w.rot), cw - 1).slice(0, 3); lr.forEach((t, k) => doc.text(t, x + cw / 2, base0 + 4 + k * 3, { align: "center" }));
+          doc.setFont("helvetica", "normal"); doc.setFontSize(6.6); doc.setTextColor(...C.fraco); doc.text(umaLinha(w.sub, cw - 1), x + cw / 2, base0 + 4.6 + lr.length * 3, { align: "center" }); maxRot = Math.max(maxRot, lr.length); });
+        doc.setTextColor(...C.texto); y = base0 + 10 + maxRot * 3; return; }
       if (b.t === "destaques") { const n = b.itens.length, cw = (LARG - (n - 1) * 4) / n;
-        b.itens.forEach(([k, v], i) => { const x = ML + i * (cw + 4); doc.setFillColor(...(i ? C.cinza2 : C.tot)); doc.roundedRect(x, y, cw, 20, 2.5, 2.5, "F"); if (!i) { doc.setFillColor(...C.verde); doc.rect(x, y + 3, 1.2, 14, "F"); }
-          doc.setFontSize(7); doc.setTextColor(...C.fraco); doc.setFont("helvetica", "bold"); doc.text(moPdfTxt(String(k).toUpperCase()), x + 4, y + 6.5, { maxWidth: cw - 6 });
-          doc.setFontSize(i ? 11 : 13); doc.setTextColor(...(i ? C.texto : C.teal)); doc.text(moPdfTxt(v), x + 4, y + 15, { maxWidth: cw - 6 }); });
-        doc.setFont("helvetica", "normal"); doc.setTextColor(...C.texto); y += 27; return; }
+        // rótulo em até 2 linhas e valor reduzido até caber: o cartão cresce junto, sem sobrepor
+        doc.setFont("helvetica", "bold"); doc.setFontSize(7); const rots = b.itens.map(([k]) => doc.splitTextToSize(moPdfTxt(String(k).toUpperCase()), cw - 6).slice(0, 2));
+        const nl = Math.max(1, ...rots.map((r) => r.length)), hc = 20 + (nl - 1) * 3;
+        b.itens.forEach(([k, v], i) => { const x = ML + i * (cw + 4); doc.setFillColor(...(i ? C.cinza2 : C.tot)); doc.roundedRect(x, y, cw, hc, 2.5, 2.5, "F"); if (!i) { doc.setFillColor(...C.verde); doc.rect(x, y + 3, 1.2, hc - 6, "F"); }
+          doc.setFontSize(7); doc.setTextColor(...C.fraco); doc.setFont("helvetica", "bold"); rots[i].forEach((t, k2) => doc.text(t, x + 4, y + 6.5 + k2 * 3));
+          let fs = i ? 11 : 13; doc.setFontSize(fs); while (fs > 7 && doc.getTextWidth(moPdfTxt(v)) > cw - 6) { fs -= 0.5; doc.setFontSize(fs); }
+          doc.setTextColor(...(i ? C.texto : C.teal)); doc.text(umaLinha(v, cw - 6), x + 4, y + 15 + (nl - 1) * 3); });
+        doc.setFont("helvetica", "normal"); doc.setTextColor(...C.texto); y += hc + 7; return; }
       if (b.t === "barra") { if (!b.tot) return; doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(...C.fraco); doc.text("COMPOSIÇÃO DO PREÇO POR EMPREGADO", ML, y); y += 3;
         let x = ML; b.comp.forEach(([, v, c]) => { const w = (v / b.tot) * LARG; if (w > 0) { doc.setFillColor(...c); doc.rect(x, y, w, 5, "F"); x += w; } });
         y += 9; doc.setFont("helvetica", "normal"); doc.setFontSize(7.3);
-        b.comp.forEach(([k, v, c], i) => { const col = i % 3, lin = Math.floor(i / 3), x2 = ML + col * (LARG / 3), y2 = y + lin * 5; doc.setFillColor(...c); doc.rect(x2, y2 - 2.4, 2.6, 2.6, "F"); doc.setTextColor(...C.texto);
-          doc.text(moPdfTxt(k) + "  " + (v / b.tot * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%", x2 + 4, y2); });
-        y += 12; return; }
+        // legenda em 3 colunas; se algum texto não couber, passa para 2 colunas (e, em último caso, corta com reticências)
+        const rotB = b.comp.map(([k, v]) => moPdfTxt(k) + "  " + (v / b.tot * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 }) + "%");
+        const ncB = rotB.some((s) => doc.getTextWidth(s) > LARG / 3 - 6) ? 2 : 3, cwB = LARG / ncB;
+        b.comp.forEach(([k, v, c], i) => { const col = i % ncB, lin = Math.floor(i / ncB), x2 = ML + col * cwB, y2 = y + lin * 5; doc.setFillColor(...c); doc.rect(x2, y2 - 2.4, 2.6, 2.6, "F"); doc.setTextColor(...C.texto);
+          doc.text(umaLinha(rotB[i], cwB - 6), x2 + 4, y2); });
+        y += Math.ceil(b.comp.length / ncB) * 5 + 2; return; }
       if (b.t === "pares") { const pares = []; for (let i = 0; i < b.pares.length; i += 2) pares.push([b.pares[i][0], String(b.pares[i][1]), b.pares[i + 1] ? b.pares[i + 1][0] : "", b.pares[i + 1] ? String(b.pares[i + 1][1]) : ""]);
         doc.autoTable({ ...base, startY: y, head: [[{ content: b.titulo.toUpperCase(), colSpan: 4, styles: { fillColor: C.teal, textColor: 255, fontSize: 8, fontStyle: "bold" } }]], body: pares, theme: "plain",
           styles: { ...base.styles, fontSize: 8, cellPadding: { top: 1.4, bottom: 1.4, left: 2, right: 2 }, lineWidth: { bottom: 0.1 } },
           columnStyles: { 0: { textColor: C.fraco, fontStyle: "bold", cellWidth: LARG * 0.22 }, 1: { cellWidth: LARG * 0.28 }, 2: { textColor: C.fraco, fontStyle: "bold", cellWidth: LARG * 0.22 } } });
         y = fimY() + 5; return; }
-      if (b.t === "legenda") { doc.setFillColor(...C.ambar); doc.rect(ML, y - 2.6, 3.4, 3.4, "F"); doc.setFontSize(7.3); doc.setTextColor(...C.fraco); doc.text(moPdfTxt(b.texto), ML + 5, y, { maxWidth: LARG - 5 }); doc.setTextColor(...C.texto); y += 5; return; }
-      if (b.t === "texto") { doc.autoTable({ ...base, startY: y, head: [[{ content: b.titulo, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }]], body: b.paragrafos.map((t) => [t]), theme: "plain",
+      if (b.t === "legenda") { doc.setFillColor(...C.ambar); doc.rect(ML, y - 2.6, 3.4, 3.4, "F"); doc.setFontSize(7.3); doc.setTextColor(...C.fraco); const ll = doc.splitTextToSize(moPdfTxt(b.texto), LARG - 5); ll.forEach((t, i) => doc.text(t, ML + 5, y + i * 3.2)); doc.setTextColor(...C.texto); y += 5 + (ll.length - 1) * 3.2; return; }
+      if (b.t === "texto") { doc.autoTable({ ...base, startY: y, head: b.titulo ? [[{ content: b.titulo, styles: { fillColor: C.navy, textColor: 255, fontSize: 8, fontStyle: "bold" } }]] : undefined, body: b.paragrafos.map((t) => [t]), theme: "plain",
           rowPageBreak: "avoid", styles: { ...base.styles, fontSize: 8.4, cellPadding: { top: 1.6, bottom: 1.6, left: 2, right: 2 } } }); y = fimY() + 5; return; }
       // tabela
       const nc = b.cab.length, alin = b.alin || "", somaL = (b.larg || []).reduce((a, w) => a + w, 0) || nc;
@@ -13954,12 +14141,18 @@ class Component extends DCLogic {
       moCompInfo: comp ? "Planilha da contratação " + comp.origem + (comp.em ? " em " + new Date(comp.em).toLocaleString("pt-BR") : "") + ", recalculada com as regras da IN: " + brl(comp.rA.total) + " por empregado."
         + (r.vigente && Math.abs(comp.rA.total - r.vigente) > 0.05 ? " O preço vigente informado é " + brl(r.vigente) + ": diferença de " + brl(Math.abs(comp.rA.total - r.vigente)) + ", que pode indicar falha de cálculo na planilha da contratação ou repactuação anterior não registrada." : "") : "",
       cmpAdd: () => this.moCmpAdd(), cmpPdf: () => this.moCmpRelatorio("pdf"), cmpExcel: () => this.moCmpRelatorio("xlsx"), cmpRecomecar: () => this.cmpRecomecar(),
+      ...(() => { const cats = this.cmpCatsLer(), brl = (v) => "R$ " + (Number(v) || 0).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return { cmpTemCats: cats.length > 0, cmpCatsN: cats.length, cmpTemQuadroRep: this.moListaLer("repactuacao").length > 0,
+          cmpCats: cats.map((k, i) => { let mens = 0; try { const u = k.cols[k.cols.length - 1]; mens = moCmpCalc(u).mensal; } catch (e) {}
+            return { nome: k.nome, det: k.cols.length + " planilha(s): " + k.cols.map((c) => c.nome).join(" → ") + " · última: " + brl(mens) + " por mês", naoSobe: i === 0, naoDesce: i === cats.length - 1,
+              subir: () => this.cmpCatMover(i, -1), descer: () => this.cmpCatMover(i, 1), abrir: () => this.cmpCatAbrir(i), excluir: () => this.cmpCatDel(i) }; }),
+          cmpCatIncluir: () => this.cmpCatIncluir(), cmpCatsDoQuadro: () => this.cmpCatsDoQuadro(), cmpTodasPdf: () => this.moCmpRelatorioTodas("pdf"), cmpTodasExcel: () => this.moCmpRelatorioTodas("xlsx") }; })(),
       cmpEsq: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: -510 }); } catch (e) {} }, cmpDir: () => { try { document.querySelector(".lmo-cmp-scroll").scrollBy({ left: 510 }); } catch (e) {} },
       cmpOk: (s.cmp && s.cmp.ok) || "", cmpErro: (s.cmp && s.cmp.erro) || "",
       ...(() => { const q = this.cmpQuadros(), sel = (s.cmp && s.cmp.quadroSel) || (q[0] && q[0].id) || "";
         return { cmpTemQuadro: q.length > 0, cmpQuadroOps: q.map((x) => ({ id: x.id, nome: x.rot + " · " + x.it.nome + (x.modo === "repactuacao" ? (x.it.ant ? " (contratação e repactuada)" : " (repactuada)") : ""), sel: x.id === sel })),
           onCmpQuadroSel: (e) => { const v = e.target.value; this.setState((z) => ({ cmp: { ...z.cmp, quadroSel: v } })); }, cmpUsarQuadro: () => this.cmpUsarQuadro() }; })(),
-      cmpInfo: [["contrato", "Contrato"], ["contratante", "Contratante"], ["contratada", "Contratada"], ["categoria", "Categoria"]].map(([k, rot]) => ({ rot, valor: ((s.cmp && s.cmp.info) || {})[k] || "", on: (e) => { const v = e.target.value; const c = this.state.cmp; this.cmpGravar({ ...c, info: { ...(c.info || {}), [k]: v } }); } })),
+      cmpInfo: [["contrato", "Contrato"], ["contratante", "Contratante"], ["contratada", "Contratada"], ["categoria", "Categoria"], ["inicio", "Início dos próximos 12 meses (mm/aaaa)"]].map(([k, rot]) => ({ rot, valor: ((s.cmp && s.cmp.info) || {})[k] || "", on: (e) => { const v = e.target.value; const c = this.state.cmp; this.cmpGravar({ ...c, info: { ...(c.info || {}), [k]: v } }); } })),
       ...(s.calcAba === "cmp" ? (() => { const { cols, brl } = this.moCmpDados();
         const pctX = (v) => ((Number(v) || 0) * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 4 }) + "%";
         const TODAS = ["gt_tipo", "gt_multa"]; // a garantia trabalhista é do contrato: vale para todas as planilhas da linha do tempo
