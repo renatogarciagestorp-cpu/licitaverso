@@ -1,5 +1,5 @@
 /* Faz a página do Acervo Licitacon funcionar no site público, sem o Claude:
-   - "decisoes" e "meta" vêm de acervo-completo.json (atualizado nos dias úteis);
+   - "decisoes" e "meta" vêm de acervo-completo.json (atualizado automaticamente);
    - com as contas ativas (config.js preenchido), a Biblioteca é para quem tem conta (gratuita, sem plano) e as
      anotações, marcadores, dossiês e preferências ficam salvos na conta da pessoa (Supabase),
      disponíveis em qualquer aparelho; sem contas, ficam no navegador (localStorage);
@@ -61,6 +61,8 @@
     const b = d.querySelector("[data-recarregar]");
     if (b) b.onclick = () => location.reload();
   });
+  // link direto para um item (#it-<id>, vindo da faixa da página inicial): guardado para depois do login
+  try { if (/^#it-/.test(location.hash)) sessionStorage.setItem("lv-bib-ir", location.hash); } catch (e) {}
   const portao = () => painel("portao", '<div class="in"><h1 id="lvPortaoTit">A Biblioteca Jurídica é gratuita para quem tem conta.</h1>'
     + '<p>Crie sua conta grátis, sem cartão e sem plano, para pesquisar decisões e normas sobre licitações e contratos das fontes oficiais de todo o país.</p>'
     + '<ul><li>TCU, CGU, STF, STJ, tribunais de contas, tribunais de justiça e procuradorias dos estados, além de leis e decretos.</li>'
@@ -68,7 +70,7 @@
     + '<li>Anotações, marcadores e dossiês salvos na sua conta, em qualquer aparelho.</li></ul>'
     + '<div class="ac"><a class="pri" href="index.html?p=cadastro&amp;volta=biblioteca">Criar conta grátis</a>'
     + '<a class="sec" href="index.html?p=login&amp;volta=biblioteca">Já tenho conta: entrar</a></div>'
-    + '<small>A coleta nas fontes oficiais é automática, nos dias úteis.</small></div>');
+    + '<small>A coleta nas fontes oficiais é automática.</small></div>');
   const aguardando = (falhou) => painel(falhou ? "falha" : "aguardando", '<div class="in"><h1 id="lvPortaoTit">'
     + (falhou ? "Não conseguimos conferir sua conta agora." : "Conferindo sua conta…") + '</h1>'
     + '<p>' + (falhou ? "Pode ser a conexão. Confira a internet e tente de novo." : "A conexão está lenta. O acervo abre assim que a conferência terminar.") + '</p>'

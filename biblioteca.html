@@ -64,6 +64,8 @@
     const b = d.querySelector("[data-recarregar]");
     if (b) b.onclick = () => location.reload();
   });
+  // link direto para um item (#it-<id>, vindo da faixa da página inicial): guardado para depois do login
+  try { if (/^#it-/.test(location.hash)) sessionStorage.setItem("lv-bib-ir", location.hash); } catch (e) {}
   const portao = () => painel("portao", '<div class="in"><h1 id="lvPortaoTit">A Biblioteca Jurídica é gratuita para quem tem conta.</h1>'
     + '<p>Crie sua conta grátis, sem cartão e sem plano, para pesquisar decisões e normas sobre licitações e contratos das fontes oficiais de todo o país.</p>'
     + '<ul><li>TCU, CGU, STF, STJ, tribunais de contas, tribunais de justiça e procuradorias dos estados, além de leis e decretos.</li>'
@@ -1286,7 +1288,7 @@ function exportarMd(){
     const last=S.docs.map(d=>d.capturado_em||"").sort().pop();
     $("stamp").innerHTML=`${S.docs.length} registros<br>Última captação: ${last?new Date(last).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"}):"—"}`;
     render();
-    if(!S._hash&&/^#it-/.test(location.hash)){S._hash=1;const id=decodeURIComponent(location.hash.slice(4));if(S.byId.has(id))setTimeout(()=>irPara(id),60)}
+    if(!S._hash){let h=location.hash;try{if(!/^#it-/.test(h))h=sessionStorage.getItem("lv-bib-ir")||"";sessionStorage.removeItem("lv-bib-ir")}catch(e){}if(/^#it-/.test(h)){S._hash=1;const id=decodeURIComponent(h.slice(4));if(S.byId.has(id))setTimeout(()=>irPara(id),60)}}
   },e=>{$("stamp").textContent="Não foi possível carregar o acervo agora. Recarregue a página."});
 
   S.downloads=await claude.use("downloads");

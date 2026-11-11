@@ -528,8 +528,9 @@
       if (!it.length) { caixa.style.display = "none"; return; }
       var html = it.map(function (x) {
         var c = corOrgao(x.orgao);
-        return '<article class="lvi-dec"><div class="lvi-dec-top"><span class="lvi-org" style="--o:' + c[0] + ";--oc:" + c[1] + '">' + esc(x.orgao) + "</span>" +
-          "<span>" + esc(x.tipo) + "</span><em>" + esc(x.data) + "</em></div><b>" + esc(x.numero) + "</b><p>" + esc(x.titulo) + "</p><small>" + esc(x.tema) + "</small></article>";
+        var abre = x.id ? '<a class="lvi-dec" href="biblioteca.html#it-' + encodeURIComponent(x.id) + '" aria-label="Abrir na Biblioteca: ' + esc(x.orgao + " – " + x.numero) + '">' : '<article class="lvi-dec">';
+        return abre + '<div class="lvi-dec-top"><span class="lvi-org" style="--o:' + c[0] + ";--oc:" + c[1] + '">' + esc(x.orgao) + "</span>" +
+          "<span>" + esc(x.tipo) + "</span><em>" + esc(x.data) + "</em></div><b>" + esc(x.numero) + "</b><p>" + esc(x.titulo) + "</p><small>" + esc(x.tema) + "</small>" + (x.id ? "</a>" : "</article>");
       }).join("");
       trilho(caixa, html, it.length * 5.5);
     }).catch(function () { caixa.style.display = "none"; });
