@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Gera inicio-destaques.json: decisões reais e recentes do acervo para a faixa animada da página inicial.
 
-Mostra o que chegou por último na Biblioteca (data de inclusão, depois a do julgamento), no máximo 3 por órgão,
-para a faixa mostrar a variedade de fontes. Roda dentro de scripts/empacotar-site.py e na automação
+Mostra as decisões e orientações mais recentes do acervo pela data (julgamento, sessão ou assinatura), na mesma
+ordem da lista da Biblioteca. Roda dentro de scripts/empacotar-site.py e na automação
 acervo-mesclar (a cada coleta que entra no site); à mão: python3 scripts/gerar-destaques.py
 """
 import json
@@ -12,7 +12,7 @@ RAIZ = pathlib.Path(__file__).resolve().parent.parent
 ACERVO = RAIZ / "acervo.json"
 SAIDA = RAIZ / "inicio-destaques.json"
 TOTAL = 28
-POR_ORGAO = 3
+POR_ORGAO = 99  # sem limite: a faixa segue a ordem da Biblioteca (mais recentes primeiro)
 
 
 def curto(t: str, n: int) -> str:
@@ -25,7 +25,7 @@ def main() -> None:
         return
     itens = json.loads(ACERVO.read_text(encoding="utf-8")).get("itens", [])
     itens = [x for x in itens if x.get("natureza") in ("decisoes", "orientacoes") and x.get("numero") and x.get("titulo") and x.get("data") and x.get("tema") not in ("Outros", "")]
-    itens.sort(key=lambda x: ((x.get("verificado_em") or "")[:10], x["data"]), reverse=True)
+    itens.sort(key=lambda x: (x["data"], (x.get("verificado_em") or "")[:10]), reverse=True)
     conta, saida = {}, []
     for x in itens:
         o = x.get("orgao") or ""
