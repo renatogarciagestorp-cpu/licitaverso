@@ -33,7 +33,7 @@ def main() -> None:
             continue
         conta[o] = conta.get(o, 0) + 1
         a, m, d = x["data"][:10].split("-")
-        saida.append({"orgao": o, "tipo": x.get("tipo", ""), "numero": curto(x["numero"], 60), "data": f"{d}/{m}/{a}",
+        saida.append({"id": x.get("id", ""), "orgao": o, "tipo": x.get("tipo", ""), "numero": curto(x["numero"], 60), "data": f"{d}/{m}/{a}",
                       "tema": x.get("tema", ""), "titulo": curto(x["titulo"], 150)})
         if len(saida) >= TOTAL:
             break

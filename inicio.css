@@ -236,6 +236,8 @@ button.lvi-campo-btn:focus-visible { outline: 2px solid var(--lvi-menta); outlin
 @keyframes lvi-marq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 .lvi-dec { flex: none; width: 330px; display: grid; gap: 6px; align-content: start; padding: 14px 16px; border-radius: 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--lvi-linha); transition: background .2s, border-color .2s; }
 .lvi-dec:hover { background: rgba(255,255,255,0.09); border-color: rgba(111,224,174,0.45); }
+a.lvi-dec { color: inherit; text-decoration: none; cursor: pointer; }
+a.lvi-dec:focus-visible { outline: 2px solid #6FE0AE; outline-offset: 2px; }
 .lvi-dec-top { display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--lvi-texto-2); }
 .lvi-org { font-size: 11px; font-weight: 900; letter-spacing: .04em; padding: 3px 8px; border-radius: 7px; background: var(--o, rgba(111,224,174,0.16)); color: var(--oc, var(--lvi-menta)); }
 .lvi-dec-top > em { margin-left: auto; font-style: normal; }
