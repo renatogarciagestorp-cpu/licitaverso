@@ -91,8 +91,11 @@ DOCS.update({
                           "Parâmetros e indicadores para aferir o cumprimento das metas (art. 22, IV)",
                           "Público-alvo, local e prazo de execução", "Equipe de trabalho",
                           "Previsão de receitas e despesas, por natureza: pessoal e encargos, material de consumo, serviços, equipamentos e custos indiretos (art. 22, II-A, e art. 46)",
-                          "Cronograma de execução das metas e de desembolso", "Contrapartida, se houver (art. 35, § 1º)",
-                          "Monitoramento, avaliação e prestação de contas (arts. 58 a 72)",
+                          "Estimativa dos encargos previdenciários e trabalhistas da equipe durante a vigência",
+                          "Compatibilidade dos custos com os preços de mercado ou de outras parcerias da mesma natureza (cotações, tabelas, publicações), com a fonte de cada valor",
+                          "Plano de aplicação dos recursos e cronograma de desembolso compatível com as etapas e metas do cronograma físico",
+                          "Contrapartida, se houver (art. 35, § 1º)",
+                          "Monitoramento, avaliação, modo e periodicidade da prestação de contas e prazos de análise (arts. 58 a 72)",
                           "Elementos exigidos pelo decreto regulamentador do ente (cite cada dispositivo)"]},
     "riscos": {"nome": "Mapa de Riscos", "roteiro": "riscos", "objetos": [],
                "base": "art. 18, X, da Lei nº 14.133/2021 (análise dos riscos da contratação) e, quando cabível, a matriz de riscos do art. 6º, XXVII, e do art. 22",
@@ -169,7 +172,10 @@ def bloco_regime(regime, tem_normas):
                 "decreto regulamentador do ente. NÃO é licitação: não use os termos e institutos da Lei nº 14.133/2021 (licitante, pregão, "
                 "proposta de preço, menor preço, habilitação do art. 62); use chamamento público, organização da sociedade civil, proposta, "
                 "plano de trabalho, termo de colaboração ou de fomento. "
-                + ("O regulamento do ente foi enviado (abaixo): siga-o e cite-o. " if tem_normas else
+                + ("O decreto do ente foi enviado (abaixo): siga-o e cite-o (número do decreto e artigo). Se ele trouxer modelo, roteiro ou "
+                   "anexo com a estrutura do documento (ex.: itens obrigatórios do plano de trabalho), siga essa estrutura, a ordem e os títulos "
+                   "dele, cobrindo também todos os elementos exigidos pela lei e pelo decreto; regras do decreto mais exigentes que a lei "
+                   "prevalecem (ex.: vedação de parcela única, prazos de vigência, limites e comprovação de custos). " if tem_normas else
                    "O decreto regulamentador do ente não foi enviado: nos pontos que dependem dele, escreva [PREENCHER: conferir no decreto "
                    "do ente — o que deve ser conferido]. ") + "\n\n")
     return ("REGIME JURÍDICO: Lei nº 14.133/2021. "
