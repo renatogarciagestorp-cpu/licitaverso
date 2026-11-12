@@ -887,6 +887,7 @@
   .lve-doc > span { font-size: 14.5px; line-height: 1.55; color: #5F7077; }
   .lve-doc > small { font-size: 12.5px; color: #0F6B7E; font-weight: 700; }
   .lve-doc .lve-doc-cta { margin-top: auto; color: #0A7A50; font-weight: 800; }
+  .lve-leis .lve-doc { padding: 16px 18px; gap: 4px; } .lve-leis .lve-doc > b { font-size: 17px; } .lve-leis .lve-doc > span { font-size: 13.5px; }
   .lve-grid { margin-top: -28px; position: relative; display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 18px; align-items: start; }
   .lve-lado { position: sticky; top: 92px; background: #fff; border: 1px solid #E3E9E8; border-radius: 16px; padding: 18px; display: grid; gap: 6px; box-shadow: 0 12px 28px rgba(11,31,42,0.07); }
   .lve-lado-t { font-size: 16px; color: #0A1F2A; }
@@ -3225,7 +3226,7 @@
       <section class="lva-hero lvx-ph">
         <div class="lvc-hero-in">
           <span class="lvh-eyebrow">O Elaborador · Lei 14.133/2021</span>
-          <h1 class="lva-h1" style="max-width: 22ch">ETP, TR ou Projeto Básico em minutos, não em dias.</h1>
+          <h1 class="lva-h1" style="max-width: 22ch">ETP, TR, edital e contratação direta em minutos, não em dias.</h1>
           <p class="lva-lead">Você informa a contratação. Nós pesquisamos o mercado, comparamos as soluções e entregamos o documento pronto para revisar.</p>
           <sc-if value="{{ elSemDoc }}" hint-placeholder-val="{{ true }}">
             <div class="lvh-ctas" style="margin-top: 22px">
@@ -3247,6 +3248,12 @@
             <div class="lve-valid lve-valid-ok" role="status" style="margin-top: 22px"><b>✓ {{ elLiberadoTexto }}</b>
               <button type="button" class="lve-voltar" sc-camel-on-click="{{ elIrLiberado }}" style="margin-left: 10px">Preencher agora →</button></div>
           </sc-if>
+          <h2 class="lve-h2" id="el-lei">Qual lei rege a contratação?</h2>
+          <div class="lve-docs lve-leis" role="group" aria-label="Lei da contratação">
+            <sc-for list="{{ elRegimes }}" as="r" hint-placeholder-count="3">
+              <button type="button" class="lve-doc" sc-camel-on-click="{{ r.escolher }}" aria-pressed="{{ r.sel }}"><b>{{ r.nome }}</b><span>{{ r.desc }}</span></button>
+            </sc-for>
+          </div>
           <h2 class="lve-h2" id="el-escolher">Qual documento você quer criar?</h2>
           <div class="lve-docs">
             <sc-for list="{{ elDocs }}" as="dc" hint-placeholder-count="3">
@@ -3496,6 +3503,29 @@
                 </sc-if>
 
                 <sc-if value="{{ elEtapaFinal }}" hint-placeholder-val="{{ false }}">
+            <div class="lve-bloco">
+              <h4 class="lve-bloco-t">{{ elNormasTitulo }}</h4>
+              <p style="margin: 0 0 10px; font-size: 13px; line-height: 1.5; color: #5F7077">{{ elNormasTexto }}</p>
+              <sc-if value="{{ elPedeRilc }}" hint-placeholder-val="{{ false }}"><p role="note" style="margin: 0 0 10px; padding: 9px 12px; border: 1px solid #F1D49A; background: #FFF8EC; border-radius: 10px; font-size: 13px; line-height: 1.5; color: #5A4300"><b>Empresa estatal:</b> envie o Regulamento Interno de Licitações e Contratos (RILC) da estatal (Lei 13.303/2016, art. 40). Sem ele, os pontos que dependem do regulamento saem marcados para você conferir.</p></sc-if>
+              <div style="display: grid; gap: 8px">
+                <sc-for list="{{ elNormas }}" as="n" hint-placeholder-count="2">
+                  <button type="button" sc-camel-on-click="{{ n.alternar }}" aria-pressed="{{ n.ativo }}" style="display: flex; align-items: center; gap: 10px; border: 1px solid {{ n.borda }}; background: {{ n.fundo }}; border-radius: 12px; padding: 10px 12px; cursor: pointer; text-align: left">
+                    <span aria-hidden="true" style="width: 20px; height: 20px; flex: none; border-radius: 6px; border: 1.5px solid {{ n.borda }}; display: grid; place-items: center; font-size: 13px; font-weight: 800; color: #0A7A50">{{ n.marca }}</span>
+                    <span style="font-size: 13.5px; font-weight: 700; color: #172B33; overflow-wrap: anywhere">{{ n.nome }} <span style="font-weight: 600; color: #5F7077">· {{ n.tipo }}</span></span>
+                  </button>
+                </sc-for>
+              </div>
+              <div style="display: grid; gap: 8px; margin-top: 10px; border: 1px solid #E3E9E8; border-radius: 12px; padding: 12px; background: #FBFCFC">
+                <label style="position: relative; display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 13.5px; color: #3D5058">
+                  <input type="file" accept="application/pdf,.pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" sc-camel-on-change="{{ onAnNormaArquivo }}" style="position: absolute; width: 1px; height: 1px; opacity: 0">
+                  <span aria-hidden="true" style="border-radius: 8px; background: #EAF2F1; color: #0F6B7E; padding: 6px 10px; font-weight: 800; font-size: 12px">+ Norma</span>
+                  <strong style="color: #0A1F2A; overflow-wrap: anywhere">{{ anNormaArquivoNome }}</strong>
+                </label>
+                <input type="text" value="{{ anNormaNome }}" sc-camel-on-input="{{ onAnNormaNome }}" placeholder="Nome (ex.: RILC da Companhia X, 2025; ou Decreto Municipal nº 123/2023)" aria-label="Nome da norma" maxlength="200" style="width: 100%; box-sizing: border-box; border: 1px solid #DDE4E3; border-radius: 10px; padding: 10px 12px; font-size: 13.5px">
+                <button type="button" sc-camel-on-click="{{ elEnviarNorma }}" style="justify-self: start; background: #0F6B7E; color: #FFFFFF; border: 0; border-radius: 10px; padding: 9px 16px; font-size: 13.5px; font-weight: 800; cursor: pointer">{{ anNormaBotao }}</button>
+              </div>
+              <sc-if value="{{ anNormaErro }}" hint-placeholder-val="{{ false }}"><p role="alert" style="margin: 8px 0 0; font-size: 13px; font-weight: 700; color: #8A1230">{{ anNormaErro }}</p></sc-if>
+            </div>
             <div class="lve-bloco">
               <h4 class="lve-bloco-t">Modelo, logo e rodapé</h4>
               <div class="lve-2arq">
@@ -5961,6 +5991,7 @@
             <div>
               <span style="display: block; font-size: 13px; font-weight: 700; color: #0F6B7E; margin-bottom: 6px">Regulamentação específica (opcional)</span>
               <p style="margin: 0 0 10px; font-size: 13px; line-height: 1.5; color: #5F7077">Decreto estadual ou municipal que regulamenta a Lei 14.133, regulamento interno de estatal (RILC) etc. O agente aplica a norma em complemento à legislação nacional. Até {{ anMaxNormas }} por análise.</p>
+              <sc-if value="{{ anPedeRilc }}" hint-placeholder-val="{{ false }}"><p role="note" style="margin: 0 0 10px; padding: 9px 12px; border: 1px solid #F1D49A; background: #FFF8EC; border-radius: 10px; font-size: 13px; line-height: 1.5; color: #5A4300"><b>Empresa estatal:</b> envie o Regulamento Interno de Licitações e Contratos (RILC) da estatal (Lei 13.303/2016, art. 40). Sem ele, o agente marca como não verificáveis os pontos que dependem do regulamento.</p></sc-if>
               <sc-if value="{{ anSemNormas }}" hint-placeholder-val="{{ false }}">
                 <p style="margin: 0 0 10px; font-size: 13px; color: #5F7077">Nenhuma norma enviada ainda.</p>
               </sc-if>
@@ -6271,7 +6302,7 @@
                 <h2 style="margin: 0; font-size: 21px; font-weight: 800; letter-spacing: -0.02em; flex: 1">Meus documentos</h2>
                 <button sc-camel-on-click="{{ atualizarAnalises }}" style="background: #F1F6F5; border: 1px solid #DCE8E6; color: #0F6B7E; border-radius: 10px; padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer">Atualizar</button>
               </div>
-              <p style="margin: 6px 0 0; font-size: 14px; color: #5F7077">ETP, TR e Projeto Básico criados pelo agente e os pareceres das análises de documentos, com download em Word e PDF.</p>
+              <p style="margin: 6px 0 0; font-size: 14px; color: #5F7077">Documentos criados pelo agente (ETP, TR, Projeto Básico, edital, contratação direta e mapa de riscos) e os pareceres das análises de documentos, com download em Word e PDF.</p>
               <div class="lvc-chips" style="margin-top: 14px"><sc-for list="{{ docsFiltros }}" as="fx" hint-placeholder-count="3"><button type="button" class="lvc-chip" sc-camel-on-click="{{ fx.escolher }}" aria-pressed="{{ fx.sel }}">{{ fx.rot }}</button></sc-for></div>
               <sc-if value="{{ semMeusDocs }}" hint-placeholder-val="{{ false }}">
                 <div style="margin-top: 16px; background: #F7FAF9; border: 1px dashed #CFE0DC; border-radius: 12px; padding: 18px; display: grid; gap: 10px">
@@ -7514,6 +7545,7 @@ const AN_REGIMES = [["lei-14133", "Lei 14.133/2021", "Administração pública"]
 // documentos aceitos (até 3 por análise). formato pdf = só PDF; planilha = Excel (recomendado) ou PDF
 const AN_TIPOS = [
   ["edital", "Edital (com minutas)", "pdf", "Edital e anexos: minuta do contrato, da ata ou do termo de colaboração."],
+  ["direta", "Contratação direta (dispensa ou inexigibilidade)", "pdf", "Processo de dispensa ou inexigibilidade: justificativa, enquadramento, razão da escolha, preço, habilitação e autorização. Na Lei 13.019, dispensa ou inexigibilidade de chamamento público."],
   ["etp", "Estudo Técnico Preliminar (ETP)", "pdf", "Estudo da necessidade, das alternativas e da solução escolhida."],
   ["tr", "Termo de Referência / Projeto Básico", "pdf", "Definição do objeto, modelo de execução, de gestão e de pagamento."],
   ["riscos", "Matriz de Riscos", "pdf", "Mapa de riscos ou matriz de alocação de riscos."],
@@ -7547,7 +7579,8 @@ const ELAB_COMUM = { t: "Identificação", d: "Dados que entram no cabeçalho e 
   { k: "necessidade", rot: "Necessidade e problema a resolver", obrig: true, dica: "O que acontece hoje, por que é preciso contratar e qual o interesse público envolvido." }
 ] };
 const ELAB = {
-  etp: { nome: "Estudo Técnico Preliminar", sigla: "ETP", base: "Lei 14.133/2021, art. 18, § 1º", desc: "Primeira etapa do planejamento: demonstra a necessidade, compara soluções e conclui pela viabilidade.", passos: [
+  etp: { regimes: ["lei-14133", "lei-13303"], porRegime: { "lei-13303": { base: "Lei 13.303/2016 e o RILC da estatal" } },
+    nome: "Estudo Técnico Preliminar", sigla: "ETP", base: "Lei 14.133/2021, art. 18, § 1º", desc: "Primeira etapa do planejamento: demonstra a necessidade, compara soluções e conclui pela viabilidade.", passos: [
     { t: "Planejamento e requisitos", d: "Incisos II e III do art. 18, § 1º.", campos: [
       { k: "pca", rot: "Previsão no Plano de Contratações Anual (inciso II)", dica: "Item do PCA ou justificativa caso não haja plano." },
       { k: "requisitos", rot: "Requisitos da contratação (inciso III)", dica: "Padrões de qualidade, desempenho, sustentabilidade, prazos, qualificação exigida." } ] },
@@ -7567,7 +7600,8 @@ const ELAB = {
     { t: "Conclusão", d: "Inciso XIII.", campos: [
       { k: "conclusao", rot: "Posicionamento sobre a viabilidade (inciso XIII)", obrig: true, dica: "Sua conclusão sobre a adequação da contratação. Se deixar em branco, o agente propõe com base nas respostas." } ] }
   ] },
-  tr: { nome: "Termo de Referência", sigla: "TR", base: "Lei 14.133/2021, art. 6º, XXIII", desc: "Documento para contratar bens e serviços: define o objeto, como será executado, fiscalizado e pago.", passos: [
+  tr: { regimes: ["lei-14133", "lei-13303"], porRegime: { "lei-13303": { base: "Lei 13.303/2016 e o RILC da estatal" } },
+    nome: "Termo de Referência", sigla: "TR", base: "Lei 14.133/2021, art. 6º, XXIII", desc: "Documento para contratar bens e serviços: define o objeto, como será executado, fiscalizado e pago.", passos: [
     { t: "Objeto e fundamentação", d: "Alíneas \"a\" e \"b\".", campos: [
       { k: "definicao", rot: "Definição do objeto: natureza, quantitativos, prazo e prorrogação (alínea a)", obrig: true },
       { k: "fundamentacao", rot: "Fundamentação: referência ao ETP (alínea b)", dica: "Número ou resumo do ETP que fundamenta a contratação." } ] },
@@ -7584,7 +7618,8 @@ const ELAB = {
       { k: "valor", rot: "Estimativa do valor e pesquisa de preços (alínea i)", obrig: true },
       { k: "orcamento", rot: "Adequação orçamentária (alínea j)", dica: "Dotação, programa de trabalho, fonte de recursos." } ] }
   ] },
-  projeto_basico: { nome: "Projeto Básico", sigla: "PB", base: "Lei 14.133/2021, art. 6º, XXV", desc: "Para obras e serviços de engenharia: define e dimensiona a obra com precisão para orçar e executar.", passos: [
+  projeto_basico: { regimes: ["lei-14133", "lei-13303"], porRegime: { "lei-13303": { base: "Lei 13.303/2016, art. 42, VIII, e o RILC" } },
+    nome: "Projeto Básico", sigla: "PB", base: "Lei 14.133/2021, art. 6º, XXV", desc: "Para obras e serviços de engenharia: define e dimensiona a obra com precisão para orçar e executar.", passos: [
     { t: "Levantamentos e soluções técnicas", d: "Alíneas \"a\" e \"b\".", campos: [
       { k: "levantamentos", rot: "Levantamentos, sondagens, ensaios e estudos (alínea a)", obrig: true, dica: "Topografia, sondagens, ensaios, estudos socioambientais já realizados ou necessários." },
       { k: "solucoes", rot: "Soluções técnicas globais e localizadas (alínea b)", obrig: true } ] },
@@ -7594,8 +7629,29 @@ const ELAB = {
     { t: "Plano da obra e orçamento", d: "Alíneas \"e\" e \"f\".", campos: [
       { k: "plano_obra", rot: "Programação, suprimentos e normas de fiscalização (alínea e)" },
       { k: "orcamento", rot: "Orçamento detalhado do custo global (alínea f)", obrig: true, dica: "Valor global, referências (SINAPI, SICRO, EMOP…), data-base, BDI e regime de execução." } ] }
-  ] }
+  ] },
+  edital: { regimes: ["lei-14133", "lei-13303", "lei-13019"], nome: "Edital", sigla: "Edital", base: "Lei 14.133/2021, art. 25, com as minutas",
+    desc: "Edital da licitação com a minuta do contrato (e da ata, se houver registro de preços), pronto para a análise jurídica.", passos: [],
+    porRegime: { "lei-13303": { base: "Lei 13.303/2016 e o RILC, com a minuta do contrato" },
+      "lei-13019": { nome: "Edital de chamamento público", base: "Lei 13.019/2014, art. 24, com a minuta do termo",
+        desc: "Chamamento de organizações da sociedade civil, com critérios de seleção e a minuta do termo de colaboração ou de fomento." } } },
+  direta: { regimes: ["lei-14133", "lei-13303", "lei-13019"], nome: "Contratação direta", sigla: "Direta", base: "Lei 14.133/2021, arts. 72 a 75",
+    desc: "Processo de dispensa ou inexigibilidade: enquadramento, razão da escolha, justificativa do preço e autorização.", passos: [],
+    porRegime: { "lei-13303": { base: "Lei 13.303/2016, arts. 29 e 30, e o RILC" },
+      "lei-13019": { nome: "Dispensa ou inexigibilidade de chamamento", base: "Lei 13.019/2014, arts. 30 a 32",
+        desc: "Justificativa da parceria sem chamamento público, com o enquadramento, a escolha da organização e a publicação do extrato." } } },
+  riscos: { regimes: ["lei-14133", "lei-13303"], nome: "Mapa de riscos", sigla: "Riscos", base: "Lei 14.133/2021, art. 18, X, e art. 22",
+    desc: "Riscos do planejamento, da seleção e da execução, com probabilidade, impacto, ações preventivas e responsáveis.", passos: [],
+    porRegime: { "lei-13303": { nome: "Matriz de riscos", base: "Lei 13.303/2016, art. 42, X, e art. 69, X" } } }
 };
+// lei da contratação: cada documento segue a sua (na Lei 13.303 vale também o RILC da estatal)
+const ELAB_REGIMES = [["lei-14133", "Lei 14.133/2021", "Administração direta, autarquias e fundações"],
+  ["lei-13303", "Lei 13.303/2016", "Empresas públicas e sociedades de economia mista (com o RILC)"],
+  ["lei-13019", "Lei 13.019/2014", "Parcerias com organizações da sociedade civil"]];
+const elabDoc = (doc, regime) => { const d = ELAB[doc]; if (!d) return null; return { ...d, ...((d.porRegime || {})[regime || "lei-14133"] || {}) }; };
+const elabPesquisa = (doc, R) => { R = R || {}; const reg = R.regime || "lei-14133";
+  return doc === "etp" || ((doc === "tr" || (doc === "direta" && reg !== "lei-13019")) && !String(R.valor || "").trim()); };
+const elabVisivelRegime = (c, R) => !c.soRegime || c.soRegime.includes((R || {}).regime || "lei-14133");
 // criação rápida: o que o assinante informa em cada documento (obrig = exigido pela Lei 14.133/2021; o agente nunca decide por ele)
 const ELAB_ROT = { normas: "Normas do órgão", normas_ref: "Regulamento do órgão", cadastro: "Cadastro de fornecedores", dot_unidade: "Unidade orçamentária", dot_programa: "Programa de trabalho", dot_elemento: "Elemento de despesa", dot_fonte: "Fonte de recursos", orgao: "Órgão ou entidade", uf: "UF", objeto: "Objeto", necessidade: "Necessidade / fundamentação", quantidades: "Quantidades",
   natureza: "Natureza / solução", prazo: "Prazo", prazo_outro: "Prazo (detalhe)", pca: "Plano de Contratações Anual", parcelamento: "Parcelamento",
@@ -7605,7 +7661,11 @@ const ELAB_ROT = { normas: "Normas do órgão", normas_ref: "Regulamento do órg
   resp_nome: "Responsável pelo setor: nome", resp_cargo: "Responsável pelo setor: cargo", resp_matricula: "Responsável pelo setor: matrícula",
   entrega: "Forma de entrega", rodape_incluir: "Informações no rodapé", rodape: "Texto do rodapé", modelo_arquivo: "Modelo em Word", logo_arquivo: "Logo",
   especificacoes: "Especificações", local_entrega: "Local de entrega", prazo_entrega: "Prazo de entrega", garantia_bem: "Garantia do produto", amostra: "Amostra",
-  instrumento: "Instrumento da contratação", pca_item: "Item do PCA", data_orcamento: "Data do orçamento estimado", indice: "Índice de reajuste", processo: "Nº do processo", municipio: "Município", autoridade: "Autoridade que aprova", gestor: "Gestor do contrato", fiscais: "Fiscais", fonte: "Fonte orçamentária", correlatas: "Contratações ligadas" };
+  instrumento: "Instrumento da contratação", pca_item: "Item do PCA", data_orcamento: "Data do orçamento estimado", indice: "Índice de reajuste", processo: "Nº do processo", municipio: "Município", autoridade: "Autoridade que aprova", gestor: "Gestor do contrato", fiscais: "Fiscais", fonte: "Fonte orçamentária", correlatas: "Contratações ligadas",
+  tipo_parceria: "Tipo de parceria", metas: "Objetivos, metas e público", modo_disputa: "Modo de disputa", registro_precos: "Registro de preços", me_epp: "Participação de ME e EPP",
+  criterios_selecao: "Critérios de seleção", agente: "Agente de contratação ou comissão", hipotese: "Hipótese legal", hipotese_detalhe: "Por que se enquadra",
+  contratado: "Contratado escolhido", motivo_escolha: "Razão da escolha", justificativa_preco: "Justificativa do preço", fase: "Fase analisada",
+  riscos_conhecidos: "Riscos já identificados", matriz: "Matriz de alocação de riscos", equipe: "Equipe de planejamento", garantia: "Garantia da contratação" };
 // dados do órgão e de quem assina: podem ir para qualquer documento (se o assinante marcar)
 const ELAB_GERAIS = ["orgao", "uf", "observacoes", "unidade", "gestor", "fiscais", "fonte", "dot_unidade", "dot_programa", "dot_elemento", "dot_fonte", "normas", "normas_ref", "cadastro", "municipio", "autoridade", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
 const ELAB_PARES = { modelo_arquivo: "modelo_nome", logo_arquivo: "logo_nome" };
@@ -7616,7 +7676,9 @@ const ELAB_FINAIS = [
   { k: "autoridade", etapa: "pessoas", rot: "Autoridade que aprova o documento", tipo: "linha", ph: "Nome, cargo e matrícula. Ex.: Maria Lima, Secretária de Administração, 4321" }];
 // informações que entram no documento: se estiverem em branco, o assinante é perguntado antes de criar
 const ELAB_NECESSARIOS = { etp: ["processo", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade"],
-  tr: ["processo", "unidade", "gestor", "fiscais", "normas", "dot_programa", "dot_elemento", "dot_fonte", "municipio", "autoridade"], projeto_basico: ["processo", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade"] };
+  tr: ["processo", "unidade", "gestor", "fiscais", "normas", "dot_programa", "dot_elemento", "dot_fonte", "municipio", "autoridade"], projeto_basico: ["processo", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade"],
+  edital: ["processo", "unidade", "agente", "fonte", "municipio", "autoridade"], direta: ["processo", "unidade", "contratado", "fonte", "municipio", "autoridade"],
+  riscos: ["processo", "unidade", "municipio", "autoridade"] };
 const ELAB_MODALIDADES = ["Pregão", "Concorrência", "Concurso", "Diálogo competitivo", "Dispensa", "Inexigibilidade", "Adesão a ata"];
 const ELAB_CRITERIOS = ["Menor preço", "Maior desconto", "Melhor técnica ou conteúdo artístico", "Técnica e preço", "Maior retorno econômico"];
 const ELAB_REC = "Analisar no ETP e recomendar";
@@ -7712,6 +7774,62 @@ const ELAB_RAPIDO = {
     { k: "fiscais", etapa: "pessoas", rot: "Fiscais do contrato ou comissão de fiscalização", tipo: "texto", ph: "Um por linha: nome, cargo, matrícula e função (fiscal técnico, administrativo, suplente)" },
     { k: "fonte", etapa: "pessoas", rot: "Fonte orçamentária e dotação", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" },
     ...ELAB_FINAIS
+  ],
+  edital: [
+    { k: "objeto", etapa: "contratacao", rot: "Objeto da licitação ou da parceria", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: aquisição de notebooks para as escolas municipais" },
+    { k: "necessidade", etapa: "contratacao", rot: "Fundamentação: TR, ETP ou plano que dá base ao edital", tipo: "texto", obrig: true, ph: "Ex.: TR nº 12/2026 e ETP nº 8/2026, processo 1234/2026", dica: "O edital reproduz as condições do termo de referência ou do projeto básico; informe onde estão." },
+    { k: "tipo_parceria", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Tipo de parceria", tipo: "chips", obrig: true, op: ["Termo de colaboração", "Termo de fomento"], dica: "Colaboração: proposta pela administração; fomento: proposta pelas organizações (Lei 13.019, arts. 16 e 17)." },
+    { k: "metas", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Objetivos, metas e público atendido", tipo: "texto", obrig: true, ph: "Ex.: atender 300 crianças de 6 a 14 anos no contraturno escolar, em 3 núcleos" },
+    { k: "natureza", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Natureza do objeto", tipo: "chips", obrig: true, op: ["Compra", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva", "Obra ou serviço de engenharia"] },
+    { k: "quantidades", etapa: "contratacao", rot: "Itens, lotes e quantidades", tipo: "texto", ph: "Ex.: lote 1: 300 notebooks; lote 2: 50 monitores" },
+    { k: "prazo", etapa: "contratacao", rot: "Prazo do contrato ou da parceria", tipo: "chips", obrig: true, outro: true, op: ["Entrega única", "12 meses", "24 meses", "Outro"] },
+    ELAB_PROCESSO,
+    { k: "valor", etapa: "mercado", rot: "Valor estimado (ou valor de referência da parceria)", tipo: "linha", ph: "Ex.: R$ 850.000,00", dica: "Se o orçamento for sigiloso, escreva \"sigiloso\": o edital trata do sigilo." },
+    { k: "selecao", etapa: "mercado", soRegime: ["lei-14133"], rot: "Modalidade", tipo: "chips", obrig: true, op: ["Pregão", "Concorrência", "Concurso", "Leilão", "Diálogo competitivo"] },
+    { k: "selecao", etapa: "mercado", soRegime: ["lei-13303"], rot: "Procedimento", tipo: "chips", obrig: true, op: ["Pregão", "Licitação pelo procedimento da Lei 13.303"] },
+    { k: "criterio", etapa: "mercado", soRegime: ["lei-14133", "lei-13303"], rot: "Critério de julgamento", tipo: "chips", obrig: true, op: ELAB_CRITERIOS },
+    { k: "modo_disputa", etapa: "mercado", soRegime: ["lei-14133", "lei-13303"], rot: "Modo de disputa", tipo: "chips", obrig: true, op: ["Aberto", "Fechado", "Aberto e fechado", "Fechado e aberto"] },
+    { k: "adjudicacao", etapa: "mercado", soRegime: ["lei-14133", "lei-13303"], rot: "Adjudicação", tipo: "chips", obrig: true, op: ["Por item", "Por lote", "Global (lote único)"] },
+    { k: "registro_precos", etapa: "mercado", soRegime: ["lei-14133", "lei-13303"], rot: "Registro de preços?", tipo: "chips", obrig: true, op: ["Não", "Sim"], dica: "Com registro de preços, o edital traz também a minuta da ata." },
+    { k: "me_epp", etapa: "mercado", soRegime: ["lei-14133", "lei-13303"], rot: "Participação de ME e EPP", tipo: "chips", obrig: true, op: ["Ampla, com os benefícios da LC 123", "Exclusiva para ME e EPP", "Cota reservada para ME e EPP"] },
+    { k: "garantia", etapa: "mercado", soRegime: ["lei-14133", "lei-13303"], rot: "Garantia da contratação", tipo: "chips", op: ["Não exigir", "Exigir (até 5%)", "Exigir (até 10%, com justificativa)"] },
+    { k: "criterios_selecao", etapa: "mercado", soRegime: ["lei-13019"], rot: "Critérios de seleção e pontuação", tipo: "texto", obrig: true, ph: "Ex.: experiência na área (30 pontos), adequação da proposta às metas (40), custo-benefício (30)" },
+    ELAB_UNIDADE,
+    { k: "agente", etapa: "pessoas", rot: "Agente de contratação, pregoeiro ou comissão", tipo: "linha", ph: "Na parceria: comissão de seleção. Ex.: Portaria nº 15/2026" },
+    { k: "gestor", etapa: "pessoas", rot: "Gestor do contrato ou da parceria", tipo: "linha", ph: "Nome, cargo e matrícula" },
+    { k: "fonte", etapa: "pessoas", rot: "Dotação orçamentária", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" },
+    ...ELAB_FINAIS
+  ],
+  direta: [
+    { k: "objeto", etapa: "contratacao", rot: "O que será contratado (ou qual a parceria)?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: show musical na festa de aniversário do município" },
+    { k: "necessidade", etapa: "contratacao", rot: "Por que é preciso contratar?", tipo: "texto", obrig: true, ph: "Ex.: o evento é tradição do calendário oficial e a data está próxima" },
+    { k: "hipotese", etapa: "contratacao", soRegime: ["lei-14133"], rot: "Hipótese legal", tipo: "chips", obrig: true, op: ["Dispensa por valor (art. 75, I ou II)", "Emergência ou calamidade (art. 75, VIII)", "Licitação deserta ou fracassada (art. 75, III)", "Outra hipótese de dispensa (art. 75)", "Inexigibilidade: fornecedor exclusivo (art. 74, I)", "Inexigibilidade: artista consagrado (art. 74, II)", "Inexigibilidade: serviço técnico especializado (art. 74, III)", "Inexigibilidade: credenciamento (art. 74, IV)", "Inexigibilidade: imóvel (art. 74, V)"] },
+    { k: "hipotese", etapa: "contratacao", soRegime: ["lei-13303"], rot: "Hipótese legal", tipo: "chips", obrig: true, op: ["Dispensa por valor (art. 29, I ou II)", "Emergência (art. 29, XV)", "Licitação deserta (art. 29, III)", "Outra hipótese de dispensa (art. 29)", "Inexigibilidade: fornecedor exclusivo (art. 30, I)", "Inexigibilidade: serviço técnico especializado (art. 30, II)"] },
+    { k: "hipotese", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Hipótese legal", tipo: "chips", obrig: true, op: ["Dispensa: urgência (art. 30, I)", "Dispensa: guerra, calamidade ou grave perturbação da ordem (art. 30, III)", "Dispensa: proteção a pessoas ameaçadas (art. 30, IV)", "Dispensa: educação, saúde ou assistência social com OSC credenciada (art. 30, VI)", "Inexigibilidade: competição inviável (art. 31)", "Emenda parlamentar (art. 29)"] },
+    { k: "hipotese_detalhe", etapa: "contratacao", rot: "Por que a situação se enquadra nessa hipótese?", tipo: "texto", obrig: true, ph: "Ex.: a banda tem empresário exclusivo e é reconhecida pela crítica (reportagens anexas)" },
+    { k: "quantidades", etapa: "contratacao", rot: "Quantidades e especificações", tipo: "texto", ph: "Ex.: 1 apresentação de 2 horas, com som e iluminação" },
+    { k: "contratado", etapa: "contratacao", rot: "Fornecedor ou organização escolhida (nome e CNPJ)", tipo: "linha", ph: "Ex.: XYZ Produções Ltda., CNPJ 00.000.000/0001-00" },
+    { k: "motivo_escolha", etapa: "contratacao", rot: "Razão da escolha", tipo: "texto", obrig: true, ph: "Ex.: único representante do artista; menor preço entre três orçamentos" },
+    { k: "prazo", etapa: "contratacao", rot: "Prazo", tipo: "chips", obrig: true, outro: true, op: ["Entrega única", "6 meses", "12 meses", "Outro"] },
+    ELAB_PROCESSO,
+    { k: "valor", etapa: "mercado", rot: "Valor da contratação", tipo: "linha", ph: "Ex.: R$ 45.000,00", dica: "Se ainda não tiver, deixe em branco: pesquisamos contratações semelhantes como referência (na parceria, informe o valor do plano de trabalho)." },
+    { k: "justificativa_preco", etapa: "mercado", rot: "Como o preço foi verificado", tipo: "texto", ph: "Ex.: notas fiscais do mesmo artista em outros municípios; três orçamentos; tabela oficial" },
+    ELAB_UNIDADE,
+    { k: "gestor", etapa: "pessoas", rot: "Gestor do contrato ou da parceria", tipo: "linha", ph: "Nome, cargo e matrícula" },
+    { k: "fonte", etapa: "pessoas", rot: "Dotação orçamentária", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" },
+    ...ELAB_FINAIS
+  ],
+  riscos: [
+    { k: "objeto", etapa: "contratacao", rot: "Contratação analisada", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: serviços contínuos de limpeza dos prédios da sede" },
+    { k: "necessidade", etapa: "contratacao", rot: "Contexto: fase atual e documentos já feitos", tipo: "texto", obrig: true, ph: "Ex.: ETP concluído (nº 8/2026); TR em elaboração" },
+    { k: "natureza", etapa: "contratacao", rot: "Natureza do objeto", tipo: "chips", obrig: true, op: ["Compra", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva", "Obra ou serviço de engenharia"] },
+    { k: "fase", etapa: "contratacao", rot: "Fases a mapear", tipo: "chips", obrig: true, op: ["Todas as fases", "Planejamento", "Seleção do fornecedor", "Gestão do contrato"] },
+    { k: "riscos_conhecidos", etapa: "contratacao", rot: "Riscos ou problemas já conhecidos", tipo: "texto", ph: "Ex.: o contrato anterior teve atrasos de pagamento e greve de empregados" },
+    { k: "matriz", etapa: "contratacao", soRegime: ["lei-14133"], rot: "Incluir matriz de alocação de riscos (art. 22)?", tipo: "chips", op: ["Não", "Sim"], dica: "Obrigatória em obras e serviços de grande vulto e nas contratações integrada e semi-integrada." },
+    ELAB_PROCESSO,
+    ELAB_UNIDADE,
+    { k: "equipe", etapa: "pessoas", rot: "Equipe de planejamento", tipo: "texto", ph: "Um por linha: nome, cargo e função" },
+    ...ELAB_FINAIS
   ]
 };
 const ELAB_ETAPAS = {
@@ -7729,7 +7847,18 @@ const ELAB_ETAPAS = {
     { id: "contratacao", t: "A obra", d: "O que será feito, onde, por quê e as quantidades principais." },
     { id: "mercado", t: "Execução e contratação", d: "Regime de execução, parcelamento, seleção e orçamento." },
     { id: "pessoas", t: "Pessoas e orçamento", d: "Quem vai gerir, fiscalizar e assinar, e a dotação orçamentária." },
-    { id: "final", t: "Revisar e criar", d: "Modelo do seu órgão, logo, rodapé e conferência final." } ]
+    { id: "final", t: "Revisar e criar", d: "Modelo do seu órgão, logo, rodapé e conferência final." } ],
+  edital: [
+    { id: "contratacao", t: "O objeto", d: "O que será licitado (ou a parceria), com base no TR, no projeto básico ou no plano." },
+    { id: "mercado", t: "Regras da disputa", d: "Valor, modalidade, critério, modo de disputa, registro de preços e participação de ME e EPP." },
+    { id: "pessoas", t: "Pessoas e orçamento", d: "Quem conduz, gere e assina, e de onde sai o recurso." }, { id: "final", t: "Revisar e criar", d: "Modelo do seu órgão, logo, rodapé, regulamentação e conferência final." } ],
+  direta: [
+    { id: "contratacao", t: "A hipótese", d: "Objeto, enquadramento legal, por que se enquadra e quem será contratado." },
+    { id: "mercado", t: "Preço", d: "Valor e como foi verificado (ou nossa pesquisa de referência)." },
+    { id: "pessoas", t: "Pessoas e orçamento", d: "Quem conduz, gere e assina, e de onde sai o recurso." }, { id: "final", t: "Revisar e criar", d: "Modelo do seu órgão, logo, rodapé, regulamentação e conferência final." } ],
+  riscos: [
+    { id: "contratacao", t: "A contratação", d: "Objeto, fase e riscos já conhecidos." },
+    { id: "pessoas", t: "Pessoas e orçamento", d: "Quem conduz, gere e assina, e de onde sai o recurso." }, { id: "final", t: "Revisar e criar", d: "Modelo do seu órgão, logo, rodapé, regulamentação e conferência final." } ]
 };
 const ELAB_MONTAGEM = {
   etp: [
@@ -7754,7 +7883,22 @@ const ELAB_MONTAGEM = {
     ["Execução", "Regime, parcelamento, seleção e critério que você escolheu, fundamentados."],
     ["Elementos técnicos", "Art. 6º, XXV: levantamentos, soluções técnicas, serviços e materiais, métodos e programação."],
     ["Orçamento", "Seu orçamento ou a estrutura pronta para completar (SINAPI, EMOP, BDI)."],
-    ["Conferência e Word", "O agente revisa o próprio texto, lista pendências e entrega em Word e PDF."] ]
+    ["Conferência e Word", "O agente revisa o próprio texto, lista pendências e entrega em Word e PDF."] ],
+  edital: [
+    ["Suas escolhas", "Modalidade, critério, modo de disputa, adjudicação, registro de preços e ME/EPP como você definiu."],
+    ["A lei da contratação", "Lei 14.133 (art. 25), Lei 13.303 com o RILC da estatal ou Lei 13.019 (edital de chamamento, art. 24)."],
+    ["Minutas", "Minuta do contrato com as cláusulas obrigatórias (ou do termo de colaboração ou fomento) e, se houver registro de preços, da ata."],
+    ["Conferência e Word", "O agente confere o edital com o roteiro do Parecerista, corrige e entrega em Word e PDF."] ],
+  direta: [
+    ["Enquadramento", "A hipótese de dispensa ou inexigibilidade com os requisitos de cada uma demonstrados."],
+    ["Escolha e preço", "Razão da escolha do contratado e justificativa do preço, com a pesquisa de referência quando faltar valor."],
+    ["Instrução completa", "Todos os elementos do processo (art. 72 da Lei 14.133, arts. 29 e 30 da Lei 13.303 e o RILC, ou arts. 30 a 32 da Lei 13.019)."],
+    ["Conferência e Word", "O agente confere o processo com o roteiro do Parecerista, corrige e entrega em Word e PDF."] ],
+  riscos: [
+    ["Riscos por fase", "Planejamento, seleção do fornecedor e gestão do contrato, com os riscos próprios do objeto."],
+    ["Avaliação", "Probabilidade, impacto, nível, ações preventivas e de contingência e responsáveis."],
+    ["Matriz de alocação", "Na Lei 14.133, quando você pedir (art. 22); na Lei 13.303, a matriz de riscos do art. 42, X."],
+    ["Conferência e Word", "O agente confere com o roteiro do Parecerista e entrega em Word e PDF."] ]
 };
 // campos obrigatórios que faltam (inclui órgão e UF e o detalhe quando marcar "Outro")
 function elFaltando(doc, R, etapa) {
@@ -7765,7 +7909,7 @@ function elFaltando(doc, R, etapa) {
   if (nesta("contratacao") && vazio("orgao")) f.push("órgão");
   if (nesta("contratacao") && vazio("uf")) f.push("UF");
   (ELAB_RAPIDO[doc] || []).forEach((c) => {
-    if (!nesta(c.etapa)) return;
+    if (!nesta(c.etapa) || !elabVisivelRegime(c, R)) return;
     if (c.seParc && String(R.parcelamento || "").startsWith("Analisar")) return;
     const nome = (ELAB_ROT[c.k] || c.rot).toLowerCase();
     if (c.obrig && vazio(c.k)) f.push(nome);
@@ -9715,7 +9859,7 @@ const ELAB_TERMO_VERSAO = "elab-2";
 const ELAB_TERMO = [
   "Natureza: minuta de Estudo Técnico Preliminar, Termo de Referência ou Projeto Básico elaborada de forma automatizada por inteligência artificial, a partir das informações que você prestar e da pesquisa em bases oficiais. Não substitui a análise técnica e jurídica do órgão (Lei 14.133/2021, art. 53).",
   "Revisão obrigatória: o documento é entregue para revisão. Conferir os dados, as escolhas e os fundamentos, ajustar o que for preciso e assinar é responsabilidade de quem assina o documento.",
-  "Pagamento antes da elaboração: a elaboração é contratada por documento (ETP, TR ou Projeto Básico). Depois do pagamento (ou do uso da franquia do Pro), você preenche as informações e envia; o documento contratado fica liberado até ser enviado.",
+  "Pagamento antes da elaboração: a elaboração é contratada por documento (ETP, TR, Projeto Básico, edital com as minutas, contratação direta ou mapa de riscos), na lei da contratação escolhida (Lei 14.133/2021, Lei 13.303/2016 com o RILC da estatal ou Lei 13.019/2014). Depois do pagamento (ou do uso da franquia do Pro), você preenche as informações e envia; o documento contratado fica liberado até ser enviado.",
   "Valores e franquia: R$ 290,00 por documento para quem não é assinante; assinantes do Básico têm 10% de desconto e do Premium, 15%. O Pro inclui 2 por semana, somando análises e documentos criados (equipes: 6 por acesso por mês); a partir do 3º, 30% de desconto. Elaboração que não puder ser concluída por falha técnica não consome a franquia; a paga é refeita ou estornada.",
   "Perguntas durante a elaboração: se faltar alguma informação que só o órgão tem, o agente pergunta nesta página e completa o documento sem novo custo.",
   "Pesquisa de mercado: contratações do PNCP e preços praticados do Compras.gov.br, primeiro do seu estado. Os valores do ETP são estimativa preliminar e não substituem a pesquisa de preços do art. 23 da Lei 14.133/2021.",
@@ -9823,13 +9967,13 @@ const eqPreco = (plano, n, anual) => { const pa = Math.round(EQ_MENSAL[plano] * 
 const EQ_INCLUI = {
   basico: ["Fórum (leitura e participação) e Calculadora para cada acesso", "Descontos do Básico no Parecerista, no Elaborador, em cursos e consultoria"],
   premium: ["Tudo do Premium para cada acesso: fórum, Calculadora, cursos e consultoria com desconto", "O Parecerista e O Elaborador com 15% de desconto"],
-  pro: ["Tudo do Pro para cada acesso", "O Parecerista e O Elaborador: 6 por acesso por mês, somados para a equipe, entre analisar documentos e criar ETP, TR ou Projeto Básico", "Agente das planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana para a equipe", "1 consultoria por escrito por mês para a organização; as demais com 30% de desconto"]
+  pro: ["Tudo do Pro para cada acesso", "O Parecerista e O Elaborador: 6 por acesso por mês, somados para a equipe, entre analisar e criar documentos", "Agente das planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana para a equipe", "1 consultoria por escrito por mês para a organização; as demais com 30% de desconto"]
 };
 const PLANO_BENEFICIOS = {
   teste: ["Leitura do fórum da comunidade", "O Parecerista e O Elaborador: 2 por semana sem custo, somados, como no Pro", "Calculadora, planilhas de mão de obra e comparação de planilhas (o agente de IA das planilhas é do Pro)", "Biblioteca Jurídica completa (grátis com a conta)", "Sem cobrança automática ao final"],
   basico: ["Fórum: leitura e participação", "Calculadora: reajuste por índice, planilhas de mão de obra (IN 05/2017) e comparação de planilhas", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "O Parecerista: análise com 10% de desconto (R$ 261,00)"],
   premium: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "O Parecerista: análise com 15% de desconto (R$ 246,50)", "Prioridade na agenda do especialista"],
-  pro: ["Tudo do Premium", "Agente de IA nas planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "O Parecerista e O Elaborador: 2 por semana sem custo, entre analisar documentos e criar ETP, TR ou Projeto Básico; a partir do 3º, 30% de desconto (R$ 203,00)", "Suporte prioritário"]
+  pro: ["Tudo do Premium", "Agente de IA nas planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "O Parecerista e O Elaborador: 2 por semana sem custo, entre analisar e criar documentos; a partir do 3º, 30% de desconto (R$ 203,00)", "Suporte prioritário"]
 };
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
@@ -10015,7 +10159,7 @@ class Component extends DCLogic {
     forumErro: "",
     nova: { aberta: false, titulo: "", contexto: "", avisar: null, enviando: false, erro: "" },
     pp: { iniciado: false, d: PP_PADRAO, etapa: "enq", lista: [], ocupado: "", erro: "", ok: "", id: "", excluir: "", colar: "", colarAberto: false },
-    el: { doc: "", passo: 0, respostas: {}, aceite: false, enviando: false, erro: "", ok: "", docEsc: "etp", metodo: "pix", contratando: false, contErro: "" },
+    el: { doc: "", regime: "lei-14133", normas: [], passo: 0, respostas: {}, aceite: false, enviando: false, erro: "", ok: "", docEsc: "etp", metodo: "pix", contratando: false, contErro: "" },
     calcAba: "indice",
     cmp: { cols: [], info: {}, ok: "", erro: "" },
     pca: { lista: [], carregado: false, ano: new Date().getFullYear(), form: null, colar: null, setor: "", msg: "", erro: "", excluir: "", todos: false },
@@ -10203,11 +10347,14 @@ class Component extends DCLogic {
   // ------------------------------------------------------------ elaboração de documentos
   elPassos(doc) { const d = ELAB[doc]; return d ? [ELAB_COMUM].concat(d.passos) : []; }
 
-  elEscolher(doc) {
+  elEscolher(doc, regimeEsc) {
+    const cred = this.creditoGeracao(doc);
+    const regime = (cred && cred.regime) || regimeEsc || this.state.el.regime || "lei-14133";
     // 1) rascunho não enviado deste documento: continua; 2) senão, lista os dados do último documento enviado para o assinante
     //    escolher o que aproveitar (cada contratação tem suas particularidades: nada é copiado sem ele marcar)
     let rasc = {};
     try { rasc = JSON.parse(localStorage.getItem("lv-elab-" + doc) || "{}") || {}; } catch (e) { rasc = {}; }
+    if ((rasc.regime || "lei-14133") !== regime) rasc = {};  // rascunho de outra lei não serve
     const temRasc = Object.keys(rasc).some((k) => k !== "orgao" && k !== "uf" && String(rasc[k] || "").trim());
     let reap = [];
     if (!temRasc) {
@@ -10215,7 +10362,7 @@ class Component extends DCLogic {
         const u = JSON.parse(localStorage.getItem("lv-elab-ultimo") || "null");
         const r = u && (u.respostas || u), ok = r && typeof r === "object" ? r : {};
         // só o que existe no documento novo (e, nas opções, só valores que ele aceita)
-        const campo = (k) => (ELAB_RAPIDO[doc] || []).find((c) => c.k === k);
+        const campo = (k) => (ELAB_RAPIDO[doc] || []).find((c) => c.k === k && elabVisivelRegime(c, { regime }));
         const cabe = (k) => {
           if (ELAB_GERAIS.includes(k)) return true;
           const c = campo(k); if (!c) return false;
@@ -10242,7 +10389,7 @@ class Component extends DCLogic {
           ["selecao", rec.modalidade], ["criterio", rec.criterio]];
         const novos = [];
         sug.forEach(([k, v, outro]) => {
-          const c = (ELAB_RAPIDO[doc] || []).find((x) => x.k === k);
+          const c = (ELAB_RAPIDO[doc] || []).find((x) => x.k === k && elabVisivelRegime(x, { regime }));
           if (!v || !c || String(rasc[k] || "").trim()) return;
           if (c.tipo === "chips" && !(c.op || []).includes(v)) return;
           reap = reap.filter((x) => x.k !== k);
@@ -10259,7 +10406,8 @@ class Component extends DCLogic {
     const p = this.state.perfil || {};
     const base = temRasc ? rasc : {};
     if (!base.orgao && p.orgao) base.orgao = p.orgao;
-    this.setState({ el: { doc, passo: 0, maxPasso: 0, respostas: base, rascunho: temRasc, reap, reapAnterior: reap.docAnterior || "", reapEtp: reap.etp || "", reapAberto: reap.length > 0,
+    base.regime = regime;
+    this.setState({ el: { doc, regime, normas: this.state.el.normas || [], passo: 0, maxPasso: 0, respostas: base, rascunho: temRasc, reap, reapAnterior: reap.docAnterior || "", reapEtp: reap.etp || "", reapAberto: reap.length > 0,
       aceite: false, enviando: false, erro: "", ok: "" } });
     try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {}
   }
@@ -10876,7 +11024,7 @@ class Component extends DCLogic {
 
   elPrecisaPesquisa() {
     const el = this.state.el, R = el.respostas || {};
-    return el.doc === "etp" || (el.doc === "tr" && !String(R.valor || "").trim());
+    return elabPesquisa(el.doc, R);
   }
 
   // pesquisa feita e, se não achou nada, o assinante forneceu referências ou escolheu completar depois
@@ -10925,7 +11073,7 @@ class Component extends DCLogic {
     if (rodada === 1) {
       (ELAB_NECESSARIOS[el.doc] || []).forEach((k) => {
         if (String(R[k] || "").trim() || String(R.sem_info || "").includes("[" + k + "]")) return;
-        const c = (ELAB_RAPIDO[el.doc] || []).find((x) => x.k === k) || {};
+        const c = (ELAB_RAPIDO[el.doc] || []).find((x) => x.k === k && elabVisivelRegime(x, R)) || {};
         perguntas.push({ id: "campo_" + k, campo: k, tema: c.rot || ELAB_ROT[k], pergunta: "Informe: " + (c.rot || ELAB_ROT[k]).toLowerCase() + ".",
           por_que: "Essa informação entra no documento. Sem ela, o campo sai em branco.", opcoes: [], ph: String(c.ph || "").replace(/^Se já houver\. /, ""), resposta: "", semInfo: false });
       });
@@ -11004,7 +11152,7 @@ class Component extends DCLogic {
     };
     const pend = (this.state.analises || []).find((a) => a.tipo === "geracao" && a.documento === el.doc && a.status === "aguardando_documentos");
     if (pend) {  // já paga ou liberada: só envia as respostas
-      const r0 = await this.sb.functions.invoke("mp-checkout", { body: { acao: "enviar_geracao", id: pend.id, respostas: el.respostas } });
+      const r0 = await this.sb.functions.invoke("mp-checkout", { body: { acao: "enviar_geracao", id: pend.id, respostas: el.respostas, normas: (el.normas || []).slice(0, AN_MAX_NORMAS) } });
       if (r0.error) { await falhou(r0.error); return; }
       comecar(pend.id); return;
     }
@@ -14979,20 +15127,21 @@ class Component extends DCLogic {
 
   // O Elaborador, etapa 1: escolha do documento, aceite e pagamento (ou franquia). Só depois o questionário é aberto.
   async elContratar() {
-    const el = this.state.el, doc = el.docEsc;
+    const el = this.state.el, doc = el.docEsc, regime = el.regime || "lei-14133";
     const erro = (m) => this.setState((x) => ({ el: { ...x.el, contratando: false, contErro: m } }));
     if (!ELAB[doc]) { erro("Escolha o documento que você quer criar."); return; }
+    if (!ELAB[doc].regimes.includes(regime)) { erro("Este documento não se aplica à lei escolhida."); return; }
     if (this.creditoGeracao(doc)) { this.elEscolher(doc); return; }
     if (!this.sb) { erro("A elaboração ainda não está ativa neste site (modo demonstração)."); return; }
     if (!this.u) { this.setState({ volta: "elaborar" }); this.irPara("login"); return; }
     if (!el.aceite) { erro("Leia e aceite as condições da elaboração para continuar."); return; }
     this.setState((x) => ({ el: { ...x.el, contratando: true, contErro: "" } }));
-    const { data, error } = await this.sb.functions.invoke("mp-checkout", { body: { acao: "criar", tipo: "geracao", documento: doc, aceite: true,
+    const { data, error } = await this.sb.functions.invoke("mp-checkout", { body: { acao: "criar", tipo: "geracao", documento: doc, regime, aceite: true,
       termo_versao: ELAB_TERMO_VERSAO, metodo: el.metodo || "pix", retorno: baseSite() + "index.html" } });
     if (error) { erro(await erroDaFuncao(error)); return; }
     if (data && data.gratuito) {
       await this.carregarDados();
-      this.elEscolher(doc);
+      this.elEscolher(doc, regime);
       return;
     }
     if (data && data.url) {
@@ -15177,7 +15326,7 @@ class Component extends DCLogic {
     this.setState({ an: { ...an, normaArquivo: f, normaNome: an.normaNome || sugestao, normaErro: "" } });
   }
 
-  async enviarNorma() {
+  async enviarNorma(destino) {
     const an = this.state.an;
     const erro = (m) => this.setState({ an: { ...this.state.an, normaEnviando: false, normaErro: m } });
     if (!this.sb) { erro("O envio de normas ainda não está ativo neste site (modo demonstração)."); return; }
@@ -15194,8 +15343,10 @@ class Component extends DCLogic {
     if (up.error) { erro("Não foi possível enviar o arquivo. Tente de novo."); return; }
     const { data, error } = await this.sb.from("normas_usuario").insert({ usuario_id: this.state.usuario.id, nome: nome.slice(0, 200), arquivo: caminho, tamanho: an.normaArquivo.size }).select("id, nome, arquivo, tamanho, criado_em").single();
     if (error || !data) { this.sb.storage.from("analises").remove([caminho]).catch(() => {}); erro("Não foi possível registrar a norma. Tente de novo."); return; }
-    const sel = (this.state.an.normas || []).length < AN_MAX_NORMAS ? [...this.state.an.normas, data.id] : this.state.an.normas;
-    this.setState({ normasUsuario: [data, ...(this.state.normasUsuario || [])], an: { ...this.state.an, normas: sel, normaArquivo: null, normaNome: "", normaEnviando: false, normaErro: "" } });
+    const sel = destino !== "el" && (this.state.an.normas || []).length < AN_MAX_NORMAS ? [...this.state.an.normas, data.id] : this.state.an.normas;
+    const selEl = destino === "el" && (this.state.el.normas || []).length < AN_MAX_NORMAS ? [...(this.state.el.normas || []), data.id] : (this.state.el.normas || []);
+    this.setState({ normasUsuario: [data, ...(this.state.normasUsuario || [])], el: { ...this.state.el, normas: selEl },
+      an: { ...this.state.an, normas: sel, normaArquivo: null, normaNome: "", normaEnviando: false, normaErro: "" } });
   }
 
   alternarNorma(id) {
@@ -15857,15 +16008,23 @@ class Component extends DCLogic {
           : s.plano === "premium" ? "Valor: R$ 246,50 (15% de desconto do Premium)." : s.plano === "basico" ? "Valor: R$ 261,00 (10% de desconto do Básico)." : "Valor: R$ 290,00 por documento. Assinantes têm desconto; o Pro tem franquia.";
         const EX = { etp: [["Limpeza predial", "Serviços contínuos de limpeza dos prédios da sede administrativa"], ["Notebooks", "Aquisição de notebooks para as escolas municipais"], ["Locação de veículos", "Locação de veículos com motorista para a Secretaria de Saúde"], ["Merenda escolar", "Aquisição de gêneros alimentícios para a merenda escolar"]],
           tr: [["Limpeza predial", "Serviços contínuos de limpeza dos prédios da sede administrativa"], ["Material de escritório", "Aquisição de material de escritório para o exercício"], ["Vigilância", "Serviços de vigilância patrimonial armada nas unidades de saúde"], ["Manutenção de ar-condicionado", "Manutenção preventiva e corretiva dos aparelhos de ar-condicionado"]],
+          edital: [["Notebooks", "Aquisição de notebooks para as escolas municipais"], ["Limpeza predial", "Serviços contínuos de limpeza dos prédios da sede administrativa"], ["Contraturno escolar", "Parceria para atividades socioeducativas no contraturno escolar"]],
+          direta: [["Show musical", "Contratação de show musical para a festa de aniversário do município"], ["Software exclusivo", "Renovação da licença de software de fornecedor exclusivo"], ["Pequena compra", "Aquisição de material de copa e cozinha"]],
+          riscos: [["Limpeza predial", "Serviços contínuos de limpeza dos prédios da sede administrativa"], ["Reforma de escola", "Reforma e adequação de acessibilidade de escola municipal"], ["Merenda escolar", "Aquisição de gêneros alimentícios para a merenda escolar"]],
           projeto_basico: [["Reforma de escola", "Reforma e adequação de acessibilidade de escola municipal"], ["Pavimentação", "Pavimentação asfáltica de vias urbanas"], ["Praça", "Construção de praça com playground e academia ao ar livre"], ["Telhado", "Substituição da cobertura do prédio da prefeitura"]] };
         return {
           elSemDoc: !d, elComDoc: !!d,
-          elDocs: Object.entries(ELAB).map(([k, x]) => {
-            const lib = !!this.creditoGeracao(k);
+          elRegimes: ELAB_REGIMES.map(([id, nome, desc]) => ({ nome, desc, sel: (el.regime || "lei-14133") === id,
+            escolher: () => this.setState((x2) => {
+              const docEsc = (ELAB[x2.el.docEsc] || {}).regimes && ELAB[x2.el.docEsc].regimes.includes(id) ? x2.el.docEsc : Object.keys(ELAB).find((k) => ELAB[k].regimes.includes(id));
+              return { el: { ...x2.el, regime: id, docEsc, contErro: "" } };
+            }) })),
+          elDocs: Object.entries(ELAB).filter(([k, x]) => x.regimes.includes(el.regime || "lei-14133")).map(([k, x0]) => {
+            const lib = !!this.creditoGeracao(k), x = elabDoc(k, el.regime);
             return { sigla: x.sigla, nome: x.nome, desc: x.desc, base: x.base, sel: !lib && el.docEsc === k,
               cta: lib ? "Liberado: preencher →" : (el.docEsc === k ? "Escolhido ✓" : "Escolher →"),
               escolher: () => {
-                if (lib) { this.elEscolher(k); return; }
+                if (lib) { this.elEscolher(k, el.regime); return; }
                 this.setState((x2) => ({ el: { ...x2.el, docEsc: k, contErro: "" } }));
                 setTimeout(() => { try { document.getElementById("el-contratar").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {} }, 60);
               } };
@@ -15875,7 +16034,7 @@ class Component extends DCLogic {
             const resta = c ? Math.max(0, Number(c.limite) - Number(c.usadas)) : 0;
             return {
               elComoFunciona: [
-                { n: "1", t: "Escolha e contrate", d: "ETP, TR ou Projeto Básico. Pague com o desconto do seu plano ou use a franquia do Pro." },
+                { n: "1", t: "Escolha e contrate", d: "Lei da contratação e documento: ETP, TR, Projeto Básico, edital, contratação direta ou mapa de riscos. Pague com o desconto do seu plano ou use a franquia do Pro." },
                 { n: "2", t: "Informe a contratação", d: "Objeto, necessidade, quantidades, especificações e quem vai gerir, fiscalizar e assinar." },
                 { n: "3", t: "Pesquisamos o mercado", d: "Contratações de outros órgãos (PNCP) e preços praticados (Compras.gov.br), primeiro no seu estado." },
                 { n: "4", t: "Receba o documento", d: "Soluções comparadas, a melhor indicada e cada item da lei cumprido, em Word e PDF, para revisar." }],
@@ -15885,7 +16044,7 @@ class Component extends DCLogic {
               elOQueFaz: ["Pesquisa de mercado com contratações semelhantes e preços praticados, citando as fontes",
                 "Todas as soluções possíveis (compra, locação, serviço, adesão a ata) comparadas pelo custo total no tempo",
                 "A solução mais vantajosa indicada e justificada, com modalidade, critério de julgamento e tratamento de ME/EPP",
-                "Cada elemento exigido pela Lei 14.133/2021, matriz de riscos e redação técnica pronta para assinar",
+                "Cada elemento exigido pela lei da contratação (14.133, 13.303 com o RILC da estatal ou 13.019), com redação técnica pronta para assinar",
                 "Seu modelo do órgão, logo e rodapé, se você enviar; entrega em Word (editável) e PDF"],
               elPrecisa: ["O que precisa contratar, por quê e em que quantidade", "Especificações e requisitos essenciais",
                 "Gestor, fiscais, fonte orçamentária e quem assina", "Opcional: modelo em Word, logo, contrato anterior e referências de preço"],
@@ -15899,7 +16058,7 @@ class Component extends DCLogic {
               elTabelaPrecos: [["Gratuito", "R$ 290,00 por documento"], ["Básico", brlSimples(AN_PRECO * 0.9) + " por documento (10% de desconto)"],
                 ["Premium", brlSimples(AN_PRECO * 0.85) + " por documento (15% de desconto)"], ["Pro", "2 por semana sem custo (análises e documentos, somados); a partir do 3º, " + brlSimples(AN_PRECO * 0.7) + " (30% de desconto)"]]
                 .map(([p2, v]) => { const atual = (p2 === "Gratuito" && s.usuario && !s.plano) || (p2 === "Básico" && s.plano === "basico") || (p2 === "Premium" && s.plano === "premium") || (p2 === "Pro" && s.plano === "pro"); return { p: p2, v, fundo: atual ? "#E3F2EA" : "#F6F8F7" }; }),
-              elDocsEsc: Object.entries(ELAB).map(([k, x]) => ({ nome: x.sigla === "PB" ? "Projeto Básico" : x.sigla, ativo: el.docEsc === k,
+              elDocsEsc: Object.entries(ELAB).filter(([k, x]) => x.regimes.includes(el.regime || "lei-14133")).map(([k, x]) => ({ nome: x.sigla === "PB" ? "Projeto Básico" : x.sigla, ativo: el.docEsc === k,
                 escolher: () => this.setState((x2) => ({ el: { ...x2.el, docEsc: k, contErro: "" } })), ...corBotao(el.docEsc === k) })),
               elTermo: ELAB_TERMO,
               elAceite: !!el.aceite, onElAceite: (e) => { const v = e.target.checked; this.setState((x2) => ({ el: { ...x2.el, aceite: v, contErro: "" } })); },
@@ -15913,7 +16072,23 @@ class Component extends DCLogic {
               elContErro: el.contErro || ""
             };
           })(),
-          elNome: d ? d.nome : "", elSigla: d ? d.sigla : "",
+          elNome: d ? elabDoc(el.doc, el.regime).nome : "", elSigla: d ? d.sigla : "",
+          elLei: (ELAB_REGIMES.find((x) => x[0] === (el.regime || "lei-14133")) || [])[1] || "",
+          elNormasTitulo: el.regime === "lei-13303" ? "Regulamento interno (RILC) da estatal" : el.regime === "lei-13019" ? "Decreto que regulamenta as parcerias no seu ente" : "Regulamentação do seu ente (opcional)",
+          elNormasTexto: el.regime === "lei-13303" ? "O documento segue a Lei 13.303/2016 e o RILC que você selecionar abaixo. Até " + AN_MAX_NORMAS + " normas."
+            : el.regime === "lei-13019" ? "O documento segue a Lei 13.019/2014 e o decreto do seu estado ou município, se você selecionar. Até " + AN_MAX_NORMAS + " normas."
+            : "Decreto estadual ou municipal que regulamenta a Lei 14.133. O agente aplica a norma junto com a lei. Até " + AN_MAX_NORMAS + " normas.",
+          elPedeRilc: el.regime === "lei-13303" && !(el.normas || []).length,
+          elNormas: (s.normasUsuario || []).map((n) => {
+            const ativo = (el.normas || []).includes(n.id);
+            return { nome: n.nome, ativo, marca: ativo ? "✓" : "", tipo: /\.docx$/i.test(n.arquivo) ? "Word" : "PDF",
+              fundo: ativo ? "#E3F2EA" : "#FFFFFF", borda: ativo ? "#0FA36B" : "#DDE4E3",
+              alternar: () => this.setState((x2) => { const at = x2.el.normas || [];
+                if (at.includes(n.id)) return { el: { ...x2.el, normas: at.filter((y) => y !== n.id) } };
+                if (at.length >= AN_MAX_NORMAS) return { an: { ...x2.an, normaErro: "Selecione no máximo " + AN_MAX_NORMAS + " normas." } };
+                return { el: { ...x2.el, normas: at.concat(n.id) } }; }) };
+          }),
+          elEnviarNorma: () => { if (!s.an.normaEnviando) this.enviarNorma("el"); },
           elTrocar: () => this.setState({ el: { ...s.el, doc: "", passo: 0, docEsc: s.el.doc || s.el.docEsc } }),
           elExemplos: (EX[el.doc] || []).map(([rot, txt]) => ({ rot, sel: R.objeto === txt, usar: () => set("objeto", R.objeto === txt ? "" : txt) })),
           elOrgao: R.orgao || "", elOnOrgao: this.elResponder("orgao"),
@@ -15945,7 +16120,7 @@ class Component extends DCLogic {
               })() };
           };
             const et = (ELAB_ETAPAS[el.doc] || [])[el.passo || 0] || {};
-            const vis = (c) => c.etapa === et.id && !(c.seParc && String(R.parcelamento || "").startsWith("Analisar")) && !(c.seCompra && R.natureza !== "Compra") && !(c.seNormas && R.normas !== "Regulamento próprio");
+            const vis = (c) => c.etapa === et.id && elabVisivelRegime(c, R) && !(c.seParc && String(R.parcelamento || "").startsWith("Analisar")) && !(c.seCompra && R.natureza !== "Compra") && !(c.seNormas && R.normas !== "Regulamento próprio");
             return { elCamposA: (ELAB_RAPIDO[el.doc] || []).filter((c) => vis(c) && !c.depois).map(mapa),
                      elCamposB: (ELAB_RAPIDO[el.doc] || []).filter((c) => vis(c) && c.depois).map(mapa) };
           })(),
@@ -15955,14 +16130,14 @@ class Component extends DCLogic {
             if (et.id === "final") {
               const add = (k, rot) => { const v = String(R[k] || "").trim(); if (v) resumo.push({ rot, valor: (v + (R[k + "_outro"] ? " (" + R[k + "_outro"] + ")" : "")).slice(0, 160) + (v.length > 160 ? "…" : "") }); };
               add("orgao", "Órgão"); add("uf", "UF");
-              (ELAB_RAPIDO[el.doc] || []).forEach((c) => add(c.k, ELAB_ROT[c.k] || c.rot));
+              (ELAB_RAPIDO[el.doc] || []).filter((c) => elabVisivelRegime(c, R)).forEach((c) => add(c.k, ELAB_ROT[c.k] || c.rot));
               add("elab_nome", "Elaboração"); add("resp_nome", "Responsável pelo setor");
               const pq = el.pesq;
               if (pq && pq.estado === "ok") resumo.push({ rot: "Pesquisa de mercado", valor: pq.refs.length + " contratações e " + (pq.precos || []).length + " grupos de preços praticados" });
               else if (R.precos_sem === "sim") resumo.push({ rot: "Pesquisa de mercado", valor: "valores a completar depois" });
             }
             return {
-              elBase: d ? d.base : "",
+              elBase: d ? elabDoc(el.doc, el.regime).base : "",
               elEtapas: ets.map((e, j) => ({ n: j < i ? "✓" : String(j + 1), t: e.t, atual: j === i ? "step" : "false",
                 cls: j === i ? "atual" : j < i ? "feita" : "", ir: () => { if (j <= Math.max(i, el.maxPasso || 0)) this.elIrEtapa(j); } })),
               elProgPct: ets.length ? Math.round(((i + 1) / ets.length) * 100) : 0,
@@ -15975,7 +16150,7 @@ class Component extends DCLogic {
               elMontagem: (ELAB_MONTAGEM[el.doc] || []).map(([t, dd]) => ({ t, d: dd }))
             };
           })(),
-          elMostraPesquisa: el.doc === "etp" || (el.doc === "tr" && !String(R.valor || "").trim()),
+          elMostraPesquisa: elabPesquisa(el.doc, R),
           elTextoPesquisa: el.doc === "etp"
             ? "No ETP não se informa valor estimado. Pesquisamos no PNCP contratações de outros órgãos e, no Compras.gov.br, os preços unitários praticados, priorizando o seu estado, para todas as soluções possíveis (compra, locação, serviço…); o agente compara as soluções no estudo, com as fontes."
             : "O agente traz contratações semelhantes do PNCP e preços unitários praticados do Compras.gov.br, priorizando o seu estado, como referência; o valor final deve vir da sua pesquisa de preços formal (art. 23).",
@@ -16290,7 +16465,7 @@ class Component extends DCLogic {
       topSec: s.usuario && (s.plano || s.admin) ? this.nav("biblioteca") : this.nav("planos"),
       homeTopo: [
         ["✦", "Agente de IA", "O Parecerista", "Parecer técnico sobre edital, ETP, TR e planilhas, com a lei e a jurisprudência.", "h-parecerista"],
-        ["✎", "Agente de IA", "O Elaborador", "ETP, TR e Projeto Básico em Word e PDF, com pesquisa de preços no PNCP.", "h-elaborador"],
+        ["✎", "Agente de IA", "O Elaborador", "ETP, TR, Projeto Básico, edital, contratação direta e mapa de riscos em Word e PDF, nas Leis 14.133, 13.303 e 13.019.", "h-elaborador"],
         ["%", "Calculadora", "Reajuste e planilhas", "Reajuste por índice, planilhas da IN 05/2017, repactuação, comparação de planilhas e reequilíbrio.", "h-calculadora"],
         ["▦", "Gestão Contratual", "Seus contratos", "Linha do tempo, prazos de reajuste e prorrogação e avisos por e-mail.", "h-gestao"],
         ["⌕", "Grátis", "Biblioteca Jurídica", "TCU, Tribunais de Contas, PGEs e TJs de todo o país, com link oficial.", "h-biblioteca"],
@@ -16689,6 +16864,7 @@ class Component extends DCLogic {
         : (this.precoAnalise() > 0 ? "Pagar " + brlSimples(this.precoAnalise()) + " e continuar" : (this.cortesiaAnalise() && !this.temFranquiaLivre() ? "Fazer minha análise grátis" : "Continuar para o envio (sem custo)")))),
       iniciarAnalise: () => { if (!s.an.iniciando) this.iniciarAnalise(); },
       // página 2: envio
+      anPedeRilc: s.an.regime === "lei-13303" && !((s.an.normas || []).length),
       anRegimes: AN_REGIMES.map(([id, nome, sub]) => ({ nome, sub, ativo: s.an.regime === id, ...corBotao(s.an.regime === id),
         escolher: () => this.setState({ an: { ...this.state.an, regime: id, erro: "",
           docs: this.state.an.docs.map((d) => (id !== "lei-13019" && (d.tipo === "plano_trabalho" || d.tipo === "planilha_parceria") ? { tipo: "", arquivo: null, paginas: null, escaneado: false } : d)) } }) })),
@@ -16829,7 +17005,7 @@ class Component extends DCLogic {
         { nome: "Premium", base: 199.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(199.9), unidade: unidadePlano, nota: notaPlano(199.9), detalhePreco: detalhePlano(199.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
           itens: ["Tudo do Básico", "O Parecerista e O Elaborador com 15% de desconto", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Prioridade na agenda do especialista"] },
         { nome: "Pro", base: 479.9, publico: "Profissionais avançados e empresas.", preco: precoPlano(479.9), unidade: unidadePlano, nota: notaPlano(479.9), detalhePreco: detalhePlano(479.9), destaque: destaque === "Pro", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Tudo do Premium", "O Parecerista e O Elaborador: 2 por semana incluídos, entre analisar documentos e criar ETP, TR ou Projeto Básico; a partir do 3º, 30% de desconto", "Agente de IA nas planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "Suporte prioritário"] }
+          itens: ["Tudo do Premium", "O Parecerista e O Elaborador: 2 por semana incluídos, entre analisar e criar documentos; a partir do 3º, 30% de desconto", "Agente de IA nas planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "Suporte prioritário"] }
       ]),
 
       // área do assinante
@@ -16930,7 +17106,7 @@ class Component extends DCLogic {
           ["Agente de IA nas planilhas de mão de obra", ["—", "—", eq ? "1 elaboração, 1 repactuação e 1 análise de proposta por semana, para a equipe" : "1 elaboração, 1 repactuação e 1 análise de proposta por semana"]],
           ["Cursos", ["10% de desconto", "15% de desconto", "50% de desconto"]],
           ["Consultoria técnica", ["10% de desconto", "15% de desconto", eq ? "1 por escrito por mês para a equipe; demais com 30%" : "1 por escrito por mês incluída; demais com 30%"]],
-          ["O Parecerista (parecer técnico) e O Elaborador (ETP, TR e Projeto Básico)", ["10% de desconto", "15% de desconto", eq ? "6 por acesso por mês, somados para a equipe" : "2 por semana incluídos, entre analisar e criar; demais com 30%"]],
+          ["O Parecerista (parecer técnico) e O Elaborador (ETP, TR, Projeto Básico, edital, contratação direta e mapa de riscos)", ["10% de desconto", "15% de desconto", eq ? "6 por acesso por mês, somados para a equipe" : "2 por semana incluídos, entre analisar e criar; demais com 30%"]],
           ["Prioridade na agenda do especialista", ["—", "Sim", "Sim"]],
           ["Suporte prioritário", ["—", "—", "Sim"]]
         ];

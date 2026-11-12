@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Elaboração de documentos pelo Agente Licitacon: ETP, Termo de Referência e Projeto Básico (Lei 14.133/2021).
+"""Elaboração de documentos pelo Agente Licitacon: ETP, TR, Projeto Básico, Edital, Contratação direta e Mapa de riscos (Leis 14.133, 13.303 e 13.019).
 
 Fluxo: questionário do assinante -> redação pelo modelo (com o roteiro de verificação, o texto legal e a jurisprudência
 da Biblioteca, priorizando o Tribunal de Contas do estado informado) -> conferência automática do próprio texto pelo
@@ -28,7 +28,7 @@ MODELOS = {"etp": me, "tr": mt}
 
 def modelo_padrao(doc, respostas, modelo_assinante):
     """'etp' ou 'tr' quando o documento sai num modelo padrão; '' para o formato genérico."""
-    if modelo_assinante:
+    if modelo_assinante or regime_de(respostas) != "lei-14133":  # os modelos padrão são da Lei 14.133
         return ""
     if doc == "etp":
         return "etp"
@@ -57,7 +57,113 @@ DOCS = {
                                   "Métodos construtivos, instalações provisórias e organização da obra",
                                   "Programação, estratégia de suprimentos e normas de fiscalização", "Orçamento detalhado do custo global"]},
 }
+# ------------------------------------------------------------------ regimes jurídicos: cada documento segue a lei da contratação
+REGIMES_DOC = {"etp": ("lei-14133", "lei-13303"), "tr": ("lei-14133", "lei-13303"), "projeto_basico": ("lei-14133", "lei-13303"),
+               "edital": ("lei-14133", "lei-13303", "lei-13019"), "direta": ("lei-14133", "lei-13303", "lei-13019"),
+               "riscos": ("lei-14133", "lei-13303")}
+NOME_REGIME = {"lei-14133": "Lei nº 14.133/2021", "lei-13303": "Lei nº 13.303/2016 e o regulamento interno de licitações e contratos (RILC) da estatal",
+               "lei-13019": "Lei nº 13.019/2014 (parcerias com organizações da sociedade civil)"}
+DOCS.update({
+    "edital": {"nome": "Edital de Licitação", "roteiro": "edital", "objetos": [],
+               "base": "art. 25 da Lei nº 14.133/2021, com a minuta do contrato (art. 92) e, se houver registro de preços, a minuta da ata (art. 82)",
+               "secoes": ["Preâmbulo (órgão, modalidade, critério de julgamento, modo de disputa, regime de execução e base legal)", "Objeto",
+                          "Valor estimado e dotação orçamentária (ou sigilo do orçamento, art. 24)", "Condições de participação e vedações (arts. 9º e 14)",
+                          "Tratamento diferenciado de ME e EPP (art. 4º e LC 123/2006)", "Envio das propostas e dos documentos",
+                          "Abertura da sessão e fase de lances (modo de disputa, arts. 56 e 57)", "Julgamento e aceitabilidade das propostas (art. 59)",
+                          "Habilitação (arts. 62 a 70)", "Impugnações e pedidos de esclarecimento (art. 164)", "Recursos (art. 165)",
+                          "Infrações e sanções administrativas (arts. 155 a 163)", "Garantia da contratação (arts. 96 a 102), se exigida",
+                          "Contratação, prazo para assinatura e condições de pagamento", "Disposições gerais e anexos",
+                          "ANEXO: Minuta do contrato (cláusulas necessárias do art. 92)", "ANEXO: Minuta da ata de registro de preços (somente se houver registro de preços)"]},
+    "direta": {"nome": "Processo de Contratação Direta", "roteiro": "direta", "objetos": [],
+               "base": "arts. 72 a 75 da Lei nº 14.133/2021 (instrução do processo de dispensa ou inexigibilidade)",
+               "secoes": ["Objeto e documento de formalização da demanda (art. 72, I)", "Enquadramento legal da hipótese de dispensa ou inexigibilidade",
+                          "Justificativa da hipótese e caracterização dos requisitos legais", "Estimativa da despesa (art. 72, II, e art. 23)",
+                          "Razão da escolha do contratado (art. 72, VI)", "Justificativa do preço (art. 72, VII)",
+                          "Requisitos de habilitação e qualificação mínima (art. 72, V)", "Previsão de recursos orçamentários (art. 72, IV)",
+                          "Pareceres técnico e jurídico (art. 72, III)", "Autorização da autoridade competente (art. 72, VIII)",
+                          "Divulgação do ato e publicação no PNCP (art. 72, parágrafo único)"]},
+    "riscos": {"nome": "Mapa de Riscos", "roteiro": "riscos", "objetos": [],
+               "base": "art. 18, X, da Lei nº 14.133/2021 (análise dos riscos da contratação) e, quando cabível, a matriz de riscos do art. 6º, XXVII, e do art. 22",
+               "secoes": ["Identificação da contratação e da fase", "Metodologia (probabilidade, impacto e nível de risco)",
+                          "Riscos da fase de planejamento", "Riscos da fase de seleção do fornecedor", "Riscos da fase de gestão e execução do contrato",
+                          "Para cada risco: descrição, causa, consequência, probabilidade, impacto, nível, ações preventivas, ações de contingência e responsável",
+                          "Matriz de alocação de riscos entre contratante e contratado (art. 22 e art. 103), quando cabível",
+                          "Acompanhamento e atualização do mapa"]},
+})
+VARIANTES = {
+    ("etp", "lei-13303"): {"base": "Lei nº 13.303/2016 (arts. 31, 32 e 42) e o regulamento interno de licitações e contratos (RILC) da estatal, que disciplina os estudos preliminares (art. 40)"},
+    ("tr", "lei-13303"): {"base": "Lei nº 13.303/2016 (arts. 31, 32, 42 e 47) e o regulamento interno de licitações e contratos (RILC) da estatal (art. 40)"},
+    ("projeto_basico", "lei-13303"): {"base": "art. 42, VIII, da Lei nº 13.303/2016 (alíneas \"a\" a \"f\"), para obras e serviços de engenharia, e o RILC da estatal (art. 40)"},
+    ("edital", "lei-13303"): {"base": "arts. 31 a 41 e 51 a 62 da Lei nº 13.303/2016, com a minuta do contrato (art. 69), e o regulamento interno de licitações e contratos (RILC) da estatal (art. 40)",
+        "secoes": ["Preâmbulo (estatal, procedimento ou pregão, critério de julgamento, modo de disputa, regime de execução e base legal)", "Objeto",
+                   "Orçamento estimado (sigiloso ou divulgado, art. 34) e recursos", "Condições de participação e impedimentos (art. 38)",
+                   "Tratamento diferenciado de ME e EPP (art. 28, § 1º, e LC 123/2006)", "Apresentação das propostas e dos lances (arts. 51 a 53)",
+                   "Julgamento e critérios (arts. 54 a 56)", "Negociação (art. 57)", "Habilitação (art. 58)", "Recursos (art. 59)",
+                   "Sanções (arts. 82 a 84)", "Garantia (art. 70), se exigida", "Contratação e pagamento", "Disposições gerais e anexos",
+                   "ANEXO: Minuta do contrato (cláusulas do art. 69)", "ANEXO: Matriz de riscos (art. 69, X), quando cabível"]},
+    ("direta", "lei-13303"): {"base": "arts. 29 e 30 da Lei nº 13.303/2016 (com o § 3º do art. 30) e o regulamento interno de licitações e contratos (RILC) da estatal (art. 40)",
+        "secoes": ["Objeto e necessidade", "Enquadramento legal (art. 29: dispensa; art. 30: inexigibilidade) e dispositivo do RILC",
+                   "Justificativa da hipótese e caracterização dos requisitos", "Caracterização da emergência, se for o caso (art. 30, § 3º, I)",
+                   "Razão da escolha do fornecedor (art. 30, § 3º, II)", "Justificativa do preço (art. 30, § 3º, III)",
+                   "Habilitação e ausência de impedimentos do contratado (art. 38)", "Recursos para a contratação",
+                   "Autorização e publicidade (art. 39 e RILC)"]},
+    ("riscos", "lei-13303"): {"nome": "Matriz de Riscos",
+        "base": "art. 42, X, e art. 69, X, da Lei nº 13.303/2016 (matriz de riscos) e o regulamento interno de licitações e contratos (RILC) da estatal",
+        "secoes": ["Identificação da contratação", "Metodologia (probabilidade, impacto e nível de risco)",
+                   "Eventos supervenientes e sua alocação (art. 42, X, \"a\")", "Riscos ligados à liberdade de inovação da contratada (art. 42, X, \"b\" e \"c\")",
+                   "Para cada risco: descrição, probabilidade, impacto, parte responsável, medidas de mitigação e efeito no equilíbrio econômico-financeiro",
+                   "Eventos não alocados à contratada e reequilíbrio (art. 81)", "Acompanhamento"]},
+    ("edital", "lei-13019"): {"nome": "Edital de Chamamento Público",
+        "base": "art. 24 da Lei nº 13.019/2014 (edital de chamamento público), com a minuta do termo de colaboração ou de fomento (art. 42), e o decreto regulamentador do ente",
+        "secoes": ["Preâmbulo (ente, tipo de parceria: termo de colaboração ou de fomento, e base legal)", "Objeto da parceria e programação orçamentária (art. 24, § 1º, I)",
+                   "Objetivos, metas e público atendido", "Datas, prazos, condições, local e forma de apresentação das propostas (art. 24, § 1º, III)",
+                   "Condições de participação e vedações (arts. 33, 34 e 39)", "Comissão de seleção (art. 27)",
+                   "Critérios de seleção e julgamento, metodologia de pontuação e peso de cada critério (art. 24, § 1º, V)",
+                   "Valor de referência ou teto e contrapartida (art. 24, § 1º, VI, e art. 35, § 1º)", "Fases: seleção, recursos, homologação e celebração",
+                   "Divulgação do resultado e prazo de recurso", "Documentos para a celebração e plano de trabalho (art. 22)",
+                   "Condições de acessibilidade (art. 24, § 1º, VII)", "Disposições finais",
+                   "ANEXO: Minuta do termo de colaboração ou de fomento (cláusulas do art. 42)"]},
+    ("direta", "lei-13019"): {"nome": "Justificativa de Dispensa ou Inexigibilidade de Chamamento Público",
+        "base": "arts. 30 a 32 da Lei nº 13.019/2014 e o decreto regulamentador do ente",
+        "secoes": ["Objeto da parceria e interesse público", "Enquadramento: dispensa (art. 30) ou inexigibilidade (art. 31) do chamamento",
+                   "Justificativa da hipótese", "Escolha da organização da sociedade civil e sua capacidade",
+                   "Requisitos e documentos da organização (arts. 33, 34 e 39)", "Plano de trabalho, valores e cronograma (art. 22 e art. 35)",
+                   "Pareceres técnico e jurídico, gestor e comissão de monitoramento (art. 35)",
+                   "Publicação do extrato da justificativa e prazo de impugnação (art. 32, §§ 1º a 3º)", "Autorização do administrador público"]},
+}
+
+
+def regime_de(respostas):
+    r = str((respostas or {}).get("regime") or "lei-14133")
+    return r if r in NOME_REGIME else "lei-14133"
+
+
+def cfg(doc, respostas=None):
+    """Nome, base legal e seções do documento conforme a lei da contratação."""
+    regime = regime_de(respostas)
+    return {**DOCS[doc], **VARIANTES.get((doc, regime), {}), "regime": regime}
+
+
+def bloco_regime(regime, tem_normas):
+    if regime == "lei-13303":
+        return ("REGIME JURÍDICO: empresa pública ou sociedade de economia mista. Aplicam-se a Lei nº 13.303/2016 e o regulamento interno de "
+                "licitações e contratos (RILC) da estatal (art. 40); NÃO aplique a Lei nº 14.133/2021 (ela exclui as estatais, art. 1º, § 1º) e não "
+                "use instruções normativas federais nem SICAF como obrigação. "
+                + ("O RILC foi enviado (regulamentação específica abaixo): siga-o em cada seção e cite o dispositivo do RILC junto com o da lei. "
+                   if tem_normas else "O RILC NÃO foi enviado: nos pontos que dependem dele (prazos, procedimento, alçadas, limites), escreva "
+                   "[PREENCHER: conferir no RILC — o que deve ser conferido] e registre a pendência; não invente regras do RILC. ") + "\n\n")
+    if regime == "lei-13019":
+        return ("REGIME JURÍDICO: parceria entre a administração pública e organização da sociedade civil (OSC), Lei nº 13.019/2014 (MROSC) e o "
+                "decreto regulamentador do ente. NÃO é licitação: não use os termos e institutos da Lei nº 14.133/2021 (licitante, pregão, "
+                "proposta de preço, menor preço, habilitação do art. 62); use chamamento público, organização da sociedade civil, proposta, "
+                "plano de trabalho, termo de colaboração ou de fomento. "
+                + ("O regulamento do ente foi enviado (abaixo): siga-o e cite-o. " if tem_normas else
+                   "O decreto regulamentador do ente não foi enviado: nos pontos que dependem dele, escreva [PREENCHER: conferir no decreto "
+                   "do ente — o que deve ser conferido]. ") + "\n\n")
+    return ("REGIME JURÍDICO: Lei nº 14.133/2021. "
+            + ("A regulamentação do ente foi enviada (abaixo): siga-a e cite-a quando ela detalhar a lei. " if tem_normas else "") + "\n\n")
 CAMPOS_ROTULO = {
+    "tipo_parceria": "Tipo de parceria (escolha do requisitante)", "metas": "Objetivos, metas e público atendido", "modo_disputa": "Modo de disputa (escolha do requisitante)", "registro_precos": "Registro de preços (escolha do requisitante)", "me_epp": "Participação de ME e EPP (escolha do requisitante)", "criterios_selecao": "Critérios de seleção e pontuação", "agente": "Agente de contratação, pregoeiro ou comissão", "hipotese": "Hipótese legal da contratação direta (escolha do requisitante)", "hipotese_detalhe": "Por que a situação se enquadra na hipótese", "contratado": "Fornecedor ou organização escolhida", "motivo_escolha": "Razão da escolha do contratado", "justificativa_preco": "Como o preço foi verificado", "fase": "Fases a mapear", "riscos_conhecidos": "Riscos ou problemas já conhecidos", "matriz": "Incluir matriz de alocação de riscos (art. 22)", "equipe": "Equipe de planejamento", "garantia": "Garantia da contratação (escolha do requisitante)",
     "orgao": "Órgão ou entidade", "uf": "UF e município", "unidade": "Unidade requisitante", "natureza": "Natureza do objeto / solução indicada",
     "objeto": "Objeto", "necessidade": "Necessidade", "pca": "Plano de contratações anual", "requisitos": "Requisitos",
     "quantidades": "Quantidades e memória de cálculo", "mercado": "Levantamento de mercado", "valor": "Valor estimado informado pelo requisitante",
@@ -124,7 +230,7 @@ def jurisprudencia_do_estado(uf, consulta, n=6):
 
 
 CHAVES_INTERNAS = {"entrega", "modelo_arquivo", "modelo_nome", "logo_arquivo", "logo_nome", "precos_pdfs", "precos_links", "precos_manual", "precos_sem",
-                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "pca_ref", "pesquisa_precos_id"}
+                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "pca_ref", "pesquisa_precos_id", "regime"}
 
 
 def texto_de_link(url):
@@ -179,9 +285,9 @@ def bloco_precos_assinante(respostas, pdfs_locais):
 
 
 def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=False):
-    d = DOCS[doc]
-    roteiro = an.carregar_roteiro("lei-14133")
-    itens, _ = an.montar_itens(roteiro, d["roteiro"], "lei-14133", d["objetos"])
+    d = cfg(doc, respostas)
+    roteiro = an.carregar_roteiro(d["regime"])
+    itens, _ = an.montar_itens(roteiro, d["roteiro"], d["regime"], d["objetos"])
     def valor_legivel(k, v):
         if k == "itens_pp":
             try:
@@ -207,6 +313,7 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
     refs = an.selecionar_referencias(itens, texto_resp, limite=10)
     bloco_juris = "\n".join(f"- [{j['id']}] {j.get('orgao','')} {j.get('numero','')} ({j.get('data','')[:4]}): {(j.get('tese') or j.get('titulo') or '')[:500]}" for j in juris) or "(nenhuma)"
     system = (
+        bloco_regime(d["regime"], bool(an.NORMAS_LOCAIS)) +
         f"Você é especialista em planejamento de contratações públicas e redige o {d['nome']} conforme o {d['base']}. "
         "Escreva em linguagem técnica de documento oficial, com rigor jurídico, na voz da própria unidade que assina o documento: "
         "use preferencialmente a forma impessoal (voz passiva sintética: \"informa-se\", \"verifica-se\", \"constatou-se\", "
@@ -254,13 +361,14 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
            "fonte de cada componente, e indique a solução de menor custo total que atenda aos requisitos, justificando também os aspectos "
            "qualitativos; a estimativa do valor é preliminar (art. 18, § 1º, VI), dependente da pesquisa de preços do art. 23; " if doc == "etp" else
            "se o requisitante não informou o valor, apresente os dados do PNCP como referência preliminar, em mapa resumido, registrando "
-           "que o valor estimado deve vir da pesquisa de preços formal do art. 23 da Lei 14.133/2021 ([PREENCHER] no valor final); ")
+           "que o valor estimado deve vir da pesquisa de preços formal " + ("do art. 23 da Lei 14.133/2021" if d["regime"] == "lei-14133" else "prevista no RILC" if d["regime"] == "lei-13303" else "da parceria") + " ([PREENCHER] no valor final); ")
         + (f"(10) siga o modelo padrão descrito a seguir e entregue com a ferramenta entregar_documento.\n{MODELOS[padrao].INSTRUCOES}" if padrao else
            f"(10) produza as seções na ordem: {'; '.join(d['secoes'])}. Entregue com a ferramenta entregar_documento.")
     )
     usuario = (
         f"RESPOSTAS DO REQUISITANTE ({d['nome']}):\n{texto_resp}\n\n"
         f"ROTEIRO DE VERIFICAÇÃO (o documento deve atender a estes itens):\n{an.bloco_roteiro(itens)}\n\n"
+        f"{an.bloco_normas_locais(itens)}"
         f"{an.bloco_referencias(refs)}\n\n"
         f"JURISPRUDÊNCIA DA BIBLIOTECA (priorize o Tribunal de Contas do estado{(' ' + uf) if uf else ''}):\n{bloco_juris}\n"
         + (f"\n{pm.bloco_prompt(pesquisa)}\n" if pesquisa is not None else "")
@@ -289,10 +397,10 @@ def texto_plano(docj):
 
 
 def simulado(doc, respostas):
-    d = DOCS[doc]
+    d = cfg(doc, respostas)
     return {"titulo": f"{d['nome'].upper()}", "secoes": [{"titulo": t, "paragrafos": [
         f"[Texto de exemplo da seção \"{t}\". Na elaboração real, o agente redige esta seção a partir das respostas: "
-        f"{respostas.get('objeto', '[PREENCHER: objeto]')}.]"], "fundamento": "Lei 14.133/2021"} for t in d["secoes"]],
+        f"{respostas.get('objeto', '[PREENCHER: objeto]')}.]"], "fundamento": NOME_REGIME[d["regime"]]} for t in d["secoes"]],
         "pendencias": ["[Exemplo] Confirmar o valor estimado com a pesquisa de preços anexada ao processo."], "jurisprudencia_ids": []}
 
 
@@ -479,8 +587,8 @@ FERRAMENTA_DUVIDAS = {
 
 def pre_analise(doc, respostas, pesquisa, usuario_pedido):
     """Antes de redigir (a parte cara), confere com os dados da pesquisa se falta alguma informação que só o requisitante tem."""
-    d = DOCS[doc]
-    system = (f"Você vai redigir o {d['nome']} (Lei 14.133/2021) e precisa que ele saia COMPLETO, sem lacunas. Leia as respostas, os "
+    d = cfg(doc, respostas)
+    system = (f"Você vai redigir o {d['nome']} ({NOME_REGIME[d['regime']]}) e precisa que ele saia COMPLETO, sem lacunas. Leia as respostas, os "
               "esclarecimentos e a pesquisa de mercado e liste somente as informações que só o requisitante pode dar e que faltam para "
               "preencher todos os campos e fazer o estudo de custo das soluções (ex.: vida útil esperada do bem quando depender do uso no "
               "órgão, garantia exigida, se há equipe própria de manutenção, ata de registro de preços específica que pretende aderir, "
@@ -538,7 +646,7 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
     from docx import Document
     from docx.enum.text import WD_ALIGN_PARAGRAPH
     from docx.shared import Cm, Pt, RGBColor
-    d = DOCS[doc]
+    d = cfg(doc, respostas)
     w = abrir_modelo(modelo) if modelo else None
     do_assinante = w is not None
     if not do_assinante:
@@ -702,10 +810,22 @@ def main():
     ap.add_argument("--modelo", help="Word do assinante para servir de modelo")
     ap.add_argument("--logo", help="imagem da logo do órgão")
     ap.add_argument("--preco-pdf", action="append", default=[], help="PDF de referência de preço (nome=caminho)")
+    ap.add_argument("--regime", choices=sorted(NOME_REGIME), help="lei da contratação (padrão: a das respostas ou a Lei 14.133)")
+    ap.add_argument("--norma-local", action="append", default=[], help='regulamentação do ente ou RILC: "Nome::caminho.txt"')
     ap.add_argument("--docj", help="completar: documento já redigido (JSON); só preenche as lacunas, sem chamar a API")
     a = ap.parse_args()
     pasta = pathlib.Path(a.pasta); pasta.mkdir(parents=True, exist_ok=True)
     respostas = {k: str(v) for k, v in json.loads(pathlib.Path(a.respostas).read_text(encoding="utf-8")).items()}
+    if a.regime:
+        respostas["regime"] = a.regime
+    regime = regime_de(respostas)
+    if regime not in REGIMES_DOC[a.doc]:
+        sys.exit(f"O documento {a.doc} não se aplica ao regime {regime}.")
+    an.carregar_normas_locais(a.norma_local)
+    global TEXTO_VALOR
+    if regime != "lei-14133":
+        TEXTO_VALOR = ("conforme a pesquisa de preços a ser juntada aos autos (Lei nº 13.303/2016, art. 31, e RILC)" if regime == "lei-13303"
+                       else "conforme o plano de trabalho e a planilha de custos da parceria")
     padrao = modelo_padrao(a.doc, respostas, a.modelo)
     M = MODELOS.get(padrao)
     if a.docj:  # fase "completar": o assinante respondeu às lacunas; nenhum custo de API
@@ -731,7 +851,8 @@ def main():
         return
     print("ETAPA: pesquisa", flush=True)
     pesquisa = None
-    if a.doc in ("etp", "tr") and not (a.doc == "tr" and respostas.get("valor", "").strip()):
+    if (a.doc in ("etp", "tr", "direta") and regime != "lei-13019"
+            and not (a.doc in ("tr", "direta") and respostas.get("valor", "").strip())):
         pesquisa = pm.pesquisar(respostas.get("objeto", ""),
                                 uf_de(respostas.get("uf", "")), respostas.get("natureza", ""))
         (pasta / "pesquisa.json").write_text(json.dumps(pesquisa, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -773,9 +894,12 @@ def main():
         print("ETAPA: conferencia", flush=True)
         txt = pasta / "documento.txt"; txt.write_text(M.texto_plano(docj) if M else texto_plano(docj), encoding="utf-8")
         conf = pasta / "conferencia.json"
-        args = [sys.executable, str(RAIZ / "scripts/agente/analisar.py"), "--doc", DOCS[a.doc]["roteiro"], "--texto", str(txt),
-                "--saida", str(conf), "--fonte", "minuta elaborada pelo agente"]
-        for o in DOCS[a.doc]["objetos"]:
+        dc = cfg(a.doc, respostas)
+        args = [sys.executable, str(RAIZ / "scripts/agente/analisar.py"), "--doc", dc["roteiro"], "--texto", str(txt),
+                "--saida", str(conf), "--fonte", "minuta elaborada pelo agente", "--regime", regime]
+        for nl in a.norma_local:
+            args += ["--norma-local", nl]
+        for o in dc["objetos"]:
             args += ["--objeto", o]
         regras = getattr(M, "conferir_regras", None) if M else None
         if regras:  # modelo com texto fixo (AGU): conferência por regras, sem custo; só os achados vão à correção paga

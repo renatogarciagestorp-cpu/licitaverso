@@ -1,7 +1,7 @@
 {
  "_sobre": "Roteiros de verificação do Agente Licitacon para contratações regidas pela Lei 14.133/2021. Cada item aponta o dispositivo legal (norma, art, disp) conferido automaticamente contra agente/normas/<norma>.json. disp usa os ids do arquivo da norma: caput, I, II, p1 (§ 1º), p1.I (§ 1º, inciso I), pu (parágrafo único), XXIII.a (inciso XXIII, alínea a). gravidade: alta = vício que compromete a legalidade ou a competitividade; media = falha que exige correção ou motivação; baixa = boa prática ou melhoria. obrigatorio: sim | condicional (ver 'quando') | recomendado. Fase de testes: somente a Lei 14.133/2021 é usada como fundamento.",
  "regime": "lei-14133",
- "versao": "2026-10-29b",
+ "versao": "2026-11-12",
  "revisado_por_especialista": false,
  "documentos": {
   "etp": "Estudo Técnico Preliminar",
@@ -9,6 +9,7 @@
   "riscos": "Mapa / Matriz de Riscos",
   "planilha": "Planilha de custos e formação de preços (dedicação exclusiva de mão de obra)",
   "edital": "Edital e minutas (ata e contrato)",
+  "direta": "Processo de contratação direta (dispensa ou inexigibilidade)",
   "cruzado": "Coerência entre os documentos"
  },
  "itens": [
@@ -1782,6 +1783,556 @@
    "temas": [
     "divergência entre edital e termo de referência",
     "vinculação ao instrumento convocatório"
+   ]
+  },
+  {
+   "id": "dir-01",
+   "doc": "direta",
+   "titulo": "Enquadramento expresso na hipótese legal de dispensa ou inexigibilidade",
+   "verificar": "O processo indica o inciso (e a alínea, se houver) do art. 75 ou do art. 74 em que se funda a contratação direta e demonstra, com fatos do caso, que todos os pressupostos daquela hipótese estão presentes.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "72",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "74",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "75",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Contratação direta sem hipótese legal configurada equivale a dispensa indevida de licitação: o contrato é nulo e o agente público e o contratado respondem solidariamente pelo dano em caso de dolo, fraude ou erro grosseiro (art. 73).",
+   "dica": "Cite o dispositivo exato e, em seguida, demonstre um a um os requisitos que ele exige; não basta transcrever o texto da lei.",
+   "temas": [
+    "contratação direta",
+    "dispensa de licitação",
+    "inexigibilidade",
+    "enquadramento legal"
+   ]
+  },
+  {
+   "id": "dir-02",
+   "doc": "direta",
+   "titulo": "Documento de formalização de demanda e artefatos de planejamento",
+   "verificar": "O processo contém o documento de formalização de demanda e, conforme a complexidade do objeto, o ETP, a análise de riscos e o termo de referência, projeto básico ou projeto executivo — ou registra por que algum deles foi dispensado.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "72",
+     "disp": "I"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Sem demanda formalizada e sem objeto bem definido, a contratação direta perde a motivação e fica impossível aferir se o objeto contratado corresponde à necessidade e se o preço é adequado.",
+   "dica": "Junte o DFD assinado pela área demandante e o TR/projeto proporcional ao objeto; se o ETP ou a análise de riscos não forem elaborados, registre a justificativa.",
+   "temas": [
+    "documento de formalização de demanda",
+    "planejamento",
+    "termo de referência",
+    "estudo técnico preliminar"
+   ]
+  },
+  {
+   "id": "dir-03",
+   "doc": "direta",
+   "titulo": "Estimativa de despesa calculada na forma do art. 23",
+   "verificar": "A estimativa de despesa foi feita com os parâmetros do art. 23 (painel de preços/PNCP, contratações similares, mídia especializada, pesquisa com no mínimo três fornecedores, notas fiscais), com memória de cálculo e datas.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "72",
+     "disp": "II"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "23",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "23",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "23",
+     "disp": "p2"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Estimativa sem método ou baseada em cotação única não demonstra que o valor é compatível com o mercado, o que caracteriza risco de sobrepreço e é apontado pelos tribunais de contas.",
+   "dica": "Combine fontes públicas (painel de preços, contratações similares do último ano) com cotações formais, registre data e hora de acesso e descarte valores inexequíveis ou excessivos.",
+   "temas": [
+    "estimativa de despesa",
+    "pesquisa de preços",
+    "sobrepreço"
+   ]
+  },
+  {
+   "id": "dir-04",
+   "doc": "direta",
+   "titulo": "Justificativa de preço do contratado",
+   "verificar": "Há justificativa de que o preço a ser pago é compatível com o mercado; quando não for possível estimar pelo art. 23, §§ 1º a 3º (comum em inexigibilidade), o contratado comprova o preço com notas fiscais emitidas a outros contratantes no último ano ou outro meio idôneo.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "72",
+     "disp": "VII"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "23",
+     "disp": "p4"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem justificativa de preço, a contratação direta fica sujeita a glosa por sobrepreço e à responsabilização do ordenador de despesa; a ausência é uma das falhas mais citadas pelo controle.",
+   "dica": "Compare o preço proposto com a estimativa ou exija do contratado notas fiscais de objetos de mesma natureza emitidas a terceiros nos 12 meses anteriores, e registre a conclusão.",
+   "temas": [
+    "justificativa de preço",
+    "inexigibilidade",
+    "sobrepreço",
+    "notas fiscais"
+   ]
+  },
+  {
+   "id": "dir-05",
+   "doc": "direta",
+   "titulo": "Parecer jurídico e pareceres técnicos",
+   "verificar": "Consta parecer jurídico que examina o enquadramento e os requisitos da contratação direta e, quando o caso exigir, parecer técnico que os demonstre (singularidade, exclusividade, urgência).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "72",
+     "disp": "III"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "A ausência do parecer jurídico vicia a instrução do processo e retira do gestor um elemento de segurança que os órgãos de controle exigem antes da autorização.",
+   "dica": "Encaminhe o processo à assessoria jurídica antes da autorização e trate formalmente as ressalvas do parecer (acatando ou justificando).",
+   "temas": [
+    "parecer jurídico",
+    "parecer técnico",
+    "contratação direta"
+   ]
+  },
+  {
+   "id": "dir-06",
+   "doc": "direta",
+   "titulo": "Compatibilidade orçamentária",
+   "verificar": "Há demonstração de que existem recursos orçamentários para o compromisso a ser assumido (dotação, programa de trabalho, natureza de despesa e valor).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "72",
+     "disp": "IV"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Assumir obrigação sem previsão orçamentária gera despesa sem cobertura, nulidade do ato e responsabilização do ordenador de despesa.",
+   "dica": "Junte a informação de disponibilidade orçamentária emitida pelo setor financeiro, com dotação e valor, antes da autorização da contratação.",
+   "temas": [
+    "orçamento",
+    "dotação orçamentária",
+    "contratação direta"
+   ]
+  },
+  {
+   "id": "dir-07",
+   "doc": "direta",
+   "titulo": "Habilitação e qualificação mínima do contratado",
+   "verificar": "O processo comprova que o contratado preenche os requisitos de habilitação e a qualificação mínima necessária ao objeto (regularidade jurídica, fiscal, trabalhista e capacidade técnica, conforme o caso).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "72",
+     "disp": "V"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Contratar diretamente empresa irregular ou sem capacidade comprovada aumenta o risco de inexecução e pode configurar favorecimento.",
+   "dica": "Junte as certidões e documentos de habilitação proporcionais ao objeto e consulte os cadastros de impedidos (Ceis/Cnep) antes da contratação.",
+   "temas": [
+    "habilitação",
+    "qualificação técnica",
+    "contratação direta"
+   ]
+  },
+  {
+   "id": "dir-08",
+   "doc": "direta",
+   "titulo": "Razão da escolha do contratado",
+   "verificar": "O processo explica por que foi escolhido aquele fornecedor específico (menor preço entre as propostas, exclusividade, notória especialização, singularidade do imóvel etc.), com elementos objetivos.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "72",
+     "disp": "VI"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Escolha do contratado sem motivação objetiva sugere direcionamento e compromete a impessoalidade da contratação direta.",
+   "dica": "Relacione a escolha aos critérios da hipótese legal e anexe as propostas ou documentos comparados.",
+   "temas": [
+    "razão da escolha do contratado",
+    "impessoalidade",
+    "direcionamento"
+   ]
+  },
+  {
+   "id": "dir-09",
+   "doc": "direta",
+   "titulo": "Autorização da autoridade competente",
+   "verificar": "Há ato de autorização da contratação direta assinado pela autoridade competente, posterior à instrução do processo (pareceres, preço e orçamento).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "72",
+     "disp": "VIII"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem autorização da autoridade competente, a contratação direta é praticada por agente sem competência e o ato é nulo.",
+   "dica": "Verifique a norma interna de delegação de competência e colha a autorização somente depois de juntados todos os documentos do art. 72.",
+   "temas": [
+    "autorização da autoridade competente",
+    "competência",
+    "contratação direta"
+   ]
+  },
+  {
+   "id": "dir-10",
+   "doc": "direta",
+   "titulo": "Divulgação do ato de autorização ou do extrato e publicação no PNCP",
+   "verificar": "O ato que autoriza a contratação direta ou o extrato do contrato foi divulgado em sítio eletrônico oficial, e o contrato foi divulgado no PNCP em até 10 dias úteis da assinatura.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "72",
+     "disp": "pu"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "94",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "94",
+     "disp": "II"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "174",
+     "disp": "I"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "A divulgação no PNCP é condição de eficácia do contrato; sem ela o contrato não produz efeitos e a falta de publicidade da contratação direta é vício grave apontado pelo controle.",
+   "dica": "Programe a publicação do ato de autorização ou do extrato no sítio oficial e no PNCP logo após a assinatura e junte o comprovante ao processo.",
+   "temas": [
+    "publicidade",
+    "PNCP",
+    "extrato",
+    "eficácia do contrato"
+   ]
+  },
+  {
+   "id": "dir-11",
+   "doc": "direta",
+   "titulo": "Limite de valor e somatório no exercício (fracionamento)",
+   "verificar": "Na dispensa por valor, o montante respeita o limite do art. 75, I ou II (com os valores atualizados), considerado o somatório despendido no exercício pela unidade gestora com objetos de mesma natureza (mesmo ramo de atividade).",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "75",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "75",
+     "disp": "II"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "75",
+     "disp": "p1"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "75",
+     "disp": "p1.I"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "75",
+     "disp": "p1.II"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Dispensa em razão do valor (art. 75, I ou II).",
+   "gravidade": "alta",
+   "risco": "Dividir a demanda em várias dispensas para ficar abaixo do limite configura fracionamento de despesa, fuga indevida da licitação e enseja responsabilização dos agentes.",
+   "dica": "Levante as contratações do mesmo ramo de atividade já realizadas no exercício pela unidade gestora e some ao valor pretendido antes de enquadrar a dispensa.",
+   "temas": [
+    "dispensa por valor",
+    "fracionamento de despesa",
+    "somatório no exercício"
+   ]
+  },
+  {
+   "id": "dir-12",
+   "doc": "direta",
+   "titulo": "Aviso de dispensa eletrônica com prazo mínimo de 3 dias úteis",
+   "verificar": "Na dispensa por valor, houve divulgação prévia de aviso em sítio eletrônico oficial por no mínimo 3 dias úteis, com especificação do objeto e convite a propostas adicionais, selecionando-se a mais vantajosa — ou justificativa para não adotá-lo.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "75",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "recomendado",
+   "gravidade": "media",
+   "risco": "Dispensar o aviso sem justificativa reduz a competição, enfraquece a justificativa de preço e afasta a contratação da proposta mais vantajosa.",
+   "dica": "Publique o aviso de dispensa eletrônica com objeto, quantidades e prazo para propostas; se não o fizer, registre o motivo no processo.",
+   "temas": [
+    "dispensa eletrônica",
+    "aviso de dispensa",
+    "competitividade"
+   ]
+  },
+  {
+   "id": "dir-13",
+   "doc": "direta",
+   "titulo": "Emergência ou calamidade: urgência concreta, prazo de 1 ano e vedações",
+   "verificar": "A situação emergencial ou calamitosa está caracterizada com fatos; o objeto limita-se ao necessário para atendê-la; o prazo não excede 1 ano da ocorrência; não há prorrogação nem recontratação de empresa já contratada por emergência; e há providências para concluir a licitação e apurar a responsabilidade de quem deu causa à situação.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "75",
+     "disp": "VIII"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "75",
+     "disp": "p6"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Dispensa por emergência ou calamidade pública (art. 75, VIII).",
+   "gravidade": "alta",
+   "risco": "Emergência não comprovada ou fabricada por falta de planejamento, contrato acima de 1 ano, prorrogado ou recontratação da mesma empresa tornam a dispensa ilegal e geram responsabilização dos agentes.",
+   "dica": "Descreva o fato que gerou a urgência e o risco concreto, limite quantidades e prazo ao estritamente necessário, inicie a licitação em paralelo e registre a apuração de responsabilidade se a emergência decorreu de desídia.",
+   "temas": [
+    "emergência",
+    "calamidade pública",
+    "dispensa emergencial",
+    "prorrogação vedada"
+   ]
+  },
+  {
+   "id": "dir-14",
+   "doc": "direta",
+   "titulo": "Inexigibilidade por exclusividade comprovada",
+   "verificar": "A exclusividade do produtor, empresa ou representante comercial está demonstrada por atestado, contrato de exclusividade, declaração do fabricante ou outro documento idôneo, sem preferência por marca específica.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "74",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "74",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Inexigibilidade com fundamento no art. 74, I.",
+   "gravidade": "alta",
+   "risco": "Exclusividade não comprovada (ou atestado genérico, vencido ou emitido pelo próprio interessado) descaracteriza a inviabilidade de competição e torna a inexigibilidade indevida.",
+   "dica": "Exija documento idôneo e atual que delimite o território e o objeto da exclusividade e demonstre que nenhum outro produto atende à necessidade, sem escolher marca por preferência.",
+   "temas": [
+    "inexigibilidade",
+    "exclusividade",
+    "atestado de exclusividade",
+    "preferência por marca"
+   ]
+  },
+  {
+   "id": "dir-15",
+   "doc": "direta",
+   "titulo": "Notória especialização e serviço técnico de natureza predominantemente intelectual",
+   "verificar": "O serviço está entre os listados no art. 74, III (não sendo publicidade e divulgação), tem natureza predominantemente intelectual, e o contratado tem notória especialização comprovada (desempenho anterior, estudos, publicações, equipe), sendo seu trabalho essencial ao objeto; os profissionais que justificaram a inexigibilidade são os que executarão o serviço.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "74",
+     "disp": "III"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "74",
+     "disp": "p3"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "74",
+     "disp": "p4"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Inexigibilidade com fundamento no art. 74, III.",
+   "gravidade": "alta",
+   "risco": "Inexigibilidade para serviço comum ou sem notória especialização comprovada é contratação direta indevida; a substituição dos profissionais ou a subcontratação desfaz o fundamento da escolha.",
+   "dica": "Junte currículos, atestados, publicações e demonstre por que o trabalho daquele profissional ou empresa é essencial ao objeto; vede no contrato a subcontratação e a troca da equipe.",
+   "temas": [
+    "inexigibilidade",
+    "notória especialização",
+    "serviço técnico especializado",
+    "natureza intelectual"
+   ]
+  },
+  {
+   "id": "dir-16",
+   "doc": "direta",
+   "titulo": "Credenciamento: edital de chamamento e regras de distribuição",
+   "verificar": "A contratação por credenciamento decorre de edital de chamamento divulgado em sítio oficial, aberto permanentemente a novos interessados, com condições padronizadas, valor definido (nas hipóteses de contratação paralela ou com seleção por terceiros) e critérios objetivos de distribuição da demanda.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "74",
+     "disp": "IV"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "79",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "79",
+     "disp": "p1.I"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "79",
+     "disp": "p1.II"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "79",
+     "disp": "p1.III"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Inexigibilidade com fundamento no art. 74, IV.",
+   "gravidade": "media",
+   "risco": "Credenciamento sem edital público, fechado a novos interessados ou sem critério objetivo de distribuição permite escolha discricionária do contratado e afronta a isonomia.",
+   "dica": "Publique o edital de chamamento, mantenha o cadastro aberto, fixe o valor e adote rodízio ou sorteio para distribuir as demandas entre os credenciados.",
+   "temas": [
+    "credenciamento",
+    "inexigibilidade",
+    "isonomia"
+   ]
+  },
+  {
+   "id": "dir-17",
+   "doc": "direta",
+   "titulo": "Compra ou locação de imóvel: avaliação, inexistência de imóvel público e singularidade",
+   "verificar": "Há avaliação prévia do imóvel (estado de conservação, custos de adaptação e prazo de amortização), certificação da inexistência de imóveis públicos vagos que atendam ao objeto e justificativa da singularidade do imóvel e da vantagem para a Administração.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "74",
+     "disp": "V"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "74",
+     "disp": "p5"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "74",
+     "disp": "p5.I"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "74",
+     "disp": "p5.II"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "74",
+     "disp": "p5.III"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Inexigibilidade com fundamento no art. 74, V.",
+   "gravidade": "alta",
+   "risco": "Sem avaliação e sem demonstração de singularidade, a locação ou compra direta pode ocorrer acima do valor de mercado ou quando havia imóvel público disponível, o que gera dano ao erário.",
+   "dica": "Junte laudo de avaliação, certidão do órgão de patrimônio sobre a inexistência de imóvel público disponível e justificativa da localização e das instalações que tornam aquele imóvel singular.",
+   "temas": [
+    "inexigibilidade",
+    "locação de imóvel",
+    "aquisição de imóvel",
+    "avaliação"
+   ]
+  },
+  {
+   "id": "dir-18",
+   "doc": "direta",
+   "titulo": "Coerência entre objeto, enquadramento, escolha do contratado e preço",
+   "verificar": "O objeto descrito no DFD/TR é o mesmo do enquadramento legal, da proposta, do parecer e do contrato (quantidades, prazo e valor), e a justificativa de preço e a razão da escolha se referem a esse mesmo objeto.",
+   "fundamento": [
+    {
+     "norma": "lei-14133",
+     "art": "72",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "72",
+     "disp": "VI"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "72",
+     "disp": "VII"
+    },
+    {
+     "norma": "lei-14133",
+     "art": "73",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Divergência entre o objeto justificado e o efetivamente contratado esvazia o enquadramento e pode caracterizar contratação direta indevida, com responsabilidade solidária do agente e do contratado pelo dano.",
+   "dica": "Confronte objeto, quantidades, prazo e valor em todos os documentos e corrija as divergências antes da autorização e da assinatura.",
+   "temas": [
+    "coerência entre documentos",
+    "contratação direta indevida",
+    "responsabilidade solidária"
    ]
   }
  ]

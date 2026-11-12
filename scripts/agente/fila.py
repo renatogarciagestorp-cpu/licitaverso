@@ -138,10 +138,31 @@ def a_normas(a):
     return [n for n in v if isinstance(n, dict) and n.get("arquivo")][:3]
 
 
-DOC_ANALISAR = {"edital": "edital", "tr": "tr", "etp": "etp", "riscos": "riscos", "plano_trabalho": "plano_trabalho"}
-PRIORIDADE = ["edital", "tr", "plano_trabalho", "etp", "riscos", "memoria_calculo", "planilha_mo", "planilha_obras", "planilha_parceria"]
+def baixar_normas(a, pasta, rotulo):
+    """Baixa e extrai o texto das normas do assinante (decreto, RILC etc.); devolve os argumentos --norma-local."""
+    args = []
+    for k, n in enumerate(a_normas(a), 1):
+        try:
+            bruto = http("GET", f"{SUPA}/storage/v1/object/analises/{n['arquivo']}", cab=cab(), binario=True, timeout=300)
+            orig = pasta / f"norma{k}{pathlib.Path(n['arquivo']).suffix.lower() or '.pdf'}"
+            orig.write_bytes(bruto)
+            txt_n = pasta / f"norma{k}.txt"
+            if orig.suffix == ".docx":
+                import docx  # python-docx
+                txt_n.write_text("\n".join(p.text for p in docx.Document(str(orig)).paragraphs), encoding="utf-8")
+            else:
+                subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-texto.py"), str(orig), str(txt_n)], capture_output=True, timeout=1800)
+            if txt_n.exists() and len(txt_n.read_text(encoding="utf-8", errors="replace").strip()) > 200:
+                args += ["--norma-local", f"{n['nome']}::{txt_n}"]
+        except Exception as e:
+            print(f"{rotulo}: norma local {k} não lida ({type(e).__name__})")
+    return args
+
+
+DOC_ANALISAR = {"edital": "edital", "tr": "tr", "etp": "etp", "riscos": "riscos", "plano_trabalho": "plano_trabalho", "direta": "direta"}
+PRIORIDADE = ["direta", "edital", "tr", "plano_trabalho", "etp", "riscos", "memoria_calculo", "planilha_mo", "planilha_obras", "planilha_parceria"]
 PLANILHA_ANEXO = {"planilha_mo": "planilha", "planilha_obras": "orcamento", "planilha_parceria": "plano-custos", "memoria_calculo": "outro"}
-NOME_DOC = {"edital": "Edital", "tr": "Termo de Referência", "etp": "Estudo Técnico Preliminar", "riscos": "Matriz de Riscos",
+NOME_DOC = {"direta": "Processo de contratação direta", "edital": "Edital", "tr": "Termo de Referência", "etp": "Estudo Técnico Preliminar", "riscos": "Matriz de Riscos",
             "plano_trabalho": "Plano de trabalho", "memoria_calculo": "Memória de cálculo", "planilha_mo": "Planilha de custos de mão de obra (IN 05/2017)",
             "planilha_obras": "Planilha orçamentária", "planilha_parceria": "Planilha de custos da parceria"}
 
@@ -246,21 +267,7 @@ def processar(a):
             if compra:
                 args += ["--compra", str(compra)]
             # regulamentação específica enviada pelo assinante (decreto, RILC etc.)
-            for k, n in enumerate(a_normas(a), 1):
-                try:
-                    bruto = http("GET", f"{SUPA}/storage/v1/object/analises/{n['arquivo']}", cab=cab(), binario=True, timeout=300)
-                    orig = pasta / f"norma{k}{pathlib.Path(n['arquivo']).suffix.lower() or '.pdf'}"
-                    orig.write_bytes(bruto)
-                    txt_n = pasta / f"norma{k}.txt"
-                    if orig.suffix == ".docx":
-                        import docx  # python-docx
-                        txt_n.write_text("\n".join(p.text for p in docx.Document(str(orig)).paragraphs), encoding="utf-8")
-                    else:
-                        subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-texto.py"), str(orig), str(txt_n)], capture_output=True, timeout=1800)
-                    if txt_n.exists() and len(txt_n.read_text(encoding="utf-8", errors="replace").strip()) > 200:
-                        args += ["--norma-local", f"{n['nome']}::{txt_n}"]
-                except Exception as e:
-                    print(f"análise {aid}: norma local {k} não lida ({type(e).__name__})")
+            args += baixar_normas(a, pasta, f"análise {aid}")
             # regime jurídico, objeto especial e planilhas em Excel
             if a.get("regime") in ("lei-14133", "lei-13303", "lei-13019"):
                 args += ["--regime", a["regime"]]
@@ -354,7 +361,7 @@ def processar(a):
 
 
 def processar_geracao(a):
-    """Elaboração de ETP, TR ou Projeto Básico a partir do questionário (scripts/agente/elaborar.py)."""
+    """Elaboração de ETP, TR, Projeto Básico, Edital, Contratação direta ou Mapa de riscos a partir do questionário (scripts/agente/elaborar.py)."""
     aid = a["id"]
     print(f"elaboração {aid}: início (tentativa {a.get('tentativas')})")
     try:
@@ -364,7 +371,7 @@ def processar_geracao(a):
     with tempfile.TemporaryDirectory() as tmp:
         pasta = pathlib.Path(tmp)
         try:
-            if a.get("documento") not in ("etp", "tr", "projeto_basico"):
+            if a.get("documento") not in ("etp", "tr", "projeto_basico", "edital", "direta", "riscos"):
                 raise ErroCliente("Tipo de documento inválido.")
             respostas = a.get("respostas") or {}
             if not str(respostas.get("objeto", "")).strip():
@@ -403,6 +410,9 @@ def processar_geracao(a):
                 except Exception:
                     pass
                 extra += ["--docj", str(pasta / "rascunho" / "documento.json")]
+            if a.get("regime") in ("lei-14133", "lei-13303", "lei-13019"):
+                extra += ["--regime", a["regime"]]
+            extra += baixar_normas(a, pasta, f"elaboração {aid}")  # RILC da estatal ou decreto do ente
             etapa_paga = True  # a partir daqui há custo de API: falha não volta para a fila automaticamente
             proc = subprocess.Popen([sys.executable, str(RAIZ / "scripts/agente/elaborar.py"), "--doc", a["documento"], "--respostas",
                                      str(pasta / "respostas.json"), "--pasta", str(pasta / "saida")] + extra,

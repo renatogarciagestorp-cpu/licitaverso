@@ -686,7 +686,7 @@ def validar_outros(lista, texto):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--doc", required=True, choices=["edital", "etp", "tr", "riscos", "planilha", "plano_trabalho", "orcamento"])
+    ap.add_argument("--doc", required=True, choices=["edital", "etp", "tr", "riscos", "planilha", "plano_trabalho", "orcamento", "direta"])
     ap.add_argument("--regime", default="lei-14133", choices=sorted(REGIMES))
     ap.add_argument("--objeto", action="append", default=[], choices=sorted(OBJETOS), help="obras e/ou mao-de-obra (repetível)")
     ap.add_argument("--anexo", action="append", default=[], help='planilha anexa já extraída: "tipo::nome::caminho.txt" (tipo: orcamento, planilha, plano-custos, outro)')
@@ -763,6 +763,11 @@ def main():
     if a.regime == "lei-13019" and "plano-custos" not in tipos_anexo:
         fatos.append("O destinatário NÃO enviou a planilha de custos do plano de trabalho em Excel; avalie a previsão de receitas e despesas "
                      "pelo que constar do documento.")
+    if a.regime == "lei-13303":
+        fatos.append("Empresa estatal: além da Lei 13.303/2016, vale o REGULAMENTO INTERNO DE LICITAÇÕES E CONTRATOS (RILC) da estatal (art. 40). "
+                     + ("O RILC foi enviado (regulamentação específica): confira cada documento também contra ele e cite-o no fundamento."
+                        if NORMAS_LOCAIS else "O destinatário NÃO enviou o RILC: marque como nao_verificavel os itens que dependem dele e recomende juntá-lo; "
+                        "não presuma regras do RILC nem aplique a Lei 14.133/2021 no lugar dele."))
     cabecalho = (f"REGIME JURÍDICO DA CONTRATAÇÃO: {REGIMES[a.regime]}."
                  + (f" OBJETO: {'; '.join(OBJETO_TEXTO[o] for o in objetos)}." if objetos else "")
                  + ("" if roteiro["_proprio"] else f" ATENÇÃO: ainda não há roteiro próprio para a {REGIMES[a.regime]}; o roteiro abaixo é o da "
