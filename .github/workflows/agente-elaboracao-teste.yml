@@ -29,7 +29,8 @@ jobs:
       - name: Elaborar
         env: { DOC: "${{ inputs.doc }}", CASO: "${{ inputs.caso }}", SIMULAR: "${{ inputs.simular }}", CONF: "${{ inputs.conferencia }}", NORMA: "${{ inputs.norma }}" }
         run: |
-          python3 scripts/agente/elaborar.py --doc "$DOC" --respostas "agente/testes/elaboracao/$CASO" --pasta /tmp/saida $([ "$SIMULAR" = "sim" ] && echo --simular) $([ "$CONF" = "nao" ] && echo --sem-conferencia) $([ -n "$NORMA" ] && echo --norma-local "Regulamentação do ente::agente/testes/elaboracao/$NORMA")
+          EXTRA=(); [ -n "$NORMA" ] && EXTRA=(--norma-local "Regulamentacao-do-ente::agente/testes/elaboracao/$NORMA")
+          python3 scripts/agente/elaborar.py --doc "$DOC" --respostas "agente/testes/elaboracao/$CASO" --pasta /tmp/saida $([ "$SIMULAR" = "sim" ] && echo --simular) $([ "$CONF" = "nao" ] && echo --sem-conferencia) "${EXTRA[@]}"
           python3 -c "import json;e=json.load(open('/tmp/saida/execucao.json'));print('::notice title=Custo::US$',e.get('custo_usd'),'·',e.get('segundos','-'),'s · pendências',e.get('pendencias'),'· perguntas',e.get('perguntas',0),'· alta',e.get('alta',0),'· média',e.get('media',0))"
       - name: Guardar o resultado no ramo agente-testes (caso fictício)
         if: always()
