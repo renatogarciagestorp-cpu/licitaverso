@@ -1163,6 +1163,7 @@
   .lvc-aba { border: 0; background: none; border-radius: 10px; padding: 10px 16px; font: inherit; font-size: 14px; font-weight: 800; color: #5F7077; white-space: nowrap; }
   .lvc-aba.ativo { background: #0A1F2A; color: #fff; }
   .lvc-apres { margin-top: 22px; display: grid; gap: 16px; }
+  .lmo-legado { margin: 8px 0 0; padding: 10px 12px; border: 1px solid #F1D49A; background: #FFF8EC; border-radius: 12px; font-size: 13.5px; display: grid; gap: 8px; justify-items: start; } .lmo-legado p { margin: 0; }
   .lvc-abrir { margin: 12px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; font-size: 13.5px; color: #3D5058; } .lvc-abrir span { font-weight: 700; } .lvc-abrir small { color: #6A7B82; flex-basis: 100%; }
   .lvc-ferr-int { margin: 22px 0 0; max-width: 90ch; } .lvc-ferr-int h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: #0A1F2A; } .lvc-ferr-int p { margin: 6px 0 0; font-size: 15px; line-height: 1.6; color: #3D5058; }
   .lvf-vit { margin-top: 16px; display: grid; gap: 12px; }
@@ -3972,14 +3973,11 @@
           <sc-if value="{{ calcAbaMo }}" hint-placeholder-val="{{ false }}">
           <div class="lmo">
             <div class="lmo-salvas">
-              <sc-if value="{{ moSalvasAtivo }}" hint-placeholder-val="{{ false }}">
-                <div class="lmo-salvas-barra">
-                  <input type="text" aria-label="Nome da planilha" value="{{ moSalvarNome }}" placeholder="{{ moSalvarPh }}" sc-camel-on-input="{{ onMoSalvarNome }}">
-                  <button type="button" class="lmo-btn" sc-camel-on-click="{{ moSalvar }}">{{ moSalvarTxt }}</button>
-                  <button type="button" class="lve-voltar" sc-camel-on-click="{{ moSalvasAlternar }}">{{ moSalvasRot }}</button>
-                </div>
+              <p class="lmo-nota" style="margin: 0"><b>Para guardar a planilha,</b> baixe em Excel ou salve no seu Google Drive em "Documentos para download". O Excel reabre no site com "Abrir arquivo do computador" ou "Abrir do Google Drive", no topo da Calculadora.</p>
+              <sc-if value="{{ moLegado }}" hint-placeholder-val="{{ false }}">
+                <div class="lmo-legado" role="note"><p><b>Você tem {{ moLegadoN }} planilha(s) salva(s) no site.</b> O "Salvar na conta" foi substituído pelo Excel e pelo Google Drive, e as planilhas salvas no site ficam disponíveis até {{ moLegadoAte }}. Em cada uma, clique em <b>Exportar</b> para baixar ou salvar no seu Drive.</p>
+                  <button type="button" class="lve-voltar" sc-camel-on-click="{{ moSalvasAlternar }}">{{ moSalvasRot }}</button></div>
               </sc-if>
-              <sc-if value="{{ moSalvasDemo }}" hint-placeholder-val="{{ true }}"><p class="lmo-nota" style="margin: 0">{{ moSalvasDemoTxt }}</p></sc-if>
               <sc-if value="{{ moSalvasOk }}" hint-placeholder-val="{{ false }}"><p class="lmo-ok" role="status">{{ moSalvasOk }}</p></sc-if>
               <sc-if value="{{ moSalvasErro }}" hint-placeholder-val="{{ false }}"><p class="lve-erro" role="alert">{{ moSalvasErro }}</p></sc-if>
               <sc-if value="{{ moSalvasAbertas }}" hint-placeholder-val="{{ false }}">
@@ -3989,9 +3987,9 @@
                       <li>
                         <div><b>{{ g.nome }}</b><small>{{ g.info }}</small></div>
                         <div class="lmo-salvas-acoes">
+                          <button type="button" class="lmo-btn" style="padding: 6px 12px; font-size: 13px" sc-camel-on-click="{{ g.exportar }}">Exportar</button>
                           <button type="button" class="lmo-ano" sc-camel-on-click="{{ g.abrir }}">Abrir a última</button>
                           <select aria-label="Abrir outra versão" sc-camel-on-change="{{ g.abrirVersao }}"><option value="">Outra versão…</option><sc-for list="{{ g.versoes }}" as="v" hint-placeholder-count="2"><option value="{{ v.id }}">{{ v.nome }}</option></sc-for></select>
-                          <sc-if value="{{ g.podeCompartilhar }}" hint-placeholder-val="{{ false }}"><label class="lvc-check" style="margin: 0"><input type="checkbox" checked="{{ g.compartilhada }}" sc-camel-on-change="{{ g.compartilhar }}"> Compartilhar com a equipe</label></sc-if>
                           <sc-if value="{{ g.minha }}" hint-placeholder-val="{{ true }}"><button type="button" class="lmo-x" style="width: auto; padding: 0 10px" sc-camel-on-click="{{ g.excluir }}">{{ g.excluirTxt }}</button></sc-if>
                         </div>
                       </li>
@@ -9861,7 +9859,7 @@ const PLANO_BENEFICIOS = {
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "19";
+const CHAT_VERSAO = "20";
 // versão da Biblioteca no endereço: força o navegador a buscar a página nova depois de cada mudança (o GitHub Pages guarda em cache por 10 minutos)
 const BIB_URL = "biblioteca.html?v=2";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
@@ -9965,6 +9963,7 @@ function entregarArquivo(nome, blob) {
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
 }
 const LV_ABA_DADOS = "licitacon_dados";
+const MO_SALVAS_ATE = "31/12/2026"; // fim das planilhas salvas no site (o Excel e o Google Drive as substituem)
 const AN_ARQ_DIAS = 7; // pareceres e minutas dos agentes: dias no site depois de prontos (scripts/limpeza-lgpd.py, PARECER_DIAS)
 const MO_MODOS_IDS = ["planejamento", "repactuacao", "proposta"];
 function entregarPdf(doc, nome) { entregarArquivo(nome, doc.output("blob")); }
@@ -11446,7 +11445,7 @@ class Component extends DCLogic {
     if (destino === "forum" && this.u) this.carregarForum({ leve: true });
     if (destino === "forum" && (!this.u || !this.podeLerForum())) this.carregarVitrine();
     if (destino === "agente" && this.u) this.carregarDados({ leve: true });
-    if (destino === "calculadora") { if (window.LV_ARQ && window.LV_ARQ.driveAtivo()) window.LV_ARQ.prepararDrive().catch(() => {}); this.carregarIndices(); this.moCotaCarregar(); this.ctCarregar(); }
+    if (destino === "calculadora") { if (this.sb && this.u) this.moSalvasCarregar(); if (window.LV_ARQ && window.LV_ARQ.driveAtivo()) window.LV_ARQ.prepararDrive().catch(() => {}); this.carregarIndices(); this.moCotaCarregar(); this.ctCarregar(); }
     if (destino === "gestao" || destino === "contratos") { this.ctCarregar(); if (destino === "contratos") { this.carregarIndices(); this.pcaCarregar(); } }
     if (destino === "precos") this.ppIniciar();
   }
@@ -12544,7 +12543,7 @@ class Component extends DCLogic {
     this.setState((x) => ({ rq: { ...x.rq, baixando: false } }));
   }
 
-  moModo(modo) { const ab = this.state.mo && this.state.mo.salvasAbertas; this.setState({ mo: { modo, d: this.moCarregar(modo), enviando: false, agente: false, erro: "", ok: "", obs: [], salvasAbertas: ab, listaEditId: "" } }, () => { if (ab) this.moSalvasCarregar(); }); }
+  moModo(modo) { const ab = this.state.mo && this.state.mo.salvasAbertas; this.setState({ mo: { modo, d: this.moCarregar(modo), enviando: false, agente: false, erro: "", ok: "", obs: [], salvasAbertas: ab, listaEditId: "" } }, () => { if (this.sb && this.u) this.moSalvasCarregar(); }); }
 
   // planilhas salvas na conta (com versões e compartilhamento com a equipe)
   async moSalvasCarregar() {
@@ -12572,6 +12571,12 @@ class Component extends DCLogic {
   moNomePadrao() {
     const d = this.state.mo.d, m = this.state.mo.modo;
     return (m === "proposta" ? "Proposta " + (d.pr_licitante || "") : m === "repactuacao" ? "Repactuação " + (d.rp_contrato ? "contrato " + d.rp_contrato + " " : "") + (d.categoria || "") : "Planejamento " + (d.categoria || "")).replace(/\s+/g, " ").trim();
+  }
+  // planilhas salvas no site (recurso antigo): abre e já gera o Excel na caixa "Documento pronto"
+  async moSalvaExportar(id) {
+    await this.moSalvaAbrir(id);
+    await new Promise((ok) => setTimeout(ok, 80));
+    await this.moBaixar("xlsx", "planilha");
   }
   async moSalvaAbrir(id) {
     if (!this.sb) return;
@@ -14159,12 +14164,14 @@ class Component extends DCLogic {
           moSalvar: () => { if (!mo.salvando) this.moSalvar(); }, moSalvarTxt: mo.salvando ? "Salvando…" : "Salvar na conta",
           moSalvasOk: mo.salvasOk || "", moSalvasErro: mo.salvasErro || "", moTemSalvas: grupos.length > 0, moSalvasAbertas: !!mo.salvasAbertas,
           moSalvasAlternar: () => { const ab = !mo.salvasAbertas; this.setState((x) => ({ mo: { ...x.mo, salvasAbertas: ab } })); if (ab) this.moSalvasCarregar(); },
-          moSalvasRot: (mo.salvasAbertas ? "Fechar" : "Minhas planilhas salvas") + (grupos.length ? " (" + grupos.length + ")" : ""),
+          moSalvasRot: mo.salvasAbertas ? "Fechar a lista" : "Ver as planilhas salvas no site",
+          moLegado: !!(this.sb && this.u) && grupos.length > 0, moLegadoN: grupos.length, moLegadoAte: MO_SALVAS_ATE,
           moTemOrg: !!(org && org.id),
           moSalvas: grupos.map((g) => ({ nome: g.nome, info: (g.minha ? "" : "Da equipe, por " + (g.autor || "outro membro") + " · ") + g.versoes.length + " versão(ões) · última em " + dataBR(g.versoes[0].criado_em) + (g.minha && g.compartilhada ? " · compartilhada com a equipe" : ""),
             minha: g.minha, versoes: g.versoes.map((v) => ({ id: v.id, nome: "v" + v.versao + " – " + dataBR(v.criado_em) })), abrir: () => this.moSalvaAbrir(g.versoes[0].id),
             abrirVersao: (e) => { const id = e.target.value; if (id) this.moSalvaAbrir(id); },
             podeCompartilhar: g.minha && !!(org && org.id), compartilhada: g.compartilhada, compartilhar: (e) => this.moSalvaCompartilhar(g.nome, e.target.checked),
+            exportar: () => this.moSalvaExportar(g.versoes[0].id),
             excluir: () => this.moSalvaExcluir(g.nome), excluirTxt: mo.excluirNome === g.nome ? "Confirmar exclusão" : "Excluir" }))
         };
       })(),
