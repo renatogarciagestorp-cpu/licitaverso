@@ -14,5 +14,10 @@ window.LICITAVERSO_CONFIG = {
   // A "Secret Key" fica só no Supabase (Authentication → Attack Protection), nunca aqui. Vazio = sem verificação.
   turnstileSiteKey: "0x4AAAAAAF7W9spVgeoyIwVh",
   // Botão "Entrar com o Google": ligar (true) só depois de configurar a credencial do Google no Supabase.
-  googleLogin: true
+  googleLogin: true,
+  // Google Drive (caixa "Documento pronto" e "Abrir do Google Drive"): valores públicos do projeto "Licitacon" no Google Cloud.
+  // A chave de API é restrita ao endereço do site e às APIs Drive e Picker; o acesso usa só o escopo drive.file.
+  googleClientId: "696275581777-3bk1bar8nu0a8le86pa995j9vjcr6t15.apps.googleusercontent.com",
+  googleApiKey: "AIzaSyDuIsoggDhKUGtSB4WF6A_RLCzzjxj11xI",
+  googleAppId: "696275581777"
 };
