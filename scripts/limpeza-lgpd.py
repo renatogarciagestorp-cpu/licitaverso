@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""LGPD — retenção mínima: apaga os documentos enviados ao Parecerista 30 dias depois que a análise termina
-(concluída, com erro ou cancelada). O parecer gerado continua na conta do assinante. Não imprime dados pessoais."""
+"""LGPD e armazenamento — retenção mínima:
+- documentos enviados ao Parecerista: apagados 30 dias depois que a análise termina (concluída, com erro ou cancelada);
+- pareceres e minutas gerados pelos agentes (PDF e Word): apagados 7 dias depois de prontos. O assinante baixa ou salva
+  no Google Drive dele na caixa "Documento pronto"; o resumo em texto continua na conta. Não imprime dados pessoais."""
 import datetime, json, os, sys, urllib.parse, urllib.request
 
 REF = os.environ.get("PROJECT_REF", "umnhhztdqersjfrzqcea")
 SUPA = f"https://{REF}.supabase.co"
 DIAS = int(os.environ.get("RETENCAO_DIAS", "30"))
+PARECER_DIAS = int(os.environ.get("PARECER_DIAS", "7"))
 
 
 def http(metodo, url, dados=None, cab=None):
@@ -50,7 +53,28 @@ def main():
              {"documentos_excluidos_em": datetime.datetime.now(datetime.timezone.utc).isoformat()}, {**cab, "Prefer": "return=minimal"})
         apagadas += 1
     print(f"::notice::LGPD: documentos apagados de {apagadas} análise(s) encerrada(s) há mais de {DIAS} dias")
+    apagar_pareceres(cab)
     avisar_pedidos(cab)
+
+
+# a regra começou em 12/11/2026: os pareceres que já estavam prontos ganham os mesmos 7 dias, contados dessa data
+PARECER_INICIO = datetime.datetime(2026, 11, 19, tzinfo=datetime.timezone.utc)
+
+
+def apagar_pareceres(cab):
+    if datetime.datetime.now(datetime.timezone.utc) < PARECER_INICIO:
+        print("::notice::Armazenamento: limpeza dos pareceres começa em 19/11/2026")
+        return
+    limite = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=PARECER_DIAS)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    filtro = ("analises?select=id,parecer_pdf,parecer_docx&status=eq.concluida&concluido_em=lt." + limite +
+              "&or=(parecer_pdf.not.is.null,parecer_docx.not.is.null)&limit=500")
+    lista = http("GET", f"{SUPA}/rest/v1/{filtro}", cab=cab) or []
+    for a in lista:
+        caminhos = [c for c in (a.get("parecer_pdf"), a.get("parecer_docx")) if c]
+        if caminhos:
+            http("DELETE", f"{SUPA}/storage/v1/object/analises", {"prefixes": caminhos}, cab)
+        http("PATCH", f"{SUPA}/rest/v1/analises?id=eq.{a['id']}", {"parecer_pdf": None, "parecer_docx": None}, {**cab, "Prefer": "return=minimal"})
+    print(f"::notice::Armazenamento: pareceres e minutas apagados de {len(lista)} análise(s) prontas há mais de {PARECER_DIAS} dias")
 
 
 def avisar_pedidos(cab):

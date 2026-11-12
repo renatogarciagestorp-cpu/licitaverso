@@ -70,7 +70,7 @@ window.LV_CHAT_BASE = {
       a: [{ t: "Abrir O Parecerista", ir: "agente" }, { t: "Abrir meu perfil", ir: "conta", tab: "perfil" }], rel: ["agente-preco", "teste-gratis"] },
     { id: "parecerista-receber", p: "Quanto tempo demora e onde recebo o parecer?",
       k: ["quanto tempo demora", "demora", "prazo da analise", "quando fica pronto", "onde recebo o parecer", "onde vejo o parecer", "baixar parecer", "meus pareceres", "parecer em word", "minhas analises"],
-      r: "Na página de envio aparece a **estimativa de duração**, em minutos, conforme os documentos. Você pode fechar a página: avisamos por **e-mail** quando o parecer fica pronto.\nO parecer, em **PDF e Word**, fica em O Parecerista (Minhas análises) e em **Minha conta → Meus documentos**. Os arquivos enviados são apagados 30 dias depois da análise; o parecer continua na conta.",
+      r: "Na página de envio aparece a **estimativa de duração**, em minutos, conforme os documentos. Você pode fechar a página: avisamos por **e-mail** quando o parecer fica pronto.\nO parecer, em **PDF e Word**, fica em O Parecerista (Minhas análises) e em **Minha conta → Meus documentos** por **7 dias**: baixe ou salve no seu **Google Drive** nesse prazo, porque depois os arquivos são apagados. Os arquivos enviados são apagados 30 dias depois da análise.",
       a: [{ t: "Meus documentos", ir: "conta", tab: "documentos" }], rel: ["agente", "meus-documentos"] },
     { id: "agente-opinativo", p: "O parecer do Parecerista me obriga a corrigir?",
       k: ["opinativo", "vinculante", "obrigado a corrigir", "responsabilidade", "decisao final", "parecer juridico", "substitui o juridico", "artigo 53", "art 53"],

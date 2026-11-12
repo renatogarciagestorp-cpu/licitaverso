@@ -7339,7 +7339,8 @@ const INSTITUCIONAL = {
       { titulo: "5. Transferência internacional", texto: "Supabase, GitHub, Anthropic e, conforme o caso, Google e Cloudflare tratam dados fora do Brasil. A transferência se apoia nas hipóteses do art. 33 da LGPD — em especial, cláusulas contratuais e garantias de proteção oferecidas por esses fornecedores e a necessidade para a execução do contrato com você (art. 33, IX, combinado com o art. 7º, V).", itens: [] },
       { titulo: "6. Retenção e descarte", texto: "Guardamos cada dado só pelo tempo necessário:", itens: [
         "Documentos enviados ao Parecerista: apagados automaticamente 30 dias após o fim da análise.",
-        "Pareceres, consultorias e dados da conta: enquanto a conta existir; após o pedido de exclusão, apagados ou anonimizados em até 15 dias.",
+        "Pareceres e minutas gerados pelos agentes (PDF e Word): 7 dias depois de prontos, para você baixar ou salvar no seu Google Drive; depois, apagados automaticamente. O resumo da análise continua na conta.",
+        "Consultorias e dados da conta: enquanto a conta existir; após o pedido de exclusão, apagados ou anonimizados em até 15 dias.",
         "Registros de pagamento: 5 anos, por obrigação legal e fiscal.",
         "Registros de acesso: 6 meses (Marco Civil da Internet).",
         "Dados necessários à defesa em processo: pelo prazo do processo."
@@ -7795,7 +7796,7 @@ const AN_TERMO = [
   "Regulamentação específica (opcional): você pode anexar até 3 normas próprias (decreto estadual ou municipal, regulamento interno de licitações de estatal etc.), em PDF ou Word, que o agente aplica em complemento à legislação nacional, apontando eventual conflito. Você é responsável pela vigência e fidelidade do texto enviado.",
   "Prazo: o tempo de análise depende da quantidade de documentos, da qualidade dos arquivos (documento digitalizado exige reconhecimento de texto) e da complexidade da contratação. A estimativa é calculada na página de envio, a partir dos arquivos escolhidos. Você recebe um aviso por e-mail e baixa o parecer em PDF e Word nesta página.",
   "Valores e cota: análise a R$ 290,00 para quem não é assinante; assinantes do Básico têm 10% de desconto e do Premium, 15%, e pagam antes de enviar os documentos. O plano Pro inclui 2 análises por semana (de segunda a domingo, sem acúmulo) sem custo adicional; a partir da 3ª na semana, a análise sai com 30% de desconto. Análise que não puder ser concluída por falha técnica não consome a cota; a paga é reprocessada ou estornada.",
-  "Dados: o documento é processado por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos. Os arquivos ficam em armazenamento privado, acessíveis só a você e à equipe do Licitacon, e são apagados automaticamente 30 dias após o fim da análise; o parecer fica na sua conta. Não envie documento cuja divulgação a prestadores de serviço seja vedada e retire dados pessoais desnecessários (Lei 13.709/2018).",
+  "Dados: o documento é processado por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos. Os arquivos ficam em armazenamento privado, acessíveis só a você e à equipe do Licitacon, e são apagados automaticamente 30 dias após o fim da análise. O parecer fica 7 dias no site para você baixar ou salvar no seu Google Drive. Não envie documento cuja divulgação a prestadores de serviço seja vedada e retire dados pessoais desnecessários (Lei 13.709/2018).",
   "Custo da mão de obra: o custo total do profissional na planilha (IN 05/2017) é comparado com a referência de mercado do estado divulgada pelo Salario.com.br (dados do Novo CAGED). Essa fonte não é parâmetro normativo; a comparação é indicativa e orienta a revisão da planilha.",
   "Análise de preços: quando o documento traz o orçamento estimado, o sistema compara os valores com preços homologados em contratações equivalentes publicadas no PNCP (órgãos do mesmo estado, últimos 12 meses, Lei 14.133/2021). O resultado é indicativo e depende da equivalência das especificações; não substitui a pesquisa de preços do processo.",
   "Limitações: a inteligência artificial pode errar ou deixar de identificar pontos. Confira cada apontamento no documento e na fonte oficial antes de decidir."
@@ -9835,7 +9836,7 @@ const PLANO_BENEFICIOS = {
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
 const MODALIDADES = ["escrita", "video", "reuniao"];
-const CHAT_VERSAO = "18";
+const CHAT_VERSAO = "19";
 // versão da Biblioteca no endereço: força o navegador a buscar a página nova depois de cada mudança (o GitHub Pages guarda em cache por 10 minutos)
 const BIB_URL = "biblioteca.html?v=2";
 const DESC_CONSULTORIA = { basico: 0.1, premium: 0.15, pro: 0.3 };
@@ -9939,6 +9940,7 @@ function entregarArquivo(nome, blob) {
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
 }
 const LV_ABA_DADOS = "licitacon_dados";
+const AN_ARQ_DIAS = 7; // pareceres e minutas dos agentes: dias no site depois de prontos (scripts/limpeza-lgpd.py, PARECER_DIAS)
 const MO_MODOS_IDS = ["planejamento", "repactuacao", "proposta"];
 function entregarPdf(doc, nome) { entregarArquivo(nome, doc.output("blob")); }
 function baixarArquivo(nome, conteudo, tipo) {
@@ -11294,7 +11296,7 @@ class Component extends DCLogic {
       sb.from("forum_seguindo").select("topico_id, forum_topicos(nome)"),
       sb.from("biblioteca_pessoal").select("chave, dados, atualizado_em").like("chave", "nota-%").limit(1000),
       sb.rpc("meu_cupom_curso"),
-      sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg, documentos, liberar_em, tipo, progresso, perguntas, fase, custo_usd").order("criado_em", { ascending: false }).limit(30),
+      sb.from("analises").select("id, criado_em, documento, origem, nome_arquivo, pncp_link, cobranca, valor, status, paginas, parecer_pdf, parecer_docx, resumo, erro_msg, documentos, liberar_em, tipo, progresso, perguntas, fase, custo_usd, concluido_em").order("criado_em", { ascending: false }).limit(30),
       sb.rpc("minha_cota_analises"),
       sb.from("normas_usuario").select("id, nome, arquivo, tamanho, criado_em").order("criado_em", { ascending: false }).limit(30),
       sb.from("renovacoes").select("id, plano, ciclo, valor, status, proxima_cobranca, criado_em").order("criado_em", { ascending: false }).limit(10),
@@ -16621,7 +16623,7 @@ class Component extends DCLogic {
       ],
       anDados: [
         "Os arquivos são processados por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos.",
-        "Os documentos ficam em armazenamento privado, acessíveis só a você e à equipe técnica do Licitacon, e são apagados automaticamente 30 dias após o fim da análise. O parecer fica na sua conta até você excluí-la.",
+        "Os documentos ficam em armazenamento privado, acessíveis só a você e à equipe técnica do Licitacon, e são apagados automaticamente 30 dias após o fim da análise. O parecer, em PDF e Word, fica 7 dias no site para você baixar ou salvar no seu Google Drive; depois, é apagado.",
         "Não envie documento sigiloso ou cuja divulgação a prestadores de serviço seja vedada. Retire dados pessoais desnecessários antes de enviar (por exemplo, documentos de habilitação).",
         "Tratamento conforme a Lei Geral de Proteção de Dados (Lei 13.709/2018) e a Política de Privacidade do Licitacon."
       ],
@@ -16754,9 +16756,14 @@ class Component extends DCLogic {
         const titulo = ger ? "Elaboração · " + ((ELAB[a.documento] || {}).nome || a.documento)
           : docs.length ? docs.map((d) => (AN_TIPO[d.tipo] || { nome: d.tipo }).nome).join(" + ") : (AN_DOC_NOME[a.documento] || a.documento);
         const base = (ger ? ((ELAB[a.documento] || {}).sigla || "Documento") + "-" : "Analise-") + String(a.id).slice(0, 8);
+        // pareceres e minutas ficam 7 dias no site depois de prontos (limpeza diária); depois, só no Drive ou no computador
+        const fimArq = a.concluido_em ? new Date(new Date(a.concluido_em).getTime() + AN_ARQ_DIAS * 864e5) : null;
+        const prazoArq = a.status !== "concluida" ? "" : !a.parecer_pdf && !a.parecer_docx && fimArq && fimArq.getTime() < Date.now() ? " · Os arquivos ficaram " + AN_ARQ_DIAS + " dias no site e foram apagados: procure na sua pasta do Google Drive ou no seu computador."
+          : (a.parecer_pdf || a.parecer_docx) && fimArq ? " · Arquivos disponíveis para baixar até " + dataBR(fimArq.toISOString()) + ": salve no seu Google Drive." : "";
         return {
           doc: titulo, status: st[0], cor: st[1], fundo: st[2], data: dataBR(a.criado_em),
-          detalhe: a.status === "erro" ? (a.erro_msg || "Não foi possível concluir a análise.")
+          detalhe: prazoArq ? (a.status === "concluida" && ger ? (r.objeto || a.nome_arquivo || "") + (Number(r.pendencias || 0) ? " · " + Number(r.pendencias) + " informações para completar" : "") : ((docs.length ? docs.map((d) => d.nome_arquivo).join(" · ") : (a.origem === "pncp" ? "PNCP" : (a.nome_arquivo || "PDF enviado"))))) + prazoArq
+            : a.status === "erro" ? (a.erro_msg || "Não foi possível concluir a análise.")
             : a.status === "aguardando_documentos" && ger ? "Elaboração liberada · envie as respostas do questionário para iniciar"
             : ger && a.status === "concluida" ? (r.objeto || a.nome_arquivo || "") + (Number(r.pendencias || 0) ? " · " + Number(r.pendencias) + " informações para completar" : "")
             : ger && a.status === "aguardando_informacoes" ? "O agente precisa de informações suas para concluir. Clique em Continuar."
