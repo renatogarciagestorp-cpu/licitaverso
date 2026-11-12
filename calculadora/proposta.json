@@ -1,17 +1,17 @@
 {
  "status": 200,
- "segundos": 64,
+ "segundos": 67,
  "uso": {
-  "input_tokens": 34426,
+  "input_tokens": 34364,
   "cache_creation_input_tokens": 0,
   "cache_read_input_tokens": 0,
   "cache_creation": {
    "ephemeral_5m_input_tokens": 0,
    "ephemeral_1h_input_tokens": 0
   },
-  "output_tokens": 9484,
+  "output_tokens": 10219,
   "output_tokens_details": {
-   "thinking_tokens": 2669
+   "thinking_tokens": 2882
   },
   "service_tier": "standard",
   "inference_geo": "global",
@@ -23,38 +23,38 @@
   "modelo": "claude-sonnet-5-5",
   "stop_reason": "tool_use"
  },
- "custo_estimado_usd": 0.256,
+ "custo_estimado_usd": 0.266,
  "resposta": {
   "campos": [
    {
     "campo": "salario",
     "valor": "1760.00",
-    "fonte": "Proposta: Módulo 1, A; confere com CCT, cláusula terceira (piso do Servente, R$ 1.760,00)"
+    "fonte": "Proposta: Módulo 1, A – salário-base (confere com CCT, cl. 3ª)"
    },
    {
     "campo": "categoria",
     "valor": "Servente de limpeza",
-    "fonte": "Proposta: cabeçalho"
+    "fonte": "Proposta: categoria"
    },
    {
     "campo": "cbo",
     "valor": "5143-20",
-    "fonte": "Proposta: cabeçalho; CCT, cláusula terceira"
+    "fonte": "Proposta: CBO 5143-20"
    },
    {
     "campo": "data_base",
     "valor": "01/01/2026",
-    "fonte": "CCT, cláusula primeira"
+    "fonte": "CCT 2026, cl. 1ª"
    },
    {
     "campo": "ano_cct",
     "valor": "2026",
-    "fonte": "CCT 2026/2026, cláusula primeira"
+    "fonte": "CCT 2026/2026, cl. 1ª"
    },
    {
     "campo": "insal",
     "valor": "18.42",
-    "fonte": "Proposta: Módulo 1, B (20% do salário mínimo = R$ 324,20, equivalente a 18,42% do piso); CCT, cláusula quarta"
+    "fonte": "Proposta: Módulo 1, B – R$ 324,20 (20% do salário mínimo = 18,42% do salário-base; CCT cl. 4ª)"
    },
    {
     "campo": "p13",
@@ -64,7 +64,7 @@
    {
     "campo": "pfa",
     "valor": "2.78",
-    "fonte": "Proposta: Submódulo 2.1, B (férias e adicional de férias)"
+    "fonte": "Proposta: Submódulo 2.1, B – férias e adicional de férias"
    },
    {
     "campo": "inss",
@@ -79,7 +79,12 @@
    {
     "campo": "rat",
     "valor": "1.00",
-    "fonte": "Proposta: Submódulo 2.2, C (1% x FAP 1,0000)"
+    "fonte": "Proposta: Submódulo 2.2, C – SAT/RAT 1%"
+   },
+   {
+    "campo": "fap",
+    "valor": "1.0000",
+    "fonte": "Proposta: Submódulo 2.2, C – FAP 1,0000"
    },
    {
     "campo": "sesc",
@@ -107,14 +112,24 @@
     "fonte": "Proposta: Submódulo 2.2, H"
    },
    {
-    "campo": "fap",
-    "valor": "1.0000",
-    "fonte": "Proposta: Submódulo 2.2, C"
+    "campo": "vt_tarifa",
+    "valor": "4.95",
+    "fonte": "Proposta: Submódulo 2.3, A"
+   },
+   {
+    "campo": "vt_viagens",
+    "valor": "2",
+    "fonte": "Proposta: Submódulo 2.3, A"
+   },
+   {
+    "campo": "dias",
+    "valor": "22",
+    "fonte": "Proposta: Submódulo 2.3, A e B"
    },
    {
     "campo": "aux_dia",
     "valor": "20.00",
-    "fonte": "Proposta: Submódulo 2.3, B (22 x R$ 20,00); a CCT, cláusula quinta, prevê R$ 23,00"
+    "fonte": "Proposta: Submódulo 2.3, B – 22 x R$ 20,00 (CCT cl. 5ª prevê R$ 23,00)"
    },
    {
     "campo": "api",
@@ -139,7 +154,7 @@
    {
     "campo": "inf_multa_api",
     "valor": "5.00",
-    "fonte": "Proposta: Módulo 3, C (multa do FGTS e contribuição social, 50%)"
+    "fonte": "Proposta: Módulo 3, C – multa do FGTS e contribuição social (50%)"
    },
    {
     "campo": "inf_apt",
@@ -184,7 +199,7 @@
    {
     "campo": "unif",
     "valor": "30.00",
-    "fonte": "Proposta: Módulo 5, A (uniformes e EPI)"
+    "fonte": "Proposta: Módulo 5, A – uniformes e EPI"
    },
    {
     "campo": "ci",
@@ -207,49 +222,34 @@
     "fonte": "Proposta: Módulo 6, C"
    },
    {
-    "campo": "vt_tarifa",
-    "valor": "4.95",
-    "fonte": "Proposta: Submódulo 2.3, A"
-   },
-   {
-    "campo": "vt_viagens",
-    "valor": "2",
-    "fonte": "Proposta: Submódulo 2.3, A"
-   },
-   {
-    "campo": "dias",
-    "valor": "22",
-    "fonte": "Proposta: Submódulo 2.3, A"
-   },
-   {
     "campo": "emp_posto",
     "valor": "1",
-    "fonte": "Proposta: cabeçalho"
+    "fonte": "Proposta: empregados por posto"
    },
    {
     "campo": "postos",
     "valor": "10",
-    "fonte": "Proposta: cabeçalho"
+    "fonte": "Proposta: postos"
    },
    {
     "campo": "meses",
     "valor": "12",
-    "fonte": "Proposta: cabeçalho"
+    "fonte": "Proposta: meses"
    },
    {
     "campo": "tipo_servico",
     "valor": "Limpeza e conservação",
-    "fonte": "Dados do site"
+    "fonte": "Dados do site / proposta"
    },
    {
     "campo": "municipio",
     "valor": "Niterói",
-    "fonte": "Proposta: cabeçalho"
+    "fonte": "Proposta: município"
    },
    {
     "campo": "uf",
     "valor": "RJ",
-    "fonte": "Proposta: cabeçalho"
+    "fonte": "Proposta: município Niterói/RJ"
    },
    {
     "campo": "vigente",
@@ -258,100 +258,100 @@
    }
   ],
   "observacoes": [
-   "Confirmar na diligência se este é o 1º ano do contrato. Se for, as férias de 2,78% são falha alta. Se for prorrogação, 2,78% está correto e o aviso prévio trabalhado D, E e F deve ser excluído.",
-   "Insalubridade: a CCT usa o salário mínimo (R$ 1.621,00) como base. A planilha adota R$ 324,20 e o campo 'insal' mostra 18,42% do piso, só como conversão.",
-   "A CCT tem vigência só em 2026 (data-base 1º/1). O odontológico vale desde 1º/3/2026, então o valor deve estar na planilha. Verificar a repactuação.",
-   "ISS de Niterói: o item 7.10 tem alíquota de 2% para imóveis públicos e 5% nos demais casos (Código Tributário, Lei 2.597/2008). Se o serviço for em imóveis públicos da Prefeitura, vale 2%. A confirmação final é do órgão.",
-   "A vale-transporte está correta: 2 × 22 × R$ 4,95 menos 6% do piso = R$ 112,20.",
-   "O pregão é de uma 'Prefeitura Municipal de Exemplo' em Niterói. Conferir se o valor estimado pela Administração (pr_estimado) foi informado, para a regra de 50% da IN 73/2022, art. 34."
+   "ISS de Niterói: a tabela oficial da Fazenda municipal indica 2% para o item 7.10 da LC 116/2003 (limpeza de imóveis), com tributação no local da execução. A alíquota da proposta confere.",
+   "A planilha fecha aritmeticamente (Módulos, base do 2.2 incluindo o Módulo 4, custos indiretos, lucro e tributos por dentro). Os erros são de conteúdo, e não de soma.",
+   "Apesar de o 2.1 informar 11,11%, 8,33% (13º) e 2,78% (férias) somam esse valor: os 8,33% são só do 13º e as férias estão incompletas.",
+   "Não foi informado o valor estimado pela Administração (pr_estimado), então não se aplicou o teste de 50% da IN 73/2022, art. 34.",
+   "O RAT de 3% para o CNAE 8121-4/00 é um enquadramento provável, não confirmado em consulta. Deve ser verificado na diligência.",
+   "A CCT do caso é fictícia. As correções estimadas por empregado por mês usam o piso de R$ 1.760,00, e o plano odontológico só vale a partir de março/2026."
   ],
   "falhas": [
    {
     "rubrica": "Submódulo 2.1, B – Férias e adicional de 1/3",
-    "problema": "Proposta provisiona 2,78% (R$ 57,94), só o adicional de 1/3. Em contratação nova (1º ano) a rubrica deve cobrir férias + 1/3.",
-    "fundamento": "IN 05/2017, Anexo VII-D, Submódulo 2.1, notas 1 a 3 (nota 3 pela IN 7/2018)",
-    "correcao": "Usar 11,11% sobre o Módulo 1 (≈ R$ 231,55). O 2,78% só vale da 1ª prorrogação em diante. Diferença de 8,33% (≈ R$ 173,61), mais ≈ R$ 60 de encargos do 2.2 (≈ R$ 234 no total).",
-    "impacto": "Custo legal obrigatório subdimensionado em ≈ R$ 234/empregado/mês. O preço não pode ser majorado, e a margem (CI + lucro ≈ R$ 146) não cobre a diferença.",
+    "problema": "A proposta provisiona 2,78% (R$ 57,94), só o adicional de 1/3, e o total do 2.1 fica em 11,11%. A contratação é nova (1º ano), então a rubrica deveria ter 11,11% (1/12 das férias + 1/3). O total de 11,11% só fecha porque o 13º (8,33%) soma 2,78%, e isso não confere com a soma de 8,33% e 11,11%.",
+    "fundamento": "IN SEGES/MP 05/2017, Anexo VII-D, Submódulo 2.1, notas 1 a 3 (IN 7/2018); CLT, art. 129 e art. 7º, XVII, CF",
+    "correcao": "Provisionar 11,11% sobre o Módulo 1 (R$ 231,55) no 1º ano. Reduz-se a 2,78% só a partir da 1ª prorrogação. A diferença é de cerca de R$ 173,61, mais R$ 63 de encargos do 2.2, por empregado por mês.",
+    "impacto": "A correção eleva o custo em cerca de R$ 234 por empregado por mês, com os encargos do 2.2. Não cabe absorver pelo preço ofertado sem comprometer os demais custos obrigatórios, e o item contribui para a inexequibilidade.",
     "gravidade": "alta"
    },
    {
     "rubrica": "Submódulo 2.3, B – Auxílio-alimentação",
-    "problema": "Calculado a R$ 20,00 × 22 = R$ 440,00. A CCT fixa R$ 23,00 por dia trabalhado, sem desconto do empregado.",
-    "fundamento": "CCT, cláusula quinta",
-    "correcao": "R$ 23,00 × 22 = R$ 506,00, sem dedução de participação.",
-    "impacto": "Faltam R$ 66,00/empregado/mês, abaixo do mínimo da convenção. Só poderia ser absorvido pela margem.",
+    "problema": "A proposta usa R$ 20,00 por dia (R$ 440,00). A CCT, cláusula 5ª, fixa R$ 23,00 por dia efetivamente trabalhado, sem desconto do empregado.",
+    "fundamento": "CCT 2026, cl. 5ª; IN 05/2017, Anexo VII-A, item 9.3 (custo contrário à exigência legal ou convencional)",
+    "correcao": "22 dias × R$ 23,00 = R$ 506,00, sem participação do empregado. A diferença é de R$ 66,00 por empregado por mês.",
+    "impacto": "Custo abaixo do piso da convenção, em cerca de R$ 66 por empregado por mês, mais tributos. A correção só cabe dentro do preço se houver margem em outras rubricas (custos indiretos e lucro), o que não ocorre junto com as demais falhas.",
     "gravidade": "alta"
    },
    {
     "rubrica": "Submódulo 2.3 – Seguro de vida",
-    "problema": "Rubrica ausente. A CCT exige custo mínimo de R$ 12,00 por empregado.",
-    "fundamento": "CCT, cláusula sétima",
-    "correcao": "Incluir R$ 12,00/mês.",
-    "impacto": "Faltam R$ 12,00/empregado/mês.",
+    "problema": "A proposta não traz o seguro de vida em grupo, que a CCT, cláusula 7ª, fixa em no mínimo R$ 12,00 por empregado por mês.",
+    "fundamento": "CCT 2026, cl. 7ª",
+    "correcao": "Incluir R$ 12,00 por empregado por mês.",
+    "impacto": "Rubrica obrigatória da convenção que falta, em R$ 12,00 por empregado por mês. É valor baixo, mas obrigatório. Pode ser absorvido só se a soma das correções couber no preço, o que não ocorre.",
     "gravidade": "alta"
    },
    {
     "rubrica": "Submódulo 2.3 – Assistência odontológica",
-    "problema": "Rubrica ausente. A CCT prevê plano odontológico de R$ 18,50 desde 1º/3/2026.",
-    "fundamento": "CCT, cláusula nona",
-    "correcao": "Incluir R$ 18,50/mês.",
-    "impacto": "Faltam R$ 18,50/empregado/mês.",
+    "problema": "A proposta não traz o plano odontológico exigido pela CCT, cláusula 9ª, de R$ 18,50 por empregado por mês desde 1º/3/2026.",
+    "fundamento": "CCT 2026, cl. 9ª",
+    "correcao": "Incluir R$ 18,50 por empregado por mês, desde que a execução ocorra a partir de março/2026.",
+    "impacto": "Rubrica obrigatória da convenção que falta, em R$ 18,50 por empregado por mês. Entra na soma das correções que não cabem no preço.",
     "gravidade": "alta"
    },
    {
-    "rubrica": "Submódulo 2.2, C – RAT",
-    "problema": "Adotado RAT de 1% com FAP 1,0000. Limpeza e conservação de prédios (CNAE 8121-4/00) costuma ter grau de risco 3 (RAT 3%). O FAP não foi comprovado.",
-    "fundamento": "Lei 8.212/1991, art. 22, II; cadernos técnicos de limpeza e conservação",
-    "correcao": "Confirmar o CNAE e o FAP da licitante (extrato do FAP). Se o RAT for 3%, aplicar 3% × FAP sobre a base de 2.2 (≈ R$ 50 a mais).",
-    "impacto": "Se confirmado, o custo é ≈ R$ 50/empregado/mês maior. Depende de comprovação.",
-    "gravidade": "media"
+    "rubrica": "Submódulo 2.2, C – SAT/RAT",
+    "problema": "A proposta aplica RAT de 1% × FAP 1,0000. A atividade de limpeza em prédios (CNAE 8121-4/00) costuma ser enquadrada em grau de risco 3 (RAT de 3%). A proposta não comprova o enquadramento nem o FAP da licitante.",
+    "fundamento": "Lei 8.212/1991, art. 22, II; Decreto 3.048/1999, Anexo V; FAP (art. 10 da Lei 10.666/2003)",
+    "correcao": "Confirmar o CNAE e o grau de risco. Se for 3%, aplicar 3% × FAP vigente da licitante sobre a base do 2.2, cerca de R$ 50 a R$ 54 a mais por empregado por mês.",
+    "impacto": "Se o RAT correto for 3%, o custo fica subestimado em cerca de R$ 50 a R$ 54 por empregado por mês. É preciso comprovar o enquadramento e o FAP antes de concluir.",
+    "gravidade": "alta"
    },
    {
     "rubrica": "Módulo 3, C – Multa do FGTS",
-    "problema": "Aplica 5,00% (R$ 104,21), com 'contribuição social' e 50%. A contribuição de 10% da LC 110/2001 foi extinta pela Lei 13.932/2019, em vigor desde 1º/1/2020.",
-    "fundamento": "Lei 13.932/2019; caderno técnico SEGES (8% × 40% × 90% × (1+5/56+5/56+5/168))",
-    "correcao": "Usar ≈ 3,48% do Módulo 1 (≈ R$ 72,5).",
-    "impacto": "Superdimensionado em ≈ R$ 31,7/empregado/mês. A redução ajuda a compensar outras faltas, sem majorar o preço.",
+    "problema": "A proposta usa 5,00% e rotula a rubrica como 'contribuição social (50%)'. A contribuição social de 10% (LC 110/2001) foi extinta pela Lei 13.932/2019 desde 1º/1/2020, e a multa é de 40%.",
+    "fundamento": "Lei 13.932/2019; Lei 8.036/1990, art. 18, § 1º; cadernos técnicos SEGES (≈3,48%)",
+    "correcao": "Aplicar 8% × 40% × 90% × (1 + 5/56 + 5/56 + 5/168) ≈ 3,48% do Módulo 1 (cerca de R$ 72,53).",
+    "impacto": "A rubrica está superavaliada em cerca de R$ 31,7 por empregado por mês. A correção reduz o preço e pode ser feita sem majorá-lo.",
     "gravidade": "media"
    },
    {
     "rubrica": "Módulo 3, F – Multa do FGTS sobre aviso prévio trabalhado",
-    "problema": "Lançado 0,08% (R$ 1,67). 40% × 8% × 1,94% resulta em ≈ 0,06%.",
-    "fundamento": "Caderno técnico SEGES; Acórdãos TCU 1.904/2007 e 1.186/2017-Plenário",
-    "correcao": "Usar ≈ 0,06%.",
-    "impacto": "Diferença desprezível (< R$ 1).",
-    "gravidade": "baixa"
-   },
-   {
-    "rubrica": "Módulo 3, D, E, F – Aviso prévio trabalhado",
-    "problema": "1,94% no 1º ano está dentro do limite. A planilha não avisa que é custo não renovável.",
-    "fundamento": "Acórdãos TCU 1.904/2007, 1.186/2017 e 3.006/2010; IN 05/2017, art. 57",
-    "correcao": "Excluir D, E e F (ou reduzir a 0,194%) na repactuação e nas prorrogações.",
-    "impacto": "Sem efeito no 1º ano.",
+    "problema": "A proposta usa 0,08%, equivalente a 8% × 50% × 1,94%. O correto é 40% × 8% × 1,94% ≈ 0,06%.",
+    "fundamento": "Lei 13.932/2019; modelo dos cadernos técnicos SEGES",
+    "correcao": "Aplicar 0,06% (cerca de R$ 1,30).",
+    "impacto": "Diferença de poucos centavos, absorvida pelo preço. Reduz o custo.",
     "gravidade": "baixa"
    },
    {
     "rubrica": "Módulo 5 – Insumos",
-    "problema": "Só há uniformes e EPI (R$ 30,00). Não constam materiais de limpeza nem equipamentos.",
-    "fundamento": "CCT, cláusula oitava; Anexo VII-D, Módulo 5; IN 05/2017, Anexo VII-A, item 9.3",
-    "correcao": "Detalhar uniformes (2 conjuntos/ano) e EPI, e dizer se materiais e equipamentos estão no preço, conforme o edital.",
-    "impacto": "Falta de transparência. Pode haver custo não cotado, a esclarecer em diligência.",
+    "problema": "A proposta traz só uniformes e EPI (R$ 30,00). Não há materiais de limpeza nem equipamentos, e não há declaração de que a Administração os fornecerá. Também não há justificativa do valor de uniformes e EPI frente aos 2 conjuntos por ano da CCT, cláusula 8ª.",
+    "fundamento": "CCT 2026, cl. 8ª; IN 05/2017, Anexo VII-D, Módulo 5",
+    "correcao": "Detalhar os insumos (uniformes, EPI, materiais e equipamentos) com memória de cálculo e comprovação por notas fiscais, ou declarar que a Administração fornece os materiais.",
+    "impacto": "Pode exigir majoração se o edital impuser materiais e equipamentos à contratada. Verificar o edital e pedir a justificativa.",
+    "gravidade": "media"
+   },
+   {
+    "rubrica": "Módulo 6, B – Lucro",
+    "problema": "O lucro de 0,50% (R$ 21,41) é muito baixo e deixa pouca margem para absorver os custos omitidos ou subavaliados.",
+    "fundamento": "IN 05/2017, Anexo VII-A, itens 9.2 e 9.4; Lei 14.133/2021, art. 59, § 2º",
+    "correcao": "Pedir justificativa da composição do lucro e dos custos indiretos (3%). Não é vedado, mas deve ser demonstrado.",
+    "impacto": "Absorvendo toda a margem (custos indiretos e lucro, R$ 146 por empregado por mês), ainda faltam recursos para cobrir as correções somadas.",
     "gravidade": "baixa"
    },
    {
-    "rubrica": "Módulo 6 – Custos indiretos e lucro",
-    "problema": "CI de 3% e lucro de 0,50% são baixos, mas não vedados. Aritmética conferida: tributos 5,65% 'por fora' sobre R$ 4.303,08 dão R$ 4.560,76. IRPJ e CSLL não constam. ISS de 2% é compatível com imóveis públicos (7.10), em Niterói.",
-    "fundamento": "Súmula TCU 254; IN 05/2017, Anexo VII-A, item 9.3",
-    "correcao": "Sem correção formal. A margem de ≈ R$ 146 é insuficiente para absorver as faltas acima.",
-    "impacto": "Lucro e CI quase não absorvem as correções.",
+    "rubrica": "Módulo 1, B – Insalubridade",
+    "problema": "O adicional de R$ 324,20 está correto (20% do salário mínimo de R$ 1.621,00, conforme a CCT, cláusula 4ª). A planilha não informa que ele só vale para quem limpa sanitários coletivos.",
+    "fundamento": "CCT 2026, cl. 4ª; NR-15",
+    "correcao": "Manter o valor em R$ 324,20 e confirmar o enquadramento dos postos.",
+    "impacto": "Sem impacto. É conferência de transparência.",
     "gravidade": "baixa"
    },
    {
-    "rubrica": "Submódulo 2.2 – Base de cálculo",
-    "problema": "A base (Módulo 1 + 2.1 + Módulo 4 = R$ 2.525,42) está correta, e os 34,80% fecham em R$ 878,85. A base ficará maior quando o 2.1, B subir para 11,11%.",
-    "fundamento": "IN 05/2017, Anexo VII-D, Submódulo 2.2",
-    "correcao": "Recalcular o 2.2 depois dos ajustes do 2.1 e do RAT.",
-    "impacto": "Os encargos sobre as correções já estão estimados nas falhas acima.",
+    "rubrica": "Resumo (Tributos e fechamento da planilha)",
+    "problema": "As contas fecham: Módulos 1 a 6, base do 2.2 (incluindo o Módulo 4), custos indiretos, lucro e tributos por dentro (PIS 0,65% e COFINS 3,00% cumulativos e ISS 2% de Niterói). O preço total é R$ 4.560,76. Não há IRPJ nem CSLL, e o regime é compatível.",
+    "fundamento": "Lei 9.718/1998; Súmula TCU 254; tabela oficial de ISS de Niterói (item 7.10)",
+    "correcao": "Sem correção. Manter a incidência do 2.2 sobre o Módulo 4.",
+    "impacto": "Sem impacto.",
     "gravidade": "baixa"
    }
   ],
@@ -359,24 +359,25 @@
    "encontrado": true,
    "aliquota": 2,
    "item": "7.10",
-   "fonte": "Lei Municipal 2.597/2008 (Código Tributário de Niterói), art. 10, II, c: 2% para os subitens 7.05, 7.10 e 7.11 referentes a vias, parques, jardins e imóveis públicos, com 5% como regra geral. Confere com a tabela de alíquotas da Secretaria de Fazenda: https://www.fazenda.niteroi.rj.gov.br/site/aliqu",
+   "fonte": "Prefeitura de Niterói, Secretaria de Fazenda – tabela 'Alíquotas de ISS e local da tributação', item 7.10, alíquota de 2%, tributação no local da execução (https://www.fazenda.niteroi.rj.gov.br/site/aliquotas-de-iss-e-local-da-tributacao/tabela/); Código Tributário, Lei 2.597/2008, Anexo III",
    "municipio": "Niterói",
    "uf": "RJ"
   },
   "exequibilidade": {
    "conclusao": "inexequivel",
-   "fundamento": "A planilha fecha aritmeticamente (R$ 4.560,76/empregado; R$ 547.291,30 global) e o piso e a insalubridade (20% do salário mínimo) estão corretos. Mas há custos obrigatórios abaixo do mínimo: férias de 1/3 só (2,78% em vez de 11,11%, ≈ R$ 234 com encargos), auxílio-alimentação a R$ 20 em vez de R$ 23 (R$ 66), seguro de vida (R$ 12) e odontológico (R$ 18,50) ausentes, e RAT possivelmente de 3%. A subprovisão é de ≈ R$ 330 a R$ 380/empregado/mês. A multa do FGTS a maior (≈ R$ 31,7) compensa pouco. CI + lucro somam ≈ R$ 146, e a correção não pode majorar o preço (IN 05/2017, Anexo VII-A, itens 7.9 e 9.3). O preço não cobre os custos obrigatórios da lei e da convenção (Lei 14.133/2021, art. 59, III e IV, e § 2º). Se o contrato for prorrogado e a licitante provar que as férias do 1º ano já foram amortizadas, a conclusão pode mudar, mas isso não está na proposta. Recomenda-se diligência (IN 05/2017, item 9.4) antes da decisão; sem justificativa, desclassificar."
+   "fundamento": "A proposta (R$ 4.560,76 por empregado por mês) subestima custos obrigatórios. O 2.1, B provisiona só 2,78% de férias no 1º ano, quando o correto é 11,11% (cerca de R$ 234 com encargos). O auxílio-alimentação fica em R$ 20,00, abaixo dos R$ 23,00 da CCT (R$ 66). Faltam o seguro de vida (R$ 12,00) e o plano odontológico (R$ 18,50), e o RAT de 1% é duvidoso para limpeza (grau 3). As correções somam cerca de R$ 330 a R$ 390 por empregado por mês. Após descontar o excesso da multa do FGTS (cerca de R$ 32), a margem de custos indiretos e lucro (R$ 146) não as absorve. A correção exigiria majorar o preço, o que não é admitido (IN 05/2017, Anexo VII-A, itens 7.9, 9.2 e 9.3; Lei 14.133/2021, art. 59, III e IV, e § 2º). Não foi informado o valor estimado, então não se aplica o limite de 50% da IN 73/2022, art. 34. Antes de desclassificar, recomenda-se diligência (art. 59, § 2º) para dar à licitante a chance de comprovar os custos."
   },
   "diligencias": [
-   "Explicar por que o Submódulo 2.1, B provisiona só 2,78% (adicional de 1/3) em contratação nova. Apresentar a memória de cálculo das férias do 1º ano (11,11%).",
-   "Justificar o auxílio-alimentação de R$ 20,00/dia, abaixo dos R$ 23,00 da cláusula quinta da CCT 2026. Comprovar o valor efetivamente pago (contratos, notas fiscais, folha).",
-   "Informar onde estão o seguro de vida (R$ 12,00, cláusula sétima) e o plano odontológico (R$ 18,50, cláusula nona). Apresentar apólice e contrato com a operadora, ou demonstrar que o custo está em outra rubrica.",
-   "Comprovar o CNAE da atividade e o grau de risco do RAT (1% informado). Apresentar o extrato do FAP vigente (1,0000) e as GFIP/eSocial ou DCTFWeb.",
-   "Explicar o Módulo 3, C (5,00%, 'multa e contribuição social 50%') e demonstrar a memória de cálculo, considerando a extinção da contribuição de 10% (Lei 13.932/2019).",
-   "Comprovar CI de 3% e lucro de 0,50%: demonstrações contábeis, custos administrativos e margem. Dizer se o lucro é viável no contrato.",
-   "Detalhar o Módulo 5 (R$ 30,00): quantidade e preço dos 2 conjuntos de uniforme por ano e dos EPI (notas fiscais, cotações). Informar onde estão materiais de limpeza e equipamentos, se exigidos no edital.",
-   "Comprovar o regime de Lucro Presumido (PIS 0,65% e COFINS 3%) e a alíquota de ISS de 2% (imóveis públicos, item 7.10) com certidão ou declaração fiscal.",
-   "Demonstrar, com os ajustes acima, que o preço de R$ 4.560,76/empregado cobre os custos sem majoração. Apresentar a planilha corrigida e os documentos de suporte (IN 05/2017, Anexo VII-A, item 9.4)."
+   "Explicar por que o Submódulo 2.1, B provisiona só 2,78% de férias em contratação nova (1º ano), e demonstrar como cobrirá o 1/12 das férias, em 11,11%.",
+   "Justificar o auxílio-alimentação de R$ 20,00 por dia, abaixo dos R$ 23,00 da cláusula 5ª da CCT 2026, e apresentar a memória de cálculo corrigida.",
+   "Comprovar a contratação do seguro de vida em grupo (R$ 12,00 por empregado por mês, cl. 7ª) e informar onde ele está contemplado na planilha.",
+   "Comprovar o custeio do plano odontológico (R$ 18,50 por empregado por mês, cl. 9ª) e informar onde ele está contemplado na planilha.",
+   "Apresentar o CNAE da atividade e o grau de risco que justificam o RAT de 1%, e o FAP vigente da licitante (extrato do FAP/Receita Federal).",
+   "Esclarecer o uso de 50% no Módulo 3, C e F (multa do FGTS e contribuição social extinta) e apresentar a planilha corrigida.",
+   "Detalhar o Módulo 5: quantidade, valor unitário e reposição de uniformes e EPI (2 conjuntos por ano, cl. 8ª), e informar quem fornece materiais e equipamentos de limpeza.",
+   "Justificar o lucro de 0,50% e os custos indiretos de 3% (composição, com demonstrativos contábeis), e comprovar que os custos omitidos serão cobertos sem majorar o preço.",
+   "Comprovar o regime de Lucro Presumido (PIS 0,65% e COFINS 3,00%) com a EFD-Contribuições ou certidão, e o ISS de 2% (item 7.10 em Niterói).",
+   "Informar a base e a fonte dos percentuais do Módulo 4 (ausências legais de 1,66%, licença-paternidade, acidente de trabalho e maternidade) frente aos cadernos técnicos."
   ]
  }
 }
