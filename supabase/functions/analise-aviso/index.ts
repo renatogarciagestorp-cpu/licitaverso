@@ -23,6 +23,9 @@ Deno.serve(async (req) => {
   const doc = geracao ? (DOC_GERACAO[a.documento] ?? a.documento) : (DOC_ANALISE[a.documento as DocAnalise] ?? a.documento);
   const primeiro = (p?.nome || "").trim().split(/\s+/)[0] || "Olá";
   const link = `${SITE}index.html?p=${geracao ? "elaborar" : "agente"}`;
+  // pareceres e minutas ficam 7 dias no site (scripts/limpeza-lgpd.py); depois, só no computador ou no Drive da pessoa
+  const ate = new Date(Date.now() + 7 * 864e5).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" });
+  const prazo = `<strong>Os arquivos ficam no site até ${ate}.</strong> Baixe ou salve no seu Google Drive até essa data: depois, eles são apagados e não podem ser recuperados pelo site.`;
   const enviados: string[] = [];
 
   try {
@@ -57,6 +60,7 @@ Deno.serve(async (req) => {
           r.objeto ? `<strong>Objeto:</strong> ${esc(String(r.objeto).slice(0, 300))}` : "",
           anexos.length ? `O documento segue <strong>anexado a este e-mail</strong>, em Word (editável) e PDF, e também fica disponível na sua área.`
             : `O documento está disponível em Word (editável) e PDF na sua área, em <em>O Elaborador</em> e em <em>Minha conta</em>.`,
+          prazo,
           Number(r.pendencias || 0) ? `No anexo final estão as <strong>${Number(r.pendencias)} informações</strong> que você optou por completar depois, destacadas em amarelo no texto.` : "",
           `Lembre-se: é uma minuta elaborada por inteligência artificial. Revise todo o texto e complete as lacunas destacadas antes de juntar ao processo.`,
         ].filter(Boolean), { texto: "Abrir o documento", url: link }, undefined, "Andamento de consultoria");
@@ -68,6 +72,7 @@ Deno.serve(async (req) => {
           r.objeto ? `<strong>Objeto:</strong> ${esc(String(r.objeto).slice(0, 300))}` : "",
           `<strong>Resultado:</strong> ${esc(r.situacao || "")} Apontamentos: ${Number(r.alta || 0)} de gravidade alta, ${Number(r.media || 0)} média e ${Number(r.baixa || 0)} baixa.`,
           `O parecer está disponível em PDF e Word na sua área, em <em>Análise de documentos</em>.`,
+          prazo,
           `Lembre-se: o parecer é <strong>opinativo</strong>. Ele aponta todos os aspectos identificados, dos críticos aos leves, mas a decisão de ajustar ou manter cada ponto é sua.`,
         ].filter(Boolean), { texto: "Abrir o parecer", url: link }, undefined, "Andamento de consultoria");
         await enviarEmail({ email: p.email, nome: p.nome }, `Parecer pronto: análise do ${doc}`, html);
