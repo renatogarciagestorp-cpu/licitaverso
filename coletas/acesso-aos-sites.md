@@ -62,6 +62,14 @@ Se o `git push` der 403, faça a busca e o `add_repo` de novo e tente mais uma v
 - Guarde em `fontes` do meta da coleta os endereços que funcionaram, para a próxima execução já começar por eles.
 - Site que não responde (timeout) é marcado no pedido: os outros endereços dele no mesmo pedido voltam com
   "pulado: o site não respondeu…", sem esperar de novo. Registre a falha e tente esse órgão numa próxima execução.
+- **Tribunais de Justiça com eSAJ** (consulta de jurisprudência em `/cjsg/`, como o TJ-AL em www2.tjal.jus.br): a
+  "Consulta Completa" responde por POST, sem captcha, com ementa, número, relator, órgão julgador e data. Modelo (troque
+  o domínio, as datas dd/mm/aaaa e o termo da ementa):
+  `POST https://www2.tjal.jus.br/cjsg/resultadoCompleta.do conversationId=&dados.buscaInteiroTeor=&dados.pesquisarComSinonimos=S&dados.buscaEmenta=licita%C3%A7%C3%A3o&dados.nuProcOrigem=&dados.nuRegistro=&agenteSelectedEntitiesList=&contadoragente=0&contadorMaioragente=0&dados.dtJulgamentoInicio=01%2F09%2F2026&dados.dtJulgamentoFim=12%2F11%2F2026&dados.dtPublicacaoInicio=&dados.dtPublicacaoFim=&dados.origensSelecionadas=T&tipoDecisaoSelecionados=A&dados.ordenarPor=dtPublicacao`
+  Se o tribunal pedir captcha, não contorne: registre e siga.
+- Sites que não respondem ao leitor em nenhuma variação (http/https, com e sem www) bloqueiam acesso de fora do país ou de
+  datacenters (em 12/11/2026: TCE-AL, PGE-AL, TCE-BA, TCM-BA e TJ-SE). Não insista neles a cada execução: tente uma vez
+  por mês e registre a falha.
 - Erros no índice: "robots.txt do site não permite" (o órgão não autoriza leitura automática daquele caminho: procure
   outra página pública ou registre a falha), "o site respondeu 403/404/500" (registre e siga), "fora dos domínios oficiais".
 - O passo de publicação no site continua usando o clone em `/home/claude/licitaverso` (o ramo `coleta-fontes` nunca vai para o main).
