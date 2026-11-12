@@ -59,6 +59,7 @@ export const TIPOS_DOC_ANALISE: Record<string, { nome: string; formato: "pdf" | 
   tr: { nome: "Termo de Referência / Projeto Básico", formato: "pdf" },
   riscos: { nome: "Matriz de Riscos", formato: "pdf" },
   edital: { nome: "Edital (com minutas)", formato: "pdf" },
+  direta: { nome: "Processo de contratação direta (dispensa ou inexigibilidade)", formato: "pdf" },
   memoria_calculo: { nome: "Memória de cálculo", formato: "planilha" },
   plano_trabalho: { nome: "Plano de trabalho", formato: "pdf" },
   planilha_mo: { nome: "Planilha de custos de mão de obra (IN 05/2017)", formato: "planilha" },
@@ -76,6 +77,12 @@ export const MAX_PAGINAS_ANALISE = 200;
  *  franquia (2 por semana somando análises e elaborações; equipes: 6 por acesso por mês, somados). */
 export const DOC_GERACAO: Record<string, string> = {
   etp: "Estudo Técnico Preliminar (ETP)", tr: "Termo de Referência", projeto_basico: "Projeto Básico",
+  edital: "Edital (com as minutas)", direta: "Processo de contratação direta (dispensa ou inexigibilidade)", riscos: "Mapa de riscos",
+};
+// lei da contratação: cada documento existe só nos regimes em que a lei o prevê
+export const REGIMES_GERACAO: Record<string, string[]> = {
+  etp: ["lei-14133", "lei-13303"], tr: ["lei-14133", "lei-13303"], projeto_basico: ["lei-14133", "lei-13303"],
+  edital: ["lei-14133", "lei-13303", "lei-13019"], direta: ["lei-14133", "lei-13303", "lei-13019"], riscos: ["lei-14133", "lei-13303"],
 };
 export const MAX_RESPOSTAS_GERACAO = 60000; // caracteres do questionário
 

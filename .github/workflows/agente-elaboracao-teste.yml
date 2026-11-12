@@ -1,11 +1,11 @@
-name: Agente — testar elaboração (ETP, TR, Projeto Básico)
+name: Agente — testar elaboração (ETP, TR, Projeto Básico, edital, contratação direta, riscos)
 
 # Teste interno, com caso fictício: gera o documento, mede o custo e guarda o Word como artefato.
 # Custa crédito da API (cerca de US$ 1 por documento): rodar só quando necessário.
 on:
   workflow_dispatch:
     inputs:
-      doc: { description: "etp, tr ou projeto_basico", required: true, default: "etp" }
+      doc: { description: "etp, tr, projeto_basico, edital, direta ou riscos (a lei vem do campo regime do caso)", required: true, default: "etp" }
       caso: { description: "arquivo em agente/testes/elaboracao/", required: true, default: "etp-limpeza.json" }
       simular: { description: "sim = sem custo (só pesquisa de mercado e Word de exemplo); nao = chama a API", required: true, default: "sim" }
       conferencia: { description: "sim = confere e corrige o texto (custa mais); nao = só a redação", required: true, default: "sim" }

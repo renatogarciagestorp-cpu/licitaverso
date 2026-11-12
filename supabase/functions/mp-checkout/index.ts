@@ -13,7 +13,7 @@ import {
   aplicarPagamento, clienteServico, conferirRenovacao, CORS, env, erro, mp, resposta, usuarioDaRequisicao, nivelDoToken } from "../_shared/comum.ts";
 import {
   CONSULTORIA, type Ciclo, FRANQUIA_PRO_SEMANA, inicioMesBR, MAX_DOCS_ANALISE, MAX_PAGINAS_ANALISE, type Modalidade, type Plano, PLANOS,
-  precoAnalise, precoConsultoria, DOC_GERACAO, MAX_RESPOSTAS_GERACAO, precoPlano, TIPOS_DOC_ANALISE, FRANQUIA_EQUIPE_MES, MIN_ACESSOS_EQUIPE, MAX_ACESSOS_EQUIPE, precoEquipe,
+  precoAnalise, precoConsultoria, DOC_GERACAO, REGIMES_GERACAO, MAX_RESPOSTAS_GERACAO, precoPlano, TIPOS_DOC_ANALISE, FRANQUIA_EQUIPE_MES, MIN_ACESSOS_EQUIPE, MAX_ACESSOS_EQUIPE, precoEquipe,
 } from "../_shared/precos.ts";
 import { avisarEquipeNovaConsultoria } from "../_shared/consultoria.ts";
 
@@ -155,7 +155,7 @@ Deno.serve(async (req) => {
     // ---------------------------------------------------------------- respostas do questionário da elaboração (etapa 2)
     if (acao === "enviar_geracao") {
       const id = String(corpo.id ?? "");
-      const { data: g } = await admin.from("analises").select("id, usuario_id, status, tipo, documento").eq("id", id).maybeSingle();
+      const { data: g } = await admin.from("analises").select("id, usuario_id, status, tipo, documento, regime").eq("id", id).maybeSingle();
       if (!g || g.usuario_id !== usuario.id || g.tipo !== "geracao") return erro("Elaboração não encontrada.", 404);
       if (g.status !== "aguardando_documentos") return erro("Esta elaboração não está aguardando as respostas (verifique o pagamento).");
       const respostas = corpo.respostas && typeof corpo.respostas === "object" && !Array.isArray(corpo.respostas) ? corpo.respostas : null;
@@ -166,8 +166,18 @@ Deno.serve(async (req) => {
         limpo[k] = String(v ?? "").slice(0, 8000);
       }
       if (JSON.stringify(limpo).length > MAX_RESPOSTAS_GERACAO) return erro("O questionário ficou grande demais. Resuma as respostas mais longas.");
-      const faltam = ["orgao", "uf", "objeto", "necessidade", "quantidades"].filter((k) => !String(limpo[k] ?? "").trim());
-      if (faltam.length || String(limpo.objeto ?? "").trim().length < 8) return erro("Preencha os campos obrigatórios (órgão, UF, objeto, necessidade e quantidades).");
+      const comQtd = ["etp", "tr", "projeto_basico"].includes(g.documento);
+      const faltam = ["orgao", "uf", "objeto", "necessidade"].concat(comQtd ? ["quantidades"] : []).filter((k) => !String(limpo[k] ?? "").trim());
+      if (faltam.length || String(limpo.objeto ?? "").trim().length < 8)
+        return erro("Preencha os campos obrigatórios (órgão, UF, objeto, necessidade" + (comQtd ? " e quantidades)." : ")."));
+      limpo.regime = g.regime || "lei-14133"; // a lei escolhida ao contratar vale para o documento todo
+      // RILC da estatal ou decreto do ente: só normas do próprio assinante
+      let normasG: { id: string; nome: string; arquivo: string }[] = [];
+      const pedidasG = (Array.isArray(corpo.normas) ? corpo.normas : []).map(String).slice(0, 3);
+      if (pedidasG.length) {
+        const { data: ns } = await admin.from("normas_usuario").select("id, nome, arquivo").in("id", pedidasG).eq("usuario_id", usuario.id);
+        normasG = (ns ?? []).map((n: any) => ({ id: n.id, nome: n.nome, arquivo: n.arquivo }));
+      }
       const assin = ["elab_nome", "elab_cargo", "resp_nome", "resp_cargo"].filter((k) => !String(limpo[k] ?? "").trim());
       if (assin.length) return erro("Informe nome e cargo de quem elabora e do responsável pelo setor.");
       // arquivos enviados pelo assinante (modelo em Word, logo, documentos de preço): só da pasta dele
@@ -182,7 +192,7 @@ Deno.serve(async (req) => {
         if (!Array.isArray(lista) || lista.length > 5 || !lista.every((x) => x && caminhoOk((x as { arquivo?: unknown }).arquivo))) return erro("Arquivo inválido.");
       }
       const { error } = await admin.from("analises").update({
-        respostas: limpo, status: "na_fila", enviado_em: new Date().toISOString(),
+        respostas: limpo, normas: normasG, status: "na_fila", enviado_em: new Date().toISOString(),
         nome_arquivo: String(limpo.objeto).slice(0, 160),
       }).eq("id", id).eq("status", "aguardando_documentos");
       if (error) throw error;
@@ -421,14 +431,16 @@ Deno.serve(async (req) => {
       // A franquia do Pro é a mesma para analisar e elaborar (2 por semana; equipes: 6 por acesso por mês, somados).
       const geracao = corpo.tipo === "geracao";
       const docG = geracao ? String(corpo.documento ?? "") : "";
-      if (geracao && !DOC_GERACAO[docG]) return erro("Escolha o documento: ETP, Termo de Referência ou Projeto Básico.");
+      if (geracao && !DOC_GERACAO[docG]) return erro("Escolha o documento a criar.");
+      const regG = String(corpo.regime ?? "lei-14133");
+      if (geracao && !(REGIMES_GERACAO[docG] ?? []).includes(regG)) return erro("Este documento não se aplica à lei escolhida.");
       const base = geracao
-        ? { tipo: "geracao", documento: docG, origem: "questionario", regime: "lei-14133" }
+        ? { tipo: "geracao", documento: docG, origem: "questionario", regime: regG }
         : { tipo: "analise", documento: "multiplos", origem: "arquivos" };
       if (corpo.aceite !== true) return erro(geracao ? "Aceite as condições da elaboração para continuar." : "Aceite as condições da análise para continuar.");
       if (ehAdmin) {
         const { data: pend } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
-          .eq("status", "aguardando_documentos").eq("tipo", base.tipo).eq("documento", base.documento).limit(1).maybeSingle();
+          .eq("status", "aguardando_documentos").eq("tipo", base.tipo).eq("documento", base.documento).match(geracao ? { regime: regG } : {}).limit(1).maybeSingle();
         if (pend) return resposta({ gratuito: true, referencia: `analise:${pend.id}`, id: pend.id });
         const { data: nova, error } = await admin.from("analises").insert({
           usuario_id: usuario.id, ...base, cobranca: "cortesia_admin", plano: "pro", valor: 0,
@@ -440,7 +452,7 @@ Deno.serve(async (req) => {
       // plano de equipe Pro: franquia somada (6 análises por acesso por mês), compartilhada pela equipe
       if (orgPro) {
         const { data: pendOrg } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
-          .eq("status", "aguardando_documentos").eq("cobranca", "franquia_org").eq("tipo", base.tipo).eq("documento", base.documento).limit(1).maybeSingle();
+          .eq("status", "aguardando_documentos").eq("cobranca", "franquia_org").eq("tipo", base.tipo).eq("documento", base.documento).match(geracao ? { regime: regG } : {}).limit(1).maybeSingle();
         if (pendOrg) return resposta({ gratuito: true, referencia: `analise:${pendOrg.id}`, id: pendOrg.id });
         const { data: usadasOrg } = await admin.rpc("analises_usadas_org", { org: org!.id });
         if (Number(usadasOrg ?? 0) < FRANQUIA_EQUIPE_MES * Number(org!.acessos)) {
@@ -461,7 +473,7 @@ Deno.serve(async (req) => {
       if ((vigente === "pro" || vigente === "teste") && !orgPro) {
         // reaproveita uma análise da cota ainda sem documentos, para não consumir a cota duas vezes
         const { data: pendente } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
-          .eq("status", "aguardando_documentos").eq("cobranca", "franquia_pro").eq("tipo", base.tipo).eq("documento", base.documento).limit(1).maybeSingle();
+          .eq("status", "aguardando_documentos").eq("cobranca", "franquia_pro").eq("tipo", base.tipo).eq("documento", base.documento).match(geracao ? { regime: regG } : {}).limit(1).maybeSingle();
         if (pendente) return resposta({ gratuito: true, referencia: `analise:${pendente.id}`, id: pendente.id });
         const { data: usadas } = await admin.rpc("analises_usadas_semana", { uid: usuario.id });
         franquia = Number(usadas ?? 0) < FRANQUIA_PRO_SEMANA;

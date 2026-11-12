@@ -1,4 +1,4 @@
-// Conferência prévia das informações, ANTES de criar o ETP, TR ou Projeto Básico.
+// Conferência prévia das informações, ANTES de criar o documento (ETP, TR, Projeto Básico, edital, contratação direta ou mapa de riscos).
 // O agente lê as respostas do assinante e devolve as dúvidas e inconsistências que precisam ser resolvidas com ele,
 // item a item (especificação estranha, dado que só o órgão tem, contradição, marca sem justificativa etc.).
 // Só para quem está logado, com limite diário (custo de API). POST { doc, respostas } -> { perguntas: [...] }
@@ -7,8 +7,12 @@ import { clienteServico, CORS, erro, resposta, usuarioDaRequisicao, segredoConfe
 
 const MODELO = Deno.env.get("AGENTE_MODELO") || "claude-sonnet-5-5";
 const LIMITE_DIA = 40;
-const NOMES: Record<string, string> = { etp: "Estudo Técnico Preliminar", tr: "Termo de Referência", projeto_basico: "Projeto Básico" };
+const NOMES: Record<string, string> = { etp: "Estudo Técnico Preliminar", tr: "Termo de Referência", projeto_basico: "Projeto Básico",
+  edital: "Edital", direta: "Processo de contratação direta", riscos: "Mapa de riscos" };
+const LEIS: Record<string, string> = { "lei-14133": "Lei 14.133/2021", "lei-13303": "Lei 13.303/2016 e regulamento interno (RILC) da estatal",
+  "lei-13019": "Lei 13.019/2014, parceria com organização da sociedade civil" };
 const ROTULOS: Record<string, string> = {
+  tipo_parceria: "Tipo de parceria", metas: "Objetivos, metas e público atendido", modo_disputa: "Modo de disputa", registro_precos: "Registro de preços", me_epp: "Participação de ME e EPP", criterios_selecao: "Critérios de seleção e pontuação", agente: "Agente de contratação, pregoeiro ou comissão", hipotese: "Hipótese legal da contratação direta", hipotese_detalhe: "Por que a situação se enquadra na hipótese", contratado: "Fornecedor ou organização escolhida", motivo_escolha: "Razão da escolha do contratado", justificativa_preco: "Como o preço foi verificado", fase: "Fases a mapear", riscos_conhecidos: "Riscos ou problemas já conhecidos", matriz: "Incluir matriz de alocação de riscos (art. 22)", equipe: "Equipe de planejamento", garantia: "Garantia da contratação",
   orgao: "Órgão", uf: "UF", objeto: "Objeto", necessidade: "Necessidade / fundamentação", quantidades: "Quantidades", especificacoes: "Especificações",
   natureza: "Natureza / solução", prazo: "Prazo", prazo_outro: "Prazo (detalhe)", pca: "PCA", correlatas: "Contratações ligadas", processo: "Nº do processo",
   parcelamento: "Parcelamento", parc_motivo: "Motivo do parcelamento", valor: "Valor estimado", adjudicacao: "Adjudicação", selecao: "Forma de seleção",
@@ -80,6 +84,7 @@ Deno.serve(async (req) => {
   const doc = String(corpo.doc ?? "");
   if (!NOMES[doc]) return erro("Documento inválido.");
   const r = corpo.respostas && typeof corpo.respostas === "object" ? corpo.respostas as Record<string, unknown> : {};
+  const lei = LEIS[String(r.regime ?? "")] ?? LEIS["lei-14133"];
   const linhas = Object.entries(r).filter(([k, v]) => ROTULOS[k] && String(v ?? "").trim())
     .map(([k, v]) => `- ${ROTULOS[k]}: ${legivel(k, v).slice(0, 4000)}`).join("\n");
   let esclarecimentos = "";
@@ -88,10 +93,10 @@ Deno.serve(async (req) => {
     if (Array.isArray(lista)) esclarecimentos = lista.slice(0, 40).map((x: any) => `- P: ${String(x.pergunta ?? "").slice(0, 400)}\n  R: ${String(x.resposta ?? "").slice(0, 1000)}`).join("\n");
   } catch { /* sem esclarecimentos */ }
 
-  const system = `Você confere as informações de um requisitante ANTES de redigir o ${NOMES[doc]} (Lei 14.133/2021) para um órgão público.
+  const system = `Você confere as informações de um requisitante ANTES de redigir o ${NOMES[doc]} (${lei}) para um órgão público.
 Aponte somente o que precisa ser resolvido COM O REQUISITANTE para que o documento saia completo e correto, sem lacunas:
 (1) especificações inconsistentes, incomuns ou com provável erro de digitação (ex.: notebook de 19 polegadas, "SSD 225"), unidades confusas, quantidades incoerentes;
-(2) exigência de marca, fabricante ou software específico sem justificativa técnica (art. 41 da Lei 14.133/2021): pergunte a justificativa ou se aceita equivalentes;
+(2) exigência de marca, fabricante ou software específico sem justificativa técnica (sem justificativa técnica, a exigência restringe a competição): pergunte a justificativa ou se aceita equivalentes;
 (3) requisitos essenciais que faltam e mudam o preço ou a solução (ex.: para notebook: processador, memória, armazenamento, tela, sistema operacional, garantia; para serviço: horários, local, produtividade);
 (4) dados que só o órgão tem e que o documento exige, se estiverem em branco (o que já está nas respostas não se pergunta de novo; quantidades e preços dos itens da pesquisa de preços já estão definidos);
 (5) contradições entre as respostas.

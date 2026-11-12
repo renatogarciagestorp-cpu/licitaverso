@@ -1,11 +1,12 @@
 {
  "_sobre": "Roteiro de verificação do Agente Licitacon para PARCERIAS COM ORGANIZAÇÕES DA SOCIEDADE CIVIL (Lei 13.019/2014 — termos de colaboração e de fomento), na mesma estrutura do roteiro da Lei 14.133/2021. O termo de referência é substituído pelo plano de trabalho e pela planilha de custos do projeto; havendo profissional com dedicação exclusiva, o custo é formado pelo modelo do Anexo VII-D da IN SEGES/MP 5/2017 (módulo mão de obra).",
  "regime": "lei-13019",
- "versao": "2026-10-30",
+ "versao": "2026-11-12",
  "revisado_por_especialista": false,
  "documentos": {
   "edital": "Edital de chamamento público e minuta do termo",
   "plano_trabalho": "Plano de trabalho e planilha de custos",
+  "direta": "Dispensa ou inexigibilidade de chamamento público",
   "cruzado": "Coerência entre os documentos"
  },
  "itens": [
@@ -906,6 +907,451 @@
    "dica": "Confira os totais entre os documentos.",
    "temas": [
     "valor previsto"
+   ]
+  },
+  {
+   "id": "o-dir-01",
+   "doc": "direta",
+   "titulo": "Enquadramento em hipótese taxativa de dispensa de chamamento",
+   "verificar": "A dispensa do chamamento público está fundada em um dos incisos vigentes do art. 30 (urgência por paralisação, guerra ou calamidade, programa de proteção a pessoas ameaçadas, ou atividades de educação, saúde e assistência social com OSC previamente credenciada), com fatos que o comprovem.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "30",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "30",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "30",
+     "disp": "II"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "30",
+     "disp": "III"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "30",
+     "disp": "VI"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Parceria celebrada com dispensa de chamamento público.",
+   "gravidade": "alta",
+   "risco": "Dispensa fora das hipóteses do art. 30 elimina indevidamente a seleção isonômica e torna nula a parceria.",
+   "dica": "Indique o inciso exato do art. 30 e demonstre, com documentos, a situação de fato que o caracteriza.",
+   "temas": [
+    "dispensa de chamamento público",
+    "chamamento público",
+    "enquadramento legal"
+   ]
+  },
+  {
+   "id": "o-dir-02",
+   "doc": "direta",
+   "titulo": "Dispensa por urgência limitada a 180 dias",
+   "verificar": "Na dispensa por urgência, há demonstração da paralisação ou iminência de paralisação de atividade de relevante interesse público e a vigência da parceria não excede 180 dias.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "30",
+     "disp": "I"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Dispensa com fundamento no art. 30, I.",
+   "gravidade": "alta",
+   "risco": "Usar a urgência para parceria de longo prazo ou sem paralisação demonstrada desvirtua a dispensa e afasta o chamamento sem amparo legal.",
+   "dica": "Documente a paralisação ou o risco iminente, limite a vigência a 180 dias e inicie o chamamento público para a solução definitiva.",
+   "temas": [
+    "dispensa de chamamento público",
+    "urgência",
+    "prazo da parceria"
+   ]
+  },
+  {
+   "id": "o-dir-03",
+   "doc": "direta",
+   "titulo": "Dispensa para educação, saúde ou assistência social com OSC credenciada",
+   "verificar": "A atividade é de educação, saúde ou assistência social e a OSC estava previamente credenciada pelo órgão gestor da respectiva política, com comprovante do credenciamento.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "30",
+     "disp": "VI"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Dispensa com fundamento no art. 30, VI.",
+   "gravidade": "alta",
+   "risco": "Sem credenciamento prévio pelo órgão gestor da política, a hipótese do inciso VI não se configura e a dispensa é indevida.",
+   "dica": "Junte o ato de credenciamento da OSC emitido pelo órgão gestor da política setorial, anterior à dispensa.",
+   "temas": [
+    "dispensa de chamamento público",
+    "credenciamento",
+    "assistência social",
+    "saúde",
+    "educação"
+   ]
+  },
+  {
+   "id": "o-dir-04",
+   "doc": "direta",
+   "titulo": "Inexigibilidade por inviabilidade de competição entre OSCs",
+   "verificar": "A inexigibilidade demonstra a inviabilidade de competição — natureza singular do objeto ou metas que só uma entidade específica pode atingir —, como nos casos de compromisso internacional que indique a instituição ou de lei que identifique expressamente a entidade beneficiária.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "31",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "31",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "31",
+     "disp": "II"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Parceria celebrada com inexigibilidade de chamamento público.",
+   "gravidade": "alta",
+   "risco": "Inexigibilidade sem demonstração concreta de que só aquela OSC pode executar o objeto é fuga ao chamamento e torna a parceria nula.",
+   "dica": "Demonstre a singularidade ou a exclusividade da entidade com documentos (ato internacional, lei autorizativa que a nomeie, dados técnicos) e não apenas com a afirmação do gestor.",
+   "temas": [
+    "inexigibilidade de chamamento público",
+    "inviabilidade de competição",
+    "entidade identificada em lei"
+   ]
+  },
+  {
+   "id": "o-dir-05",
+   "doc": "direta",
+   "titulo": "Parcerias com recursos de emenda parlamentar",
+   "verificar": "Quando o termo de colaboração ou de fomento envolver recursos de emenda parlamentar, o processo identifica a emenda e a entidade indicada, e cumpre as demais exigências da lei mesmo sem chamamento.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "29",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "32",
+     "disp": "p4"
+    }
+   ],
+   "obrigatorio": "condicional",
+   "quando": "Parceria com recursos de emenda parlamentar às leis orçamentárias.",
+   "gravidade": "media",
+   "risco": "Tratar a emenda parlamentar como dispensa de todas as exigências leva à celebração sem plano de trabalho, sem pareceres ou com OSC que não preenche os requisitos.",
+   "dica": "Junte a identificação da emenda e da entidade beneficiária e siga as mesmas etapas de análise do plano de trabalho, pareceres e habilitação da OSC.",
+   "temas": [
+    "emenda parlamentar",
+    "chamamento público",
+    "termo de fomento",
+    "termo de colaboração"
+   ]
+  },
+  {
+   "id": "o-dir-06",
+   "doc": "direta",
+   "titulo": "Justificativa formal do administrador público",
+   "verificar": "Há ato do administrador público que justifica a ausência de chamamento público, indicando a hipótese legal, os motivos de fato e a razão da escolha da OSC.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "32",
+     "disp": "caput"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem justificativa formal do administrador, a dispensa ou inexigibilidade não tem motivação e a parceria fica sujeita à anulação.",
+   "dica": "Elabore a justificativa assinada pelo administrador público com hipótese legal, fatos, escolha da entidade e compatibilidade dos valores.",
+   "temas": [
+    "justificativa",
+    "dispensa de chamamento público",
+    "inexigibilidade de chamamento público",
+    "motivação"
+   ]
+  },
+  {
+   "id": "o-dir-07",
+   "doc": "direta",
+   "titulo": "Publicação do extrato da justificativa no sítio oficial na mesma data",
+   "verificar": "O extrato da justificativa foi publicado no sítio oficial da administração na internet na mesma data em que foi efetivado.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "32",
+     "disp": "p1"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "A falta de publicação do extrato da justificativa acarreta, por determinação legal, a nulidade do ato de formalização da parceria.",
+   "dica": "Publique o extrato no sítio oficial no mesmo dia da justificativa e junte o comprovante com data ao processo.",
+   "temas": [
+    "publicidade",
+    "extrato da justificativa",
+    "nulidade"
+   ]
+  },
+  {
+   "id": "o-dir-08",
+   "doc": "direta",
+   "titulo": "Prazo de impugnação e análise antes da celebração",
+   "verificar": "Foi respeitado o prazo de cinco dias para impugnação da justificativa, e eventuais impugnações foram analisadas em até cinco dias; se procedentes, o ato foi revogado e aberto chamamento público.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "32",
+     "disp": "p2"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "32",
+     "disp": "p3"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "media",
+   "risco": "Celebrar a parceria antes de esgotado o prazo de impugnação, ou ignorar impugnação procedente, viola o controle social previsto em lei e expõe a parceria à revogação.",
+   "dica": "Aguarde o prazo de cinco dias após a publicação, registre a inexistência de impugnação ou a decisão fundamentada sobre ela e só então formalize o termo.",
+   "temas": [
+    "impugnação",
+    "controle social",
+    "dispensa de chamamento público"
+   ]
+  },
+  {
+   "id": "o-dir-09",
+   "doc": "direta",
+   "titulo": "Plano de trabalho e demais exigências mantidos",
+   "verificar": "Mesmo sem chamamento, o processo contém plano de trabalho aprovado, indicação de dotação orçamentária e demonstração de que a capacidade técnica e operacional da OSC é compatível com o objeto.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "32",
+     "disp": "p4"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "II"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "III"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "IV"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "A dispensa ou inexigibilidade não afasta as demais regras da lei; celebrar sem plano de trabalho ou sem dotação torna a parceria irregular e inviabiliza o controle da execução e da prestação de contas.",
+   "dica": "Siga o rito completo da celebração: plano de trabalho aprovado, informação orçamentária e avaliação da capacidade da OSC.",
+   "temas": [
+    "plano de trabalho",
+    "dotação orçamentária",
+    "capacidade técnica e operacional"
+   ]
+  },
+  {
+   "id": "o-dir-10",
+   "doc": "direta",
+   "titulo": "Requisitos estatutários e documentos da OSC",
+   "verificar": "A OSC escolhida comprova estatuto com finalidade de relevância pública e social, destinação do patrimônio em caso de dissolução e escrituração contábil regular, tempo mínimo de existência, experiência prévia e capacidade técnica e operacional, além de certidões de regularidade, ata de eleição, relação de dirigentes e funcionamento no endereço declarado.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "33",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "33",
+     "disp": "I"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "33",
+     "disp": "III"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "33",
+     "disp": "IV"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "33",
+     "disp": "V.a"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "33",
+     "disp": "V.b"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "33",
+     "disp": "V.c"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "34",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "34",
+     "disp": "II"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "34",
+     "disp": "III"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "34",
+     "disp": "V"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "34",
+     "disp": "VI"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "34",
+     "disp": "VII"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Celebrar com OSC que não preenche os requisitos legais torna a parceria irregular e aumenta o risco de inexecução e de desvio de recursos.",
+   "dica": "Confira o estatuto e os documentos dos arts. 33 e 34 antes da celebração, considerando as dispensas aplicáveis a organizações religiosas e cooperativas.",
+   "temas": [
+    "requisitos da OSC",
+    "habilitação",
+    "estatuto social",
+    "regularidade fiscal"
+   ]
+  },
+  {
+   "id": "o-dir-11",
+   "doc": "direta",
+   "titulo": "Ausência de impedimentos da OSC",
+   "verificar": "A OSC não está impedida de celebrar parceria: não omissa em prestar contas, sem contas rejeitadas nos últimos cinco anos, sem sanções vigentes e sem dirigentes com contas julgadas irregulares ou condenados por improbidade.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "39",
+     "disp": "caput"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "39",
+     "disp": "II"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "39",
+     "disp": "IV"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "39",
+     "disp": "V"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "39",
+     "disp": "VI"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "39",
+     "disp": "VII"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Parceria celebrada com OSC impedida é ilegal e expõe a administração a novo dano ao erário.",
+   "dica": "Consulte os cadastros de sanções, as prestações de contas anteriores e a situação dos dirigentes e registre a verificação no processo.",
+   "temas": [
+    "impedimentos da OSC",
+    "prestação de contas",
+    "sanções"
+   ]
+  },
+  {
+   "id": "o-dir-12",
+   "doc": "direta",
+   "titulo": "Pareceres técnico e jurídico, gestor e comissão designados",
+   "verificar": "Há parecer técnico sobre mérito, viabilidade, cronograma de desembolso e meios de fiscalização, com designação do gestor e da comissão de monitoramento e avaliação, e parecer jurídico sobre a possibilidade da celebração; ressalvas foram sanadas ou justificadas por ato formal.",
+   "fundamento": [
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "V"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "V.a"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "V.c"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "V.g"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "V.h"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "VI"
+    },
+    {
+     "norma": "lei-13019",
+     "art": "35",
+     "disp": "p2"
+    }
+   ],
+   "obrigatorio": "sim",
+   "gravidade": "alta",
+   "risco": "Sem os pareceres e a designação do gestor, a parceria é celebrada sem análise de viabilidade e sem responsável pelo acompanhamento, falha recorrente apontada pelos tribunais de contas.",
+   "dica": "Colha os pareceres antes da assinatura, designe gestor e comissão no ato e registre como cada ressalva foi tratada.",
+   "temas": [
+    "parecer técnico",
+    "parecer jurídico",
+    "gestor da parceria",
+    "comissão de monitoramento e avaliação"
    ]
   }
  ]
