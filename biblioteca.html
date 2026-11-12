@@ -1288,7 +1288,7 @@ function exportarMd(){
     const last=S.docs.map(d=>d.capturado_em||"").sort().pop();
     $("stamp").innerHTML=`${S.docs.length} registros<br>Última captação: ${last?new Date(last).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"}):"—"}`;
     render();
-    if(!S._hash){let h=location.hash;try{if(!/^#it-/.test(h))h=sessionStorage.getItem("lv-bib-ir")||"";sessionStorage.removeItem("lv-bib-ir")}catch(e){}if(/^#it-/.test(h)){S._hash=1;const id=decodeURIComponent(h.slice(4));if(S.byId.has(id))setTimeout(()=>irPara(id),60)}}
+    if(!S._hash){let h=location.hash;try{if(!/^#it-/.test(h)){h=sessionStorage.getItem("lv-bib-ir")||"";if(h)sessionStorage.removeItem("lv-bib-ir")}}catch(e){}if(/^#it-/.test(h)){S._hash=1;const id=decodeURIComponent(h.slice(4));if(S.byId.has(id))setTimeout(()=>irPara(id),60)}}
   },e=>{$("stamp").textContent="Não foi possível carregar o acervo agora. Recarregue a página."});
 
   S.downloads=await claude.use("downloads");
