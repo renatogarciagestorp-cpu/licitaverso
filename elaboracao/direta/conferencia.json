@@ -1,0 +1,770 @@
+{
+  "regime": "lei-13303",
+  "regime_texto": "Lei 13.303/2016",
+  "objeto": [],
+  "roteiro_versao": "roteiro 2026-11-12",
+  "itens_roteiro": [
+    {
+      "id": "e-dir-01",
+      "doc": "direta",
+      "titulo": "Enquadramento legal da hipótese",
+      "verificar": "O processo indica o fundamento específico da contratação direta (inciso do art. 29 para dispensa ou art. 30 para inexigibilidade) e demonstra que os requisitos daquela hipótese estão presentes.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "29",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "30",
+          "disp": "caput"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Contratação direta sem enquadramento ou com enquadramento equivocado é contratação sem licitação fora das hipóteses legais.",
+      "dica": "Cite o inciso aplicável e demonstre, um a um, os requisitos da hipótese.",
+      "temas": [
+        "dispensa",
+        "inexigibilidade",
+        "enquadramento"
+      ]
+    },
+    {
+      "id": "e-dir-02",
+      "doc": "direta",
+      "titulo": "Dispensa por valor: obras e serviços de engenharia",
+      "verificar": "O valor não ultrapassa o limite do art. 29, I (R$ 100.000,00 ou o valor atualizado pelo Conselho de Administração) e não se refere a parcelas de uma mesma obra ou serviço, ou a obras e serviços de mesma natureza e local que possam ser realizados conjunta e concomitantemente.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "29",
+          "disp": "I"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Ultrapassar o limite ou somar parcelas da mesma obra torna a dispensa ilegal.",
+      "dica": "Some todas as contratações da mesma natureza e local no exercício antes de enquadrar.",
+      "temas": [
+        "dispensa por valor",
+        "obras",
+        "limite"
+      ]
+    },
+    {
+      "id": "e-dir-03",
+      "doc": "direta",
+      "titulo": "Dispensa por valor: compras e outros serviços",
+      "verificar": "O valor não ultrapassa o limite do art. 29, II (R$ 50.000,00 ou o valor atualizado pelo Conselho de Administração) e não se refere a parcelas de um mesmo serviço, compra ou alienação de maior vulto que possa ser realizado de uma só vez.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "29",
+          "disp": "II"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Dispensa acima do limite ou de parcela de objeto maior é contratação direta irregular.",
+      "dica": "Demonstre o valor total do objeto e o consumo previsto no exercício.",
+      "temas": [
+        "dispensa por valor",
+        "compras",
+        "limite"
+      ]
+    },
+    {
+      "id": "e-dir-04",
+      "doc": "direta",
+      "titulo": "Limites de valor atualizados pelo Conselho de Administração",
+      "verificar": "Se o processo usa limites de dispensa diferentes dos previstos na lei, há deliberação do Conselho de Administração que os alterou para refletir a variação de custos, e ela está juntada ou referenciada.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "29",
+          "disp": "p3"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Aplicar limite atualizado sem deliberação válida do Conselho torna a dispensa irregular.",
+      "dica": "Junte a ata ou deliberação do Conselho e a norma interna que a incorporou.",
+      "temas": [
+        "limite de dispensa",
+        "Conselho de Administração",
+        "atualização de valores"
+      ]
+    },
+    {
+      "id": "e-dir-05",
+      "doc": "direta",
+      "titulo": "Fracionamento indevido da despesa",
+      "verificar": "Não há fracionamento para enquadrar a contratação na dispensa por valor: o objeto não é parte de contratação maior realizável de uma só vez, e o parcelamento não resultou em valores inferiores aos limites dos incisos I e II do art. 29.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "29",
+          "disp": "I"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "29",
+          "disp": "II"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "32",
+          "disp": "III"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Fracionar para fugir da licitação é irregularidade grave apontada com frequência pelos tribunais de contas.",
+      "dica": "Verifique outras contratações do mesmo objeto no período e consolide a demanda no planejamento anual.",
+      "temas": [
+        "fracionamento",
+        "dispensa por valor",
+        "fuga à licitação"
+      ]
+    },
+    {
+      "id": "e-dir-06",
+      "doc": "direta",
+      "titulo": "Emergência caracterizada e dentro dos limites",
+      "verificar": "Na dispensa emergencial, o processo caracteriza a urgência e o risco a pessoas ou bens, limita-se aos bens e parcelas necessários ao atendimento da situação, a execução cabe em até 180 dias consecutivos contados da ocorrência e não há prorrogação; apura-se a responsabilidade de quem deu causa à emergência.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "29",
+          "disp": "XV"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "30",
+          "disp": "p3.I"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "29",
+          "disp": "p2"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Emergência fabricada pela falta de planejamento, objeto além do necessário ou contrato prorrogado são irregularidades graves.",
+      "dica": "Descreva o fato, a data da ocorrência, o risco concreto e por que não há tempo para licitar; limite o objeto ao estritamente necessário.",
+      "temas": [
+        "emergência",
+        "180 dias",
+        "responsabilização"
+      ]
+    },
+    {
+      "id": "e-dir-07",
+      "doc": "direta",
+      "titulo": "Licitação deserta ou com preços excessivos",
+      "verificar": "Na dispensa por licitação anterior sem interessados, demonstra-se que ela não pode ser repetida sem prejuízo e que as condições preestabelecidas foram mantidas; na dispensa por preços excessivos, comprova-se que as propostas eram manifestamente superiores aos de mercado.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "29",
+          "disp": "III"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "29",
+          "disp": "IV"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Alterar as condições do edital fracassado ou não comprovar o prejuízo da repetição invalida a dispensa.",
+      "dica": "Junte a ata da licitação anterior e compare as condições com as da contratação direta.",
+      "temas": [
+        "licitação deserta",
+        "preços excessivos",
+        "dispensa"
+      ]
+    },
+    {
+      "id": "e-dir-08",
+      "doc": "direta",
+      "titulo": "Compra ou locação de imóvel",
+      "verificar": "Na compra ou locação de imóvel, demonstra-se que as necessidades de instalação e localização condicionam a escolha e há avaliação prévia que comprova a compatibilidade do preço com o mercado.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "29",
+          "disp": "V"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Sem avaliação prévia ou sem demonstrar a singularidade da localização, a escolha do imóvel é arbitrária.",
+      "dica": "Junte o laudo de avaliação e o estudo de alternativas de imóveis.",
+      "temas": [
+        "imóvel",
+        "locação",
+        "avaliação prévia"
+      ]
+    },
+    {
+      "id": "e-dir-09",
+      "doc": "direta",
+      "titulo": "Inexigibilidade por fornecedor exclusivo",
+      "verificar": "A exclusividade do produtor, empresa ou representante comercial está comprovada por documento idôneo e atual, e demonstra-se que só aquele objeto atende à necessidade.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "30",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "30",
+          "disp": "I"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Atestado de exclusividade genérico ou vencido não comprova a inviabilidade de competição.",
+      "dica": "Junte atestado de exclusividade atualizado e pesquise se há outros distribuidores.",
+      "temas": [
+        "inexigibilidade",
+        "exclusividade",
+        "fornecedor exclusivo"
+      ]
+    },
+    {
+      "id": "e-dir-10",
+      "doc": "direta",
+      "titulo": "Serviço técnico especializado e notória especialização",
+      "verificar": "O serviço está entre os listados no art. 30, II, não é de publicidade ou divulgação, e a notória especialização do profissional ou empresa é demonstrada (desempenho anterior, estudos, experiência, publicações, equipe técnica) de modo a evidenciar que o trabalho é essencial e o mais adequado ao objeto.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "30",
+          "disp": "II"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "30",
+          "disp": "p1"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Inexigibilidade para serviço comum, para publicidade ou sem prova da notória especialização é ilegal.",
+      "dica": "Junte currículo, atestados e publicações e relacione-os com a complexidade do objeto.",
+      "temas": [
+        "inexigibilidade",
+        "notória especialização",
+        "serviços técnicos especializados"
+      ]
+    },
+    {
+      "id": "e-dir-11",
+      "doc": "direta",
+      "titulo": "Razão da escolha do fornecedor",
+      "verificar": "O processo explica por que aquele fornecedor ou executante foi escolhido, com critérios objetivos e impessoais.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "30",
+          "disp": "p3.II"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "31",
+          "disp": "caput"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Escolha sem motivação viola a impessoalidade e sugere direcionamento.",
+      "dica": "Registre as alternativas consultadas e o critério que levou à escolha.",
+      "temas": [
+        "razão da escolha",
+        "impessoalidade"
+      ]
+    },
+    {
+      "id": "e-dir-12",
+      "doc": "direta",
+      "titulo": "Justificativa do preço",
+      "verificar": "O preço é justificado por comparação com preços de mercado, contratações similares ou preços praticados pelo próprio fornecedor com outros clientes, sem sobrepreço; o processo registra que, comprovado sobrepreço ou superfaturamento, respondem solidariamente quem decidiu a contratação direta e o fornecedor.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "30",
+          "disp": "p3.III"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "30",
+          "disp": "p2"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "31",
+          "disp": "p1.I"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Preço não justificado expõe o decisor e o contratado à responsabilidade solidária pelo dano.",
+      "dica": "Junte cotações, notas fiscais do fornecedor a outros clientes ou contratações públicas similares.",
+      "temas": [
+        "justificativa de preço",
+        "sobrepreço",
+        "responsabilidade solidária"
+      ]
+    },
+    {
+      "id": "e-dir-13",
+      "doc": "direta",
+      "titulo": "Contratado sem impedimentos e vinculação ao termo de dispensa",
+      "verificar": "O contratado não incide nos impedimentos legais (sócio empregado ou dirigente, parentes, empresa suspensa ou inidônea, cadastro de inidôneos), mantém as condições de habilitação e o contrato se vincula ao termo que dispensou ou inexigiu a licitação e à proposta.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "38",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "37",
+          "disp": "p1"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "69",
+          "disp": "VIII"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "69",
+          "disp": "IX"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Contratar diretamente empresa impedida é nulo e caracteriza favorecimento.",
+      "dica": "Consulte os cadastros de sanções e colha declaração de inexistência de impedimentos.",
+      "temas": [
+        "impedimentos",
+        "habilitação",
+        "vinculação"
+      ]
+    },
+    {
+      "id": "e-dir-14",
+      "doc": "direta",
+      "titulo": "Publicidade da contratação direta",
+      "verificar": "A contratação direta e o contrato foram divulgados no portal da estatal na internet, as aquisições de bens constam da relação semestral publicada e as informações de execução são disponibilizadas.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "39",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "48",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "88",
+          "disp": "caput"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Falta de publicidade impede o controle social e é apontada pelos órgãos de controle.",
+      "dica": "Indique o link do portal e a data de divulgação.",
+      "temas": [
+        "publicidade",
+        "transparência",
+        "portal"
+      ]
+    },
+    {
+      "id": "e-dir-15",
+      "doc": "direta",
+      "titulo": "Contratação direta conforme o RILC",
+      "verificar": "Confira o processo contra o RILC da estatal, se enviado como regulamentação específica: procedimento interno de dispensa e inexigibilidade, limites de valor vigentes, alçadas de autorização e ratificação, instrução mínima, pesquisa de preços e prazos de publicação. Se o RILC não tiver sido enviado, registre como não verificável e recomende juntá-lo.",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "40",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "40",
+          "disp": "IV"
+        },
+        {
+          "norma": "lei-13303",
+          "art": "29",
+          "disp": "p3"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "O RILC define o rito e as alçadas da contratação direta; descumpri-lo vicia o ato e a responsabilidade recai sobre quem autorizou.",
+      "dica": "Liste os requisitos do RILC para contratação direta e indique onde cada um está no processo.",
+      "temas": [
+        "RILC",
+        "contratação direta",
+        "alçadas"
+      ]
+    }
+  ],
+  "documentos_nomes": {
+    "etp": "Documento de planejamento / estudo técnico",
+    "tr": "Termo de Referência / Projeto Básico",
+    "riscos": "Matriz de Riscos",
+    "planilha": "Planilha de custos e formação de preços",
+    "edital": "Edital e minuta do contrato",
+    "cruzado": "Coerência entre os documentos",
+    "direta": "Processo de contratação direta (dispensa ou inexigibilidade)",
+    "orcamento": "Planilha orçamentária e BDI",
+    "plano_trabalho": "Plano de trabalho"
+  },
+  "data": "12/11/2026",
+  "processo": {
+    "orgao": "Companhia Municipal de Saneamento de Exemplo (RJ) – empresa estatal (Lei 13.303/2016)",
+    "numero": "Processo de Contratação Direta nº 889/2026",
+    "objeto": "Suporte técnico 24x7 e atualização do software proprietário de telemetria de 42 estações elevatórias, por 12 meses, fornecido pela TeleSan Sistemas Ltda., no valor estimado de R$ 186.000,00",
+    "modalidade": "Inexigibilidade de licitação – fornecedor exclusivo (Lei 13.303/2016, art. 30, caput e inciso I)"
+  },
+  "documentos": [
+    {
+      "tipo": "direta",
+      "arquivo": "minuta elaborada pelo agente",
+      "paginas": null,
+      "ocr": false
+    }
+  ],
+  "ementa": "INEXIGIBILIDADE. LEI 13.303/2016. FORNECEDOR EXCLUSIVO. SOFTWARE DE TELEMETRIA. SUPORTE E ATUALIZAÇÃO. ATESTADO DE EXCLUSIVIDADE. JUSTIFICATIVA DE PREÇO. RILC NÃO ENVIADO. INSTRUÇÃO INCOMPLETA",
+  "ementa_texto": "Inexigibilidade, com base no art. 30, caput e I, da Lei 13.303/2016, para suporte e atualização de software proprietário de telemetria, no valor de R$ 186.000,00. A tese de inviabilidade de competição é coerente, mas a instrução está incompleta: o atestado de exclusividade não foi identificado nem confirmado, o quadro comparativo de preços está em branco, os impedimentos do contratado não foram verificados e o RILC não foi enviado.",
+  "resumo": "O processo nº 889/2026 propõe a contratação direta, por inexigibilidade (art. 30, caput e I, da Lei 13.303/2016), da TeleSan Sistemas Ltda. para suporte técnico 24x7 e atualizações do software de telemetria que monitora 42 estações elevatórias, por 12 meses e R$ 186.000,00 (R$ 15.500,00 por mês; R$ 4.428,57 por estação por ano, aritmética conferida). O documento tem estrutura adequada ao art. 30, § 3º, da Lei 13.303/2016: caracteriza a necessidade, expõe a razão técnica da exclusividade, trata da escolha do fornecedor, da justificativa de preço, dos impedimentos do art. 38, das cláusulas do art. 69, VIII e IX, e da publicidade. Todavia, funciona como minuta com vários campos \"[PREENCHER]\". Não identifica o atestado de exclusividade nem a sua confirmação (Súmula TCU 255). Não apresenta o quadro comparativo das duas notas fiscais. Não registra as consultas aos cadastros de sanções e as certidões. Não indica o endereço e a data de publicação no portal. Além disso, o RILC não foi enviado, o que impede verificar alçadas, instrução mínima, metodologia de preços e prazos. Há ainda pontos a corrigir: o enquadramento no inciso I do art. 30 (que se refere a materiais, equipamentos ou gêneros) para um serviço, a imputação integral da despesa ao exercício de 2026 apesar de a vigência alcançar 2027, o CNPJ aparentemente genérico e a proximidade do vencimento da licença (30/11/2026).",
+  "conclusao": "O processo não está apto à autorização no estado em que se encontra. A tese de inexigibilidade por inviabilidade de competição é plausível para suporte e atualização de software proprietário, mas depende de prova que ainda não consta dos autos. É preciso: (i) identificar, juntar e confirmar junto ao emitente o atestado de exclusividade, de preferência com documentos complementares de titularidade do software; (ii) preencher o quadro comparativo de preços por estação e por mês, com as notas fiscais; (iii) consultar os cadastros de sanções e juntar as certidões e a declaração do art. 38; (iv) corrigir o CNPJ e a imputação orçamentária; (v) juntar o RILC e conferir alçadas, parecer jurídico, metodologia de preços e prazos de publicação; e (vi) fixar o início da vigência para evitar descontinuidade a partir de 01/12/2026, sem recorrer a emergência. Concluídas essas providências, a contratação poderá ser submetida à autoridade competente. A decisão de corrigir ou manter cada ponto cabe à Companhia.",
+  "resultados": [
+    {
+      "item": "e-dir-01",
+      "resultado": "parcial",
+      "gravidade": "media",
+      "local": "Seção 2 – Enquadramento legal e dispositivo do RILC (documento sem marcação de páginas)",
+      "trecho": "A contratação enquadra-se como inexigibilidade de licitação, por fornecedor exclusivo, com fundamento no art. 30, caput e inciso I, da Lei nº 13.303/2016",
+      "constatacao": "O documento indica o fundamento específico (art. 30, caput e I), afasta expressamente o art. 29 e organiza a demonstração dos requisitos nas seções 3 a 6. Há duas lacunas. Primeira: o inciso I do art. 30 trata da aquisição de materiais, equipamentos ou gêneros, e o objeto é serviço (suporte e atualização), embora inseparável do software proprietário. O enquadramento não é desarrazoado, porque o rol do art. 30 é exemplificativo (\"em especial\"), mas exige que a inviabilidade de competição seja demonstrada no caso concreto. Segunda: os requisitos centrais (atestado e sua confirmação) estão em branco, como detalhado no item e-dir-09. Também está em branco o dispositivo do RILC que disciplina a hipótese.",
+      "porque": "O art. 30 da Lei 13.303/2016 condiciona a contratação direta à inviabilidade de competição, e o inciso I descreve a aquisição de bens de produtor, empresa ou representante exclusivo. Aplicado a serviço, o enquadramento precisa se apoiar na demonstração concreta de que o suporte e as atualizações só podem ser prestados pela desenvolvedora, e não em mera analogia com o inciso I.",
+      "correcao": "Fundamentar a inexigibilidade no caput do art. 30 (inviabilidade de competição), com o inciso I como hipótese exemplificativa. Demonstrar, com documentos, que o suporte e as atualizações dependem de acesso exclusivo ao código-fonte e às versões oficiais. Completar o campo referente ao artigo do RILC.",
+      "redacao_sugerida": "A contratação fundamenta-se no art. 30, caput, da Lei nº 13.303/2016, por inviabilidade de competição, aplicando-se por analogia a hipótese exemplificativa do inciso I, uma vez que o suporte técnico e as atualizações do software proprietário de telemetria só podem ser prestados pela desenvolvedora, titular do código-fonte e das versões oficiais, conforme documentos juntados às fls. __ e art. __ do RILC.",
+      "risco": "Enquadramento frágil pode ser questionado pelos órgãos de controle como contratação sem licitação fora das hipóteses legais, com responsabilização solidária do decisor (art. 30, § 2º).",
+      "referencias_ids": [
+        "tcu-licitacoes-contratos#1710"
+      ],
+      "jurisprudencia_ids": [
+        "pge-ro-parecer-referencial-2-2024"
+      ]
+    },
+    {
+      "item": "e-dir-02",
+      "resultado": "nao_aplicavel",
+      "constatacao": "A contratação é inexigibilidade (art. 30), e não dispensa por valor para obras e serviços de engenharia (art. 29, I). O objeto também não é obra nem serviço de engenharia. O próprio documento afasta os limites do art. 29, I e II.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "e-dir-03",
+      "resultado": "nao_aplicavel",
+      "constatacao": "Não há dispensa por valor com base no art. 29, II. Trata-se de inexigibilidade por inviabilidade de competição. Registra-se, apenas, que o valor estimado (R$ 186.000,00) superaria o limite legal de R$ 50.000,00, de modo que a dispensa por valor não seria alternativa.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "e-dir-04",
+      "resultado": "nao_aplicavel",
+      "constatacao": "O processo não aplica limite de dispensa diferente do legal. Não há dispensa por valor, e o próprio documento afasta a atualização do art. 29, § 3º.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "e-dir-05",
+      "resultado": "nao_aplicavel",
+      "constatacao": "O fracionamento do art. 29, I e II, e do art. 32, III, refere-se à dispensa por valor. A contratação é inexigibilidade de objeto único (1 pacote de suporte para 42 estações, 12 meses). Recomenda-se, apenas, confirmar internamente que não há outros contratos ou pagamentos de suporte e atualização do mesmo software em separado, para que o valor global fique consolidado.",
+      "gravidade": "baixa",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "e-dir-06",
+      "resultado": "nao_aplicavel",
+      "constatacao": "A seção 4 afirma que a contratação não se funda em emergência (art. 29, XV). Observa-se, porém, que a licença vence em 30/11/2026 e o processo ainda tem lacunas. Se o prazo se esgotar, a continuidade do serviço poderia induzir a um pleito emergencial por falta de planejamento, o que deve ser evitado (ver apontamento sobre prazo).",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "e-dir-07",
+      "resultado": "nao_aplicavel",
+      "constatacao": "Não se trata de dispensa por licitação deserta ou por preços excessivos (art. 29, III e IV). O documento afasta expressamente essas hipóteses.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "e-dir-08",
+      "resultado": "nao_aplicavel",
+      "constatacao": "O objeto não é compra ou locação de imóvel (art. 29, V).",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "e-dir-09",
+      "resultado": "parcial",
+      "gravidade": "alta",
+      "local": "Seção 3 – Requisitos 2 e 3 (documento sem marcação de páginas)",
+      "trecho": "consta dos autos atestado de exclusividade emitido pela associação do setor de software. [PREENCHER: identificação da associação emitente, número e data do atestado",
+      "constatacao": "A tese técnica é coerente: o software é proprietário, e suporte e atualizações dependem do código-fonte e das versões oficiais da TeleSan, desenvolvedora. Porém: (a) o atestado não está identificado (emitente, número, data), então não se pode aferir que seja idôneo e atual; (b) a confirmação junto ao emitente (Súmula TCU 255) está em aberto, pois o texto diz que a unidade \"deverá confirmar\" e deixa a data e a forma em branco; (c) a prova escolhida (atestado de associação do setor) é indireta para demonstrar a titularidade do código-fonte, sendo mais robustos documentos da própria titularidade (registro do programa de computador, contrato ou licença de uso, declaração do desenvolvedor); (d) a afirmação de que terceiros não podem prestar o suporte (inclusive revendedores ou parceiros autorizados) não está acompanhada de consulta ou declaração que a sustente.",
+      "porque": "A exclusividade não se presume e deve ser provada por documento idôneo, cuja veracidade o agente público deve confirmar. Sem isso, a inviabilidade de competição que justifica o art. 30, I, da Lei 13.303/2016 não está demonstrada. Atestado genérico, vencido ou não confirmado não comprova a inviabilidade de competição.",
+      "correcao": "Identificar e juntar o atestado (emitente, número, data de emissão e vigência). Confirmar a autenticidade junto ao emitente e registrar nos autos a data, a forma e o responsável pela confirmação. Complementar com declaração do desenvolvedor, registro do software e contrato ou licença que comprove a titularidade do código-fonte. Consultar o desenvolvedor sobre eventual rede de parceiros que preste suporte ao mesmo software e registrar o resultado.",
+      "redacao_sugerida": "A exclusividade da TeleSan Sistemas Ltda. para o suporte e a atualização do software de telemetria está comprovada pelo atestado nº __/__ de __/__/____ (fls. __), emitido por __, cuja autenticidade foi confirmada em __/__/____, por __, junto ao emitente (fls. __), em atendimento à Súmula TCU 255, e pelo registro do programa de computador nº __ e pelo contrato de licença (fls. __), que demonstram a titularidade do código-fonte. Em consulta formal, a desenvolvedora declarou não haver parceiros autorizados a prestar o serviço (fls. __).",
+      "risco": "Contratação direta sem exclusividade comprovada é contratação sem licitação fora das hipóteses legais, com responsabilidade solidária do decisor e do fornecedor em caso de sobrepreço (art. 30, § 2º). Atestado não confirmado é fragilidade frequentemente apontada pelos tribunais de contas.",
+      "referencias_ids": [
+        "tcu-licitacoes-contratos#1710"
+      ],
+      "jurisprudencia_ids": [
+        "tcu-sumula-255",
+        "tce-pa-acordao-69066"
+      ]
+    },
+    {
+      "item": "e-dir-10",
+      "resultado": "nao_aplicavel",
+      "constatacao": "A contratação não se funda no art. 30, II (serviço técnico especializado de notória especialização). O fundamento é a exclusividade do fornecedor (art. 30, I). Não há, portanto, necessidade de demonstrar notória especialização.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "e-dir-11",
+      "resultado": "parcial",
+      "gravidade": "media",
+      "local": "Seção 5 – Razão da escolha do fornecedor (documento sem marcação de páginas)",
+      "trecho": "Não há alternativas de fornecedores para o objeto, porquanto qualquer outro prestador não teria acesso legítimo ao código-fonte nem às atualizações.",
+      "constatacao": "A seção 5 explica a escolha de forma objetiva e impessoal: a TeleSan é a desenvolvedora e detentora do código-fonte e das atualizações, e o texto invoca o art. 31 da Lei 13.303/2016. A afirmação de que não há alternativas, contudo, é uma asserção sem registro de consulta ao mercado ou ao desenvolvedor, e depende da comprovação da exclusividade (item e-dir-09), ainda incompleta.",
+      "porque": "O art. 30, § 3º, II, exige a razão da escolha do fornecedor, e o art. 31 impõe impessoalidade e julgamento objetivo. A motivação só é segura se estiver amparada em prova da exclusividade e no registro das alternativas examinadas.",
+      "correcao": "Complementar a seção com remissão às folhas do atestado e dos documentos de titularidade, e com o registro da análise de alternativas (consulta a parceiros ou revendedores e avaliação da migração para outra solução). Isso reforça que a escolha decorre do critério técnico, e não de preferência.",
+      "redacao_sugerida": "A escolha da TeleSan Sistemas Ltda. decorre de critério técnico objetivo: titularidade do código-fonte e das versões oficiais do software de telemetria já implantado em 42 estações (documentos às fls. __). Foram examinadas as alternativas de prestação por terceiros e de substituição da solução, afastadas por (i) inexistência de parceiros autorizados (fls. __) e (ii) custo e risco de nova implantação (fls. __).",
+      "risco": "Motivação sem lastro documental sugere direcionamento e viola a impessoalidade.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "e-dir-12",
+      "resultado": "parcial",
+      "gravidade": "alta",
+      "local": "Seção 6 – Justificativa do preço (documento sem marcação de páginas)",
+      "trecho": "Quadro comparativo: [PREENCHER: preço: número, data, companhia tomadora, objeto/quantitativo de estações e valor de cada uma das duas notas fiscais de 2026, para cálculo do valor por estação",
+      "constatacao": "O método indicado é idôneo e adequado a fornecedor exclusivo: comparar com preços praticados pelo próprio contratado com outras companhias de saneamento em 2026, mediante notas fiscais. Também está correto o registro da responsabilidade solidária do art. 30, § 2º, e do conceito de sobrepreço (art. 31, § 1º, I). Entretanto, o quadro comparativo está em branco e as notas fiscais (\"anexas\") não foram enviadas, de modo que não é possível aferir a compatibilidade do valor de R$ 186.000,00 (R$ 4.428,57 por estação por ano; R$ 369,05 por estação por mês, valor derivado do total estimado). Também ficam em aberto: a amostra de apenas duas notas fiscais; a comparabilidade do escopo (suporte 24x7, atualizações, número de estações, nível de serviço); o efeito de escala; e a metodologia exigida pelo RILC.",
+      "porque": "O art. 30, § 3º, III, exige justificativa do preço, e o art. 31, § 1º, I, define sobrepreço como preços expressivamente superiores aos referenciais de mercado. Sem os valores comparados, o preço não está justificado e o decisor e o fornecedor ficam expostos à responsabilidade solidária (art. 30, § 2º). Como parâmetro técnico, o Caderno de Logística (federal, de aplicação por analogia a estatal) recomenda, para contratação direta, a comparação com notas fiscais do contratado a outros clientes no período de até um ano e, sempre que possível, ao menos três notas, comparando o valor unitário.",
+      "correcao": "Preencher o quadro com número, data, tomadora, escopo, quantidade de estações e valor de cada nota. Calcular o valor por estação e por mês e comparar com R$ 369,05. Demonstrar a similaridade de escopo e nível de serviço. Se possível, ampliar a amostra para ao menos três documentos ou outro meio idôneo. Registrar o resultado (preço compatível ou negociação de redução) e a conformidade com a metodologia do RILC.",
+      "redacao_sugerida": "Quadro comparativo: NF nº __ (__/__/2026), Companhia __, __ estações, R$ __ → R$ __ por estação/mês; NF nº __ (__/__/2026), Companhia __, __ estações, R$ __ → R$ __ por estação/mês; objeto desta contratação: 42 estações, R$ 186.000,00 → R$ 369,05 por estação/mês. Diferença percentual: __%. Os escopos são equivalentes (suporte 24x7 e atualizações), conforme documentos às fls. __. O preço é considerado compatível/foi negociado para R$ __.",
+      "risco": "Risco de sobrepreço sem lastro para refutação. A responsabilidade solidária do decisor e do fornecedor pode ser apurada por órgão de controle externo.",
+      "referencias_ids": [
+        "cad-pesquisa-precos#56",
+        "cad-pesquisa-precos#60",
+        "tcu-licitacoes-contratos#1742"
+      ],
+      "jurisprudencia_ids": [
+        "tce-pa-acordao-69368"
+      ]
+    },
+    {
+      "item": "e-dir-13",
+      "resultado": "parcial",
+      "gravidade": "media",
+      "local": "Seção 7 – Habilitação e ausência de impedimentos do contratado (documento sem marcação de páginas)",
+      "trecho": "Antes da contratação, serão consultados os cadastros de sanções aplicáveis, inclusive o cadastro de fornecedores impedidos (art. 37)",
+      "constatacao": "O documento prevê as consultas e as certidões, a declaração de inexistência dos impedimentos do art. 38 e a vinculação do contrato ao termo de inexigibilidade e à proposta (art. 69, VIII) e a obrigação de manter as condições de habilitação (art. 69, IX). Contudo, as consultas ainda não foram realizadas, e as datas e resultados estão em branco, e os documentos de habilitação exigidos pelo RILC não foram conferidos. Além disso, o CNPJ informado parece genérico (ver apontamento próprio), o que compromete a consulta.",
+      "porque": "Os arts. 37 e 38 impedem a contratação de empresa sancionada ou com vínculos com a estatal. A verificação prévia é a prova de que o contratado não incide nos impedimentos, e as cláusulas do art. 69, VIII e IX, devem constar do contrato.",
+      "correcao": "Antes da autorização, realizar e juntar as consultas aos cadastros (inclusive o cadastro do art. 37), as certidões e a declaração do art. 38, com data e resultado. Verificar o quadro societário da TeleSan frente a empregados, dirigentes e parentes da Companhia. Garantir que as cláusulas do art. 69, VIII e IX, constem da minuta.",
+      "redacao_sugerida": "Em __/__/2026 foram consultados, sem ocorrências, os cadastros __ (fls. __). Foram juntadas as certidões de regularidade fiscal, trabalhista e previdenciária válidas até __ (fls. __) e a declaração de inexistência dos impedimentos do art. 38 da Lei nº 13.303/2016 (fls. __).",
+      "risco": "Contratar empresa impedida é causa de nulidade e caracteriza favorecimento.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "e-dir-14",
+      "resultado": "parcial",
+      "gravidade": "baixa",
+      "local": "Seção 9 – Autorização e publicidade (documento sem marcação de páginas)",
+      "trecho": "[PREENCHER: endereço eletrônico do portal, data de divulgação e prazo de publicação conforme o RILC].",
+      "constatacao": "O documento prevê a divulgação no portal da Companhia (art. 39), a atualização mensal dos dados de execução (art. 88) e, se for o caso, a inclusão na relação semestral (art. 48). É compromisso prospectivo: não há endereço, data de divulgação nem prazo do RILC. Observa-se que a relação do art. 48 refere-se a aquisições de bens, e a contratação é de serviço, sendo adequada a ressalva \"caso aplicável\".",
+      "porque": "Os arts. 39, 48 e 88 exigem divulgação do contrato em portal na internet, da relação semestral de aquisições de bens e da execução contratual atualizada mensalmente. A falta de publicidade impede o controle social.",
+      "correcao": "Após a assinatura, registrar nos autos o link e a data de divulgação do termo de inexigibilidade e do contrato. Incluir o contrato na rotina mensal de atualização da execução. Conferir no RILC o prazo de publicação.",
+      "redacao_sugerida": "A contratação direta e o contrato foram divulgados em __/__/2026 no endereço eletrônico __, em __ dias da assinatura, conforme art. __ do RILC.",
+      "risco": "Ausência ou atraso de divulgação é apontada pelos órgãos de controle e pode macular o processo.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "e-dir-15",
+      "resultado": "nao_verificavel",
+      "gravidade": "alta",
+      "local": "Seções 1, 2, 6, 7 e 9 (campos \"conferir no RILC\")",
+      "trecho": "[PREENCHER: conferir no RILC — alçada de autorização e ratificação da inexigibilidade, parecer jurídico obrigatório e eventual valor-limite que exija deliberação da Diretoria ou do Conselho].",
+      "constatacao": "O RILC não foi enviado, e o próprio documento deixa em aberto, remetendo ao regulamento: o artigo que disciplina a inexigibilidade por fornecedor exclusivo; a instrução mínima e o procedimento interno; o prazo e a possibilidade de prorrogação do contrato; a metodologia e a quantidade mínima de documentos na pesquisa de preços; os documentos de habilitação; a alçada de autorização e ratificação; a exigência de parecer jurídico; o valor-limite para deliberação da Diretoria ou do Conselho; os prazos de publicação; e as cláusulas padrão (níveis de serviço). Sem o RILC, não é possível verificar a conformidade com o rito interno.",
+      "porque": "O art. 40, IV, da Lei 13.303/2016 atribui ao RILC os procedimentos de licitação e de contratação direta. Descumprir o rito ou as alçadas vicia o ato e atrai a responsabilidade de quem autorizou. Não se presumem regras do RILC nem se aplica a Lei 14.133/2021 em seu lugar.",
+      "correcao": "Juntar o RILC vigente (e, se houver, a deliberação do Conselho sobre valores) e preencher todos os campos pendentes com a indicação do artigo, em quadro de conformidade: requisito do RILC × folha dos autos. Submeter novamente o processo para conferência.",
+      "risco": "Autorização por alçada incorreta ou sem parecer jurídico obrigatório torna o ato anulável e expõe a autoridade à responsabilização.",
+      "jurisprudencia_ids": []
+    }
+  ],
+  "outros_apontamentos": [
+    {
+      "titulo": "Instrução em formato de minuta, com campos \"[PREENCHER]\" nos requisitos essenciais",
+      "constatacao": "O documento mantém campos em branco em pontos exigidos pelo art. 30, § 3º, da Lei 13.303/2016: identificação e confirmação do atestado, quadro comparativo de preços, consultas aos cadastros e certidões, dotação orçamentária e dados de publicação. A autoridade seria chamada a autorizar a contratação sem os elementos que a sustentam.",
+      "trecho": "[PREENCHER: data e forma da confirmação do atestado junto à entidade emitente].",
+      "local": "Seção 3 – Requisito 3 (e demais seções)",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "30",
+          "disp": "p3"
+        }
+      ],
+      "porque": "O processo de contratação direta deve ser instruído com os elementos do art. 30, § 3º, antes da decisão. Autorizar com lacunas inverte a ordem lógica do controle e sujeita a decisão à responsabilização.",
+      "risco": "Autorização com instrução incompleta e eventual necessidade de refazer atos após o início da execução.",
+      "correcao": "Preencher todos os campos, juntar os documentos referidos e só então submeter à autoridade. Registrar a lista de verificação com a folha de cada elemento.",
+      "gravidade": "media"
+    },
+    {
+      "titulo": "Prazo exíguo até o vencimento da licença e vigência indefinida",
+      "constatacao": "A licença de suporte vence em 30/11/2026 e a análise é de 12/11/2026, restando 18 dias para concluir confirmação do atestado, pesquisa de preços, consultas, parecer, autorização, contrato e publicação. O documento também não fixa a data de início da vigência nem a possibilidade de prorrogação (campo \"[PREENCHER]\"), e a execução antes da conclusão do processo é vedada pelo próprio documento.",
+      "trecho": "Prazo da contratação: 12 meses. [PREENCHER: conferir no RILC — regras sobre a data de início da vigência",
+      "local": "Seção 1 – Prazo da contratação; Seção 4",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "69",
+          "disp": "VIII"
+        }
+      ],
+      "porque": "Se o prazo se esgotar, o serviço contínuo fica descoberto e surge a pressão para contratação emergencial ou execução sem cobertura contratual. A falta de planejamento pode caracterizar emergência fabricada (art. 29, XV), o que se deve evitar.",
+      "risco": "Perda de comunicação com os sensores das 42 estações e comprometimento do monitoramento operacional. Risco de pagamento por serviço prestado sem contrato.",
+      "correcao": "Priorizar o processo e fixar cronograma interno. Definir vigência de 12 meses a partir de 01/12/2026 (ou da assinatura, se posterior), com a previsão de prorrogação conforme o RILC. Exigir, em eventual prorrogação, nova justificativa de preço e nova confirmação da exclusividade. Consultar a contratada sobre a possibilidade de extensão temporária da licença atual, como plano de contingência.",
+      "gravidade": "media"
+    },
+    {
+      "titulo": "Imputação integral da despesa ao exercício de 2026 e ausência de dotação",
+      "constatacao": "O documento imputa todo o valor de R$ 186.000,00 ao orçamento de custeio de 2026, embora a vigência de 12 meses, iniciando-se em 01/12/2026, produza apenas um mês de despesa em 2026 (R$ 15.500,00) e onze meses em 2027 (R$ 170.500,00, cálculo a partir do valor mensal informado). O número da dotação e a declaração de disponibilidade orçamentária estão em branco.",
+      "trecho": "As despesas correrão à conta do orçamento de custeio de 2026, centro de custo 3.2.01, no valor estimado de R$ 186.000,00.",
+      "local": "Seção 8 – Recursos para a contratação",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "30",
+          "disp": "p3"
+        }
+      ],
+      "porque": "A despesa deve ser apropriada ao período em que ocorre a execução, e a disponibilidade de recursos deve ser atestada. A cláusula \"havendo execução em exercício seguinte\" é incompatível com o prazo informado, que certamente alcança 2027.",
+      "risco": "Inconsistência orçamentária e contratação sem cobertura para as parcelas de 2027.",
+      "correcao": "Apropriar a despesa por exercício conforme o cronograma de pagamento, indicar as contas e obter a declaração de disponibilidade da área financeira para 2026 e a previsão no orçamento de 2027.",
+      "gravidade": "media"
+    },
+    {
+      "titulo": "CNPJ do contratado aparentemente genérico",
+      "constatacao": "O CNPJ informado para a TeleSan Sistemas Ltda. (00.000.000/0001-00) tem aparência de valor genérico ou de preenchimento provisório. Não serve para as consultas aos cadastros de sanções, às certidões e à confirmação do atestado de exclusividade.",
+      "trecho": "TeleSan Sistemas Ltda. (CNPJ 00.000.000/0001-00)",
+      "local": "Seção 1 e Seção 5",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "38",
+          "disp": "caput"
+        }
+      ],
+      "porque": "A verificação dos impedimentos dos arts. 37 e 38 e a identificação do titular da exclusividade dependem do correto registro do contratado.",
+      "risco": "Consulta a cadastros com identificação incorreta resulta em verificação inválida de impedimentos.",
+      "correcao": "Corrigir o CNPJ conforme o cartão do CNPJ e refazer as consultas com o número correto.",
+      "gravidade": "media"
+    },
+    {
+      "titulo": "Níveis de serviço apenas recomendados e dependência de fornecedor exclusivo",
+      "constatacao": "O documento apenas recomenda a previsão de níveis de serviço, confidencialidade e backup, e remete as cláusulas à minuta padrão do RILC. O objeto é suporte 24x7, que sem indicadores de tempo de resposta e solução fica de difícil fiscalização e de difícil comparação de preço. Há um único gestor designado, sem indicação de fiscal ou substituto. Não há registro de medidas para reduzir a dependência do fornecedor exclusivo (custódia do código-fonte, documentação, plano de migração).",
+      "trecho": "Recomenda-se a previsão de níveis de serviço (tempo de resposta e de solução) e de confidencialidade e backup das configurações no contrato.",
+      "local": "Seção 7 – Fiscalização",
+      "fundamento": [
+        {
+          "norma": "lei-13303",
+          "art": "69",
+          "disp": "VIII"
+        }
+      ],
+      "porque": "Serviço de execução contínua exige parâmetros objetivos de aferição para que o preço pago corresponda ao que foi contratado, o que se relaciona com a economicidade e a vedação ao superfaturamento (art. 31).",
+      "risco": "Pagamento integral por serviço sem desempenho mensurável e aumento da dependência do fornecedor nas próximas contratações.",
+      "correcao": "Incluir no contrato indicadores (tempo de resposta e de solução por criticidade), glosas, confidencialidade e backup. Designar fiscal e substituto. Avaliar custódia do código-fonte (escrow) e estudo de alternativas para os próximos ciclos.",
+      "gravidade": "baixa"
+    }
+  ],
+  "precos": null,
+  "salarios": null,
+  "normas_locais": [],
+  "referencias_tecnicas": [
+    {
+      "id": "tcu-licitacoes-contratos#1710",
+      "fonte": "tcu-licitacoes-contratos",
+      "titulo_fonte": "Licitações & Contratos: orientações e jurisprudência do TCU (5ª edição)",
+      "alcance": "nacional",
+      "secao": "",
+      "pagina": 708,
+      "texto": "697\nArt. 74 [...]\n § 1º [...] atestado de exclusividade, contrato de exclusividade, declaração do fabricante ou\n outro documento idôneo capaz de comprovar que o objeto é fornecido ou prestado por\n produtor, empresa ou representante comercial exclusivos; (Grifo nosso)\n Cabe ressaltar que a inviabilidade de competição pode ser demonstrada por qualquer\ndocumento, desde que idôneo e capaz de comprovar a exclusividade. Assim, é importante que\na Administração verifique cuidadosamente a veracidade da documentação apresentada e, se\nnecessário, realize diligências e instrua o processo com outros documentos adicionais que\ncorroborem a informação1098.\nQuadro 305 - Referências normativas para inexigibilidade para contratação de objeto de\n fornecedor exclusivo\nNormativos Dispositivos",
+      "item": "e-dir-09",
+      "abnt": "BRASIL. Tribunal de Contas da União. Licitações & contratos: orientações e jurisprudência do TCU. 5. ed. Brasília, DF: TCU, 2024. Acesso em: {acesso}.",
+      "url": ""
+    },
+    {
+      "id": "tcu-licitacoes-contratos#1742",
+      "fonte": "tcu-licitacoes-contratos",
+      "titulo_fonte": "Licitações & Contratos: orientações e jurisprudência do TCU (5ª edição)",
+      "alcance": "nacional",
+      "secao": "Art. 74. É inexigível a licitação quando inviável a competição, em especial nos casos de:\n [...]",
+      "pagina": 719,
+      "texto": "Art. 23. O valor previamente estimado da contratação deverá ser compatível com os\n valores praticados pelo mercado, considerados os preços constantes de bancos de dados\n públicos e as quantidades a serem contratadas, observadas a potencial economia de\n escala e as peculiaridades do local de execução do objeto. [...]\n § 4º Nas contratações diretas por inexigibilidade ou por dispensa, quando não for\n possível estimar o valor do objeto na forma estabelecida nos §§ 1º, 2º e 3º deste artigo,\n o contratado deverá comprovar previamente que os preços estão em conformidade com\n os praticados em contratações semelhantes de objetos de mesma natureza, por meio da\n apresentação de notas fiscais emitidas para outros contratantes no período de até 1 (um)\n ano anterior à data da contratação pela Administração, ou por outro meio idôneo.\nArt. 6º [...]\nXIX - notória especialização: qualidade de profissional ou de empresa cujo conceito, no\n Lei 14.133/2021 campo de sua especialidade, decorrente de desempenho anterior, estudos, experiência,\n publicações, organização, aparelhamento, equipe técnica ou outros requisitos\n relacionados com suas atividades, permite inferir que o seu trabalho é essencial e\n reconhecidamente adequado à plena satisfação do objeto do contrato; [...]\nArt. 74. É inexigível a licitação quando inviável a competição, em especial nos casos de:\n [...]",
+      "item": "e-dir-10",
+      "abnt": "BRASIL. Tribunal de Contas da União. Licitações & contratos: orientações e jurisprudência do TCU. 5. ed. Brasília, DF: TCU, 2024. Acesso em: {acesso}.",
+      "url": ""
+    },
+    {
+      "id": "cad-pesquisa-precos#56",
+      "fonte": "cad-pesquisa-precos",
+      "titulo_fonte": "Caderno de Logística – Pesquisa de preços (2023)",
+      "alcance": "federal-parametro",
+      "secao": "Art. 7º Nas contratações diretas por inexigibilidade ou por dispensa de licitação, aplica-se o\n disposto no art. 5º.",
+      "pagina": 30,
+      "texto": "Caderno de Logística – Pesquisa de Preços\nc. a contratação deve ter sido realizada dentro do período de um ano anterior à data\n da contratação que está sendo realizada; ou\n d. outros métodos idôneos.\nEXCEÇÃO: Caso a contratada não tenha comercializado o mesmo objeto anteriormente,\nexcepcionalmente, a justificativa do preço poderá ser realizada com outros objetos de\nmesma natureza, cabendo à contratada demonstrar a similaridade das especificações\ntécnicas com o objeto pretendido.\nATENÇÃO! Sempre que possível, deve-se apresentar, ao menos, três notas fiscais, seguindo\na mesma lógica da norma.\nNo caso das dispensas por baixo valor (incisos I e II do art. 75 da Lei nº 14.133/21), a\nestimativa de preços poderá ser feita durante a seleção da proposta mais vantajosa, entre\nos valores ofertados pelos concorrentes, agilizando o processo.\n❑ Confira a seguir os principais dispositivos que tratam do assunto:\n IN Seges nº 65, de 2021\nArt. 7º Nas contratações diretas por inexigibilidade ou por dispensa de licitação, aplica-se o\n disposto no art. 5º.\n(...)\n§ 4º Na hipótese de dispensa de licitação com base nos incisos I e II do art. 75 da Lei nº\n 14.133, de 1º de abril de 2021, a estimativa de preços de que trata o caput poderá ser\n realizada concomitantemente à seleção da proposta economicamente mais vantajosa.\n§ 5º O procedimento do § 4º será realizado por meio de solicitação formal de cotações a\n fornecedores.\nIN Seges nº 67, de 2021",
+      "item": "e-dir-15",
+      "abnt": "BRASIL. Secretaria de Gestão. Caderno de Logística: pesquisa de preços. Brasília, DF, 2023. Disponível em: {url}. Acesso em: {acesso}.",
+      "url": "https://www.gov.br/compras/pt-br/agente-publico/cadernos-de-logistica/midia/temporario-caderno-de-pesquisa-de-precos-2023_final-1.pdf"
+    },
+    {
+      "id": "cad-pesquisa-precos#60",
+      "fonte": "cad-pesquisa-precos",
+      "titulo_fonte": "Caderno de Logística – Pesquisa de preços (2023)",
+      "alcance": "federal-parametro",
+      "secao": "2.3. Na consulta direta com fornecedores, foi enviada comunicação às seguintes empresas:",
+      "pagina": 32,
+      "texto": "2.3. Na consulta direta com fornecedores, foi enviada comunicação às seguintes empresas:\nFornecedor Apresentou resposta? Justificativa para escolha\n [Nome do fornecedor] S/N [Apresentar justificativas\n (em caso positivo, indicar para a escolha]\n sequencial/folha)\n [Nome do fornecedor] S/N [Apresentar justificativas\n (em caso positivo, indicar para a escolha]\n sequencial/folha)\n31 | 38",
+      "item": "e-dir-11",
+      "abnt": "BRASIL. Secretaria de Gestão. Caderno de Logística: pesquisa de preços. Brasília, DF, 2023. Disponível em: {url}. Acesso em: {acesso}.",
+      "url": "https://www.gov.br/compras/pt-br/agente-publico/cadernos-de-logistica/midia/temporario-caderno-de-pesquisa-de-precos-2023_final-1.pdf"
+    }
+  ],
+  "jurisprudencia_externa": [],
+  "_execucao": {
+    "modelo": "claude-sonnet-5-5",
+    "segundos": 121,
+    "uso": {
+      "input_tokens": 4,
+      "cache_creation_input_tokens": 42188,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 42188,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 18314,
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard",
+      "output_tokens_details": {
+        "thinking_tokens": 6638
+      }
+    },
+    "custo_usd": 0.2886,
+    "parada": "tool_use",
+    "avisos": [],
+    "fatos": [
+      "Empresa estatal: além da Lei 13.303/2016, vale o REGULAMENTO INTERNO DE LICITAÇÕES E CONTRATOS (RILC) da estatal (art. 40). O destinatário NÃO enviou o RILC: marque como nao_verificavel os itens que dependem dele e recomende juntá-lo; não presuma regras do RILC nem aplique a Lei 14.133/2021 no lugar dele."
+    ],
+    "trilhas": [],
+    "trilhas_avaliadas": []
+  }
+}
