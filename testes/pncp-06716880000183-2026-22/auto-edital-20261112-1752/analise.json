@@ -1,0 +1,1611 @@
+{
+  "regime": "lei-14133",
+  "regime_texto": "Lei 14.133/2021",
+  "objeto": [],
+  "roteiro_versao": "roteiro 2026-10-29b",
+  "itens_roteiro": [
+    {
+      "id": "plan-01",
+      "doc": "planilha",
+      "titulo": "Enquadramento como dedicação exclusiva de mão de obra",
+      "verificar": "O objeto se enquadra como serviço contínuo com regime de dedicação exclusiva de mão de obra (empregados à disposição nas dependências do contratante, sem compartilhamento, com fiscalização da distribuição e da jornada).",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "6",
+          "disp": "XVI"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Enquadramento errado leva a critério de reajuste errado (índice × repactuação) e a obrigações trabalhistas mal dimensionadas.",
+      "dica": "Confirme as características do art. 6º, XVI, e reflita o enquadramento no TR, na planilha e no edital.",
+      "temas": [
+        "dedicação exclusiva de mão de obra",
+        "terceirização",
+        "serviços contínuos"
+      ]
+    },
+    {
+      "id": "plan-02",
+      "doc": "planilha",
+      "titulo": "Convenção coletiva da categoria correta",
+      "verificar": "A planilha/orçamento usa a convenção ou acordo coletivo da categoria profissional que corresponde às atribuições do posto (sindicato, vigência e data-base indicados) e os salários, benefícios e adicionais conferem com ela. Convenção de categoria diversa da profissional a ser contratada (por exemplo, asseio e conservação para auxiliar de educação infantil) é falha GRAVE, porque altera piso salarial, benefícios, adicionais e encargos — toda a composição do custo do posto.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "135",
+          "disp": "II"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "135",
+          "disp": "p5"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "23",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "63",
+          "disp": "p1"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Orçamento com convenção de outra categoria distorce o custo do posto (para mais ou para menos), compromete a aceitabilidade das propostas e a repactuação futura (que se vincula à convenção da proposta), e expõe a Administração a sobrepreço, inexequibilidade ou passivo trabalhista subsidiário.",
+      "dica": "Identifique a categoria pela CBO e pelas atribuições do posto, confirme no Mediador/MTE a convenção aplicável ao sindicato da categoria na base territorial e refaça a planilha; registre no processo a justificativa do enquadramento sindical.",
+      "temas": [
+        "convenção coletiva",
+        "repactuação",
+        "piso salarial",
+        "categoria profissional",
+        "enquadramento sindical"
+      ]
+    },
+    {
+      "id": "plan-03",
+      "doc": "planilha",
+      "titulo": "Itens de convenção que não vinculam a Administração",
+      "verificar": "A planilha não inclui, como custo obrigatório, cláusulas de convenção sobre matéria não trabalhista, participação nos lucros, ou que fixem valores/índices de encargos sociais e preços de insumos.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "135",
+          "disp": "p1"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Custos indevidos elevam o preço e criam precedente para repactuações irregulares.",
+      "dica": "Revise as cláusulas da CCT e exclua da planilha o que se enquadra nas vedações do art. 135, § 1º.",
+      "temas": [
+        "convenção coletiva",
+        "repactuação"
+      ]
+    },
+    {
+      "id": "plan-04",
+      "doc": "planilha",
+      "titulo": "Declaração de custos trabalhistas integrais",
+      "verificar": "O edital exige declaração do licitante de que a proposta cobre integralmente os custos dos direitos trabalhistas (Constituição, leis, normas infralegais, convenções e TACs vigentes).",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "63",
+          "disp": "p1"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Sem a declaração, enfraquece-se a base para recusar propostas com custos trabalhistas subdimensionados.",
+      "dica": "Inclua a declaração no modelo de proposta e cite o art. 63, § 1º.",
+      "temas": [
+        "exequibilidade",
+        "custos trabalhistas"
+      ]
+    },
+    {
+      "id": "plan-05",
+      "doc": "planilha",
+      "titulo": "Garantias do cumprimento das obrigações trabalhistas",
+      "verificar": "O edital/contrato prevê ao menos uma das medidas para assegurar o pagamento das verbas trabalhistas (garantia com cobertura trabalhista, conta vinculada, pagamento direto em caso de inadimplemento, entre outras).",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "121",
+          "disp": "p2"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "121",
+          "disp": "p3"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Sem essas medidas e com fiscalização falha, a Administração pode responder solidariamente por encargos previdenciários e subsidiariamente por verbas trabalhistas.",
+      "dica": "Preveja conta-depósito vinculada (bloqueada para movimentação) para férias, 13º e rescisórias e a comprovação mensal das obrigações.",
+      "temas": [
+        "conta vinculada",
+        "responsabilidade subsidiária",
+        "obrigações trabalhistas"
+      ]
+    },
+    {
+      "id": "plan-06",
+      "doc": "planilha",
+      "titulo": "Conferência aritmética da planilha",
+      "verificar": "Somatórios, percentuais e totais da planilha estão corretos e consistentes entre módulos (conferência feita por programa, não pela IA).",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "18",
+          "disp": "IV"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Erros de cálculo distorcem o valor estimado e o critério de aceitabilidade de preços.",
+      "dica": "Envie a planilha em Excel (com fórmulas) para conferência automática.",
+      "temas": [
+        "planilha de custos",
+        "formação de preços"
+      ]
+    },
+    {
+      "id": "ed-01",
+      "doc": "edital",
+      "titulo": "Conteúdo mínimo do edital",
+      "verificar": "O edital traz objeto e regras de convocação, julgamento, habilitação, recursos, penalidades, fiscalização e gestão do contrato, entrega do objeto e condições de pagamento.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "25",
+          "disp": "caput"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Edital lacunoso gera impugnações, insegurança aos licitantes e nulidade de atos.",
+      "dica": "Use o roteiro do art. 25 como checklist e, quando houver, a minuta padronizada do órgão.",
+      "temas": [
+        "edital",
+        "conteúdo do edital"
+      ]
+    },
+    {
+      "id": "ed-02",
+      "doc": "edital",
+      "titulo": "Índice de reajuste com data-base no orçamento",
+      "verificar": "O edital prevê índice de reajustamento de preço com data-base vinculada à data do orçamento estimado, independentemente do prazo do contrato.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "25",
+          "disp": "p7"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "92",
+          "disp": "p3"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Sem índice e data-base, o contratado pode pleitear reajuste por critério não previsto; data-base contada da assinatura ou da proposta contraria a lei e gera reajustes indevidos ou negados de forma ilegal.",
+      "dica": "Escreva: 'os preços serão reajustados pelo [índice], com data-base na data do orçamento estimado ([mês/ano]), observado o interregno mínimo de um ano'.",
+      "temas": [
+        "reajuste",
+        "data-base",
+        "índice de reajuste",
+        "anualidade"
+      ]
+    },
+    {
+      "id": "ed-03",
+      "doc": "edital",
+      "titulo": "Critério de reajuste em serviços contínuos",
+      "verificar": "Em serviços contínuos, o critério de reajuste é reajustamento em sentido estrito (por índice) quando não há dedicação exclusiva/predominância de mão de obra, e repactuação quando há.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "25",
+          "disp": "p8.I"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "25",
+          "disp": "p8.II"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "92",
+          "disp": "p4.II"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "135",
+          "disp": "caput"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Prever reajuste por índice em contrato com dedicação exclusiva de mão de obra (ou o inverso) gera pagamentos desconectados dos custos reais e disputas na execução.",
+      "dica": "Com dedicação exclusiva: repactuação para mão de obra (data-base da convenção) e índice/repactuação para insumos, conforme o caso, com interregno mínimo de um ano.",
+      "temas": [
+        "repactuação",
+        "reajuste",
+        "serviços contínuos",
+        "dedicação exclusiva de mão de obra"
+      ]
+    },
+    {
+      "id": "ed-04",
+      "doc": "edital",
+      "titulo": "Divulgação de todos os anexos",
+      "verificar": "Edital, minuta de contrato, TR, projetos e demais anexos são divulgados no sítio oficial na mesma data, sem exigência de cadastro para acesso.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "25",
+          "disp": "p3"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "54",
+          "disp": "caput"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Anexo não divulgado ou acesso condicionado a cadastro restringe a competitividade e pode anular o certame.",
+      "dica": "Publique tudo no PNCP e no sítio do órgão no mesmo dia, com acesso livre.",
+      "temas": [
+        "publicidade",
+        "PNCP",
+        "divulgação do edital"
+      ]
+    },
+    {
+      "id": "ed-05",
+      "doc": "edital",
+      "titulo": "Prazo mínimo para apresentação de propostas",
+      "verificar": "O prazo entre a divulgação e o fim do recebimento de propostas respeita o mínimo legal para o objeto e o critério de julgamento, contado em dias úteis com exclusão do dia do começo, que é o primeiro dia útil seguinte à divulgação na internet.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "55",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "183",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "183",
+          "disp": "p1.I"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Prazo inferior ao mínimo é vício que leva à republicação ou anulação.",
+      "dica": "Conte em dias úteis a partir da divulgação e, se o edital for alterado com impacto nas propostas, reabra o prazo (art. 55, § 1º).",
+      "temas": [
+        "prazo de publicação",
+        "prazo mínimo de propostas",
+        "prazo mínimo para apresentação de propostas",
+        "primeiro dia útil seguinte à divulgação",
+        "divulgação do edital no PNCP"
+      ]
+    },
+    {
+      "id": "ed-06",
+      "doc": "edital",
+      "titulo": "Qualificação técnica proporcional",
+      "verificar": "As exigências de capacidade técnica se limitam às parcelas de maior relevância ou valor significativo (valor individual igual ou superior a 4% do total) e os quantitativos mínimos não passam de 50% dessas parcelas.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "67",
+          "disp": "p1"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "67",
+          "disp": "p2"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Exigências desproporcionais restringem a competição e são das irregularidades mais apontadas em representações e impugnações.",
+      "dica": "Liste as parcelas de maior relevância com seu percentual no orçamento e limite os quantitativos a 50% delas.",
+      "temas": [
+        "qualificação técnica",
+        "atestado de capacidade técnica",
+        "parcela de maior relevância"
+      ]
+    },
+    {
+      "id": "ed-07",
+      "doc": "edital",
+      "titulo": "Qualificação econômico-financeira",
+      "verificar": "Os índices contábeis exigidos estão justificados no processo; não se exige faturamento mínimo anterior nem índices de rentabilidade ou lucratividade; capital ou patrimônio líquido mínimo não passa de 10% do valor estimado.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "69",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "69",
+          "disp": "p2"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "69",
+          "disp": "p4"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "69",
+          "disp": "p5"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Exigências econômicas vedadas ou desproporcionais restringem a competição e levam à anulação do certame.",
+      "dica": "Justifique os índices escolhidos e seus valores com base no mercado do objeto.",
+      "temas": [
+        "qualificação econômico-financeira",
+        "índices contábeis",
+        "patrimônio líquido"
+      ]
+    },
+    {
+      "id": "ed-08",
+      "doc": "edital",
+      "titulo": "Garantia de proposta e garantia contratual",
+      "verificar": "A garantia de proposta, se exigida, não passa de 1% do valor estimado; a garantia contratual respeita os limites legais (até 5%, ou até 10% com justificativa de complexidade e riscos).",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "58",
+          "disp": "p1"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "98",
+          "disp": "caput"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Garantias acima do limite legal restringem a participação.",
+      "dica": "Fixe percentuais dentro do limite e justifique quando usar o percentual majorado.",
+      "temas": [
+        "garantia contratual",
+        "garantia de proposta"
+      ]
+    },
+    {
+      "id": "ed-09",
+      "doc": "edital",
+      "titulo": "Participação em consórcio",
+      "verificar": "Se o edital veda a participação de consórcios, a vedação está justificada no processo.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "15",
+          "disp": "caput"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Vedação sem motivação pode restringir a competição em objetos de maior porte ou complexidade.",
+      "dica": "Registre no ETP/TR por que o consórcio não é adequado ao objeto (ou admita-o com as regras do art. 15).",
+      "temas": [
+        "consórcio",
+        "participação em licitação"
+      ]
+    },
+    {
+      "id": "ed-10",
+      "doc": "edital",
+      "titulo": "Tratamento diferenciado a ME e EPP",
+      "verificar": "O edital aplica o tratamento favorecido às microempresas e empresas de pequeno porte (LC 123/2006), observados os limites do art. 4º da Lei 14.133.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "4",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "4",
+          "disp": "p1"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Omitir ou aplicar mal o tratamento diferenciado gera impugnações e nulidade de etapas.",
+      "dica": "Inclua as regras de empate ficto, regularidade fiscal tardia e, quando cabível, itens exclusivos ou cota reservada.",
+      "temas": [
+        "microempresa",
+        "empresa de pequeno porte",
+        "tratamento diferenciado"
+      ]
+    },
+    {
+      "id": "ed-11",
+      "doc": "edital",
+      "titulo": "Impugnação e esclarecimentos",
+      "verificar": "O edital prevê pedidos de esclarecimento e impugnação até 3 dias úteis antes da abertura, com resposta em até 3 dias úteis (limitada ao último dia útil antes da abertura), e divulgação das respostas.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "164",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "164",
+          "disp": "pu"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Prazos divergentes da lei cerceiam o direito de impugnar e podem anular o certame.",
+      "dica": "Copie os prazos do art. 164 e indique o meio eletrônico para envio.",
+      "temas": [
+        "impugnação ao edital",
+        "esclarecimentos"
+      ]
+    },
+    {
+      "id": "ed-12",
+      "doc": "edital",
+      "titulo": "Recursos administrativos",
+      "verificar": "O edital prevê recurso no prazo de 3 dias úteis, com as regras de intenção e de contrarrazões.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "165",
+          "disp": "I"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "165",
+          "disp": "p1"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Regras recursais em desacordo com a lei geram nulidade da fase de julgamento.",
+      "dica": "Reproduza os prazos e o rito do art. 165.",
+      "temas": [
+        "recurso administrativo",
+        "intenção de recurso"
+      ]
+    },
+    {
+      "id": "ed-13",
+      "doc": "edital",
+      "titulo": "Sanções e multas",
+      "verificar": "As sanções seguem o rol do art. 156 e a multa está entre 0,5% e 30% do valor do contrato ou da contratação direta.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "156",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "156",
+          "disp": "p3"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Multas fora dos limites legais são inaplicáveis e enfraquecem a gestão do contrato.",
+      "dica": "Gradue as multas por tipo de infração dentro do intervalo legal.",
+      "temas": [
+        "sanções administrativas",
+        "multa contratual"
+      ]
+    },
+    {
+      "id": "ed-14",
+      "doc": "edital",
+      "titulo": "Orçamento sigiloso motivado",
+      "verificar": "Se o orçamento estimado é sigiloso, há motivação e o sigilo não alcança os órgãos de controle; o valor é divulgado após o julgamento.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "24",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "18",
+          "disp": "XI"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Sigilo sem motivação, ou com valor divulgado indevidamente, compromete a estratégia de preços e a transparência.",
+      "dica": "Registre no processo o motivo do sigilo e o momento da divulgação.",
+      "temas": [
+        "orçamento sigiloso",
+        "sigilo do orçamento"
+      ]
+    },
+    {
+      "id": "ed-15",
+      "doc": "edital",
+      "titulo": "Minuta de contrato como anexo e cláusulas necessárias",
+      "verificar": "A minuta de contrato é anexo do edital e contém as cláusulas necessárias (objeto, regime, preço e reajuste, prazos, pagamento, garantias, direitos e responsabilidades, sanções, extinção, matriz de riscos quando houver).",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "18",
+          "disp": "VI"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "92",
+          "disp": "caput"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Cláusula essencial ausente gera lacuna na execução e dificulta a aplicação de sanções e reajustes.",
+      "dica": "Confira a minuta contra os incisos do art. 92.",
+      "temas": [
+        "minuta de contrato",
+        "cláusulas necessárias"
+      ]
+    },
+    {
+      "id": "ed-16",
+      "doc": "edital",
+      "titulo": "Vigência e prorrogação de serviços contínuos",
+      "verificar": "Em serviços e fornecimentos contínuos, a vigência é de até 5 anos e a possibilidade de prorrogação (até 10 anos) está prevista no edital, condicionada à vantajosidade.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "106",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "107",
+          "disp": "caput"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Sem previsão no edital, a prorrogação futura fica juridicamente frágil.",
+      "dica": "Preveja expressamente a prorrogação e as condições para atestar a vantajosidade.",
+      "temas": [
+        "prorrogação contratual",
+        "serviços contínuos",
+        "vigência"
+      ]
+    },
+    {
+      "id": "ed-17",
+      "doc": "edital",
+      "titulo": "Parecer jurídico",
+      "verificar": "Há registro de que o processo foi submetido à análise jurídica prévia do órgão de assessoramento jurídico.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "53",
+          "disp": "caput"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "A ausência da análise jurídica prévia é vício de procedimento.",
+      "dica": "Junte o parecer jurídico e registre o atendimento das recomendações (ou a motivação para não atendê-las).",
+      "temas": [
+        "parecer jurídico",
+        "assessoria jurídica"
+      ]
+    },
+    {
+      "id": "srp-01",
+      "doc": "edital",
+      "titulo": "Registro de preços: julgamento por lote (grupo de itens)",
+      "verificar": "Se o registro de preços adota menor preço por grupo/lote, o processo demonstra a inviabilidade de adjudicar por item e a vantagem técnica e econômica do agrupamento, e o edital indica o critério de aceitabilidade dos preços unitários máximos.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "p1"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "p2"
+        }
+      ],
+      "gravidade": "alta",
+      "risco": "Agrupamento sem a demonstração exigida restringe a competição (afasta quem fornece só parte dos itens) e permite registrar itens individualmente caros dentro de um lote barato no total (jogo de planilha); sem preço unitário máximo, não há como recusar itens com sobrepreço.",
+      "dica": "Demonstre no ETP por que cada item não pode ser licitado isoladamente e qual a vantagem do lote; indique no edital o preço unitário máximo aceitável de cada item (ou o critério para aferi-lo).",
+      "temas": [
+        "registro de preços",
+        "adjudicação por lote",
+        "menor preço global",
+        "adjudicação por item",
+        "parcelamento do objeto"
+      ]
+    },
+    {
+      "id": "srp-02",
+      "doc": "edital",
+      "titulo": "Registro de preços: quem pode aderir à ata",
+      "verificar": "As regras de adesão por não participantes respeitam a esfera do gerenciador: ata municipal só admite adesão de órgãos municipais (e desde que o registro tenha sido feito por licitação); órgãos federais não podem aderir a atas estaduais, distritais ou municipais; os limites de 50% por órgão e do dobro no total estão previstos.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "86",
+          "disp": "p3"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "86",
+          "disp": "p3.II"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "86",
+          "disp": "p8"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "86",
+          "disp": "p4"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "86",
+          "disp": "p5"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Cláusula que admite adesões vedadas pela lei induz órgãos de outras esferas a contratações irregulares, com risco de nulidade e responsabilização de quem autorizar a adesão.",
+      "dica": "Restrinja a adesão aos órgãos e entidades municipais (art. 86, § 3º, II) e mantenha os limites dos §§ 4º e 5º.",
+      "temas": [
+        "adesão à ata de registro de preços",
+        "carona",
+        "órgão não participante"
+      ]
+    },
+    {
+      "id": "srp-03",
+      "doc": "edital",
+      "titulo": "Registro de preços: quantidades e vigência da ata",
+      "verificar": "O edital fixa a quantidade máxima de cada item compatível com a vigência da ata (1 ano, prorrogável por igual período) e o planejamento não estima consumo para período maior que o da ata.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "I"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "84",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "18",
+          "disp": "p1.IV"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Quantidades dimensionadas para mais anos que a validade da ata superestimam o registro, inflam o limite das adesões (que é calculado sobre esse quantitativo) e distorcem a economia de escala ofertada.",
+      "dica": "Dimensione a quantidade máxima para a vigência da ata, com memória de cálculo; planeje os anos seguintes em novo registro de preços.",
+      "temas": [
+        "registro de preços",
+        "estimativa de quantitativos",
+        "superdimensionamento",
+        "prorrogação da ata",
+        "quantitativos inicialmente fixados",
+        "ata de registro de preços"
+      ]
+    },
+    {
+      "id": "srp-04",
+      "doc": "edital",
+      "titulo": "Registro de preços: regras obrigatórias do edital",
+      "verificar": "O edital dispõe sobre: quantidade mínima a ser cotada; possibilidade de cotar quantitativo inferior ao máximo; condições para alteração dos preços registrados; registro de mais de um fornecedor (cadastro de reserva); vedação de o órgão participar de mais de uma ata com o mesmo objeto; hipóteses de cancelamento da ata.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "II"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "IV"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "VI"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "VII"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "VIII"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "82",
+          "disp": "IX"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "A omissão de regras que a lei manda o edital prever gera insegurança na formação das propostas e na gestão da ata, e pode ser apontada em impugnação ou pelo controle.",
+      "dica": "Inclua uma seção do edital com cada um dos incisos do art. 82, mesmo que para declarar a opção adotada (ex.: 'não será admitida cotação de quantitativo inferior ao máximo').",
+      "temas": [
+        "registro de preços",
+        "edital de registro de preços"
+      ]
+    },
+    {
+      "id": "ed-18",
+      "doc": "edital",
+      "titulo": "Coerência interna do edital e dos anexos",
+      "verificar": "Datas, critério de julgamento, forma de adjudicação e demais regras são os mesmos no corpo do edital, no termo de referência, no ETP e nas minutas, sem disposições contraditórias.",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "25",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "18",
+          "disp": "IX"
+        }
+      ],
+      "gravidade": "media",
+      "risco": "Regras contraditórias geram dúvida sobre como competir e julgar, motivam impugnações e recursos e podem anular atos do certame.",
+      "dica": "Revise o edital e os anexos juntos antes da publicação, com uma tabela única de datas, critério de julgamento e forma de adjudicação.",
+      "temas": [
+        "divergência entre edital e termo de referência",
+        "vinculação ao instrumento convocatório"
+      ]
+    }
+  ],
+  "documentos_nomes": {
+    "etp": "Estudo Técnico Preliminar",
+    "tr": "Termo de Referência",
+    "riscos": "Mapa / Matriz de Riscos",
+    "planilha": "Planilha de custos e formação de preços (dedicação exclusiva de mão de obra)",
+    "edital": "Edital e minutas (ata e contrato)",
+    "cruzado": "Coerência entre os documentos",
+    "orcamento": "Planilha orçamentária e BDI",
+    "plano_trabalho": "Plano de trabalho"
+  },
+  "data": "12/11/2026",
+  "processo": {
+    "orgao": "Prefeitura Municipal de Campo Maior - PI (Secretaria Municipal de Cultura e Desenvolvimento do Turismo)",
+    "numero": "Pregão Eletrônico nº 015/2026 - SRP (PNCP 06716880000183-1-000022/2026)",
+    "objeto": "Registro de preços para eventual contratação de empresa especializada na execução de estruturas decorativas e ornamentais para eventos públicos (confecção, ambientação temática, montagem, instalação e desmontagem), em 7 lotes por evento.",
+    "modalidade": "Pregão eletrônico, registro de preços, menor preço por lote, modo de disputa aberto (Lei 14.133/2021)"
+  },
+  "documentos": [
+    {
+      "tipo": "edital",
+      "arquivo": "https://pncp.gov.br/app/editais/06716880000183/2026/22",
+      "paginas": 76,
+      "ocr": false
+    }
+  ],
+  "ementa": "PREGÃO ELETRÔNICO. REGISTRO DE PREÇOS. DECORAÇÃO DE EVENTOS. JULGAMENTO POR LOTE. ORÇAMENTO SIGILOSO. VEDAÇÃO A CONSÓRCIO. ADESÃO À ATA. VIGÊNCIA DA ATA. QUALIFICAÇÃO TÉCNICA. PESQUISA DE PREÇOS",
+  "ementa_texto": "Edital de pregão eletrônico para registro de preços de decoração de eventos municipais, já homologado (R$ 4.107.670,00). O prazo de propostas, os recursos, a impugnação, as sanções e a garantia de proposta estão regulares. Há falhas relevantes: julgamento por lote sem a demonstração do art. 82, § 1º; orçamento sigiloso sem motivação concreta, contraditório com a publicação do valor no PNCP; vedação a consórcio sem justificativa; adesão à ata aberta a órgãos federais e estaduais; quantitativos e vigência incoerentes entre ETP, ata e contrato.",
+  "resumo": "O certame não se enquadra como dedicação exclusiva de mão de obra, de modo que os itens plan-01 a plan-06 e os de serviços contínuos não se aplicam. O edital cumpre o conteúdo básico do art. 25. Estão regulares o prazo mínimo de propostas (9º dia útil, pelo cálculo do sistema), o rito recursal, os prazos de impugnação, as sanções e multas, a garantia de proposta (0,15% por lote, calculada pelo sistema a partir dos valores do edital, abaixo do limite de 1%) e a declaração de custos trabalhistas. Os pontos críticos estão no sistema de registro de preços. O julgamento por lote não vem acompanhado da demonstração de inviabilidade da adjudicação por item nem de preços unitários máximos. A cláusula de adesão admite órgãos federais e estaduais em ata municipal. Os quantitativos foram planejados para 2026-2028, enquanto a ata vale 1 ano (prorrogável por igual período) e o contrato vai só até 31/12/2026. Faltam regras do art. 82 (quantidade mínima, cotação inferior ao máximo, vedação de participação em mais de uma ata). O orçamento sigiloso tem motivação genérica, é mantido de forma permanente e foi divulgado no PNCP (R$ 4.292.956,02, \"sem sigilo\"). A vedação a consórcio não tem justificativa concreta. A qualificação técnica é genérica e a pesquisa de preços não está documentada. Há ainda sinais de modelo reaproveitado de outro objeto e outras incoerências de menor monta. A análise de preços do sistema não teve amostra suficiente (20 itens), e por isso não conclui sobre sobrepreço.",
+  "conclusao": "Com o certame homologado, as providências se dirigem à execução da ata e aos próximos certames. Recomenda-se: (i) não autorizar adesões de órgãos federais ou estaduais à ata em vigor e corrigir a cláusula 4.1 nos próximos editais; (ii) avaliar, antes de qualquer prorrogação, os quantitativos, a vigência incoerente do contrato e a renovação de itens de confecção; (iii) nos próximos registros, motivar concretamente o sigilo (ou abandoná-lo) e alinhar o PNCP ao edital; (iv) demonstrar o art. 82, § 1º, ou adjudicar por item, indicando preços unitários máximos; (v) justificar ou admitir consórcios; (vi) delimitar a qualificação técnica, avaliar exigência de responsável técnico, documentar a pesquisa de preços e depurar as peças de resíduos de modelo. Os itens plan-01 a plan-06, ed-03 e ed-16 não se aplicam. O item ed-17 (parecer jurídico) não pôde ser verificado, pois o documento não traz o parecer. O parecer é opinativo, e a decisão de corrigir ou manter cada ponto cabe ao órgão.",
+  "resultados": [
+    {
+      "item": "plan-01",
+      "resultado": "nao_aplicavel",
+      "constatacao": "O objeto é a confecção, instalação e desmontagem de estruturas decorativas por demanda de eventos. Não há postos de trabalho nem empregados à disposição do contratante, sem dedicação exclusiva de mão de obra (art. 6º, XVI). O TR não prevê fiscalização de jornada nem planilha de postos.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "plan-02",
+      "resultado": "nao_aplicavel",
+      "constatacao": "Não há dedicação exclusiva de mão de obra nem planilha de custos de postos ou convenção coletiva de categoria. Não se aplica a verificação da convenção coletiva.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "plan-03",
+      "resultado": "nao_aplicavel",
+      "constatacao": "Não há planilha de mão de obra com cláusulas de convenção coletiva a avaliar.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "plan-04",
+      "resultado": "conforme",
+      "constatacao": "O edital exige a declaração de que a proposta compreende a integralidade dos custos trabalhistas, no cadastramento da proposta (4.3.1.1) e como condição sob pena de desclassificação (8.8). A declaração é repetida no TR (10.27, a e i).",
+      "trecho": "8.8. O licitante deverá apresentar, sob pena de desclassificação, declaração de que suas propostas",
+      "local": "Edital, item 8.8 [página 12]",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "plan-05",
+      "resultado": "nao_aplicavel",
+      "constatacao": "O art. 121, §§ 2º e 3º, trata das contratações com dedicação exclusiva de mão de obra, o que não é o caso. A cláusula contratual 9.8 já atribui à contratada a responsabilidade pelos encargos.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "plan-06",
+      "resultado": "nao_aplicavel",
+      "constatacao": "Não há planilha de custos e formação de preços de mão de obra. A planilha do TR traz valores em branco por causa do sigilo orçamentário, e não há cálculo aritmético a conferir. A pesquisa de preços é tratada em outros_apontamentos.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "ed-01",
+      "resultado": "conforme",
+      "constatacao": "O edital traz o objeto, a convocação e os lances, o julgamento, a habilitação (remetida ao TR), os recursos, as sanções, a fiscalização e gestão (TR, itens 8 e 9) e as condições de entrega e pagamento. Os pontos de inconsistência estão tratados nos itens específicos.",
+      "dica": "Depurar as remissões cruzadas, pois a habilitação está só no TR, e os trechos de modelo reaproveitado (marca/fabricante, engenharia, amostra).",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "ed-02",
+      "resultado": "conforme",
+      "constatacao": "A minuta de contrato prevê o índice IPCA-E, com preços fixos por um ano contado da data do orçamento estimado (cláusula 7). O TR (1.4) e a ata (6.1.3) são coerentes.",
+      "trecho": "7.1. Os preços inicialmente contratados são fixos e irreajustáveis no prazo de um ano contado da",
+      "local": "Minuta de contrato, cláusula 7.1 [página 70]",
+      "dica": "Como o orçamento é sigiloso, registrar no processo a data do orçamento estimado, que é o marco do reajuste, e reproduzir a cláusula no corpo do edital. Hoje a regra só consta do TR (1.4) e do contrato.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "ed-03",
+      "resultado": "nao_aplicavel",
+      "constatacao": "Não há dedicação exclusiva nem predominância de mão de obra, e a demanda é eventual (por evento). O reajuste por índice (IPCA-E) é coerente com isso. O ETP chama o objeto de \"serviços contínuos e de natureza eventual\", contradição tratada em outros_apontamentos.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "ed-04",
+      "resultado": "parcial",
+      "gravidade": "baixa",
+      "constatacao": "Os anexos (TR, ETP, minutas de ata e contrato) integram o edital (14.11) e o documento analisado os traz. O edital identifica como endereço do PNCP o sítio do Portal de Compras Públicas, que é a plataforma da disputa, não o PNCP. Não foi possível confirmar a divulgação simultânea de todos os anexos nem o acesso sem cadastro.",
+      "trecho": "O Edital está disponibilizado, na íntegra, no Portal Nacional de Contratações Públicas (PNCP),",
+      "local": "Edital, capa [página 1] e item 14.10 [página 17]",
+      "porque": "O art. 25, § 3º, exige a divulgação de todos os elementos do edital na mesma data, sem registro ou identificação para acesso, e o art. 54 exige o inteiro teor no PNCP. Indicar o endereço errado dificulta o acesso dos interessados.",
+      "correcao": "Indicar o endereço correto do PNCP e conferir se edital e anexos foram publicados no mesmo ato (divulgação de 08/05/2026), com acesso livre.",
+      "redacao_sugerida": "O edital e todos os seus anexos estão disponíveis, na íntegra e sem necessidade de cadastro, no Portal Nacional de Contratações Públicas (PNCP) – https://www.gov.br/pncp – e no sítio oficial do Município.",
+      "risco": "Interessados podem não localizar o edital e anexos, reduzindo a competição, e a omissão de anexo pode ser alegada em impugnação.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "ed-05",
+      "resultado": "conforme",
+      "constatacao": "Divulgação em 08/05/2026 (sexta-feira) e fim do recebimento em 22/05/2026 09:30. Pela contagem do art. 183 (dia do começo em 11/05, excluído), o encerramento cai no 9º dia útil, acima do mínimo de 8 dias úteis para serviços comuns. A contagem considerou só feriados nacionais. Se o objeto fosse tratado como serviço especial ou de engenharia, o mínimo seria de 10 dias úteis, hipótese não afastada, mas o TR o define como serviço comum (2.4).",
+      "trecho": "09:30 (NOVE E TRINTA HORAS) DO DIA 22/05/2026 (HORÁRIO DE BRASÍLIA).",
+      "local": "Edital, preâmbulo [página 2]",
+      "jurisprudencia_ids": [
+        "tcu-ac-2921-2026-plenario"
+      ],
+      "dica": "Conferir feriados municipais e registrar no processo a classificação do objeto como serviço comum. O item 4.8 permite retirar ou substituir proposta até a abertura da sessão (25/05), enquanto o preâmbulo fixa o fim do recebimento em 22/05; alinhar as datas."
+    },
+    {
+      "item": "ed-06",
+      "resultado": "parcial",
+      "gravidade": "media",
+      "constatacao": "A qualificação técnica se resume a atestado de serviços \"compatíveis com o objeto\", sem indicar as parcelas de maior relevância ou valor significativo (≥ 4%) nem quantitativos. Não há excesso (não se exigem quantidades acima de 50%), mas a exigência é aberta e depende de avaliação subjetiva. O ETP repete o texto sem justificar. Também não consta exigência de responsável técnico (ver outros_apontamentos).",
+      "trecho": "Atestado fornecido por pessoa jurídica de direito público ou privado, comprovando que a",
+      "local": "TR, item 10.25 [página 39]; ETP [página 57]",
+      "porque": "O art. 67, §§ 1º e 2º, restringe os atestados às parcelas de maior relevância ou valor significativo (≥ 4%) e a quantitativos de até 50%. A ausência de parcelas e de critério objetivo de similaridade gera subjetividade na habilitação. Conforme o TCU (Acórdão 1742/2026), é irregular exigir similaridade sem delimitar de forma clara e verificável as características mínimas.",
+      "correcao": "Identificar, com base no orçamento, as parcelas de maior relevância (ex.: estruturas metálicas e coberturas tipo box truss, portais, iluminação LED) e definir objetivamente o que é \"compatível\", com quantitativos de até 50%, ou justificar a opção por atestado simples.",
+      "redacao_sugerida": "Atestado(s) de execução anterior de confecção e instalação de estruturas decorativas temporárias em estrutura metálica com iluminação LED, em eventos públicos ou privados, em quantidade mínima de [até 50% da parcela de maior relevância], sem limitação de tempo ou local específico.",
+      "risco": "Inabilitação ou habilitação arbitrária, impugnações e questionamento do controle externo sobre a aferição da capacidade técnica.",
+      "jurisprudencia_ids": [
+        "tcu-js-205696"
+      ]
+    },
+    {
+      "item": "ed-07",
+      "resultado": "conforme",
+      "constatacao": "A habilitação econômico-financeira se limita à certidão negativa de falência (e de insolvência civil, para pessoa física ou sociedade simples). Não há faturamento mínimo, índices de rentabilidade nem capital ou patrimônio líquido mínimo.",
+      "trecho": "Certidão negativa de falência expedida pelo distribuidor da sede do fornecedor - Lei nº",
+      "local": "TR, item 10.24 [página 39]",
+      "dica": "Para registro de até R$ 4,3 milhões, considerar, de forma justificada, índices usuais ou patrimônio líquido de até 10% do valor de cada lote nos próximos certames. Trata-se de escolha discricionária, e a ausência não é irregular.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "ed-08",
+      "resultado": "parcial",
+      "gravidade": "baixa",
+      "constatacao": "A garantia de proposta é exigida por lote, com valores de R$ 356,79 a R$ 1.724,78, e R$ 6.439,38 para todos os lotes. Em relação ao total estimado informado pelo sistema (R$ 4.292.956,02), isso equivale a cerca de 0,15%, dentro do limite de 1%. A exigência por lote respeita a proporcionalidade (Súmula TCU 247) e a contratual não é exigida. Há, porém, a exigência de boleto e comprovante de pagamento \"conforme a modalidade\", que, aplicada a seguro-garantia, pode levar à exclusão por inadimplemento do prêmio.",
+      "trecho": "apresentação do boleto e do respectivo comprovante de pagamento da garantia no mesmo campo),",
+      "local": "Edital, item 6.23 [página 9]",
+      "porque": "O art. 58, § 1º, limita a garantia de proposta a 1% do valor estimado, e o limite foi respeitado. A exigência de comprovante de pagamento não é prevista em lei para todas as modalidades. Segundo o TCU (Acórdão 2518/2026), a apólice vigente de seguro-garantia permanece eficaz, e o atraso no prêmio não justifica, por si só, excluir o licitante.",
+      "correcao": "Esclarecer que o comprovante de pagamento se aplica apenas à caução em dinheiro e que, no seguro-garantia e na fiança, basta a apólice ou carta regular e vigente.",
+      "risco": "Desclassificação por formalidade e restrição indevida da participação.",
+      "jurisprudencia_ids": [
+        "tcu-js-209110",
+        "tcu-js-199693"
+      ]
+    },
+    {
+      "item": "ed-09",
+      "resultado": "nao_conforme",
+      "gravidade": "media",
+      "constatacao": "O edital veda consórcios (3.6.8.2, inserido no subitem dos agentes públicos) e o TR (2.6) declara, sem justificativa concreta, que a vedação é \"para garantia de maior competitividade\". O ETP não trata do tema. A fundamentação é contraditória, pois a vedação reduz o universo de competidores, e o objeto reúne atividades diversas (metalurgia, impressão, iluminação, fibra), em que consórcios poderiam ampliar a disputa. O item 8.4 trata de consórcio \"quando permitido\".",
+      "trecho": "Consórcio de empresas, para garantia de maior competitividade entre os participantes.",
+      "local": "TR, item 2.6 [página 33]; Edital, item 3.6.8.2 [página 4]",
+      "porque": "O art. 15 admite a vedação só se devidamente justificada no processo. A frase do TR não demonstra por que o consórcio seria inadequado a este objeto.",
+      "correcao": "Motivar no processo (ETP/TR) a vedação com fundamento técnico ou de mercado, como o número de fornecedores aptos e o risco de conluio, ou admitir consórcios com as regras do art. 15. Corrigir a posição do item no edital nos próximos certames.",
+      "redacao_sugerida": "Não será admitida a participação de consórcios, pelos seguintes motivos: [indicar fundamentos técnicos e de mercado, com evidência do número de empresas aptas a executar isoladamente todas as parcelas do lote].",
+      "risco": "Restrição à competitividade e impugnação por vedação imotivada.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "ed-10",
+      "resultado": "parcial",
+      "gravidade": "baixa",
+      "constatacao": "O edital aplica o tratamento favorecido (3.5, 4.6), o empate ficto de 5% (6.19) e a regularidade fiscal tardia (8.14). Faltam o prazo de 5 dias úteis (prorrogável) para regularizar a documentação com restrição e a regra de apresentar toda a documentação ainda que com restrição. O item 8.14 afirma que a regularidade só é exigida para a contratação, mas o TR exige as certidões de todos na habilitação. Não há item exclusivo ou cota reservada, o que se mostra coerente com os lotes acima de R$ 80 mil (art. 48 da LC 123) e com serviços não divisíveis em bens.",
+      "trecho": "8.14. A comprovação de regularidade fiscal e trabalhista das microempresas e das empresas de",
+      "local": "Edital, item 8.14 [página 13]",
+      "porque": "O art. 4º da Lei 14.133 manda aplicar os arts. 42 a 49 da LC 123/2006, que preveem prazo para regularização fiscal tardia. Omiti-lo e remeter a decreto federal gera incerteza.",
+      "correcao": "Incluir as regras de regularização tardia (art. 43, § 1º, da LC 123) e compatibilizar o item 8.14 com o TR.",
+      "redacao_sugerida": "As ME/EPP deverão apresentar toda a documentação de regularidade fiscal e trabalhista, ainda que com restrição, e terão 5 dias úteis, prorrogáveis por igual período, a partir da declaração de vencedora, para regularizá-la.",
+      "risco": "Impugnações e controvérsia sobre inabilitação de ME/EPP.",
+      "referencias_ids": [
+        "tcu-licitacoes-contratos#1090"
+      ],
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "ed-11",
+      "resultado": "conforme",
+      "constatacao": "Prazos de 3 dias úteis para impugnar e para responder, limitados ao último dia útil antes da abertura, e divulgação da resposta (13.1 e 13.2), com protocolo eletrônico (13.3).",
+      "trecho": "13.1. Qualquer pessoa é parte legítima para impugnar este Edital por irregularidade na aplicação da",
+      "local": "Edital, item 13.1 [página 16]",
+      "dica": "O item 13.1 trata só da impugnação. Incluir expressamente o pedido de esclarecimento e seu prazo de 3 dias úteis antes da abertura, e a vinculação dos participantes às respostas.",
+      "referencias_ids": [
+        "tcu-licitacoes-contratos#1217"
+      ],
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "ed-12",
+      "resultado": "conforme",
+      "constatacao": "Recurso em 3 dias úteis, intenção manifestada imediatamente (mínimo de 10 minutos), razões e contrarrazões em 3 dias úteis, reconsideração em 3 dias úteis e decisão superior em 10 dias úteis, com efeito suspensivo (item 11).",
+      "trecho": "11.2. O prazo recursal é de 3 (três) dias úteis, contados da data de intimação ou de lavratura da ata.",
+      "local": "Edital, item 11.2 [página 14]",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "ed-13",
+      "resultado": "conforme",
+      "constatacao": "O rol de sanções segue o art. 156, e a multa vai de 0,5% a 30%, graduada em 0,5%-15% e 15%-30% (12.4). As multas contratuais (mora acumulada de até 22% em 30 dias; 1,5% e 2%) estão dentro dos limites. Prazo do impedimento de até 3 anos (12.7).",
+      "trecho": "12.4. A multa será recolhida em percentual de 0,5% a 30% incidente sobre o valor do contrato",
+      "local": "Edital, item 12.4 [página 15]",
+      "dica": "Para infrações anteriores à contratação (12.1.1 a 12.1.3), indicar a base de cálculo da multa (por exemplo, o valor estimado do lote), pois não há \"valor do contrato\". Compatibilizar os prazos de recolhimento (10 dias úteis no edital; 30 dias no contrato, cláusula 11.3.5).",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "ed-14",
+      "resultado": "nao_conforme",
+      "gravidade": "media",
+      "constatacao": "O orçamento é sigiloso (capa e TR), com a única motivação de que o sigilo \"visa a maior economicidade\", sem qualquer fundamento do caso concreto. O TR prevê a disponibilização \"exclusiva e permanentemente\" aos órgãos de controle, isto é, sem divulgação posterior ao julgamento. O sistema informa que o valor total estimado (R$ 4.292.956,02) foi publicado no PNCP como \"compra sem sigilo\", o que contradiz o edital. A tabela do TR também não traz valores. A garantia de proposta é proporcional ao valor de cada lote, de modo que os valores do item 6.23 permitem, a quem conheça o critério, estimar o orçamento.",
+      "trecho": "O orçamento possui caráter sigiloso e será disponibilizado exclusiva e permanentemente aos",
+      "local": "TR, item 1.1, observação [página 33]; item 15 [página 41]; ETP [página 59]",
+      "porque": "O art. 24 exige justificativa para o sigilo, e o art. 18, XI, exige motivação sobre o momento de divulgação. A publicidade do orçamento é apenas diferida, e o sigilo permanente é incompatível com o dever de transparência. O TCU considera irregular o orçamento sigiloso sem justificativa adequada que indique vantajosidade (Acórdão 1635/2026). A divulgação no PNCP esvazia a finalidade do sigilo e gera insegurança sobre o que valeu para as propostas.",
+      "correcao": "Em ata e certames futuros, motivar concretamente o sigilo (ou adotar orçamento aberto), prever a divulgação após o julgamento e alinhar o cadastro no PNCP ao edital. Para este certame, registrar nos autos a divergência, o momento e o motivo da divulgação do valor.",
+      "redacao_sugerida": "O orçamento estimado terá caráter sigiloso pelos seguintes motivos: [justificativa concreta de vantajosidade]. O sigilo não prevalece perante os órgãos de controle e o valor será divulgado após o julgamento das propostas, antes da homologação.",
+      "risco": "Questionamento de transparência, alegação de que o sigilo foi quebrado e de que os preços de referência estavam disponíveis a alguns.",
+      "jurisprudencia_ids": [
+        "tcu-js-205376",
+        "tcm-sp-tc-015572-2025"
+      ]
+    },
+    {
+      "item": "ed-15",
+      "resultado": "parcial",
+      "gravidade": "media",
+      "constatacao": "A minuta de contrato (Anexo III) integra o edital e traz objeto, vigência, preço, reajuste, obrigações, garantia, sanções, extinção, dotação, alterações, publicação e foro. Faltam os critérios de atualização monetária entre o adimplemento e o pagamento, a indicação de prazos de recebimento (remetidos ao TR) e a matriz de riscos, dispensada no TR (1.5). A vigência está presa a 31/12/2026, o que conflita com a ata (outros_apontamentos). A minuta também traz prazo excessivo para a Administração decidir (outros_apontamentos).",
+      "trecho": "6.1. O prazo para pagamento a contratada e demais condições a ele referentes encontram-se",
+      "local": "Minuta de contrato, cláusula 6 [página 70]",
+      "porque": "O art. 92 exige, entre as cláusulas necessárias, o preço, as condições de pagamento, os critérios de reajuste e os de atualização monetária entre a data do adimplemento e a do pagamento.",
+      "correcao": "Incluir cláusula de atualização monetária por atraso de pagamento, prazos de recebimento no contrato e cláusula de vigência compatível com a ata. Conferir a minuta contra o art. 92.",
+      "risco": "Lacunas na execução e dificuldade para aplicar reajuste e atualização.",
+      "redacao_sugerida": "Em caso de atraso de pagamento por culpa da Contratante, o valor devido será atualizado monetariamente pelo IPCA-E, pro rata die, entre a data do adimplemento e a do efetivo pagamento.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "ed-16",
+      "resultado": "nao_aplicavel",
+      "constatacao": "O objeto é eventual, contratado por evento, e o contrato vai até 31/12/2026, sem previsão de prorrogação sucessiva. O ETP o qualifica como \"contínuo\" apenas na justificativa. Essa qualificação, incompatível com o resto do processo, é tratada em outros_apontamentos. A prorrogação da ata é tratada em srp-03.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "ed-17",
+      "resultado": "nao_verificavel",
+      "constatacao": "O documento não traz o parecer jurídico nem referência a ele (apenas há menção de solicitação de certame e de disponibilidade orçamentária no TR, item 16). Não é possível verificar o controle prévio de legalidade do art. 53.",
+      "correcao": "Juntar ao processo e conferir o parecer jurídico e o registro do atendimento das recomendações. Como o edital contém cláusulas controversas (adesão, consórcio, sigilo), verificar se o órgão jurídico as analisou.",
+      "gravidade": "alta",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "srp-01",
+      "resultado": "nao_conforme",
+      "gravidade": "alta",
+      "constatacao": "O julgamento é por menor preço por lote (7 lotes por evento, cada um com 6 a 21 itens heterogêneos). O ETP justifica o agrupamento apenas pela \"demanda do evento\" e pela conveniência logística, sem demonstrar a inviabilidade de adjudicar por item nem a vantagem técnica e econômica. O edital não indica os preços unitários máximos de aceitabilidade (o valor é sigiloso, e o TR, em branco). O edital ainda se contradiz ao dizer que a licitação será dividida em itens (1.2).",
+      "trecho": "agrupados em lotes de acordo com a demanda do evento em questão.",
+      "local": "ETP, justificativa de parcelamento [página 60]; Edital, itens 1.2 e 1.3 [página 3]",
+      "porque": "O art. 82, § 1º, só admite o menor preço por grupo de itens quando demonstradas a inviabilidade de adjudicar por item e a vantagem técnica e econômica, e exige indicar no edital o critério de aceitabilidade de preços unitários máximos. Sem isso, o agrupamento afasta quem fornece só parte dos itens (Súmula TCU 247) e permite itens caros dentro de um lote barato no total. A contratação posterior de item isolado exige pesquisa de mercado (art. 82, § 2º).",
+      "correcao": "Nos próximos registros, adjudicar por item ou documentar no ETP, com dados, por que cada lote não pode ser dividido e qual a vantagem. Indicar o preço unitário máximo de cada item (ou o critério para aferi-lo) no edital e regular as contratações isoladas de item. Na ata em vigor, avaliar e registrar a vantagem de eventual contratação de item isolado (art. 82, § 2º).",
+      "redacao_sugerida": "O julgamento será por menor preço por lote, em razão de [demonstração concreta da inviabilidade da adjudicação por item e da vantagem técnica e econômica, com dados de custo e logística]. Serão desclassificadas as propostas com preço unitário superior ao máximo constante do Anexo [__].",
+      "risco": "Restrição à competitividade, \"jogo de planilha\" por itens com sobrepreço dentro do lote e impugnação do edital.",
+      "jurisprudencia_ids": [
+        "tcu-sumula-247",
+        "tcu-js-58558"
+      ],
+      "referencias_ids": [
+        "tcu-licitacoes-contratos#1640"
+      ]
+    },
+    {
+      "item": "srp-02",
+      "resultado": "nao_conforme",
+      "gravidade": "media",
+      "constatacao": "A ata é do Município e admite adesão por órgãos e entidades das esferas federal, estadual, distrital e municipal. Os limites de 50% e do dobro estão previstos (4.5 e 4.6).",
+      "trecho": "4.1. Durante a vigência da ata, os órgãos e as entidades da Administração Pública federal, estadual,",
+      "local": "Minuta de ata, cláusula 4.1 [página 64]",
+      "porque": "O art. 86, § 3º, II, permite a adesão a ata de gerenciador municipal apenas por órgãos municipais (desde que o registro tenha sido feito por licitação), e o § 8º veda aos órgãos federais aderir a ata municipal. A cláusula induz adesões vedadas.",
+      "correcao": "Na ata em vigor, não autorizar adesões de órgãos federais, estaduais ou distritais e orientar o gerenciador. Corrigir a minuta nos próximos registros.",
+      "redacao_sugerida": "Durante a vigência da ata, somente os órgãos e entidades da Administração Pública municipal poderão aderir à ata na condição de não participantes, observados os limites de 50% por órgão e do dobro no total (art. 86, §§ 4º e 5º).",
+      "risco": "Adesões irregulares e responsabilização de quem as autorizar.",
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "srp-03",
+      "resultado": "parcial",
+      "gravidade": "media",
+      "constatacao": "O ETP dimensiona as quantidades para 2026, 2027 e 2028 (3 unidades por item, 2 para o Carnaval), com base em eventos de 2021 a 2025, sem memória de cálculo. A ata vale 1 ano, prorrogável por igual período, e o contrato vai até 31/12/2026. Os quantitativos, que servem de base ao limite das adesões, ficam desconectados da vigência. Além disso, a ata prevê a prorrogação (5.1) sem dizer se os quantitativos se renovam nem tratar itens de confecção que podem ser reaproveitados em eventos seguintes.",
+      "trecho": "permitindo contratações ao longo do período de 2026, 2017 e 2028 sem a",
+      "local": "ETP, descrição da necessidade [página 44]; estimativa das quantidades [página 59]; Ata, cláusula 5.1 [página 64]",
+      "porque": "O art. 82, I, exige a quantidade máxima compatível com a ata, o art. 84 limita a vigência a 1 ano prorrogável por igual período, e o art. 18, § 1º, IV, exige memória de cálculo. Prorrogar a ata renovando itens de confecção de estruturas reutilizáveis pode gerar pagamento em duplicidade (art. 84, preço vantajoso; art. 107, por analogia). Não se localizou vedação expressa.",
+      "correcao": "Dimensionar a quantidade máxima para o período da ata, com memória de cálculo por evento. Prever na ata que a prorrogação só ocorre com demonstração de preço vantajoso, sem restabelecer quantitativos já consumidos e com exclusão ou redução de itens de execução única ou reaproveitáveis.",
+      "risco": "Superestimativa do registro (infla o limite das adesões e distorce a economia de escala) e eventual pagamento em duplicidade na prorrogação.",
+      "redacao_sugerida": "A prorrogação da ata dependerá de demonstração de preço vantajoso e não restabelecerá os quantitativos já consumidos, devendo ser excluídos ou revistos os itens de execução única ou já amortizados.",
+      "jurisprudencia_ids": [
+        "tcu-js-21059",
+        "tcu-js-20943"
+      ]
+    },
+    {
+      "item": "srp-04",
+      "resultado": "parcial",
+      "gravidade": "media",
+      "constatacao": "O edital e a ata tratam da alteração de preços (ata 6 e 7), do cadastro de reserva (edital 10; ata 5) e do cancelamento (ata 8). Não foram localizadas regras sobre a quantidade mínima a ser cotada (art. 82, II), a possibilidade de cotar quantitativo inferior ao máximo (IV) e a vedação de o órgão participar de mais de uma ata com o mesmo objeto (VIII). O item 2.1 do edital remete à ata para adesões e participantes.",
+      "trecho": "2.1. As regras referentes ao órgão gerenciador e participantes, bem como a eventuais adesões são as",
+      "local": "Edital, item 2.1 [página 3]; Minuta de ata [páginas 62-68]",
+      "porque": "O art. 82 exige que o edital disponha sobre todos esses temas. A omissão deixa a formação das propostas sem regra expressa e fragiliza a gestão da ata.",
+      "correcao": "Incluir seção do edital com cada inciso do art. 82, ainda que para declarar a opção adotada.",
+      "redacao_sugerida": "Não será admitida cotação de quantitativo inferior ao máximo previsto para cada lote. Fica vedada a participação de órgão ou entidade em mais de uma ata com o mesmo objeto no prazo de validade daquela de que já participou, ressalvada a ata com quantitativo inferior ao máximo.",
+      "risco": "Insegurança na formulação das propostas e impugnações.",
+      "referencias_ids": [
+        "tcu-licitacoes-contratos#1640"
+      ],
+      "jurisprudencia_ids": []
+    },
+    {
+      "item": "ed-18",
+      "resultado": "parcial",
+      "gravidade": "media",
+      "constatacao": "Há incoerências entre as peças. O edital diz que a licitação é dividida em itens (1.2), mas julga por lote (1.3). Declara valor sigiloso, enquanto o PNCP publicou o valor. O ETP planeja 2026-2028, a ata vale 1 ano e o contrato termina em 31/12/2026. O TR (7.1) fixa prazo de prestação de 48 horas, e o ETP fala em iniciar em 48 horas. O ETP chama o objeto de \"contínuo\". O TR afirma \"ampla pesquisa de preços\", e o ETP descreve apenas cotações diretas. Há resíduos de modelo (marca e fabricante, registro do bem, amostra, \"sistema que será implantado\") e erros de grafia no objeto (\"NECESSODADES\").",
+      "trecho": "1.2. A licitação será dividida em ITENS, conforme tabela constante do Termo de Referência.",
+      "local": "Edital, itens 1.2 e 1.3 [página 3]; TR, itens 2.7 e 7.1 [páginas 33 e 35]",
+      "porque": "O art. 25 exige edital claro, e o art. 18, IX, a motivação das condições. Regras contraditórias geram dúvida sobre como competir e julgar e motivam impugnações e recursos.",
+      "correcao": "Revisar edital, TR, ETP e minutas em conjunto, com tabela única de datas, critério de julgamento, adjudicação e vigência, e eliminar o conteúdo de modelo.",
+      "risco": "Impugnações, divergência de interpretação na execução e questionamento pelo controle.",
+      "jurisprudencia_ids": []
+    }
+  ],
+  "outros_apontamentos": [
+    {
+      "titulo": "Pesquisa de preços não documentada nas peças analisadas",
+      "constatacao": "O ETP informa que o banco de preços do TCE/PI não encontrou contratações similares e que se fez cotação direta com fornecedores, sem apresentar as cotações, o número de fornecedores ou a justificativa de por que não houve outra fonte. O anexo citado não integra o documento. O TR diz que o preço baseia-se em \"ampla pesquisa\". Os itens trazem descrições compostas e unidade \"SERV\", o que dificulta a comparação. O sistema não encontrou amostra suficiente em 20 itens, e por isso não se conclui sobre sobrepreço.",
+      "gravidade": "media",
+      "trecho": "foram buscados preços referenciais para nortear os parâmetros aceitáveis de contratação para",
+      "local": "ETP, levantamento de mercado [página 57]",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "23",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "18",
+          "disp": "IV"
+        }
+      ],
+      "porque": "O valor estimado deve ser compatível com o mercado, e o orçamento deve vir com as composições dos preços (art. 18, IV). A pesquisa só com fornecedores exige justificativa e cotações formais comparáveis. Sem a memória, não se afere a compatibilidade com o mercado.",
+      "risco": "Orçamento sem base verificável (risco de sobrepreço ou inexequibilidade), tanto mais grave porque o sigilo impede o controle social.",
+      "correcao": "Juntar ao processo as cotações, a memória e a análise crítica, justificar a pesquisa direta, e esclarecer o ocorrido junto ao órgão (pedido de esclarecimento, art. 164) se a documentação existir. Como o valor homologado (R$ 4.107.670,00) é inferior ao estimado, comparar os preços registrados com o mercado antes de contratar."
+    },
+    {
+      "titulo": "Vigência do contrato incompatível com a ata e com o planejamento",
+      "constatacao": "O contrato vigora \"até 31 de dezembro de 2026\", e a ata vale 1 ano (a partir do dia útil seguinte à divulgação) e é prorrogável. O ETP planeja contratações de 2026 a 2028. Qualquer contratação em 2027 (por exemplo, Carnaval) já nasce vencida. A expressão \"contados a partir de sua assinatura\" no TR também é incompatível com data fixa.",
+      "gravidade": "media",
+      "trecho": "2.1. O prazo de vigência da contratação é até 31 de Dezembro de 2026, na forma do artigo 105 da",
+      "local": "Minuta de contrato, cláusula 2.1 [página 69]; TR, item 1.3 [página 33]",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "84",
+          "disp": "caput"
+        },
+        {
+          "norma": "lei-14133",
+          "art": "105",
+          "disp": "caput"
+        }
+      ],
+      "porque": "A vigência do contrato deve ser compatível com os créditos orçamentários e com a ata. Data fixa gera contratos de duração irregular ou impede o uso da ata durante sua vigência.",
+      "risco": "Contratação inviável após 2026, prorrogações irregulares e litígio sobre prazos.",
+      "correcao": "Prever vigência por prazo (ex.: até a conclusão do evento), nunca superior à ata nem aos créditos, e ajustar o planejamento (ver srp-03)."
+    },
+    {
+      "titulo": "Vedação total à subcontratação sem fundamentação específica",
+      "constatacao": "O TR e a minuta vedam qualquer subcontratação \"para maior eficiência na fiscalização\". O objeto combina confecção metálica, impressão de lona, sublimação, fibra de vidro e iluminação LED, atividades que normalmente se subcontratam.",
+      "gravidade": "media",
+      "trecho": "NÃO É ADMITIDA A SUBCONTRATAÇÃO DO OBJETO CONTRATUAL.",
+      "local": "TR, item 5.11 [página 35]; item 2.5 [página 33]; Contrato, cláusula 4 [página 70]",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "122",
+          "disp": "caput"
+        }
+      ],
+      "porque": "A subcontratação parcial é admitida nos limites do edital, e vedá-la totalmente, sem demonstrar a inviabilidade, reduz o número de fornecedores aptos.",
+      "risco": "Restrição à competitividade e preços mais altos.",
+      "correcao": "Justificar a vedação no ETP ou admitir subcontratação parcial para parcelas acessórias (como impressão), com limite, autorização e responsabilidade da contratada."
+    },
+    {
+      "titulo": "Prazo de 48 horas para confecção e instalação",
+      "constatacao": "O TR fixa prazo de prestação de até 48 horas após a ordem de serviço, incluindo confecção e instalação de estruturas de grande porte (cobertura de 1.400 m², árvores de 8 a 15 m, 100 estandartes). O ETP diz que a contratada deve \"iniciar\" em 48 horas, o que é diferente. Não há evidência de que o prazo seja executável.",
+      "gravidade": "media",
+      "trecho": "O prazo de prestação dos serviços será de ate 48 (QUARENTA E OITO) horas, contados",
+      "local": "TR, item 7.1 [página 35]; ETP [página 45]",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "18",
+          "disp": "IX"
+        }
+      ],
+      "porque": "Prazo desproporcional ao objeto favorece quem tem estoque ou estrutura prévia e dificulta a concorrência. O conflito entre TR e ETP gera dúvida sobre o prazo de início ou de conclusão. A situação deve ser esclarecida junto ao órgão, pois pode haver prazo em ordem de serviço.",
+      "risco": "Restrição à participação, inexecução e aplicação de multas por prazo inexequível.",
+      "correcao": "Diferenciar prazo de início e de conclusão por tipo de estrutura, com cronograma por evento na ordem de serviço, e compatibilizar TR e ETP."
+    },
+    {
+      "titulo": "Unidade de medida \"SERV\" agregando múltiplos componentes",
+      "constatacao": "Cada item é um serviço global (\"SERV\") que reúne componentes de quantidade e preço distintos (por exemplo, 100 estandartes ou 40 casas cenográficas), em regime declarado de \"empreitada por preço unitário\". Não há critério de medição de entregas parciais.",
+      "gravidade": "baixa",
+      "trecho": "A execução do contrato ocorrerá sob o regime empreitada por preço",
+      "local": "TR, item 2.9 [página 33]; tabelas dos lotes [páginas 18-33]",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "92",
+          "disp": "VII"
+        }
+      ],
+      "porque": "A unidade agregada dificulta a pesquisa de preços, a medição e o pagamento por parcelas e torna incoerente o regime \"por preço unitário\".",
+      "risco": "Divergências de medição e dificuldade de comparar preços.",
+      "correcao": "Detalhar a composição de cada item (componentes e quantidades) e o critério de medição, ou adotar o regime coerente com a unidade."
+    },
+    {
+      "titulo": "Ausência de exigência de responsável técnico para estruturas",
+      "constatacao": "O objeto inclui estruturas metálicas e coberturas tipo box truss de 1.400 m², árvores de até 15 m, instalação elétrica de iluminação em espaços públicos e instalações temporárias com público, e o ETP cita normas de segurança. A habilitação não exige registro em conselho profissional, responsável técnico nem ART/RRT.",
+      "gravidade": "media",
+      "trecho": "segurança de instalações temporárias e prevenção de acidentes;",
+      "local": "ETP, requisitos da contratação [página 45]; TR, item 10.25 [página 39]",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "67",
+          "disp": "caput"
+        }
+      ],
+      "porque": "A segurança de estruturas temporárias e de instalações elétricas deve ser aferida na habilitação ou na execução. A omissão de qualquer exigência técnica deixa a Administração sem garantia de que o responsável é habilitado. Não se afirma obrigatoriedade; trata-se de avaliação técnica a registrar no processo.",
+      "risco": "Risco de acidentes em eventos públicos e responsabilização da Administração.",
+      "correcao": "Avaliar com a área técnica a exigência de responsável técnico e de ART/RRT para as estruturas e instalações de maior porte, restrita ao necessário, ou exigir laudo na execução."
+    },
+    {
+      "titulo": "Prazo excessivo para a Administração decidir (60 dias úteis)",
+      "constatacao": "A minuta fixa 60 dias úteis, prorrogáveis por igual período, para decidir solicitações e pedidos de reequilíbrio econômico-financeiro.",
+      "gravidade": "baixa",
+      "trecho": "8.9. A Administração terá o prazo de 60 (sessenta dias) úteis, a contar da data do protocolo do",
+      "local": "Minuta de contrato, cláusulas 8.9 e 8.10 [página 71]",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "123",
+          "disp": "caput"
+        }
+      ],
+      "porque": "O art. 123 estabelece o prazo de 1 mês para decidir, prorrogável por igual período. O prazo previsto é bem superior, e deve ser corrigido para não contrariar a lei geral.",
+      "risco": "Contestação da cláusula e atrasos na decisão sobre equilíbrio.",
+      "correcao": "Reduzir o prazo para 1 mês, com possibilidade de prorrogação motivada por igual período."
+    },
+    {
+      "titulo": "Resíduos de modelo de outro objeto no edital, TR e ETP",
+      "constatacao": "O edital exige indicar marca, fabricante, registro do bem no órgão competente e amostra de serviços de confecção personalizada (TR 5.1 a 5.10), e o ETP fala em \"sistema que será implantado\" e cita a IN 73/2020. São trechos de outro objeto (compras ou software).",
+      "gravidade": "baixa",
+      "trecho": "municipal pode adquirir o sistema que será implantado.",
+      "local": "ETP, levantamento de mercado [página 58]; Edital, item 5.1.3 [página 6]; TR, itens 5.1 a 5.10 [páginas 34-35]",
+      "fundamento": [
+        {
+          "norma": "lei-14133",
+          "art": "18",
+          "disp": "IX"
+        }
+      ],
+      "porque": "Exigências incompatíveis com o objeto geram dúvidas e podem ser usadas para restringir ou desclassificar propostas. A amostra de estruturas sob medida é de difícil cumprimento.",
+      "risco": "Impugnações e decisões inconsistentes.",
+      "correcao": "Excluir as exigências inaplicáveis e corrigir as referências normativas (por exemplo, a IN 65/2021 para pesquisa de preços)."
+    }
+  ],
+  "precos": {
+    "criterios": {
+      "uf": "PI",
+      "data_referencia": "2026-05-08",
+      "janela_dias": 365,
+      "lei": "Lei 14.133/2021",
+      "preco": "valor unitário homologado",
+      "estatistica": "media_saneada",
+      "minimo_comparaveis": 3,
+      "limiar_indicio": 0.25,
+      "limiar_atencao": 0.1,
+      "similaridade_minima": 0.55,
+      "saneamento": "descarte, um por rodada, do preço mais de 25% abaixo ou acima da média dos demais, até não haver descarte (mínimo de 3 preços)",
+      "limiar_cv": 0.25,
+      "alternativa": "mediana dos remanescentes se o CV continuar acima de 25%",
+      "heterogeneidade": "CV acima de 0,5 após o saneamento",
+      "fundamento": "IN SEGES/ME 65/2021, arts. 3º, VI, e 6º; TCU, Manual de Licitações e Contratos (4ª ed.), item 4.3.9.3"
+    },
+    "itens": [
+      {
+        "numero": 3,
+        "descricao": "SABOR MAIOR - ESPAÇO INSTAGRAMÁVEL. ORNAMENTAÇÃO UTILIZANDO 3 PANELAS GIGANTE E CONCHA, COM FOGO DE LENHA ABAIXO. COM LOGOMARCA DO EVENTO EM AMBOS OS LADOS.\r\n\r\nCONFECCIONADO EM FIBRA DE VIDRO, ESTRUTURA METÁLICA, LOGOMARCA EM ACRÍLICO E ILUMINAÇÃO EM LED.\r\nTAMANHO 3X2,5 METROS.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 50166.66,
+        "valor_total": 150499.98,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 35,
+        "descricao": "NATAL - ESPAÇO INSTAGRAMÁVEL. CONFECÇÃO E INSTALAÇÃO DE 12 ARRANJOS ORNAMENTAIS MODELO “PRESÉPIO”.\r\n \r\nCONFECCIONADA EM FIBRA DE VIDRO, ESTRUTURA METÁLICA, MANGUEIRA EM LED E MALHAS. \r\nTAMANHO REAL.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 49660.0,
+        "valor_total": 148980.0,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 27,
+        "descricao": "SABOR MAIOR - CONFECÇÃO E INSTALAÇÃO DE CENARIO REPRODUZINDO 40 BARES, RESTAURANTES, LANCHONETES E CHURRASCARIAS ANTIGAS.\r\n\r\nCONFECCIONADA EM LONA IMPRESSA, ESTRUTURA METÁLICA.\r\nTAMANHO 3X4 METROS.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 49500.0,
+        "valor_total": 148500.0,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 6,
+        "descricao": "VESPERATA - CONFECÇÃO E INSTALAÇÃO DE CENÁRIO REPRODUZINDO 40 CASAS ANTIGAS PARA FRENTE DE QUIOSQUES.\r\n\r\nCONFECCIONADA EM LONA IMPRESSA, ESTRUTURA METÁLICA.\r\nTAMANHO UNITÁRIO 3X4 METROS.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 49233.33,
+        "valor_total": 147699.99,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 36,
+        "descricao": "NATAL - CONFECÇÃO E INSTALAÇÃO DE 60 ARRANJOS ORNAMENTAIS MODELO “DIVERSOS”. APLICAÇÃO EM POSTES, SOLO E ÁRVORES.\r\n \r\nANJOS, SINOS, ESTRELAS, ESTRELAS COM CALDA, VELAS, ETC. CONFECCIONADA EM ESTRUTURA METÁLICA, E MANGUEIRA EM LED E PISCAS.\r\nTAMANHO 2X1.5M.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 36033.33,
+        "valor_total": 108099.99,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 70,
+        "descricao": "FESTEJOS DE SANTO ANTÔNIO - ESPAÇO \tINSTAGRAMÁVEL 03     CONFECÇÃO E INSTALAÇÃO DE 02 FOGUEIRAS GIGANTES.\r\n\r\nCONFECCIONADA EM ESTRUTURA METÁLICA, FIBRA DE VIDRO, MALHAS, FITA LED E PINTURA EM ESMALTE SINTÉTICO.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 30200.0,
+        "valor_total": 90600.0,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 61,
+        "descricao": "FESTEJOS DE SANTO ANTÔNIO - CONFECÇÃO E INSTALAÇÃO DE BANDEIRAS JUNINAS “MODELO CARUARU” COBRINDO UMA ÁREA DE 1.200 M² NO ESPAÇO CULTURAL.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 29900.0,
+        "valor_total": 89700.0,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 23,
+        "descricao": "VESPERATA - CONFECÇÃO E INSTALAÇÃO DE 25 CENÁRIOS REPRODUZINDO RUAS E CASARÕES ANTIGOS.\r\n\r\nCONFECCIONADA EM LONA IMPRESSA, ESTRUTURA METÁLICA.\r\nTAMANHO UNITÁRIO 3X4 METROS.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 29533.33,
+        "valor_total": 88599.99,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 64,
+        "descricao": "FESTEJOS DE SANTO ANTÔNIO - DECORAÇÃO DE PALCO CONFECÇÃO E INSTALAÇÃO DE PEÇAS JUNINAS ORNAMENAIS NO PALCO. \r\n\r\nPEÇAS CONFECCIONADAS EM MDF RECORTADO, PINTURA MANUAL E FITA LED.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 27900.0,
+        "valor_total": 83700.0,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 72,
+        "descricao": "FESTEJOS DE SANTO ANTÔNIO - CONFECÇÃO E INSTALAÇÃO DE CORREDOR DECORADO EM MALHA TENCIONADA E MIL LAMPADAS RETRÔ. \r\n \r\nCONFECCIONADA EM ESTRUTURA METÁLICA, MALHAS, LÂMPADAS RETRÔ EM LED.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 26300.0,
+        "valor_total": 78900.0,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 33,
+        "descricao": "FESTEJOS DE SANTO ANTÔNIO - ESPAÇO \tINSTAGRAMÁVEL 02 BARRACA DO LEILÃO.\r\nORNAMENTAÇÃO FESTIVA COM MALHAS E ILUMINAÇÃO.\r\n \r\nORNAMENTAÇÃO INSTALADA SOBRE A BARRACA DO LEILÃO NA PRAÇA BONA PRIMO. CONFECCIONADO EM MALHA, COM ILUMINAÇÃO EXTERNA DE 1.000 LÂMPADAS LED, ESTILO RETRÔ.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 25833.33,
+        "valor_total": 77499.99,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 74,
+        "descricao": "FESTEJOS DE SANTO ANTÔNIO - ESPAÇO \tINSTAGRAMÁVEL 04     CONFECÇÃO E INSTALAÇÃO DE TÚNEL DECORATIVO JUNINO.\r\n\r\nCONFECCIONADA EM ESTRUTURA METÁLICA, MALHAS, 400 LÂMPADAS DECORATIVAS RETRÔ \r\nEM LED.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 25283.33,
+        "valor_total": 75849.99,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 26,
+        "descricao": "NATAL - ESPAÇO INSTAGRAMÁVEL. CONFECÇÃO E INSTALAÇÃO 06 DE ORNAMENTOS MODELO REI MAGO SOBRE CAMELO.\r\n\r\nCONFECCIONADA EM FIBRA DE VIDRO, TECIDO E MANGUEIRA LED. \r\nCOMPRIMENTO 3 METROS CADA.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 25003.33,
+        "valor_total": 75009.99,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 79,
+        "descricao": "FESTEJOS DE SANTO ANTÔNIO - SERVIÇO DE MONTAGEM E DESMONTAGEM.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 24966.66,
+        "valor_total": 74899.98,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 53,
+        "descricao": "SABOR MAIOR - DECORAÇÃO DE PALCO CONFECÇÃO E INSTALAÇÃO DE PEÇAS ORNAMENAIS NO PALCO.\r\n\r\nPEÇAS CONFECCIONADAS EM MDF RECORTADO, PINTURA MANUAL E FITA LED.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 23866.66,
+        "valor_total": 71599.98,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 68,
+        "descricao": "NATAL - CONFECÇÃO E INSTALAÇÃO DE ORNAMENTAÇÃO UTILIZANDO PISCAS E CASCATAS E MANGUEIRAS LED EM ÁRVORES E PERGOLADOS NA PRAÇA DA LIBERDADE. \r\n\r\nPISCA-PISCAS, CASCATAS E MANGUEIRA EM LED.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 22823.33,
+        "valor_total": 68469.99,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 67,
+        "descricao": "FESTEJOS DE SANTO ANTÔNIO - INSTALAÇÃO DE ESTRUTURA “TIPO COBERTURA BOX TRUSS” COM MALHA TENCIONADA COLORIDA.\r\n\r\nCONFECCIONADA EM ESTRUTURA METÁLICA, MALHAS E FITAS METÁLICAS. COBRINDO ÁREA DE 1.400 M² .",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 22586.66,
+        "valor_total": 67759.98,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 8,
+        "descricao": "VESPERATA - ORNAMENTAÇÃO UTILIZANDO 2.000 LÂMPADAS LED DECORATIVAS COM QUENTE COM RABIXOS. \r\n\r\nCONFECCIONADA EM ESTRUTURA METÁLICA, INSTALADAS NO LOCAL DO EVENTO.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 22536.66,
+        "valor_total": 67609.98,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 4,
+        "descricao": "CANTATA PÉ DA SERRA - CONFECÇÃO E INSTALAÇÃO DE ESTRUTURA “TIPO COBERTURA BOX TRUSS” COM MALHA TENCIONADA COLORIDA.\r\n\r\nCONFECCIONADA EM ESTRUTURA METÁLICA, MALHAS E FITAS METÁLICAS. COBRINDO ÁREA DE 1.400 M².",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 22533.33,
+        "valor_total": 67599.99,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      },
+      {
+        "numero": 11,
+        "descricao": "NATAL - CONFECÇÃO E INSTALAÇÃO DE ORNAMENTAÇÃO UTILIZANDO, SINOS, VELAS, ESTRELAS, PISCAS, CASCATAS E MANGUEIRAS LED NAS ÁRVORES, CARNAÚBAS E PERGOLADOS DA PRAÇA RUI BARBOSA. \r\n\r\nPISCA-PISCAS, CASCATAS E MANGUEIRA EM LED.",
+        "unidade": "Serviço",
+        "quantidade": 3.0,
+        "valor_estimado": 22350.0,
+        "valor_total": 67050.0,
+        "comparaveis": [],
+        "n": 0,
+        "situacao": "amostra_insuficiente",
+        "descartados": 0
+      }
+    ],
+    "itens_no_orcamento": 82,
+    "itens_analisados": 20,
+    "cobertura_valor": 0.4306,
+    "com_indicio": 0,
+    "excesso_total": 0,
+    "totais": {
+      "itens": 0,
+      "valor_orcado": 0,
+      "valor_mercado": 0,
+      "diferenca": 0,
+      "desvio": null,
+      "excesso_itens_acima": 0
+    }
+  },
+  "salarios": null,
+  "normas_locais": [],
+  "referencias_tecnicas": [
+    {
+      "id": "tcu-licitacoes-contratos#1640",
+      "fonte": "tcu-licitacoes-contratos",
+      "titulo_fonte": "Licitações & Contratos: orientações e jurisprudência do TCU (5ª edição)",
+      "alcance": "nacional",
+      "secao": "",
+      "pagina": 681,
+      "texto": "670\nVII - o registro de mais de um fornecedor ou prestador de serviço, desde que aceitem\ncotar o objeto em preço igual ao do licitante vencedor, assegurada a preferência de\ncontratação de acordo com a ordem de classificação;\nVIII - a vedação à participação do órgão ou entidade em mais de uma ata de registro de\npreços com o mesmo objeto no prazo de validade daquela de que já tiver participado,\nsalvo na ocorrência de ata que tenha registrado quantitativo inferior ao máximo previsto\nno edital;\nIX - as hipóteses de cancelamento da ata de registro de preços e suas consequências.\n§ 1º O critério de julgamento de menor preço por grupo de itens somente poderá ser\nadotado quando for demonstrada a inviabilidade de se promover a adjudicação por item\ne for evidenciada a sua vantagem técnica e econômica, e o critério de aceitabilidade de\npreços unitários máximos deverá ser indicado no edital.\n§ 2º Na hipótese de que trata o § 1º deste artigo, observados os parâmetros estabelecidos\nnos §§ 1º, 2º e 3º do art. 23 desta Lei, a contratação posterior de item específico constante\nde grupo de itens exigirá prévia pesquisa de mercado e demonstração de sua vantagem\npara o órgão ou entidade.\n§ 3º É permitido registro de preços com indicação limitada a unidades de contratação,\nsem indicação do total a ser adquirido, apenas nas seguintes situações:\nI - quando for a primeira licitação para o objeto e o órgão ou entidade não tiver registro\nde demandas anteriores;\nII - no caso de alimento perecível;",
+      "item": "srp-01",
+      "abnt": "BRASIL. Tribunal de Contas da União. Licitações & contratos: orientações e jurisprudência do TCU. 5. ed. Brasília, DF: TCU, 2024. Acesso em: {acesso}.",
+      "url": ""
+    },
+    {
+      "id": "tcu-licitacoes-contratos#1090",
+      "fonte": "tcu-licitacoes-contratos",
+      "titulo_fonte": "Licitações & Contratos: orientações e jurisprudência do TCU (5ª edição)",
+      "alcance": "nacional",
+      "secao": "",
+      "pagina": 464,
+      "texto": "453\nO enquadramento como microempresa (ME) ou empresa de pequeno porte (EPP) é\ndefinido pela LC 123/2006, em razão da receita anual bruta auferida pela entidade,\nconsiderando o “produto da venda de bens e serviços nas operações de conta própria, o preço\ndos serviços prestados e o resultado nas operações em conta alheia”. O limite de receita para\nser considerada microempresa é de R$ 360.000,00; para empresa de pequeno porte é de R$\n4.800.000,00664.\nSe, no ano-calendário, a EPP exceder em até 20% o limite de receita bruta anual de R$\n4.800.000,00, ela será excluída do tratamento diferenciado previsto na LC 123/2006 no ano-\ncalendário subsequente à ocorrência do excesso. Caso o excesso ultrapasse 20% do limite\nprevisto, a EPP perderá os benefícios no mês subsequente à ocorrência do excesso 665.\nÉ importante mencionar que, para fins de tratamento diferenciado nas contratações\npúblicas, os agricultores familiares, os produtores rurais pessoas físicas, os\nmicroempreendedores individuais (MEI) e as sociedades cooperativas são equiparados a\nmicroempresas (ME) e empresas de pequeno porte (EPP) 666.\nO art. 4º da Lei 14.133/2021 preservou o tratamento favorecido e diferenciado para as\nME/EPP nas licitações públicas (disciplinado nos arts. 42 a 49 da LC 123/2006 667), a ser\naplicado independentemente de previsão no edital de licitação 668. Os benefícios previstos são\nos seguintes:",
+      "item": "ed-10",
+      "abnt": "BRASIL. Tribunal de Contas da União. Licitações & contratos: orientações e jurisprudência do TCU. 5. ed. Brasília, DF: TCU, 2024. Acesso em: {acesso}.",
+      "url": ""
+    },
+    {
+      "id": "tcu-licitacoes-contratos#1217",
+      "fonte": "tcu-licitacoes-contratos",
+      "titulo_fonte": "Licitações & Contratos: orientações e jurisprudência do TCU (5ª edição)",
+      "alcance": "nacional",
+      "secao": "Art. 50. Os atos administrativos deverão ser motivados, com indicação dos fatos e dos\n fundamentos jurídicos, quando:",
+      "pagina": 516,
+      "texto": "Art. 17. Qualquer pessoa é parte legítima para impugnar edital de licitação por\n irregularidade ou para solicitar esclarecimento sobre os seus termos, devendo\n encaminhar o pedido em até 3 (três) dias úteis antes da data de abertura da sessão pública,\n por meio eletrônico, na forma prevista no edital de licitação.\n § 1º O agente de contratação ou a comissão de contratação, quando o substituir,\nIN - Seges/ME responderá aos pedidos de esclarecimentos e/ou impugnação no prazo de até três dias\n 2/2023 úteis contado da data de recebimento do pedido, limitado ao último dia útil anterior à\n data da abertura do certame, e poderá requisitar subsídios formais aos responsáveis pela\n elaboração do edital de licitação e dos anexos.\n § 2º A impugnação não possui efeito suspensivo, sendo a sua concessão medida\n excepcional que deverá ser motivada pelo agente de contratação ou pela comissão de\n contratação, quando o substituir, nos autos do processo de licitação.\n § 3º Acolhida a impugnação contra o edital de licitação, será definida e publicada nova\n data para realização do certame, observado o prazo fixado no art. 18.\n § 4º As respostas aos pedidos de esclarecimentos e impugnações serão divulgadas em\n sítio eletrônico oficial do órgão ou da entidade promotora da licitação e no sistema,\n dentro do prazo estabelecido no § 1º, e vincularão os participantes e a Administração.\nObjeto e âmbito de aplicação",
+      "item": "ed-11",
+      "abnt": "BRASIL. Tribunal de Contas da União. Licitações & contratos: orientações e jurisprudência do TCU. 5. ed. Brasília, DF: TCU, 2024. Acesso em: {acesso}.",
+      "url": ""
+    }
+  ],
+  "jurisprudencia_externa": [],
+  "_execucao": {
+    "modelo": "claude-sonnet-5-5",
+    "segundos": 286,
+    "uso": {
+      "input_tokens": 4,
+      "cache_creation_input_tokens": 164440,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 164440,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 41085,
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard",
+      "output_tokens_details": {
+        "thinking_tokens": 24201
+      }
+    },
+    "custo_usd": 0.822,
+    "parada": "tool_use",
+    "avisos": [],
+    "fatos": [
+      "Número de controle PNCP: 06716880000183-1-000022/2026; modalidade: Pregão - Eletrônico; registro de preços: sim; modo de disputa: Aberto.",
+      "Valor total estimado publicado no PNCP: R$ 4.292.956,02; situação do sigilo no PNCP: Compra sem sigilo.",
+      "Valor homologado: R$ 4.107.670,00 (o certame já tem resultado).",
+      "Divulgação no PNCP em 08/05/2026 13:54; fim do recebimento de propostas em 22/05/2026 09:30. Contagem pelo art. 183 (cálculo do sistema, só feriados nacionais): o dia do começo é 11/05/2026 (excluído) e o encerramento cai no 9º dia útil. Feriados estaduais ou municipais não foram considerados.",
+      "Análise de preços calculada pelo sistema (critérios: mesma UF PI, contratações homologadas em até 1 ano, Lei 14.133/2021, objeto equivalente; referência de mercado = média saneada de no mínimo 3 preços, com descarte dos preços mais de 25% abaixo ou acima da média dos demais (TCU; IN SEGES/ME 65/2021, art. 6º); indício acima de 25%):\n  Demais itens analisados: 0 compatíveis, 20 sem amostra suficiente, 0 com amostra heterogênea."
+    ],
+    "trilhas": [
+      {
+        "id": "t-consorcio",
+        "ocorrencias": 1
+      }
+    ],
+    "trilhas_avaliadas": [
+      {
+        "id": "t-consorcio",
+        "confirmado": true,
+        "motivo": "O edital (3.6.8.2) e o TR (2.6) vedam consórcios com justificativa genérica e contraditória, sem motivação concreta no ETP. Registrado no item ed-09."
+      }
+    ]
+  },
+  "referencia_documento": "PREFEITURA MUNICIPAL DE CAMPO MAIOR - PI (SECRETARIA MUNICIPAL DE CULTURA E DESENVOLVIMENTO DO TURISMO). Edital e minutas (ata e contrato) — Pregão Eletrônico nº 015/2026 - SRP (PNCP 06716880000183-1-000022/2026). Disponível em: https://pncp.gov.br/app/editais/06716880000183/2026/22. Acesso em: {acesso}."
+}
