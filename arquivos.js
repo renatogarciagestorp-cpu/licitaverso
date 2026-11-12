@@ -195,11 +195,14 @@
   function abrirDrive(mimes) {
     return prepararGoogle().then(obterToken).then(function () {
       var P = window.google.picker, pasta = lerPasta();
-      var v = new P.DocsView(P.ViewId.DOCS).setMimeTypes((mimes || []).join(",")).setIncludeFolders(true).setMode(P.DocsViewMode.LIST);
+      // mostra todos os arquivos da pasta (com o filtro, o Google diria só "Não há documentos"); a escolha é conferida abaixo
+      var v = new P.DocsView(P.ViewId.DOCS).setIncludeFolders(true).setMode(P.DocsViewMode.LIST);
       if (pasta) v.setParent(pasta.id);
-      return picker(v, "Escolha o arquivo salvo pelo Licitacon");
+      return picker(v, "Escolha a planilha em Excel (.xlsx) salva pelo Licitacon. Só arquivos Excel são aceitos");
     }).then(function (doc) {
       if (!doc) return null;
+      var aceito = (mimes || []).indexOf(doc.mimeType) >= 0 || /\.xlsx$/i.test(doc.name || "");
+      if (!aceito) throw new Error("so_excel");
       return fetch("https://www.googleapis.com/drive/v3/files/" + encodeURIComponent(doc.id) + "?alt=media", { headers: { Authorization: "Bearer " + token } })
         .then(function (r) { if (!r.ok) throw new Error("drive_" + r.status); return r.blob(); }).then(function (b) { return { nome: doc.name, blob: b }; });
     });
