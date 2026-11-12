@@ -78,11 +78,13 @@ export const MAX_PAGINAS_ANALISE = 200;
 export const DOC_GERACAO: Record<string, string> = {
   etp: "Estudo Técnico Preliminar (ETP)", tr: "Termo de Referência", projeto_basico: "Projeto Básico",
   edital: "Edital (com as minutas)", direta: "Processo de contratação direta (dispensa ou inexigibilidade)", riscos: "Mapa de riscos",
+  plano_trabalho: "Plano de trabalho da parceria (Lei 13.019/2014)",
 };
 // lei da contratação: cada documento existe só nos regimes em que a lei o prevê
 export const REGIMES_GERACAO: Record<string, string[]> = {
   etp: ["lei-14133", "lei-13303"], tr: ["lei-14133", "lei-13303"], projeto_basico: ["lei-14133", "lei-13303"],
   edital: ["lei-14133", "lei-13303", "lei-13019"], direta: ["lei-14133", "lei-13303", "lei-13019"], riscos: ["lei-14133", "lei-13303"],
+  plano_trabalho: ["lei-13019"],
 };
 export const MAX_RESPOSTAS_GERACAO = 60000; // caracteres do questionário
 

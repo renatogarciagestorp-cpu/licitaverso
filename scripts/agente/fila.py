@@ -371,7 +371,7 @@ def processar_geracao(a):
     with tempfile.TemporaryDirectory() as tmp:
         pasta = pathlib.Path(tmp)
         try:
-            if a.get("documento") not in ("etp", "tr", "projeto_basico", "edital", "direta", "riscos"):
+            if a.get("documento") not in ("etp", "tr", "projeto_basico", "edital", "direta", "riscos", "plano_trabalho"):
                 raise ErroCliente("Tipo de documento inválido.")
             respostas = a.get("respostas") or {}
             if not str(respostas.get("objeto", "")).strip():
@@ -412,7 +412,10 @@ def processar_geracao(a):
                 extra += ["--docj", str(pasta / "rascunho" / "documento.json")]
             if a.get("regime") in ("lei-14133", "lei-13303", "lei-13019"):
                 extra += ["--regime", a["regime"]]
-            extra += baixar_normas(a, pasta, f"elaboração {aid}")  # RILC da estatal ou decreto do ente
+            normas_args = baixar_normas(a, pasta, f"elaboração {aid}")  # RILC da estatal ou decreto do ente
+            if a.get("documento") == "plano_trabalho" and not normas_args and a.get("fase") != "completar":
+                raise ErroCliente("Não foi possível ler o decreto que regulamenta a Lei 13.019/2014 no seu ente. Envie o decreto em PDF com texto (não digitalizado) ou em Word.")
+            extra += normas_args
             etapa_paga = True  # a partir daqui há custo de API: falha não volta para a fila automaticamente
             proc = subprocess.Popen([sys.executable, str(RAIZ / "scripts/agente/elaborar.py"), "--doc", a["documento"], "--respostas",
                                      str(pasta / "respostas.json"), "--pasta", str(pasta / "saida")] + extra,

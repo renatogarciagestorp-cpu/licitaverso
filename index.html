@@ -3531,6 +3531,7 @@
             <div class="lve-bloco">
               <h4 class="lve-bloco-t">{{ elNormasTitulo }}</h4>
               <p style="margin: 0 0 10px; font-size: 13px; line-height: 1.5; color: #5F7077">{{ elNormasTexto }}</p>
+              <sc-if value="{{ elPedeDecreto }}" hint-placeholder-val="{{ false }}"><p role="note" style="margin: 0 0 10px; padding: 9px 12px; border: 1px solid #F1D49A; background: #FFF8EC; border-radius: 10px; font-size: 13px; line-height: 1.5; color: #5A4300"><b>Obrigatório:</b> envie o decreto do seu município, estado ou DF que regulamenta a Lei 13.019/2014 (em PDF com texto ou Word) e deixe-o selecionado. O plano de trabalho segue a lei e esse decreto.</p></sc-if>
               <sc-if value="{{ elPedeRilc }}" hint-placeholder-val="{{ false }}"><p role="note" style="margin: 0 0 10px; padding: 9px 12px; border: 1px solid #F1D49A; background: #FFF8EC; border-radius: 10px; font-size: 13px; line-height: 1.5; color: #5A4300"><b>Empresa estatal:</b> envie o Regulamento Interno de Licitações e Contratos (RILC) da estatal (Lei 13.303/2016, art. 40). Sem ele, os pontos que dependem do regulamento saem marcados para você conferir.</p></sc-if>
               <div style="display: grid; gap: 8px">
                 <sc-for list="{{ elNormas }}" as="n" hint-placeholder-count="2">
@@ -7665,6 +7666,8 @@ const ELAB = {
     porRegime: { "lei-13303": { base: "Lei 13.303/2016, arts. 29 e 30, e o RILC" },
       "lei-13019": { nome: "Dispensa ou inexigibilidade de chamamento", base: "Lei 13.019/2014, arts. 30 a 32",
         desc: "Justificativa da parceria sem chamamento público, com o enquadramento, a escolha da organização e a publicação do extrato." } } },
+  plano_trabalho: { regimes: ["lei-13019"], exigeNorma: true, nome: "Plano de trabalho", sigla: "Plano", base: "Lei 13.019/2014, art. 22, e o decreto do seu ente",
+    desc: "Plano de trabalho da parceria: realidade, metas, atividades, indicadores, receitas e despesas e cronograma, conforme a lei e o decreto do seu ente.", passos: [] },
   riscos: { regimes: ["lei-14133", "lei-13303"], nome: "Mapa de riscos", sigla: "Riscos", base: "Lei 14.133/2021, art. 18, X, e art. 22",
     desc: "Riscos do planejamento, da seleção e da execução, com probabilidade, impacto, ações preventivas e responsáveis.", passos: [],
     porRegime: { "lei-13303": { nome: "Matriz de riscos", base: "Lei 13.303/2016, art. 42, X, e art. 69, X" } } }
@@ -7686,7 +7689,8 @@ const ELAB_ROT = { normas: "Normas do órgão", normas_ref: "Regulamento do órg
   resp_nome: "Responsável pelo setor: nome", resp_cargo: "Responsável pelo setor: cargo", resp_matricula: "Responsável pelo setor: matrícula",
   entrega: "Forma de entrega", rodape_incluir: "Informações no rodapé", rodape: "Texto do rodapé", modelo_arquivo: "Modelo em Word", logo_arquivo: "Logo",
   especificacoes: "Especificações", local_entrega: "Local de entrega", prazo_entrega: "Prazo de entrega", garantia_bem: "Garantia do produto", amostra: "Amostra",
-  instrumento: "Instrumento da contratação", pca_item: "Item do PCA", data_orcamento: "Data do orçamento estimado", indice: "Índice de reajuste", processo: "Nº do processo", municipio: "Município", autoridade: "Autoridade que aprova", gestor: "Gestor do contrato", fiscais: "Fiscais", fonte: "Fonte orçamentária", correlatas: "Contratações ligadas",
+  instrumento: "Instrumento da contratação", pca_item: "Item do PCA", data_orcamento: "Data do orçamento estimado", indice: "Índice de reajuste", processo: "Nº do processo", municipio: "Município", autoridade: "Autoridade que aprova", gestor: "Gestor do contrato", fiscais: "Fiscais", fonte: "Fonte orçamentária", correlatas: "Contratações ligadas", osc: "Organização da sociedade civil", atividades: "Atividades e forma de execução", indicadores: "Indicadores das metas",
+  publico: "Público-alvo e local", despesas: "Receitas e despesas", cronograma: "Cronograma de desembolso", contrapartida: "Contrapartida",
   tipo_parceria: "Tipo de parceria", metas: "Objetivos, metas e público", modo_disputa: "Modo de disputa", registro_precos: "Registro de preços", me_epp: "Participação de ME e EPP",
   criterios_selecao: "Critérios de seleção", agente: "Agente de contratação ou comissão", hipotese: "Hipótese legal", hipotese_detalhe: "Por que se enquadra",
   contratado: "Contratado escolhido", motivo_escolha: "Razão da escolha", justificativa_preco: "Justificativa do preço", fase: "Fase analisada",
@@ -7703,7 +7707,7 @@ const ELAB_FINAIS = [
 const ELAB_NECESSARIOS = { etp: ["processo", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade"],
   tr: ["processo", "unidade", "gestor", "fiscais", "normas", "dot_programa", "dot_elemento", "dot_fonte", "municipio", "autoridade"], projeto_basico: ["processo", "unidade", "gestor", "fiscais", "fonte", "municipio", "autoridade"],
   edital: ["processo", "unidade", "agente", "fonte", "municipio", "autoridade"], direta: ["processo", "unidade", "contratado", "fonte", "municipio", "autoridade"],
-  riscos: ["processo", "unidade", "municipio", "autoridade"] };
+  riscos: ["processo", "unidade", "municipio", "autoridade"], plano_trabalho: ["processo", "unidade", "osc", "gestor", "fonte", "municipio", "autoridade"] };
 const ELAB_MODALIDADES = ["Pregão", "Concorrência", "Concurso", "Diálogo competitivo", "Dispensa", "Inexigibilidade", "Adesão a ata"];
 const ELAB_CRITERIOS = ["Menor preço", "Maior desconto", "Melhor técnica ou conteúdo artístico", "Técnica e preço", "Maior retorno econômico"];
 const ELAB_REC = "Analisar no ETP e recomendar";
@@ -7844,6 +7848,27 @@ const ELAB_RAPIDO = {
     { k: "fonte", etapa: "pessoas", rot: "Dotação orçamentária", tipo: "linha", ph: "Ex.: 02.10.04.122.0001.2001 · 3.3.90.39 · Fonte 1.500.000" },
     ...ELAB_FINAIS
   ],
+  plano_trabalho: [
+    { k: "objeto", etapa: "contratacao", rot: "Objeto da parceria", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: atividades socioeducativas no contraturno escolar para crianças e adolescentes" },
+    { k: "tipo_parceria", etapa: "contratacao", rot: "Tipo de parceria", tipo: "chips", obrig: true, op: ["Termo de colaboração", "Termo de fomento"] },
+    { k: "osc", etapa: "contratacao", rot: "Organização da sociedade civil (nome, CNPJ e responsável)", tipo: "linha", ph: "Ex.: Associação Amigos do Bairro, CNPJ 00.000.000/0001-00, presidente Maria Silva" },
+    { k: "necessidade", etapa: "contratacao", rot: "Realidade que a parceria vai enfrentar (diagnóstico)", tipo: "texto", obrig: true, ph: "Ex.: 420 crianças do bairro sem atividade no contraturno; índice de evasão escolar de 12%", dica: "Art. 22, I: descrição da realidade e nexo com as atividades e as metas." },
+    { k: "metas", etapa: "contratacao", rot: "Metas", tipo: "texto", obrig: true, ph: "Ex.: atender 300 crianças por mês; reduzir a evasão para 6% em 12 meses" },
+    { k: "atividades", etapa: "contratacao", rot: "Atividades e forma de execução", tipo: "texto", obrig: true, ph: "Ex.: oficinas de reforço escolar, esporte e música, 4 horas por dia, de segunda a sexta, em 3 núcleos" },
+    { k: "indicadores", etapa: "contratacao", rot: "Como medir o cumprimento das metas", tipo: "texto", ph: "Ex.: lista de frequência mensal, boletins escolares, relatório fotográfico", dica: "Art. 22, IV. Se deixar em branco, o agente propõe indicadores coerentes com as metas." },
+    { k: "publico", etapa: "contratacao", rot: "Público-alvo e local", tipo: "linha", ph: "Ex.: crianças de 6 a 14 anos matriculadas na rede municipal; núcleos Centro, Norte e Sul" },
+    { k: "prazo", etapa: "contratacao", rot: "Prazo da parceria", tipo: "chips", obrig: true, outro: true, op: ["12 meses", "24 meses", "Outro"] },
+    ELAB_PROCESSO,
+    { k: "valor", etapa: "mercado", rot: "Valor total da parceria", tipo: "linha", obrig: true, ph: "Ex.: R$ 480.000,00" },
+    { k: "despesas", etapa: "mercado", rot: "Previsão de receitas e despesas", tipo: "texto", obrig: true, ph: "Ex.: 1 coordenador R$ 4.000/mês; 6 educadores R$ 2.500/mês com encargos; material pedagógico R$ 2.000/mês; lanche R$ 3.000/mês", dica: "Art. 22, II-A: por natureza (pessoal e encargos, materiais, serviços, equipamentos, custos indiretos)." },
+    { k: "cronograma", etapa: "mercado", rot: "Cronograma de desembolso", tipo: "chips", outro: true, op: ["Parcelas mensais", "Parcelas trimestrais", "Outro"] },
+    { k: "contrapartida", etapa: "mercado", rot: "Contrapartida da organização", tipo: "linha", ph: "Ex.: cessão do espaço do núcleo Centro (não pode ser exigida em dinheiro)" },
+    ELAB_UNIDADE,
+    { k: "equipe", etapa: "pessoas", rot: "Equipe de trabalho da organização", tipo: "texto", ph: "Um por linha: função, formação e carga horária" },
+    { k: "gestor", etapa: "pessoas", rot: "Gestor da parceria (administração)", tipo: "linha", ph: "Nome, cargo e matrícula" },
+    { k: "fonte", etapa: "pessoas", rot: "Dotação orçamentária", tipo: "linha", ph: "Ex.: 02.08.08.243.0010.2.040 · 3.3.50.43 · Fonte 1.500.000" },
+    ...ELAB_FINAIS
+  ],
   riscos: [
     { k: "objeto", etapa: "contratacao", rot: "Contratação analisada", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: serviços contínuos de limpeza dos prédios da sede" },
     { k: "necessidade", etapa: "contratacao", rot: "Contexto: fase atual e documentos já feitos", tipo: "texto", obrig: true, ph: "Ex.: ETP concluído (nº 8/2026); TR em elaboração" },
@@ -7881,6 +7906,11 @@ const ELAB_ETAPAS = {
     { id: "contratacao", t: "A hipótese", d: "Objeto, enquadramento legal, por que se enquadra e quem será contratado." },
     { id: "mercado", t: "Preço", d: "Valor e como foi verificado (ou nossa pesquisa de referência)." },
     { id: "pessoas", t: "Pessoas e orçamento", d: "Quem conduz, gere e assina, e de onde sai o recurso." }, { id: "final", t: "Revisar e criar", d: "Modelo do seu órgão, logo, rodapé, regulamentação e conferência final." } ],
+  plano_trabalho: [
+    { id: "contratacao", t: "A parceria", d: "Realidade, metas, atividades e indicadores." },
+    { id: "mercado", t: "Recursos", d: "Valor, receitas e despesas, desembolso e contrapartida." },
+    { id: "pessoas", t: "Pessoas e orçamento", d: "Equipe, gestor da parceria e dotação." },
+    { id: "final", t: "Decreto do ente e criar", d: "O decreto que regulamenta a Lei 13.019 no seu ente (obrigatório), modelo, logo e rodapé." } ],
   riscos: [
     { id: "contratacao", t: "A contratação", d: "Objeto, fase e riscos já conhecidos." },
     { id: "pessoas", t: "Pessoas e orçamento", d: "Quem conduz, gere e assina, e de onde sai o recurso." }, { id: "final", t: "Revisar e criar", d: "Modelo do seu órgão, logo, rodapé, regulamentação e conferência final." } ]
@@ -7919,6 +7949,11 @@ const ELAB_MONTAGEM = {
     ["Escolha e preço", "Razão da escolha do contratado e justificativa do preço, com a pesquisa de referência quando faltar valor."],
     ["Instrução completa", "Todos os elementos do processo (art. 72 da Lei 14.133, arts. 29 e 30 da Lei 13.303 e o RILC, ou arts. 30 a 32 da Lei 13.019)."],
     ["Conferência e Word", "O agente confere o processo com o roteiro do Parecerista, corrige e entrega em Word e PDF."] ],
+  plano_trabalho: [
+    ["Lei e decreto do ente", "Art. 22 da Lei 13.019/2014 e os elementos exigidos pelo decreto do seu município, estado ou DF, que você envia."],
+    ["Metas e indicadores", "Metas ligadas à realidade descrita, com parâmetros objetivos de aferição."],
+    ["Receitas e despesas", "Previsão por natureza (pessoal e encargos, materiais, serviços, custos indiretos) e cronograma de desembolso."],
+    ["Conferência e Word", "O agente confere o plano com o roteiro do Parecerista, corrige e entrega em Word e PDF."] ],
   riscos: [
     ["Riscos por fase", "Planejamento, seleção do fornecedor e gestão do contrato, com os riscos próprios do objeto."],
     ["Avaliação", "Probabilidade, impacto, nível, ações preventivas e de contingência e responsáveis."],
@@ -7942,6 +7977,7 @@ function elFaltando(doc, R, etapa) {
   });
   if (nesta("pessoas")) ["elab_nome", "elab_cargo", "resp_nome", "resp_cargo"].forEach((k) => { if (vazio(k)) f.push(ELAB_ROT[k].toLowerCase()); });
   if (nesta("final")) {
+    if ((ELAB[doc] || {}).exigeNorma && !(R._normas > 0)) f.push("o decreto do seu ente que regulamenta a Lei 13.019/2014 (envie e selecione abaixo)");
     if (vazio("entrega")) f.push("como quer receber o documento");
     if (vazio("rodape_incluir")) f.push("se quer informações no rodapé");
     else if (R.rodape_incluir === "Sim" && vazio("rodape")) f.push("texto do rodapé");
@@ -9884,7 +9920,7 @@ const ELAB_TERMO_VERSAO = "elab-2";
 const ELAB_TERMO = [
   "Natureza: minuta de Estudo Técnico Preliminar, Termo de Referência ou Projeto Básico elaborada de forma automatizada por inteligência artificial, a partir das informações que você prestar e da pesquisa em bases oficiais. Não substitui a análise técnica e jurídica do órgão (Lei 14.133/2021, art. 53).",
   "Revisão obrigatória: o documento é entregue para revisão. Conferir os dados, as escolhas e os fundamentos, ajustar o que for preciso e assinar é responsabilidade de quem assina o documento.",
-  "Pagamento antes da elaboração: a elaboração é contratada por documento (ETP, TR, Projeto Básico, edital com as minutas, contratação direta ou mapa de riscos), na lei da contratação escolhida (Lei 14.133/2021, Lei 13.303/2016 com o RILC da estatal ou Lei 13.019/2014). Depois do pagamento (ou do uso da franquia do Pro), você preenche as informações e envia; o documento contratado fica liberado até ser enviado.",
+  "Pagamento antes da elaboração: a elaboração é contratada por documento (ETP, TR, Projeto Básico, edital com as minutas, contratação direta, mapa de riscos ou plano de trabalho da parceria), na lei da contratação escolhida (Lei 14.133/2021, Lei 13.303/2016 com o RILC da estatal ou Lei 13.019/2014). Depois do pagamento (ou do uso da franquia do Pro), você preenche as informações e envia; o documento contratado fica liberado até ser enviado.",
   "Valores e franquia: R$ 290,00 por documento para quem não é assinante; assinantes do Básico têm 10% de desconto e do Premium, 15%. O Pro inclui 2 por semana, somando análises e documentos criados (equipes: 6 por acesso por mês); a partir do 3º, 30% de desconto. Elaboração que não puder ser concluída por falha técnica não consome a franquia; a paga é refeita ou estornada.",
   "Perguntas durante a elaboração: se faltar alguma informação que só o órgão tem, o agente pergunta nesta página e completa o documento sem novo custo.",
   "Pesquisa de mercado: contratações do PNCP e preços praticados do Compras.gov.br, primeiro do seu estado. Os valores do ETP são estimativa preliminar e não substituem a pesquisa de preços do art. 23 da Lei 14.133/2021.",
@@ -11071,7 +11107,7 @@ class Component extends DCLogic {
   async elAvancar() {
     const el = this.state.el, et = (ELAB_ETAPAS[el.doc] || [])[el.passo || 0];
     if (!et) return;
-    const falta = elFaltando(el.doc, el.respostas, et.id);
+    const falta = elFaltando(el.doc, { ...(el.respostas || {}), _normas: (el.normas || []).length }, et.id);
     if (falta.length) { this.setState({ el: { ...el, erro: "Falta informar: " + falta.join(", ") + "." } }); return; }
     if (et.id === "contratacao" && String((el.respostas || {}).objeto || "").trim().length < 8) { this.setState({ el: { ...el, erro: "Descreva o objeto com um pouco mais de detalhe." } }); return; }
     if (et.id === "mercado" && !(await this.elChecarPesquisa())) return;
@@ -11082,7 +11118,7 @@ class Component extends DCLogic {
   elValidar() {
     const el = this.state.el, R = el.respostas || {};
     const probs = (ELAB_ETAPAS[el.doc] || []).map((e, i) => {
-      const f = elFaltando(el.doc, R, e.id);
+      const f = elFaltando(el.doc, { ...R, _normas: (el.normas || []).length }, e.id);
       if (e.id === "contratacao" && String(R.objeto || "").trim() && String(R.objeto).trim().length < 8) f.push("descreva o objeto com um pouco mais de detalhe");
       if (e.id === "contratacao" && R.uf && !/^[A-Z]{2}$/.test(R.uf)) f.push("UF com 2 letras");
       if (e.id === "final" && !el.aceite) f.push("aceite das condições (caixa de confirmação)");
@@ -16035,6 +16071,7 @@ class Component extends DCLogic {
           tr: [["Limpeza predial", "Serviços contínuos de limpeza dos prédios da sede administrativa"], ["Material de escritório", "Aquisição de material de escritório para o exercício"], ["Vigilância", "Serviços de vigilância patrimonial armada nas unidades de saúde"], ["Manutenção de ar-condicionado", "Manutenção preventiva e corretiva dos aparelhos de ar-condicionado"]],
           edital: [["Notebooks", "Aquisição de notebooks para as escolas municipais"], ["Limpeza predial", "Serviços contínuos de limpeza dos prédios da sede administrativa"], ["Contraturno escolar", "Parceria para atividades socioeducativas no contraturno escolar"]],
           direta: [["Show musical", "Contratação de show musical para a festa de aniversário do município"], ["Software exclusivo", "Renovação da licença de software de fornecedor exclusivo"], ["Pequena compra", "Aquisição de material de copa e cozinha"]],
+          plano_trabalho: [["Contraturno escolar", "Atividades socioeducativas no contraturno escolar para crianças e adolescentes"], ["Acolhimento", "Serviço de acolhimento institucional para crianças e adolescentes"], ["Idosos", "Centro de convivência e fortalecimento de vínculos para pessoas idosas"]],
           riscos: [["Limpeza predial", "Serviços contínuos de limpeza dos prédios da sede administrativa"], ["Reforma de escola", "Reforma e adequação de acessibilidade de escola municipal"], ["Merenda escolar", "Aquisição de gêneros alimentícios para a merenda escolar"]],
           projeto_basico: [["Reforma de escola", "Reforma e adequação de acessibilidade de escola municipal"], ["Pavimentação", "Pavimentação asfáltica de vias urbanas"], ["Praça", "Construção de praça com playground e academia ao ar livre"], ["Telhado", "Substituição da cobertura do prédio da prefeitura"]] };
         return {
@@ -16099,11 +16136,12 @@ class Component extends DCLogic {
           })(),
           elNome: d ? elabDoc(el.doc, el.regime).nome : "", elSigla: d ? d.sigla : "",
           elLei: (ELAB_REGIMES.find((x) => x[0] === (el.regime || "lei-14133")) || [])[1] || "",
-          elNormasTitulo: el.regime === "lei-13303" ? "Regulamento interno (RILC) da estatal" : el.regime === "lei-13019" ? "Decreto que regulamenta as parcerias no seu ente" : "Regulamentação do seu ente (opcional)",
+          elNormasTitulo: el.regime === "lei-13303" ? "Regulamento interno (RILC) da estatal" : el.regime === "lei-13019" ? ((d && d.exigeNorma) ? "Decreto que regulamenta a Lei 13.019 no seu ente (obrigatório)" : "Decreto que regulamenta as parcerias no seu ente") : "Regulamentação do seu ente (opcional)",
           elNormasTexto: el.regime === "lei-13303" ? "O documento segue a Lei 13.303/2016 e o RILC que você selecionar abaixo. Até " + AN_MAX_NORMAS + " normas."
             : el.regime === "lei-13019" ? "O documento segue a Lei 13.019/2014 e o decreto do seu estado ou município, se você selecionar. Até " + AN_MAX_NORMAS + " normas."
             : "Decreto estadual ou municipal que regulamenta a Lei 14.133. O agente aplica a norma junto com a lei. Até " + AN_MAX_NORMAS + " normas.",
           elPedeRilc: el.regime === "lei-13303" && !(el.normas || []).length,
+          elPedeDecreto: !!(d && d.exigeNorma) && !(el.normas || []).length,
           elNormas: (s.normasUsuario || []).map((n) => {
             const ativo = (el.normas || []).includes(n.id);
             return { nome: n.nome, ativo, marca: ativo ? "✓" : "", tipo: /\.docx$/i.test(n.arquivo) ? "Word" : "PDF",
@@ -16490,7 +16528,7 @@ class Component extends DCLogic {
       topSec: s.usuario && (s.plano || s.admin) ? this.nav("biblioteca") : this.nav("planos"),
       homeTopo: [
         ["✦", "Agente de IA", "O Parecerista", "Parecer técnico sobre edital, ETP, TR e planilhas, com a lei e a jurisprudência.", "h-parecerista"],
-        ["✎", "Agente de IA", "O Elaborador", "ETP, TR, Projeto Básico, edital, contratação direta e mapa de riscos em Word e PDF, nas Leis 14.133, 13.303 e 13.019.", "h-elaborador"],
+        ["✎", "Agente de IA", "O Elaborador", "ETP, TR, Projeto Básico, edital, contratação direta, mapa de riscos e plano de trabalho em Word e PDF, nas Leis 14.133, 13.303 e 13.019.", "h-elaborador"],
         ["%", "Calculadora", "Reajuste e planilhas", "Reajuste por índice, planilhas da IN 05/2017, repactuação, comparação de planilhas e reequilíbrio.", "h-calculadora"],
         ["▦", "Gestão Contratual", "Seus contratos", "Linha do tempo, prazos de reajuste e prorrogação e avisos por e-mail.", "h-gestao"],
         ["⌕", "Grátis", "Biblioteca Jurídica", "TCU, Tribunais de Contas, PGEs e TJs de todo o país, com link oficial.", "h-biblioteca"],
