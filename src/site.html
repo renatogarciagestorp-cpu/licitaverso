@@ -29,7 +29,7 @@
 <script src="animacoes.js?v=6" defer></script>
 <link rel="stylesheet" href="inicio.css?v=33">
 <script src="inicio.js?v=26" defer></script>
-<script src="arquivos.js?v=1" defer></script>
+<script src="arquivos.js?v=2" defer></script>
 <!-- telas vivas da página inicial (GSAP, baixado sob demanda): ver inicio-ui.js -->
 <script src="inicio-ui.js?v=7" defer></script>
 <!-- painéis da Gestão Contratual: acabamento (gestao.css) e montagem animada com GSAP sob demanda (gestao-anim.js) -->
@@ -3929,7 +3929,7 @@
         </div>
         <div class="lvc-ferr-int"><h2>{{ calcFerrTitulo }}</h2><p>{{ calcFerrLead }}</p></div>
         <sc-if value="{{ calcAbrirMostrar }}" hint-placeholder-val="{{ true }}">
-          <div class="lvc-abrir"><span>Continuar um trabalho salvo:</span><button type="button" class="lve-voltar" sc-camel-on-click="{{ calcAbrirPc }}">Abrir arquivo do computador</button><sc-if value="{{ calcAbrirDriveOk }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ calcAbrirDrive }}">Abrir do Google Drive</button></sc-if><small>O Excel baixado pelo site leva os dados de preenchimento.</small></div>
+          <div class="lvc-abrir"><span>Continuar um trabalho salvo:</span><button type="button" class="lve-voltar" sc-camel-on-click="{{ calcAbrirPc }}">Abrir arquivo do computador</button><sc-if value="{{ calcAbrirDriveOk }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ calcAbrirDrive }}">Abrir do Google Drive</button></sc-if><small>Só é aceito documento em Excel (.xlsx) gerado pelo site: ele leva os dados de preenchimento.</small></div>
         </sc-if>
         <sc-if value="{{ calcBloqueada }}" hint-placeholder-val="{{ false }}">
           <div class="lvc-apres">
@@ -13747,7 +13747,7 @@ class Component extends DCLogic {
     const XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     let arq;
     try { arq = await L.abrir({ origem, extensoes: [".xlsx"], mimes: [XLSX] }); }
-    catch (e) { this.aviso(origem === "drive" ? "Não foi possível abrir o Google Drive. Tente de novo." : "Não foi possível abrir o arquivo.", "erro"); return; }
+    catch (e) { this.aviso(e && e.message === "so_excel" ? "Só é aceito documento em Excel (.xlsx) gerado pelo Licitacon. PDF e Word não podem ser reabertos para edição." : origem === "drive" ? "Não foi possível abrir o Google Drive. Tente de novo." : "Não foi possível abrir o arquivo.", "erro"); return; }
     if (!arq) return;
     let dados = null;
     try {
