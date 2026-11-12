@@ -8,6 +8,7 @@ on:
       doc: { description: "etp, tr, projeto_basico, edital, direta ou riscos (a lei vem do campo regime do caso)", required: true, default: "etp" }
       caso: { description: "arquivo em agente/testes/elaboracao/", required: true, default: "etp-limpeza.json" }
       simular: { description: "sim = sem custo (só pesquisa de mercado e Word de exemplo); nao = chama a API", required: true, default: "sim" }
+      norma: { description: "opcional: texto da regulamentação do ente ou RILC em agente/testes/elaboracao/ (ex.: decreto-exemplo.txt)", required: false, default: "" }
       conferencia: { description: "sim = confere e corrige o texto (custa mais); nao = só a redação", required: true, default: "sim" }
 
 permissions: { contents: write }
@@ -26,9 +27,9 @@ jobs:
           sudo apt-get install -y -qq poppler-utils libreoffice-writer-nogui fonts-liberation >/dev/null
           pip install -q python-docx matplotlib
       - name: Elaborar
-        env: { DOC: "${{ inputs.doc }}", CASO: "${{ inputs.caso }}", SIMULAR: "${{ inputs.simular }}", CONF: "${{ inputs.conferencia }}" }
+        env: { DOC: "${{ inputs.doc }}", CASO: "${{ inputs.caso }}", SIMULAR: "${{ inputs.simular }}", CONF: "${{ inputs.conferencia }}", NORMA: "${{ inputs.norma }}" }
         run: |
-          python3 scripts/agente/elaborar.py --doc "$DOC" --respostas "agente/testes/elaboracao/$CASO" --pasta /tmp/saida $([ "$SIMULAR" = "sim" ] && echo --simular) $([ "$CONF" = "nao" ] && echo --sem-conferencia)
+          python3 scripts/agente/elaborar.py --doc "$DOC" --respostas "agente/testes/elaboracao/$CASO" --pasta /tmp/saida $([ "$SIMULAR" = "sim" ] && echo --simular) $([ "$CONF" = "nao" ] && echo --sem-conferencia) $([ -n "$NORMA" ] && echo --norma-local "Regulamentação do ente::agente/testes/elaboracao/$NORMA")
           python3 -c "import json;e=json.load(open('/tmp/saida/execucao.json'));print('::notice title=Custo::US$',e.get('custo_usd'),'·',e.get('segundos','-'),'s · pendências',e.get('pendencias'),'· perguntas',e.get('perguntas',0),'· alta',e.get('alta',0),'· média',e.get('media',0))"
       - name: Guardar o resultado no ramo agente-testes (caso fictício)
         if: always()

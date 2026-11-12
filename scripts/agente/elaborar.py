@@ -60,7 +60,8 @@ DOCS = {
 # ------------------------------------------------------------------ regimes jurídicos: cada documento segue a lei da contratação
 REGIMES_DOC = {"etp": ("lei-14133", "lei-13303"), "tr": ("lei-14133", "lei-13303"), "projeto_basico": ("lei-14133", "lei-13303"),
                "edital": ("lei-14133", "lei-13303", "lei-13019"), "direta": ("lei-14133", "lei-13303", "lei-13019"),
-               "riscos": ("lei-14133", "lei-13303")}
+               "riscos": ("lei-14133", "lei-13303"), "plano_trabalho": ("lei-13019",)}
+DOC_EXIGE_NORMA = {"plano_trabalho"}  # o decreto do ente que regulamenta a Lei 13.019 é obrigatório
 NOME_REGIME = {"lei-14133": "Lei nº 14.133/2021", "lei-13303": "Lei nº 13.303/2016 e o regulamento interno de licitações e contratos (RILC) da estatal",
                "lei-13019": "Lei nº 13.019/2014 (parcerias com organizações da sociedade civil)"}
 DOCS.update({
@@ -82,6 +83,17 @@ DOCS.update({
                           "Requisitos de habilitação e qualificação mínima (art. 72, V)", "Previsão de recursos orçamentários (art. 72, IV)",
                           "Pareceres técnico e jurídico (art. 72, III)", "Autorização da autoridade competente (art. 72, VIII)",
                           "Divulgação do ato e publicação no PNCP (art. 72, parágrafo único)"]},
+    "plano_trabalho": {"nome": "Plano de Trabalho", "roteiro": "plano_trabalho", "objetos": [],
+               "base": "art. 22 da Lei nº 13.019/2014 e o decreto do estado, do Distrito Federal ou do município que regulamenta a lei (enviado pelo requisitante)",
+               "secoes": ["Identificação da organização da sociedade civil, do responsável e da parceria (termo de colaboração ou de fomento)",
+                          "Descrição da realidade objeto da parceria e nexo com as atividades e as metas (art. 22, I)",
+                          "Metas a serem atingidas (art. 22, II)", "Atividades ou projetos e forma de execução (art. 22, III)",
+                          "Parâmetros e indicadores para aferir o cumprimento das metas (art. 22, IV)",
+                          "Público-alvo, local e prazo de execução", "Equipe de trabalho",
+                          "Previsão de receitas e despesas, por natureza: pessoal e encargos, material de consumo, serviços, equipamentos e custos indiretos (art. 22, II-A, e art. 46)",
+                          "Cronograma de execução das metas e de desembolso", "Contrapartida, se houver (art. 35, § 1º)",
+                          "Monitoramento, avaliação e prestação de contas (arts. 58 a 72)",
+                          "Elementos exigidos pelo decreto regulamentador do ente (cite cada dispositivo)"]},
     "riscos": {"nome": "Mapa de Riscos", "roteiro": "riscos", "objetos": [],
                "base": "art. 18, X, da Lei nº 14.133/2021 (análise dos riscos da contratação) e, quando cabível, a matriz de riscos do art. 6º, XXVII, e do art. 22",
                "secoes": ["Identificação da contratação e da fase", "Metodologia (probabilidade, impacto e nível de risco)",
@@ -163,6 +175,7 @@ def bloco_regime(regime, tem_normas):
     return ("REGIME JURÍDICO: Lei nº 14.133/2021. "
             + ("A regulamentação do ente foi enviada (abaixo): siga-a e cite-a quando ela detalhar a lei. " if tem_normas else "") + "\n\n")
 CAMPOS_ROTULO = {
+    "osc": "Organização da sociedade civil (nome, CNPJ e responsável)", "atividades": "Atividades e forma de execução", "indicadores": "Parâmetros e indicadores de aferição das metas", "publico": "Público-alvo", "despesas": "Previsão de receitas e despesas", "cronograma": "Cronograma de execução e desembolso", "contrapartida": "Contrapartida",
     "tipo_parceria": "Tipo de parceria (escolha do requisitante)", "metas": "Objetivos, metas e público atendido", "modo_disputa": "Modo de disputa (escolha do requisitante)", "registro_precos": "Registro de preços (escolha do requisitante)", "me_epp": "Participação de ME e EPP (escolha do requisitante)", "criterios_selecao": "Critérios de seleção e pontuação", "agente": "Agente de contratação, pregoeiro ou comissão", "hipotese": "Hipótese legal da contratação direta (escolha do requisitante)", "hipotese_detalhe": "Por que a situação se enquadra na hipótese", "contratado": "Fornecedor ou organização escolhida", "motivo_escolha": "Razão da escolha do contratado", "justificativa_preco": "Como o preço foi verificado", "fase": "Fases a mapear", "riscos_conhecidos": "Riscos ou problemas já conhecidos", "matriz": "Incluir matriz de alocação de riscos (art. 22)", "equipe": "Equipe de planejamento", "garantia": "Garantia da contratação (escolha do requisitante)",
     "orgao": "Órgão ou entidade", "uf": "UF e município", "unidade": "Unidade requisitante", "natureza": "Natureza do objeto / solução indicada",
     "objeto": "Objeto", "necessidade": "Necessidade", "pca": "Plano de contratações anual", "requisitos": "Requisitos",
@@ -822,6 +835,8 @@ def main():
     if regime not in REGIMES_DOC[a.doc]:
         sys.exit(f"O documento {a.doc} não se aplica ao regime {regime}.")
     an.carregar_normas_locais(a.norma_local)
+    if a.doc in DOC_EXIGE_NORMA and not an.NORMAS_LOCAIS and not a.docj:
+        sys.exit("O plano de trabalho exige o decreto do ente que regulamenta a Lei 13.019/2014.")
     global TEXTO_VALOR
     if regime != "lei-14133":
         TEXTO_VALOR = ("conforme a pesquisa de preços a ser juntada aos autos (Lei nº 13.303/2016, art. 31, e RILC)" if regime == "lei-13303"

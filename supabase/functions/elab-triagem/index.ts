@@ -8,10 +8,12 @@ import { clienteServico, CORS, erro, resposta, usuarioDaRequisicao, segredoConfe
 const MODELO = Deno.env.get("AGENTE_MODELO") || "claude-sonnet-5-5";
 const LIMITE_DIA = 40;
 const NOMES: Record<string, string> = { etp: "Estudo Técnico Preliminar", tr: "Termo de Referência", projeto_basico: "Projeto Básico",
-  edital: "Edital", direta: "Processo de contratação direta", riscos: "Mapa de riscos" };
+  edital: "Edital", direta: "Processo de contratação direta", riscos: "Mapa de riscos", plano_trabalho: "Plano de trabalho da parceria" };
 const LEIS: Record<string, string> = { "lei-14133": "Lei 14.133/2021", "lei-13303": "Lei 13.303/2016 e regulamento interno (RILC) da estatal",
   "lei-13019": "Lei 13.019/2014, parceria com organização da sociedade civil" };
 const ROTULOS: Record<string, string> = {
+  osc: "Organização da sociedade civil", atividades: "Atividades e forma de execução", indicadores: "Indicadores das metas", publico: "Público-alvo",
+  despesas: "Previsão de receitas e despesas", cronograma: "Cronograma", contrapartida: "Contrapartida",
   tipo_parceria: "Tipo de parceria", metas: "Objetivos, metas e público atendido", modo_disputa: "Modo de disputa", registro_precos: "Registro de preços", me_epp: "Participação de ME e EPP", criterios_selecao: "Critérios de seleção e pontuação", agente: "Agente de contratação, pregoeiro ou comissão", hipotese: "Hipótese legal da contratação direta", hipotese_detalhe: "Por que a situação se enquadra na hipótese", contratado: "Fornecedor ou organização escolhida", motivo_escolha: "Razão da escolha do contratado", justificativa_preco: "Como o preço foi verificado", fase: "Fases a mapear", riscos_conhecidos: "Riscos ou problemas já conhecidos", matriz: "Incluir matriz de alocação de riscos (art. 22)", equipe: "Equipe de planejamento", garantia: "Garantia da contratação",
   orgao: "Órgão", uf: "UF", objeto: "Objeto", necessidade: "Necessidade / fundamentação", quantidades: "Quantidades", especificacoes: "Especificações",
   natureza: "Natureza / solução", prazo: "Prazo", prazo_outro: "Prazo (detalhe)", pca: "PCA", correlatas: "Contratações ligadas", processo: "Nº do processo",
