@@ -721,7 +721,9 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
     par(respostas.get("objeto", ""), centro=True)
     w.add_paragraph()
     for i, s in enumerate(docj.get("secoes", []), 1):
-        par(f"{i} {s.get('titulo','').upper()}", negrito=True, recuo=False)
+        tp = par(f"{i} {s.get('titulo','').upper()}", negrito=True, recuo=False)
+        if tp is not None:
+            tp.alignment = WD_ALIGN_PARAGRAPH.LEFT  # título justificado espalha as palavras
         for t in s.get("paragrafos", []):
             par(t)
         if s.get("fundamento"):
