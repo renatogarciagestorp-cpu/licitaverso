@@ -776,7 +776,7 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
         """Normaliza o texto da IA: um parágrafo com quebras de linha vira vários; a linha separadora de tabela em
         Markdown (|---|---|) sai; "3.5 Tabela 2 – Metas" vira a legenda "Tabela 2 – Metas"."""
         out = []
-        for t in lista or []:
+        for t in ([lista] if isinstance(lista, str) else lista or []):  # o preâmbulo pode vir como texto único
             for l in str(t).split("\n"):
                 l = l.strip()
                 if not l or re.fullmatch(r"\|?[\s\-:|]*-[\s\-:|]*\|?", l):
@@ -806,7 +806,7 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
     eh_anexo = lambda x: str(x.get("titulo", "")).strip().upper().startswith("ANEXO")
     anexos = [x for x in docj.get("secoes", []) if eh_anexo(x)]  # vão depois das assinaturas
     def secao(s, n_sec):
-        tit = s.get("titulo", "")
+        tit = re.sub(r"^\s*(\d+(\.\d+)*\.?|[IVXLC]+\s*[-–.])\s+", "", s.get("titulo", ""))  # a IA às vezes já numera o título
         if n_sec is None:  # anexo: nova página, sem número de seção
             w.add_page_break()
             par(tit.upper(), negrito=True, centro=True)
