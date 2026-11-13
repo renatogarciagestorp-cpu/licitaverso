@@ -412,30 +412,33 @@ def processar_geracao(a):
                 extra += ["--docj", str(pasta / "rascunho" / "documento.json")]
             if a.get("regime") in ("lei-14133", "lei-13303", "lei-13019"):
                 extra += ["--regime", a["regime"]]
-            # edital de chamamento: o plano de trabalho (arquivo do assinante ou plano feito no Elaborador) é a base
-            plano_v = str(respostas.get("plano") or "")
-            if plano_v and a.get("fase") != "completar":
-                txt_p = pasta / "plano.txt"
+            # edital: os documentos que o baseiam (arquivo do assinante ou documento feito no Elaborador); "dispensado" não é lido
+            BASES = [("plano", "Plano de trabalho"), ("base_tr", "Termo de Referência ou Projeto Básico"), ("base_etp", "Estudo Técnico Preliminar"), ("base_riscos", "Matriz de riscos")]
+            for chave, rotulo in BASES:
+                valor_b = str(respostas.get(chave) or "")
+                if not valor_b or valor_b == "dispensado" or a.get("fase") == "completar":
+                    continue
+                txt_b = pasta / f"{chave}.txt"
                 try:
-                    if plano_v.startswith("ref:") and re.fullmatch(r"ref:[0-9a-f-]{36}", plano_v):
-                        orig_p = pasta / "plano.docx"
-                        orig_p.write_bytes(http("GET", f"{SUPA}/storage/v1/object/analises/{a['usuario_id']}/pareceres/{plano_v[4:]}.docx",
+                    if re.fullmatch(r"ref:[0-9a-f-]{36}", valor_b):
+                        orig_b = pasta / f"{chave}.docx"
+                        orig_b.write_bytes(http("GET", f"{SUPA}/storage/v1/object/analises/{a['usuario_id']}/pareceres/{valor_b[4:]}.docx",
                                                 cab=cab(), binario=True, timeout=300))
                     else:
-                        orig_p = baixar(plano_v, "plano" + (".docx" if plano_v.lower().endswith(".docx") else ".pdf"))
-                    if orig_p and orig_p.suffix == ".docx":
+                        orig_b = baixar(valor_b, chave + (".docx" if valor_b.lower().endswith(".docx") else ".pdf"))
+                    if orig_b and orig_b.suffix == ".docx":
                         import docx  # python-docx
-                        dd = docx.Document(str(orig_p))
+                        dd = docx.Document(str(orig_b))
                         linhas = [p.text for p in dd.paragraphs] + [" | ".join(c.text for c in r.cells) for t in dd.tables for r in t.rows]
-                        txt_p.write_text("\n".join(linhas), encoding="utf-8")
-                    elif orig_p:
-                        subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-texto.py"), str(orig_p), str(txt_p)], capture_output=True, timeout=1800)
+                        txt_b.write_text("\n".join(linhas), encoding="utf-8")
+                    elif orig_b:
+                        subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-texto.py"), str(orig_b), str(txt_b)], capture_output=True, timeout=1800)
                 except Exception as e:
-                    print(f"elaboração {aid}: plano de trabalho não lido ({type(e).__name__})")
-                if not txt_p.exists() or len(txt_p.read_text(encoding="utf-8", errors="replace").strip()) < 200:
-                    raise ErroCliente("Não foi possível ler o plano de trabalho. Envie o plano em PDF com texto (não digitalizado) ou em Word; "
-                                      "se escolheu um plano feito aqui, ele pode ter passado do prazo de 7 dias no site.")
-                extra += ["--plano", str(txt_p)]
+                    print(f"elaboração {aid}: {rotulo} não lido ({type(e).__name__})")
+                if not txt_b.exists() or len(txt_b.read_text(encoding="utf-8", errors="replace").strip()) < 200:
+                    raise ErroCliente(f"Não foi possível ler o documento \"{rotulo}\". Envie-o em PDF com texto (não digitalizado) ou em Word; "
+                                      "se escolheu um documento feito aqui, ele pode ter passado do prazo de 7 dias no site.")
+                extra += (["--plano", str(txt_b)] if chave == "plano" else ["--base", f"{rotulo}::{txt_b}"])
             normas_args = baixar_normas(a, pasta, f"elaboração {aid}")  # RILC da estatal ou decreto do ente
             if a.get("documento") == "plano_trabalho" and not normas_args and a.get("fase") != "completar":
                 raise ErroCliente("Não foi possível ler o decreto que regulamenta a Lei 13.019/2014 no seu ente. Envie o decreto em PDF com texto (não digitalizado) ou em Word.")

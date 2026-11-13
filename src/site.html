@@ -3447,6 +3447,8 @@
                 <sc-if value="{{ c.ehPlano }}" hint-placeholder-val="{{ false }}">
                   <sc-if value="{{ c.temPlanosSite }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ c.planosSite }}" as="o" hint-placeholder-count="2"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
                   <label class="lve-arq"><input type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" sc-camel-on-change="{{ c.onPlanoArq }}"><span>{{ c.planoRot }}</span></label>
+                  <sc-if value="{{ c.dispensavel }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><button type="button" class="lvc-chip" sc-camel-on-click="{{ c.marcarDispensa }}" aria-pressed="{{ c.dispensado }}">Não há (dispensado)</button></div></sc-if>
+                  <sc-if value="{{ c.dispensado }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="Motivo da dispensa" value="{{ c.motivo }}" sc-camel-on-input="{{ c.onMotivo }}" placeholder="Motivo (ex.: dispensa por valor, art. 75, II; IN 58/2022, art. 14)"></sc-if>
                 </sc-if>
                 <sc-if value="{{ c.temExemplos }}" hint-placeholder-val="{{ false }}"><div class="lve-exemplos"><span>Exemplos:</span><sc-for list="{{ elExemplos }}" as="ex" hint-placeholder-count="4"><button type="button" class="lvc-chip" sc-camel-on-click="{{ ex.usar }}" aria-pressed="{{ ex.sel }}">{{ ex.rot }}</button></sc-for></div></sc-if>
                 <sc-if value="{{ c.dica }}" hint-placeholder-val="{{ false }}"><small>{{ c.dica }}</small></sc-if>
@@ -3486,6 +3488,8 @@
                 <sc-if value="{{ c.ehPlano }}" hint-placeholder-val="{{ false }}">
                   <sc-if value="{{ c.temPlanosSite }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ c.planosSite }}" as="o" hint-placeholder-count="2"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
                   <label class="lve-arq"><input type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" sc-camel-on-change="{{ c.onPlanoArq }}"><span>{{ c.planoRot }}</span></label>
+                  <sc-if value="{{ c.dispensavel }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><button type="button" class="lvc-chip" sc-camel-on-click="{{ c.marcarDispensa }}" aria-pressed="{{ c.dispensado }}">Não há (dispensado)</button></div></sc-if>
+                  <sc-if value="{{ c.dispensado }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="Motivo da dispensa" value="{{ c.motivo }}" sc-camel-on-input="{{ c.onMotivo }}" placeholder="Motivo (ex.: dispensa por valor, art. 75, II; IN 58/2022, art. 14)"></sc-if>
                 </sc-if>
                 <sc-if value="{{ c.temExemplos }}" hint-placeholder-val="{{ false }}"><div class="lve-exemplos"><span>Exemplos:</span><sc-for list="{{ elExemplos }}" as="ex" hint-placeholder-count="4"><button type="button" class="lvc-chip" sc-camel-on-click="{{ ex.usar }}" aria-pressed="{{ ex.sel }}">{{ ex.rot }}</button></sc-for></div></sc-if>
                 <sc-if value="{{ c.dica }}" hint-placeholder-val="{{ false }}"><small>{{ c.dica }}</small></sc-if>
@@ -7640,7 +7644,7 @@ const ELAB = {
       { k: "orcamento", rot: "Orçamento detalhado do custo global (alínea f)", obrig: true, dica: "Valor global, referências (SINAPI, SICRO, EMOP…), data-base, BDI e regime de execução." } ] }
   ] },
   edital: { regimes: ["lei-14133", "lei-13303", "lei-13019"], nome: "Edital", sigla: "Edital", base: "Lei 14.133/2021, art. 25, com as minutas",
-    desc: "Edital da licitação com a minuta do contrato (e da ata, se houver registro de preços), pronto para a análise jurídica.", passos: [],
+    desc: "Edital da licitação com a minuta do contrato (e da ata, se houver registro de preços), feito a partir do seu ETP, TR ou Projeto Básico e matriz de riscos.", passos: [],
     porRegime: { "lei-13303": { base: "Lei 13.303/2016 e o RILC, com a minuta do contrato" },
       "lei-13019": { nome: "Edital de chamamento público", base: "Lei 13.019/2014, art. 24, com a minuta do termo",
         desc: "Chamamento de organizações da sociedade civil, com critérios de seleção e a minuta do termo de colaboração ou de fomento." } } },
@@ -7673,14 +7677,14 @@ const ELAB_ROT = { normas: "Normas do órgão", normas_ref: "Regulamento do órg
   entrega: "Forma de entrega", rodape_incluir: "Informações no rodapé", rodape: "Texto do rodapé", modelo_arquivo: "Modelo em Word", logo_arquivo: "Logo",
   especificacoes: "Especificações", local_entrega: "Local de entrega", prazo_entrega: "Prazo de entrega", garantia_bem: "Garantia do produto", amostra: "Amostra",
   instrumento: "Instrumento da contratação", pca_item: "Item do PCA", data_orcamento: "Data do orçamento estimado", indice: "Índice de reajuste", processo: "Nº do processo", municipio: "Município", autoridade: "Autoridade que aprova", gestor: "Gestor do contrato", fiscais: "Fiscais", fonte: "Fonte orçamentária", correlatas: "Contratações ligadas", osc: "Organização da sociedade civil", atividades: "Atividades e forma de execução", indicadores: "Indicadores das metas",
-  publico: "Público-alvo e local", despesas: "Receitas e despesas", cronograma: "Cronograma de desembolso", contrapartida: "Contrapartida", plano: "Plano de trabalho", envio_propostas: "Envio das propostas", contato: "Canal de esclarecimentos",
+  publico: "Público-alvo e local", despesas: "Receitas e despesas", cronograma: "Cronograma de desembolso", contrapartida: "Contrapartida", plano: "Plano de trabalho", base_tr: "TR ou Projeto Básico", base_etp: "ETP", base_riscos: "Matriz de riscos", envio_propostas: "Envio das propostas", contato: "Canal de esclarecimentos",
   tipo_parceria: "Tipo de parceria", metas: "Objetivos, metas e público", modo_disputa: "Modo de disputa", registro_precos: "Registro de preços", me_epp: "Participação de ME e EPP",
   criterios_selecao: "Critérios de seleção", agente: "Agente de contratação ou comissão", hipotese: "Hipótese legal", hipotese_detalhe: "Por que se enquadra",
   contratado: "Contratado escolhido", motivo_escolha: "Razão da escolha", justificativa_preco: "Justificativa do preço", fase: "Fase analisada",
   riscos_conhecidos: "Riscos já identificados", matriz: "Matriz de alocação de riscos", equipe: "Equipe de planejamento", garantia: "Garantia da contratação" };
 // dados do órgão e de quem assina: podem ir para qualquer documento (se o assinante marcar)
 const ELAB_GERAIS = ["orgao", "uf", "observacoes", "unidade", "gestor", "fiscais", "fonte", "dot_unidade", "dot_programa", "dot_elemento", "dot_fonte", "normas", "normas_ref", "cadastro", "municipio", "autoridade", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
-const ELAB_PARES = { modelo_arquivo: "modelo_nome", logo_arquivo: "logo_nome", plano: "plano_nome" };
+const ELAB_PARES = { modelo_arquivo: "modelo_nome", logo_arquivo: "logo_nome", plano: "plano_nome", base_tr: "base_tr_nome", base_etp: "base_etp_nome", base_riscos: "base_riscos_nome" };
 const ELAB_PROCESSO = { k: "processo", etapa: "contratacao", rot: "Nº do processo administrativo", tipo: "linha", ph: "Se já houver. Ex.: 1234/2026" };
 const ELAB_UNIDADE = { k: "unidade", etapa: "pessoas", rot: "Unidade requisitante", tipo: "linha", ph: "Ex.: Secretaria Municipal de Administração" };
 const ELAB_FINAIS = [
@@ -7791,7 +7795,10 @@ const ELAB_RAPIDO = {
     { k: "objeto", etapa: "contratacao", rot: "Objeto da licitação ou da parceria", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: aquisição de notebooks para as escolas municipais" },
     { k: "necessidade", etapa: "contratacao", rot: "Fundamentação: TR, ETP ou plano que dá base ao edital", tipo: "texto", obrig: true, ph: "Ex.: TR nº 12/2026 e ETP nº 8/2026, processo 1234/2026", dica: "O edital reproduz as condições do termo de referência ou do projeto básico; informe onde estão." },
     { k: "tipo_parceria", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Tipo de parceria", tipo: "chips", obrig: true, op: ["Termo de colaboração", "Termo de fomento"], dica: "Colaboração: proposta pela administração; fomento: proposta pelas organizações (Lei 13.019, arts. 16 e 17)." },
-    { k: "plano", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Plano de trabalho da parceria", tipo: "plano", obrig: true, dica: "O edital traz as informações do plano de trabalho (objeto, metas, ações, indicadores, prazos, valor e cronograma). Escolha um plano feito aqui no Elaborador ou envie o seu em PDF ou Word." },
+    { k: "base_tr", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Termo de Referência ou Projeto Básico", tipo: "docbase", fonte: ["tr", "projeto_basico"], obrig: true, dica: "O edital reproduz as condições do TR ou do Projeto Básico (objeto, execução, pagamento, habilitação). Escolha um feito aqui no Elaborador ou envie o seu em PDF ou Word." },
+    { k: "base_etp", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Estudo Técnico Preliminar (ETP)", tipo: "docbase", fonte: ["etp"], dispensavel: true, obrig: true, dica: "Base da solução, do parcelamento e da forma de contratação. Se o ETP foi dispensado, marque e informe o motivo." },
+    { k: "base_riscos", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Matriz ou mapa de riscos", tipo: "docbase", fonte: ["riscos"], dispensavel: true, obrig: true, dica: "Vira a cláusula de matriz de riscos da minuta do contrato. Se não houver, marque e informe o motivo." },
+    { k: "plano", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Plano de trabalho da parceria", tipo: "docbase", fonte: ["plano_trabalho"], obrig: true, dica: "O edital traz as informações do plano de trabalho (objeto, metas, ações, indicadores, prazos, valor e cronograma). Escolha um plano feito aqui no Elaborador ou envie o seu em PDF ou Word." },
     { k: "metas", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Objetivos, metas e público atendido", tipo: "texto", ph: "Ex.: atender 300 crianças de 6 a 14 anos no contraturno escolar, em 3 núcleos", dica: "Se deixar em branco, vem do plano de trabalho." },
     { k: "natureza", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Natureza do objeto", tipo: "chips", obrig: true, op: ["Compra", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva", "Obra ou serviço de engenharia"] },
     { k: "quantidades", etapa: "contratacao", rot: "Itens, lotes e quantidades", tipo: "texto", ph: "Ex.: lote 1: 300 notebooks; lote 2: 50 monitores" },
@@ -7929,6 +7936,7 @@ const ELAB_MONTAGEM = {
     ["Orçamento", "Seu orçamento ou a estrutura pronta para completar (SINAPI, EMOP, BDI)."],
     ["Conferência e Word", "O agente revisa o próprio texto, lista pendências e entrega em Word e PDF."] ],
   edital: [
+    ["Seus documentos de base", "Na 14.133 e na 13.303: ETP, TR ou Projeto Básico e matriz de riscos. Na 13.019: o plano de trabalho. O edital reproduz o que está neles."],
     ["Suas escolhas", "Modalidade, critério, modo de disputa, adjudicação, registro de preços e ME/EPP como você definiu."],
     ["A lei da contratação", "Lei 14.133 (art. 25), Lei 13.303 com o RILC da estatal ou Lei 13.019 (edital de chamamento, art. 24)."],
     ["Minutas", "Minuta do contrato com as cláusulas obrigatórias (ou do termo de colaboração ou fomento) e, se houver registro de preços, da ata."],
@@ -7962,6 +7970,7 @@ function elFaltando(doc, R, etapa) {
     if (c.seParc && String(R.parcelamento || "").startsWith("Analisar")) return;
     const nome = (ELAB_ROT[c.k] || c.rot).toLowerCase();
     if (c.obrig && vazio(c.k)) f.push(nome);
+    else if (c.tipo === "docbase" && R[c.k] === "dispensado" && vazio(c.k + "_motivo")) f.push("o motivo da dispensa de \"" + nome + "\"");
     else if (c.outro && String(R[c.k] || "").split("; ").includes("Outro") && vazio(c.k + "_outro")) f.push("o detalhe de \"" + nome + "\" (você marcou Outro)");
   });
   if (nesta("pessoas")) ["elab_nome", "elab_cargo", "resp_nome", "resp_cargo"].forEach((k) => { if (vazio(k)) f.push(ELAB_ROT[k].toLowerCase()); });
@@ -16154,15 +16163,20 @@ class Component extends DCLogic {
             };
             return { rot: c.rot, obrig: !!c.obrig, opcional: !c.obrig, ph: c.ph || "", dica: c.dica || "",
               ehTexto: c.tipo === "texto", ehLinha: c.tipo === "linha", ehChips: c.tipo === "chips", temExemplos: !!c.exemplos,
-              ehPlano: c.tipo === "plano",
+              ehPlano: c.tipo === "docbase",
               ...(() => {
-                if (c.tipo !== "plano") return { temPlanosSite: false, planosSite: [], onPlanoArq: () => {}, planoRot: "" };
-                const feitos = (s.analises || []).filter((a) => a.tipo === "geracao" && a.documento === "plano_trabalho" && a.status === "concluida").slice(0, 6);
+                if (c.tipo !== "docbase") return { temPlanosSite: false, planosSite: [], onPlanoArq: () => {}, planoRot: "", dispensavel: false, dispensado: false, marcarDispensa: () => {}, motivo: "", onMotivo: () => {} };
+                const v = String(R[c.k] || ""), kn = c.k + "_nome", km = c.k + "_motivo";
+                const feitos = (s.analises || []).filter((a) => a.tipo === "geracao" && (c.fonte || []).includes(a.documento) && a.status === "concluida").slice(0, 6);
+                const sigla = { etp: "ETP", tr: "TR", projeto_basico: "Projeto Básico", riscos: "Mapa de riscos", plano_trabalho: "Plano" };
                 return { temPlanosSite: feitos.length > 0,
-                  planosSite: feitos.map((a) => { const ref = "ref:" + a.id, nome = "Plano feito aqui: " + String((a.resumo && a.resumo.objeto) || a.nome_arquivo || "plano de trabalho").slice(0, 60);
-                    return { nome, sel: R.plano === ref, escolher: () => this.elResponderVarios({ plano: ref, plano_nome: nome }) }; }),
-                  onPlanoArq: async (e) => { const r = await this.elSubir(e, "plano", { ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }, 15); if (r) this.elResponderVarios({ plano: r.arquivo, plano_nome: r.nome }); },
-                  planoRot: R.plano && !String(R.plano).startsWith("ref:") ? "📄 " + (R.plano_nome || "plano enviado") + " (trocar)" : "+ Enviar plano de trabalho (PDF ou Word)" };
+                  planosSite: feitos.map((a) => { const ref = "ref:" + a.id, nome = (sigla[a.documento] || "Documento") + " feito aqui: " + String((a.resumo && a.resumo.objeto) || a.nome_arquivo || "").slice(0, 60);
+                    return { nome, sel: v === ref, escolher: () => this.elResponderVarios({ [c.k]: ref, [kn]: nome }) }; }),
+                  onPlanoArq: async (e) => { const r = await this.elSubir(e, c.k, { ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }, 15); if (r) this.elResponderVarios({ [c.k]: r.arquivo, [kn]: r.nome }); },
+                  planoRot: v && !v.startsWith("ref:") && v !== "dispensado" ? "📄 " + (R[kn] || "arquivo enviado") + " (trocar)" : "+ Enviar arquivo (PDF ou Word)",
+                  dispensavel: !!c.dispensavel, dispensado: v === "dispensado",
+                  marcarDispensa: () => this.elResponderVarios(v === "dispensado" ? { [c.k]: "", [kn]: "" } : { [c.k]: "dispensado", [kn]: "dispensado" }),
+                  motivo: R[km] || "", onMotivo: this.elResponder(km) };
               })(),
               valor: v, onInput: this.elResponder(c.k),
               op: (c.op || []).map((nome) => ({ nome, sel: sel.includes(nome), escolher: () => alterna(nome) })),
