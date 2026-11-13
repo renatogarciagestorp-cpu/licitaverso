@@ -190,6 +190,10 @@ Deno.serve(async (req) => {
       for (const k of ["modelo_arquivo", "logo_arquivo"]) {
         if (limpo[k] && !caminhoOk(limpo[k])) return erro("Arquivo inválido.");
       }
+      // edital de chamamento: o plano de trabalho é a base (arquivo do assinante ou plano feito no Elaborador)
+      if (limpo.plano && !caminhoOk(limpo.plano) && !/^ref:[0-9a-f-]{36}$/.test(limpo.plano)) return erro("Plano de trabalho inválido.");
+      if (g.documento === "edital" && g.regime === "lei-13019" && !limpo.plano)
+        return erro("Para elaborar o edital de chamamento, forneça o plano de trabalho da parceria.");
       if (limpo.precos_pdfs) {
         let lista: unknown;
         try { lista = JSON.parse(limpo.precos_pdfs); } catch { return erro("Arquivo inválido."); }
