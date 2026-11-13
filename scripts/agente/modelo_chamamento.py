@@ -26,6 +26,11 @@ def _v(R, k, desc):
     return v if v else f"[PREENCHER: {desc}]"
 
 
+def _meio(t):
+    """Texto que entra no meio da frase: primeira letra minúscula (salvo sigla ou nome próprio em maiúsculas)."""
+    return t[0].lower() + t[1:] if len(t) > 1 and t[0].isupper() and t[1].islower() else t
+
+
 def esfera(orgao):
     o = (orgao or "").lower()
     if re.search(r"prefeitura|munic[ií]pio|c[aâ]mara municipal", o):
@@ -97,7 +102,7 @@ def documento(R, decreto="", plano=""):
     fomento = "fomento" in tipo.lower()
     _, existencia = esfera(R.get("orgao", ""))
     processo = _v(R, "processo", "nº do processo administrativo")
-    objeto = _v(R, "objeto", "objeto da parceria")
+    objeto = _meio(_v(R, "objeto", "objeto da parceria"))
     valor = _v(R, "valor", "valor de referência da parceria (do plano de trabalho)")
     prazo = (R.get("prazo") or "").strip()
     if prazo == "Outro":
@@ -402,3 +407,157 @@ def texto_plano(docj):
         partes.append(f"\n{i}. {s.get('titulo','').upper()}")
         partes += s.get("paragrafos", [])
     return "\n".join(partes)
+
+
+# ---------------------------------------------------------------- justificativa de dispensa ou inexigibilidade (art. 32)
+HIPOTESES = [  # (trecho que identifica a escolha do assinante, enquadramento, requisitos a demonstrar)
+    ("art. 30, I", "dispensa de chamamento público por urgência decorrente de paralisação ou iminência de paralisação de atividades de "
+     "relevante interesse público, pelo prazo de até 180 (cento e oitenta) dias (art. 30, I)",
+     ["a atividade paralisada ou em risco de paralisação e o seu relevante interesse público;",
+      "a urgência concreta, que não permite aguardar o prazo do chamamento público (no mínimo 30 dias de divulgação, art. 26);",
+      "que a parceria se limita a 180 (cento e oitenta) dias, sem prorrogação que ultrapasse esse prazo, e que o chamamento público "
+      "será iniciado para a continuidade, se a necessidade persistir."]),
+    ("art. 30, II", "dispensa de chamamento público em caso de guerra, calamidade pública, grave perturbação da ordem pública ou "
+     "ameaça à paz social (art. 30, II)",
+     ["a situação excepcional, com o ato que a reconhece (decreto de calamidade, se houver);",
+      "o nexo entre a situação e o objeto da parceria; e",
+      "que a duração e o escopo da parceria se limitam ao necessário para enfrentar a situação."]),
+    ("art. 30, III", "dispensa de chamamento público para a realização de programa de proteção a pessoas ameaçadas ou em situação "
+     "que possa comprometer a sua segurança (art. 30, III)",
+     ["o programa de proteção e o público atendido;",
+      "por que a publicidade de um chamamento comprometeria a segurança das pessoas protegidas; e",
+      "as medidas de sigilo adotadas na execução e na prestação de contas, nos limites da lei."]),
+    ("art. 30, VI", "dispensa de chamamento público para atividades voltadas ou vinculadas a serviços de educação, saúde ou "
+     "assistência social, executadas por organização da sociedade civil previamente credenciada pelo órgão gestor da política (art. 30, VI)",
+     ["que a atividade é de educação, saúde ou assistência social;",
+      "o credenciamento prévio da organização pelo órgão gestor da política (ato, data e vigência); e",
+      "que o credenciamento foi aberto a todas as organizações que atendessem aos requisitos."]),
+    ("art. 31, I", "inexigibilidade de chamamento público porque o objeto constitui incumbência prevista em acordo, ato ou "
+     "compromisso internacional que indica as instituições que utilizarão os recursos (art. 31, I)",
+     ["o acordo, ato ou compromisso internacional e o dispositivo que indica a organização; e",
+      "a correspondência entre o objeto da parceria e a incumbência prevista."]),
+    ("art. 31, II", "inexigibilidade de chamamento público porque a parceria decorre de transferência autorizada em lei que "
+     "identifica expressamente a organização beneficiária, inclusive subvenção (art. 31, II)",
+     ["a lei (número, data e dispositivo) que identifica expressamente a organização beneficiária;",
+      "que a lei orçamentária ou de diretrizes autoriza a transferência, quando se tratar de subvenção; e",
+      "a correspondência entre o objeto autorizado na lei e o da parceria."]),
+    ("art. 31", "inexigibilidade de chamamento público por inviabilidade de competição entre organizações da sociedade civil, em "
+     "razão da natureza singular do objeto ou porque as metas somente podem ser atingidas por uma entidade específica (art. 31, caput)",
+     ["a natureza singular do objeto ou por que as metas só podem ser atingidas pela organização escolhida;",
+      "a inexistência de outras organizações aptas, com a pesquisa ou o levantamento feito; e",
+      "a experiência e a capacidade técnica e operacional da organização, comprovadas."]),
+    ("art. 29", "celebração sem chamamento público de termo que envolve recursos decorrentes de emenda parlamentar à lei "
+     "orçamentária anual (art. 29)",
+     ["a emenda parlamentar (número, autor, exercício e valor) e a organização nela indicada; e",
+      "a compatibilidade do objeto com a finalidade da emenda e com a política pública."]),
+]
+
+
+def hipotese(R):
+    h = str(R.get("hipotese") or "")
+    for chave, enq, req in HIPOTESES:
+        if f"({chave})" in h:  # o assinante escolhe uma opção que termina com "(art. 30, I)", "(art. 31)" etc.
+            return enq, req
+    return "[PREENCHER: hipótese de dispensa (art. 30) ou inexigibilidade (art. 31) de chamamento público]", []
+
+
+def justificativa(R, decreto="", plano=""):
+    """Justificativa de dispensa ou inexigibilidade de chamamento público (art. 32), no formato do Elaborador."""
+    R = dict(R or {})
+    dec = decreto or "[PREENCHER: decreto que regulamenta a Lei 13.019/2014 no ente]"
+    orgao = _v(R, "orgao", "órgão ou entidade")
+    tipo = (R.get("tipo_parceria") or "").strip() or "Termo de Colaboração"
+    tipo_l = tipo[0].upper() + tipo[1:]
+    objeto = _meio(_v(R, "objeto", "objeto da parceria"))
+    osc = _v(R, "contratado", "organização da sociedade civil (nome e CNPJ)")
+    valor = _v(R, "valor", "valor global da parceria (do plano de trabalho)")
+    prazo = (R.get("prazo") or "").strip()
+    prazo = (R.get("prazo_outro") or "").strip() if prazo == "Outro" else prazo
+    prazo = prazo or "[PREENCHER: prazo de execução (do plano de trabalho)]"
+    enq, req = hipotese(R)
+    art29 = "(art. 29)" in str(R.get("hipotese") or "")
+    _, existencia = esfera(R.get("orgao", ""))
+    secoes = []
+
+    def sec(titulo, itens, fundamento):
+        secoes.append({"titulo": titulo, "paragrafos": _numerar(itens, len(secoes) + 1), "fundamento": fundamento})
+
+    preambulo = [f"{orgao.upper()}, por seu administrador público, com fundamento na {LEI} e no {dec}, apresenta a justificativa "
+                 f"para a celebração de {tipo_l} com {osc}, sem chamamento público, tendo por objeto {objeto}. "
+                 f"Processo administrativo nº {_v(R, 'processo', 'nº do processo administrativo')}."]
+
+    sec("Objeto e interesse público", [
+        f"A parceria tem por objeto {objeto}, conforme o plano de trabalho" + (" que integra o processo." if plano else "."),
+        _v(R, "necessidade", "realidade que motiva a parceria e interesse público envolvido (do plano de trabalho)"),
+        f"O prazo de execução é de {prazo} e o valor global, de {valor}, conforme o plano de trabalho e o cronograma de desembolso.",
+    ], f"{LEI}, arts. 2º, VII e VIII, e 22")
+
+    sec("Enquadramento legal", [
+        f"A celebração se enquadra na hipótese de {enq}.",
+        "A ausência de chamamento público não afasta a aplicação dos demais dispositivos da Lei 13.019/2014, inclusive o plano de "
+        "trabalho, os requisitos da organização, os pareceres e a prestação de contas (art. 32, § 4º).",
+    ], f"{LEI}, arts. 29 a 32; {dec}")
+
+    sec("Justificativa da hipótese", [
+        _v(R, "hipotese_detalhe", "fatos que demonstram o enquadramento na hipótese"),
+        ("Ficam demonstrados, com os documentos juntados ao processo:", req or ["[PREENCHER: requisitos da hipótese escolhida]"]),
+    ], f"{LEI}, arts. 30 a 32")
+
+    sec("Escolha da organização da sociedade civil", [
+        f"A organização escolhida é {osc}.",
+        f"Razão da escolha: {_v(R, 'motivo_escolha', 'razão da escolha da organização')}",
+        "A organização demonstra experiência prévia na realização do objeto ou de objeto de natureza semelhante e capacidade técnica e "
+        "operacional para executá-lo, admitida a previsão de contratar ou adquirir com recursos da parceria as instalações e "
+        "condições materiais necessárias (art. 33, V, e § 5º).",
+    ], f"{LEI}, arts. 33 e 35, III")
+
+    sec("Requisitos e impedimentos da organização", [
+        ("A organização comprovou, com os documentos juntados ao processo:", [
+            "a) estatuto com objetivos de relevância pública e social, destinação do patrimônio em caso de dissolução e escrituração "
+            "contábil regular (art. 33, I, III e IV);",
+            f"b) no mínimo {existencia} de existência com cadastro ativo no CNPJ (art. 33, V, \"a\");",
+            "c) certidões de regularidade fiscal, previdenciária, tributária, de contribuições e de dívida ativa, CRF/FGTS e CNDT (art. 34, II);",
+            "d) ata de eleição da diretoria e relação nominal dos dirigentes, com endereço, RG e CPF (art. 34, V e VI);",
+            "e) funcionamento no endereço declarado (art. 34, VII); e",
+            "f) declaração de que não incorre nas vedações do art. 39, confirmada por consulta aos cadastros de entidades impedidas e de "
+            "sanções (CEPIM, CEIS e CNEP) e aos cadastros do ente."]),
+        f"Aplicam-se, ainda, os requisitos e impedimentos previstos no {dec}.",
+    ], f"{LEI}, arts. 33, 34 e 39; {dec}")
+
+    sec("Plano de trabalho e recursos", [
+        "O plano de trabalho contém a descrição da realidade e o nexo com as metas, as ações, as metas quantitativas e os indicadores, "
+        "a previsão de receitas e despesas com a demonstração da compatibilidade dos custos com o mercado e o cronograma de desembolso (art. 22).",
+        f"As despesas correrão à conta da dotação {_v(R, 'fonte', 'programa de trabalho, elemento de despesa e fonte de recursos')} "
+        "(art. 35, II).",
+        "Não será exigida contrapartida financeira; eventual contrapartida em bens e serviços terá a expressão monetária identificada "
+        "no termo (art. 35, § 1º).",
+    ], f"{LEI}, arts. 22 e 35")
+
+    sec("Providências para a celebração", [
+        "A celebração dependerá: da aprovação do plano de trabalho; do parecer do órgão técnico sobre o mérito, a reciprocidade de "
+        "interesses, a viabilidade, o cronograma de desembolso e os meios de fiscalização; da designação do gestor da parceria e da "
+        "comissão de monitoramento e avaliação; e do parecer jurídico (art. 35, IV a VI).",
+        f"Gestor da parceria: {_v(R, 'gestor', 'gestor da parceria (nome, cargo e matrícula)')}.",
+        f"O {tipo_l} somente produzirá efeitos após a publicação do respectivo extrato no meio oficial de publicidade (art. 38).",
+    ], f"{LEI}, arts. 35 e 38")
+
+    sec("Publicidade e impugnação", [
+        ("Esta justificativa não dispensa a publicidade: " if art29 else "") +
+        "O extrato desta justificativa será publicado, na mesma data em que for efetivado, no sítio oficial do ente e, a critério do "
+        "administrador, em outros meios, sob pena de nulidade do ato de formalização da parceria (art. 32, § 1º).",
+        "Qualquer interessado poderá impugnar a justificativa no prazo de 5 (cinco) dias da publicação; a impugnação será analisada pelo "
+        "administrador público em até 5 (cinco) dias do protocolo (art. 32, § 2º).",
+        "Havendo fundamento na impugnação, será revogado o ato que declarou a dispensa ou a inexigibilidade e iniciado imediatamente o "
+        "chamamento público (art. 32, § 3º).",
+    ] if not art29 else [
+        "A celebração sem chamamento público decorre diretamente do art. 29 da Lei 13.019/2014; o extrato do termo será publicado no "
+        "meio oficial de publicidade do ente (art. 38), observada a transparência ativa da parceria (art. 10).",
+    ], f"{LEI}, arts. 10, 29, 32 e 38")
+
+    sec("Decisão", [
+        f"Diante do exposto, com fundamento na hipótese indicada no item 2.1, justifica-se a celebração do {tipo_l} com {osc}, sem "
+        f"chamamento público, condicionada ao cumprimento das providências do item 7.1.",
+    ], f"{LEI}, art. 32")
+
+    return {"titulo": "JUSTIFICATIVA DE " + ("CELEBRAÇÃO SEM CHAMAMENTO PÚBLICO" if art29 else "DISPENSA OU INEXIGIBILIDADE DE CHAMAMENTO PÚBLICO"),
+            "preambulo": preambulo, "secoes": secoes, "pendencias": [], "jurisprudencia_ids": []}

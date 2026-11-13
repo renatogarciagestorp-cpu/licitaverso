@@ -158,6 +158,9 @@ def modelo_base(doc, respostas):
     if doc == "edital" and regime_de(respostas) == "lei-13019":
         dec = an.NORMAS_LOCAIS[0]["nome"] if an.NORMAS_LOCAIS else ""
         return mc.documento(respostas, dec, PLANO_TXT)
+    if doc == "direta" and regime_de(respostas) == "lei-13019":
+        dec = an.NORMAS_LOCAIS[0]["nome"] if an.NORMAS_LOCAIS else ""
+        return mc.justificativa(respostas, dec, PLANO_TXT)
     return None
 
 
@@ -922,8 +925,8 @@ def main():
     global PLANO_TXT
     if a.plano and pathlib.Path(a.plano).exists():
         PLANO_TXT = pathlib.Path(a.plano).read_text(encoding="utf-8", errors="replace")[:60000]
-    if a.doc == "edital" and regime == "lei-13019" and not PLANO_TXT and not a.docj:
-        sys.exit("O edital de chamamento exige o plano de trabalho da parceria.")
+    if a.doc in ("edital", "direta") and regime == "lei-13019" and not PLANO_TXT and not a.docj:
+        sys.exit("O edital de chamamento e a dispensa ou inexigibilidade de chamamento exigem o plano de trabalho da parceria.")
     for spec in a.base:
         rot, _, cam = spec.partition("::")
         if pathlib.Path(cam).exists():
@@ -934,8 +937,8 @@ def main():
         if falta or not any(r.startswith("Termo") for r, _ in BASES_TXT):
             sys.exit("O edital exige o ETP, o TR ou Projeto Básico e a matriz de riscos (ou a dispensa justificada do ETP ou da matriz). Falta: "
                      + (", ".join(falta) or "Termo de Referência ou Projeto Básico"))
-    if a.doc in DOC_EXIGE_NORMA and not an.NORMAS_LOCAIS and not a.docj:
-        sys.exit("O plano de trabalho exige o decreto do ente que regulamenta a Lei 13.019/2014.")
+    if (a.doc in DOC_EXIGE_NORMA or (a.doc == "direta" and regime == "lei-13019")) and not an.NORMAS_LOCAIS and not a.docj:
+        sys.exit("Este documento exige o decreto do ente que regulamenta a Lei 13.019/2014.")
     global TEXTO_VALOR
     if regime != "lei-14133":
         TEXTO_VALOR = ("conforme a pesquisa de preços a ser juntada aos autos (Lei nº 13.303/2016, art. 31, e RILC)" if regime == "lei-13303"
