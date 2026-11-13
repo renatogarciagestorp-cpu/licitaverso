@@ -794,8 +794,13 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
             for j in range(n):
                 cel = tb.cell(i, j)
                 cel.text = ""
-                run = cel.paragraphs[0].add_run(r[j] if j < len(r) else "")
-                run.font.size = Pt(9.5); run.bold = (i == 0)
+                for trecho in re.split(r"(\[PREENCHER[^\]]*\])", r[j] if j < len(r) else ""):
+                    if not trecho:
+                        continue
+                    run = cel.paragraphs[0].add_run(trecho)
+                    run.font.size = Pt(9.5); run.bold = (i == 0)
+                    if trecho.startswith("[PREENCHER"):
+                        run.font.highlight_color = 7  # amarelo, como no texto corrido
                 if i < len(rows) - 1:
                     cel.paragraphs[0].paragraph_format.keep_with_next = (i == 0)
             trPr = tb.rows[i]._tr.get_or_add_trPr()  # linha não se divide entre páginas; o cabeçalho se repete
