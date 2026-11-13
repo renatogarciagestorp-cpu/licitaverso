@@ -149,11 +149,14 @@ VARIANTES = {
 }
 
 
+PLANO_TXT = ""  # plano de trabalho enviado pelo assinante (edital de chamamento)
+
+
 def modelo_base(doc, respostas):
     """Documento com texto padrão já revisado (hoje: edital de chamamento da Lei 13.019); None se não houver."""
     if doc == "edital" and regime_de(respostas) == "lei-13019":
         dec = an.NORMAS_LOCAIS[0]["nome"] if an.NORMAS_LOCAIS else ""
-        return mc.documento(respostas, dec)
+        return mc.documento(respostas, dec, PLANO_TXT)
     return None
 
 
@@ -221,6 +224,7 @@ FERRAMENTA = {
     "description": "Entrega o documento redigido, seção por seção, com as pendências que o requisitante precisa completar.",
     "input_schema": {"type": "object", "properties": {
         "titulo": {"type": "string"},
+        "preambulo": {"type": "array", "items": {"type": "string"}, "description": "parágrafos sem número antes da seção 1 (ex.: preâmbulo do edital)"},
         "secoes": {"type": "array", "items": {"type": "object", "properties": {
             "titulo": {"type": "string"},
             "paragrafos": {"type": "array", "items": {"type": "string"}},
@@ -259,7 +263,7 @@ def jurisprudencia_do_estado(uf, consulta, n=6):
 
 
 CHAVES_INTERNAS = {"entrega", "modelo_arquivo", "modelo_nome", "logo_arquivo", "logo_nome", "precos_pdfs", "precos_links", "precos_manual", "precos_sem",
-                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "pca_ref", "pesquisa_precos_id", "regime"}
+                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "pca_ref", "pesquisa_precos_id", "regime", "plano", "plano_nome"}
 
 
 def texto_de_link(url):
@@ -362,6 +366,8 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
         "pendencias só os dados do órgão que ficaram em branco; não deixe dúvidas, ressalvas ou "
         "pedidos de confirmação no texto nem nas pendências; (3) cite os dispositivos legais corretos e vigentes, "
         "usando o texto oficial fornecido; (4) siga o roteiro de verificação fornecido para que o documento atenda a cada item; "
+        "antes de usar [PREENCHER], procure a informação nas respostas, no plano de trabalho, nas normas enviadas e na pesquisa: "
+        "só deixe em branco o que nenhuma fonte informa (o requisitante será perguntado antes de o documento ser liberado); "
         "(5) jurisprudência: só a fornecida, citando órgão, número e ano, e só quando pertinente; informe os ids usados; "
         "(6) não use marca ou especificação que restrinja a competição sem justificativa técnica; "
         "(7) nunca decida nem presuma pelo requisitante: as escolhas dele (parcelamento e motivo, forma de adjudicação, modalidade, "
@@ -409,6 +415,8 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
         f"JURISPRUDÊNCIA DA BIBLIOTECA (priorize o Tribunal de Contas do estado{(' ' + uf) if uf else ''}):\n{bloco_juris}\n"
         + (f"\n{pm.bloco_prompt(pesquisa)}\n" if pesquisa is not None else "")
         + (f"\n{precos_assinante}\n" if precos_assinante else "")
+        + (f"\nPLANO DE TRABALHO DA PARCERIA (fonte do objeto, da realidade, das metas, das ações, dos indicadores, dos prazos, do valor e do "
+           f"cronograma do edital; use os dados dele e não deixe [PREENCHER] para o que ele informa):\n{PLANO_TXT}\n" if PLANO_TXT else "")
         + (f"\nMODELO-BASE (texto padrão revisado; adapte e complete):\n{mc.texto_plano(modelo_base(doc, respostas))}\n" if modelo_base(doc, respostas) else "")
     )
     return system, usuario, juris
@@ -738,9 +746,25 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
     if respostas.get("unidade"):
         par(respostas["unidade"], centro=True)
     w.add_paragraph()
-    par(d["nome"].upper(), negrito=True, centro=True, tam=14)
+    tit_doc = str(docj.get("titulo") or "").strip()
+    par((tit_doc if tit_doc.upper().startswith(d["nome"].upper()[:12]) else d["nome"]).upper(), negrito=True, centro=True, tam=14)
     par(respostas.get("objeto", ""), centro=True)
     w.add_paragraph()
+    for t in docj.get("preambulo") or []:  # preâmbulo sem número (ex.: edital de chamamento)
+        par(t)
+
+    def tabela(linhas):  # linhas "| a | b |": a primeira é o cabeçalho
+        rows = [[c.strip() for c in l.strip().strip("|").split("|")] for l in linhas]
+        n = max(len(r) for r in rows)
+        tb = w.add_table(rows=len(rows), cols=n)
+        tb.style = "Table Grid"
+        for i, r in enumerate(rows):
+            for j in range(n):
+                cel = tb.cell(i, j)
+                cel.text = ""
+                run = cel.paragraphs[0].add_run(r[j] if j < len(r) else "")
+                run.font.size = Pt(9.5); run.bold = (i == 0)
+        w.add_paragraph()
     eh_anexo = lambda x: str(x.get("titulo", "")).strip().upper().startswith("ANEXO")
     anexos = [x for x in docj.get("secoes", []) if eh_anexo(x)]  # vão depois das assinaturas
     def secao(s, n_sec):
@@ -752,7 +776,16 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
             tp = par(f"{n_sec} {tit.upper()}", negrito=True, recuo=False)
             if tp is not None:
                 tp.alignment = WD_ALIGN_PARAGRAPH.LEFT  # título justificado espalha as palavras
-        for t in s.get("paragrafos", []):
+        bloco = []
+        for t in list(s.get("paragrafos", [])) + [""]:
+            if t.startswith("|"):
+                bloco.append(t); continue
+            if bloco:
+                tabela(bloco); bloco = []
+            if not t:
+                continue
+            if t.startswith("Tabela "):
+                par(t, negrito=True, recuo=False, tam=10); continue
             par(t, recuo=not re.match(r"^\d+(\.\d+)+ |^[a-z]\) ", t))
         if s.get("fundamento"):
             par("Fundamento: " + s["fundamento"], recuo=False, tam=10, cor="66757F")
@@ -865,6 +898,7 @@ def main():
     ap.add_argument("--preco-pdf", action="append", default=[], help="PDF de referência de preço (nome=caminho)")
     ap.add_argument("--regime", choices=sorted(NOME_REGIME), help="lei da contratação (padrão: a das respostas ou a Lei 14.133)")
     ap.add_argument("--norma-local", action="append", default=[], help='regulamentação do ente ou RILC: "Nome::caminho.txt"')
+    ap.add_argument("--plano", help="texto do plano de trabalho (base do edital de chamamento)")
     ap.add_argument("--docj", help="completar: documento já redigido (JSON); só preenche as lacunas, sem chamar a API")
     a = ap.parse_args()
     pasta = pathlib.Path(a.pasta); pasta.mkdir(parents=True, exist_ok=True)
@@ -879,6 +913,11 @@ def main():
         sys.exit("No termo de fomento, o plano de trabalho é elaborado pela organização da sociedade civil (Lei 13.019, art. 17), não pela administração.")
     if a.doc == "plano_trabalho":
         respostas["tipo_parceria"] = "Termo de colaboração"
+    global PLANO_TXT
+    if a.plano and pathlib.Path(a.plano).exists():
+        PLANO_TXT = pathlib.Path(a.plano).read_text(encoding="utf-8", errors="replace")[:60000]
+    if a.doc == "edital" and regime == "lei-13019" and not PLANO_TXT and not a.docj:
+        sys.exit("O edital de chamamento exige o plano de trabalho da parceria.")
     if a.doc in DOC_EXIGE_NORMA and not an.NORMAS_LOCAIS and not a.docj:
         sys.exit("O plano de trabalho exige o decreto do ente que regulamenta a Lei 13.019/2014.")
     global TEXTO_VALOR
@@ -1003,7 +1042,7 @@ def main():
                 return t
             docj = trocar_textos(docj, trocar_auto)
         if lac:  # o texto já está pago; as lacunas são preenchidas com as respostas do assinante, sem novo custo
-            perguntas = [{"id": f"l{i + 1}", "opcoes": [], **x} for i, x in enumerate(lac[:25])]
+            perguntas = [{"id": f"l{i + 1}", "opcoes": [], **x} for i, x in enumerate(lac[:60])]
             aguardar(pasta, perguntas, "completar", custo_usd, docj)
             return
     docj = aplicar_lacunas(docj, {})

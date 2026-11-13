@@ -412,6 +412,30 @@ def processar_geracao(a):
                 extra += ["--docj", str(pasta / "rascunho" / "documento.json")]
             if a.get("regime") in ("lei-14133", "lei-13303", "lei-13019"):
                 extra += ["--regime", a["regime"]]
+            # edital de chamamento: o plano de trabalho (arquivo do assinante ou plano feito no Elaborador) é a base
+            plano_v = str(respostas.get("plano") or "")
+            if plano_v and a.get("fase") != "completar":
+                txt_p = pasta / "plano.txt"
+                try:
+                    if plano_v.startswith("ref:") and re.fullmatch(r"ref:[0-9a-f-]{36}", plano_v):
+                        orig_p = pasta / "plano.docx"
+                        orig_p.write_bytes(http("GET", f"{SUPA}/storage/v1/object/analises/{a['usuario_id']}/pareceres/{plano_v[4:]}.docx",
+                                                cab=cab(), binario=True, timeout=300))
+                    else:
+                        orig_p = baixar(plano_v, "plano" + (".docx" if plano_v.lower().endswith(".docx") else ".pdf"))
+                    if orig_p and orig_p.suffix == ".docx":
+                        import docx  # python-docx
+                        dd = docx.Document(str(orig_p))
+                        linhas = [p.text for p in dd.paragraphs] + [" | ".join(c.text for c in r.cells) for t in dd.tables for r in t.rows]
+                        txt_p.write_text("\n".join(linhas), encoding="utf-8")
+                    elif orig_p:
+                        subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-texto.py"), str(orig_p), str(txt_p)], capture_output=True, timeout=1800)
+                except Exception as e:
+                    print(f"elaboração {aid}: plano de trabalho não lido ({type(e).__name__})")
+                if not txt_p.exists() or len(txt_p.read_text(encoding="utf-8", errors="replace").strip()) < 200:
+                    raise ErroCliente("Não foi possível ler o plano de trabalho. Envie o plano em PDF com texto (não digitalizado) ou em Word; "
+                                      "se escolheu um plano feito aqui, ele pode ter passado do prazo de 7 dias no site.")
+                extra += ["--plano", str(txt_p)]
             normas_args = baixar_normas(a, pasta, f"elaboração {aid}")  # RILC da estatal ou decreto do ente
             if a.get("documento") == "plano_trabalho" and not normas_args and a.get("fase") != "completar":
                 raise ErroCliente("Não foi possível ler o decreto que regulamenta a Lei 13.019/2014 no seu ente. Envie o decreto em PDF com texto (não digitalizado) ou em Word.")
