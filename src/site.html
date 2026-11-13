@@ -3254,6 +3254,13 @@
               <button type="button" class="lve-doc" sc-camel-on-click="{{ r.escolher }}" aria-pressed="{{ r.sel }}"><b>{{ r.nome }}</b><span>{{ r.desc }}</span></button>
             </sc-for>
           </div>
+          <sc-if value="{{ elPergChamamento }}" hint-placeholder-val="{{ false }}">
+            <div class="lve-bloco" style="margin: 0 0 22px">
+              <h4 class="lve-bloco-t">Haverá chamamento público?</h4>
+              <div class="lvc-chips"><sc-for list="{{ elOpChamamento }}" as="o" hint-placeholder-count="2"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div>
+              <small style="display: block; margin-top: 8px; color: #5F7077">Sem chamamento: dispensa (art. 30), inexigibilidade (art. 31) ou emenda parlamentar (art. 29). Em todos os casos a parceria precisa do plano de trabalho.</small>
+            </div>
+          </sc-if>
           <h2 class="lve-h2" id="el-escolher">Qual documento você quer criar?</h2>
           <div class="lve-docs">
             <sc-for list="{{ elDocs }}" as="dc" hint-placeholder-count="3">
@@ -7651,7 +7658,7 @@ const ELAB = {
   direta: { regimes: ["lei-14133", "lei-13303", "lei-13019"], nome: "Contratação direta", sigla: "Direta", base: "Lei 14.133/2021, arts. 72 a 75",
     desc: "Processo de dispensa ou inexigibilidade: enquadramento, razão da escolha, justificativa do preço e autorização.", passos: [],
     porRegime: { "lei-13303": { base: "Lei 13.303/2016, arts. 29 e 30, e o RILC" },
-      "lei-13019": { nome: "Dispensa ou inexigibilidade de chamamento", base: "Lei 13.019/2014, arts. 30 a 32",
+      "lei-13019": { exigeNorma: true, nome: "Dispensa ou inexigibilidade de chamamento", base: "Lei 13.019/2014, arts. 29 a 32, e o decreto do seu ente",
         desc: "Justificativa da parceria sem chamamento público, com o enquadramento, a escolha da organização e a publicação do extrato." } } },
   plano_trabalho: { regimes: ["lei-13019"], exigeNorma: true, nome: "Plano de trabalho (termo de colaboração)", sigla: "Plano", base: "Lei 13.019/2014, arts. 16 e 22, e o decreto do seu ente",
     desc: "Plano de trabalho do termo de colaboração, proposto pela administração. No termo de fomento, quem elabora é a OSC: analise-o no Parecerista.", passos: [] },
@@ -7829,6 +7836,7 @@ const ELAB_RAPIDO = {
     { k: "hipotese", etapa: "contratacao", soRegime: ["lei-14133"], rot: "Hipótese legal", tipo: "chips", obrig: true, op: ["Dispensa por valor (art. 75, I ou II)", "Emergência ou calamidade (art. 75, VIII)", "Licitação deserta ou fracassada (art. 75, III)", "Outra hipótese de dispensa (art. 75)", "Inexigibilidade: fornecedor exclusivo (art. 74, I)", "Inexigibilidade: artista consagrado (art. 74, II)", "Inexigibilidade: serviço técnico especializado (art. 74, III)", "Inexigibilidade: credenciamento (art. 74, IV)", "Inexigibilidade: imóvel (art. 74, V)"] },
     { k: "hipotese", etapa: "contratacao", soRegime: ["lei-13303"], rot: "Hipótese legal", tipo: "chips", obrig: true, op: ["Dispensa por valor (art. 29, I ou II)", "Emergência (art. 29, XV)", "Licitação deserta (art. 29, III)", "Outra hipótese de dispensa (art. 29)", "Inexigibilidade: fornecedor exclusivo (art. 30, I)", "Inexigibilidade: serviço técnico especializado (art. 30, II)"] },
     { k: "hipotese", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Hipótese legal", tipo: "chips", obrig: true, op: ["Dispensa: urgência por paralisação de atividade de relevante interesse público, até 180 dias (art. 30, I)", "Dispensa: guerra, calamidade pública, grave perturbação da ordem ou ameaça à paz social (art. 30, II)", "Dispensa: programa de proteção a pessoas ameaçadas (art. 30, III)", "Dispensa: educação, saúde ou assistência social com OSC credenciada (art. 30, VI)", "Inexigibilidade: competição inviável pela natureza singular do objeto ou metas que só uma OSC pode atingir (art. 31)", "Inexigibilidade: compromisso internacional que indica a OSC (art. 31, I)", "Inexigibilidade: lei que identifica a OSC beneficiária, inclusive subvenção (art. 31, II)", "Sem chamamento: recursos de emenda parlamentar (art. 29)"] },
+    { k: "plano", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Plano de trabalho da parceria", tipo: "docbase", fonte: ["plano_trabalho"], obrig: true, dica: "Mesmo sem chamamento, a parceria exige plano de trabalho (arts. 22 e 32, § 4º). Escolha um plano feito aqui ou envie o seu em PDF ou Word." },
     { k: "hipotese_detalhe", etapa: "contratacao", rot: "Por que a situação se enquadra nessa hipótese?", tipo: "texto", obrig: true, ph: "Ex.: a banda tem empresário exclusivo e é reconhecida pela crítica (reportagens anexas)" },
     { k: "quantidades", etapa: "contratacao", rot: "Quantidades e especificações", tipo: "texto", ph: "Ex.: 1 apresentação de 2 horas, com som e iluminação" },
     { k: "contratado", etapa: "contratacao", rot: "Fornecedor ou organização escolhida (nome e CNPJ)", tipo: "linha", ph: "Ex.: XYZ Produções Ltda., CNPJ 00.000.000/0001-00" },
@@ -7975,7 +7983,7 @@ function elFaltando(doc, R, etapa) {
   });
   if (nesta("pessoas")) ["elab_nome", "elab_cargo", "resp_nome", "resp_cargo"].forEach((k) => { if (vazio(k)) f.push(ELAB_ROT[k].toLowerCase()); });
   if (nesta("final")) {
-    if ((ELAB[doc] || {}).exigeNorma && !(R._normas > 0)) f.push("o decreto do seu ente que regulamenta a Lei 13.019/2014 (envie e selecione abaixo)");
+    if ((elabDoc(doc, R.regime) || {}).exigeNorma && !(R._normas > 0)) f.push("o decreto do seu ente que regulamenta a Lei 13.019/2014 (envie e selecione abaixo)");
     if (vazio("entrega")) f.push("como quer receber o documento");
     if (vazio("rodape_incluir")) f.push("se quer informações no rodapé");
     else if (R.rodape_incluir === "Sim" && vazio("rodape")) f.push("texto do rodapé");
@@ -16079,6 +16087,10 @@ class Component extends DCLogic {
               const docEsc = (ELAB[x2.el.docEsc] || {}).regimes && ELAB[x2.el.docEsc].regimes.includes(id) ? x2.el.docEsc : Object.keys(ELAB).find((k) => ELAB[k].regimes.includes(id));
               return { el: { ...x2.el, regime: id, docEsc, contErro: "" } };
             }) })),
+          elPergChamamento: (el.regime || "lei-14133") === "lei-13019",
+          elOpChamamento: [["edital", "Sim: edital de chamamento público"], ["direta", "Não: justificativa de dispensa, inexigibilidade ou emenda parlamentar"]].map(([k, nome]) => ({ nome, sel: el.docEsc === k,
+            escolher: () => { this.setState((x2) => ({ el: { ...x2.el, docEsc: k, contErro: "" } }));
+              setTimeout(() => { try { document.getElementById("el-contratar").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {} }, 60); } })),
           elDocs: Object.entries(ELAB).filter(([k, x]) => x.regimes.includes(el.regime || "lei-14133")).map(([k, x0]) => {
             const lib = !!this.creditoGeracao(k), x = elabDoc(k, el.regime);
             return { sigla: x.sigla, nome: x.nome, desc: x.desc, base: x.base, sel: !lib && el.docEsc === k,
@@ -16134,12 +16146,12 @@ class Component extends DCLogic {
           })(),
           elNome: d ? elabDoc(el.doc, el.regime).nome : "", elSigla: d ? d.sigla : "",
           elLei: (ELAB_REGIMES.find((x) => x[0] === (el.regime || "lei-14133")) || [])[1] || "",
-          elNormasTitulo: el.regime === "lei-13303" ? "Regulamento interno (RILC) da estatal" : el.regime === "lei-13019" ? ((d && d.exigeNorma) ? "Decreto que regulamenta a Lei 13.019 no seu ente (obrigatório)" : "Decreto que regulamenta as parcerias no seu ente") : "Regulamentação do seu ente (opcional)",
+          elNormasTitulo: el.regime === "lei-13303" ? "Regulamento interno (RILC) da estatal" : el.regime === "lei-13019" ? ((d && elabDoc(el.doc, el.regime).exigeNorma) ? "Decreto que regulamenta a Lei 13.019 no seu ente (obrigatório)" : "Decreto que regulamenta as parcerias no seu ente") : "Regulamentação do seu ente (opcional)",
           elNormasTexto: el.regime === "lei-13303" ? "O documento segue a Lei 13.303/2016 e o RILC que você selecionar abaixo. Até " + AN_MAX_NORMAS + " normas."
             : el.regime === "lei-13019" ? "O documento segue a Lei 13.019/2014 e o decreto do seu estado ou município, se você selecionar. Até " + AN_MAX_NORMAS + " normas."
             : "Decreto estadual ou municipal que regulamenta a Lei 14.133. O agente aplica a norma junto com a lei. Até " + AN_MAX_NORMAS + " normas.",
           elPedeRilc: el.regime === "lei-13303" && !(el.normas || []).length,
-          elPedeDecreto: !!(d && d.exigeNorma) && !(el.normas || []).length,
+          elPedeDecreto: !!(d && elabDoc(el.doc, el.regime).exigeNorma) && !(el.normas || []).length,
           elNormas: (s.normasUsuario || []).map((n) => {
             const ativo = (el.normas || []).includes(n.id);
             return { nome: n.nome, ativo, marca: ativo ? "✓" : "", tipo: /\.docx$/i.test(n.arquivo) ? "Word" : "PDF",

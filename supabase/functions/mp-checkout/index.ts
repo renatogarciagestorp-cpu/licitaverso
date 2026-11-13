@@ -180,8 +180,8 @@ Deno.serve(async (req) => {
       }
       if (g.documento === "plano_trabalho" && /fomento/i.test(String(limpo.tipo_parceria ?? "")))
         return erro("No termo de fomento, o plano de trabalho é elaborado pela organização da sociedade civil. Use O Parecerista para analisar o plano recebido.");
-      if (g.documento === "plano_trabalho" && !normasG.length)
-        return erro("Envie o decreto do seu município, estado ou DF que regulamenta a Lei 13.019/2014: o plano de trabalho segue a lei e esse decreto.");
+      if ((g.documento === "plano_trabalho" || (g.documento === "direta" && g.regime === "lei-13019")) && !normasG.length)
+        return erro("Envie o decreto do seu município, estado ou DF que regulamenta a Lei 13.019/2014: o documento segue a lei e esse decreto.");
       const assin = ["elab_nome", "elab_cargo", "resp_nome", "resp_cargo"].filter((k) => !String(limpo[k] ?? "").trim());
       if (assin.length) return erro("Informe nome e cargo de quem elabora e do responsável pelo setor.");
       // arquivos enviados pelo assinante (modelo em Word, logo, documentos de preço): só da pasta dele
@@ -196,8 +196,8 @@ Deno.serve(async (req) => {
         if (limpo[k] && !baseOk(limpo[k], disp)) return erro("Documento de base inválido.");
         if (limpo[k] === "dispensado" && !String(limpo[k + "_motivo"] ?? "").trim()) return erro("Informe o motivo da dispensa do documento de base.");
       }
-      if (g.documento === "edital" && g.regime === "lei-13019" && !limpo.plano)
-        return erro("Para elaborar o edital de chamamento, forneça o plano de trabalho da parceria.");
+      if ((g.documento === "edital" || g.documento === "direta") && g.regime === "lei-13019" && !limpo.plano)
+        return erro("Forneça o plano de trabalho da parceria: ele é obrigatório também sem chamamento público (arts. 22 e 32, § 4º, da Lei 13.019).");
       if (g.documento === "edital" && g.regime !== "lei-13019" && !(limpo.base_tr && limpo.base_etp && limpo.base_riscos))
         return erro("Para elaborar o edital, forneça o ETP, o Termo de Referência ou Projeto Básico e a matriz de riscos (ou informe a dispensa do ETP ou da matriz).");
       if (limpo.precos_pdfs) {
