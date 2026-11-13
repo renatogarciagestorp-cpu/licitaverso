@@ -192,12 +192,16 @@ Deno.serve(async (req) => {
       }
       // edital: os documentos que o baseiam (arquivo do assinante, documento feito no Elaborador ou, quando cabível, dispensado)
       const baseOk = (v: string, dispensavel: boolean) => caminhoOk(v) || /^ref:[0-9a-f-]{36}$/.test(v) || (dispensavel && v === "dispensado");
-      for (const [k, disp] of [["plano", false], ["base_tr", false], ["base_etp", true], ["base_riscos", true]] as [string, boolean][]) {
+      for (const [k, disp] of [["plano", false], ["base_tr", false], ["base_etp", true], ["base_riscos", true], ["base_planilha", false], ["base_planilha_mo", false]] as [string, boolean][]) {
         if (limpo[k] && !baseOk(limpo[k], disp)) return erro("Documento de base inválido.");
         if (limpo[k] === "dispensado" && !String(limpo[k + "_motivo"] ?? "").trim()) return erro("Informe o motivo da dispensa do documento de base.");
       }
       if ((g.documento === "edital" || g.documento === "direta") && g.regime === "lei-13019" && !limpo.plano)
         return erro("Forneça o plano de trabalho da parceria: ele é obrigatório também sem chamamento público (arts. 22 e 32, § 4º, da Lei 13.019).");
+      if (g.documento === "plano_trabalho" && !limpo.base_planilha)
+        return erro("Envie a planilha de custos da parceria: o plano de trabalho é elaborado a partir dela (valores, especificações e fontes).");
+      if (g.documento === "plano_trabalho" && limpo.mao_obra === "Sim" && !limpo.base_planilha_mo)
+        return erro("Há mão de obra com dedicação exclusiva: envie também as planilhas de custos e formação de preços (IN 05/2017).");
       if (g.documento === "edital" && g.regime !== "lei-13019" && !(limpo.base_tr && limpo.base_etp && limpo.base_riscos))
         return erro("Para elaborar o edital, forneça o ETP, o Termo de Referência ou Projeto Básico e a matriz de riscos (ou informe a dispensa do ETP ou da matriz).");
       if (limpo.precos_pdfs) {

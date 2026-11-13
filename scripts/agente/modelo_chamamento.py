@@ -670,6 +670,9 @@ def parcelas(R, total, n):
     return [(i + 1, 1 + i * passo, v) for i, v in enumerate(vals)]
 
 
+VISITA = {"Mensal": "mensais", "Bimestral": "bimestrais", "Trimestral": "trimestrais"}
+
+
 def plano(R, decreto=""):
     """Plano de trabalho do termo de colaboração (proposto pela administração, art. 16), no formato do Elaborador."""
     R = dict(R or {})
@@ -689,8 +692,17 @@ def plano(R, decreto=""):
     rel = (R.get("relatorio_periodicidade") or "mensal").strip().lower()
     secoes = []
 
-    def sec(titulo, itens, fundamento):
+    num = {}
+
+    def sec(titulo, itens, fundamento, chave=""):
+        num[chave or titulo] = len(secoes) + 1
         secoes.append({"titulo": titulo, "paragrafos": _numerar(itens, len(secoes) + 1), "fundamento": fundamento})
+
+    def it(chave):  # remissão a outra seção, resolvida ao final
+        return "{{item:" + chave + "}}"
+
+    mo = str(R.get("mao_obra") or "").startswith("Sim")
+    planilhas = ("na planilha de custos geral da parceria" + (" e nas planilhas de custos e formação de preços (IN 05/2017)" if mo else ""))
 
     preambulo = [f"Plano de trabalho do termo de colaboração a ser celebrado entre {orgao}"
                  + (f", por intermédio da {unidade}," if unidade else "")
@@ -717,16 +729,16 @@ def plano(R, decreto=""):
 
     sec("Diagnóstico da realidade e justificativa", [
         _v(R, "necessidade", "realidade que a parceria vai enfrentar, com dados e fontes"),
-        "As atividades descritas no item 6 respondem diretamente a essa realidade, e as metas do item 5 medem a mudança esperada, "
-        "aferida pelos indicadores do item 7.",
+        f"As atividades descritas no item {it('ativ')} respondem diretamente a essa realidade, e as metas do item {it('metas')} medem a "
+        f"mudança esperada, aferida pelos indicadores do item {it('ind')}.",
         "A parceria é proposta pela administração pública por meio de termo de colaboração porque a política pública e seus "
         "parâmetros (objeto, metas, valor e forma de execução) são definidos pelo próprio ente, cabendo à organização executá-la "
         "em regime de mútua cooperação, sem transferência de funções exclusivas do Estado (art. 40).",
-    ], f"{LEI}, arts. 2º, VII, 16, 22, I, e 40")
+    ], f"{LEI}, arts. 2º, VII, 16, 22, I, e 40", "diag")
 
     sec("Objetivos", [
-        f"Objetivo geral: realizar {obj_m}, para enfrentar a realidade descrita no item 2.",
-        ("Objetivos específicos, cada um ligado a uma meta do item 5:",
+        f"Objetivo geral: realizar {obj_m}, para enfrentar a realidade descrita no item {it('diag')}.",
+        (f"Objetivos específicos, cada um ligado a uma meta do item {it('metas')}:",
          [f"{chr(97 + i)}) {_meio(m)} (meta {i + 1});" if i < len(metas) - 1 else f"{chr(97 + i)}) {_meio(m)} (meta {i + 1})."
           for i, m in enumerate(metas[:26])]),
     ], f"{LEI}, art. 22, II")
@@ -745,23 +757,32 @@ def plano(R, decreto=""):
         afer = f"{quando.group(1)}º mês" if quando else (f"mensal, até o {n}º mês" if n else "mensal")
         linhas_metas.append(f"| Meta {i} | {m[0].upper() + m[1:]} | {afer} |")
     sec("Metas e resultados esperados", [
-        "As metas são quantitativas e mensuráveis e serão aferidas pelos indicadores do item 7.",
+        f"As metas são quantitativas e mensuráveis e serão aferidas pelos indicadores do item {it('ind')}.",
         "Tabela 2 – Metas",
         "| Meta | Descrição e quantidade | Aferição |",
         *linhas_metas,
-        "Resultado esperado: a redução da situação descrita no item 2, demonstrada pela comparação entre a linha de base do "
+        f"Resultado esperado: a redução da situação descrita no item {it('diag')}, demonstrada pela comparação entre a linha de base do "
         "diagnóstico e os resultados medidos ao fim da parceria.",
         "Metas descumpridas sem justificativa suficiente ensejam a glosa dos valores correspondentes na prestação de contas.",
-    ], f"{LEI}, arts. 22, II, e 64")
+    ], f"{LEI}, arts. 22, II, e 64", "metas")
 
     sec("Atividades e forma de execução", [
         _v(R, "atividades", "atividades e forma de execução"),
-        "A organização executará as atividades diretamente, com a equipe do item 8, admitida a atuação em rede somente se prevista no edital (art. 35-A); as "
+        f"A organização executará as atividades diretamente, com a equipe do item {it('equipe')}, admitida a atuação em rede somente se prevista no edital (art. 35-A); as "
         "contratações de bens e serviços com recursos da parceria observarão a compatibilidade com os preços de mercado e as regras "
         f"de compras do {dec}.",
         "Não se incluem atividades de regulação, fiscalização, poder de polícia ou outras exclusivas do Estado, nem serviços cujo "
         "destinatário seja o aparelho administrativo do ente (art. 40).",
-    ], f"{LEI}, arts. 22, III, 35-A e 40; {dec}")
+    ], f"{LEI}, arts. 22, III, 35-A e 40; {dec}", "ativ")
+
+    ac = (R.get("acessibilidade") or "").strip()
+    sec("Acessibilidade", [
+        (f"Medidas de acessibilidade previstas: {_meio(ac)}" + ("" if ac.endswith(".") else ".")) if ac else
+        "Os locais de execução e as atividades garantirão acesso a pessoas com deficiência, com mobilidade reduzida e idosas: "
+        "rotas acessíveis, sanitário adaptado e sinalização nos espaços de atendimento (ABNT NBR 9050), prioridade de atendimento e "
+        "comunicação acessível quando necessária, conforme a Lei nº 13.146/2015 e a Lei nº 10.741/2003.",
+        f"O cumprimento dessas medidas será verificado nas visitas técnicas do item {it('monit')}.",
+    ], f"{LEI}, art. 24, § 1º; Lei nº 13.146/2015")
 
     linhas_ind = []
     for i, m in enumerate(metas, 1):
@@ -776,8 +797,8 @@ def plano(R, decreto=""):
         "Tabela 3 – Indicadores",
         "| Meta | Indicador (fórmula) | Meio de verificação | Periodicidade |",
         *linhas_ind,
-    ] + ([f"Parâmetros informados pela administração: {'; '.join(inds)}."] if inds and len(inds) != len(metas) else []),
-        f"{LEI}, arts. 22, IV, 59 e 64")
+        *([f"Parâmetros informados pela administração: {'; '.join(inds)}."] if inds and len(inds) != len(metas) else []),
+    ], f"{LEI}, arts. 22, IV, 59 e 64", "ind")
 
     eq = equipe(R)
     sec("Equipe de trabalho", ([
@@ -785,13 +806,16 @@ def plano(R, decreto=""):
         "| Função | Quantidade | Carga horária |",
         *[f"| {f} | {q} | {h} |" for f, q, h in eq],
     ] if eq else ["[PREENCHER: equipe de trabalho (função, quantidade e carga horária)]"]) + [
-        "A remuneração da equipe paga com recursos da parceria será proporcional ao tempo dedicado ao objeto, compatível com o "
-        "mercado e com o piso da categoria, e poderá incluir impostos, contribuições sociais, FGTS, férias, décimo terceiro, "
-        "verbas rescisórias e demais encargos (art. 46, I).",
+        ("A remuneração, o CBO, os encargos e os benefícios de cada categoria constam das planilhas de custos e formação de preços "
+         "(IN 05/2017), com a cláusula da convenção ou do acordo coletivo aplicada; a remuneração paga com recursos da parceria será "
+         "proporcional ao tempo dedicado ao objeto e poderá incluir impostos, contribuições sociais, FGTS, férias, décimo terceiro, "
+         "verbas rescisórias e demais encargos (art. 46, I)." if mo else
+         "Não há mão de obra com dedicação exclusiva: os serviços específicos necessários à execução constam da planilha de custos "
+         "geral, com especificação, quantidade e fonte de preço de cada um."),
         "É vedado pagar, com recursos da parceria, servidor ou empregado público, salvo nas hipóteses de lei específica e da lei de "
         "diretrizes orçamentárias (art. 45, II). A organização responde exclusivamente pelos encargos trabalhistas, previdenciários "
         "e fiscais, sem responsabilidade solidária ou subsidiária da administração (art. 42, XX).",
-    ], f"{LEI}, arts. 42, XX, 45, II, e 46")
+    ], f"{LEI}, arts. 42, XX, 45, II, e 46", "equipe")
 
     ds = despesas(R, n)
     linhas_d, soma, faltam = [], 0.0, []
@@ -813,29 +837,54 @@ def plano(R, decreto=""):
         fecha.append(f"[PREENCHER: a soma das despesas ({_brl(soma)}) difere do valor total da parceria ({valor_txt}) em "
                      f"{_brl(abs(dif))}; ajuste as despesas ou o valor]")
     sec("Previsão de receitas e despesas", [
-        f"Receita: repasse da administração pública no valor de {valor_txt}, conforme o cronograma do item 12. Os rendimentos de "
-        "aplicação financeira serão aplicados no objeto, sujeitos às mesmas condições de prestação de contas (art. 51, parágrafo único).",
+        f"Receita: repasse da administração pública no valor de {valor_txt}, conforme o cronograma do item {it('desemb')}. Os "
+        "rendimentos de aplicação financeira serão aplicados no objeto, sujeitos às mesmas condições de prestação de contas (art. 51, "
+        "parágrafo único).",
+        f"Os valores, as especificações e a fonte de cada item constam {planilhas}; a tabela abaixo os resume por natureza.",
         "Tabela 5 – Despesas por natureza",
         "| Natureza | Item | Qtd. | Valor mensal unitário | Meses | Valor total |",
-        *(linhas_d or ["| [PREENCHER: despesas por natureza] | | | | | |"]),
+        *(linhas_d or ["| [PREENCHER: despesas por natureza, com quantidade e valor, conforme a planilha de custos] | | | | | |"]),
         (f"| Total | | | | | {_brl(soma)} |" if not faltam and ds else f"| Total (valor da parceria) | | | | | {valor_txt} |"),
         *fecha,
-        "Os custos indiretos (contabilidade, energia, água, internet, aluguel e semelhantes) serão pagos na proporção do uso para o "
-        "objeto, demonstrada na prestação de contas; não se admite percentual fixo a título de taxa de administração, de gerência "
-        "ou similar (arts. 45, I, e 46, III).",
+        "São custos diretos os que se alocam diretamente a uma meta ou atividade, e indiretos os que dependem de critério de rateio "
+        "para chegar ao custo de cada meta (contabilidade, energia, água, internet, aluguel e semelhantes).",
+        (f"Critério de rateio dos custos indiretos: {_meio(R['rateio'].strip())}" + ("" if R['rateio'].strip().endswith('.') else ".")
+         if (R.get("rateio") or "").strip() else
+         "[PREENCHER: critério de rateio de cada custo indireto (ex.: horas dedicadas, área ocupada, número de atendidos)]"
+         if any(d[0] == "Custos indiretos" for d in ds) else "Não há custos indiretos previstos."),
+        "Não se admite percentual fixo a título de taxa de administração, de gerência ou similar (arts. 45, I, e 46, III).",
         ("É vedado usar os recursos para:", [
             "a) taxa de administração, de gerência ou similar;",
             "b) finalidade diversa da pactuada, ainda que em caráter de emergência;",
             "c) despesas anteriores ou posteriores à vigência;",
             "d) multas, juros ou correção monetária por atraso de responsabilidade da organização; e",
             "e) publicidade que caracterize promoção pessoal de autoridades ou servidores."]),
-    ], f"{LEI}, arts. 22, II-A, 45, 46 e 51")
+    ], f"{LEI}, arts. 22, II-A, 45, 46 e 51", "desp")
 
+    mem = (R.get("memoria") or "").strip()
+    sec("Memória de cálculo das quantidades", [
+        (mem + ("" if mem.endswith(".") else ".")) if mem else
+        "[PREENCHER: memória de cálculo de cada quantidade da planilha (como foi definida e qual meta atende)]",
+        f"As quantidades guardam proporção com as metas do item {it('metas')} e com o período de execução de cada uma; o detalhamento "
+        f"de cada item está {planilhas}.",
+    ], f"{LEI}, art. 22, II-A e IV; {dec}", "mem")
+
+    fontes = [f for f in str(R.get("pesquisa_fontes") or "").split("; ") if f]
+    metodo = (R.get("pesquisa_metodo") or "").strip()
+    obs = (R.get("justificativa_preco") or "").strip()
     sec("Compatibilidade dos custos com o mercado", [
-        f"Fontes dos valores: {_v(R, 'justificativa_preco', 'fonte de cada valor (cotações, convenção coletiva, tabelas oficiais, parcerias semelhantes)')}",
-        "Cada valor da Tabela 5 tem fonte identificada no processo (cotação, tabela oficial, convenção ou acordo coletivo, ata ou "
-        f"parceria semelhante), na forma exigida pelo {dec}.",
-    ], f"{LEI}, art. 22, II-A; {dec}")
+        (f"Os valores de referência foram obtidos de: {'; '.join(fontes)}." if fontes else
+         "[PREENCHER: fontes da pesquisa de preços (painel de preços ou PNCP, contratações similares, sites, cotações, notas fiscais, convenção coletiva ou CAGED)]"),
+        (f"Método para o valor de referência de cada item: {metodo.lower()} dos preços válidos, depois de descartados os "
+         "inexequíveis e os excessivamente elevados." if metodo else "[PREENCHER: método estatístico do valor de referência (média, mediana ou menor preço)]"),
+        "As cotações diretas, quando usadas, foram solicitadas formalmente a no mínimo 3 (três) fornecedores do ramo, com justificativa "
+        "da escolha, e não têm mais de 6 (seis) meses na data de divulgação do edital; as consultas a sites registram data e hora de acesso.",
+        *(["Os salários seguem a convenção ou o acordo coletivo da categoria, com o CBO correspondente a cada função; quando se usa o "
+           "CAGED, adota-se a média (TCU, Acórdão 2142/2022-Plenário), e valor acima do piso só se admite com demonstração de que é o "
+           "praticado no mercado para tarefas de complexidade semelhante."] if mo else []),
+        *([f"Observações: {obs}"] if obs else []),
+        f"O mapa de preços com a fonte de cada valor integra a planilha de custos, na forma exigida pelo {dec}.",
+    ], f"{LEI}, art. 22, II-A; {dec}", "merc")
 
     linhas_f = []
     for i, m in enumerate(metas, 1):
@@ -847,27 +896,33 @@ def plano(R, decreto=""):
         "Tabela 6 – Cronograma físico",
         "| Meta | Período de execução | Marco de verificação |",
         *linhas_f,
-    ], f"{LEI}, art. 22, II e III")
+    ], f"{LEI}, art. 22, II e III", "fisico")
 
     pc = parcelas(R, valor, n)
+    mi = re.match(r"(\d+)", str(R.get("implantacao") or ""))
+    imp = int(mi.group(1)) if mi else 0
     crono = str(R.get("cronograma") or "")
     crono = str(R.get("cronograma_outro") or "") if crono == "Outro" else crono
     sec("Cronograma de desembolso", ([
         "Tabela 7 – Cronograma de desembolso",
-        "| Parcela | Mês de liberação | Valor | Condição |",
-        *[f"| {i} | {m}º mês | {_brl(v)} | " + ("após a publicação do extrato e a abertura da conta específica" if i == 1 else
-                                              "regular aplicação da parcela anterior e cumprimento das metas do período") + " |"
+        "| Parcela | Mês de liberação | Metas em execução | Valor | Condição |",
+        *[f"| {i} | {m}º mês | " + ("implantação" if imp and m <= imp else ("metas 1 a " + str(len(metas)) if len(metas) > 1 else "meta 1"))
+          + f" | {_brl(v)} | " + ("após a publicação do extrato e a abertura da conta específica" if i == 1 else
+                                 "regular aplicação da parcela anterior e cumprimento das metas do período") + " |"
           for i, m, v in pc],
-        f"| Total | | {_brl(sum(v for _, _, v in pc))} | |",
+        f"| Total | | | {_brl(sum(v for _, _, v in pc))} | |",
     ] if pc else [f"Desembolso: {crono or '[PREENCHER: cronograma de desembolso (número de parcelas, meses e valores)]'}."]) + [
-        "As parcelas guardam consonância com as metas e etapas do cronograma físico (item 11) e ficarão retidas: quando houver "
+        *([("No primeiro mês" if imp == 1 else f"Nos primeiros {imp} meses") + ", de implantação, a parcela financia a contratação "
+           "da equipe, a preparação dos espaços e os materiais iniciais; os custos de operação desse período são proporcionais ao tempo "
+           "efetivo de execução, conforme a planilha de custos."] if imp else []),
+        f"As parcelas guardam consonância com as metas e etapas do cronograma físico (item {it('fisico')}) e ficarão retidas: quando houver "
         "evidências de irregularidade na aplicação de parcela anterior; quando constatado desvio de finalidade ou inadimplemento "
         "da organização; ou quando a organização deixar de adotar, sem justificativa suficiente, as medidas saneadoras apontadas "
         "pela administração ou pelos órgãos de controle (art. 48).",
         "Os recursos serão depositados e geridos em conta corrente específica, isenta de tarifa bancária, em instituição financeira "
         "pública indicada pela administração, e os pagamentos serão feitos por transferência eletrônica identificada ao "
         "beneficiário final (arts. 51 e 53).",
-    ], f"{LEI}, arts. 48, 51 e 53; {dec}")
+    ], f"{LEI}, arts. 48, 51 e 53; {dec}", "desemb")
 
     cp = (R.get("contrapartida") or "").strip()
     sec("Contrapartida", [
@@ -889,20 +944,27 @@ def plano(R, decreto=""):
 
     sec("Monitoramento, avaliação e prestação de contas", [
         f"A execução será acompanhada pelo gestor da parceria, {_v(R, 'gestor', 'gestor da parceria')}, e pela comissão de "
-        "monitoramento e avaliação, com visitas técnicas in loco e relatório técnico de monitoramento e avaliação homologado pela "
-        "comissão (arts. 58, 59 e 61).",
+        "monitoramento e avaliação, que terá ao menos um servidor ocupante de cargo efetivo e não será integrada pelo gestor nem por "
+        "quem acompanha a execução, para segregar as funções (arts. 2º, XI, 58 e 61).",
+        ("Meios e procedimentos de fiscalização:", [
+            f"a) execução física: visitas técnicas in loco {VISITA.get(str(R.get('visitas') or 'Mensal'), 'mensais')}, com roteiro de "
+            "verificação de cada meta, conferência dos meios de verificação da Tabela 3 e das medidas de acessibilidade, e registro em "
+            "relatório de visita;",
+            "b) execução financeira: conferência mensal dos extratos da conta específica com o cronograma de desembolso, a planilha de "
+            "custos e os comprovantes de despesa;",
+            "c) relatório técnico de monitoramento e avaliação, homologado pela comissão, com a análise das metas, dos valores "
+            "transferidos e das eventuais auditorias (art. 59); e",
+            "d) pesquisa de satisfação com os beneficiários, se a vigência passar de um ano (art. 58, § 2º)."]),
         f"A organização apresentará relatório {rel} de execução do objeto, com as atividades realizadas e o comparativo entre as metas "
         "propostas e os resultados alcançados, acompanhado dos meios de verificação da Tabela 3; o relatório de execução financeira "
         "será exigido quando não comprovado o alcance das metas (art. 66).",
         "Prestação de contas final em até 90 (noventa) dias do término da vigência" + (", com prestação de contas anual por durar "
         "mais de um ano" if n and n > 12 else "") + "; a administração terá até 150 (cento e cinquenta) dias para apreciá-la "
         "(arts. 69 e 71).",
-        *(["Como a vigência é superior a um ano, a administração realizará pesquisa de satisfação com os beneficiários (art. 58, § 2º)."]
-          if n and n > 12 else []),
         "A organização manterá os documentos originais da prestação de contas por 10 (dez) anos (art. 68, parágrafo único).",
         "Alterações de valores ou de metas exigem termo aditivo ou apostila ao plano de trabalho, conforme o caso, sem alteração do "
         "objeto (art. 57).",
-    ], f"{LEI}, arts. 57 a 72; {dec}")
+    ], f"{LEI}, arts. 2º, XI, e 57 a 72; {dec}", "monit")
 
     sec("Responsáveis", [
         "Tabela 8 – Responsáveis",
@@ -912,4 +974,13 @@ def plano(R, decreto=""):
         "| Responsável legal da organização | " + ("a definir após o chamamento público" if sem_osc else osc) + " |",
     ], f"{LEI}, arts. 35, V, \"g\", e 61")
 
+    sec("Aprovação", [
+        "Aprovo o presente plano de trabalho.",
+        "Tabela 9 – Aprovação",
+        "| Ordenador de despesas | Data |",
+        f"| {_v(R, 'autoridade', 'ordenador de despesas (nome e cargo)')} | ____/____/______ |",
+    ], f"{LEI}, art. 35; {dec}")
+
+    for s_ in secoes:  # resolve as remissões entre seções
+        s_["paragrafos"] = [re.sub(r"\{\{item:(\w+)\}\}", lambda m: str(num.get(m.group(1), "?")), p) for p in s_["paragrafos"]]
     return {"titulo": "PLANO DE TRABALHO", "preambulo": preambulo, "secoes": secoes, "pendencias": [], "jurisprudencia_ids": []}

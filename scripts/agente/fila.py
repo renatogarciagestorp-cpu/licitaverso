@@ -413,7 +413,9 @@ def processar_geracao(a):
             if a.get("regime") in ("lei-14133", "lei-13303", "lei-13019"):
                 extra += ["--regime", a["regime"]]
             # edital: os documentos que o baseiam (arquivo do assinante ou documento feito no Elaborador); "dispensado" não é lido
-            BASES = [("plano", "Plano de trabalho"), ("base_tr", "Termo de Referência ou Projeto Básico"), ("base_etp", "Estudo Técnico Preliminar"), ("base_riscos", "Matriz de riscos")]
+            BASES = [("plano", "Plano de trabalho"), ("base_tr", "Termo de Referência ou Projeto Básico"), ("base_etp", "Estudo Técnico Preliminar"),
+                     ("base_riscos", "Matriz de riscos"), ("base_planilha", "Planilha de custos da parceria"),
+                     ("base_planilha_mo", "Planilhas de custos e formação de preços (IN 05-2017)")]
             for chave, rotulo in BASES:
                 valor_b = str(respostas.get(chave) or "")
                 if not valor_b or valor_b == "dispensado" or a.get("fase") == "completar":
@@ -425,18 +427,22 @@ def processar_geracao(a):
                         orig_b.write_bytes(http("GET", f"{SUPA}/storage/v1/object/analises/{a['usuario_id']}/pareceres/{valor_b[4:]}.docx",
                                                 cab=cab(), binario=True, timeout=300))
                     else:
-                        orig_b = baixar(valor_b, chave + (".docx" if valor_b.lower().endswith(".docx") else ".pdf"))
+                        ext_b = pathlib.Path(valor_b).suffix.lower()
+                        orig_b = baixar(valor_b, chave + (ext_b if ext_b in (".docx", ".xlsx") else ".pdf"))
                     if orig_b and orig_b.suffix == ".docx":
                         import docx  # python-docx
                         dd = docx.Document(str(orig_b))
                         linhas = [p.text for p in dd.paragraphs] + [" | ".join(c.text for c in r.cells) for t in dd.tables for r in t.rows]
                         txt_b.write_text("\n".join(linhas), encoding="utf-8")
+                    elif orig_b and orig_b.suffix == ".xlsx":  # planilha de custos: célula a célula
+                        subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-planilha.py"), str(orig_b), str(txt_b)], capture_output=True, timeout=600)
                     elif orig_b:
                         subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-texto.py"), str(orig_b), str(txt_b)], capture_output=True, timeout=1800)
                 except Exception as e:
                     print(f"elaboração {aid}: {rotulo} não lido ({type(e).__name__})")
                 if not txt_b.exists() or len(txt_b.read_text(encoding="utf-8", errors="replace").strip()) < 200:
-                    raise ErroCliente(f"Não foi possível ler o documento \"{rotulo}\". Envie-o em PDF com texto (não digitalizado) ou em Word; "
+                    raise ErroCliente(f"Não foi possível ler o documento \"{rotulo}\". Envie-o em PDF com texto (não digitalizado), em Word"
+                                      + (" ou em Excel (.xlsx)" if chave.startswith("base_planilha") else "") + "; "
                                       "se escolheu um documento feito aqui, ele pode ter passado do prazo de 7 dias no site.")
                 extra += (["--plano", str(txt_b)] if chave == "plano" else ["--base", f"{rotulo}::{txt_b}"])
             normas_args = baixar_normas(a, pasta, f"elaboração {aid}")  # RILC da estatal ou decreto do ente
