@@ -10,6 +10,8 @@ on:
       simular: { description: "sim = sem custo (só pesquisa de mercado e Word de exemplo); nao = chama a API", required: true, default: "sim" }
       norma: { description: "opcional: texto da regulamentação do ente ou RILC em agente/testes/elaboracao/ (ex.: decreto-exemplo.txt)", required: false, default: "" }
       base_tr: { description: "opcional (edital 14.133/13.303): TR ou Projeto Básico em agente/testes/elaboracao/ (ex.: base-tr-notebooks.txt)", required: false, default: "" }
+      plano: { description: "opcional (edital ou direta da 13.019): plano de trabalho em agente/testes/elaboracao/", required: false, default: "" }
+      bases: { description: "opcional: documentos de base, \"Rótulo::arquivo\" separados por ;; (arquivos em agente/testes/elaboracao/)", required: false, default: "" }
       conferencia: { description: "sim = confere e corrige o texto (custa mais); nao = só a redação", required: true, default: "sim" }
 
 permissions: { contents: write }
@@ -28,10 +30,12 @@ jobs:
           sudo apt-get install -y -qq poppler-utils libreoffice-writer-nogui fonts-liberation >/dev/null
           pip install -q python-docx matplotlib
       - name: Elaborar
-        env: { DOC: "${{ inputs.doc }}", CASO: "${{ inputs.caso }}", SIMULAR: "${{ inputs.simular }}", CONF: "${{ inputs.conferencia }}", NORMA: "${{ inputs.norma }}", BASE_TR: "${{ inputs.base_tr }}" }
+        env: { DOC: "${{ inputs.doc }}", CASO: "${{ inputs.caso }}", SIMULAR: "${{ inputs.simular }}", CONF: "${{ inputs.conferencia }}", NORMA: "${{ inputs.norma }}", BASE_TR: "${{ inputs.base_tr }}", PLANO: "${{ inputs.plano }}", BASES: "${{ inputs.bases }}" }
         run: |
           EXTRA=(); [ -n "$NORMA" ] && EXTRA=(--norma-local "Regulamentacao-do-ente::agente/testes/elaboracao/$NORMA")
           [ -n "$BASE_TR" ] && EXTRA+=(--base "Termo de Referência ou Projeto Básico::agente/testes/elaboracao/$BASE_TR")
+          [ -n "$PLANO" ] && EXTRA+=(--plano "agente/testes/elaboracao/$PLANO")
+          if [ -n "$BASES" ]; then while IFS= read -r b; do [ -n "$b" ] && EXTRA+=(--base "${b%%::*}::agente/testes/elaboracao/${b#*::}"); done < <(printf '%s' "$BASES" | sed 's/;;/\n/g'); fi
           python3 scripts/agente/elaborar.py --doc "$DOC" --respostas "agente/testes/elaboracao/$CASO" --pasta /tmp/saida $([ "$SIMULAR" = "sim" ] && echo --simular) $([ "$CONF" = "nao" ] && echo --sem-conferencia) "${EXTRA[@]}"
           python3 -c "import json;e=json.load(open('/tmp/saida/execucao.json'));print('::notice title=Custo::US$',e.get('custo_usd'),'·',e.get('segundos','-'),'s · pendências',e.get('pendencias'),'· perguntas',e.get('perguntas',0),'· alta',e.get('alta',0),'· média',e.get('media',0))"
       - name: Guardar o resultado no ramo agente-testes (caso fictício)
