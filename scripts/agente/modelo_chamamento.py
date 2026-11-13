@@ -1,4 +1,7 @@
-"""Modelo padrão Licitacon do Edital de Chamamento Público (Lei 13.019/2014).
+"""Modelos padrão Licitacon da Lei 13.019/2014: edital de chamamento público, justificativa de dispensa ou
+inexigibilidade de chamamento e plano de trabalho do termo de colaboração.
+
+Edital de chamamento público.
 
 Estrutura: a do Edital de Chamamento Público nº 1/2026/SNP-MCID (Ministério das Cidades, termo de colaboração),
 adaptada a qualquer ente e seguida na ordem: preâmbulo; 1 propósito; 2 objeto; 3 justificativa; 4 participação;
@@ -561,3 +564,352 @@ def justificativa(R, decreto="", plano=""):
 
     return {"titulo": "JUSTIFICATIVA DE " + ("CELEBRAÇÃO SEM CHAMAMENTO PÚBLICO" if art29 else "DISPENSA OU INEXIGIBILIDADE DE CHAMAMENTO PÚBLICO"),
             "preambulo": preambulo, "secoes": secoes, "pendencias": [], "jurisprudencia_ids": []}
+
+
+# ---------------------------------------------------------------- plano de trabalho do termo de colaboração (art. 22)
+# Estrutura inspirada no plano de trabalho do Hospital Veterinário de Maricá (proc. 11931/2025) e na minuta de termo de
+# colaboração/fomento do Espírito Santo, sem repetir as falhas encontradas nos dois:
+# - critérios de julgamento do chamamento dentro do plano (pertencem ao edital);
+# - "objetivo geral" de realizar o chamamento (o objetivo é o da parceria);
+# - diagnóstico e tabelas repetidos; atendimentos tratados como se fossem animais (percentual da população);
+# - metas sem quantidade ("de acordo com a demanda") e metas repetidas entre unidades;
+# - custos indiretos como percentual fixo sobre o total (art. 45, I, veda taxa de administração; art. 46, III, exige
+#   custos indiretos demonstrados e proporcionais);
+# - parcelas do desembolso que não somam o total por arredondamento e sem ligação com as metas;
+# - aplicação em caderneta de poupança "se o uso for igual ou superior a um mês" (regra de convênios; na Lei 13.019 os
+#   recursos ficam em conta específica isenta de tarifa e os rendimentos vão para o objeto, art. 51);
+# - equipe paga sem quantidade, função e carga horária; dois decretos diferentes citados para a mesma regra.
+
+NATUREZAS = [  # (natureza, palavras que a identificam), na ordem da tabela de despesas
+    ("Pessoal", r"coordenad|educador|t[eé]cnic|auxiliar|monitor|professor|instrutor|assistente|psic[oó]log|veterin|m[eé]dic|"
+                r"enfermeir|cozinheir|merendeir|motorista|vigia|porteir|recepcion|profissional|sal[aá]rio|equipe|oficineir"),
+    ("Encargos sociais e trabalhistas", r"encargo|inss|fgts|f[eé]rias|13[ºo°]|d[eé]cimo|rescis"),
+    ("Custos indiretos", r"indiret|contad|contabil|energia|[aá]gua|internet|telefon|aluguel|limpeza do|seguran[cç]a patrimonial"),
+    ("Equipamentos e material permanente", r"equipamento|mobili|computador|notebook|ve[ií]culo|ambul[aâ]ncia|permanente|eletrodom"),
+    ("Material de consumo", r"material|insumo|lanche|aliment|g[eê]nero|uniform|medicament|limpeza|expediente|combust"),
+    ("Serviços de terceiros", r"servi[cç]o|transporte|loca[cç][aã]o|manuten|consultori|capacita"),
+]
+
+
+def _natureza(t):
+    for nome, rx in NATUREZAS:
+        if re.search(rx, t, re.I):
+            return nome
+    return "Outras despesas"
+
+
+def _brl(v):
+    return "R$ " + f"{v:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+
+def _valor(t):
+    m = re.search(r"R\$\s*([\d.]+(?:,\d{1,2})?)", t or "")
+    if not m:
+        return None
+    return float(m.group(1).replace(".", "").replace(",", "."))
+
+
+def _itens(t):
+    return [x.strip(" .;") for x in re.split(r"\s*;\s*|\n+", str(t or "")) if x.strip(" .;")]
+
+
+def meses(R):
+    p = str(R.get("prazo") or "")
+    p = str(R.get("prazo_outro") or "") if p == "Outro" else p
+    m = re.search(r"(\d+)\s*(mes|m[eê]s)", p, re.I)
+    if m:
+        return int(m.group(1))
+    m = re.search(r"(\d+)\s*ano", p, re.I)
+    return int(m.group(1)) * 12 if m else None
+
+
+def despesas(R, n):
+    """Linhas da previsão de despesas: (natureza, item, qtd, unitário mensal ou None, meses ou None, total ou None)."""
+    out = []
+    for it in _itens(R.get("despesas")):
+        v = _valor(it)
+        mensal = bool(re.search(r"/\s*m[eê]s|mensa", it, re.I))
+        q = re.match(r"(\d+)\s+(?!R\$)", it)
+        qtd = int(q.group(1)) if q and mensal else 1
+        nome = re.sub(r"\s*R\$\s*[\d.,]+\s*(/\s*m[eê]s)?", "", it).strip(" ,:–-") or it
+        if q and mensal:
+            nome = nome[len(q.group(0)):].strip() or nome
+        nome = nome[0].upper() + nome[1:]
+        if v is None:
+            out.append((_natureza(it), nome, qtd, None, n if mensal or n else None, None))
+        elif mensal:
+            out.append((_natureza(it), nome, qtd, v, n, round(qtd * v * n, 2) if n else None))
+        else:
+            out.append((_natureza(it), nome, qtd, None, None, round(v, 2)))
+    ordem = [x[0] for x in NATUREZAS] + ["Outras despesas"]
+    return sorted(out, key=lambda x: ordem.index(x[0]))
+
+
+def equipe(R):
+    out = []
+    for it in _itens(R.get("equipe")):
+        q = re.match(r"(\d+)\s+", it)
+        h = re.search(r"(\d+)\s*h", it)
+        funcao = re.sub(r"^\d+\s+", "", it)
+        funcao = re.sub(r",?\s*\d+\s*h(oras)?(\s*semanais)?", "", funcao).strip(" ,")
+        out.append((funcao[0].upper() + funcao[1:] if funcao else it, q.group(1) if q else "1", f"{h.group(1)} h semanais" if h else "conforme a escala"))
+    return out
+
+
+def parcelas(R, total, n):
+    """Cronograma de desembolso: parcelas iguais, a diferença de centavos na última, para a soma bater com o total."""
+    c = str(R.get("cronograma") or "")
+    if not total or not n:
+        return None
+    passo = 3 if "trimestr" in c.lower() else 1 if "mensa" in c.lower() else None
+    if not passo:
+        return None
+    k = max(1, -(-n // passo))
+    base = round(total / k, 2)
+    vals = [base] * (k - 1) + [round(total - base * (k - 1), 2)]
+    return [(i + 1, 1 + i * passo, v) for i, v in enumerate(vals)]
+
+
+def plano(R, decreto=""):
+    """Plano de trabalho do termo de colaboração (proposto pela administração, art. 16), no formato do Elaborador."""
+    R = dict(R or {})
+    dec = decreto or "[PREENCHER: decreto que regulamenta a Lei 13.019/2014 no ente]"
+    orgao = _v(R, "orgao", "órgão ou entidade")
+    unidade = (R.get("unidade") or "").strip()
+    objeto = _v(R, "objeto", "objeto da parceria")
+    obj_m = _meio(objeto)
+    osc = (R.get("osc") or "").strip() or "a ser selecionada por chamamento público"
+    sem_osc = not (R.get("osc") or "").strip()
+    n = meses(R)
+    prazo = f"{n} meses" if n else _v(R, "prazo", "prazo de execução da parceria")
+    valor_txt = _v(R, "valor", "valor total da parceria")
+    valor = _valor(R.get("valor"))
+    metas = _itens(R.get("metas")) or ["[PREENCHER: metas quantitativas da parceria]"]
+    inds = _itens(R.get("indicadores"))
+    rel = (R.get("relatorio_periodicidade") or "mensal").strip().lower()
+    secoes = []
+
+    def sec(titulo, itens, fundamento):
+        secoes.append({"titulo": titulo, "paragrafos": _numerar(itens, len(secoes) + 1), "fundamento": fundamento})
+
+    preambulo = [f"Plano de trabalho do termo de colaboração a ser celebrado entre {orgao}"
+                 + (f", por intermédio da {unidade}," if unidade else "")
+                 + (" e a organização da sociedade civil selecionada por chamamento público" if sem_osc else f" e {osc}")
+                 + f", tendo por objeto {obj_m}, elaborado pela administração pública nos termos dos arts. 16 e 22 da {LEI} "
+                 f"e do {dec}. Processo administrativo nº {_v(R, 'processo', 'nº do processo administrativo')}."]
+
+    sec("Identificação da parceria", [
+        "Tabela 1 – Dados da parceria",
+        "| Campo | Informação |",
+        f"| Órgão ou entidade | {orgao} |",
+        f"| Unidade responsável | {unidade or '[PREENCHER: unidade requisitante]'} |",
+        f"| Organização da sociedade civil | {osc[0].upper() + osc[1:]} |",
+        "| Instrumento | Termo de colaboração (proposta da administração pública, art. 16) |",
+        f"| Objeto | {objeto} |",
+        f"| Público-alvo e local | {_v(R, 'publico', 'público-alvo e local de execução')} |",
+        f"| Valor total | {valor_txt} |",
+        f"| Prazo de execução | {prazo}, contados do primeiro dia após a publicação do extrato do termo (art. 38) |",
+        f"| Gestor da parceria | {_v(R, 'gestor', 'gestor da parceria (nome, cargo e matrícula)')} |",
+        f"| Dotação orçamentária | {_v(R, 'fonte', 'programa de trabalho, elemento de despesa e fonte de recursos')} |",
+    ] + (["Os dados da organização (endereço, CNPJ, responsável legal e técnico) serão incluídos após o resultado do chamamento "
+          "público, sem alteração das metas, do valor e do cronograma deste plano."] if sem_osc else []),
+        f"{LEI}, arts. 16 e 22; {dec}")
+
+    sec("Diagnóstico da realidade e justificativa", [
+        _v(R, "necessidade", "realidade que a parceria vai enfrentar, com dados e fontes"),
+        "As atividades descritas no item 6 respondem diretamente a essa realidade, e as metas do item 5 medem a mudança esperada, "
+        "aferida pelos indicadores do item 7.",
+        "A parceria é proposta pela administração pública por meio de termo de colaboração porque a política pública e seus "
+        "parâmetros (objeto, metas, valor e forma de execução) são definidos pelo próprio ente, cabendo à organização executá-la "
+        "em regime de mútua cooperação, sem transferência de funções exclusivas do Estado (art. 40).",
+    ], f"{LEI}, arts. 2º, VII, 16, 22, I, e 40")
+
+    sec("Objetivos", [
+        f"Objetivo geral: realizar {obj_m}, para enfrentar a realidade descrita no item 2.",
+        ("Objetivos específicos, cada um ligado a uma meta do item 5:",
+         [f"{chr(97 + i)}) {_meio(m)} (meta {i + 1});" if i < len(metas) - 1 else f"{chr(97 + i)}) {_meio(m)} (meta {i + 1})."
+          for i, m in enumerate(metas[:26])]),
+    ], f"{LEI}, art. 22, II")
+
+    sec("Público-alvo, local e prazo", [
+        f"Público-alvo e local de execução: {_meio(_v(R, 'publico', 'público-alvo e local de execução'))}.",
+        f"O prazo de execução é de {prazo}, contados do primeiro dia após a publicação do extrato do termo de colaboração (art. 38), "
+        "prorrogável na forma do art. 55, mediante solicitação justificada com antecedência mínima de 30 (trinta) dias do término.",
+        "O atraso na liberação de recursos pela administração ensejará a prorrogação de ofício da vigência pelo período exato do "
+        "atraso (art. 55, parágrafo único).",
+    ], f"{LEI}, arts. 38 e 55")
+
+    linhas_metas = []
+    for i, m in enumerate(metas, 1):
+        quando = re.search(r"em\s+(\d+)\s*mes", m, re.I)
+        afer = f"{quando.group(1)}º mês" if quando else (f"mensal, até o {n}º mês" if n else "mensal")
+        linhas_metas.append(f"| Meta {i} | {m[0].upper() + m[1:]} | {afer} |")
+    sec("Metas e resultados esperados", [
+        "As metas são quantitativas e mensuráveis e serão aferidas pelos indicadores do item 7.",
+        "Tabela 2 – Metas",
+        "| Meta | Descrição e quantidade | Aferição |",
+        *linhas_metas,
+        "Resultado esperado: a redução da situação descrita no item 2, demonstrada pela comparação entre a linha de base do "
+        "diagnóstico e os resultados medidos ao fim da parceria.",
+        "Metas descumpridas sem justificativa suficiente ensejam a glosa dos valores correspondentes na prestação de contas.",
+    ], f"{LEI}, arts. 22, II, e 64")
+
+    sec("Atividades e forma de execução", [
+        _v(R, "atividades", "atividades e forma de execução"),
+        "A organização executará as atividades diretamente, com a equipe do item 8, admitida a atuação em rede somente se prevista no edital (art. 35-A); as "
+        "contratações de bens e serviços com recursos da parceria observarão a compatibilidade com os preços de mercado e as regras "
+        f"de compras do {dec}.",
+        "Não se incluem atividades de regulação, fiscalização, poder de polícia ou outras exclusivas do Estado, nem serviços cujo "
+        "destinatário seja o aparelho administrativo do ente (art. 40).",
+    ], f"{LEI}, arts. 22, III, 35-A e 40; {dec}")
+
+    linhas_ind = []
+    for i, m in enumerate(metas, 1):
+        ind = inds[i - 1] if len(inds) == len(metas) else None
+        pct = re.search(r"\d+\s*%", m)
+        formula = ("percentual apurado no período" if pct else "quantidade realizada ÷ quantidade prevista × 100")
+        meio = ind or (inds[0] if len(inds) == 1 else "registros de atendimento, listas de presença e relatório fotográfico")
+        linhas_ind.append(f"| Meta {i} | {formula} | {meio} | {rel} |")
+    sec("Indicadores e meios de verificação", [
+        "Cada meta tem indicador objetivo, fórmula de cálculo e meio de verificação, que serão usados no relatório técnico de "
+        "monitoramento e avaliação (art. 59) e na prestação de contas (art. 64).",
+        "Tabela 3 – Indicadores",
+        "| Meta | Indicador (fórmula) | Meio de verificação | Periodicidade |",
+        *linhas_ind,
+    ] + ([f"Parâmetros informados pela administração: {'; '.join(inds)}."] if inds and len(inds) != len(metas) else []),
+        f"{LEI}, arts. 22, IV, 59 e 64")
+
+    eq = equipe(R)
+    sec("Equipe de trabalho", ([
+        "Tabela 4 – Equipe",
+        "| Função | Quantidade | Carga horária |",
+        *[f"| {f} | {q} | {h} |" for f, q, h in eq],
+    ] if eq else ["[PREENCHER: equipe de trabalho (função, quantidade e carga horária)]"]) + [
+        "A remuneração da equipe paga com recursos da parceria será proporcional ao tempo dedicado ao objeto, compatível com o "
+        "mercado e com o piso da categoria, e poderá incluir impostos, contribuições sociais, FGTS, férias, décimo terceiro, "
+        "verbas rescisórias e demais encargos (art. 46, I).",
+        "É vedado pagar, com recursos da parceria, servidor ou empregado público, salvo nas hipóteses de lei específica e da lei de "
+        "diretrizes orçamentárias (art. 45, II). A organização responde exclusivamente pelos encargos trabalhistas, previdenciários "
+        "e fiscais, sem responsabilidade solidária ou subsidiária da administração (art. 42, XX).",
+    ], f"{LEI}, arts. 42, XX, 45, II, e 46")
+
+    ds = despesas(R, n)
+    linhas_d, soma, faltam = [], 0.0, []
+    for nat, item, q, unit, mm, tot in ds:
+        if tot is None:
+            faltam.append(item)
+        else:
+            soma += tot
+    dif = round(valor - soma, 2) if valor is not None else None
+    for nat, item, q, unit, mm, tot in ds:
+        if tot is None:
+            dica = f"; a diferença entre o valor total e os demais itens é {_brl(dif)}" if dif and len(faltam) == 1 and dif > 0 else ""
+            tot_t = f"[PREENCHER: valor total de {_meio(item)} em {n or 'todo o'} {'meses' if n else 'prazo'}{dica}]"
+        else:
+            tot_t = _brl(tot)
+        linhas_d.append(f"| {nat} | {item} | {q} | {_brl(unit) if unit else '—'} | {mm or '—'} | {tot_t} |")
+    fecha = []
+    if ds and not faltam and valor is not None and abs(dif) >= 0.01:
+        fecha.append(f"[PREENCHER: a soma das despesas ({_brl(soma)}) difere do valor total da parceria ({valor_txt}) em "
+                     f"{_brl(abs(dif))}; ajuste as despesas ou o valor]")
+    sec("Previsão de receitas e despesas", [
+        f"Receita: repasse da administração pública no valor de {valor_txt}, conforme o cronograma do item 12. Os rendimentos de "
+        "aplicação financeira serão aplicados no objeto, sujeitos às mesmas condições de prestação de contas (art. 51, parágrafo único).",
+        "Tabela 5 – Despesas por natureza",
+        "| Natureza | Item | Qtd. | Valor mensal unitário | Meses | Valor total |",
+        *(linhas_d or ["| [PREENCHER: despesas por natureza] | | | | | |"]),
+        (f"| Total | | | | | {_brl(soma)} |" if not faltam and ds else f"| Total (valor da parceria) | | | | | {valor_txt} |"),
+        *fecha,
+        "Os custos indiretos (contabilidade, energia, água, internet, aluguel e semelhantes) serão pagos na proporção do uso para o "
+        "objeto, demonstrada na prestação de contas; não se admite percentual fixo a título de taxa de administração, de gerência "
+        "ou similar (arts. 45, I, e 46, III).",
+        ("É vedado usar os recursos para:", [
+            "a) taxa de administração, de gerência ou similar;",
+            "b) finalidade diversa da pactuada, ainda que em caráter de emergência;",
+            "c) despesas anteriores ou posteriores à vigência;",
+            "d) multas, juros ou correção monetária por atraso de responsabilidade da organização; e",
+            "e) publicidade que caracterize promoção pessoal de autoridades ou servidores."]),
+    ], f"{LEI}, arts. 22, II-A, 45, 46 e 51")
+
+    sec("Compatibilidade dos custos com o mercado", [
+        f"Fontes dos valores: {_v(R, 'justificativa_preco', 'fonte de cada valor (cotações, convenção coletiva, tabelas oficiais, parcerias semelhantes)')}",
+        "Cada valor da Tabela 5 tem fonte identificada no processo (cotação, tabela oficial, convenção ou acordo coletivo, ata ou "
+        f"parceria semelhante), na forma exigida pelo {dec}.",
+    ], f"{LEI}, art. 22, II-A; {dec}")
+
+    linhas_f = []
+    for i, m in enumerate(metas, 1):
+        quando = re.search(r"em\s+(\d+)\s*mes", m, re.I)
+        periodo = f"1º ao {n}º mês" if n else "[PREENCHER: período]"
+        marco = (f"resultado medido no {quando.group(1)}º mês" if quando else f"relatório {rel} de execução")
+        linhas_f.append(f"| Meta {i} | {periodo} | {marco} |")
+    sec("Cronograma físico de execução", [
+        "Tabela 6 – Cronograma físico",
+        "| Meta | Período de execução | Marco de verificação |",
+        *linhas_f,
+    ], f"{LEI}, art. 22, II e III")
+
+    pc = parcelas(R, valor, n)
+    crono = str(R.get("cronograma") or "")
+    crono = str(R.get("cronograma_outro") or "") if crono == "Outro" else crono
+    sec("Cronograma de desembolso", ([
+        "Tabela 7 – Cronograma de desembolso",
+        "| Parcela | Mês de liberação | Valor | Condição |",
+        *[f"| {i} | {m}º mês | {_brl(v)} | " + ("após a publicação do extrato e a abertura da conta específica" if i == 1 else
+                                              "regular aplicação da parcela anterior e cumprimento das metas do período") + " |"
+          for i, m, v in pc],
+        f"| Total | | {_brl(sum(v for _, _, v in pc))} | |",
+    ] if pc else [f"Desembolso: {crono or '[PREENCHER: cronograma de desembolso (número de parcelas, meses e valores)]'}."]) + [
+        "As parcelas guardam consonância com as metas e etapas do cronograma físico (item 11) e ficarão retidas: quando houver "
+        "evidências de irregularidade na aplicação de parcela anterior; quando constatado desvio de finalidade ou inadimplemento "
+        "da organização; ou quando a organização deixar de adotar, sem justificativa suficiente, as medidas saneadoras apontadas "
+        "pela administração ou pelos órgãos de controle (art. 48).",
+        "Os recursos serão depositados e geridos em conta corrente específica, isenta de tarifa bancária, em instituição financeira "
+        "pública indicada pela administração, e os pagamentos serão feitos por transferência eletrônica identificada ao "
+        "beneficiário final (arts. 51 e 53).",
+    ], f"{LEI}, arts. 48, 51 e 53; {dec}")
+
+    cp = (R.get("contrapartida") or "").strip()
+    sec("Contrapartida", [
+        (f"A organização oferece, como contrapartida em bens e serviços: {_meio(cp)}. A contrapartida terá sua expressão monetária "
+         "identificada no termo, com inventário dos bens e serviços avaliados individualmente." if cp and not re.match(r"(n[aã]o|sem|nenhum)", cp, re.I)
+         else "Não há contrapartida."),
+        "Não é exigida contrapartida financeira como requisito para a celebração (art. 35, § 1º).",
+    ], f"{LEI}, art. 35, § 1º")
+
+    bens = (R.get("bens") or "").strip()
+    perm = [d for d in ds if d[0] == "Equipamentos e material permanente"]
+    sec("Bens permanentes", [
+        (f"Bens permanentes a adquirir com recursos da parceria: {_meio(bens or '; '.join(d[1] for d in perm))}." if bens or perm
+         else "Não há previsão de aquisição de bens permanentes com recursos da parceria."),
+        "Os bens permanentes adquiridos, produzidos ou transformados com recursos da parceria serão gravados com cláusula de "
+        "inalienabilidade e, ao fim da parceria, terão a destinação prevista no termo de colaboração, observado o "
+        f"{dec} (arts. 35, § 5º, e 36).",
+    ], f"{LEI}, arts. 35, § 5º, e 36; {dec}")
+
+    sec("Monitoramento, avaliação e prestação de contas", [
+        f"A execução será acompanhada pelo gestor da parceria, {_v(R, 'gestor', 'gestor da parceria')}, e pela comissão de "
+        "monitoramento e avaliação, com visitas técnicas in loco e relatório técnico de monitoramento e avaliação homologado pela "
+        "comissão (arts. 58, 59 e 61).",
+        f"A organização apresentará relatório {rel} de execução do objeto, com as atividades realizadas e o comparativo entre as metas "
+        "propostas e os resultados alcançados, acompanhado dos meios de verificação da Tabela 3; o relatório de execução financeira "
+        "será exigido quando não comprovado o alcance das metas (art. 66).",
+        "Prestação de contas final em até 90 (noventa) dias do término da vigência" + (", com prestação de contas anual por durar "
+        "mais de um ano" if n and n > 12 else "") + "; a administração terá até 150 (cento e cinquenta) dias para apreciá-la "
+        "(arts. 69 e 71).",
+        *(["Como a vigência é superior a um ano, a administração realizará pesquisa de satisfação com os beneficiários (art. 58, § 2º)."]
+          if n and n > 12 else []),
+        "A organização manterá os documentos originais da prestação de contas por 10 (dez) anos (art. 68, parágrafo único).",
+        "Alterações de valores ou de metas exigem termo aditivo ou apostila ao plano de trabalho, conforme o caso, sem alteração do "
+        "objeto (art. 57).",
+    ], f"{LEI}, arts. 57 a 72; {dec}")
+
+    sec("Responsáveis", [
+        "Tabela 8 – Responsáveis",
+        "| Papel | Responsável |",
+        f"| Unidade da administração | {unidade or orgao} |",
+        f"| Gestor da parceria | {_v(R, 'gestor', 'gestor da parceria')} |",
+        "| Responsável legal da organização | " + ("a definir após o chamamento público" if sem_osc else osc) + " |",
+    ], f"{LEI}, arts. 35, V, \"g\", e 61")
+
+    return {"titulo": "PLANO DE TRABALHO", "preambulo": preambulo, "secoes": secoes, "pendencias": [], "jurisprudencia_ids": []}

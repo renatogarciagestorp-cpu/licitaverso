@@ -87,18 +87,12 @@ DOCS.update({
                           "Divulgação do ato e publicação no PNCP (art. 72, parágrafo único)"]},
     "plano_trabalho": {"nome": "Plano de Trabalho do Termo de Colaboração", "roteiro": "plano_trabalho", "objetos": [],
                "base": "arts. 16 e 22 da Lei nº 13.019/2014 (termo de colaboração: plano proposto pela administração pública) e o decreto do estado, do Distrito Federal ou do município que regulamenta a lei (enviado pelo requisitante)",
-               "secoes": ["Identificação da organização da sociedade civil, do responsável e da parceria (termo de colaboração)",
-                          "Descrição da realidade objeto da parceria e nexo com as atividades e as metas (art. 22, I)",
-                          "Metas a serem atingidas (art. 22, II)", "Atividades ou projetos e forma de execução (art. 22, III)",
-                          "Parâmetros e indicadores para aferir o cumprimento das metas (art. 22, IV)",
-                          "Público-alvo, local e prazo de execução", "Equipe de trabalho",
-                          "Previsão de receitas e despesas, por natureza: pessoal e encargos, material de consumo, serviços, equipamentos e custos indiretos (art. 22, II-A, e art. 46)",
-                          "Estimativa dos encargos previdenciários e trabalhistas da equipe durante a vigência",
-                          "Compatibilidade dos custos com os preços de mercado ou de outras parcerias da mesma natureza (cotações, tabelas, publicações), com a fonte de cada valor",
-                          "Plano de aplicação dos recursos e cronograma de desembolso compatível com as etapas e metas do cronograma físico",
-                          "Contrapartida, se houver (art. 35, § 1º)",
-                          "Monitoramento, avaliação, modo e periodicidade da prestação de contas e prazos de análise (arts. 58 a 72)",
-                          "Elementos exigidos pelo decreto regulamentador do ente (cite cada dispositivo)"]},
+               "secoes": ["Identificação da parceria", "Diagnóstico da realidade e justificativa (art. 22, I)", "Objetivos geral e específicos",
+                          "Público-alvo, local e prazo", "Metas e resultados esperados (art. 22, II)", "Atividades e forma de execução (art. 22, III)",
+                          "Indicadores e meios de verificação (art. 22, IV)", "Equipe de trabalho",
+                          "Previsão de receitas e despesas por natureza (art. 22, II-A, e arts. 45 e 46)", "Compatibilidade dos custos com o mercado",
+                          "Cronograma físico de execução", "Cronograma de desembolso (art. 48)", "Contrapartida (art. 35, § 1º)",
+                          "Bens permanentes (arts. 35, § 5º, e 36)", "Monitoramento, avaliação e prestação de contas (arts. 57 a 72)", "Responsáveis"]},
     "riscos": {"nome": "Mapa de Riscos", "roteiro": "riscos", "objetos": [],
                "base": "art. 18, X, da Lei nº 14.133/2021 (análise dos riscos da contratação) e, quando cabível, a matriz de riscos do art. 6º, XXVII, e do art. 22",
                "secoes": ["Identificação da contratação e da fase", "Metodologia (probabilidade, impacto e nível de risco)",
@@ -154,13 +148,16 @@ BASES_TXT = []  # [(rótulo, texto)]: ETP, TR ou Projeto Básico e matriz de ris
 
 
 def modelo_base(doc, respostas):
-    """Documento com texto padrão já revisado (hoje: edital de chamamento da Lei 13.019); None se não houver."""
+    """Documento com texto padrão já revisado (Lei 13.019: edital de chamamento, justificativa e plano de trabalho); None se não houver."""
     if doc == "edital" and regime_de(respostas) == "lei-13019":
         dec = an.NORMAS_LOCAIS[0]["nome"] if an.NORMAS_LOCAIS else ""
         return mc.documento(respostas, dec, PLANO_TXT)
     if doc == "direta" and regime_de(respostas) == "lei-13019":
         dec = an.NORMAS_LOCAIS[0]["nome"] if an.NORMAS_LOCAIS else ""
         return mc.justificativa(respostas, dec, PLANO_TXT)
+    if doc == "plano_trabalho":
+        dec = an.NORMAS_LOCAIS[0]["nome"] if an.NORMAS_LOCAIS else ""
+        return mc.plano(respostas, dec)
     return None
 
 
@@ -198,7 +195,7 @@ def bloco_regime(regime, tem_normas):
             + ("A regulamentação do ente foi enviada (abaixo): siga-a e cite-a quando ela detalhar a lei. " if tem_normas else "") + "\n\n")
 CAMPOS_ROTULO = {
     "envio_propostas": "Forma de envio das propostas", "contato": "Canal para esclarecimentos, impugnações e recursos",
-    "osc": "Organização da sociedade civil (nome, CNPJ e responsável)", "atividades": "Atividades e forma de execução", "indicadores": "Parâmetros e indicadores de aferição das metas", "publico": "Público-alvo", "despesas": "Previsão de receitas e despesas", "cronograma": "Cronograma de execução e desembolso", "contrapartida": "Contrapartida",
+    "osc": "Organização da sociedade civil (nome, CNPJ e responsável)", "atividades": "Atividades e forma de execução", "indicadores": "Parâmetros e indicadores de aferição das metas", "publico": "Público-alvo", "despesas": "Previsão de receitas e despesas", "cronograma": "Cronograma de execução e desembolso", "contrapartida": "Contrapartida", "bens": "Bens permanentes a comprar com recursos da parceria", "relatorio_periodicidade": "Periodicidade do relatório de execução da organização",
     "tipo_parceria": "Tipo de parceria (escolha do requisitante)", "metas": "Objetivos, metas e público atendido", "modo_disputa": "Modo de disputa (escolha do requisitante)", "registro_precos": "Registro de preços (escolha do requisitante)", "me_epp": "Participação de ME e EPP (escolha do requisitante)", "criterios_selecao": "Critérios de seleção e pontuação", "agente": "Agente de contratação, pregoeiro ou comissão", "hipotese": "Hipótese legal da contratação direta (escolha do requisitante)", "hipotese_detalhe": "Por que a situação se enquadra na hipótese", "contratado": "Fornecedor ou organização escolhida", "motivo_escolha": "Razão da escolha do contratado", "justificativa_preco": "Como o preço foi verificado", "fase": "Fases a mapear", "riscos_conhecidos": "Riscos ou problemas já conhecidos", "matriz": "Incluir matriz de alocação de riscos (art. 22)", "equipe": "Equipe de planejamento", "garantia": "Garantia da contratação (escolha do requisitante)",
     "orgao": "Órgão ou entidade", "uf": "UF e município", "unidade": "Unidade requisitante", "natureza": "Natureza do objeto / solução indicada",
     "objeto": "Objeto", "necessidade": "Necessidade", "pca": "Plano de contratações anual", "requisitos": "Requisitos",
@@ -408,7 +405,14 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
            "objetivos; não reintroduza o que o modelo corrigiu (desclassificar proposta igual ao valor de referência, exigir capacidade "
            "instalada prévia, autenticação de cópias ou reconhecimento de firma, cessão de direitos autorais da proposta, cobrança pelo "
            "edital, certidão de falência de associação, citar o decreto federal 8.726/2016 em vez do decreto do ente, datas divergentes "
-           "entre itens). Entregue com a ferramenta entregar_documento." if modelo_base(doc, respostas) else
+           "entre itens)"
+           + ("; no plano de trabalho: mantenha os números coerentes entre si (soma das despesas = valor total = soma das parcelas, "
+              "metas da Tabela 2 = metas dos indicadores e do cronograma físico), traga para cada seção os elementos e formulários que o "
+              "decreto do ente exigir, e não reintroduza falhas comuns: critérios de julgamento do chamamento dentro do plano (são do "
+              "edital), objetivo de \"realizar o chamamento\", metas sem quantidade (\"de acordo com a demanda\"), atendimentos tratados "
+              "como percentual da população, custos indiretos como percentual fixo do total (art. 45, I), parcelas que não somam o "
+              "total, aplicação em poupança no lugar da conta específica do art. 51, texto ou tabelas repetidos" if doc == "plano_trabalho" else "")
+           + ". Entregue com a ferramenta entregar_documento." if modelo_base(doc, respostas) else
            f"(10) produza as seções na ordem: {'; '.join(d['secoes'])}. Entregue com a ferramenta entregar_documento.")
     )
     usuario = (
