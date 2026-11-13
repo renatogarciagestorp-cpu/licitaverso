@@ -131,15 +131,14 @@ VARIANTES = {
                    "Para cada risco: descrição, probabilidade, impacto, parte responsável, medidas de mitigação e efeito no equilíbrio econômico-financeiro",
                    "Eventos não alocados à contratada e reequilíbrio (art. 81)", "Acompanhamento"]},
     ("edital", "lei-13019"): {"nome": "Edital de Chamamento Público",
-        "base": "art. 24 da Lei nº 13.019/2014 (edital de chamamento público), com a minuta do termo de colaboração ou de fomento (art. 42), e o decreto regulamentador do ente",
+        "base": "art. 24 da Lei nº 13.019/2014 (edital de chamamento público, sem anexos: o plano de trabalho orientativo, a minuta do termo e as declarações são juntados pelo órgão) e o decreto regulamentador do ente",
         "secoes": ["Preâmbulo (ente, tipo de parceria: termo de colaboração ou de fomento, e base legal)", "Objeto da parceria e programação orçamentária (art. 24, § 1º, I)",
                    "Objetivos, metas e público atendido", "Datas, prazos, condições, local e forma de apresentação das propostas (art. 24, § 1º, III)",
                    "Condições de participação e vedações (arts. 33, 34 e 39)", "Comissão de seleção (art. 27)",
                    "Critérios de seleção e julgamento, metodologia de pontuação e peso de cada critério (art. 24, § 1º, V)",
                    "Valor de referência ou teto e contrapartida (art. 24, § 1º, VI, e art. 35, § 1º)", "Fases: seleção, recursos, homologação e celebração",
                    "Divulgação do resultado e prazo de recurso", "Documentos para a celebração e plano de trabalho (art. 22)",
-                   "Condições para interposição de recurso (art. 24, § 1º, VIII)", "Medidas de acessibilidade (art. 24, § 1º, X)", "Disposições finais",
-                   "ANEXO: Minuta do termo de colaboração ou de fomento (cláusulas do art. 42)"]},
+                   "Condições para interposição de recurso (art. 24, § 1º, VIII)", "Medidas de acessibilidade (art. 24, § 1º, X)", "Disposições finais"]},
     ("direta", "lei-13019"): {"nome": "Justificativa de Dispensa ou Inexigibilidade de Chamamento Público",
         "base": "arts. 30 a 32 da Lei nº 13.019/2014 e o decreto regulamentador do ente",
         "secoes": ["Objeto da parceria e interesse público", "Enquadramento: dispensa (art. 30) ou inexigibilidade (art. 31) do chamamento",
@@ -393,8 +392,8 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
            "se o requisitante não informou o valor, apresente os dados do PNCP como referência preliminar, em mapa resumido, registrando "
            "que o valor estimado deve vir da pesquisa de preços formal " + ("do art. 23 da Lei 14.133/2021" if d["regime"] == "lei-14133" else "prevista no RILC" if d["regime"] == "lei-13303" else "da parceria") + " ([PREENCHER] no valor final); ")
         + (f"(10) siga o modelo padrão descrito a seguir e entregue com a ferramenta entregar_documento.\n{MODELOS[padrao].INSTRUCOES}" if padrao else
-           "(10) use como base o MODELO-BASE enviado, já revisado juridicamente: mantenha a estrutura, a numeração, as seções, as cláusulas e os "
-           "anexos; adapte ao caso e ao decreto do ente (prazos, fatores e pesos de julgamento, impedimentos, limites de aditivo, vigência, "
+           "(10) use como base o MODELO-BASE enviado, já revisado juridicamente: mantenha a estrutura, a numeração, as seções e as cláusulas, sem "
+           "acrescentar anexos; adapte ao caso e ao decreto do ente (prazos, fatores e pesos de julgamento, impedimentos, limites de aditivo, vigência, "
            "prestação de contas), sempre citando o dispositivo do decreto; detalhe o objeto, as metas e os critérios de pontuação com níveis "
            "objetivos; não reintroduza o que o modelo corrigiu (desclassificar proposta igual ao valor de referência, exigir capacidade "
            "instalada prévia, autenticação de cópias ou reconhecimento de firma, cessão de direitos autorais da proposta, cobrança pelo "
@@ -799,7 +798,7 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
     # anexo: só o que o requisitante optou por completar depois (as dúvidas foram resolvidas antes da redação)
     if docj.get("pendencias"):
         w.add_page_break()
-        par("ANEXO — INFORMAÇÕES PARA COMPLETAR (retire antes de juntar ao processo)", negrito=True, centro=True)
+        par("PENDÊNCIAS PARA COMPLETAR (retire esta página antes de juntar ao processo)", negrito=True, centro=True)
         par("Estes são os pontos que você informou não ter no momento da elaboração. Eles estão destacados em amarelo no texto.", tam=10)
         for t in docj["pendencias"]:
             par("• " + t, recuo=False, tam=11)
