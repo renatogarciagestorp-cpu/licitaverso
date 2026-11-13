@@ -7551,7 +7551,7 @@ const AN_TIPOS = [
   ["tr", "Termo de Referência / Projeto Básico", "pdf", "Definição do objeto, modelo de execução, de gestão e de pagamento."],
   ["riscos", "Matriz de Riscos", "pdf", "Mapa de riscos ou matriz de alocação de riscos."],
   ["memoria_calculo", "Memória de cálculo", "planilha", "Cálculo dos quantitativos e dos valores estimados."],
-  ["plano_trabalho", "Plano de trabalho", "pdf", "Lei 13.019/2014: substitui o termo de referência nas parcerias com OSC."],
+  ["plano_trabalho", "Plano de trabalho", "pdf", "Lei 13.019/2014: no termo de colaboração, elaborado pela administração; no termo de fomento, apresentado pela organização da sociedade civil."],
   ["planilha_mo", "Planilha de custos de mão de obra (IN 05/2017)", "planilha", "Uma composição por posto: CBO, categoria, salário-base, adicionais, encargos, benefícios, insumos, custos indiretos, lucro e tributos."],
   ["planilha_obras", "Planilha orçamentária (obras e serviços de engenharia)", "planilha", "Valores unitários e totais sem e com BDI, composição do BDI (onerado ou desonerado), tabelas (EMOP, SINAPI, SICRO, SCO etc.) e datas-base."],
   ["planilha_parceria", "Planilha de custos da parceria (Lei 13.019)", "planilha", "Detalhamento de tudo o que será implementado e adquirido na execução, com o custo total da parceria."]
@@ -7641,8 +7641,8 @@ const ELAB = {
     porRegime: { "lei-13303": { base: "Lei 13.303/2016, arts. 29 e 30, e o RILC" },
       "lei-13019": { nome: "Dispensa ou inexigibilidade de chamamento", base: "Lei 13.019/2014, arts. 30 a 32",
         desc: "Justificativa da parceria sem chamamento público, com o enquadramento, a escolha da organização e a publicação do extrato." } } },
-  plano_trabalho: { regimes: ["lei-13019"], exigeNorma: true, nome: "Plano de trabalho", sigla: "Plano", base: "Lei 13.019/2014, art. 22, e o decreto do seu ente",
-    desc: "Plano de trabalho da parceria: realidade, metas, atividades, indicadores, receitas e despesas e cronograma, conforme a lei e o decreto do seu ente.", passos: [] },
+  plano_trabalho: { regimes: ["lei-13019"], exigeNorma: true, nome: "Plano de trabalho (termo de colaboração)", sigla: "Plano", base: "Lei 13.019/2014, arts. 16 e 22, e o decreto do seu ente",
+    desc: "Plano de trabalho do termo de colaboração, proposto pela administração. No termo de fomento, quem elabora é a OSC: analise-o no Parecerista.", passos: [] },
   riscos: { regimes: ["lei-14133", "lei-13303"], nome: "Mapa de riscos", sigla: "Riscos", base: "Lei 14.133/2021, art. 18, X, e art. 22",
     desc: "Riscos do planejamento, da seleção e da execução, com probabilidade, impacto, ações preventivas e responsáveis.", passos: [],
     porRegime: { "lei-13303": { nome: "Matriz de riscos", base: "Lei 13.303/2016, art. 42, X, e art. 69, X" } } }
@@ -7825,7 +7825,8 @@ const ELAB_RAPIDO = {
   ],
   plano_trabalho: [
     { k: "objeto", etapa: "contratacao", rot: "Objeto da parceria", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: atividades socioeducativas no contraturno escolar para crianças e adolescentes" },
-    { k: "tipo_parceria", etapa: "contratacao", rot: "Tipo de parceria", tipo: "chips", obrig: true, op: ["Termo de colaboração", "Termo de fomento"] },
+    { k: "tipo_parceria", etapa: "contratacao", rot: "Tipo de parceria", tipo: "chips", obrig: true, op: ["Termo de colaboração"], aviso: () => "No termo de fomento, o plano de trabalho é elaborado e apresentado pela organização da sociedade civil, não pela administração. Nesse caso, use O Parecerista para analisar o plano recebido da OSC.",
+      dica: "Termo de colaboração: a proposta parte da administração pública, que elabora o plano de trabalho (Lei 13.019, art. 16)." },
     { k: "osc", etapa: "contratacao", rot: "Organização da sociedade civil (nome, CNPJ e responsável)", tipo: "linha", ph: "Ex.: Associação Amigos do Bairro, CNPJ 00.000.000/0001-00, presidente Maria Silva" },
     { k: "necessidade", etapa: "contratacao", rot: "Realidade que a parceria vai enfrentar (diagnóstico)", tipo: "texto", obrig: true, ph: "Ex.: 420 crianças do bairro sem atividade no contraturno; índice de evasão escolar de 12%", dica: "Art. 22, I: descrição da realidade e nexo com as atividades e as metas." },
     { k: "metas", etapa: "contratacao", rot: "Metas", tipo: "texto", obrig: true, ph: "Ex.: atender 300 crianças por mês; reduzir a evasão para 6% em 12 meses" },

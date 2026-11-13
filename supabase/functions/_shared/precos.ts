@@ -78,7 +78,7 @@ export const MAX_PAGINAS_ANALISE = 200;
 export const DOC_GERACAO: Record<string, string> = {
   etp: "Estudo Técnico Preliminar (ETP)", tr: "Termo de Referência", projeto_basico: "Projeto Básico",
   edital: "Edital (com as minutas)", direta: "Processo de contratação direta (dispensa ou inexigibilidade)", riscos: "Mapa de riscos",
-  plano_trabalho: "Plano de trabalho da parceria (Lei 13.019/2014)",
+  plano_trabalho: "Plano de trabalho do termo de colaboração (Lei 13.019/2014)",
 };
 // lei da contratação: cada documento existe só nos regimes em que a lei o prevê
 export const REGIMES_GERACAO: Record<string, string[]> = {

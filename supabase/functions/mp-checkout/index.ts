@@ -178,6 +178,8 @@ Deno.serve(async (req) => {
         const { data: ns } = await admin.from("normas_usuario").select("id, nome, arquivo").in("id", pedidasG).eq("usuario_id", usuario.id);
         normasG = (ns ?? []).map((n: any) => ({ id: n.id, nome: n.nome, arquivo: n.arquivo }));
       }
+      if (g.documento === "plano_trabalho" && /fomento/i.test(String(limpo.tipo_parceria ?? "")))
+        return erro("No termo de fomento, o plano de trabalho é elaborado pela organização da sociedade civil. Use O Parecerista para analisar o plano recebido.");
       if (g.documento === "plano_trabalho" && !normasG.length)
         return erro("Envie o decreto do seu município, estado ou DF que regulamenta a Lei 13.019/2014: o plano de trabalho segue a lei e esse decreto.");
       const assin = ["elab_nome", "elab_cargo", "resp_nome", "resp_cargo"].filter((k) => !String(limpo[k] ?? "").trim());
