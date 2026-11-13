@@ -68,13 +68,15 @@ export const TIPOS_DOC_ANALISE: Record<string, { nome: string; formato: "pdf" | 
 };
 export const MAX_DOCS_ANALISE = 3;
 export const ANALISE_AVULSA = 290;
-/** Não assinante: R$ 290 por análise. Básico 10% e Premium 15% de desconto; Pro: 2 por semana incluídas e, a partir da 3ª, 30% de desconto. */
+/** Não assinante: R$ 290 por análise. Básico 10% e Premium 15% de desconto; Pro: 8 por mês incluídas e, acima disso, 30% de desconto. */
 export const DESCONTO_ANALISE: Record<string, number> = { basico: 0.1, premium: 0.15, pro: 0.3 };
-export const FRANQUIA_PRO_SEMANA = 2;
-export const MAX_PAGINAS_ANALISE = 200;
+export const FRANQUIA_PRO_MES = 8; // Pro individual: análises e elaborações somadas, por mês (horário de Brasília)
+export const FRANQUIA_PRO_SEMANA = 2; // teste grátis de 7 dias
+export const MAX_PAGINAS_ANALISE = 200; // por documento
+export const MAX_PAGINAS_FRANQUIA = 300; // análise da franquia (Pro, teste e equipes): soma das páginas dos documentos
 
 /** Elaboração de documento pelo agente (Lei 14.133/2021). Mesmo preço e descontos da análise; no Pro, entra na mesma
- *  franquia (2 por semana somando análises e elaborações; equipes: 6 por acesso por mês, somados). */
+ *  franquia (8 por mês somando análises e elaborações; equipes: 6 por acesso por mês, somados). */
 export const DOC_GERACAO: Record<string, string> = {
   etp: "Estudo Técnico Preliminar (ETP)", tr: "Termo de Referência", projeto_basico: "Projeto Básico",
   edital: "Edital (com as minutas)", direta: "Processo de contratação direta (dispensa ou inexigibilidade)", riscos: "Mapa de riscos",
