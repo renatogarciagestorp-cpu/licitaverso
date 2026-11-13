@@ -22,6 +22,8 @@ _spec3 = importlib.util.spec_from_file_location("modelo_etp", RAIZ / "scripts" /
 me = importlib.util.module_from_spec(_spec3); _spec3.loader.exec_module(me)
 _spec4 = importlib.util.spec_from_file_location("modelo_tr", RAIZ / "scripts" / "agente" / "modelo_tr.py")
 mt = importlib.util.module_from_spec(_spec4); _spec4.loader.exec_module(mt)
+_spec5 = importlib.util.spec_from_file_location("modelo_chamamento", RAIZ / "scripts" / "agente" / "modelo_chamamento.py")
+mc = importlib.util.module_from_spec(_spec5); _spec5.loader.exec_module(mc)
 # modelos padrão: ETP (Licitacon) e TR de compras (AGU); o Word do assinante, se enviado, prevalece
 MODELOS = {"etp": me, "tr": mt}
 
@@ -136,7 +138,7 @@ VARIANTES = {
                    "Critérios de seleção e julgamento, metodologia de pontuação e peso de cada critério (art. 24, § 1º, V)",
                    "Valor de referência ou teto e contrapartida (art. 24, § 1º, VI, e art. 35, § 1º)", "Fases: seleção, recursos, homologação e celebração",
                    "Divulgação do resultado e prazo de recurso", "Documentos para a celebração e plano de trabalho (art. 22)",
-                   "Condições de acessibilidade (art. 24, § 1º, VII)", "Disposições finais",
+                   "Condições para interposição de recurso (art. 24, § 1º, VIII)", "Medidas de acessibilidade (art. 24, § 1º, X)", "Disposições finais",
                    "ANEXO: Minuta do termo de colaboração ou de fomento (cláusulas do art. 42)"]},
     ("direta", "lei-13019"): {"nome": "Justificativa de Dispensa ou Inexigibilidade de Chamamento Público",
         "base": "arts. 30 a 32 da Lei nº 13.019/2014 e o decreto regulamentador do ente",
@@ -146,6 +148,14 @@ VARIANTES = {
                    "Pareceres técnico e jurídico, gestor e comissão de monitoramento (art. 35)",
                    "Publicação do extrato da justificativa e prazo de impugnação (art. 32, §§ 1º a 3º)", "Autorização do administrador público"]},
 }
+
+
+def modelo_base(doc, respostas):
+    """Documento com texto padrão já revisado (hoje: edital de chamamento da Lei 13.019); None se não houver."""
+    if doc == "edital" and regime_de(respostas) == "lei-13019":
+        dec = an.NORMAS_LOCAIS[0]["nome"] if an.NORMAS_LOCAIS else ""
+        return mc.documento(respostas, dec)
+    return None
 
 
 def regime_de(respostas):
@@ -181,6 +191,7 @@ def bloco_regime(regime, tem_normas):
     return ("REGIME JURÍDICO: Lei nº 14.133/2021. "
             + ("A regulamentação do ente foi enviada (abaixo): siga-a e cite-a quando ela detalhar a lei. " if tem_normas else "") + "\n\n")
 CAMPOS_ROTULO = {
+    "envio_propostas": "Forma de envio das propostas", "contato": "Canal para esclarecimentos, impugnações e recursos",
     "osc": "Organização da sociedade civil (nome, CNPJ e responsável)", "atividades": "Atividades e forma de execução", "indicadores": "Parâmetros e indicadores de aferição das metas", "publico": "Público-alvo", "despesas": "Previsão de receitas e despesas", "cronograma": "Cronograma de execução e desembolso", "contrapartida": "Contrapartida",
     "tipo_parceria": "Tipo de parceria (escolha do requisitante)", "metas": "Objetivos, metas e público atendido", "modo_disputa": "Modo de disputa (escolha do requisitante)", "registro_precos": "Registro de preços (escolha do requisitante)", "me_epp": "Participação de ME e EPP (escolha do requisitante)", "criterios_selecao": "Critérios de seleção e pontuação", "agente": "Agente de contratação, pregoeiro ou comissão", "hipotese": "Hipótese legal da contratação direta (escolha do requisitante)", "hipotese_detalhe": "Por que a situação se enquadra na hipótese", "contratado": "Fornecedor ou organização escolhida", "motivo_escolha": "Razão da escolha do contratado", "justificativa_preco": "Como o preço foi verificado", "fase": "Fases a mapear", "riscos_conhecidos": "Riscos ou problemas já conhecidos", "matriz": "Incluir matriz de alocação de riscos (art. 22)", "equipe": "Equipe de planejamento", "garantia": "Garantia da contratação (escolha do requisitante)",
     "orgao": "Órgão ou entidade", "uf": "UF e município", "unidade": "Unidade requisitante", "natureza": "Natureza do objeto / solução indicada",
@@ -382,6 +393,13 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
            "se o requisitante não informou o valor, apresente os dados do PNCP como referência preliminar, em mapa resumido, registrando "
            "que o valor estimado deve vir da pesquisa de preços formal " + ("do art. 23 da Lei 14.133/2021" if d["regime"] == "lei-14133" else "prevista no RILC" if d["regime"] == "lei-13303" else "da parceria") + " ([PREENCHER] no valor final); ")
         + (f"(10) siga o modelo padrão descrito a seguir e entregue com a ferramenta entregar_documento.\n{MODELOS[padrao].INSTRUCOES}" if padrao else
+           "(10) use como base o MODELO-BASE enviado, já revisado juridicamente: mantenha a estrutura, a numeração, as seções, as cláusulas e os "
+           "anexos; adapte ao caso e ao decreto do ente (prazos, fatores e pesos de julgamento, impedimentos, limites de aditivo, vigência, "
+           "prestação de contas), sempre citando o dispositivo do decreto; detalhe o objeto, as metas e os critérios de pontuação com níveis "
+           "objetivos; não reintroduza o que o modelo corrigiu (desclassificar proposta igual ao valor de referência, exigir capacidade "
+           "instalada prévia, autenticação de cópias ou reconhecimento de firma, cessão de direitos autorais da proposta, cobrança pelo "
+           "edital, certidão de falência de associação, citar o decreto federal 8.726/2016 em vez do decreto do ente, datas divergentes "
+           "entre itens). Entregue com a ferramenta entregar_documento." if modelo_base(doc, respostas) else
            f"(10) produza as seções na ordem: {'; '.join(d['secoes'])}. Entregue com a ferramenta entregar_documento.")
     )
     usuario = (
@@ -392,6 +410,7 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
         f"JURISPRUDÊNCIA DA BIBLIOTECA (priorize o Tribunal de Contas do estado{(' ' + uf) if uf else ''}):\n{bloco_juris}\n"
         + (f"\n{pm.bloco_prompt(pesquisa)}\n" if pesquisa is not None else "")
         + (f"\n{precos_assinante}\n" if precos_assinante else "")
+        + (f"\nMODELO-BASE (texto padrão revisado; adapte e complete):\n{mc.texto_plano(modelo_base(doc, respostas))}\n" if modelo_base(doc, respostas) else "")
     )
     return system, usuario, juris
 
@@ -416,6 +435,9 @@ def texto_plano(docj):
 
 
 def simulado(doc, respostas):
+    base = modelo_base(doc, respostas)
+    if base:  # modelo com texto padrão: sai completo mesmo sem a IA
+        return base
     d = cfg(doc, respostas)
     return {"titulo": f"{d['nome'].upper()}", "secoes": [{"titulo": t, "paragrafos": [
         f"[Texto de exemplo da seção \"{t}\". Na elaboração real, o agente redige esta seção a partir das respostas: "
@@ -720,14 +742,23 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
     par(d["nome"].upper(), negrito=True, centro=True, tam=14)
     par(respostas.get("objeto", ""), centro=True)
     w.add_paragraph()
-    for i, s in enumerate(docj.get("secoes", []), 1):
-        tp = par(f"{i} {s.get('titulo','').upper()}", negrito=True, recuo=False)
-        if tp is not None:
-            tp.alignment = WD_ALIGN_PARAGRAPH.LEFT  # título justificado espalha as palavras
+    eh_anexo = lambda x: str(x.get("titulo", "")).strip().upper().startswith("ANEXO")
+    anexos = [x for x in docj.get("secoes", []) if eh_anexo(x)]  # vão depois das assinaturas
+    def secao(s, n_sec):
+        tit = s.get("titulo", "")
+        if n_sec is None:  # anexo: nova página, sem número de seção
+            w.add_page_break()
+            par(tit.upper(), negrito=True, centro=True)
+        else:
+            tp = par(f"{n_sec} {tit.upper()}", negrito=True, recuo=False)
+            if tp is not None:
+                tp.alignment = WD_ALIGN_PARAGRAPH.LEFT  # título justificado espalha as palavras
         for t in s.get("paragrafos", []):
-            par(t)
+            par(t, recuo=not re.match(r"^\d+(\.\d+)+ |^[a-z]\) ", t))
         if s.get("fundamento"):
             par("Fundamento: " + s["fundamento"], recuo=False, tam=10, cor="66757F")
+    for n_sec, s_ in enumerate([x for x in docj.get("secoes", []) if not eh_anexo(x)], 1):
+        secao(s_, n_sec)
     usados = list(dict.fromkeys(docj.get("jurisprudencia_ids") or []))
     try:  # as decisões citadas podem vir do roteiro (candidatas de cada item) ou da seleção do estado: busca todas na Biblioteca
         por_id = {it["id"]: it for it in json.loads((RAIZ / "acervo.json").read_text(encoding="utf-8")).get("itens", [])}
@@ -763,6 +794,8 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
             x.paragraph_format.keep_with_next = True
     assinatura("Responsável pela elaboração", respostas.get("elab_nome", ""), respostas.get("elab_cargo", ""), respostas.get("elab_matricula", ""))
     assinatura("Responsável pelo setor", respostas.get("resp_nome", ""), respostas.get("resp_cargo", ""), respostas.get("resp_matricula", ""))
+    for s_ in anexos:
+        secao(s_, None)
     # anexo: só o que o requisitante optou por completar depois (as dúvidas foram resolvidas antes da redação)
     if docj.get("pendencias"):
         w.add_page_break()
