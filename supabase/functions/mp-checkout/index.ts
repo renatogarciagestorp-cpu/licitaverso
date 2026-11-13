@@ -190,10 +190,16 @@ Deno.serve(async (req) => {
       for (const k of ["modelo_arquivo", "logo_arquivo"]) {
         if (limpo[k] && !caminhoOk(limpo[k])) return erro("Arquivo inválido.");
       }
-      // edital de chamamento: o plano de trabalho é a base (arquivo do assinante ou plano feito no Elaborador)
-      if (limpo.plano && !caminhoOk(limpo.plano) && !/^ref:[0-9a-f-]{36}$/.test(limpo.plano)) return erro("Plano de trabalho inválido.");
+      // edital: os documentos que o baseiam (arquivo do assinante, documento feito no Elaborador ou, quando cabível, dispensado)
+      const baseOk = (v: string, dispensavel: boolean) => caminhoOk(v) || /^ref:[0-9a-f-]{36}$/.test(v) || (dispensavel && v === "dispensado");
+      for (const [k, disp] of [["plano", false], ["base_tr", false], ["base_etp", true], ["base_riscos", true]] as [string, boolean][]) {
+        if (limpo[k] && !baseOk(limpo[k], disp)) return erro("Documento de base inválido.");
+        if (limpo[k] === "dispensado" && !String(limpo[k + "_motivo"] ?? "").trim()) return erro("Informe o motivo da dispensa do documento de base.");
+      }
       if (g.documento === "edital" && g.regime === "lei-13019" && !limpo.plano)
         return erro("Para elaborar o edital de chamamento, forneça o plano de trabalho da parceria.");
+      if (g.documento === "edital" && g.regime !== "lei-13019" && !(limpo.base_tr && limpo.base_etp && limpo.base_riscos))
+        return erro("Para elaborar o edital, forneça o ETP, o Termo de Referência ou Projeto Básico e a matriz de riscos (ou informe a dispensa do ETP ou da matriz).");
       if (limpo.precos_pdfs) {
         let lista: unknown;
         try { lista = JSON.parse(limpo.precos_pdfs); } catch { return erro("Arquivo inválido."); }

@@ -150,6 +150,7 @@ VARIANTES = {
 
 
 PLANO_TXT = ""  # plano de trabalho enviado pelo assinante (edital de chamamento)
+BASES_TXT = []  # [(rótulo, texto)]: ETP, TR ou Projeto Básico e matriz de riscos que baseiam o edital
 
 
 def modelo_base(doc, respostas):
@@ -263,7 +264,7 @@ def jurisprudencia_do_estado(uf, consulta, n=6):
 
 
 CHAVES_INTERNAS = {"entrega", "modelo_arquivo", "modelo_nome", "logo_arquivo", "logo_nome", "precos_pdfs", "precos_links", "precos_manual", "precos_sem",
-                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "pca_ref", "pesquisa_precos_id", "regime", "plano", "plano_nome"}
+                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "pca_ref", "pesquisa_precos_id", "regime", "plano", "plano_nome", "base_tr", "base_tr_nome", "base_etp", "base_etp_nome", "base_riscos", "base_riscos_nome", "base_tr_motivo", "base_etp_motivo", "base_riscos_motivo"}
 
 
 def texto_de_link(url):
@@ -415,6 +416,10 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
         f"JURISPRUDÊNCIA DA BIBLIOTECA (priorize o Tribunal de Contas do estado{(' ' + uf) if uf else ''}):\n{bloco_juris}\n"
         + (f"\n{pm.bloco_prompt(pesquisa)}\n" if pesquisa is not None else "")
         + (f"\n{precos_assinante}\n" if precos_assinante else "")
+        + "".join(f"\nDOCUMENTO QUE BASEIA O EDITAL – {rot.upper()} (use os dados dele no edital e na minuta; não deixe [PREENCHER] para o que ele informa):\n{txt}\n"
+                  for rot, txt in BASES_TXT)
+        + "".join(f"\n{n} DISPENSADO pelo requisitante. Motivo: {respostas.get(k + '_motivo', '')}\n"
+                  for k, n in (("base_etp", "ETP"), ("base_riscos", "MATRIZ DE RISCOS")) if respostas.get(k) == "dispensado")
         + (f"\nPLANO DE TRABALHO DA PARCERIA (fonte do objeto, da realidade, das metas, das ações, dos indicadores, dos prazos, do valor e do "
            f"cronograma do edital; use os dados dele e não deixe [PREENCHER] para o que ele informa):\n{PLANO_TXT}\n" if PLANO_TXT else "")
         + (f"\nMODELO-BASE (texto padrão revisado; adapte e complete):\n{mc.texto_plano(modelo_base(doc, respostas))}\n" if modelo_base(doc, respostas) else "")
@@ -899,6 +904,7 @@ def main():
     ap.add_argument("--regime", choices=sorted(NOME_REGIME), help="lei da contratação (padrão: a das respostas ou a Lei 14.133)")
     ap.add_argument("--norma-local", action="append", default=[], help='regulamentação do ente ou RILC: "Nome::caminho.txt"')
     ap.add_argument("--plano", help="texto do plano de trabalho (base do edital de chamamento)")
+    ap.add_argument("--base", action="append", default=[], help='documento que baseia o edital: "ETP::caminho.txt" (repetível)')
     ap.add_argument("--docj", help="completar: documento já redigido (JSON); só preenche as lacunas, sem chamar a API")
     a = ap.parse_args()
     pasta = pathlib.Path(a.pasta); pasta.mkdir(parents=True, exist_ok=True)
@@ -918,6 +924,16 @@ def main():
         PLANO_TXT = pathlib.Path(a.plano).read_text(encoding="utf-8", errors="replace")[:60000]
     if a.doc == "edital" and regime == "lei-13019" and not PLANO_TXT and not a.docj:
         sys.exit("O edital de chamamento exige o plano de trabalho da parceria.")
+    for spec in a.base:
+        rot, _, cam = spec.partition("::")
+        if pathlib.Path(cam).exists():
+            BASES_TXT.append((rot.strip(), pathlib.Path(cam).read_text(encoding="utf-8", errors="replace")[:45000]))
+    if a.doc == "edital" and regime != "lei-13019" and not a.docj:
+        falta = [n for k, n in (("base_tr", "Termo de Referência ou Projeto Básico"), ("base_etp", "ETP"), ("base_riscos", "matriz de riscos"))
+                 if not respostas.get(k)]
+        if falta or not any(r.startswith("Termo") for r, _ in BASES_TXT):
+            sys.exit("O edital exige o ETP, o TR ou Projeto Básico e a matriz de riscos (ou a dispensa justificada do ETP ou da matriz). Falta: "
+                     + (", ".join(falta) or "Termo de Referência ou Projeto Básico"))
     if a.doc in DOC_EXIGE_NORMA and not an.NORMAS_LOCAIS and not a.docj:
         sys.exit("O plano de trabalho exige o decreto do ente que regulamenta a Lei 13.019/2014.")
     global TEXTO_VALOR
