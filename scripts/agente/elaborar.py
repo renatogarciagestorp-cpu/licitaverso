@@ -83,9 +83,9 @@ DOCS.update({
                           "Requisitos de habilitação e qualificação mínima (art. 72, V)", "Previsão de recursos orçamentários (art. 72, IV)",
                           "Pareceres técnico e jurídico (art. 72, III)", "Autorização da autoridade competente (art. 72, VIII)",
                           "Divulgação do ato e publicação no PNCP (art. 72, parágrafo único)"]},
-    "plano_trabalho": {"nome": "Plano de Trabalho", "roteiro": "plano_trabalho", "objetos": [],
-               "base": "art. 22 da Lei nº 13.019/2014 e o decreto do estado, do Distrito Federal ou do município que regulamenta a lei (enviado pelo requisitante)",
-               "secoes": ["Identificação da organização da sociedade civil, do responsável e da parceria (termo de colaboração ou de fomento)",
+    "plano_trabalho": {"nome": "Plano de Trabalho do Termo de Colaboração", "roteiro": "plano_trabalho", "objetos": [],
+               "base": "arts. 16 e 22 da Lei nº 13.019/2014 (termo de colaboração: plano proposto pela administração pública) e o decreto do estado, do Distrito Federal ou do município que regulamenta a lei (enviado pelo requisitante)",
+               "secoes": ["Identificação da organização da sociedade civil, do responsável e da parceria (termo de colaboração)",
                           "Descrição da realidade objeto da parceria e nexo com as atividades e as metas (art. 22, I)",
                           "Metas a serem atingidas (art. 22, II)", "Atividades ou projetos e forma de execução (art. 22, III)",
                           "Parâmetros e indicadores para aferir o cumprimento das metas (art. 22, IV)",
@@ -841,6 +841,10 @@ def main():
     if regime not in REGIMES_DOC[a.doc]:
         sys.exit(f"O documento {a.doc} não se aplica ao regime {regime}.")
     an.carregar_normas_locais(a.norma_local)
+    if a.doc == "plano_trabalho" and "fomento" in respostas.get("tipo_parceria", "").lower():
+        sys.exit("No termo de fomento, o plano de trabalho é elaborado pela organização da sociedade civil (Lei 13.019, art. 17), não pela administração.")
+    if a.doc == "plano_trabalho":
+        respostas["tipo_parceria"] = "Termo de colaboração"
     if a.doc in DOC_EXIGE_NORMA and not an.NORMAS_LOCAIS and not a.docj:
         sys.exit("O plano de trabalho exige o decreto do ente que regulamenta a Lei 13.019/2014.")
     global TEXTO_VALOR
