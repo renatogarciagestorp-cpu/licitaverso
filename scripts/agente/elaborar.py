@@ -715,6 +715,7 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
     from docx import Document
     from docx.enum.text import WD_ALIGN_PARAGRAPH
     from docx.shared import Cm, Pt, RGBColor
+    from docx.oxml import OxmlElement
     d = cfg(doc, respostas)
     w = abrir_modelo(modelo) if modelo else None
     do_assinante = w is not None
@@ -771,8 +772,18 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
     par((tit_doc if tit_doc.upper().startswith(d["nome"].upper()[:12]) else d["nome"]).upper(), negrito=True, centro=True, tam=14)
     par(respostas.get("objeto", ""), centro=True)
     w.add_paragraph()
-    for t in docj.get("preambulo") or []:  # preâmbulo sem número (ex.: edital de chamamento)
-        par(t)
+    def linhas(lista):
+        """Normaliza o texto da IA: um parágrafo com quebras de linha vira vários; a linha separadora de tabela em
+        Markdown (|---|---|) sai; "3.5 Tabela 2 – Metas" vira a legenda "Tabela 2 – Metas"."""
+        out = []
+        for t in lista or []:
+            for l in str(t).split("\n"):
+                l = l.strip()
+                if not l or re.fullmatch(r"\|?[\s\-:|]*-[\s\-:|]*\|?", l):
+                    continue
+                m = re.match(r"^\d+(?:\.\d+)*\.?\s+(Tabela\b.*)$", l)
+                out.append(m.group(1) if m else l)
+        return out
 
     def tabela(linhas):  # linhas "| a | b |": a primeira é o cabeçalho
         rows = [[c.strip() for c in l.strip().strip("|").split("|")] for l in linhas]
@@ -785,6 +796,12 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
                 cel.text = ""
                 run = cel.paragraphs[0].add_run(r[j] if j < len(r) else "")
                 run.font.size = Pt(9.5); run.bold = (i == 0)
+                if i < len(rows) - 1:
+                    cel.paragraphs[0].paragraph_format.keep_with_next = (i == 0)
+            trPr = tb.rows[i]._tr.get_or_add_trPr()  # linha não se divide entre páginas; o cabeçalho se repete
+            trPr.append(OxmlElement("w:cantSplit"))
+            if i == 0:
+                trPr.append(OxmlElement("w:tblHeader"))
         w.add_paragraph()
     eh_anexo = lambda x: str(x.get("titulo", "")).strip().upper().startswith("ANEXO")
     anexos = [x for x in docj.get("secoes", []) if eh_anexo(x)]  # vão depois das assinaturas
@@ -797,8 +814,13 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
             tp = par(f"{n_sec} {tit.upper()}", negrito=True, recuo=False)
             if tp is not None:
                 tp.alignment = WD_ALIGN_PARAGRAPH.LEFT  # título justificado espalha as palavras
+        blocos(s.get("paragrafos", []))
+        if s.get("fundamento"):
+            par("Fundamento: " + s["fundamento"], recuo=False, tam=10, cor="66757F")
+
+    def blocos(lista, recuo_padrao=True):
         bloco = []
-        for t in list(s.get("paragrafos", [])) + [""]:
+        for t in linhas(lista) + [""]:
             if t.startswith("|"):
                 bloco.append(t); continue
             if bloco:
@@ -806,10 +828,13 @@ def gerar_docx(doc, docj, respostas, juris, conferencia, saida, pesquisa=None, m
             if not t:
                 continue
             if t.startswith("Tabela "):
-                par(t, negrito=True, recuo=False, tam=10); continue
-            par(t, recuo=not re.match(r"^\d+(\.\d+)+ |^[a-z]\) ", t))
-        if s.get("fundamento"):
-            par("Fundamento: " + s["fundamento"], recuo=False, tam=10, cor="66757F")
+                lg = par(t, negrito=True, recuo=False, tam=10)
+                if lg is not None:
+                    lg.paragraph_format.keep_with_next = True  # a legenda não fica separada da tabela
+                continue
+            par(t, recuo=recuo_padrao and not re.match(r"^\d+(\.\d+)+ |^[a-z]\) ", t))
+
+    blocos(docj.get("preambulo"))  # preâmbulo sem número (ex.: edital de chamamento)
     for n_sec, s_ in enumerate([x for x in docj.get("secoes", []) if not eh_anexo(x)], 1):
         secao(s_, n_sec)
     usados = list(dict.fromkeys(docj.get("jurisprudencia_ids") or []))
