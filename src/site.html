@@ -3453,7 +3453,7 @@
                 <sc-if value="{{ c.mostraOutro }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}: detalhe" value="{{ c.outroValor }}" sc-camel-on-input="{{ c.onOutro }}" placeholder="Qual?"></sc-if>
                 <sc-if value="{{ c.ehPlano }}" hint-placeholder-val="{{ false }}">
                   <sc-if value="{{ c.temPlanosSite }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ c.planosSite }}" as="o" hint-placeholder-count="2"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
-                  <label class="lve-arq"><input type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" sc-camel-on-change="{{ c.onPlanoArq }}"><span>{{ c.planoRot }}</span></label>
+                  <label class="lve-arq"><input type="file" accept="{{ c.planoAceita }}" sc-camel-on-change="{{ c.onPlanoArq }}"><span>{{ c.planoRot }}</span></label>
                   <sc-if value="{{ c.dispensavel }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><button type="button" class="lvc-chip" sc-camel-on-click="{{ c.marcarDispensa }}" aria-pressed="{{ c.dispensado }}">Não há (dispensado)</button></div></sc-if>
                   <sc-if value="{{ c.dispensado }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="Motivo da dispensa" value="{{ c.motivo }}" sc-camel-on-input="{{ c.onMotivo }}" placeholder="Motivo (ex.: dispensa por valor, art. 75, II; IN 58/2022, art. 14)"></sc-if>
                 </sc-if>
@@ -3494,7 +3494,7 @@
                 <sc-if value="{{ c.mostraOutro }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="{{ c.rot }}: detalhe" value="{{ c.outroValor }}" sc-camel-on-input="{{ c.onOutro }}" placeholder="Qual?"></sc-if>
                 <sc-if value="{{ c.ehPlano }}" hint-placeholder-val="{{ false }}">
                   <sc-if value="{{ c.temPlanosSite }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ c.planosSite }}" as="o" hint-placeholder-count="2"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
-                  <label class="lve-arq"><input type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" sc-camel-on-change="{{ c.onPlanoArq }}"><span>{{ c.planoRot }}</span></label>
+                  <label class="lve-arq"><input type="file" accept="{{ c.planoAceita }}" sc-camel-on-change="{{ c.onPlanoArq }}"><span>{{ c.planoRot }}</span></label>
                   <sc-if value="{{ c.dispensavel }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><button type="button" class="lvc-chip" sc-camel-on-click="{{ c.marcarDispensa }}" aria-pressed="{{ c.dispensado }}">Não há (dispensado)</button></div></sc-if>
                   <sc-if value="{{ c.dispensado }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="Motivo da dispensa" value="{{ c.motivo }}" sc-camel-on-input="{{ c.onMotivo }}" placeholder="Motivo (ex.: dispensa por valor, art. 75, II; IN 58/2022, art. 14)"></sc-if>
                 </sc-if>
@@ -7863,13 +7863,23 @@ const ELAB_RAPIDO = {
     { k: "prazo", etapa: "contratacao", rot: "Prazo da parceria", tipo: "chips", obrig: true, outro: true, op: ["12 meses", "24 meses", "Outro"] },
     ELAB_PROCESSO,
     { k: "valor", etapa: "mercado", rot: "Valor total da parceria", tipo: "linha", obrig: true, ph: "Ex.: R$ 480.000,00" },
-    { k: "despesas", etapa: "mercado", rot: "Previsão de receitas e despesas", tipo: "texto", obrig: true, ph: "Um item por linha. Ex.: 1 coordenador R$ 4.000/mês; 6 educadores R$ 2.500/mês; encargos sobre a folha R$ 9.000/mês; material pedagógico R$ 2.000/mês; computadores R$ 12.000,00", dica: "Art. 22, II-A. Use \"/mês\" para despesa mensal (com a quantidade na frente, o valor é por pessoa ou unidade) e valor sem \"/mês\" para compra única. O plano soma tudo e confere com o valor total. Custos indiretos entram pelo valor real, não como percentual (art. 45, I)." },
-    { k: "justificativa_preco", etapa: "mercado", rot: "Como os custos foram estimados", tipo: "texto", ph: "Ex.: três cotações de material; piso salarial da convenção coletiva; valores de parceria semelhante de 2025", dica: "Os decretos costumam exigir a demonstração de que os custos são compatíveis com o mercado ou com outras parcerias." },
+    { k: "base_planilha", etapa: "mercado", rot: "Planilha de custos geral da parceria", tipo: "docbase", planilha: true, fonte: [], obrig: true, dica: "O plano de trabalho é feito depois da planilha: valores, especificações e fontes de cada item vêm dela. Envie em Excel, PDF ou Word." },
+    { k: "mao_obra", etapa: "mercado", rot: "Há mão de obra com dedicação exclusiva?", tipo: "chips", obrig: true, op: ["Sim", "Não"], dica: "Profissionais dedicados só à parceria, pagos por mês. Se a parceria só tiver serviços específicos (uma oficina, um evento, um conserto), marque Não." },
+    { k: "base_planilha_mo", etapa: "mercado", se: (R) => R.mao_obra === "Sim", rot: "Planilhas de custos e formação de preços (IN 05/2017)", tipo: "docbase", planilha: true, fonte: [], obrig: true, dica: "Uma por categoria profissional: remuneração, CBO, encargos, benefícios e a cláusula da convenção coletiva usada." },
+    { k: "pesquisa_fontes", etapa: "mercado", rot: "Fontes da pesquisa de preços", tipo: "chips", multi: true, obrig: true, op: ["Painel de Preços ou PNCP", "Contratações similares (até 1 ano)", "Mídia especializada ou sites (com data e hora)", "Cotação com 3 fornecedores (até 6 meses)", "Notas fiscais eletrônicas", "Convenção coletiva ou CAGED (salários)"] },
+    { k: "pesquisa_metodo", etapa: "mercado", rot: "Método usado para chegar ao valor de referência", tipo: "chips", obrig: true, op: ["Média", "Mediana", "Menor preço"], dica: "Para salários do CAGED, o TCU recomenda a média (Acórdão 2142/2022-Plenário)." },
+    { k: "despesas", etapa: "mercado", rot: "Resumo das despesas por natureza", tipo: "texto", ph: "Um item por linha. Ex.: 1 coordenador R$ 4.000/mês; 6 educadores R$ 2.500/mês; encargos sobre a folha R$ 9.000/mês; material pedagógico R$ 2.000/mês; computadores R$ 12.000,00", dica: "Art. 22, II-A. Use \"/mês\" para despesa mensal (com a quantidade na frente, o valor é por pessoa ou unidade) e valor sem \"/mês\" para compra única. O plano soma tudo e confere com o valor total. Custos indiretos entram pelo valor real, não como percentual (art. 45, I). Se deixar em branco, o agente resume a partir da planilha." },
+    { k: "memoria", etapa: "mercado", rot: "Memória de cálculo das quantidades", tipo: "texto", ph: "Ex.: 6 educadores = 300 crianças ÷ 50 por educador por turno; lanche = 300 crianças × 22 dias × R$ 0,45", dica: "Como cada quantidade foi definida e qual meta ela atende. Se deixar em branco, o agente tira da planilha; o que faltar vira pergunta." },
+    { k: "rateio", etapa: "mercado", rot: "Critério de rateio dos custos indiretos", tipo: "linha", ph: "Ex.: contador pelas horas dedicadas à parceria; energia pela área ocupada pelos núcleos", dica: "Custo indireto é o que não se liga a uma meta específica e precisa de critério de rateio (TCE-RJ, Consulta 57/2017). Deixe em branco se não houver." },
+    { k: "implantacao", etapa: "mercado", rot: "Período de implantação antes do atendimento", tipo: "chips", op: ["Não há", "1 mês", "2 meses", "3 meses"], dica: "Se a equipe for contratada e o espaço preparado no início, os custos desse período são menores e o desembolso acompanha." },
+    { k: "justificativa_preco", etapa: "mercado", rot: "Observações sobre a pesquisa de preços", tipo: "texto", ph: "Ex.: três cotações de material; piso salarial da convenção coletiva; valores de parceria semelhante de 2025", dica: "Os decretos costumam exigir a demonstração de que os custos são compatíveis com o mercado ou com outras parcerias." },
     { k: "cronograma", etapa: "mercado", rot: "Cronograma de desembolso", tipo: "chips", outro: true, op: ["Parcelas mensais", "Parcelas trimestrais", "Outro"], dica: "Alguns decretos proíbem a parcela única (é o caso de Maricá)." },
     { k: "contrapartida", etapa: "mercado", rot: "Contrapartida da organização", tipo: "linha", ph: "Ex.: cessão do espaço do núcleo Centro (não pode ser exigida em dinheiro)" },
     { k: "bens", etapa: "mercado", rot: "Bens permanentes a comprar com recursos da parceria", tipo: "linha", ph: "Ex.: 10 computadores e 1 projetor. Deixe em branco se não houver", dica: "Ficam gravados com cláusula de inalienabilidade e precisam de destino definido ao fim da parceria (arts. 35, § 5º, e 36)." },
     ELAB_UNIDADE,
     { k: "equipe", etapa: "pessoas", rot: "Equipe de trabalho da organização", tipo: "texto", ph: "Um por linha: quantidade, função e carga horária. Ex.: 1 coordenador pedagógico, 40 h; 6 educadores sociais, 30 h" },
+    { k: "visitas", etapa: "pessoas", rot: "Visitas técnicas da administração", tipo: "chips", op: ["Mensal", "Bimestral", "Trimestral"], dica: "Frequência das visitas in loco do gestor e da comissão de monitoramento." },
+    { k: "acessibilidade", etapa: "contratacao", rot: "Medidas de acessibilidade", tipo: "texto", ph: "Ex.: núcleos térreos com rampa e banheiro adaptado; intérprete de Libras sob demanda; prioridade para crianças com deficiência", dica: "Para pessoas com deficiência, mobilidade reduzida e idosos, conforme o objeto. Se deixar em branco, o plano traz as medidas gerais da Lei 13.146/2015." },
     { k: "relatorio_periodicidade", etapa: "pessoas", rot: "Relatório de execução da organização", tipo: "chips", op: ["Mensal", "Trimestral"], dica: "Com que frequência a organização entrega o relatório de execução do objeto, com as metas alcançadas." },
     { k: "gestor", etapa: "pessoas", rot: "Gestor da parceria (administração)", tipo: "linha", ph: "Nome, cargo e matrícula" },
     { k: "fonte", etapa: "pessoas", rot: "Dotação orçamentária", tipo: "linha", ph: "Ex.: 02.08.08.243.0010.2.040 · 3.3.50.43 · Fonte 1.500.000" },
@@ -7978,6 +7988,7 @@ function elFaltando(doc, R, etapa) {
   (ELAB_RAPIDO[doc] || []).forEach((c) => {
     if (!nesta(c.etapa) || !elabVisivelRegime(c, R)) return;
     if (c.seParc && String(R.parcelamento || "").startsWith("Analisar")) return;
+    if (c.se && !c.se(R)) return;
     const nome = (ELAB_ROT[c.k] || c.rot).toLowerCase();
     if (c.obrig && vazio(c.k)) f.push(nome);
     else if (c.tipo === "docbase" && R[c.k] === "dispensado" && vazio(c.k + "_motivo")) f.push("o motivo da dispensa de \"" + nome + "\"");
@@ -16179,15 +16190,16 @@ class Component extends DCLogic {
               ehTexto: c.tipo === "texto", ehLinha: c.tipo === "linha", ehChips: c.tipo === "chips", temExemplos: !!c.exemplos,
               ehPlano: c.tipo === "docbase",
               ...(() => {
-                if (c.tipo !== "docbase") return { temPlanosSite: false, planosSite: [], onPlanoArq: () => {}, planoRot: "", dispensavel: false, dispensado: false, marcarDispensa: () => {}, motivo: "", onMotivo: () => {} };
+                if (c.tipo !== "docbase") return { temPlanosSite: false, planosSite: [], onPlanoArq: () => {}, planoRot: "", planoAceita: "", dispensavel: false, dispensado: false, marcarDispensa: () => {}, motivo: "", onMotivo: () => {} };
                 const v = String(R[c.k] || ""), kn = c.k + "_nome", km = c.k + "_motivo";
                 const feitos = (s.analises || []).filter((a) => a.tipo === "geracao" && (c.fonte || []).includes(a.documento) && a.status === "concluida").slice(0, 6);
                 const sigla = { etp: "ETP", tr: "TR", projeto_basico: "Projeto Básico", riscos: "Mapa de riscos", plano_trabalho: "Plano" };
                 return { temPlanosSite: feitos.length > 0,
                   planosSite: feitos.map((a) => { const ref = "ref:" + a.id, nome = (sigla[a.documento] || "Documento") + " feito aqui: " + String((a.resumo && a.resumo.objeto) || a.nome_arquivo || "").slice(0, 60);
                     return { nome, sel: v === ref, escolher: () => this.elResponderVarios({ [c.k]: ref, [kn]: nome }) }; }),
-                  onPlanoArq: async (e) => { const r = await this.elSubir(e, c.k, { ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }, 15); if (r) this.elResponderVarios({ [c.k]: r.arquivo, [kn]: r.nome }); },
-                  planoRot: v && !v.startsWith("ref:") && v !== "dispensado" ? "📄 " + (R[kn] || "arquivo enviado") + " (trocar)" : "+ Enviar arquivo (PDF ou Word)",
+                  onPlanoArq: async (e) => { const r = await this.elSubir(e, c.k, Object.assign({ ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }, c.planilha ? { ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" } : {}), 15); if (r) this.elResponderVarios({ [c.k]: r.arquivo, [kn]: r.nome }); },
+                  planoAceita: ".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" + (c.planilha ? ",.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : ""),
+                  planoRot: v && !v.startsWith("ref:") && v !== "dispensado" ? "📄 " + (R[kn] || "arquivo enviado") + " (trocar)" : c.planilha ? "+ Enviar planilha (Excel, PDF ou Word)" : "+ Enviar arquivo (PDF ou Word)",
                   dispensavel: !!c.dispensavel, dispensado: v === "dispensado",
                   marcarDispensa: () => this.elResponderVarios(v === "dispensado" ? { [c.k]: "", [kn]: "" } : { [c.k]: "dispensado", [kn]: "dispensado" }),
                   motivo: R[km] || "", onMotivo: this.elResponder(km) };
@@ -16210,7 +16222,7 @@ class Component extends DCLogic {
               })() };
           };
             const et = (ELAB_ETAPAS[el.doc] || [])[el.passo || 0] || {};
-            const vis = (c) => c.etapa === et.id && elabVisivelRegime(c, R) && !(c.seParc && String(R.parcelamento || "").startsWith("Analisar")) && !(c.seCompra && R.natureza !== "Compra") && !(c.seNormas && R.normas !== "Regulamento próprio");
+            const vis = (c) => c.etapa === et.id && elabVisivelRegime(c, R) && !(c.seParc && String(R.parcelamento || "").startsWith("Analisar")) && !(c.seCompra && R.natureza !== "Compra") && !(c.seNormas && R.normas !== "Regulamento próprio") && !(c.se && !c.se(R));
             return { elCamposA: (ELAB_RAPIDO[el.doc] || []).filter((c) => vis(c) && !c.depois).map(mapa),
                      elCamposB: (ELAB_RAPIDO[el.doc] || []).filter((c) => vis(c) && c.depois).map(mapa) };
           })(),

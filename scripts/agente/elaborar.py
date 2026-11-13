@@ -89,10 +89,12 @@ DOCS.update({
                "base": "arts. 16 e 22 da Lei nº 13.019/2014 (termo de colaboração: plano proposto pela administração pública) e o decreto do estado, do Distrito Federal ou do município que regulamenta a lei (enviado pelo requisitante)",
                "secoes": ["Identificação da parceria", "Diagnóstico da realidade e justificativa (art. 22, I)", "Objetivos geral e específicos",
                           "Público-alvo, local e prazo", "Metas e resultados esperados (art. 22, II)", "Atividades e forma de execução (art. 22, III)",
-                          "Indicadores e meios de verificação (art. 22, IV)", "Equipe de trabalho",
-                          "Previsão de receitas e despesas por natureza (art. 22, II-A, e arts. 45 e 46)", "Compatibilidade dos custos com o mercado",
+                          "Acessibilidade", "Indicadores e meios de verificação (art. 22, IV)", "Equipe de trabalho",
+                          "Previsão de receitas e despesas por natureza, com custos diretos e indiretos (art. 22, II-A, e arts. 45 e 46)",
+                          "Memória de cálculo das quantidades", "Compatibilidade dos custos com o mercado",
                           "Cronograma físico de execução", "Cronograma de desembolso (art. 48)", "Contrapartida (art. 35, § 1º)",
-                          "Bens permanentes (arts. 35, § 5º, e 36)", "Monitoramento, avaliação e prestação de contas (arts. 57 a 72)", "Responsáveis"]},
+                          "Bens permanentes (arts. 35, § 5º, e 36)", "Monitoramento, avaliação e prestação de contas (arts. 57 a 72)", "Responsáveis",
+                          "Aprovação do ordenador de despesas"]},
     "riscos": {"nome": "Mapa de Riscos", "roteiro": "riscos", "objetos": [],
                "base": "art. 18, X, da Lei nº 14.133/2021 (análise dos riscos da contratação) e, quando cabível, a matriz de riscos do art. 6º, XXVII, e do art. 22",
                "secoes": ["Identificação da contratação e da fase", "Metodologia (probabilidade, impacto e nível de risco)",
@@ -195,7 +197,7 @@ def bloco_regime(regime, tem_normas):
             + ("A regulamentação do ente foi enviada (abaixo): siga-a e cite-a quando ela detalhar a lei. " if tem_normas else "") + "\n\n")
 CAMPOS_ROTULO = {
     "envio_propostas": "Forma de envio das propostas", "contato": "Canal para esclarecimentos, impugnações e recursos",
-    "osc": "Organização da sociedade civil (nome, CNPJ e responsável)", "atividades": "Atividades e forma de execução", "indicadores": "Parâmetros e indicadores de aferição das metas", "publico": "Público-alvo", "despesas": "Previsão de receitas e despesas", "cronograma": "Cronograma de execução e desembolso", "contrapartida": "Contrapartida", "bens": "Bens permanentes a comprar com recursos da parceria", "relatorio_periodicidade": "Periodicidade do relatório de execução da organização",
+    "osc": "Organização da sociedade civil (nome, CNPJ e responsável)", "atividades": "Atividades e forma de execução", "indicadores": "Parâmetros e indicadores de aferição das metas", "publico": "Público-alvo", "despesas": "Previsão de receitas e despesas", "cronograma": "Cronograma de execução e desembolso", "contrapartida": "Contrapartida", "bens": "Bens permanentes a comprar com recursos da parceria", "mao_obra": "Há mão de obra com dedicação exclusiva", "pesquisa_fontes": "Fontes da pesquisa de preços", "pesquisa_metodo": "Método do valor de referência", "memoria": "Memória de cálculo das quantidades", "rateio": "Critério de rateio dos custos indiretos", "implantacao": "Período de implantação", "visitas": "Frequência das visitas técnicas", "acessibilidade": "Medidas de acessibilidade", "relatorio_periodicidade": "Periodicidade do relatório de execução da organização",
     "tipo_parceria": "Tipo de parceria (escolha do requisitante)", "metas": "Objetivos, metas e público atendido", "modo_disputa": "Modo de disputa (escolha do requisitante)", "registro_precos": "Registro de preços (escolha do requisitante)", "me_epp": "Participação de ME e EPP (escolha do requisitante)", "criterios_selecao": "Critérios de seleção e pontuação", "agente": "Agente de contratação, pregoeiro ou comissão", "hipotese": "Hipótese legal da contratação direta (escolha do requisitante)", "hipotese_detalhe": "Por que a situação se enquadra na hipótese", "contratado": "Fornecedor ou organização escolhida", "motivo_escolha": "Razão da escolha do contratado", "justificativa_preco": "Como o preço foi verificado", "fase": "Fases a mapear", "riscos_conhecidos": "Riscos ou problemas já conhecidos", "matriz": "Incluir matriz de alocação de riscos (art. 22)", "equipe": "Equipe de planejamento", "garantia": "Garantia da contratação (escolha do requisitante)",
     "orgao": "Órgão ou entidade", "uf": "UF e município", "unidade": "Unidade requisitante", "natureza": "Natureza do objeto / solução indicada",
     "objeto": "Objeto", "necessidade": "Necessidade", "pca": "Plano de contratações anual", "requisitos": "Requisitos",
@@ -264,7 +266,7 @@ def jurisprudencia_do_estado(uf, consulta, n=6):
 
 
 CHAVES_INTERNAS = {"entrega", "modelo_arquivo", "modelo_nome", "logo_arquivo", "logo_nome", "precos_pdfs", "precos_links", "precos_manual", "precos_sem",
-                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "pca_ref", "pesquisa_precos_id", "regime", "plano", "plano_nome", "base_tr", "base_tr_nome", "base_etp", "base_etp_nome", "base_riscos", "base_riscos_nome", "base_tr_motivo", "base_etp_motivo", "base_riscos_motivo"}
+                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "pca_ref", "pesquisa_precos_id", "regime", "plano", "plano_nome", "base_tr", "base_tr_nome", "base_etp", "base_etp_nome", "base_riscos", "base_riscos_nome", "base_tr_motivo", "base_etp_motivo", "base_riscos_motivo", "base_planilha", "base_planilha_nome", "base_planilha_mo", "base_planilha_mo_nome"}
 
 
 def texto_de_link(url):
@@ -411,7 +413,11 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
               "decreto do ente exigir, e não reintroduza falhas comuns: critérios de julgamento do chamamento dentro do plano (são do "
               "edital), objetivo de \"realizar o chamamento\", metas sem quantidade (\"de acordo com a demanda\"), atendimentos tratados "
               "como percentual da população, custos indiretos como percentual fixo do total (art. 45, I), parcelas que não somam o "
-              "total, aplicação em poupança no lugar da conta específica do art. 51, texto ou tabelas repetidos" if doc == "plano_trabalho" else "")
+              "total, aplicação em poupança no lugar da conta específica do art. 51, texto ou tabelas repetidos; tire da planilha de custos "
+              "o resumo das despesas por natureza, a memória de cálculo das quantidades (ligada às metas), o critério de rateio dos custos "
+              "indiretos e as fontes e o método da pesquisa de preços; não copie para o plano a remuneração, o CBO e os encargos de cada "
+              "profissional (ficam nas planilhas da IN 05/2017, às quais o plano remete); havendo período de implantação, ajuste as "
+              "parcelas do desembolso aos custos de cada período conforme a planilha, mantendo a soma igual ao total" if doc == "plano_trabalho" else "")
            + ". Entregue com a ferramenta entregar_documento." if modelo_base(doc, respostas) else
            f"(10) produza as seções na ordem: {'; '.join(d['secoes'])}. Entregue com a ferramenta entregar_documento.")
     )
@@ -423,7 +429,10 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
         f"JURISPRUDÊNCIA DA BIBLIOTECA (priorize o Tribunal de Contas do estado{(' ' + uf) if uf else ''}):\n{bloco_juris}\n"
         + (f"\n{pm.bloco_prompt(pesquisa)}\n" if pesquisa is not None else "")
         + (f"\n{precos_assinante}\n" if precos_assinante else "")
-        + "".join(f"\nDOCUMENTO QUE BASEIA O EDITAL – {rot.upper()} (use os dados dele no edital e na minuta; não deixe [PREENCHER] para o que ele informa):\n{txt}\n"
+        + "".join(f"\nDOCUMENTO QUE BASEIA O {'PLANO DE TRABALHO' if doc == 'plano_trabalho' else 'EDITAL'} – {rot.upper()} (use os dados dele"
+                  + (" no plano: despesas por natureza, quantidades, memória de cálculo, fontes e rateio; remuneração, CBO, encargos e benefícios "
+                     "ficam nas planilhas, e o plano remete a elas" if doc == "plano_trabalho" else " no edital e na minuta")
+                  + f"; não deixe [PREENCHER] para o que ele informa):\n{txt}\n"
                   for rot, txt in BASES_TXT)
         + "".join(f"\n{n} DISPENSADO pelo requisitante. Motivo: {respostas.get(k + '_motivo', '')}\n"
                   for k, n in (("base_etp", "ETP"), ("base_riscos", "MATRIZ DE RISCOS")) if respostas.get(k) == "dispensado")
@@ -941,6 +950,11 @@ def main():
         if falta or not any(r.startswith("Termo") for r, _ in BASES_TXT):
             sys.exit("O edital exige o ETP, o TR ou Projeto Básico e a matriz de riscos (ou a dispensa justificada do ETP ou da matriz). Falta: "
                      + (", ".join(falta) or "Termo de Referência ou Projeto Básico"))
+    if a.doc == "plano_trabalho" and not a.docj and not any(r.startswith("Planilha de custos") for r, _ in BASES_TXT):
+        sys.exit("O plano de trabalho é elaborado a partir da planilha de custos da parceria: envie-a.")
+    if (a.doc == "plano_trabalho" and not a.docj and respostas.get("mao_obra") == "Sim"
+            and not any(r.startswith("Planilhas de custos e formação") for r, _ in BASES_TXT)):
+        sys.exit("Há mão de obra com dedicação exclusiva: envie as planilhas de custos e formação de preços (IN 05/2017).")
     if (a.doc in DOC_EXIGE_NORMA or (a.doc == "direta" and regime == "lei-13019")) and not an.NORMAS_LOCAIS and not a.docj:
         sys.exit("Este documento exige o decreto do ente que regulamenta a Lei 13.019/2014.")
     global TEXTO_VALOR
