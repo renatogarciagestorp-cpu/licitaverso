@@ -35,7 +35,7 @@ jobs:
           EXTRA=(); [ -n "$NORMA" ] && EXTRA=(--norma-local "Regulamentacao-do-ente::agente/testes/elaboracao/$NORMA")
           [ -n "$BASE_TR" ] && EXTRA+=(--base "Termo de Referência ou Projeto Básico::agente/testes/elaboracao/$BASE_TR")
           [ -n "$PLANO" ] && EXTRA+=(--plano "agente/testes/elaboracao/$PLANO")
-          if [ -n "$BASES" ]; then while IFS= read -r b; do [ -n "$b" ] && EXTRA+=(--base "${b%%::*}::agente/testes/elaboracao/${b#*::}"); done < <(printf '%s' "$BASES" | sed 's/;;/\n/g'); fi
+          if [ -n "$BASES" ]; then while IFS= read -r b || [ -n "$b" ]; do [ -n "$b" ] && EXTRA+=(--base "${b%%::*}::agente/testes/elaboracao/${b#*::}"); done < <(printf '%s' "$BASES" | sed 's/;;/\n/g'); fi
           python3 scripts/agente/elaborar.py --doc "$DOC" --respostas "agente/testes/elaboracao/$CASO" --pasta /tmp/saida $([ "$SIMULAR" = "sim" ] && echo --simular) $([ "$CONF" = "nao" ] && echo --sem-conferencia) "${EXTRA[@]}"
           python3 -c "import json;e=json.load(open('/tmp/saida/execucao.json'));print('::notice title=Custo::US$',e.get('custo_usd'),'·',e.get('segundos','-'),'s · pendências',e.get('pendencias'),'· perguntas',e.get('perguntas',0),'· alta',e.get('alta',0),'· média',e.get('media',0))"
       - name: Guardar o resultado no ramo agente-testes (caso fictício)
