@@ -279,7 +279,7 @@ def jurisprudencia_do_estado(uf, consulta, n=6):
 
 
 CHAVES_INTERNAS = {"entrega", "modelo_arquivo", "modelo_nome", "logo_arquivo", "logo_nome", "precos_pdfs", "precos_links", "precos_manual", "precos_sem",
-                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "pca_ref", "pesquisa_precos_id", "regime", "plano", "plano_nome", "base_tr", "base_tr_nome", "base_etp", "base_etp_nome", "base_riscos", "base_riscos_nome", "base_tr_motivo", "base_etp_motivo", "base_riscos_motivo", "base_planilha", "base_planilha_nome", "base_planilha_mo", "base_planilha_mo_nome", "base_orcamento", "base_orcamento_nome", "base_outros", "base_outros_nome"}
+                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "pca_ref", "pesquisa_precos_id", "regime", "plano", "plano_nome", "base_tr", "base_tr_nome", "base_etp", "base_etp_nome", "base_riscos", "base_riscos_nome", "base_tr_motivo", "base_etp_motivo", "base_riscos_motivo", "base_planilha", "base_planilha_nome", "base_planilha_mo", "base_planilha_mo_nome", "base_orcamento", "base_orcamento_nome", "base_outros", "base_outros_nome"} | {k + "_paginas" for k in ("plano", "base_tr", "base_etp", "base_riscos", "base_planilha", "base_planilha_mo", "base_orcamento", "base_outros")}
 
 
 def texto_de_link(url):
@@ -458,12 +458,7 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
     )
     usuario = (
         f"RESPOSTAS DO REQUISITANTE ({d['nome']}):\n{texto_resp}\n\n"
-        f"ROTEIRO DE VERIFICAÇÃO (o documento deve atender a estes itens):\n{an.bloco_roteiro(itens)}\n\n"
-        f"{an.bloco_normas_locais(itens)}"
-        f"{an.bloco_referencias(refs)}\n\n"
-        f"JURISPRUDÊNCIA DA BIBLIOTECA (priorize o Tribunal de Contas do estado{(' ' + uf) if uf else ''}):\n{bloco_juris}\n"
-        + (f"\n{pm.bloco_prompt(pesquisa)}\n" if pesquisa is not None else "")
-        + (f"\n{precos_assinante}\n" if precos_assinante else "")
+        + ("DOCUMENTOS DO PROCESSO (leia por inteiro; são a fonte das informações da contratação):\n" if BASES_TXT or PLANO_TXT else "")
         + "".join(f"\nDOCUMENTO DO PROCESSO QUE BASEIA O {d['nome'].upper()} – {rot.upper()} (use os dados dele"
                   + (" no plano: despesas por natureza, quantidades, memória de cálculo, fontes e rateio; remuneração, CBO, encargos e benefícios "
                      "ficam nas planilhas, e o plano remete a elas" if doc == "plano_trabalho" else
@@ -487,6 +482,13 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
                               if doc == "edital" and d["regime"] != "lei-13019" and not respostas.get(k)]) else "")
         + (f"\nPLANO DE TRABALHO DA PARCERIA (fonte do objeto, da realidade, das metas, das ações, dos indicadores, dos prazos, do valor e do "
            f"cronograma do edital; use os dados dele e não deixe [PREENCHER] para o que ele informa):\n{PLANO_TXT}\n" if PLANO_TXT else "")
+        + "\n"
+        + f"ROTEIRO DE VERIFICAÇÃO (o documento deve atender a estes itens):\n{an.bloco_roteiro(itens)}\n\n"
+        + f"{an.bloco_normas_locais(itens)}"
+        + f"{an.bloco_referencias(refs)}\n\n"
+        + f"JURISPRUDÊNCIA DA BIBLIOTECA (priorize o Tribunal de Contas do estado{(' ' + uf) if uf else ''}):\n{bloco_juris}\n"
+        + (f"\n{pm.bloco_prompt(pesquisa)}\n" if pesquisa is not None else "")
+        + (f"\n{precos_assinante}\n" if precos_assinante else "")
         + (f"\nMODELO-BASE (texto padrão revisado; adapte e complete):\n{mc.texto_plano(modelo_base(doc, respostas))}\n" if modelo_base(doc, respostas) else "")
     )
     return system, usuario, juris
@@ -716,7 +718,7 @@ def pre_analise(doc, respostas, pesquisa, usuario_pedido):
     original = an.FERRAMENTA
     an.FERRAMENTA = FERRAMENTA_DUVIDAS
     try:
-        r = an.chamar(system, usuario_pedido[:90000], max_tokens=2000)
+        r = an.chamar(system, usuario_pedido, max_tokens=2000)  # pedido inteiro: os documentos do processo respondem muitas dúvidas
     finally:
         an.FERRAMENTA = original
     b = next((c for c in r.get("content", []) if c.get("type") == "tool_use"), None)
@@ -1016,13 +1018,13 @@ def main():
         respostas["tipo_parceria"] = "Termo de colaboração"
     global PLANO_TXT
     if a.plano and pathlib.Path(a.plano).exists():
-        PLANO_TXT = pathlib.Path(a.plano).read_text(encoding="utf-8", errors="replace")[:60000]
+        PLANO_TXT = pathlib.Path(a.plano).read_text(encoding="utf-8", errors="replace")
     if a.doc in ("edital", "direta") and regime == "lei-13019" and not PLANO_TXT and not a.docj:
         sys.exit("O edital de chamamento e a dispensa ou inexigibilidade de chamamento exigem o plano de trabalho da parceria.")
     for spec in a.base:
         rot, _, cam = spec.partition("::")
         if pathlib.Path(cam).exists():
-            BASES_TXT.append((rot.strip(), pathlib.Path(cam).read_text(encoding="utf-8", errors="replace")[:45000]))
+            BASES_TXT.append((rot.strip(), pathlib.Path(cam).read_text(encoding="utf-8", errors="replace")))  # inteiro: a fila limita a 300 páginas
     if a.doc == "plano_trabalho" and not a.docj and not any(r.startswith("Planilha de custos") for r, _ in BASES_TXT):
         sys.exit("O plano de trabalho é elaborado a partir da planilha de custos da parceria: envie-a.")
     if (a.doc == "plano_trabalho" and not a.docj and respostas.get("mao_obra") == "Sim"
@@ -1124,7 +1126,7 @@ def main():
                 print("ETAPA: correcao", flush=True)
                 lista = "\n".join(f"- [{x.get('gravidade')}] {x.get('titulo') or x.get('item')}: {x.get('constatacao','')} Correção: {x.get('correcao','')}" for x in achados)
                 pedido = (f"DOCUMENTO JÁ REDIGIDO (JSON):\n{json.dumps(docj, ensure_ascii=False)}\n\nAPONTAMENTOS DA CONFERÊNCIA (corrija todos no "
-                          f"próprio texto; não acrescente ressalvas nem pendências por causa deles):\n{lista}\n\nDADOS ORIGINAIS:\n{usuario[:60000]}")
+                          f"próprio texto; não acrescente ressalvas nem pendências por causa deles):\n{lista}\n\nDADOS ORIGINAIS:\n{usuario}")
                 try:
                     r2 = chamar(system + " Agora você revisa o documento que redigiu: devolva o documento completo, corrigido, pela mesma ferramenta.",
                                 pedido, M.FERRAMENTA if M else None)

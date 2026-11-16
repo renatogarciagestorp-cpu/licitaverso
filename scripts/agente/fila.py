@@ -418,6 +418,7 @@ def processar_geracao(a):
                      ("base_riscos", "Matriz de riscos"), ("base_planilha", "Planilha de custos da parceria"),
                      ("base_planilha_mo", "Planilhas de custos e formação de preços (IN 05-2017)"),
                      ("base_orcamento", "Orçamento detalhado da obra"), ("base_outros", "Outros documentos do processo")]
+            pag_bases = 0  # documentos de base lidos inteiros: até 300 páginas somadas (Word e Excel: 3.000 caracteres por página)
             for chave, rotulo in BASES:
                 valor_b = str(respostas.get(chave) or "")
                 if not valor_b or valor_b == "dispensado" or a.get("fase") == "completar":
@@ -446,6 +447,16 @@ def processar_geracao(a):
                     raise ErroCliente(f"Não foi possível ler o documento \"{rotulo}\". Envie-o em PDF com texto (não digitalizado), em Word"
                                       + (" ou em Excel (.xlsx)" if chave.startswith("base_planilha") else "") + "; "
                                       "se escolheu um documento feito aqui, ele pode ter passado do prazo de 7 dias no site.")
+                pg_b = 0
+                if orig_b and orig_b.suffix == ".pdf":
+                    m_b = re.search(r"^Pages:\s+(\d+)", subprocess.run(["pdfinfo", str(orig_b)], capture_output=True, text=True).stdout, re.M)
+                    pg_b = int(m_b.group(1)) if m_b else 0
+                if not pg_b:
+                    pg_b = -(-len(txt_b.read_text(encoding="utf-8", errors="replace")) // 3000)
+                pag_bases += pg_b
+                if pag_bases > MAX_PAGINAS:
+                    raise ErroCliente(f"Os documentos de base somam mais de {MAX_PAGINAS} páginas (\"{rotulo}\" tem cerca de {pg_b}). "
+                                      "Envie só os documentos e as partes que interessam a esta elaboração.")
                 extra += (["--plano", str(txt_b)] if chave == "plano" else ["--base", f"{rotulo}::{txt_b}"])
             normas_args = baixar_normas(a, pasta, f"elaboração {aid}")  # RILC da estatal ou decreto do ente
             if a.get("documento") == "plano_trabalho" and not normas_args and a.get("fase") != "completar":
