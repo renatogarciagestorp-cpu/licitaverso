@@ -419,19 +419,26 @@ def processar_geracao(a):
                      ("base_planilha_mo", "Planilhas de custos e formação de preços (IN 05-2017)"),
                      ("base_orcamento", "Orçamento detalhado da obra"), ("base_outros", "Outros documentos do processo")]
             pag_bases = 0  # documentos de base lidos inteiros: até 300 páginas somadas (Word e Excel: 3.000 caracteres por página)
+            itens_b = []  # "outros documentos" aceita vários arquivos (um por linha); os demais, um só
             for chave, rotulo in BASES:
                 valor_b = str(respostas.get(chave) or "")
                 if not valor_b or valor_b == "dispensado" or a.get("fase") == "completar":
                     continue
-                txt_b = pasta / f"{chave}.txt"
+                vals = [x.strip() for x in valor_b.split("\n") if x.strip()] if chave == "base_outros" else [valor_b]
+                nomes = str(respostas.get(chave + "_nome") or "").split("\n")
+                for n_b, v_b in enumerate(vals[:40]):
+                    rot_b = rotulo if len(vals) == 1 else f"{rotulo} – {(nomes[n_b] if n_b < len(nomes) else '').strip() or 'arquivo ' + str(n_b + 1)}"
+                    itens_b.append((chave, rot_b, v_b, f"{chave}{n_b or ''}"))
+            for chave, rotulo, valor_b, nome_b in itens_b:
+                txt_b = pasta / f"{nome_b}.txt"
                 try:
                     if re.fullmatch(r"ref:[0-9a-f-]{36}", valor_b):
-                        orig_b = pasta / f"{chave}.docx"
+                        orig_b = pasta / f"{nome_b}.docx"
                         orig_b.write_bytes(http("GET", f"{SUPA}/storage/v1/object/analises/{a['usuario_id']}/pareceres/{valor_b[4:]}.docx",
                                                 cab=cab(), binario=True, timeout=300))
                     else:
                         ext_b = pathlib.Path(valor_b).suffix.lower()
-                        orig_b = baixar(valor_b, chave + (ext_b if ext_b in (".docx", ".xlsx") else ".pdf"))
+                        orig_b = baixar(valor_b, nome_b + (ext_b if ext_b in (".docx", ".xlsx") else ".pdf"))
                     if orig_b and orig_b.suffix == ".docx":
                         import docx  # python-docx
                         dd = docx.Document(str(orig_b))
