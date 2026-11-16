@@ -7717,7 +7717,7 @@ const ELAB_ROT = { normas: "Normas do órgão", normas_ref: "Regulamento do órg
   riscos_conhecidos: "Riscos já identificados", matriz: "Matriz de alocação de riscos", equipe: "Equipe de planejamento", garantia: "Garantia da contratação" };
 // dados do órgão e de quem assina: podem ir para qualquer documento (se o assinante marcar)
 const ELAB_GERAIS = ["orgao", "uf", "observacoes", "unidade", "gestor", "fiscais", "fonte", "dot_unidade", "dot_programa", "dot_elemento", "dot_fonte", "normas", "normas_ref", "cadastro", "municipio", "autoridade", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
-const ELAB_PARES = { modelo_arquivo: "modelo_nome", logo_arquivo: "logo_nome", plano: "plano_nome", base_tr: "base_tr_nome", base_etp: "base_etp_nome", base_riscos: "base_riscos_nome" };
+const ELAB_PARES = { modelo_arquivo: "modelo_nome", logo_arquivo: "logo_nome", plano: "plano_nome", base_tr: "base_tr_nome", base_etp: "base_etp_nome", base_riscos: "base_riscos_nome", base_orcamento: "base_orcamento_nome", base_outros: "base_outros_nome", base_planilha_mo: "base_planilha_mo_nome" };
 const ELAB_PROCESSO = { k: "processo", etapa: "contratacao", rot: "Nº do processo administrativo", tipo: "linha", ph: "Se já houver. Ex.: 1234/2026" };
 const ELAB_UNIDADE = { k: "unidade", etapa: "pessoas", rot: "Unidade requisitante", tipo: "linha", ph: "Ex.: Secretaria Municipal de Administração" };
 const ELAB_FINAIS = [
@@ -7864,9 +7864,9 @@ const ELAB_RAPIDO = {
     { k: "objeto", etapa: "contratacao", rot: "Objeto da licitação ou da parceria", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: aquisição de notebooks para as escolas municipais" },
     { k: "necessidade", etapa: "contratacao", rot: "Fundamentação: TR, ETP ou plano que dá base ao edital", tipo: "texto", obrig: true, ph: "Ex.: TR nº 12/2026 e ETP nº 8/2026, processo 1234/2026", dica: "O edital reproduz as condições do termo de referência ou do projeto básico; informe onde estão." },
     { k: "tipo_parceria", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Tipo de parceria", tipo: "chips", obrig: true, op: ["Termo de colaboração", "Termo de fomento"], dica: "Colaboração: proposta pela administração; fomento: proposta pelas organizações (Lei 13.019, arts. 16 e 17)." },
-    { k: "base_tr", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Termo de Referência ou Projeto Básico", tipo: "docbase", fonte: ["tr", "projeto_basico"], obrig: true, dica: "O edital reproduz as condições do TR ou do Projeto Básico (objeto, execução, pagamento, habilitação). Escolha um feito aqui no Elaborador ou envie o seu em PDF ou Word." },
-    { k: "base_etp", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Estudo Técnico Preliminar (ETP)", tipo: "docbase", fonte: ["etp"], dispensavel: true, obrig: true, dica: "Base da solução, do parcelamento e da forma de contratação. Se o ETP foi dispensado, marque e informe o motivo." },
-    { k: "base_riscos", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Matriz ou mapa de riscos", tipo: "docbase", fonte: ["riscos"], dispensavel: true, obrig: true, dica: "Vira a cláusula de matriz de riscos da minuta do contrato. Se não houver, marque e informe o motivo." },
+    { k: "base_tr", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Termo de Referência ou Projeto Básico", tipo: "docbase", fonte: ["tr", "projeto_basico"], dica: "Recomendado. O edital reproduz as condições do TR ou do Projeto Básico (objeto, execução, pagamento, habilitação). Escolha um feito aqui no Elaborador ou envie o seu. Você escolhe quais documentos usar: o que não vier deles o agente pergunta antes do download." },
+    { k: "base_etp", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Estudo Técnico Preliminar (ETP)", tipo: "docbase", fonte: ["etp"], dispensavel: true, dica: "Opcional. Base da solução, do parcelamento e da forma de contratação. Se o ETP foi dispensado no processo, marque e informe o motivo: o edital registra a dispensa." },
+    { k: "base_riscos", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Matriz ou mapa de riscos", tipo: "docbase", fonte: ["riscos"], dispensavel: true, dica: "Opcional. Vira a cláusula de matriz de riscos da minuta do contrato. Se não houver matriz no processo, marque e informe o motivo." },
     { k: "base_orcamento", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Planilhas de custos ou orçamento da obra", tipo: "docbase", planilha: true, fonte: [], dica: "Opcional. Planilha de custos e formação de preços (mão de obra exclusiva) ou orçamento detalhado da obra: entram como anexo do edital e fixam valor, custos mínimos e critérios de aceitabilidade." },
     { k: "base_outros", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Outros documentos do processo", tipo: "docbase", planilha: true, fonte: [], dica: "Opcional. Pesquisa de preços, parecer jurídico anterior, modelo de proposta ou edital anterior do mesmo objeto." },
     { k: "plano", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Plano de trabalho da parceria", tipo: "docbase", fonte: ["plano_trabalho"], obrig: true, dica: "O edital traz as informações do plano de trabalho (objeto, metas, ações, indicadores, prazos, valor e cronograma). Escolha um plano feito aqui no Elaborador ou envie o seu em PDF ou Word." },
@@ -8049,7 +8049,7 @@ function elabObrig(c, R) {
   if (!c.obrig) return false;
   if (!c.obrigSemBase) return true;
   const tem = (k) => { const v = String((R || {})[k] || ""); return !!v && v !== "dispensado"; };
-  return !(tem("base_etp") || tem("base_orcamento"));
+  return !(tem("base_etp") || tem("base_orcamento") || tem("base_tr"));
 }
 function elFaltando(doc, R, etapa) {
   R = R || {};
