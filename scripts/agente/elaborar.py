@@ -24,6 +24,8 @@ _spec4 = importlib.util.spec_from_file_location("modelo_tr", RAIZ / "scripts" / 
 mt = importlib.util.module_from_spec(_spec4); _spec4.loader.exec_module(mt)
 _spec5 = importlib.util.spec_from_file_location("modelo_chamamento", RAIZ / "scripts" / "agente" / "modelo_chamamento.py")
 mc = importlib.util.module_from_spec(_spec5); _spec5.loader.exec_module(mc)
+_spec6 = importlib.util.spec_from_file_location("modelo_tr_geral", RAIZ / "scripts" / "agente" / "modelo_tr_geral.py")
+mtg = importlib.util.module_from_spec(_spec6); _spec6.loader.exec_module(mtg)
 # modelos padrão: ETP (Licitacon) e TR de compras (AGU); o Word do assinante, se enviado, prevalece
 MODELOS = {"etp": me, "tr": mt}
 
@@ -160,6 +162,10 @@ def modelo_base(doc, respostas):
     if doc == "plano_trabalho":
         dec = an.NORMAS_LOCAIS[0]["nome"] if an.NORMAS_LOCAIS else ""
         return mc.plano(respostas, dec)
+    if doc == "tr" and regime_de(respostas) in ("lei-14133", "lei-13303") and not respostas.get("modelo_arquivo") \
+            and not modelo_padrao(doc, respostas, None):  # compras da 14.133 seguem o modelo da AGU
+        norma = an.NORMAS_LOCAIS[0]["nome"] if an.NORMAS_LOCAIS else ""
+        return mtg.termo(respostas, regime_de(respostas), norma)
     return None
 
 
@@ -418,6 +424,12 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
               "indiretos e as fontes e o método da pesquisa de preços; não copie para o plano a remuneração, o CBO e os encargos de cada "
               "profissional (ficam nas planilhas da IN 05/2017, às quais o plano remete); havendo período de implantação, ajuste as "
               "parcelas do desembolso aos custos de cada período conforme a planilha, mantendo a soma igual ao total" if doc == "plano_trabalho" else "")
+           + ("; no termo de referência: uma só tabela de itens (sem repetir os itens com outra numeração), remissões a itens e "
+              "anexos que existam, especificação sem contradição (ex.: tensão), LC 123/2006 (não 2016), multa compensatória dentro "
+              "de 0,5% a 30% do valor do contrato (art. 156, § 3º, na Lei 14.133), cota reservada só para bens divisíveis, regularidade "
+              "fiscal da Fazenda do domicílio ou sede do licitante (não do estado do órgão), sem \"à vista\" com prazo de pagamento e "
+              "sem regras de cooperativa de trabalho em compra de bens; monte a tabela de itens com item, descrição, unidade e "
+              "quantidade a partir das respostas" if doc == "tr" else "")
            + ". Entregue com a ferramenta entregar_documento." if modelo_base(doc, respostas) else
            f"(10) produza as seções na ordem: {'; '.join(d['secoes'])}. Entregue com a ferramenta entregar_documento.")
     )
