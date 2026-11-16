@@ -279,7 +279,7 @@ def jurisprudencia_do_estado(uf, consulta, n=6):
 
 
 CHAVES_INTERNAS = {"entrega", "modelo_arquivo", "modelo_nome", "logo_arquivo", "logo_nome", "precos_pdfs", "precos_links", "precos_manual", "precos_sem",
-                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "pca_ref", "pesquisa_precos_id", "regime", "plano", "plano_nome", "base_tr", "base_tr_nome", "base_etp", "base_etp_nome", "base_riscos", "base_riscos_nome", "base_tr_motivo", "base_etp_motivo", "base_riscos_motivo", "base_planilha", "base_planilha_nome", "base_planilha_mo", "base_planilha_mo_nome"}
+                   "rodape", "rodape_incluir", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "pca_ref", "pesquisa_precos_id", "regime", "plano", "plano_nome", "base_tr", "base_tr_nome", "base_etp", "base_etp_nome", "base_riscos", "base_riscos_nome", "base_tr_motivo", "base_etp_motivo", "base_riscos_motivo", "base_planilha", "base_planilha_nome", "base_planilha_mo", "base_planilha_mo_nome", "base_orcamento", "base_orcamento_nome", "base_outros", "base_outros_nome"}
 
 
 def texto_de_link(url):
@@ -413,7 +413,10 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
            "qualitativos; a estimativa do valor é preliminar (art. 18, § 1º, VI), dependente da pesquisa de preços do art. 23; " if doc == "etp" else
            "se o requisitante não informou o valor, apresente os dados do PNCP como referência preliminar, em mapa resumido, registrando "
            "que o valor estimado deve vir da pesquisa de preços formal " + ("do art. 23 da Lei 14.133/2021" if d["regime"] == "lei-14133" else "prevista no RILC" if d["regime"] == "lei-13303" else "da parceria") + " ([PREENCHER] no valor final); ")
-        + (f"(10) siga o modelo padrão descrito a seguir e entregue com a ferramenta entregar_documento.\n{MODELOS[padrao].INSTRUCOES}" if padrao else
+        + (f"(10) siga o modelo padrão descrito a seguir e entregue com a ferramenta entregar_documento"
+           + ("; o modelo é padrão: ajuste cada cláusula à contratação concreta a partir dos documentos do processo enviados (ETP, matriz "
+              "de riscos, pesquisa de preços, DFD), que prevalecem sobre as escolhas padrão; divergência entre documento e questionário vai "
+              "para as pendências" if BASES_TXT else "") + f".\n{MODELOS[padrao].INSTRUCOES}" if padrao else
            "(10) use como base o MODELO-BASE enviado, já revisado juridicamente: mantenha a estrutura, a numeração, as seções e as cláusulas, sem "
            "acrescentar anexos; adapte ao caso e ao decreto do ente (prazos, fatores e pesos de julgamento, impedimentos, limites de aditivo, vigência, "
            "prestação de contas), sempre citando o dispositivo do decreto; detalhe o objeto, as metas e os critérios de pontuação com níveis "
@@ -437,6 +440,16 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
               "fiscal da Fazenda do domicílio ou sede do licitante (não do estado do órgão), sem \"à vista\" com prazo de pagamento e "
               "sem regras de cooperativa de trabalho em compra de bens; monte a tabela de itens com item, descrição, unidade e "
               "quantidade a partir das respostas" if doc in ("tr", "projeto_basico") else "")
+           + ("; o MODELO-BASE é o modelo padrão da AGU: ele dá a estrutura e o texto jurídico, mas o conteúdo vem da contratação "
+              "concreta; reescreva cada cláusula para a especificidade do objeto a partir dos documentos do processo enviados (ETP, matriz "
+              "de riscos, orçamento, planilhas, pesquisa de preços, DFD, memorial): tire deles as quantidades, as especificações, os "
+              "requisitos, a forma de execução, os prazos de início, de execução e de recebimento, os critérios de medição e de pagamento, "
+              "as exigências de qualificação técnica proporcionais ao objeto, a garantia, a subcontratação e o tratamento dos riscos (cada "
+              "risco relevante da matriz com sua medida no modelo de execução, na fiscalização, nas garantias ou nas sanções); quando o "
+              "documento do processo e o modelo-base divergirem, siga o documento, sem contrariar a lei; quando o documento e as respostas "
+              "do questionário divergirem, siga o documento e registre a divergência nas pendências para o requisitante confirmar; retire "
+              "cláusulas do modelo que não se apliquem ao objeto e acrescente as que o caso exigir; não deixe [PREENCHER] para o que os "
+              "documentos informam" if doc in ("tr", "projeto_basico") else "")
            + ("; no projeto básico: mantenha o regime de execução, a medição por etapas do cronograma físico-financeiro, a garantia "
               "adicional do art. 59, § 5º, o registro no CREA ou no CAU e as parcelas de maior relevância (até 4% do valor cada, art. 67, "
               "§ 1º), e não exija quantitativo acima de 50% dessas parcelas (art. 67, § 2º)" if doc == "projeto_basico" else "")
@@ -451,9 +464,12 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
         f"JURISPRUDÊNCIA DA BIBLIOTECA (priorize o Tribunal de Contas do estado{(' ' + uf) if uf else ''}):\n{bloco_juris}\n"
         + (f"\n{pm.bloco_prompt(pesquisa)}\n" if pesquisa is not None else "")
         + (f"\n{precos_assinante}\n" if precos_assinante else "")
-        + "".join(f"\nDOCUMENTO QUE BASEIA O {'PLANO DE TRABALHO' if doc == 'plano_trabalho' else 'EDITAL'} – {rot.upper()} (use os dados dele"
+        + "".join(f"\nDOCUMENTO DO PROCESSO QUE BASEIA O {d['nome'].upper()} – {rot.upper()} (use os dados dele"
                   + (" no plano: despesas por natureza, quantidades, memória de cálculo, fontes e rateio; remuneração, CBO, encargos e benefícios "
-                     "ficam nas planilhas, e o plano remete a elas" if doc == "plano_trabalho" else " no edital e na minuta")
+                     "ficam nas planilhas, e o plano remete a elas" if doc == "plano_trabalho" else
+                     " em todo o documento: objeto, quantidades, especificações, requisitos, execução, prazos, medição, pagamento, "
+                     "habilitação e riscos; prevalece sobre as escolhas padrão do modelo-base e sobre as respostas genéricas" if doc in ("tr", "projeto_basico") else
+                     " no edital e na minuta")
                   + f"; não deixe [PREENCHER] para o que ele informa):\n{txt}\n"
                   for rot, txt in BASES_TXT)
         + "".join(f"\n{n} DISPENSADO pelo requisitante. Motivo: {respostas.get(k + '_motivo', '')}\n"
