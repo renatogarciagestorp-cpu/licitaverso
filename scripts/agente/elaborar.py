@@ -164,10 +164,13 @@ def modelo_base(doc, respostas):
     if doc == "plano_trabalho":
         dec = an.NORMAS_LOCAIS[0]["nome"] if an.NORMAS_LOCAIS else ""
         return mc.plano(respostas, dec)
+    if doc == "projeto_basico" and regime_de(respostas) == "lei-14133" and not respostas.get("modelo_arquivo"):
+        return mtsa.termo(respostas, doc="projeto_basico")  # obra e serviço de engenharia: modelo da AGU (mai/2026)
     if doc == "tr" and regime_de(respostas) in ("lei-14133", "lei-13303") and not respostas.get("modelo_arquivo") \
             and not modelo_padrao(doc, respostas, None):  # compras da 14.133 seguem o modelo da AGU
-        if regime_de(respostas) == "lei-14133" and re.fullmatch(r"Serviço (comum|contínuo)", str(respostas.get("natureza") or "")):
-            return mtsa.termo(respostas)  # serviço sem mão de obra exclusiva e sem engenharia: texto do modelo da AGU (mai/2026)
+        if regime_de(respostas) == "lei-14133" and re.fullmatch(r"Serviço (comum|contínuo|com mão de obra exclusiva)|Locação|Obra ou serviço de engenharia",
+                                                                str(respostas.get("natureza") or "")):
+            return mtsa.termo(respostas)  # serviços, locação e engenharia: texto do modelo da AGU de serviços e obras (mai/2026)
         norma = an.NORMAS_LOCAIS[0]["nome"] if an.NORMAS_LOCAIS else ""
         return mtg.termo(respostas, regime_de(respostas), norma)
     return None
@@ -207,7 +210,7 @@ def bloco_regime(regime, tem_normas):
             + ("A regulamentação do ente foi enviada (abaixo): siga-a e cite-a quando ela detalhar a lei. " if tem_normas else "") + "\n\n")
 CAMPOS_ROTULO = {
     "envio_propostas": "Forma de envio das propostas", "contato": "Canal para esclarecimentos, impugnações e recursos",
-    "osc": "Organização da sociedade civil (nome, CNPJ e responsável)", "atividades": "Atividades e forma de execução", "indicadores": "Parâmetros e indicadores de aferição das metas", "publico": "Público-alvo", "despesas": "Previsão de receitas e despesas", "cronograma": "Cronograma de execução e desembolso", "contrapartida": "Contrapartida", "bens": "Bens permanentes a comprar com recursos da parceria", "mao_obra": "Há mão de obra com dedicação exclusiva", "pesquisa_fontes": "Fontes da pesquisa de preços", "pesquisa_metodo": "Método do valor de referência", "memoria": "Memória de cálculo das quantidades", "rateio": "Critério de rateio dos custos indiretos", "implantacao": "Período de implantação", "visitas": "Frequência das visitas técnicas", "acessibilidade": "Medidas de acessibilidade", "inicio": "Início da execução", "horario": "Horário da prestação dos serviços", "vistoria": "Vistoria prévia", "srp": "Registro de preços", "me_epp": "Participação de ME/EPP", "garantia_contratual": "Garantia contratual", "subcontratacao": "Subcontratação", "consorcio": "Consórcio", "pagamento_prazo": "Prazo de pagamento", "execucao": "Como o serviço será executado", "relatorio_periodicidade": "Periodicidade do relatório de execução da organização",
+    "osc": "Organização da sociedade civil (nome, CNPJ e responsável)", "atividades": "Atividades e forma de execução", "indicadores": "Parâmetros e indicadores de aferição das metas", "publico": "Público-alvo", "despesas": "Previsão de receitas e despesas", "cronograma": "Cronograma de execução e desembolso", "contrapartida": "Contrapartida", "bens": "Bens permanentes a comprar com recursos da parceria", "mao_obra": "Há mão de obra com dedicação exclusiva", "pesquisa_fontes": "Fontes da pesquisa de preços", "pesquisa_metodo": "Método do valor de referência", "memoria": "Memória de cálculo das quantidades", "rateio": "Critério de rateio dos custos indiretos", "implantacao": "Período de implantação", "visitas": "Frequência das visitas técnicas", "acessibilidade": "Medidas de acessibilidade", "inicio": "Início da execução", "horario": "Horário da prestação dos serviços", "vistoria": "Vistoria prévia", "srp": "Registro de preços", "me_epp": "Participação de ME/EPP", "garantia_contratual": "Garantia contratual", "subcontratacao": "Subcontratação", "consorcio": "Consórcio", "pagamento_prazo": "Prazo de pagamento", "execucao": "Como o serviço será executado", "cct": "Convenção ou acordo coletivo de referência", "conta_vinculada": "Proteção das verbas trabalhistas", "uniformes": "Peças do uniforme", "custos_minimos": "Custos mínimos da convenção coletiva (salário, auxílio-alimentação e benefícios)", "parcelas_relevantes": "Parcelas de maior relevância (qualificação técnica)", "regime_exec": "Regime de execução", "data_orcamento": "Data do orçamento estimado", "relatorio_periodicidade": "Periodicidade do relatório de execução da organização",
     "tipo_parceria": "Tipo de parceria (escolha do requisitante)", "metas": "Objetivos, metas e público atendido", "modo_disputa": "Modo de disputa (escolha do requisitante)", "registro_precos": "Registro de preços (escolha do requisitante)", "me_epp": "Participação de ME e EPP (escolha do requisitante)", "criterios_selecao": "Critérios de seleção e pontuação", "agente": "Agente de contratação, pregoeiro ou comissão", "hipotese": "Hipótese legal da contratação direta (escolha do requisitante)", "hipotese_detalhe": "Por que a situação se enquadra na hipótese", "contratado": "Fornecedor ou organização escolhida", "motivo_escolha": "Razão da escolha do contratado", "justificativa_preco": "Como o preço foi verificado", "fase": "Fases a mapear", "riscos_conhecidos": "Riscos ou problemas já conhecidos", "matriz": "Incluir matriz de alocação de riscos (art. 22)", "equipe": "Equipe de planejamento", "garantia": "Garantia da contratação (escolha do requisitante)",
     "orgao": "Órgão ou entidade", "uf": "UF e município", "unidade": "Unidade requisitante", "natureza": "Natureza do objeto / solução indicada",
     "objeto": "Objeto", "necessidade": "Necessidade", "pca": "Plano de contratações anual", "requisitos": "Requisitos",
@@ -433,7 +436,10 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
               "de 0,5% a 30% do valor do contrato (art. 156, § 3º, na Lei 14.133), cota reservada só para bens divisíveis, regularidade "
               "fiscal da Fazenda do domicílio ou sede do licitante (não do estado do órgão), sem \"à vista\" com prazo de pagamento e "
               "sem regras de cooperativa de trabalho em compra de bens; monte a tabela de itens com item, descrição, unidade e "
-              "quantidade a partir das respostas" if doc == "tr" else "")
+              "quantidade a partir das respostas" if doc in ("tr", "projeto_basico") else "")
+           + ("; no projeto básico: mantenha o regime de execução, a medição por etapas do cronograma físico-financeiro, a garantia "
+              "adicional do art. 59, § 5º, o registro no CREA ou no CAU e as parcelas de maior relevância (até 4% do valor cada, art. 67, "
+              "§ 1º), e não exija quantitativo acima de 50% dessas parcelas (art. 67, § 2º)" if doc == "projeto_basico" else "")
            + ". Entregue com a ferramenta entregar_documento." if modelo_base(doc, respostas) else
            f"(10) produza as seções na ordem: {'; '.join(d['secoes'])}. Entregue com a ferramenta entregar_documento.")
     )
