@@ -7719,6 +7719,7 @@ const ELAB_AVISO_ITENS_PP = (R) => {
 };
 const ELAB_RAPIDO = {
   etp: [
+    { k: "base_outros", etapa: "contratacao", rot: "Documentos que antecedem o ETP", tipo: "docbase", planilha: true, fonte: [], dica: "Opcional. DFD, pedido da área, levantamento de demanda, pesquisa de preços ou contratos anteriores do mesmo objeto: o agente tira deles a necessidade, as quantidades e os dados de mercado." },
     { k: "objeto", etapa: "contratacao", rot: "O que você precisa contratar?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
     { k: "necessidade", etapa: "contratacao", rot: "Por que é preciso contratar?", tipo: "texto", obrig: true, ph: "Ex.: o contrato atual termina em março e o quadro próprio não executa esse serviço", dica: "Descrição da necessidade (art. 18, § 1º, I)." },
     { k: "quantidades", etapa: "contratacao", rot: "Quantidades", tipo: "texto", obrig: true, ph: "Ex.: 6.200 m² de área interna e 1.800 m² externa", dica: "Se souber, diga de onde vêm os números: área, consumo do ano anterior, número de usuários (inciso IV)." },
@@ -7841,6 +7842,8 @@ const ELAB_RAPIDO = {
     { k: "base_tr", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Termo de Referência ou Projeto Básico", tipo: "docbase", fonte: ["tr", "projeto_basico"], obrig: true, dica: "O edital reproduz as condições do TR ou do Projeto Básico (objeto, execução, pagamento, habilitação). Escolha um feito aqui no Elaborador ou envie o seu em PDF ou Word." },
     { k: "base_etp", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Estudo Técnico Preliminar (ETP)", tipo: "docbase", fonte: ["etp"], dispensavel: true, obrig: true, dica: "Base da solução, do parcelamento e da forma de contratação. Se o ETP foi dispensado, marque e informe o motivo." },
     { k: "base_riscos", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Matriz ou mapa de riscos", tipo: "docbase", fonte: ["riscos"], dispensavel: true, obrig: true, dica: "Vira a cláusula de matriz de riscos da minuta do contrato. Se não houver, marque e informe o motivo." },
+    { k: "base_orcamento", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Planilhas de custos ou orçamento da obra", tipo: "docbase", planilha: true, fonte: [], dica: "Opcional. Planilha de custos e formação de preços (mão de obra exclusiva) ou orçamento detalhado da obra: entram como anexo do edital e fixam valor, custos mínimos e critérios de aceitabilidade." },
+    { k: "base_outros", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Outros documentos do processo", tipo: "docbase", planilha: true, fonte: [], dica: "Opcional. Pesquisa de preços, parecer jurídico anterior, modelo de proposta ou edital anterior do mesmo objeto." },
     { k: "plano", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Plano de trabalho da parceria", tipo: "docbase", fonte: ["plano_trabalho"], obrig: true, dica: "O edital traz as informações do plano de trabalho (objeto, metas, ações, indicadores, prazos, valor e cronograma). Escolha um plano feito aqui no Elaborador ou envie o seu em PDF ou Word." },
     { k: "metas", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Objetivos, metas e público atendido", tipo: "texto", ph: "Ex.: atender 300 crianças de 6 a 14 anos no contraturno escolar, em 3 núcleos", dica: "Se deixar em branco, vem do plano de trabalho." },
     { k: "natureza", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Natureza do objeto", tipo: "chips", obrig: true, op: ["Compra", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva", "Obra ou serviço de engenharia"] },
@@ -7922,6 +7925,8 @@ const ELAB_RAPIDO = {
     ...ELAB_FINAIS
   ],
   riscos: [
+    { k: "base_etp", etapa: "contratacao", rot: "Estudo Técnico Preliminar (ETP)", tipo: "docbase", fonte: ["etp"], dica: "Opcional. Os riscos saem da solução, do parcelamento, dos prazos e do mercado descritos no ETP." },
+    { k: "base_outros", etapa: "contratacao", rot: "Outros documentos do processo", tipo: "docbase", planilha: true, fonte: ["tr", "projeto_basico"], dica: "Opcional. TR, Projeto Básico, orçamento ou histórico de contratos anteriores (atrasos, sanções, aditivos)." },
     { k: "objeto", etapa: "contratacao", rot: "Contratação analisada", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: serviços contínuos de limpeza dos prédios da sede" },
     { k: "necessidade", etapa: "contratacao", rot: "Contexto: fase atual e documentos já feitos", tipo: "texto", obrig: true, ph: "Ex.: ETP concluído (nº 8/2026); TR em elaboração" },
     { k: "natureza", etapa: "contratacao", rot: "Natureza do objeto", tipo: "chips", obrig: true, op: ["Compra", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva", "Obra ou serviço de engenharia"] },
@@ -10554,6 +10559,29 @@ class Component extends DCLogic {
     this.setState((s) => ({ el: { ...s.el, respostas: p.orgao ? { orgao: p.orgao } : {}, rascunho: false, erro: "" } }));
   }
 
+  // documento feito aqui escolhido como base: as respostas dele preenchem o que ainda está vazio no questionário atual
+  // (só campos que existem neste documento e, nas opções, só valores que ele aceita); o assinante confere e ajusta
+  async elAproveitarRef(id) {
+    try {
+      const { data } = await this.sb.from("analises").select("respostas").eq("id", id).maybeSingle();
+      const ok = data && data.respostas && typeof data.respostas === "object" ? data.respostas : null;
+      if (!ok) return;
+      const el = this.state.el, R = el.respostas || {}, regime = R.regime || "lei-14133", novos = {};
+      Object.keys(ok).forEach((k) => {
+        if (/^base_|^plano$|^regime$|_nome$|_motivo$|_outro$/.test(k) || String(R[k] || "").trim() || !String(ok[k] || "").trim()) return;
+        if (ELAB_GERAIS.includes(k)) { novos[k] = ok[k]; return; }
+        const c = (ELAB_RAPIDO[el.doc] || []).find((x) => x.k === k && elabVisivelRegime(x, { regime }));
+        if (!c || c.tipo === "docbase") return;
+        if (c.tipo === "chips" && !String(ok[k]).split("; ").every((x) => (c.op || []).includes(x))) return;
+        novos[k] = ok[k];
+        if (ok[k + "_outro"]) novos[k + "_outro"] = ok[k + "_outro"];
+      });
+      const n = Object.keys(novos).filter((k) => !k.endsWith("_outro")).length;
+      if (!n) return;
+      this.elResponderVarios(novos);
+      this.setState((s) => ({ el: { ...s.el, ok: n + (n === 1 ? " resposta veio" : " respostas vieram") + " do documento escolhido. Confira e ajuste o que for diferente nesta etapa." } }));
+    } catch (e) { /* sem acesso às respostas: o documento segue como base do agente */ }
+  }
   elResponderVarios(obj) {
     this.setState((s) => {
       const respostas = { ...s.el.respostas, ...obj };
@@ -16243,7 +16271,7 @@ class Component extends DCLogic {
                 const sigla = { etp: "ETP", tr: "TR", projeto_basico: "Projeto Básico", riscos: "Mapa de riscos", plano_trabalho: "Plano" };
                 return { temPlanosSite: feitos.length > 0,
                   planosSite: feitos.map((a) => { const ref = "ref:" + a.id, nome = (sigla[a.documento] || "Documento") + " feito aqui: " + String((a.resumo && a.resumo.objeto) || a.nome_arquivo || "").slice(0, 60);
-                    return { nome, sel: v === ref, escolher: () => this.elResponderVarios({ [c.k]: ref, [kn]: nome }) }; }),
+                    return { nome, sel: v === ref, escolher: () => { this.elResponderVarios({ [c.k]: ref, [kn]: nome }); if (v !== ref) this.elAproveitarRef(a.id); } }; }),
                   onPlanoArq: async (e) => { const r = await this.elSubir(e, c.k, Object.assign({ ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }, c.planilha ? { ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" } : {}), 15); if (r) this.elResponderVarios({ [c.k]: r.arquivo, [kn]: r.nome }); },
                   planoAceita: ".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" + (c.planilha ? ",.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : ""),
                   planoRot: v && !v.startsWith("ref:") && v !== "dispensado" ? "📄 " + (R[kn] || "arquivo enviado") + " (trocar)" : c.planilha ? "+ Enviar planilha (Excel, PDF ou Word)" : "+ Enviar arquivo (PDF ou Word)",

@@ -469,7 +469,13 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
                      "ficam nas planilhas, e o plano remete a elas" if doc == "plano_trabalho" else
                      " em todo o documento: objeto, quantidades, especificações, requisitos, execução, prazos, medição, pagamento, "
                      "habilitação e riscos; prevalece sobre as escolhas padrão do modelo-base e sobre as respostas genéricas" if doc in ("tr", "projeto_basico") else
-                     " no edital e na minuta")
+                     " no ETP: necessidade, quantidades e a memória delas, histórico de consumo, contratações anteriores e dados de mercado" if doc == "etp" else
+                     " na matriz: identifique os riscos a partir da solução, do parcelamento, dos prazos, do mercado e do histórico descritos, com "
+                     "probabilidade, impacto, medidas e responsável coerentes com esses documentos" if doc == "riscos" else
+                     " no edital e na minuta: a estrutura do edital é padrão, mas as condições vêm destes documentos; reproduza as do TR ou do "
+                     "Projeto Básico (objeto, itens, execução, medição, pagamento, garantia, habilitação, sanções) sem contradizê-las, use as "
+                     "planilhas e o orçamento como anexos e para os critérios de aceitabilidade, e leve a matriz de riscos para a minuta; "
+                     "divergência entre esses documentos vai para as pendências")
                   + f"; não deixe [PREENCHER] para o que ele informa):\n{txt}\n"
                   for rot, txt in BASES_TXT)
         + "".join(f"\n{n} DISPENSADO pelo requisitante. Motivo: {respostas.get(k + '_motivo', '')}\n"
