@@ -171,7 +171,8 @@ Deno.serve(async (req) => {
         limpo[k] = String(v ?? "").slice(0, 8000);
       }
       if (JSON.stringify(limpo).length > MAX_RESPOSTAS_GERACAO) return erro("O questionário ficou grande demais. Resuma as respostas mais longas.");
-      const comQtd = ["etp", "tr", "projeto_basico"].includes(g.documento);
+      const temBase = ["base_etp", "base_orcamento"].some((k) => limpo[k] && limpo[k] !== "dispensado");  // quantidades vêm do ETP ou do orçamento
+      const comQtd = ["etp", "tr", "projeto_basico"].includes(g.documento) && !temBase;
       const faltam = ["orgao", "uf", "objeto", "necessidade"].concat(comQtd ? ["quantidades"] : []).filter((k) => !String(limpo[k] ?? "").trim());
       if (faltam.length || String(limpo.objeto ?? "").trim().length < 8)
         return erro("Preencha os campos obrigatórios (órgão, UF, objeto, necessidade" + (comQtd ? " e quantidades)." : ")."));

@@ -7691,6 +7691,9 @@ const ELAB_ROT = { normas: "Normas do órgão", normas_ref: "Regulamento do órg
   contratado: "Contratado escolhido", motivo_escolha: "Razão da escolha", justificativa_preco: "Justificativa do preço", fase: "Fase analisada",
   riscos_conhecidos: "Riscos já identificados", matriz: "Matriz de alocação de riscos", equipe: "Equipe de planejamento", garantia: "Garantia da contratação" };
 // dados do órgão e de quem assina: podem ir para qualquer documento (se o assinante marcar)
+// documentos de base do Elaborador: lidos inteiros pelo agente, até 300 páginas somadas (a fila confere de novo)
+const ELAB_MAX_PAG_BASES = 300;
+const ELAB_BASES_PAG = ["plano", "base_tr", "base_etp", "base_riscos", "base_planilha", "base_planilha_mo", "base_orcamento", "base_outros"];
 const ELAB_GERAIS = ["orgao", "uf", "observacoes", "unidade", "gestor", "fiscais", "fonte", "dot_unidade", "dot_programa", "dot_elemento", "dot_fonte", "normas", "normas_ref", "cadastro", "municipio", "autoridade", "elab_nome", "elab_cargo", "elab_matricula", "resp_nome", "resp_cargo", "resp_matricula", "rodape_incluir", "rodape", "modelo_arquivo", "logo_arquivo"];
 const ELAB_PARES = { modelo_arquivo: "modelo_nome", logo_arquivo: "logo_nome", plano: "plano_nome", base_tr: "base_tr_nome", base_etp: "base_etp_nome", base_riscos: "base_riscos_nome", base_orcamento: "base_orcamento_nome", base_outros: "base_outros_nome", base_planilha_mo: "base_planilha_mo_nome" };
 const ELAB_PROCESSO = { k: "processo", etapa: "contratacao", rot: "Nº do processo administrativo", tipo: "linha", ph: "Se já houver. Ex.: 1234/2026" };
@@ -10568,7 +10571,7 @@ class Component extends DCLogic {
       if (!ok) return;
       const el = this.state.el, R = el.respostas || {}, regime = R.regime || "lei-14133", novos = {};
       Object.keys(ok).forEach((k) => {
-        if (/^base_|^plano$|^regime$|_nome$|_motivo$|_outro$/.test(k) || String(R[k] || "").trim() || !String(ok[k] || "").trim()) return;
+        if (/^base_|^plano$|^regime$|_nome$|_motivo$|_outro$|_paginas$/.test(k) || String(R[k] || "").trim() || !String(ok[k] || "").trim()) return;
         if (ELAB_GERAIS.includes(k)) { novos[k] = ok[k]; return; }
         const c = (ELAB_RAPIDO[el.doc] || []).find((x) => x.k === k && elabVisivelRegime(x, { regime }));
         if (!c || c.tipo === "docbase") return;
@@ -16271,12 +16274,16 @@ class Component extends DCLogic {
                 const sigla = { etp: "ETP", tr: "TR", projeto_basico: "Projeto Básico", riscos: "Mapa de riscos", plano_trabalho: "Plano" };
                 return { temPlanosSite: feitos.length > 0,
                   planosSite: feitos.map((a) => { const ref = "ref:" + a.id, nome = (sigla[a.documento] || "Documento") + " feito aqui: " + String((a.resumo && a.resumo.objeto) || a.nome_arquivo || "").slice(0, 60);
-                    return { nome, sel: v === ref, escolher: () => { this.elResponderVarios({ [c.k]: ref, [kn]: nome }); if (v !== ref) this.elAproveitarRef(a.id); } }; }),
-                  onPlanoArq: async (e) => { const r = await this.elSubir(e, c.k, Object.assign({ ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }, c.planilha ? { ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" } : {}), 15); if (r) this.elResponderVarios({ [c.k]: r.arquivo, [kn]: r.nome }); },
+                    return { nome, sel: v === ref, escolher: () => { this.elResponderVarios({ [c.k]: ref, [kn]: nome, [c.k + "_paginas"]: "" }); if (v !== ref) this.elAproveitarRef(a.id); } }; }),
+                  onPlanoArq: async (e) => { const f0 = e && e.target && e.target.files && e.target.files[0]; let pg = 0;
+                    if (f0 && /\.pdf$/i.test(f0.name)) { pg = (await this.lerPdf(f0)).paginas || 0;
+                      const outras = ELAB_BASES_PAG.reduce((t, k) => t + (k === c.k ? 0 : Number(R[k + "_paginas"]) || 0), 0);
+                      if (outras + pg > ELAB_MAX_PAG_BASES) { try { e.target.value = ""; } catch (er) {} this.setState((st) => ({ el: { ...st.el, erro: f0.name + " tem " + pg + " páginas; somado aos outros documentos (" + outras + "), passa do limite de " + ELAB_MAX_PAG_BASES + " páginas. Envie só as partes que interessam a esta elaboração." } })); return; } }
+                    const r = await this.elSubir(e, c.k, Object.assign({ ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }, c.planilha ? { ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" } : {}), 15); if (r) this.elResponderVarios({ [c.k]: r.arquivo, [kn]: r.nome, [c.k + "_paginas"]: pg ? String(pg) : "" }); },
                   planoAceita: ".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" + (c.planilha ? ",.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : ""),
                   planoRot: v && !v.startsWith("ref:") && v !== "dispensado" ? "📄 " + (R[kn] || "arquivo enviado") + " (trocar)" : c.planilha ? "+ Enviar planilha (Excel, PDF ou Word)" : "+ Enviar arquivo (PDF ou Word)",
                   dispensavel: !!c.dispensavel, dispensado: v === "dispensado",
-                  marcarDispensa: () => this.elResponderVarios(v === "dispensado" ? { [c.k]: "", [kn]: "" } : { [c.k]: "dispensado", [kn]: "dispensado" }),
+                  marcarDispensa: () => this.elResponderVarios(v === "dispensado" ? { [c.k]: "", [kn]: "", [c.k + "_paginas"]: "" } : { [c.k]: "dispensado", [kn]: "dispensado", [c.k + "_paginas"]: "" }),
                   motivo: R[km] || "", onMotivo: this.elResponder(km) };
               })(),
               valor: v, onInput: this.elResponder(c.k),
