@@ -208,8 +208,8 @@ Deno.serve(async (req) => {
         return erro("Envie a planilha de custos da parceria: o plano de trabalho é elaborado a partir dela (valores, especificações e fontes).");
       if (g.documento === "plano_trabalho" && limpo.mao_obra === "Sim" && !limpo.base_planilha_mo)
         return erro("Há mão de obra com dedicação exclusiva: envie também as planilhas de custos e formação de preços (IN 05/2017).");
-      if (g.documento === "edital" && g.regime !== "lei-13019" && !(limpo.base_tr && limpo.base_etp && limpo.base_riscos))
-        return erro("Para elaborar o edital, forneça o ETP, o Termo de Referência ou Projeto Básico e a matriz de riscos (ou informe a dispensa do ETP ou da matriz).");
+      // edital da 14.133/13.303: o assinante escolhe quais documentos do processo usar (TR ou Projeto Básico, ETP, matriz, planilhas);
+      // o que não vier deles o agente pergunta antes do download
       if (limpo.precos_pdfs) {
         let lista: unknown;
         try { lista = JSON.parse(limpo.precos_pdfs); } catch { return erro("Arquivo inválido."); }

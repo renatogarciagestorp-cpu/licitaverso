@@ -480,6 +480,11 @@ def montar_pedido(doc, respostas, pesquisa=None, precos_assinante="", padrao=Fal
                   for rot, txt in BASES_TXT)
         + "".join(f"\n{n} DISPENSADO pelo requisitante. Motivo: {respostas.get(k + '_motivo', '')}\n"
                   for k, n in (("base_etp", "ETP"), ("base_riscos", "MATRIZ DE RISCOS")) if respostas.get(k) == "dispensado")
+        + (f"\nDOCUMENTOS DO PROCESSO QUE O REQUISITANTE ESCOLHEU NÃO USAR NESTA ELABORAÇÃO: {', '.join(nao_usados)}. Não presuma o conteúdo "
+           "deles: use as respostas do questionário e os documentos enviados, e marque [PREENCHER] (vira pergunta ao requisitante) para o "
+           "que só eles trariam, como itens, execução, pagamento e habilitação do TR ou do Projeto Básico.\n"
+           if (nao_usados := [n for k, n in (("base_tr", "Termo de Referência ou Projeto Básico"), ("base_etp", "ETP"), ("base_riscos", "matriz de riscos"))
+                              if doc == "edital" and d["regime"] != "lei-13019" and not respostas.get(k)]) else "")
         + (f"\nPLANO DE TRABALHO DA PARCERIA (fonte do objeto, da realidade, das metas, das ações, dos indicadores, dos prazos, do valor e do "
            f"cronograma do edital; use os dados dele e não deixe [PREENCHER] para o que ele informa):\n{PLANO_TXT}\n" if PLANO_TXT else "")
         + (f"\nMODELO-BASE (texto padrão revisado; adapte e complete):\n{mc.texto_plano(modelo_base(doc, respostas))}\n" if modelo_base(doc, respostas) else "")
@@ -1018,12 +1023,6 @@ def main():
         rot, _, cam = spec.partition("::")
         if pathlib.Path(cam).exists():
             BASES_TXT.append((rot.strip(), pathlib.Path(cam).read_text(encoding="utf-8", errors="replace")[:45000]))
-    if a.doc == "edital" and regime != "lei-13019" and not a.docj:
-        falta = [n for k, n in (("base_tr", "Termo de Referência ou Projeto Básico"), ("base_etp", "ETP"), ("base_riscos", "matriz de riscos"))
-                 if not respostas.get(k)]
-        if falta or not any(r.startswith("Termo") for r, _ in BASES_TXT):
-            sys.exit("O edital exige o ETP, o TR ou Projeto Básico e a matriz de riscos (ou a dispensa justificada do ETP ou da matriz). Falta: "
-                     + (", ".join(falta) or "Termo de Referência ou Projeto Básico"))
     if a.doc == "plano_trabalho" and not a.docj and not any(r.startswith("Planilha de custos") for r, _ in BASES_TXT):
         sys.exit("O plano de trabalho é elaborado a partir da planilha de custos da parceria: envie-a.")
     if (a.doc == "plano_trabalho" and not a.docj and respostas.get("mao_obra") == "Sim"
