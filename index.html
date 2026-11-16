@@ -3479,6 +3479,7 @@
                 <sc-if value="{{ c.ehPlano }}" hint-placeholder-val="{{ false }}">
                   <sc-if value="{{ c.temPlanosSite }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ c.planosSite }}" as="o" hint-placeholder-count="2"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
                   <label class="lve-arq"><input type="file" accept="{{ c.planoAceita }}" sc-camel-on-change="{{ c.onPlanoArq }}"><span>{{ c.planoRot }}</span></label>
+                  <sc-if value="{{ c.temVarios }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><button type="button" class="lvc-chip" sc-camel-on-click="{{ c.limparVarios }}">Retirar estes arquivos</button></div></sc-if>
                   <sc-if value="{{ c.dispensavel }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><button type="button" class="lvc-chip" sc-camel-on-click="{{ c.marcarDispensa }}" aria-pressed="{{ c.dispensado }}">Não há (dispensado)</button></div></sc-if>
                   <sc-if value="{{ c.dispensado }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="Motivo da dispensa" value="{{ c.motivo }}" sc-camel-on-input="{{ c.onMotivo }}" placeholder="Motivo (ex.: dispensa por valor, art. 75, II; IN 58/2022, art. 14)"></sc-if>
                 </sc-if>
@@ -3520,6 +3521,7 @@
                 <sc-if value="{{ c.ehPlano }}" hint-placeholder-val="{{ false }}">
                   <sc-if value="{{ c.temPlanosSite }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><sc-for list="{{ c.planosSite }}" as="o" hint-placeholder-count="2"><button type="button" class="lvc-chip" sc-camel-on-click="{{ o.escolher }}" aria-pressed="{{ o.sel }}">{{ o.nome }}</button></sc-for></div></sc-if>
                   <label class="lve-arq"><input type="file" accept="{{ c.planoAceita }}" sc-camel-on-change="{{ c.onPlanoArq }}"><span>{{ c.planoRot }}</span></label>
+                  <sc-if value="{{ c.temVarios }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><button type="button" class="lvc-chip" sc-camel-on-click="{{ c.limparVarios }}">Retirar estes arquivos</button></div></sc-if>
                   <sc-if value="{{ c.dispensavel }}" hint-placeholder-val="{{ false }}"><div class="lvc-chips"><button type="button" class="lvc-chip" sc-camel-on-click="{{ c.marcarDispensa }}" aria-pressed="{{ c.dispensado }}">Não há (dispensado)</button></div></sc-if>
                   <sc-if value="{{ c.dispensado }}" hint-placeholder-val="{{ false }}"><input type="text" aria-label="Motivo da dispensa" value="{{ c.motivo }}" sc-camel-on-input="{{ c.onMotivo }}" placeholder="Motivo (ex.: dispensa por valor, art. 75, II; IN 58/2022, art. 14)"></sc-if>
                 </sc-if>
@@ -7747,7 +7749,7 @@ const ELAB_AVISO_ITENS_PP = (R) => {
 };
 const ELAB_RAPIDO = {
   etp: [
-    { k: "base_outros", etapa: "contratacao", rot: "Documentos que antecedem o ETP", tipo: "docbase", planilha: true, fonte: [], dica: "Opcional. DFD, pedido da área, levantamento de demanda, pesquisa de preços ou contratos anteriores do mesmo objeto: o agente tira deles a necessidade, as quantidades e os dados de mercado." },
+    { k: "base_outros", varios: true, etapa: "contratacao", rot: "Documentos que antecedem o ETP", tipo: "docbase", planilha: true, fonte: [], dica: "Opcional. DFD, pedido da área, levantamento de demanda, pesquisa de preços ou contratos anteriores do mesmo objeto: o agente tira deles a necessidade, as quantidades e os dados de mercado." },
     { k: "objeto", etapa: "contratacao", rot: "O que você precisa contratar?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
     { k: "necessidade", etapa: "contratacao", rot: "Por que é preciso contratar?", tipo: "texto", obrig: true, ph: "Ex.: o contrato atual termina em março e o quadro próprio não executa esse serviço", dica: "Descrição da necessidade (art. 18, § 1º, I)." },
     { k: "quantidades", etapa: "contratacao", rot: "Quantidades", tipo: "texto", obrig: true, ph: "Ex.: 6.200 m² de área interna e 1.800 m² externa", dica: "Se souber, diga de onde vêm os números: área, consumo do ano anterior, número de usuários (inciso IV)." },
@@ -7775,7 +7777,7 @@ const ELAB_RAPIDO = {
   tr: [
     { k: "base_etp", etapa: "contratacao", rot: "Estudo Técnico Preliminar (ETP)", tipo: "docbase", fonte: ["etp"], dispensavel: true, dica: "Recomendado. O modelo é padrão: o agente ajusta cada cláusula ao que o ETP define (solução, quantidades, requisitos, parcelamento, prazos, riscos). Com o ETP enviado, quantidades e especificações deixam de ser obrigatórias aqui. Se o ETP foi dispensado, marque e informe o motivo." },
     { k: "base_riscos", etapa: "contratacao", rot: "Matriz ou mapa de riscos", tipo: "docbase", fonte: ["riscos"], dispensavel: true, dica: "Os riscos e as medidas da matriz entram no modelo de execução, na fiscalização, nas garantias e nas sanções." },
-    { k: "base_outros", etapa: "contratacao", rot: "Outros documentos do processo", tipo: "docbase", planilha: true, fonte: [], dica: "DFD, pesquisa de preços, memorial descritivo, laudo, parecer técnico ou o TR anterior do mesmo objeto. Junte tudo num só PDF, Word ou Excel." },
+    { k: "base_outros", varios: true, etapa: "contratacao", rot: "Outros documentos do processo", tipo: "docbase", planilha: true, fonte: [], dica: "DFD, pesquisa de preços, memorial descritivo, laudo, parecer técnico ou o TR anterior do mesmo objeto. Junte tudo num só PDF, Word ou Excel." },
     { k: "objeto", etapa: "contratacao", rot: "O que será contratado?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
     { k: "necessidade", etapa: "contratacao", rot: "Fundamentação: número do ETP ou motivo da contratação", tipo: "texto", obrig: true, ph: "Ex.: ETP nº 12/2026, processo 1234/2026", dica: "Alínea \"b\" do art. 6º, XXIII." },
     { k: "quantidades", etapa: "contratacao", rot: "Quantidades", tipo: "texto", obrig: true, obrigSemBase: true, ph: "Ex.: 6.200 m² de área interna" },
@@ -7830,7 +7832,7 @@ const ELAB_RAPIDO = {
     { k: "base_etp", etapa: "contratacao", rot: "Estudo Técnico Preliminar (ETP)", tipo: "docbase", fonte: ["etp"], dispensavel: true, dica: "Recomendado. O modelo é padrão: o agente ajusta cada cláusula ao que o ETP define (solução, quantidades, requisitos, parcelamento, prazos, riscos). Com o ETP enviado, quantidades e especificações deixam de ser obrigatórias aqui. Se o ETP foi dispensado, marque e informe o motivo." },
     { k: "base_riscos", etapa: "contratacao", rot: "Matriz ou mapa de riscos", tipo: "docbase", fonte: ["riscos"], dispensavel: true, dica: "Os riscos e as medidas da matriz entram no modelo de execução, na fiscalização, nas garantias e nas sanções." },
     { k: "base_orcamento", etapa: "contratacao", rot: "Orçamento detalhado (planilha orçamentária)", tipo: "docbase", planilha: true, fonte: [], dica: "Planilha com composições de custos unitários e BDI. Dela saem os serviços, as quantidades, o valor, a data-base do reajuste e as parcelas de maior relevância." },
-    { k: "base_outros", etapa: "contratacao", rot: "Outros documentos do processo", tipo: "docbase", planilha: true, fonte: [], dica: "Memorial descritivo, especificações técnicas, cronograma físico-financeiro, levantamentos, sondagens ou laudos. Junte tudo num só PDF, Word ou Excel." },
+    { k: "base_outros", varios: true, etapa: "contratacao", rot: "Outros documentos do processo", tipo: "docbase", planilha: true, fonte: [], dica: "Memorial descritivo, especificações técnicas, cronograma físico-financeiro, levantamentos, sondagens ou laudos. Junte tudo num só PDF, Word ou Excel." },
     { k: "objeto", etapa: "contratacao", rot: "Qual é a obra ou o serviço de engenharia?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: reforma e acessibilidade da Escola Municipal X" },
     { k: "necessidade", etapa: "contratacao", rot: "Por que é preciso fazer?", tipo: "texto", obrig: true, ph: "Ex.: o telhado tem infiltrações e a escola não tem rampa de acesso" },
     { k: "local", etapa: "contratacao", rot: "Local da obra", tipo: "linha", obrig: true, ph: "Ex.: Rua das Flores, 100, Centro, Maricá" },
@@ -7871,7 +7873,7 @@ const ELAB_RAPIDO = {
     { k: "base_etp", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Estudo Técnico Preliminar (ETP)", tipo: "docbase", fonte: ["etp"], dispensavel: true, dica: "Opcional. Base da solução, do parcelamento e da forma de contratação. Se o ETP foi dispensado no processo, marque e informe o motivo: o edital registra a dispensa." },
     { k: "base_riscos", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Matriz ou mapa de riscos", tipo: "docbase", fonte: ["riscos"], dispensavel: true, dica: "Opcional. Vira a cláusula de matriz de riscos da minuta do contrato. Se não houver matriz no processo, marque e informe o motivo." },
     { k: "base_orcamento", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Planilhas de custos ou orçamento da obra", tipo: "docbase", planilha: true, fonte: [], dica: "Opcional. Planilha de custos e formação de preços (mão de obra exclusiva) ou orçamento detalhado da obra: entram como anexo do edital e fixam valor, custos mínimos e critérios de aceitabilidade." },
-    { k: "base_outros", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Outros documentos do processo", tipo: "docbase", planilha: true, fonte: [], dica: "Opcional. Pesquisa de preços, parecer jurídico anterior, modelo de proposta ou edital anterior do mesmo objeto." },
+    { k: "base_outros", varios: true, etapa: "contratacao", rot: "Outros documentos do processo", tipo: "docbase", planilha: true, fonte: [], dica: "Opcional. Pesquisa de preços, parecer jurídico anterior, modelo de proposta ou edital anterior do mesmo objeto." },
     { k: "plano", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Plano de trabalho da parceria", tipo: "docbase", fonte: ["plano_trabalho"], obrig: true, dica: "O edital traz as informações do plano de trabalho (objeto, metas, ações, indicadores, prazos, valor e cronograma). Escolha um plano feito aqui no Elaborador ou envie o seu em PDF ou Word." },
     { k: "metas", etapa: "contratacao", soRegime: ["lei-13019"], rot: "Objetivos, metas e público atendido", tipo: "texto", ph: "Ex.: atender 300 crianças de 6 a 14 anos no contraturno escolar, em 3 núcleos", dica: "Se deixar em branco, vem do plano de trabalho." },
     { k: "natureza", etapa: "contratacao", soRegime: ["lei-14133", "lei-13303"], rot: "Natureza do objeto", tipo: "chips", obrig: true, op: ["Compra", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva", "Obra ou serviço de engenharia"] },
@@ -7898,6 +7900,7 @@ const ELAB_RAPIDO = {
     ...ELAB_FINAIS
   ],
   direta: [
+    { k: "base_outros", varios: true, etapa: "contratacao", rot: "Outros documentos de apoio", tipo: "docbase", planilha: true, fonte: [], dica: "Opcional. Quantos arquivos quiser (PDF, Word ou Excel), até 300 páginas somando todos os documentos anexados. Pareceres, relatórios, comprovantes da hipótese de dispensa ou inexigibilidade, plano anterior." },
     { k: "objeto", etapa: "contratacao", rot: "O que será contratado (ou qual a parceria)?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: show musical na festa de aniversário do município" },
     { k: "necessidade", etapa: "contratacao", rot: "Por que é preciso contratar?", tipo: "texto", obrig: true, ph: "Ex.: o evento é tradição do calendário oficial e a data está próxima" },
     { k: "hipotese", etapa: "contratacao", soRegime: ["lei-14133"], rot: "Hipótese legal", tipo: "chips", obrig: true, op: ["Dispensa por valor (art. 75, I ou II)", "Emergência ou calamidade (art. 75, VIII)", "Licitação deserta ou fracassada (art. 75, III)", "Outra hipótese de dispensa (art. 75)", "Inexigibilidade: fornecedor exclusivo (art. 74, I)", "Inexigibilidade: artista consagrado (art. 74, II)", "Inexigibilidade: serviço técnico especializado (art. 74, III)", "Inexigibilidade: credenciamento (art. 74, IV)", "Inexigibilidade: imóvel (art. 74, V)"] },
@@ -7918,6 +7921,7 @@ const ELAB_RAPIDO = {
     ...ELAB_FINAIS
   ],
   plano_trabalho: [
+    { k: "base_outros", varios: true, etapa: "contratacao", rot: "Outros documentos de apoio", tipo: "docbase", planilha: true, fonte: [], dica: "Opcional. Quantos arquivos quiser (PDF, Word ou Excel), até 300 páginas somando todos os documentos anexados. Diagnóstico, levantamento de demanda, plano de trabalho anterior, relatórios de execução ou pareceres." },
     { k: "objeto", etapa: "contratacao", rot: "Objeto da parceria", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: atividades socioeducativas no contraturno escolar para crianças e adolescentes" },
     { k: "tipo_parceria", etapa: "contratacao", rot: "Tipo de parceria", tipo: "chips", obrig: true, op: ["Termo de colaboração"], aviso: () => "No termo de fomento, o plano de trabalho é elaborado e apresentado pela organização da sociedade civil, não pela administração. Nesse caso, use O Parecerista para analisar o plano recebido da OSC.",
       dica: "Termo de colaboração: a proposta parte da administração pública, que elabora o plano de trabalho (Lei 13.019, art. 16)." },
@@ -7954,7 +7958,7 @@ const ELAB_RAPIDO = {
   ],
   riscos: [
     { k: "base_etp", etapa: "contratacao", rot: "Estudo Técnico Preliminar (ETP)", tipo: "docbase", fonte: ["etp"], dica: "Opcional. Os riscos saem da solução, do parcelamento, dos prazos e do mercado descritos no ETP." },
-    { k: "base_outros", etapa: "contratacao", rot: "Outros documentos do processo", tipo: "docbase", planilha: true, fonte: ["tr", "projeto_basico"], dica: "Opcional. TR, Projeto Básico, orçamento ou histórico de contratos anteriores (atrasos, sanções, aditivos)." },
+    { k: "base_outros", varios: true, etapa: "contratacao", rot: "Outros documentos do processo", tipo: "docbase", planilha: true, fonte: ["tr", "projeto_basico"], dica: "Opcional. TR, Projeto Básico, orçamento ou histórico de contratos anteriores (atrasos, sanções, aditivos)." },
     { k: "objeto", etapa: "contratacao", rot: "Contratação analisada", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: serviços contínuos de limpeza dos prédios da sede" },
     { k: "necessidade", etapa: "contratacao", rot: "Contexto: fase atual e documentos já feitos", tipo: "texto", obrig: true, ph: "Ex.: ETP concluído (nº 8/2026); TR em elaboração" },
     { k: "natureza", etapa: "contratacao", rot: "Natureza do objeto", tipo: "chips", obrig: true, op: ["Compra", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva", "Obra ou serviço de engenharia"] },
@@ -16289,11 +16293,12 @@ class Component extends DCLogic {
               const n = sel.includes(nome) ? sel.filter((x) => x !== nome) : sel.concat(nome);
               set(c.k, n.join("; "));
             };
-            return { rot: c.rot, obrig: elabObrig(c, R), opcional: !elabObrig(c, R), ph: c.ph || "", dica: c.dica || "",
+            return { rot: c.rot, obrig: elabObrig(c, R), opcional: !elabObrig(c, R), ph: c.ph || "",
+              dica: (c.dica || "") + (c.varios ? " Pode anexar vários arquivos. Documentos de apoio anexados até agora: " + ELAB_BASES_PAG.reduce((t, k) => t + (Number(R[k + "_paginas"]) || 0), 0) + " de " + ELAB_MAX_PAG_BASES + " páginas (PDF; Word e Excel são contados no envio)." : ""),
               ehTexto: c.tipo === "texto", ehLinha: c.tipo === "linha", ehChips: c.tipo === "chips", temExemplos: !!c.exemplos,
               ehPlano: c.tipo === "docbase",
               ...(() => {
-                if (c.tipo !== "docbase") return { temPlanosSite: false, planosSite: [], onPlanoArq: () => {}, planoRot: "", planoAceita: "", dispensavel: false, dispensado: false, marcarDispensa: () => {}, motivo: "", onMotivo: () => {} };
+                if (c.tipo !== "docbase") return { temPlanosSite: false, planosSite: [], onPlanoArq: () => {}, planoRot: "", planoAceita: "", dispensavel: false, dispensado: false, marcarDispensa: () => {}, motivo: "", onMotivo: () => {}, temVarios: false, limparVarios: () => {} };
                 const v = String(R[c.k] || ""), kn = c.k + "_nome", km = c.k + "_motivo";
                 const feitos = (s.analises || []).filter((a) => a.tipo === "geracao" && (c.fonte || []).includes(a.documento) && a.status === "concluida").slice(0, 6);
                 const sigla = { etp: "ETP", tr: "TR", projeto_basico: "Projeto Básico", riscos: "Mapa de riscos", plano_trabalho: "Plano" };
@@ -16302,11 +16307,18 @@ class Component extends DCLogic {
                     return { nome, sel: v === ref, escolher: () => { this.elResponderVarios({ [c.k]: ref, [kn]: nome, [c.k + "_paginas"]: "" }); if (v !== ref) this.elAproveitarRef(a.id); } }; }),
                   onPlanoArq: async (e) => { const f0 = e && e.target && e.target.files && e.target.files[0]; let pg = 0;
                     if (f0 && /\.pdf$/i.test(f0.name)) { pg = (await this.lerPdf(f0)).paginas || 0;
-                      const outras = ELAB_BASES_PAG.reduce((t, k) => t + (k === c.k ? 0 : Number(R[k + "_paginas"]) || 0), 0);
+                      const outras = ELAB_BASES_PAG.reduce((t, k) => t + (k === c.k && !c.varios ? 0 : Number(R[k + "_paginas"]) || 0), 0);
                       if (outras + pg > ELAB_MAX_PAG_BASES) { try { e.target.value = ""; } catch (er) {} this.setState((st) => ({ el: { ...st.el, erro: f0.name + " tem " + pg + " páginas; somado aos outros documentos (" + outras + "), passa do limite de " + ELAB_MAX_PAG_BASES + " páginas. Envie só as partes que interessam a esta elaboração." } })); return; } }
-                    const r = await this.elSubir(e, c.k, Object.assign({ ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }, c.planilha ? { ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" } : {}), 15); if (r) this.elResponderVarios({ [c.k]: r.arquivo, [kn]: r.nome, [c.k + "_paginas"]: pg ? String(pg) : "" }); },
+                    const r = await this.elSubir(e, c.k, Object.assign({ ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }, c.planilha ? { ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" } : {}), 15); if (!r) return;
+                    const lista = c.varios && v && !v.startsWith("ref:") && v !== "dispensado";
+                    if (lista) this.elResponderVarios({ [c.k]: v + "\n" + r.arquivo, [kn]: String(R[kn] || "") + "\n" + r.nome, [c.k + "_paginas"]: String((Number(R[c.k + "_paginas"]) || 0) + pg) });
+                    else this.elResponderVarios({ [c.k]: r.arquivo, [kn]: r.nome, [c.k + "_paginas"]: pg ? String(pg) : "" }); },
                   planoAceita: ".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" + (c.planilha ? ",.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" : ""),
-                  planoRot: v && !v.startsWith("ref:") && v !== "dispensado" ? "📄 " + (R[kn] || "arquivo enviado") + " (trocar)" : c.planilha ? "+ Enviar planilha (Excel, PDF ou Word)" : "+ Enviar arquivo (PDF ou Word)",
+                  planoRot: c.varios && v && !v.startsWith("ref:") && v !== "dispensado"
+                    ? "📄 " + String(R[kn] || "").split("\n").filter(Boolean).join(" · ") + " (+ adicionar outro)"
+                    : v && !v.startsWith("ref:") && v !== "dispensado" ? "📄 " + (R[kn] || "arquivo enviado") + " (trocar)" : c.planilha ? "+ Enviar planilha (Excel, PDF ou Word)" : "+ Enviar arquivo (PDF ou Word)",
+                  temVarios: !!c.varios && !!v && !v.startsWith("ref:") && v !== "dispensado",
+                  limparVarios: () => this.elResponderVarios({ [c.k]: "", [kn]: "", [c.k + "_paginas"]: "" }),
                   dispensavel: !!c.dispensavel, dispensado: v === "dispensado",
                   marcarDispensa: () => this.elResponderVarios(v === "dispensado" ? { [c.k]: "", [kn]: "", [c.k + "_paginas"]: "" } : { [c.k]: "dispensado", [kn]: "dispensado", [c.k + "_paginas"]: "" }),
                   motivo: R[km] || "", onMotivo: this.elResponder(km) };
