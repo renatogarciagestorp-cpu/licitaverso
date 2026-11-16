@@ -105,7 +105,7 @@ Deno.serve(async (req) => {
         return erro("Informe se a contratação envolve dedicação exclusiva de mão de obra e se é obra ou serviço de engenharia.");
       }
       const lista = Array.isArray(corpo.documentos) ? corpo.documentos : [];
-      if (lista.length < 1 || lista.length > MAX_DOCS_ANALISE) return erro(`Envie de 1 a ${MAX_DOCS_ANALISE} documentos.`);
+      if (lista.length < 1 || lista.length > MAX_DOCS_ANALISE) return erro(`Envie de 1 a ${MAX_DOCS_ANALISE} documentos (até ${MAX_PAGINAS_ANALISE} páginas no total).`);
       const prefixo = usuario.id + "/analises-docs/";
       const documentos: { tipo: string; arquivo: string; nome_arquivo: string; paginas: number | null }[] = [];
       for (const x of lista) {
@@ -115,17 +115,16 @@ Deno.serve(async (req) => {
         const extOk = def.formato === "pdf" ? /\.pdf$/i.test(arq) : /\.(pdf|xlsx|xlsm|xls|ods)$/i.test(arq);
         if (!arq.startsWith(prefixo) || arq.includes("..") || !extOk) return erro(`Arquivo inválido para ${def.nome}.`);
         const pag = Number(x?.paginas ?? 0) || null;
-        if (pag && pag > MAX_PAGINAS_ANALISE) return erro(`${def.nome}: o limite é de ${MAX_PAGINAS_ANALISE} páginas por documento.`);
+        if (pag && pag > MAX_PAGINAS_ANALISE) return erro(`${def.nome}: o limite é de ${MAX_PAGINAS_ANALISE} páginas somando todos os documentos.`);
         documentos.push({ tipo, arquivo: arq, nome_arquivo: String(x?.nome_arquivo ?? "").slice(0, 160), paginas: pag });
       }
-      // franquia (Pro, teste e equipes): até 300 páginas somando os documentos; acima disso, análise avulsa
+      // quantos documentos o assinante quiser, até 300 páginas somadas (a fila confere de novo pelo PDF)
       const totalPaginas = documentos.reduce((t, d) => t + (d.paginas ?? 0), 0);
-      if ((an.cobranca === "franquia_pro" || an.cobranca === "franquia_org") && totalPaginas > MAX_PAGINAS_FRANQUIA) {
-        return erro(`A análise incluída no plano aceita até ${MAX_PAGINAS_FRANQUIA} páginas somando os documentos (enviadas: ${totalPaginas}). `
+      if (totalPaginas > MAX_PAGINAS_ANALISE) {
+        return erro(`A análise aceita até ${MAX_PAGINAS_ANALISE} páginas somando os documentos (enviadas: ${totalPaginas}). `
           + "Retire anexos que não precisam de análise ou divida o envio em duas análises.");
       }
       const tipos = new Set(documentos.map((d) => d.tipo));
-      if (tipos.size !== documentos.length) return erro("Cada tipo de documento só pode ser enviado uma vez.");
       if (regime !== "lei-13019" && (tipos.has("plano_trabalho") || tipos.has("planilha_parceria"))) {
         return erro("Plano de trabalho e planilha de custos da parceria são documentos da Lei 13.019/2014.");
       }
@@ -515,7 +514,7 @@ Deno.serve(async (req) => {
         }
       }
       valor = franquia ? 0 : precoAnalise(vigente ?? null);
-      titulo = geracao ? `Licitacon · Elaboração de ${DOC_GERACAO[docG]} pelo Elaborador` : "Licitacon · Análise pelo Parecerista (até 3 documentos)";
+      titulo = geracao ? `Licitacon · Elaboração de ${DOC_GERACAO[docG]} pelo Elaborador` : "Licitacon · Análise pelo Parecerista (até 300 páginas)";
       const { data: nova, error } = await admin.from("analises").insert({
         usuario_id: usuario.id, ...base, arquivo: null, pncp_link: null,
         cobranca: franquia ? "franquia_pro" : "avulsa", plano: vigente ?? null, valor,
