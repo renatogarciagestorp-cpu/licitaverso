@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
           a.cobranca === "cortesia_boas_vindas"
             ? "Sua análise grátis continua disponível. Você pode enviar os documentos de novo."
           : (a.cobranca === "franquia_pro" || a.cobranca === "franquia_org")
-            ? "Esta análise não foi descontada da cota semanal. Você pode enviar o documento de novo."
+            ? "Esta análise não foi descontada da cota do plano. Você pode enviar o documento de novo."
             : "Como a análise foi paga, nossa equipe vai entrar em contato em até 1 dia útil para reprocessar ou estornar o valor.",
         ], { texto: "Ver minhas análises", url: link }, undefined, "Andamento de consultoria");
         await enviarEmail({ email: p.email, nome: p.nome }, `Análise do ${doc}: não foi possível concluir`, html);

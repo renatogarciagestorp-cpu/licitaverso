@@ -4,7 +4,7 @@
 // POST { acao: "criar", tipo: "plano", plano, ciclo, parcelas, contratante, metodo, retorno }
 // POST { acao: "criar", tipo: "consultoria", modalidade, assunto, descricao, metodo, aceite, termo_versao, anexos, retorno }
 // POST { acao: "criar", tipo: "analise", aceite, termo_versao, metodo, retorno }
-//      Etapa 1: Pro com cota na semana recebe a análise sem pagamento; demais pagam antes de enviar os documentos.
+//      Etapa 1: Pro com cota no mês (teste: na semana) recebe a análise sem pagamento; demais pagam antes de enviar os documentos.
 // POST { acao: "enviar_analise", id, regime, obras, mao_de_obra, documentos: [{tipo, arquivo, nome_arquivo, paginas}] (1 a 3),
 //        cct: {arquivo, nome_arquivo}, normas: [ids], pncp_link }  — etapa 2: documentos; a análise entra na fila.
 // POST { acao: "conferir", referencia: "assinatura:<id>" | "consultoria:<id>" | "analise:<id>" }
@@ -12,7 +12,7 @@
 import {
   aplicarPagamento, clienteServico, conferirRenovacao, CORS, env, erro, mp, resposta, usuarioDaRequisicao, nivelDoToken } from "../_shared/comum.ts";
 import {
-  CONSULTORIA, type Ciclo, FRANQUIA_PRO_SEMANA, inicioMesBR, MAX_DOCS_ANALISE, MAX_PAGINAS_ANALISE, type Modalidade, type Plano, PLANOS,
+  CONSULTORIA, type Ciclo, FRANQUIA_PRO_MES, FRANQUIA_PRO_SEMANA, inicioMesBR, MAX_DOCS_ANALISE, MAX_PAGINAS_ANALISE, MAX_PAGINAS_FRANQUIA, type Modalidade, type Plano, PLANOS,
   precoAnalise, precoConsultoria, DOC_GERACAO, REGIMES_GERACAO, MAX_RESPOSTAS_GERACAO, precoPlano, TIPOS_DOC_ANALISE, FRANQUIA_EQUIPE_MES, MIN_ACESSOS_EQUIPE, MAX_ACESSOS_EQUIPE, precoEquipe,
 } from "../_shared/precos.ts";
 import { avisarEquipeNovaConsultoria } from "../_shared/consultoria.ts";
@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
     // ---------------------------------------------------------------- enviar documentos da análise (etapa 2)
     if (acao === "enviar_analise") {
       const id = String(corpo.id ?? "");
-      const { data: an } = await admin.from("analises").select("id, usuario_id, status, tipo").eq("id", id).maybeSingle();
+      const { data: an } = await admin.from("analises").select("id, usuario_id, status, tipo, cobranca").eq("id", id).maybeSingle();
       if (!an || an.usuario_id !== usuario.id || (an.tipo && an.tipo !== "analise")) return erro("Análise não encontrada.", 404);
       if (an.status !== "aguardando_documentos") return erro("Esta análise não está aguardando documentos (verifique o pagamento).");
       const regime = ["lei-14133", "lei-13303", "lei-13019"].includes(String(corpo.regime)) ? String(corpo.regime) : "";
@@ -117,6 +117,12 @@ Deno.serve(async (req) => {
         const pag = Number(x?.paginas ?? 0) || null;
         if (pag && pag > MAX_PAGINAS_ANALISE) return erro(`${def.nome}: o limite é de ${MAX_PAGINAS_ANALISE} páginas por documento.`);
         documentos.push({ tipo, arquivo: arq, nome_arquivo: String(x?.nome_arquivo ?? "").slice(0, 160), paginas: pag });
+      }
+      // franquia (Pro, teste e equipes): até 300 páginas somando os documentos; acima disso, análise avulsa
+      const totalPaginas = documentos.reduce((t, d) => t + (d.paginas ?? 0), 0);
+      if ((an.cobranca === "franquia_pro" || an.cobranca === "franquia_org") && totalPaginas > MAX_PAGINAS_FRANQUIA) {
+        return erro(`A análise incluída no plano aceita até ${MAX_PAGINAS_FRANQUIA} páginas somando os documentos (enviadas: ${totalPaginas}). `
+          + "Retire anexos que não precisam de análise ou divida o envio em duas análises.");
       }
       const tipos = new Set(documentos.map((d) => d.tipo));
       if (tipos.size !== documentos.length) return erro("Cada tipo de documento só pode ser enviado uma vez.");
@@ -446,7 +452,7 @@ Deno.serve(async (req) => {
     } else if (corpo.tipo === "analise" || corpo.tipo === "geracao") {
       // Etapa 1 do agente: aceite das condições e pagamento (ou cota do Pro). Depois: documentos (acao "enviar_analise")
       // ou, na elaboração de ETP/TR/Projeto Básico, as respostas do questionário (acao "enviar_geracao").
-      // A franquia do Pro é a mesma para analisar e elaborar (2 por semana; equipes: 6 por acesso por mês, somados).
+      // A franquia do Pro é a mesma para analisar e elaborar (8 por mês; teste: 2 na semana; equipes: 6 por acesso por mês, somados).
       const geracao = corpo.tipo === "geracao";
       const docG = geracao ? String(corpo.documento ?? "") : "";
       if (geracao && !DOC_GERACAO[docG]) return erro("Escolha o documento a criar.");
@@ -487,14 +493,14 @@ Deno.serve(async (req) => {
         }
       }
       let franquia = false;
-      // teste de 7 dias: a mesma franquia do Pro (2 por semana, somando análises e documentos)
+      // Pro: 8 por mês; teste de 7 dias: 2 na semana (somando análises e documentos)
       if ((vigente === "pro" || vigente === "teste") && !orgPro) {
         // reaproveita uma análise da cota ainda sem documentos, para não consumir a cota duas vezes
         const { data: pendente } = await admin.from("analises").select("id").eq("usuario_id", usuario.id)
           .eq("status", "aguardando_documentos").eq("cobranca", "franquia_pro").eq("tipo", base.tipo).eq("documento", base.documento).match(geracao ? { regime: regG } : {}).limit(1).maybeSingle();
         if (pendente) return resposta({ gratuito: true, referencia: `analise:${pendente.id}`, id: pendente.id });
-        const { data: usadas } = await admin.rpc("analises_usadas_semana", { uid: usuario.id });
-        franquia = Number(usadas ?? 0) < FRANQUIA_PRO_SEMANA;
+        const { data: usadas } = await admin.rpc(vigente === "pro" ? "analises_usadas_mes" : "analises_usadas_semana", { uid: usuario.id });
+        franquia = Number(usadas ?? 0) < (vigente === "pro" ? FRANQUIA_PRO_MES : FRANQUIA_PRO_SEMANA);
       }
       // primeira análise grátis (uma por CPF e por conta, com e-mail confirmado), quando não há franquia
       if (!franquia && !geracao) {
@@ -518,9 +524,9 @@ Deno.serve(async (req) => {
       }).select("id").single();
       if (error) throw error;
       if (franquia) {
-        // confere de novo depois de gravar: pedidos simultâneos não passam da franquia semanal do Pro
-        const { data: depois } = await admin.rpc("analises_usadas_semana", { uid: usuario.id });
-        if (Number(depois ?? 0) <= FRANQUIA_PRO_SEMANA) return resposta({ gratuito: true, referencia: `analise:${nova.id}`, id: nova.id });
+        // confere de novo depois de gravar: pedidos simultâneos não passam da franquia do Pro (ou do teste)
+        const { data: depois } = await admin.rpc(vigente === "pro" ? "analises_usadas_mes" : "analises_usadas_semana", { uid: usuario.id });
+        if (Number(depois ?? 0) <= (vigente === "pro" ? FRANQUIA_PRO_MES : FRANQUIA_PRO_SEMANA)) return resposta({ gratuito: true, referencia: `analise:${nova.id}`, id: nova.id });
         franquia = false;
         valor = precoAnalise(vigente ?? null);
         const { error: eAj } = await admin.from("analises").update({ cobranca: "avulsa", valor, status: "aguardando_pagamento" }).eq("id", nova.id);

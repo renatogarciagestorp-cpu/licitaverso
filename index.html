@@ -2709,7 +2709,7 @@
               <li>Bens, serviços e obras</li><li>Pesquisa de preços oficial</li><li>Conferência antes da entrega</li><li>Word e PDF para editar</li>
             </ul>
             <div class="lvh-ctas"><button class="lvh-btn" sc-camel-on-click="{{ goElaborar }}">Criar um documento</button></div>
-            <p class="lvh-ban-micro">Pago por documento, com desconto de assinante · no Pro, 2 por semana incluídos (somados ao Parecerista).</p>
+            <p class="lvh-ban-micro">Pago por documento, com desconto de assinante · no Pro, 8 por mês incluídos (somados ao Parecerista).</p>
           </div>
           <div class="lvh-art" data-lvui="elaborador">
             <div class="lvh-art-doc" aria-hidden="true">
@@ -7373,7 +7373,7 @@ const INSTITUCIONAL = {
       ] },
       { titulo: "5. Conduta no fórum", texto: "O fórum é um ambiente profissional. É proibido publicar dados pessoais de terceiros, informação sigilosa, documento sob restrição de acesso, conteúdo ofensivo, discriminatório, publicidade não autorizada ou qualquer pedido de auxílio para fraudar procedimento licitatório. Moderadores podem editar a classificação de tópicos, mesclar conversas, remover conteúdo e suspender contas reincidentes. Você mantém a titularidade do que escreve e nos concede licença não exclusiva para exibir esse conteúdo na plataforma.", itens: [] },
       { titulo: "6. Cursos e consultoria", texto: "Cursos são hospedados na plataforma Hotmart, onde ficam as aulas, os materiais e o certificado. A consultoria técnica é prestada pelo Licitacon nas modalidades por escrito, vídeo gravado e reunião ao vivo, com escopo, prazo e preço informados antes do pagamento e condições aceitas no pedido. Assinantes Básico têm 10% de desconto, Premium 15% e Pro 30%; o Pro inclui ainda 1 consultoria por escrito por mês, sem acúmulo. A consultoria não é consultoria jurídica nem parecer jurídico e não substitui a assessoria jurídica do órgão.", itens: [] },
-      { titulo: "7. Análise de documentos com inteligência artificial", texto: "A análise de documentos gera um parecer técnico automatizado, a partir do roteiro de verificação do Licitacon, da Lei nº 14.133/2021, do texto oficial dos dispositivos citados e da jurisprudência da Biblioteca. O parecer é opinativo: aponta todos os aspectos identificados, dos críticos aos de baixa vulnerabilidade, e recomenda providências, mas não vincula quem o recebe; a decisão de ajustar ou manter cada ponto, e a responsabilidade por ela, é exclusivamente do destinatário (STF, MS 24.631/DF; Decreto-Lei nº 4.657/1942, art. 28). Não é parecer jurídico e não substitui a análise jurídica prévia do órgão (Lei nº 14.133/2021, art. 53). A inteligência artificial pode errar: confira cada apontamento no documento e na fonte oficial. O documento é processado por provedor contratado (Anthropic), pela API comercial, sem uso do conteúdo para treinar modelos. O Pro inclui 2 análises por semana, sem acúmulo; as demais são avulsas, com o preço e as condições informados antes do pagamento.", itens: [] },
+      { titulo: "7. Análise de documentos com inteligência artificial", texto: "A análise de documentos gera um parecer técnico automatizado, a partir do roteiro de verificação do Licitacon, da Lei nº 14.133/2021, do texto oficial dos dispositivos citados e da jurisprudência da Biblioteca. O parecer é opinativo: aponta todos os aspectos identificados, dos críticos aos de baixa vulnerabilidade, e recomenda providências, mas não vincula quem o recebe; a decisão de ajustar ou manter cada ponto, e a responsabilidade por ela, é exclusivamente do destinatário (STF, MS 24.631/DF; Decreto-Lei nº 4.657/1942, art. 28). Não é parecer jurídico e não substitui a análise jurídica prévia do órgão (Lei nº 14.133/2021, art. 53). A inteligência artificial pode errar: confira cada apontamento no documento e na fonte oficial. O documento é processado por provedor contratado (Anthropic), pela API comercial, sem uso do conteúdo para treinar modelos. O Pro inclui 8 por mês, somando análises e documentos criados, sem acúmulo; as demais são avulsas, com o preço e as condições informados antes do pagamento.", itens: [] },
       { titulo: "8. Propriedade intelectual", texto: "Textos normativos, acórdãos, súmulas e pareceres são documentos públicos e não nos pertencem. Já a organização da base, a taxonomia de temas, as notas editoriais, a marca, o software e o design da plataforma são protegidos. É vedada a extração automatizada em massa (scraping, mirroring ou revenda) do conteúdo do Licitacon sem autorização escrita.", itens: [] },
       { titulo: "9. Disponibilidade e limitação de responsabilidade", texto: "Trabalhamos para manter a plataforma sempre disponível, mas não garantimos operação ininterrupta nem ausência de erro em documento coletado de fonte oficial. Nossa responsabilidade, nos limites da lei aplicável, fica restrita ao valor pago por você nos 12 meses anteriores ao evento. Nada aqui afasta direitos do consumidor previstos em lei.", itens: [] },
       { titulo: "10. Alterações, encerramento e foro", texto: "Mudanças relevantes nestes Termos são avisadas por e-mail e na plataforma com 30 dias de antecedência; o uso continuado após esse prazo significa aceitação. Você pode encerrar a conta quando quiser. Aplica-se a lei brasileira, com foro do domicílio do consumidor, e buscamos resolver conflitos primeiro por canal direto ou plataformas de mediação antes de qualquer medida judicial.", itens: [] }
@@ -7603,6 +7603,7 @@ const AN_TIPOS = [
 const AN_TIPO = Object.fromEntries(AN_TIPOS.map(([id, nome, formato, dica]) => [id, { id, nome, formato, dica }]));
 const AN_MAX_DOCS = 3;
 const AN_MAX_PAGINAS = 200;
+const AN_MAX_PAGINAS_FRANQUIA = 300; // análise da franquia (Pro, teste e equipes): soma das páginas
 const AN_ANEXO_MB = 25;
 const AN_PRECO = 290;
 const DESCONTO_FUNDADOR = 0.3; // o mesmo de supabase/functions/_shared/precos.ts
@@ -8035,14 +8036,14 @@ const AN_DESCONTO = { basico: 0.1, premium: 0.15, pro: 0.3 };
 const AN_MAX_MB = 25;
 const AN_MAX_NORMAS = 3;
 const AN_NORMA_MB = 15;
-const AN_TERMO_VERSAO = "2026-10-31";
+const AN_TERMO_VERSAO = "2026-11-13";
 const AN_TERMO = [
   "Natureza: parecer técnico em gestão de licitações e contratos, elaborado de forma automatizada por inteligência artificial a partir do roteiro de verificação do Licitacon. Não é parecer jurídico e não substitui a análise jurídica prévia do órgão (Lei 14.133/2021, art. 53).",
   "Parecer opinativo: o parecer aponta todos os aspectos identificados, dos críticos aos de baixa vulnerabilidade, e recomenda providências, mas não vincula quem o recebe. A decisão de ajustar ou manter cada ponto, e a responsabilidade por ela, é exclusivamente sua (STF, MS 24.631/DF; Decreto-Lei 4.657/1942, art. 28).",
   "Escopo: até 3 documentos por análise, escolhidos por você entre ETP, termo de referência, matriz de riscos, edital, memória de cálculo, plano de trabalho, planilha de custos de mão de obra (IN 05/2017), planilha orçamentária de obras e serviços de engenharia e planilha de custos da parceria (Lei 13.019), cada um com até 200 páginas e 25 MB. Documentos digitalizados (imagem) são lidos por reconhecimento óptico de caracteres (OCR); com digitalização de baixa qualidade, trechos podem ser lidos com erro. Regime: a análise segue a lei que rege a contratação (Lei 14.133/2021; Lei 13.303/2016, para empresas estatais; ou Lei 13.019/2014, para parcerias com organizações da sociedade civil). Obras e serviços de engenharia exigem a planilha orçamentária; serviços com dedicação exclusiva de mão de obra exigem a planilha de custos de mão de obra e, como anexo extra, a convenção coletiva; parcerias exigem a planilha de custos da parceria. Sem esses arquivos não é possível avaliar a economicidade, a vantajosidade e o sobrepreço. Arquivo ou trecho ilegível não é presumido: o parecer registra que não foi possível analisá-lo. A análise considera a legislação nacional aplicável a todos os entes (Constituição Federal, Lei 14.133/2021, LRF, LC 123/2006, LINDB, entre outras) e, como parâmetro técnico, instruções normativas, cadernos e manuais federais e do TCU.",
   "Regulamentação específica (opcional): você pode anexar até 3 normas próprias (decreto estadual ou municipal, regulamento interno de licitações de estatal etc.), em PDF ou Word, que o agente aplica em complemento à legislação nacional, apontando eventual conflito. Você é responsável pela vigência e fidelidade do texto enviado.",
   "Prazo: o tempo de análise depende da quantidade de documentos, da qualidade dos arquivos (documento digitalizado exige reconhecimento de texto) e da complexidade da contratação. A estimativa é calculada na página de envio, a partir dos arquivos escolhidos. Você recebe um aviso por e-mail e baixa o parecer em PDF e Word nesta página.",
-  "Valores e cota: análise a R$ 290,00 para quem não é assinante; assinantes do Básico têm 10% de desconto e do Premium, 15%, e pagam antes de enviar os documentos. O plano Pro inclui 2 análises por semana (de segunda a domingo, sem acúmulo) sem custo adicional; a partir da 3ª na semana, a análise sai com 30% de desconto. Análise que não puder ser concluída por falha técnica não consome a cota; a paga é reprocessada ou estornada.",
+  "Valores e cota: análise a R$ 290,00 para quem não é assinante; assinantes do Básico têm 10% de desconto e do Premium, 15%, e pagam antes de enviar os documentos. O plano Pro inclui 8 por mês (do dia 1º ao último dia do mês, sem acúmulo), somando análises e documentos criados, sem custo adicional; acima disso, a análise sai com 30% de desconto. A análise incluída no plano aceita até 300 páginas, somando os documentos. Análise que não puder ser concluída por falha técnica não consome a cota; a paga é reprocessada ou estornada.",
   "Dados: o documento é processado por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos. Os arquivos ficam em armazenamento privado, acessíveis só a você e à equipe do Licitacon, e são apagados automaticamente 30 dias após o fim da análise. O parecer fica 7 dias no site para você baixar ou salvar no seu Google Drive. Não envie documento cuja divulgação a prestadores de serviço seja vedada e retire dados pessoais desnecessários (Lei 13.709/2018).",
   "Custo da mão de obra: o custo total do profissional na planilha (IN 05/2017) é comparado com a referência de mercado do estado divulgada pelo Salario.com.br (dados do Novo CAGED). Essa fonte não é parâmetro normativo; a comparação é indicativa e orienta a revisão da planilha.",
   "Análise de preços: quando o documento traz o orçamento estimado, o sistema compara os valores com preços homologados em contratações equivalentes publicadas no PNCP (órgãos do mesmo estado, últimos 12 meses, Lei 14.133/2021). O resultado é indicativo e depende da equivalência das especificações; não substitui a pesquisa de preços do processo.",
@@ -9960,12 +9961,12 @@ const CALC_FERRAMENTAS = [
       "Relatório da comparação em PDF e Excel, com o que mudou em cada etapa"],
     plano: "Em todos os planos pagos e no teste grátis de 7 dias." }
 ];
-const ELAB_TERMO_VERSAO = "elab-2";
+const ELAB_TERMO_VERSAO = "elab-3";
 const ELAB_TERMO = [
   "Natureza: minuta de Estudo Técnico Preliminar, Termo de Referência ou Projeto Básico elaborada de forma automatizada por inteligência artificial, a partir das informações que você prestar e da pesquisa em bases oficiais. Não substitui a análise técnica e jurídica do órgão (Lei 14.133/2021, art. 53).",
   "Revisão obrigatória: o documento é entregue para revisão. Conferir os dados, as escolhas e os fundamentos, ajustar o que for preciso e assinar é responsabilidade de quem assina o documento.",
   "Pagamento antes da elaboração: a elaboração é contratada por documento (ETP, TR, Projeto Básico, edital com as minutas, contratação direta, mapa de riscos ou plano de trabalho da parceria), na lei da contratação escolhida (Lei 14.133/2021, Lei 13.303/2016 com o RILC da estatal ou Lei 13.019/2014). Depois do pagamento (ou do uso da franquia do Pro), você preenche as informações e envia; o documento contratado fica liberado até ser enviado.",
-  "Valores e franquia: R$ 290,00 por documento para quem não é assinante; assinantes do Básico têm 10% de desconto e do Premium, 15%. O Pro inclui 2 por semana, somando análises e documentos criados (equipes: 6 por acesso por mês); a partir do 3º, 30% de desconto. Elaboração que não puder ser concluída por falha técnica não consome a franquia; a paga é refeita ou estornada.",
+  "Valores e franquia: R$ 290,00 por documento para quem não é assinante; assinantes do Básico têm 10% de desconto e do Premium, 15%. O Pro inclui 8 por mês, somando análises e documentos criados (equipes: 6 por acesso por mês); acima disso, 30% de desconto. Elaboração que não puder ser concluída por falha técnica não consome a franquia; a paga é refeita ou estornada.",
   "Perguntas durante a elaboração: se faltar alguma informação que só o órgão tem, o agente pergunta nesta página e completa o documento sem novo custo.",
   "Pesquisa de mercado: contratações do PNCP e preços praticados do Compras.gov.br, primeiro do seu estado. Os valores do ETP são estimativa preliminar e não substituem a pesquisa de preços do art. 23 da Lei 14.133/2021.",
   "Dados: as informações e os arquivos enviados (modelo, logo, documentos de preço) são processados por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos, e ficam em armazenamento privado, acessível só a você e à equipe do Licitacon (Lei 13.709/2018).",
@@ -10075,10 +10076,10 @@ const EQ_INCLUI = {
   pro: ["Tudo do Pro para cada acesso", "O Parecerista e O Elaborador: 6 por acesso por mês, somados para a equipe, entre analisar e criar documentos", "Agente das planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana para a equipe", "1 consultoria por escrito por mês para a organização; as demais com 30% de desconto"]
 };
 const PLANO_BENEFICIOS = {
-  teste: ["Leitura do fórum da comunidade", "O Parecerista e O Elaborador: 2 por semana sem custo, somados, como no Pro", "Calculadora, planilhas de mão de obra e comparação de planilhas (o agente de IA das planilhas é do Pro)", "Biblioteca Jurídica completa (grátis com a conta)", "Sem cobrança automática ao final"],
+  teste: ["Leitura do fórum da comunidade", "O Parecerista e O Elaborador: 2 sem custo durante o teste, somados", "Calculadora, planilhas de mão de obra e comparação de planilhas (o agente de IA das planilhas é do Pro)", "Biblioteca Jurídica completa (grátis com a conta)", "Sem cobrança automática ao final"],
   basico: ["Fórum: leitura e participação", "Calculadora: reajuste por índice, planilhas de mão de obra (IN 05/2017) e comparação de planilhas", "Cursos com 10% de desconto", "Consultoria técnica com 10% de desconto", "O Parecerista: análise com 10% de desconto (R$ 261,00)"],
   premium: ["Tudo do Básico", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "O Parecerista: análise com 15% de desconto (R$ 246,50)", "Prioridade na agenda do especialista"],
-  pro: ["Tudo do Premium", "Agente de IA nas planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "O Parecerista e O Elaborador: 2 por semana sem custo, entre analisar e criar documentos; a partir do 3º, 30% de desconto (R$ 203,00)", "Suporte prioritário"]
+  pro: ["Tudo do Premium", "Agente de IA nas planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "O Parecerista e O Elaborador: 8 por mês sem custo, entre analisar e criar documentos (até 300 páginas por análise); acima disso, 30% de desconto (R$ 203,00)", "Suporte prioritário"]
 };
 const METODO_NOME = { pix: "Pix", cartao: "Cartão de crédito", credit_card: "Cartão de crédito", debito: "Cartão de débito", debit_card: "Cartão de débito", boleto: "Boleto", ticket: "Boleto", bank_transfer: "Pix", account_money: "Saldo Mercado Pago", cpgf: "Cartão corporativo (CPGF)", teste: "Teste gratuito", manual: "Lançamento manual" };
 const PLANO_CHAVE = { "Teste": "teste", "Básico": "basico", "Premium": "premium", "Pro": "pro" };
@@ -12029,7 +12030,7 @@ class Component extends DCLogic {
   }
 
   // ------------------------------------------------------------ análise de documentos
-  // franquia semanal de análises e documentos: Pro e teste de 7 dias (2 por semana, somados); equipes Pro: por mês
+  // franquia de análises e documentos, somados: Pro 8 por mês; teste de 7 dias 2 na semana; equipes Pro: 6 por acesso por mês
   temFranquia() { const s = this.state; return (s.plano === "pro" || s.plano === "teste") && !!s.cotaAnalise; }
   temFranquiaLivre() { const c = this.state.cotaAnalise; return this.temFranquia() && Number(c.usadas) < Number(c.limite); }
   precoAnalise() {
@@ -15390,6 +15391,10 @@ class Component extends DCLogic {
     const falta = this.tiposExigidos(an).find((t) => !tipos.includes(t));
     if (falta) { erro("Inclua entre os documentos: " + AN_TIPO[falta].nome + ". Sem esse arquivo não é possível avaliar a economicidade e o sobrepreço."); return; }
     if (an.mdo && !an.cct) { erro("Anexe a convenção ou acordo coletivo usado na composição do salário (PDF ou Word)."); return; }
+    const totalPg = docs.reduce((t, d) => t + (d.paginas || 0), 0);
+    if ((cred.cobranca === "franquia_pro" || cred.cobranca === "franquia_org") && totalPg > AN_MAX_PAGINAS_FRANQUIA) {
+      erro("A análise incluída no plano aceita até " + AN_MAX_PAGINAS_FRANQUIA + " páginas somando os documentos (escolhidas: " + totalPg + "). Retire anexos que não precisam de análise ou divida o envio em duas análises."); return;
+    }
     this.setState({ an: { ...an, enviando: true, erro: "", ok: "" } });
     const mime = { ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ".xlsm": "application/vnd.ms-excel.sheet.macroEnabled.12",
@@ -16158,15 +16163,15 @@ class Component extends DCLogic {
                 "Seu modelo do órgão, logo e rodapé, se você enviar; entrega em Word (editável) e PDF"],
               elPrecisa: ["O que precisa contratar, por quê e em que quantidade", "Especificações e requisitos essenciais",
                 "Gestor, fiscais, fonte orçamentária e quem assina", "Opcional: modelo em Word, logo, contrato anterior e referências de preço"],
-              elPlanoTexto: !s.usuario ? "Valor por documento: R$ 290,00. Assinantes Básico e Premium têm desconto; o Pro inclui 2 por semana, somando análises e documentos."
+              elPlanoTexto: !s.usuario ? "Valor por documento: R$ 290,00. Assinantes Básico e Premium têm desconto; o Pro inclui 8 por mês, somando análises e documentos."
                 : lib ? "Você já tem uma elaboração liberada aguardando as informações. Siga para o preenchimento."
                 : s.admin ? "Conta de administrador: elaboração sem cobrança."
-                : this.temFranquia() ? (resta > 0 ? "Você tem " + resta + " de " + c.limite + (c.equipe ? " neste mês (equipe " + c.organizacao + ")" : " nesta semana") + ", somando análises e documentos, sem custo adicional" + (s.plano === "teste" ? ", durante o teste grátis." : ".")
+                : this.temFranquia() ? (resta > 0 ? "Você tem " + resta + " de " + c.limite + (c.equipe ? " neste mês (equipe " + c.organizacao + ")" : c.periodo === "mes" ? " neste mês" : " nesta semana") + ", somando análises e documentos, sem custo adicional" + (s.plano === "teste" ? ", durante o teste grátis." : ".")
                     : "A franquia já foi usada. Este documento sai " + (s.plano === "teste" ? "por " : "com 30% de desconto: ") + brlSimples(preco) + ".")
                 : (s.plano === "basico" || s.plano === "premium") ? "Valor por documento com o desconto do seu plano: " + brlSimples(preco) + ", pago antes do preenchimento."
                 : "Valor por documento: R$ 290,00, pago antes do preenchimento.",
               elTabelaPrecos: [["Gratuito", "R$ 290,00 por documento"], ["Básico", brlSimples(AN_PRECO * 0.9) + " por documento (10% de desconto)"],
-                ["Premium", brlSimples(AN_PRECO * 0.85) + " por documento (15% de desconto)"], ["Pro", "2 por semana sem custo (análises e documentos, somados); a partir do 3º, " + brlSimples(AN_PRECO * 0.7) + " (30% de desconto)"]]
+                ["Premium", brlSimples(AN_PRECO * 0.85) + " por documento (15% de desconto)"], ["Pro", "8 por mês sem custo (análises e documentos, somados); acima disso, " + brlSimples(AN_PRECO * 0.7) + " (30% de desconto)"]]
                 .map(([p2, v]) => { const atual = (p2 === "Gratuito" && s.usuario && !s.plano) || (p2 === "Básico" && s.plano === "basico") || (p2 === "Premium" && s.plano === "premium") || (p2 === "Pro" && s.plano === "pro"); return { p: p2, v, fundo: atual ? "#E3F2EA" : "#F6F8F7" }; }),
               elDocsEsc: Object.entries(ELAB).filter(([k, x]) => x.regimes.includes(el.regime || "lei-14133")).map(([k, x]) => ({ nome: x.sigla === "PB" ? "Projeto Básico" : x.sigla, ativo: el.docEsc === k,
                 escolher: () => this.setState((x2) => ({ el: { ...x2.el, docEsc: k, contErro: "" } })), ...corBotao(el.docEsc === k) })),
@@ -16898,7 +16903,7 @@ class Component extends DCLogic {
       anIrIniciar: () => { const el = document.getElementById("an-iniciar"); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); },
       anHeroCta: this.creditoAnalise() ? "Ir para o envio dos documentos" : (this.cortesiaAnalise() && (!s.usuario || this.precoAnalise() === 0) ? "Fazer minha análise grátis" : (this.precoAnalise() === 0 && s.usuario ? "Começar uma análise (sem custo)" : "Começar uma análise")),
       ...((n) => ({ anTemMeus: n > 0, anMeusTxt: "Ver meus pareceres (" + n + ")", anIrMeus: () => { this.setState({ contaTab: "documentos", docsFiltro: "analisados" }); this.irPara("conta"); } }))((s.analises || []).filter((x) => x.tipo !== "geracao" && x.status !== "cancelada" && x.status !== "aguardando_documentos").length),
-      anHeroMicro: this.cortesiaAnalise() ? "Primeira análise grátis, uma por CPF · parecer em PDF e Word" : (s.plano === "pro" ? "Plano Pro: 2 por semana incluídas, entre analisar e criar documentos" : s.plano === "teste" ? "Teste grátis: 2 por semana incluídas, entre analisar e criar documentos" : "R$ 290,00 por análise · grátis no teste de 7 dias (2 por semana) · assinantes têm desconto"),
+      anHeroMicro: this.cortesiaAnalise() ? "Primeira análise grátis, uma por CPF · parecer em PDF e Word" : (s.plano === "pro" ? "Plano Pro: 8 por mês incluídas, entre analisar e criar documentos" : s.plano === "teste" ? "Teste grátis: 2 por semana incluídas, entre analisar e criar documentos" : "R$ 290,00 por análise · grátis no teste de 7 dias (2 por semana) · assinantes têm desconto"),
       anAmostra: [
         ["Constatação", "O termo de referência exige atestado de execução de 100% do quantitativo do objeto."],
         ["Texto legal", "Lei 14.133/2021, art. 67, § 2º: a exigência de quantidades mínimas em atestados é limitada a 50% das parcelas de maior relevância."],
@@ -16908,7 +16913,7 @@ class Component extends DCLogic {
       ].map(([r, t]) => ({ r, t })),
       anComoFunciona: [
         ["1", "Leia as condições e aceite", "Nesta página estão as regras, o que o agente faz e o que ele precisa. O aceite é obrigatório."],
-        ["2", "Pagamento ou cota do Pro", "Assinante Pro usa uma das 2 da semana (somadas com a criação de documentos), sem custo. Os demais pagam antes de seguir para o envio."],
+        ["2", "Pagamento ou cota do Pro", "Assinante Pro usa uma das 8 do mês (somadas com a criação de documentos), sem custo. Os demais pagam antes de seguir para o envio."],
         ["3", "Envie até 3 documentos", "Na página de envio você escolhe os tipos de documento, anexa os arquivos e vê a estimativa de duração."],
         ["4", "Receba o parecer", "O agente analisa e você recebe um e-mail. O parecer fica nesta página, em PDF e Word."]
       ].map(([n, t, d]) => ({ n, t, d })),
@@ -16928,7 +16933,7 @@ class Component extends DCLogic {
         "Serviço com dedicação exclusiva de mão de obra: a planilha de custos de mão de obra (IN 05/2017) é obrigatória, e a convenção ou acordo coletivo vai como anexo extra (não conta no limite de 3).",
         "Parceria pela Lei 13.019/2014: a planilha de custos da parceria é obrigatória; o plano de trabalho substitui o termo de referência.",
         "Opcional: link da contratação no PNCP e até 3 normas próprias (decreto estadual ou municipal, regulamento de estatal), que não contam no limite.",
-        "Plano Pro: 2 por semana sem custo adicional, somando análises e documentos criados (de segunda a domingo, sem acúmulo). Básico e Premium: análises ilimitadas, pagas com desconto. Sem plano: R$ 290,00 por análise."
+        "Plano Pro: 8 por mês sem custo adicional, somando análises e documentos criados (sem acúmulo), com até 300 páginas por análise. Básico e Premium: análises ilimitadas, pagas com desconto. Sem plano: R$ 290,00 por análise."
       ],
       anDados: [
         "Os arquivos são processados por provedor de inteligência artificial contratado (Anthropic), pela API comercial, que não usa o conteúdo para treinar modelos.",
@@ -16955,7 +16960,7 @@ class Component extends DCLogic {
       })(),
       anPlanoTexto: (() => {
         const c = s.cotaAnalise;
-        if (!s.usuario) return (this.cortesiaAnalise() ? "Crie sua conta e faça a primeira análise grátis (uma por CPF). Depois, o valor por análise é de R$ 290,00." : "Valor por análise: R$ 290,00.") + " No teste grátis de 7 dias, 2 por semana saem sem custo. Assinantes Básico e Premium têm desconto; o Pro inclui 2 análises por semana.";
+        if (!s.usuario) return (this.cortesiaAnalise() ? "Crie sua conta e faça a primeira análise grátis (uma por CPF). Depois, o valor por análise é de R$ 290,00." : "Valor por análise: R$ 290,00.") + " No teste grátis de 7 dias, 2 por semana saem sem custo. Assinantes Básico e Premium têm desconto; o Pro inclui 8 por mês.";
         if (this.creditoAnalise()) return "Você já tem uma análise liberada aguardando os documentos. Siga para a página de envio.";
         if (s.admin) return "Conta de administrador: análises sem limite e sem cobrança.";
         if (s.plano === "pro" && c && c.equipe) {
@@ -16965,8 +16970,8 @@ class Component extends DCLogic {
         }
         if (this.temFranquia()) {
           const resta = Math.max(0, Number(c.limite) - Number(c.usadas));
-          return resta > 0 ? "Você tem " + resta + " de " + c.limite + " disponíveis nesta semana, entre análises e documentos criados, sem custo adicional (" + (s.plano === "teste" ? "durante o teste grátis de 7 dias" : "renova na segunda-feira") + ")."
-            : "Você já usou as " + c.limite + " análises desta semana. Esta análise sai " + (s.plano === "teste" ? "por " : "com 30% de desconto: ") + brlSimples(this.precoAnalise()) + ".";
+          return resta > 0 ? "Você tem " + resta + " de " + c.limite + " disponíveis " + (c.periodo === "mes" ? "neste mês" : "nesta semana") + ", entre análises e documentos criados, sem custo adicional (" + (s.plano === "teste" ? "durante o teste grátis de 7 dias" : c.periodo === "mes" ? "renova no dia 1º" : "renova na segunda-feira") + ")."
+            : "Você já usou as " + c.limite + " análises " + (c.periodo === "mes" ? "deste mês" : "desta semana") + ". Esta análise sai " + (s.plano === "teste" ? "por " : "com 30% de desconto: ") + brlSimples(this.precoAnalise()) + ".";
         }
         if (this.cortesiaAnalise() && this.precoAnalise() === 0) {
           const o = s.oferta || {}, hoje = new Date(Date.now() - 3 * 3600000).toISOString().slice(0, 10);
@@ -16980,7 +16985,7 @@ class Component extends DCLogic {
         return "Valor por análise: R$ 290,00, pago antes de seguir para o envio dos documentos.";
       })(),
       anTabelaPrecos: [["Gratuito", "R$ 290,00 por análise"], ["Básico", brlSimples(AN_PRECO * 0.9) + " por análise (10% de desconto)"],
-        ["Premium", brlSimples(AN_PRECO * 0.85) + " por análise (15% de desconto)"], ["Pro", "2 por semana sem custo (análises e documentos criados, somados); a partir do 3º, " + brlSimples(AN_PRECO * 0.7) + " (30% de desconto)"]]
+        ["Premium", brlSimples(AN_PRECO * 0.85) + " por análise (15% de desconto)"], ["Pro", "8 por mês sem custo (análises e documentos criados, somados); acima disso, " + brlSimples(AN_PRECO * 0.7) + " (30% de desconto)"]]
         .map(([p, v]) => { const atual = (p === "Gratuito" && s.usuario && !s.plano) || (p === "Básico" && s.plano === "basico") || (p === "Premium" && s.plano === "premium") || (p === "Pro" && s.plano === "pro"); return { p, v, fundo: atual ? "#E3F2EA" : "#F6F8F7" }; }),
       anTemCredito: !!this.creditoAnalise(),
       anSemCredito: !this.creditoAnalise(),
@@ -17132,7 +17137,7 @@ class Component extends DCLogic {
         { nome: "Premium", base: 199.9, publico: "Profissionais ativos, que estudam e contratam consultoria.", preco: precoPlano(199.9), unidade: unidadePlano, nota: notaPlano(199.9), detalhePreco: detalhePlano(199.9), destaque: destaque === "Premium", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0FA36B", btnColor: "#06251A",
           itens: ["Tudo do Básico", "O Parecerista e O Elaborador com 15% de desconto", "Cursos com 15% de desconto", "Consultoria técnica com 15% de desconto", "Prioridade na agenda do especialista"] },
         { nome: "Pro", base: 479.9, publico: "Profissionais avançados e empresas.", preco: precoPlano(479.9), unidade: unidadePlano, nota: notaPlano(479.9), detalhePreco: detalhePlano(479.9), destaque: destaque === "Pro", cta: anual ? "Assinar 12 meses" : "Pagar 1 mês", btnBg: "#0A1F2A", btnColor: "#fff",
-          itens: ["Tudo do Premium", "O Parecerista e O Elaborador: 2 por semana incluídos, entre analisar e criar documentos; a partir do 3º, 30% de desconto", "Agente de IA nas planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "Suporte prioritário"] }
+          itens: ["Tudo do Premium", "O Parecerista e O Elaborador: 8 por mês incluídos, entre analisar e criar documentos (até 300 páginas por análise); acima disso, 30% de desconto", "Agente de IA nas planilhas de mão de obra: 1 elaboração, 1 análise de repactuação e 1 análise de proposta por semana", "Cursos com 50% de desconto", "1 consultoria por escrito por mês incluída; vídeo e reunião com 30% de desconto", "Suporte prioritário"] }
       ]),
 
       // área do assinante
@@ -17144,7 +17149,7 @@ class Component extends DCLogic {
       temPlanoInfo: !!vig || !s.sb || !!s.admin,
       planoInfo: (() => {
         if (!s.sb) return [["Plano", "Premium (exemplo)"], ["Situação", "Ativo"], ["Ciclo", "12 meses"], ["Válido até", "14/02/2027"]].map(([rot, val]) => ({ rot, val }));
-        if (s.admin) return [["Perfil", "Administrador"], ["Acesso", "Total, equivalente ao Pro"], ["Cobrança", "Nenhuma"], ["O Parecerista", "Sem limite semanal e sem custo"], ["Consultoria", "Sem custo"], ["Validade", "Enquanto a conta for administradora"]].map(([rot, val]) => ({ rot, val }));
+        if (s.admin) return [["Perfil", "Administrador"], ["Acesso", "Total, equivalente ao Pro"], ["Cobrança", "Nenhuma"], ["O Parecerista", "Sem limite e sem custo"], ["Consultoria", "Sem custo"], ["Validade", "Enquanto a conta for administradora"]].map(([rot, val]) => ({ rot, val }));
         if (!vig) return [];
         const dias = Math.max(0, Math.ceil((new Date(vig.fim).getTime() - agora) / 86400000));
         const cota = s.cotaAnalise;
@@ -17158,7 +17163,7 @@ class Component extends DCLogic {
           ["Forma de pagamento", METODO_NOME[vig.metodo] || vig.metodo || "—"],
           ["Renovação", (() => { const r = this.renovacaoAtiva(); return r ? "Automática no cartão (Mercado Pago)" + (r.status === "pausada" ? " · pausada" : "") + (r.proxima_cobranca ? " · próxima cobrança em " + dataBR(r.proxima_cobranca) : "") : "Manual: avisamos por e-mail antes do fim do período"; })()]
         ];
-        if ((vig.plano === "pro" || vig.plano === "teste") && cota && !cota.equipe) linhas.push(["O Parecerista e O Elaborador nesta semana", Math.max(0, Number(cota.limite) - Number(cota.usadas)) + " de " + cota.limite + " análises disponíveis (renova na segunda-feira)"]);
+        if ((vig.plano === "pro" || vig.plano === "teste") && cota && !cota.equipe) linhas.push(["O Parecerista e O Elaborador " + (cota.periodo === "mes" ? "neste mês" : "nesta semana"), Math.max(0, Number(cota.limite) - Number(cota.usadas)) + " de " + cota.limite + " disponíveis (renova " + (cota.periodo === "mes" ? "no dia 1º" : "na segunda-feira") + ")"]);
         else if (vig.plano !== "teste") linhas.push(["O Parecerista", brlSimples(this.precoAnalise()) + " por análise, com o desconto do plano"]);
         return linhas.map(([rot, val]) => ({ rot, val }));
       })(),
@@ -17233,7 +17238,7 @@ class Component extends DCLogic {
           ["Agente de IA nas planilhas de mão de obra", ["—", "—", eq ? "1 elaboração, 1 repactuação e 1 análise de proposta por semana, para a equipe" : "1 elaboração, 1 repactuação e 1 análise de proposta por semana"]],
           ["Cursos", ["10% de desconto", "15% de desconto", "50% de desconto"]],
           ["Consultoria técnica", ["10% de desconto", "15% de desconto", eq ? "1 por escrito por mês para a equipe; demais com 30%" : "1 por escrito por mês incluída; demais com 30%"]],
-          ["O Parecerista (parecer técnico) e O Elaborador (ETP, TR, Projeto Básico, edital, contratação direta e mapa de riscos)", ["10% de desconto", "15% de desconto", eq ? "6 por acesso por mês, somados para a equipe" : "2 por semana incluídos, entre analisar e criar; demais com 30%"]],
+          ["O Parecerista (parecer técnico) e O Elaborador (ETP, TR, Projeto Básico, edital, contratação direta e mapa de riscos)", ["10% de desconto", "15% de desconto", eq ? "6 por acesso por mês, somados para a equipe" : "8 por mês incluídos, entre analisar e criar; demais com 30%"]],
           ["Prioridade na agenda do especialista", ["—", "Sim", "Sim"]],
           ["Suporte prioritário", ["—", "—", "Sim"]]
         ];
@@ -17250,13 +17255,13 @@ class Component extends DCLogic {
         ["Posso cancelar quando quiser?", "Sim. Não há fidelidade nem multa. Sem a renovação automática, o plano simplesmente termina no fim do período pago e avisamos antes. Se você ativou a renovação no cartão, desligue a qualquer momento em Minha conta → Assinatura."],
         ["Órgão público pode contratar? Como funciona?", "Pode. Escolha “órgão público”, monte o plano e peça a proposta para empenho — ou baixe a proposta preliminar para instruir o processo. O enquadramento (por exemplo, dispensa por valor, art. 75, II, da Lei nº 14.133/2021) cabe ao órgão. Os acessos são liberados após a nota de empenho. Quem preferir também pode assinar como pessoa física."],
         ["Como funciona o plano para equipes?", "Você contrata a quantidade de acessos e quem contrata vira o gestor. Ele inclui as pessoas pelo e-mail e troca quando alguém sai da equipe. Cada acesso é de uma pessoa, e o desconto cresce com a quantidade: 5% de 3 a 5 acessos, 10% de 6 a 10 e 15% de 11 a 25, além dos 20% do anual."],
-        ["O que faz O Parecerista e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. Com O Elaborador, você também cria a minuta do ETP, do Termo de Referência ou do Projeto Básico a partir de um questionário, já conferida. O Pro inclui 2 por semana, somando análises e documentos criados; equipes Pro têm 6 por acesso por mês, somados. Nos demais planos cada análise ou documento é pago com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
+        ["O que faz O Parecerista e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. Com O Elaborador, você também cria a minuta do ETP, do Termo de Referência ou do Projeto Básico a partir de um questionário, já conferida. O Pro inclui 8 por mês, somando análises e documentos criados; equipes Pro têm 6 por acesso por mês, somados. Nos demais planos cada análise ou documento é pago com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
         ["O que a Calculadora faz e quem pode usar?", "A Calculadora tem seis ferramentas: reajuste por índice (IPCA, IGP-M, INCC e outros, com a nota técnica em PDF), planilha de custos da mão de obra exclusiva no formato da IN 05/2017, repactuação (com custos não renováveis, Módulo 3 da empresa conferido, quadro comparativo, retroativo e nota técnica; várias categorias num relatório único), análise da planilha da proposta da licitante (exequibilidade, falhas e diligência), comparação de planilhas lado a lado (planejamento × contratação × repactuações, por categoria do quadro, com relatório) e reequilíbrio econômico-financeiro (tributário da reforma, LC 214/2025, e por fato superveniente, art. 124, II, d, da Lei 14.133/2021). O reajuste por índice é grátis para quem tem conta; as ferramentas de mão de obra, a comparação de planilhas e o reequilíbrio estão em todos os planos pagos e no teste de 7 dias. O agente de IA que lê a convenção coletiva e as planilhas é do plano Pro."],
         ["O que a Pesquisa de preços faz e quem pode usar?", "Fica no Elaborador e estima o valor da contratação na fase de planejamento. Você escolhe o regime (Lei 14.133, com a IN SEGES/ME 65/2021; Lei 13.303, pelo regulamento interno da estatal, que a IA pode ler; ou Lei 13.019) e o tipo de objeto. Para bens e serviços, o site coleta preços no Painel de Preços do Compras.gov.br e em contratações similares do PNCP, aceita cotações e outras fontes, desconsidera os preços mais de 25% abaixo ou acima da mediana e escolhe entre média e mediana pelo coeficiente de variação (menor preço em mercado restrito). Na mão de obra exclusiva, ratifica o valor da planilha da IN 5/2017; em obras, analisa a planilha de orçamento enviada (fontes, aritmética, curva ABC, BDI pelo Acórdão 2.622/2013 do TCU, encargos e data-base). O relatório sai em PDF, Word e Excel, e o resultado vai para o Termo de Referência com um clique. Está nos planos Básico, Premium e Pro e no teste de 7 dias; o filtro de itens semelhantes com IA tem limite diário."],
         ["O que a Gestão Contratual faz e quem pode usar?", "Você cadastra cada contrato (vigência, valor, índice, data do orçamento estimado e regime legal) e registra reajustes, repactuações, reequilíbrios, aditivos e prorrogações. O site calcula o valor vigente, a próxima anualidade, o limite de acréscimos do art. 125 e a data recomendada para iniciar a prorrogação, mostra a situação de cada contrato por cor (vigente, vencendo ou vencido), monta a agenda de prazos dos próximos 12 meses e avisa por e-mail. O Painel da Organização reúne a carteira inteira em indicadores e gráficos: quantidade e valor das contratações, distribuição por modalidade, custo total, contratos vencendo e no prazo, tempo médio entre o orçamento e a assinatura e entre a anualidade e a concessão do reajuste, alterações registradas e as empresas com mais contratos, com filtros por ano, modalidade e situação; para empresas privadas, a mesma leitura é feita por órgão contratante. Também gera o PDF de cada contrato, o relatório completo da carteira e a agenda em Excel. Está em todos os planos pagos e no teste de 7 dias; nos planos para equipes, cada contrato pode ser compartilhado com a equipe, para consulta."],
         ["Quantas análises de planilha pelo agente de IA eu tenho?", "No Pro, por semana: 1 elaboração de planilha de custos, 1 análise de repactuação e 1 análise de proposta, renovando na segunda-feira. A franquia é por assinatura: na equipe, é compartilhada entre os membros. Análise que falhar por problema técnico não consome a franquia, e a planilha pode sempre ser preenchida manualmente, sem limite."],
         ["O que o plano Gratuito inclui?", "Com a conta grátis, sem cartão e sem prazo, você usa a Biblioteca Jurídica completa (com anotações, marcadores e dossiês), a calculadora de reajuste por índice com a nota técnica em PDF e lê todas as perguntas e respostas do fórum. Para perguntar e responder no fórum, usar as planilhas de mão de obra e o reequilíbrio, cadastrar contratos na Gestão Contratual e usar O Parecerista e O Elaborador (2 por semana sem custo no teste), faça o teste de 7 dias ou assine um plano."],
-        ["Posso usar O Parecerista e O Elaborador de graça?", "Sim, no teste grátis de 7 dias: você tem a mesma franquia do plano Pro, 2 por semana sem custo, somando análises do Parecerista e documentos do Elaborador. O teste não pede cartão e não cobra nada ao final; pede e-mail confirmado e CPF válido no perfil, e pode ser usado uma vez por CPF. Se a análise não puder ser concluída por falha técnica, ela não consome a franquia. Depois da franquia, cada análise ou documento sai por R$ 290,00, ou com o desconto do plano que você assinar."],
+        ["Posso usar O Parecerista e O Elaborador de graça?", "Sim, no teste grátis de 7 dias: você tem 2 sem custo durante a semana do teste, somando análises do Parecerista e documentos do Elaborador. O teste não pede cartão e não cobra nada ao final; pede e-mail confirmado e CPF válido no perfil, e pode ser usado uma vez por CPF. Se a análise não puder ser concluída por falha técnica, ela não consome a franquia. Depois da franquia, cada análise ou documento sai por R$ 290,00, ou com o desconto do plano que você assinar."],
         ["Posso mudar de plano depois?", "Sim. Na troca para um plano maior, a cobrança é proporcional: o valor que você ainda não usou do plano atual (pelos dias que faltam) é descontado do novo plano, que começa um ciclo inteiro na data da troca, e o plano antigo termina. Exemplo: no Básico mensal, faltando 15 dias, o Pro mensal sai por R$ 479,90 − R$ 59,95 = R$ 419,95. Na troca, o pagamento é único; a renovação automática do plano antigo é cancelada. Se for o mesmo plano, o tempo que ainda falta é somado ao novo período."]
       ].map(([q, a], i) => ({ q, a, aberta: s.faqAberta === i, sinal: s.faqAberta === i ? "−" : "+", alternar: () => this.setState((x) => ({ faqAberta: x.faqAberta === i ? -1 : i })) })),
       modos: [[false, "para mim"], [true, "para a minha equipe"]].map(([k, label]) => ({ label, ativo: !!s.modoEquipe === k,
