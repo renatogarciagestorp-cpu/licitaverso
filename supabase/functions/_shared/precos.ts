@@ -53,7 +53,7 @@ export const DOC_ANALISE: Record<DocAnalise, string> = {
   edital: "Edital", etp: "Estudo Técnico Preliminar", tr: "Termo de Referência", riscos: "Matriz de Riscos", planilha: "Planilha de custos",
   plano_trabalho: "Plano de trabalho", multiplos: "Documentos da contratação (até 300 páginas)",
 };
-/** Documentos que o assinante pode enviar (até 3 por análise). formato: "pdf" (texto) ou "planilha" (Excel ou PDF). */
+/** Documentos que o assinante pode enviar (quantos quiser, até 300 páginas somadas por análise). formato: "pdf" (texto) ou "planilha" (Excel ou PDF). */
 export const TIPOS_DOC_ANALISE: Record<string, { nome: string; formato: "pdf" | "planilha" }> = {
   etp: { nome: "Estudo Técnico Preliminar (ETP)", formato: "pdf" },
   tr: { nome: "Termo de Referência / Projeto Básico", formato: "pdf" },
