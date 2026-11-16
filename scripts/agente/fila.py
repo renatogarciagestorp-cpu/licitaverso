@@ -12,7 +12,7 @@ import datetime, json, os, pathlib, re, shutil, subprocess, sys, tempfile, time,
 RAIZ = pathlib.Path(__file__).resolve().parents[2]
 REF = os.environ.get("PROJECT_REF", "umnhhztdqersjfrzqcea")
 SUPA = f"https://{REF}.supabase.co"
-MAX_PAGINAS = 200
+MAX_PAGINAS = 300  # soma das páginas dos documentos de uma análise
 MAX_POR_EXECUCAO = 3
 GRAV = {"alta", "media", "baixa"}
 
@@ -168,7 +168,7 @@ NOME_DOC = {"direta": "Processo de contratação direta", "edital": "Edital", "t
 
 
 def preparar_documentos(a, pasta):
-    """Até 3 documentos: baixa, extrai o texto (PDF com OCR; Excel célula a célula) e monta os argumentos do analisar.py.
+    """Quantos documentos o assinante enviar, até 300 páginas somadas: baixa, extrai o texto (PDF com OCR; Excel célula a célula) e monta os argumentos do analisar.py.
     Devolve (texto_principal, tipo_principal, paginas_total, args_extra, salarios_json|None)."""
     docs = sorted(a_lista(a, "documentos"), key=lambda d: PRIORIDADE.index(d["tipo"]) if d["tipo"] in PRIORIDADE else 99)
     textos, total = [], 0
@@ -182,9 +182,10 @@ def preparar_documentos(a, pasta):
             if not m:
                 raise ErroCliente(f"\"{nome}\" não é um PDF válido ou está protegido por senha.")
             pg = int(m.group(1))
-            if pg > MAX_PAGINAS:
-                raise ErroCliente(f"\"{nome}\" tem {pg} páginas; o limite é de {MAX_PAGINAS} páginas por documento.")
             total += pg
+            if total > MAX_PAGINAS:
+                raise ErroCliente(f"Os documentos somam mais de {MAX_PAGINAS} páginas (\"{nome}\" tem {pg}). Retire anexos que não precisam "
+                                  "de análise ou divida o envio em duas análises.")
             r = subprocess.run([sys.executable, str(RAIZ / "scripts/agente/extrair-texto.py"), str(orig), str(txt)], capture_output=True, text=True, timeout=3600)
             if r.returncode == 3 or not txt.exists():
                 raise ErroCliente(f"Não foi possível ler o texto de \"{nome}\", nem por reconhecimento óptico (OCR). A análise não foi feita para não "
@@ -232,7 +233,7 @@ def processar(a):
         pasta = pathlib.Path(tmp)
         try:
             extra, salarios, compra = [], None, None
-            if a_lista(a, "documentos"):  # fluxo atual: até 3 documentos enviados pelo assinante
+            if a_lista(a, "documentos"):  # fluxo atual: documentos enviados pelo assinante (até 300 páginas)
                 txt, doc_p, paginas, extra, salarios = preparar_documentos(a, pasta)
                 m3 = re.search(r"(\d{14})/(\d{4})/(\d+)", a.get("pncp_link") or "")
                 if m3:  # link do PNCP opcional: só os dados da contratação (prazos e itens), sem baixar documento

@@ -2690,7 +2690,7 @@
             <span class="lvh-eyebrow">Como funciona O Parecerista</span>
             <h2 id="lvi-hist-h" class="lvi-h2">Do edital ao parecer, <em>item por item</em>.</h2>
             <ol class="lvi-passos">
-              <li><button type="button" class="lvi-passo"><span>1</span><div><b>Envie até 3 documentos</b><p>Edital, ETP, TR, matriz de riscos ou planilhas, em PDF ou Excel. Você escolhe o regime: Lei 14.133, Lei 13.303 ou Lei 13.019.</p></div></button></li>
+              <li><button type="button" class="lvi-passo"><span>1</span><div><b>Envie os documentos</b><p>Quantos quiser, até 300 páginas no total: Edital, ETP, TR, matriz de riscos ou planilhas, em PDF ou Excel. Você escolhe o regime: Lei 14.133, Lei 13.303 ou Lei 13.019.</p></div></button></li>
               <li><button type="button" class="lvi-passo"><span>2</span><div><b>O agente lê item a item</b><p>Cada trecho do documento passa pelo roteiro de verificação do Licitacon.</p></div></button></li>
               <li><button type="button" class="lvi-passo"><span>3</span><div><b>Confere com a lei e a jurisprudência</b><p>Com o texto da lei e com as decisões da Biblioteca Jurídica, coletadas em 90 fontes oficiais.</p></div></button></li>
               <li><button type="button" class="lvi-passo"><span>4</span><div><b>Receba o parecer</b><p>Em PDF e Word, no formato ABNT: cada apontamento com gravidade, fundamento, providência e redação sugerida.</p></div></button></li>
@@ -5850,7 +5850,7 @@
           <div>
             <span class="lvh-eyebrow">O Parecerista · Leis 14.133, 13.303 e 13.019</span>
             <h1 class="lva-h1">Um parecer técnico do seu edital, ETP ou TR, apontamento por apontamento.</h1>
-            <p class="lva-lead">Envie até 3 documentos da contratação. O Parecerista confere cada item com a lei e com a jurisprudência da Biblioteca e devolve um parecer em PDF e Word, no formato ABNT, com a gravidade, o fundamento, a providência e a redação sugerida.</p>
+            <p class="lva-lead">Envie os documentos da contratação, quantos quiser, até 300 páginas no total. O Parecerista confere cada item com a lei e com a jurisprudência da Biblioteca e devolve um parecer em PDF e Word, no formato ABNT, com a gravidade, o fundamento, a providência e a redação sugerida.</p>
             <div class="lvh-ctas">
               <button class="lvh-btn" sc-camel-on-click="{{ anIrIniciar }}">{{ anHeroCta }}</button>
               <sc-if value="{{ anTemMeus }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" style="padding: 14px 20px" sc-camel-on-click="{{ anIrMeus }}">{{ anMeusTxt }}</button></sc-if>
@@ -5961,7 +5961,7 @@
         <div style="max-width: 860px; margin: 0 auto">
           <button sc-camel-on-click="{{ voltarInfo }}" style="background: transparent; border: 0; color: #6FE0AE; font-size: 13.5px; font-weight: 700; cursor: pointer; padding: 0">← Voltar às informações</button>
           <h1 style="font-size: 32px; line-height: 1.1; letter-spacing: -0.03em; font-weight: 800; margin: 14px 0 0">Envio dos documentos</h1>
-          <p style="font-size: 15.5px; line-height: 1.55; color: #B9CBD2; margin: 10px 0 0">Análise liberada. Escolha o regime, responda às perguntas e anexe até 3 documentos.</p>
+          <p style="font-size: 15.5px; line-height: 1.55; color: #B9CBD2; margin: 10px 0 0">Análise liberada. Escolha o regime, responda às perguntas e anexe os documentos (até 300 páginas no total).</p>
         </div>
       </section>
       <section style="max-width: 860px; margin: -64px auto 0; padding: 0 16px 40px">
@@ -6024,7 +6024,7 @@
               <label style="position: relative; display: block; border: 1.5px dashed #BFD3D0; border-radius: 10px; padding: 11px 13px; cursor: pointer; background: #FBFCFC">
                 <input type="file" accept=".pdf,.docx" sc-camel-on-change="{{ onAnCct }}" style="position: absolute; width: 1px; height: 1px; opacity: 0">
                 <span style="display: block; font-size: 13.5px; font-weight: 700; color: #0F6B7E; overflow-wrap: anywhere">{{ anCctNome }}</span>
-                <span style="display: block; font-size: 12px; color: #5F7077; margin-top: 2px">Convenção ou acordo coletivo usado na composição do salário. Não conta no limite de 3 documentos.</span>
+                <span style="display: block; font-size: 12px; color: #5F7077; margin-top: 2px">Convenção ou acordo coletivo usado na composição do salário. Não conta no limite de 300 páginas.</span>
               </label>
             </div>
           </sc-if>
@@ -7601,8 +7601,8 @@ const AN_TIPOS = [
   ["planilha_parceria", "Planilha de custos da parceria (Lei 13.019)", "planilha", "Detalhamento de tudo o que será implementado e adquirido na execução, com o custo total da parceria."]
 ];
 const AN_TIPO = Object.fromEntries(AN_TIPOS.map(([id, nome, formato, dica]) => [id, { id, nome, formato, dica }]));
-const AN_MAX_DOCS = 3;
-const AN_MAX_PAGINAS = 200;
+const AN_MAX_DOCS = 60; // sem limite prático: o que limita é a soma das páginas
+const AN_MAX_PAGINAS = 300; // soma das páginas dos documentos da análise
 const AN_MAX_PAGINAS_FRANQUIA = 300; // análise da franquia (Pro, teste e equipes): soma das páginas
 const AN_ANEXO_MB = 25;
 const AN_PRECO = 290;
@@ -8087,7 +8087,7 @@ const AN_TERMO_VERSAO = "2026-11-13";
 const AN_TERMO = [
   "Natureza: parecer técnico em gestão de licitações e contratos, elaborado de forma automatizada por inteligência artificial a partir do roteiro de verificação do Licitacon. Não é parecer jurídico e não substitui a análise jurídica prévia do órgão (Lei 14.133/2021, art. 53).",
   "Parecer opinativo: o parecer aponta todos os aspectos identificados, dos críticos aos de baixa vulnerabilidade, e recomenda providências, mas não vincula quem o recebe. A decisão de ajustar ou manter cada ponto, e a responsabilidade por ela, é exclusivamente sua (STF, MS 24.631/DF; Decreto-Lei 4.657/1942, art. 28).",
-  "Escopo: até 3 documentos por análise, escolhidos por você entre ETP, termo de referência, matriz de riscos, edital, memória de cálculo, plano de trabalho, planilha de custos de mão de obra (IN 05/2017), planilha orçamentária de obras e serviços de engenharia e planilha de custos da parceria (Lei 13.019), cada um com até 200 páginas e 25 MB. Documentos digitalizados (imagem) são lidos por reconhecimento óptico de caracteres (OCR); com digitalização de baixa qualidade, trechos podem ser lidos com erro. Regime: a análise segue a lei que rege a contratação (Lei 14.133/2021; Lei 13.303/2016, para empresas estatais; ou Lei 13.019/2014, para parcerias com organizações da sociedade civil). Obras e serviços de engenharia exigem a planilha orçamentária; serviços com dedicação exclusiva de mão de obra exigem a planilha de custos de mão de obra e, como anexo extra, a convenção coletiva; parcerias exigem a planilha de custos da parceria. Sem esses arquivos não é possível avaliar a economicidade, a vantajosidade e o sobrepreço. Arquivo ou trecho ilegível não é presumido: o parecer registra que não foi possível analisá-lo. A análise considera a legislação nacional aplicável a todos os entes (Constituição Federal, Lei 14.133/2021, LRF, LC 123/2006, LINDB, entre outras) e, como parâmetro técnico, instruções normativas, cadernos e manuais federais e do TCU.",
+  "Escopo: os documentos que você escolher, até 300 páginas somadas por análise, entre ETP, termo de referência, matriz de riscos, edital, memória de cálculo, plano de trabalho, planilha de custos de mão de obra (IN 05/2017), planilha orçamentária de obras e serviços de engenharia e planilha de custos da parceria (Lei 13.019), cada um com até 200 páginas e 25 MB. Documentos digitalizados (imagem) são lidos por reconhecimento óptico de caracteres (OCR); com digitalização de baixa qualidade, trechos podem ser lidos com erro. Regime: a análise segue a lei que rege a contratação (Lei 14.133/2021; Lei 13.303/2016, para empresas estatais; ou Lei 13.019/2014, para parcerias com organizações da sociedade civil). Obras e serviços de engenharia exigem a planilha orçamentária; serviços com dedicação exclusiva de mão de obra exigem a planilha de custos de mão de obra e, como anexo extra, a convenção coletiva; parcerias exigem a planilha de custos da parceria. Sem esses arquivos não é possível avaliar a economicidade, a vantajosidade e o sobrepreço. Arquivo ou trecho ilegível não é presumido: o parecer registra que não foi possível analisá-lo. A análise considera a legislação nacional aplicável a todos os entes (Constituição Federal, Lei 14.133/2021, LRF, LC 123/2006, LINDB, entre outras) e, como parâmetro técnico, instruções normativas, cadernos e manuais federais e do TCU.",
   "Regulamentação específica (opcional): você pode anexar até 3 normas próprias (decreto estadual ou municipal, regulamento interno de licitações de estatal etc.), em PDF ou Word, que o agente aplica em complemento à legislação nacional, apontando eventual conflito. Você é responsável pela vigência e fidelidade do texto enviado.",
   "Prazo: o tempo de análise depende da quantidade de documentos, da qualidade dos arquivos (documento digitalizado exige reconhecimento de texto) e da complexidade da contratação. A estimativa é calculada na página de envio, a partir dos arquivos escolhidos. Você recebe um aviso por e-mail e baixa o parecer em PDF e Word nesta página.",
   "Valores e cota: análise a R$ 290,00 para quem não é assinante; assinantes do Básico têm 10% de desconto e do Premium, 15%, e pagam antes de enviar os documentos. O plano Pro inclui 8 por mês (do dia 1º ao último dia do mês, sem acúmulo), somando análises e documentos criados, sem custo adicional; acima disso, a análise sai com 30% de desconto. A análise incluída no plano aceita até 300 páginas, somando os documentos. Análise que não puder ser concluída por falha técnica não consome a cota; a paga é reprocessada ou estornada.",
@@ -15386,7 +15386,8 @@ class Component extends DCLogic {
     let info = { paginas: null, escaneado: false };
     if (/\.pdf$/i.test(f.name)) {
       info = await this.lerPdf(f);
-      if (info.paginas && info.paginas > AN_MAX_PAGINAS) { erro(f.name + " tem " + info.paginas + " páginas; o limite é de " + AN_MAX_PAGINAS + " páginas por documento."); return; }
+      const outras = this.state.an.docs.reduce((t, x, j) => t + (j === i ? 0 : (x.paginas || 0)), 0);
+      if (info.paginas && outras + info.paginas > AN_MAX_PAGINAS) { erro(f.name + " tem " + info.paginas + " páginas; somado aos outros documentos (" + outras + "), passa do limite de " + AN_MAX_PAGINAS + " páginas por análise."); return; }
     }
     const docs = this.state.an.docs.map((x, j) => (j === i ? { ...x, arquivo: f, ...info } : x));
     this.setState({ an: { ...this.state.an, docs, erro: "" } });
@@ -15456,14 +15457,13 @@ class Component extends DCLogic {
     if (!docs.length) { erro("Escolha pelo menos um documento."); return; }
     if (docs.some((d) => !d.tipo || !d.arquivo)) { erro("Cada documento precisa do tipo e do arquivo."); return; }
     const tipos = docs.map((d) => d.tipo);
-    if (new Set(tipos).size !== tipos.length) { erro("Cada tipo de documento só pode ser escolhido uma vez."); return; }
     if (an.regime !== "lei-13019" && tipos.some((t) => t === "plano_trabalho" || t === "planilha_parceria")) { erro("Plano de trabalho e planilha de custos da parceria são documentos da Lei 13.019/2014."); return; }
     const falta = this.tiposExigidos(an).find((t) => !tipos.includes(t));
     if (falta) { erro("Inclua entre os documentos: " + AN_TIPO[falta].nome + ". Sem esse arquivo não é possível avaliar a economicidade e o sobrepreço."); return; }
     if (an.mdo && !an.cct) { erro("Anexe a convenção ou acordo coletivo usado na composição do salário (PDF ou Word)."); return; }
     const totalPg = docs.reduce((t, d) => t + (d.paginas || 0), 0);
-    if ((cred.cobranca === "franquia_pro" || cred.cobranca === "franquia_org") && totalPg > AN_MAX_PAGINAS_FRANQUIA) {
-      erro("A análise incluída no plano aceita até " + AN_MAX_PAGINAS_FRANQUIA + " páginas somando os documentos (escolhidas: " + totalPg + "). Retire anexos que não precisam de análise ou divida o envio em duas análises."); return;
+    if (totalPg > AN_MAX_PAGINAS) {
+      erro("A análise aceita até " + AN_MAX_PAGINAS + " páginas somando os documentos (escolhidas: " + totalPg + "). Retire anexos que não precisam de análise ou divida o envio em duas análises."); return;
     }
     this.setState({ an: { ...an, enviando: true, erro: "", ok: "" } });
     const mime = { ".pdf": "application/pdf", ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -16715,14 +16715,14 @@ class Component extends DCLogic {
         { quem: "Quem assessora e controla", t: "Fundamentar sem a decisão certa é risco", d: "Parecer sem a jurisprudência atual do tribunal certo é retrabalho, ou pior: uma orientação frágil." }
       ],
       homePassos: [
-        { n: "1", t: "Envie até 3 documentos", d: "Edital, ETP, TR, matriz de riscos ou planilhas, em PDF ou Excel. Você escolhe o regime: Lei 14.133, Lei 13.303 ou Lei 13.019." },
+        { n: "1", t: "Envie os documentos", d: "Quantos quiser, até 300 páginas no total: Edital, ETP, TR, matriz de riscos ou planilhas, em PDF ou Excel. Você escolhe o regime: Lei 14.133, Lei 13.303 ou Lei 13.019." },
         { n: "2", t: "O agente confere item a item", d: "Com o texto da lei, com o roteiro de verificação do Licitacon e com a jurisprudência da Biblioteca." },
         { n: "3", t: "Receba o parecer", d: "Em PDF e Word, no formato ABNT: cada apontamento com gravidade, fundamento, providência e redação sugerida." }
       ],
       homeGratis: [
         { icon: "⌕", selo: "Aberta a todos", t: "Biblioteca Jurídica", d: "Pesquise jurisprudência de todo o país, com filtros e o link oficial de cada decisão. Com a conta grátis, guarde anotações e dossiês.", cta: "Pesquisar agora", go: this.nav("biblioteca") },
         this.cortesiaAnalise()
-          ? { icon: "✦", selo: "1 por CPF", t: "Primeira análise grátis", d: "Envie até 3 documentos da contratação ao Parecerista e receba o parecer técnico em PDF e Word, sem pagar.", cta: "Fazer minha análise grátis", go: this.nav("agente") }
+          ? { icon: "✦", selo: "1 por CPF", t: "Primeira análise grátis", d: "Envie os documentos da contratação (até 300 páginas) ao Parecerista e receba o parecer técnico em PDF e Word, sem pagar.", cta: "Fazer minha análise grátis", go: this.nav("agente") }
           : { icon: "%", selo: "Grátis com conta", t: "Calculadora de reajuste", d: "Reajuste por índice com conferência da anualidade, memória de cálculo mês a mês e nota técnica em PDF. Com a conta grátis você também lê o fórum.", cta: "Conhecer a Calculadora", go: this.nav("calculadora") },
         { icon: "◍", selo: "Sem cartão", t: "Teste de 7 dias", d: "Analise documentos no Parecerista e crie documentos no Elaborador (2 por semana sem custo), pergunte e responda no fórum, use as planilhas de mão de obra da IN 05/2017 e cadastre seus contratos na Gestão Contratual antes de escolher um plano.", cta: "Começar o teste", go: this.nav("planos") }
       ],
@@ -16984,7 +16984,7 @@ class Component extends DCLogic {
       anComoFunciona: [
         ["1", "Leia as condições e aceite", "Nesta página estão as regras, o que o agente faz e o que ele precisa. O aceite é obrigatório."],
         ["2", "Pagamento ou cota do Pro", "Assinante Pro usa uma das 8 do mês (somadas com a criação de documentos), sem custo. Os demais pagam antes de seguir para o envio."],
-        ["3", "Envie até 3 documentos", "Na página de envio você escolhe os tipos de documento, anexa os arquivos e vê a estimativa de duração."],
+        ["3", "Envie os documentos", "Quantos quiser, até 300 páginas no total. Na página de envio você escolhe os tipos de documento, anexa os arquivos e vê a estimativa de duração."],
         ["4", "Receba o parecer", "O agente analisa e você recebe um e-mail. O parecer fica nesta página, em PDF e Word."]
       ].map(([n, t, d]) => ({ n, t, d })),
       anOQueFaz: [
@@ -16998,7 +16998,7 @@ class Component extends DCLogic {
       ],
       anPrecisa: AN_TIPOS.map(([, nome, formato, dica]) => ({ nome, formato: formato === "pdf" ? "PDF" : "Excel (recomendado) ou PDF", dica })),
       anRegras: [
-        "Até 3 documentos por análise, cada um com até 200 páginas e 25 MB. Cada tipo de documento só pode ser escolhido uma vez.",
+        "Quantos documentos quiser por análise, até 300 páginas somadas e 25 MB por arquivo. Pode repetir o tipo (por exemplo, duas planilhas).",
         "Obras e serviços de engenharia: a planilha orçamentária é obrigatória.",
         "Serviço com dedicação exclusiva de mão de obra: a planilha de custos de mão de obra (IN 05/2017) é obrigatória, e a convenção ou acordo coletivo vai como anexo extra (não conta no limite de 3).",
         "Parceria pela Lei 13.019/2014: a planilha de custos da parceria é obrigatória; o plano de trabalho substitui o termo de referência.",
@@ -17046,7 +17046,7 @@ class Component extends DCLogic {
         if (this.cortesiaAnalise() && this.precoAnalise() === 0) {
           const o = s.oferta || {}, hoje = new Date(Date.now() - 3 * 3600000).toISOString().slice(0, 10);
           const adiada = o.cortesia_proximo_dia && String(o.cortesia_proximo_dia) > hoje;
-          return "Sua primeira análise é grátis, sem pagamento. Envie até 3 documentos da contratação e receba o parecer técnico. A partir da segunda, vale o preço do seu plano."
+          return "Sua primeira análise é grátis, sem pagamento. Envie os documentos da contratação (até 300 páginas) e receba o parecer técnico. A partir da segunda, vale o preço do seu plano."
             + (adiada ? " As análises grátis de hoje já se esgotaram: a sua entra na fila e é processada a partir de " + String(o.cortesia_proximo_dia).split("-").reverse().join("/") + ", com prioridade." : "");
         }
         const semCpf = s.oferta && s.oferta.cortesia_situacao === "sem_cpf" && !s.admin && !this.temFranquiaLivre();
@@ -17081,13 +17081,12 @@ class Component extends DCLogic {
         return t.length ? "Obrigatório nesta análise: " + t.join("; ") + (s.an.mdo ? "; e a convenção coletiva como anexo extra." : ".") : "";
       })(),
       anSlots: s.an.docs.map((d, i) => {
-        const usados = s.an.docs.filter((x, j) => j !== i).map((x) => x.tipo);
-        const opcoes = AN_TIPOS.filter(([id]) => !usados.includes(id) && (s.an.regime === "lei-13019" || (id !== "plano_trabalho" && id !== "planilha_parceria")))
+        const opcoes = AN_TIPOS.filter(([id]) => (s.an.regime === "lei-13019" || (id !== "plano_trabalho" && id !== "planilha_parceria")))
           .map(([id, nome]) => ({ id, nome, sel: d.tipo === id }));
         const t = AN_TIPO[d.tipo];
         return { n: i + 1, opcoes, temTipo: !!t, dica: t ? t.dica : "Escolha o tipo do documento.",
           aceita: t && t.formato === "pdf" ? ".pdf,application/pdf" : ".xlsx,.xlsm,.xls,.ods,.pdf",
-          formato: t ? (t.formato === "pdf" ? "PDF, até 200 páginas" : "Excel (recomendado) ou PDF, até 200 páginas") : "",
+          formato: t ? (t.formato === "pdf" ? "PDF" : "Excel (recomendado) ou PDF") : "",
           arquivo: d.arquivo ? "✓ " + d.arquivo.name + (d.paginas ? " · " + d.paginas + " páginas" : "") + (d.escaneado ? " · digitalizado" : "") : "Escolher arquivo",
           podeRemover: s.an.docs.length > 1,
           onTipo: (e) => { const v = e.target.value; this.setState((st) => ({ an: { ...st.an, erro: "", docs: st.an.docs.map((x, j) => (j === i ? { tipo: v, arquivo: null, paginas: null, escaneado: false } : x)) } })); },
@@ -17096,7 +17095,7 @@ class Component extends DCLogic {
       }),
       anPodeAdicionar: s.an.docs.length < AN_MAX_DOCS,
       anAdicionarDoc: () => this.setState((st) => ({ an: { ...st.an, docs: [...st.an.docs, { tipo: "", arquivo: null, paginas: null, escaneado: false }] } })),
-      anContagem: s.an.docs.length + " de " + AN_MAX_DOCS + " documentos",
+      anContagem: (() => { const pg = s.an.docs.reduce((t, x) => t + (x.paginas || 0), 0); return s.an.docs.length + (s.an.docs.length === 1 ? " documento" : " documentos") + " · " + pg + " de " + AN_MAX_PAGINAS + " páginas"; })(),
       anPedeCct: !!s.an.mdo,
       anCctNome: s.an.cct ? "✓ " + s.an.cct.name : "Escolher arquivo (PDF ou Word)",
       onAnCct: (e) => this.escolherCct(e),
@@ -17325,7 +17324,7 @@ class Component extends DCLogic {
         ["Posso cancelar quando quiser?", "Sim. Não há fidelidade nem multa. Sem a renovação automática, o plano simplesmente termina no fim do período pago e avisamos antes. Se você ativou a renovação no cartão, desligue a qualquer momento em Minha conta → Assinatura."],
         ["Órgão público pode contratar? Como funciona?", "Pode. Escolha “órgão público”, monte o plano e peça a proposta para empenho — ou baixe a proposta preliminar para instruir o processo. O enquadramento (por exemplo, dispensa por valor, art. 75, II, da Lei nº 14.133/2021) cabe ao órgão. Os acessos são liberados após a nota de empenho. Quem preferir também pode assinar como pessoa física."],
         ["Como funciona o plano para equipes?", "Você contrata a quantidade de acessos e quem contrata vira o gestor. Ele inclui as pessoas pelo e-mail e troca quando alguém sai da equipe. Cada acesso é de uma pessoa, e o desconto cresce com a quantidade: 5% de 3 a 5 acessos, 10% de 6 a 10 e 15% de 11 a 25, além dos 20% do anual."],
-        ["O que faz O Parecerista e quantas análises eu tenho?", "Ele lê até 3 documentos da contratação (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. Com O Elaborador, você também cria a minuta do ETP, do Termo de Referência ou do Projeto Básico a partir de um questionário, já conferida. O Pro inclui 8 por mês, somando análises e documentos criados; equipes Pro têm 6 por acesso por mês, somados. Nos demais planos cada análise ou documento é pago com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
+        ["O que faz O Parecerista e quantas análises eu tenho?", "Ele lê os documentos da contratação, até 300 páginas somadas (edital, ETP, TR, matriz de riscos, planilhas) e entrega um parecer técnico com os pontos críticos e recomendações. Com O Elaborador, você também cria a minuta do ETP, do Termo de Referência ou do Projeto Básico a partir de um questionário, já conferida. O Pro inclui 8 por mês, somando análises e documentos criados; equipes Pro têm 6 por acesso por mês, somados. Nos demais planos cada análise ou documento é pago com desconto. O parecer é opinativo e não substitui o parecer jurídico do órgão."],
         ["O que a Calculadora faz e quem pode usar?", "A Calculadora tem seis ferramentas: reajuste por índice (IPCA, IGP-M, INCC e outros, com a nota técnica em PDF), planilha de custos da mão de obra exclusiva no formato da IN 05/2017, repactuação (com custos não renováveis, Módulo 3 da empresa conferido, quadro comparativo, retroativo e nota técnica; várias categorias num relatório único), análise da planilha da proposta da licitante (exequibilidade, falhas e diligência), comparação de planilhas lado a lado (planejamento × contratação × repactuações, por categoria do quadro, com relatório) e reequilíbrio econômico-financeiro (tributário da reforma, LC 214/2025, e por fato superveniente, art. 124, II, d, da Lei 14.133/2021). O reajuste por índice é grátis para quem tem conta; as ferramentas de mão de obra, a comparação de planilhas e o reequilíbrio estão em todos os planos pagos e no teste de 7 dias. O agente de IA que lê a convenção coletiva e as planilhas é do plano Pro."],
         ["O que a Pesquisa de preços faz e quem pode usar?", "Fica no Elaborador e estima o valor da contratação na fase de planejamento. Você escolhe o regime (Lei 14.133, com a IN SEGES/ME 65/2021; Lei 13.303, pelo regulamento interno da estatal, que a IA pode ler; ou Lei 13.019) e o tipo de objeto. Para bens e serviços, o site coleta preços no Painel de Preços do Compras.gov.br e em contratações similares do PNCP, aceita cotações e outras fontes, desconsidera os preços mais de 25% abaixo ou acima da mediana e escolhe entre média e mediana pelo coeficiente de variação (menor preço em mercado restrito). Na mão de obra exclusiva, ratifica o valor da planilha da IN 5/2017; em obras, analisa a planilha de orçamento enviada (fontes, aritmética, curva ABC, BDI pelo Acórdão 2.622/2013 do TCU, encargos e data-base). O relatório sai em PDF, Word e Excel, e o resultado vai para o Termo de Referência com um clique. Está nos planos Básico, Premium e Pro e no teste de 7 dias; o filtro de itens semelhantes com IA tem limite diário."],
         ["O que a Gestão Contratual faz e quem pode usar?", "Você cadastra cada contrato (vigência, valor, índice, data do orçamento estimado e regime legal) e registra reajustes, repactuações, reequilíbrios, aditivos e prorrogações. O site calcula o valor vigente, a próxima anualidade, o limite de acréscimos do art. 125 e a data recomendada para iniciar a prorrogação, mostra a situação de cada contrato por cor (vigente, vencendo ou vencido), monta a agenda de prazos dos próximos 12 meses e avisa por e-mail. O Painel da Organização reúne a carteira inteira em indicadores e gráficos: quantidade e valor das contratações, distribuição por modalidade, custo total, contratos vencendo e no prazo, tempo médio entre o orçamento e a assinatura e entre a anualidade e a concessão do reajuste, alterações registradas e as empresas com mais contratos, com filtros por ano, modalidade e situação; para empresas privadas, a mesma leitura é feita por órgão contratante. Também gera o PDF de cada contrato, o relatório completo da carteira e a agenda em Excel. Está em todos os planos pagos e no teste de 7 dias; nos planos para equipes, cada contrato pode ser compartilhado com a equipe, para consulta."],
