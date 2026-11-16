@@ -198,7 +198,7 @@ Deno.serve(async (req) => {
       }
       // edital: os documentos que o baseiam (arquivo do assinante, documento feito no Elaborador ou, quando cabível, dispensado)
       const baseOk = (v: string, dispensavel: boolean) => caminhoOk(v) || /^ref:[0-9a-f-]{36}$/.test(v) || (dispensavel && v === "dispensado");
-      for (const [k, disp] of [["plano", false], ["base_tr", false], ["base_etp", true], ["base_riscos", true], ["base_planilha", false], ["base_planilha_mo", false]] as [string, boolean][]) {
+      for (const [k, disp] of [["plano", false], ["base_tr", false], ["base_etp", true], ["base_riscos", true], ["base_planilha", false], ["base_planilha_mo", false], ["base_orcamento", false], ["base_outros", false]] as [string, boolean][]) {
         if (limpo[k] && !baseOk(limpo[k], disp)) return erro("Documento de base inválido.");
         if (limpo[k] === "dispensado" && !String(limpo[k + "_motivo"] ?? "").trim()) return erro("Informe o motivo da dispensa do documento de base.");
       }

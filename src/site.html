@@ -7744,10 +7744,13 @@ const ELAB_RAPIDO = {
     ...ELAB_FINAIS
   ],
   tr: [
+    { k: "base_etp", etapa: "contratacao", rot: "Estudo Técnico Preliminar (ETP)", tipo: "docbase", fonte: ["etp"], dispensavel: true, dica: "Recomendado. O modelo é padrão: o agente ajusta cada cláusula ao que o ETP define (solução, quantidades, requisitos, parcelamento, prazos, riscos). Com o ETP enviado, quantidades e especificações deixam de ser obrigatórias aqui. Se o ETP foi dispensado, marque e informe o motivo." },
+    { k: "base_riscos", etapa: "contratacao", rot: "Matriz ou mapa de riscos", tipo: "docbase", fonte: ["riscos"], dispensavel: true, dica: "Os riscos e as medidas da matriz entram no modelo de execução, na fiscalização, nas garantias e nas sanções." },
+    { k: "base_outros", etapa: "contratacao", rot: "Outros documentos do processo", tipo: "docbase", planilha: true, fonte: [], dica: "DFD, pesquisa de preços, memorial descritivo, laudo, parecer técnico ou o TR anterior do mesmo objeto. Junte tudo num só PDF, Word ou Excel." },
     { k: "objeto", etapa: "contratacao", rot: "O que será contratado?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: limpeza dos 3 prédios da sede administrativa" },
     { k: "necessidade", etapa: "contratacao", rot: "Fundamentação: número do ETP ou motivo da contratação", tipo: "texto", obrig: true, ph: "Ex.: ETP nº 12/2026, processo 1234/2026", dica: "Alínea \"b\" do art. 6º, XXIII." },
-    { k: "quantidades", etapa: "contratacao", rot: "Quantidades", tipo: "texto", obrig: true, ph: "Ex.: 6.200 m² de área interna" },
-    { k: "especificacoes", etapa: "contratacao", rot: "Especificações e requisitos", tipo: "texto", obrig: true, ph: "Ex.: limpeza diária, de segunda a sexta, das 7h às 16h" },
+    { k: "quantidades", etapa: "contratacao", rot: "Quantidades", tipo: "texto", obrig: true, obrigSemBase: true, ph: "Ex.: 6.200 m² de área interna" },
+    { k: "especificacoes", etapa: "contratacao", rot: "Especificações e requisitos", tipo: "texto", obrig: true, obrigSemBase: true, ph: "Ex.: limpeza diária, de segunda a sexta, das 7h às 16h" },
     { k: "natureza", etapa: "contratacao", rot: "Solução escolhida (do ETP)", tipo: "chips", obrig: true, op: ["Compra", "Locação", "Serviço comum", "Serviço contínuo", "Serviço com mão de obra exclusiva"] },
     { k: "prazo", etapa: "contratacao", rot: "Prazo", tipo: "chips", obrig: true, outro: true, op: ["Entrega única", "12 meses", "30 meses", "Outro"] },
     // compras: o TR sai no modelo da AGU (aquisições); estes dados entram nas cláusulas de entrega, garantia, amostra e formalização
@@ -7759,6 +7762,7 @@ const ELAB_RAPIDO = {
     { k: "cct", etapa: "contratacao", se: (R) => R.natureza === "Serviço com mão de obra exclusiva", rot: "Convenção ou acordo coletivo de referência", tipo: "linha", ph: "Ex.: CCT 2026 do SIEMACO-RJ, registro MTE RJ000123/2026", dica: "Base dos custos mínimos de salário e benefícios que as propostas devem respeitar." },
     { k: "custos_minimos", etapa: "contratacao", se: (R) => R.natureza === "Serviço com mão de obra exclusiva", rot: "Custos mínimos por categoria", tipo: "texto", ph: "Ex.: servente: salário-base R$ 1.780,00, insalubridade 20%, auxílio-alimentação R$ 26,00/dia; encarregado: R$ 2.450,00" },
     { k: "uniformes", etapa: "contratacao", se: (R) => R.natureza === "Serviço com mão de obra exclusiva", rot: "Peças do uniforme", tipo: "linha", ph: "Ex.: 2 calças, 3 camisas, 1 jaqueta, 2 pares de sapato de segurança e crachá" },
+    { k: "base_planilha_mo", etapa: "mercado", se: (R) => R.natureza === "Serviço com mão de obra exclusiva", rot: "Planilhas de custos e formação de preços (IN 05/2017)", tipo: "docbase", planilha: true, fonte: [], dica: "Se já estiverem prontas, os custos mínimos, a convenção coletiva e os postos saem delas." },
     { k: "conta_vinculada", etapa: "mercado", depois: true, se: (R) => R.natureza === "Serviço com mão de obra exclusiva", rot: "Proteção das verbas trabalhistas", tipo: "chips", op: ["Conta-depósito vinculada", "Pagamento pelo fato gerador"], dica: "Férias, 13º e rescisões: depositados em conta bloqueada ou pagos só quando ocorrerem (art. 121, § 3º, III)." },
     { k: "prazo_entrega", etapa: "contratacao", seCompra: true, rot: "Prazo de entrega", tipo: "linha", ph: "Ex.: 30 dias do recebimento da nota de empenho; ou parcelas mensais" },
     { k: "garantia_bem", etapa: "contratacao", seCompra: true, rot: "Garantia do produto", tipo: "chips", outro: true, op: ["Garantia legal (Código de Defesa do Consumidor)", "12 meses", "24 meses", "36 meses", "Outro"] },
@@ -7794,10 +7798,14 @@ const ELAB_RAPIDO = {
     ...ELAB_FINAIS
   ],
   projeto_basico: [
+    { k: "base_etp", etapa: "contratacao", rot: "Estudo Técnico Preliminar (ETP)", tipo: "docbase", fonte: ["etp"], dispensavel: true, dica: "Recomendado. O modelo é padrão: o agente ajusta cada cláusula ao que o ETP define (solução, quantidades, requisitos, parcelamento, prazos, riscos). Com o ETP enviado, quantidades e especificações deixam de ser obrigatórias aqui. Se o ETP foi dispensado, marque e informe o motivo." },
+    { k: "base_riscos", etapa: "contratacao", rot: "Matriz ou mapa de riscos", tipo: "docbase", fonte: ["riscos"], dispensavel: true, dica: "Os riscos e as medidas da matriz entram no modelo de execução, na fiscalização, nas garantias e nas sanções." },
+    { k: "base_orcamento", etapa: "contratacao", rot: "Orçamento detalhado (planilha orçamentária)", tipo: "docbase", planilha: true, fonte: [], dica: "Planilha com composições de custos unitários e BDI. Dela saem os serviços, as quantidades, o valor, a data-base do reajuste e as parcelas de maior relevância." },
+    { k: "base_outros", etapa: "contratacao", rot: "Outros documentos do processo", tipo: "docbase", planilha: true, fonte: [], dica: "Memorial descritivo, especificações técnicas, cronograma físico-financeiro, levantamentos, sondagens ou laudos. Junte tudo num só PDF, Word ou Excel." },
     { k: "objeto", etapa: "contratacao", rot: "Qual é a obra ou o serviço de engenharia?", tipo: "texto", obrig: true, exemplos: true, ph: "Ex.: reforma e acessibilidade da Escola Municipal X" },
     { k: "necessidade", etapa: "contratacao", rot: "Por que é preciso fazer?", tipo: "texto", obrig: true, ph: "Ex.: o telhado tem infiltrações e a escola não tem rampa de acesso" },
     { k: "local", etapa: "contratacao", rot: "Local da obra", tipo: "linha", obrig: true, ph: "Ex.: Rua das Flores, 100, Centro, Maricá" },
-    { k: "quantidades", etapa: "contratacao", rot: "Principais serviços e quantidades", tipo: "texto", obrig: true, ph: "Ex.: 850 m² de cobertura; 2 rampas; 4 banheiros adaptados" },
+    { k: "quantidades", etapa: "contratacao", rot: "Principais serviços e quantidades", tipo: "texto", obrig: true, obrigSemBase: true, ph: "Ex.: 850 m² de cobertura; 2 rampas; 4 banheiros adaptados" },
     { k: "especificacoes", etapa: "contratacao", rot: "Especificações e padrões de acabamento", tipo: "texto", ph: "Ex.: telha termoacústica; piso cerâmico PEI 4; NBR 9050" },
     { k: "natureza", etapa: "contratacao", rot: "Natureza", tipo: "chips", obrig: true, op: ["Obra", "Serviço de engenharia", "Reforma"] },
     { k: "prazo", etapa: "contratacao", rot: "Prazo de execução", tipo: "chips", obrig: true, outro: true, op: ["6 meses", "12 meses", "Outro"] },
@@ -8006,6 +8014,13 @@ const ELAB_MONTAGEM = {
     ["Conferência e Word", "O agente confere com o roteiro do Parecerista e entrega em Word e PDF."] ]
 };
 // campos obrigatórios que faltam (inclui órgão e UF e o detalhe quando marcar "Outro")
+// campo obrigatório só quando o assinante não enviou o documento de base que o traz (ETP, orçamento)
+function elabObrig(c, R) {
+  if (!c.obrig) return false;
+  if (!c.obrigSemBase) return true;
+  const tem = (k) => { const v = String((R || {})[k] || ""); return !!v && v !== "dispensado"; };
+  return !(tem("base_etp") || tem("base_orcamento"));
+}
 function elFaltando(doc, R, etapa) {
   R = R || {};
   const vazio = (k) => !String(R[k] || "").trim();
@@ -8018,7 +8033,7 @@ function elFaltando(doc, R, etapa) {
     if (c.seParc && String(R.parcelamento || "").startsWith("Analisar")) return;
     if (c.se && !c.se(R)) return;
     const nome = (ELAB_ROT[c.k] || c.rot).toLowerCase();
-    if (c.obrig && vazio(c.k)) f.push(nome);
+    if (elabObrig(c, R) && vazio(c.k)) f.push(nome);
     else if (c.tipo === "docbase" && R[c.k] === "dispensado" && vazio(c.k + "_motivo")) f.push("o motivo da dispensa de \"" + nome + "\"");
     else if (c.outro && String(R[c.k] || "").split("; ").includes("Outro") && vazio(c.k + "_outro")) f.push("o detalhe de \"" + nome + "\" (você marcou Outro)");
   });
@@ -16218,7 +16233,7 @@ class Component extends DCLogic {
               const n = sel.includes(nome) ? sel.filter((x) => x !== nome) : sel.concat(nome);
               set(c.k, n.join("; "));
             };
-            return { rot: c.rot, obrig: !!c.obrig, opcional: !c.obrig, ph: c.ph || "", dica: c.dica || "",
+            return { rot: c.rot, obrig: elabObrig(c, R), opcional: !elabObrig(c, R), ph: c.ph || "", dica: c.dica || "",
               ehTexto: c.tipo === "texto", ehLinha: c.tipo === "linha", ehChips: c.tipo === "chips", temExemplos: !!c.exemplos,
               ehPlano: c.tipo === "docbase",
               ...(() => {

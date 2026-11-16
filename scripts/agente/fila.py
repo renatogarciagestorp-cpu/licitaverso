@@ -415,7 +415,8 @@ def processar_geracao(a):
             # edital: os documentos que o baseiam (arquivo do assinante ou documento feito no Elaborador); "dispensado" não é lido
             BASES = [("plano", "Plano de trabalho"), ("base_tr", "Termo de Referência ou Projeto Básico"), ("base_etp", "Estudo Técnico Preliminar"),
                      ("base_riscos", "Matriz de riscos"), ("base_planilha", "Planilha de custos da parceria"),
-                     ("base_planilha_mo", "Planilhas de custos e formação de preços (IN 05-2017)")]
+                     ("base_planilha_mo", "Planilhas de custos e formação de preços (IN 05-2017)"),
+                     ("base_orcamento", "Orçamento detalhado da obra"), ("base_outros", "Outros documentos do processo")]
             for chave, rotulo in BASES:
                 valor_b = str(respostas.get(chave) or "")
                 if not valor_b or valor_b == "dispensado" or a.get("fase") == "completar":
