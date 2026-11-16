@@ -1,0 +1,47 @@
+name: Acervo — leitura antecipada das coletas do RJ
+# Toda segunda às 7h50 (Brasília), antes das coletas "Nacional e RJ" (8h07) e "TCE-RJ e TCM-RJ" (8h37): lê as fontes
+# delas e deixa as leituras em lidas/rj-<data>* e lidas/nacional-<data>* no ramo coleta-fontes. Assim as coletas
+# funcionam mesmo sem permissão de envio ao GitHub (só leem o ramo). Não toca no main nem no site.
+on:
+  schedule:
+    - cron: "50 10 * * 1"
+  workflow_dispatch:
+concurrency:
+  group: acervo-fontes
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  ler:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: coleta-fontes
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: .codigo
+          sparse-checkout: |
+            scripts/agente
+            acervo-completo.json
+          sparse-checkout-cone-mode: false
+      - name: Ferramentas de PDF
+        run: |
+          sudo apt-get update -qq >/dev/null
+          sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-por >/dev/null
+      - name: Ler as fontes
+        run: |
+          dia=$(TZ=America/Sao_Paulo date +%Y%m%d)
+          rm -rf lidas/rj-$dia* lidas/nacional-$dia*
+          python3 .codigo/scripts/agente/pre-leitura.py .codigo/acervo-completo.json lidas "$dia"
+      - name: Devolver as leituras
+        run: |
+          git config user.name "Licitacon — leitor de fontes"
+          git config user.email "actions@users.noreply.github.com"
+          if [ -d lidas ]; then git add -A lidas; fi
+          if git diff --cached --quiet; then echo "Nada a devolver."; exit 0; fi
+          git commit -q -m "Leitura antecipada das coletas do RJ"
+          for i in 1 2 3; do git pull -q --rebase origin coleta-fontes && git push -q origin HEAD:coleta-fontes && exit 0; sleep 5; done
+          exit 1
