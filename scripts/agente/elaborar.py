@@ -26,6 +26,8 @@ _spec5 = importlib.util.spec_from_file_location("modelo_chamamento", RAIZ / "scr
 mc = importlib.util.module_from_spec(_spec5); _spec5.loader.exec_module(mc)
 _spec6 = importlib.util.spec_from_file_location("modelo_tr_geral", RAIZ / "scripts" / "agente" / "modelo_tr_geral.py")
 mtg = importlib.util.module_from_spec(_spec6); _spec6.loader.exec_module(mtg)
+_spec7 = importlib.util.spec_from_file_location("modelo_tr_servicos_agu", RAIZ / "scripts" / "agente" / "modelo_tr_servicos_agu.py")
+mtsa = importlib.util.module_from_spec(_spec7); _spec7.loader.exec_module(mtsa)
 # modelos padrão: ETP (Licitacon) e TR de compras (AGU); o Word do assinante, se enviado, prevalece
 MODELOS = {"etp": me, "tr": mt}
 
@@ -164,6 +166,8 @@ def modelo_base(doc, respostas):
         return mc.plano(respostas, dec)
     if doc == "tr" and regime_de(respostas) in ("lei-14133", "lei-13303") and not respostas.get("modelo_arquivo") \
             and not modelo_padrao(doc, respostas, None):  # compras da 14.133 seguem o modelo da AGU
+        if regime_de(respostas) == "lei-14133" and re.fullmatch(r"Serviço (comum|contínuo)", str(respostas.get("natureza") or "")):
+            return mtsa.termo(respostas)  # serviço sem mão de obra exclusiva e sem engenharia: texto do modelo da AGU (mai/2026)
         norma = an.NORMAS_LOCAIS[0]["nome"] if an.NORMAS_LOCAIS else ""
         return mtg.termo(respostas, regime_de(respostas), norma)
     return None
@@ -203,7 +207,7 @@ def bloco_regime(regime, tem_normas):
             + ("A regulamentação do ente foi enviada (abaixo): siga-a e cite-a quando ela detalhar a lei. " if tem_normas else "") + "\n\n")
 CAMPOS_ROTULO = {
     "envio_propostas": "Forma de envio das propostas", "contato": "Canal para esclarecimentos, impugnações e recursos",
-    "osc": "Organização da sociedade civil (nome, CNPJ e responsável)", "atividades": "Atividades e forma de execução", "indicadores": "Parâmetros e indicadores de aferição das metas", "publico": "Público-alvo", "despesas": "Previsão de receitas e despesas", "cronograma": "Cronograma de execução e desembolso", "contrapartida": "Contrapartida", "bens": "Bens permanentes a comprar com recursos da parceria", "mao_obra": "Há mão de obra com dedicação exclusiva", "pesquisa_fontes": "Fontes da pesquisa de preços", "pesquisa_metodo": "Método do valor de referência", "memoria": "Memória de cálculo das quantidades", "rateio": "Critério de rateio dos custos indiretos", "implantacao": "Período de implantação", "visitas": "Frequência das visitas técnicas", "acessibilidade": "Medidas de acessibilidade", "relatorio_periodicidade": "Periodicidade do relatório de execução da organização",
+    "osc": "Organização da sociedade civil (nome, CNPJ e responsável)", "atividades": "Atividades e forma de execução", "indicadores": "Parâmetros e indicadores de aferição das metas", "publico": "Público-alvo", "despesas": "Previsão de receitas e despesas", "cronograma": "Cronograma de execução e desembolso", "contrapartida": "Contrapartida", "bens": "Bens permanentes a comprar com recursos da parceria", "mao_obra": "Há mão de obra com dedicação exclusiva", "pesquisa_fontes": "Fontes da pesquisa de preços", "pesquisa_metodo": "Método do valor de referência", "memoria": "Memória de cálculo das quantidades", "rateio": "Critério de rateio dos custos indiretos", "implantacao": "Período de implantação", "visitas": "Frequência das visitas técnicas", "acessibilidade": "Medidas de acessibilidade", "inicio": "Início da execução", "horario": "Horário da prestação dos serviços", "vistoria": "Vistoria prévia", "srp": "Registro de preços", "me_epp": "Participação de ME/EPP", "garantia_contratual": "Garantia contratual", "subcontratacao": "Subcontratação", "consorcio": "Consórcio", "pagamento_prazo": "Prazo de pagamento", "execucao": "Como o serviço será executado", "relatorio_periodicidade": "Periodicidade do relatório de execução da organização",
     "tipo_parceria": "Tipo de parceria (escolha do requisitante)", "metas": "Objetivos, metas e público atendido", "modo_disputa": "Modo de disputa (escolha do requisitante)", "registro_precos": "Registro de preços (escolha do requisitante)", "me_epp": "Participação de ME e EPP (escolha do requisitante)", "criterios_selecao": "Critérios de seleção e pontuação", "agente": "Agente de contratação, pregoeiro ou comissão", "hipotese": "Hipótese legal da contratação direta (escolha do requisitante)", "hipotese_detalhe": "Por que a situação se enquadra na hipótese", "contratado": "Fornecedor ou organização escolhida", "motivo_escolha": "Razão da escolha do contratado", "justificativa_preco": "Como o preço foi verificado", "fase": "Fases a mapear", "riscos_conhecidos": "Riscos ou problemas já conhecidos", "matriz": "Incluir matriz de alocação de riscos (art. 22)", "equipe": "Equipe de planejamento", "garantia": "Garantia da contratação (escolha do requisitante)",
     "orgao": "Órgão ou entidade", "uf": "UF e município", "unidade": "Unidade requisitante", "natureza": "Natureza do objeto / solução indicada",
     "objeto": "Objeto", "necessidade": "Necessidade", "pca": "Plano de contratações anual", "requisitos": "Requisitos",

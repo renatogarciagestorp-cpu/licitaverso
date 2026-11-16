@@ -7778,6 +7778,9 @@ const ELAB_RAPIDO = {
     // compras: o TR sai no modelo da AGU (aquisições); estes dados entram nas cláusulas de entrega, garantia, amostra e formalização
     { k: "local", etapa: "contratacao", rot: "Local de entrega ou de execução", tipo: "linha", ph: "Ex.: Almoxarifado Central, Rua X, 100, Centro; ou os 3 prédios da sede (endereços)" },
     { k: "execucao", etapa: "contratacao", se: (R) => R.natureza !== "Compra", rot: "Como o serviço será executado", tipo: "texto", ph: "Ex.: segunda a sexta, das 7h às 16h, com encarregado no local; materiais e equipamentos por conta da contratada; medição mensal com IMR" },
+    { k: "inicio", etapa: "contratacao", se: (R) => R.natureza !== "Compra", rot: "Início da execução", tipo: "linha", ph: "Ex.: em até 10 dias da emissão da ordem de serviço" },
+    { k: "horario", etapa: "contratacao", se: (R) => R.natureza !== "Compra", rot: "Horário da prestação dos serviços", tipo: "linha", ph: "Ex.: segunda a sexta, das 8h às 17h" },
+    { k: "vistoria", etapa: "contratacao", se: (R) => R.natureza !== "Compra", rot: "Vistoria prévia do local", tipo: "chips", op: ["Não é necessária", "Sim, assegurada aos interessados"], dica: "Só quando conhecer o local for imprescindível para formular a proposta (art. 63, § 2º)." },
     { k: "prazo_entrega", etapa: "contratacao", seCompra: true, rot: "Prazo de entrega", tipo: "linha", ph: "Ex.: 30 dias do recebimento da nota de empenho; ou parcelas mensais" },
     { k: "garantia_bem", etapa: "contratacao", seCompra: true, rot: "Garantia do produto", tipo: "chips", outro: true, op: ["Garantia legal (Código de Defesa do Consumidor)", "12 meses", "24 meses", "36 meses", "Outro"] },
     { k: "amostra", etapa: "contratacao", seCompra: true, rot: "Exigir amostra do primeiro colocado?", tipo: "chips", op: ["Não", "Sim"], dica: "Só quando for indispensável para aferir a qualidade (art. 41, II)." },
