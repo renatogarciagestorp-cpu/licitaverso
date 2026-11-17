@@ -74,6 +74,8 @@ def main():
         "https://www.tjrj.jus.br/documents/d/portal-conhecimento/inconstitucionalidades-2026",
         "https://www.gov.br/compras/pt-br/acesso-a-informacao/legislacao/instrucoes-normativas",
         "https://redelog.rj.gov.br/redelog/legislacao-licitacoes/",
+        # Jurisprudência Selecionada do TCU (JSON): os 100 enunciados mais recentes, com KEY, acórdão, área e tema
+        "https://pesquisa.apps.tcu.gov.br/rest/publico/base/jurisprudencia-selecionada/documentosResumidos?termo=*&ordenacao=DTRELEVANCIA%20desc&quantidade=100&inicio=0",
     ], lidas)
     links = re.findall(r"^https?://\S+$", texto(dest, ind[0]) if ind else "", re.M)
     tcu = [u for u in dict.fromkeys(links) if re.search(r"tcu\.gov\.br", u) and re.search(r"boletim|informativo", u, re.I)][:8]
