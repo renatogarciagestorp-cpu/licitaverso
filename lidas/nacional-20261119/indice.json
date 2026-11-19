@@ -37,7 +37,7 @@
   "arquivo": "05.txt",
   "status": 200,
   "tipo": "html",
-  "bytes": 281314,
+  "bytes": 281313,
   "caracteres": 81321,
   "links": 213
  },
@@ -87,22 +87,17 @@
   "links": 39
  },
  {
-  "url": "https://www.tjrj.jus.br/documents/d/portal-conhecimento/inconstitucionalidades-2026",
-  "arquivo": null,
-  "erro": "o site não respondeu (URLError)"
- },
- {
   "url": "https://www.gov.br/compras/pt-br/acesso-a-informacao/legislacao/instrucoes-normativas",
-  "arquivo": "12.txt",
+  "arquivo": "11.txt",
   "status": 200,
   "tipo": "html",
-  "bytes": 224197,
-  "caracteres": 33927,
+  "bytes": 224109,
+  "caracteres": 33883,
   "links": 332
  },
  {
   "url": "https://redelog.rj.gov.br/redelog/legislacao-licitacoes/",
-  "arquivo": "13.txt",
+  "arquivo": "12.txt",
   "status": 200,
   "tipo": "html",
   "bytes": 372082,
@@ -111,11 +106,19 @@
  },
  {
   "url": "https://pesquisa.apps.tcu.gov.br/rest/publico/base/jurisprudencia-selecionada/documentosResumidos?termo=*&ordenacao=DTRELEVANCIA%20desc&quantidade=100&inicio=0",
-  "arquivo": "14.txt",
+  "arquivo": "13.txt",
   "status": 200,
   "tipo": "application/json",
-  "bytes": 162795,
-  "caracteres": 158476,
+  "bytes": 162730,
+  "caracteres": 158410,
   "links": 0
+ },
+ {
+  "url": "https://www.tjrj.jus.br/documents/d/portal-conhecimento/inconstitucionalidades-2026",
+  "arquivo": null,
+  "status": null,
+  "tipo": "firecrawl",
+  "bytes": 0,
+  "erro": "HTTPError: HTTP Error 402: Payment Required"
  }
 ]
