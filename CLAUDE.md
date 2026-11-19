@@ -2,6 +2,8 @@
 
 Site sobre licitações, contratos e parcerias (Lei 13.019) para a administração pública. Respostas e textos em português.
 
+**Início de toda conversa: leia `ESTADO.md`** (estado atual, tarefas agendadas, pendências). **No fim de toda conversa que mudar algo, atualize `ESTADO.md`** (últimas mudanças, pendências, números) e faça commit junto com o trabalho.
+
 ## Publicação (regra principal)
 - Trabalhe só no ramo de desenvolvimento indicado na sessão. **Publique no `main` apenas quando o usuário disser "Publique".**
 - Como publicar: crie o ramo `pub` a partir de `origin/main`, aplique os commits com `cherry-pick`, rode `python3 scripts/empacotar-site.py` e envie com `git push origin HEAD:main`. Depois volte ao ramo de trabalho, apague o `pub`, faça merge de `origin/main` e envie.
