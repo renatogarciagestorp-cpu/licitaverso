@@ -33,6 +33,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("banco")
     ap.add_argument("--data", default=datetime.date.today().isoformat())
+    ap.add_argument("--commit", default="", help="commit do repositório da Receita usado (só para registro)")
     a = ap.parse_args()
     if not pathlib.Path(a.banco).is_file():
         sys.exit("Banco não encontrado: " + a.banco)
@@ -119,7 +120,7 @@ def main() -> None:
     base = {
         "fonte": "Receita Federal do Brasil — base da calculadora de tributos da reforma (calculadora-rtc)",
         "versao": versao["VRBD_VERSAO_BASE_DADO"], "versaoData": versao["VRBD_DATA"][:10], "versaoNota": limpa(versao["VRBD_DESCRICAO"]),
-        "vigenteEm": hoje, "gerado": datetime.date.today().isoformat(),
+        "vigenteEm": hoje, "gerado": datetime.date.today().isoformat(), "commitFonte": a.commit[:12],
         "classificacoes": classes, "lc116": lc116, "lc116Nbs": mapa, "nbs": nbs, "nbsAplicavel": nbs_apl,
         "aliquotaReferencia": ref,
         "compraGov": {"redutor": redutor[0]["v"] if redutor else None,
@@ -144,8 +145,20 @@ def main() -> None:
 
     SAIDA.mkdir(parents=True, exist_ok=True)
     opts = dict(ensure_ascii=False, separators=(",", ":"))
+    ncm_dados = {"versao": base["versao"], "ncm": ncm, "regras": regras, "seletivo": seletivo}
+    meta = ("vigenteEm", "gerado", "commitFonte")
+    try:
+        antigo = json.loads((SAIDA / "rtc.json").read_text(encoding="utf-8"))
+        antigo_ncm = json.loads((SAIDA / "ncm.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        antigo, antigo_ncm = None, None
+    igual = (antigo is not None and {k: v for k, v in antigo.items() if k not in meta} == {k: v for k, v in base.items() if k not in meta}
+             and antigo_ncm == ncm_dados)
+    if igual:
+        print(f"Base {base['versao']}: nada mudou desde a última exportação; arquivos mantidos.")
+        return
     (SAIDA / "rtc.json").write_text(json.dumps(base, **opts), encoding="utf-8")
-    (SAIDA / "ncm.json").write_text(json.dumps({"versao": base["versao"], "ncm": ncm, "regras": regras, "seletivo": seletivo}, **opts), encoding="utf-8")
+    (SAIDA / "ncm.json").write_text(json.dumps(ncm_dados, **opts), encoding="utf-8")
     print(f"Base {base['versao']} ({base['versaoData']}), vigente em {hoje}: {len(classes)} classificações, "
           f"{len(lc116)} itens da LC 116 ({len(mapa)} com NBS), {len(nbs)} NBS, {len(ncm)} NCM, {len(regras)} regras de NCM.")
     for f in ("rtc.json", "ncm.json"):

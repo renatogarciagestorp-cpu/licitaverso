@@ -1601,6 +1601,10 @@
   .rt-lin span:first-child { text-align: left; font-weight: 800; } .rt-cab span { font-size: 12px; font-weight: 800; color: #5F7077; background: #F6F8F7; }
   .rt-lin span[data-destino="true"] { background: #E3F6EE; font-weight: 800; color: #0A7A50; }
   .rt-aba, .rt-aba > *, .rt-aba .lmo-bloco { min-width: 0; max-width: 100%; }
+  .rt-acoes { display: flex; flex-wrap: wrap; gap: 6px; } .rt-acoes .lve-voltar { padding: 6px 12px; font-size: 13px; }
+  .rt-acoes .rt-prim { background: #0A1F2A; color: #FFFFFF; border-color: #0A1F2A; }
+  .rt-vinc { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-top: 10px; padding: 10px 12px; border: 1px dashed #B9D8CB; border-radius: 12px; background: #F4FAF7; }
+  .rt-vinc span { flex: 1 1 320px; font-size: 13.5px; color: #24414B; } .rt-vinc .lve-voltar { padding: 6px 12px; font-size: 13px; }
   .rt-fonte { font-size: 12.5px; color: #5F7077; margin-top: 14px; }
   /* ===== Pesquisa de preços: camada visual (neurodesign) ===== */
   .pp-fundo { background: radial-gradient(1100px 380px at 50% -120px, rgba(15,163,107,.10), transparent 70%), linear-gradient(#F3F7F5, #F6F8F7 420px); }
@@ -4382,6 +4386,7 @@
                   <label class="lmo-campo"><span>Alíquota de referência da CBS (%)</span><input type="text" inputmode="decimal" value="{{ moRfCbs }}" sc-camel-on-input="{{ onMoRfCbs }}"></label>
                   <label class="lmo-campo"><span>Alíquota de referência do IBS (%, estimativa)</span><input type="text" inputmode="decimal" value="{{ moRfIbs }}" sc-camel-on-input="{{ onMoRfIbs }}"></label>
                 </div>
+                <sc-if value="{{ moRtEscolhe }}" hint-placeholder-val="{{ true }}"><div class="rt-vinc"><span>{{ moRtTxt }}</span><button type="button" class="lve-voltar" sc-camel-on-click="{{ moRtEscolher }}">Escolher na base oficial</button><sc-if value="{{ moRtTem }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moRtTirar }}">Tirar a redução</button></sc-if></div></sc-if>
                 <p class="lmo-nota">CBS: 11,3% é a referência calculada pelo TCU para 2027 (o Senado deve fixá-la até 15/12/2026). IBS: a referência ainda não foi fixada; 18,7% é estimativa. Atualize os dois campos quando as alíquotas forem publicadas.</p>
                 <div class="lmo-tabela" style="margin-top: 10px" role="table" aria-label="Período de transição">
                   <div class="lmo-lin lmo-trans lmo-cab" role="row"><span>Ano</span><span>PIS e COFINS</span><span>CBS</span><span>IBS</span><span>ISS</span><span>Tributos no preço</span><span>Preço por empregado</span><span>Valor mensal</span></div>
@@ -4970,6 +4975,7 @@
                 <label class="lmo-campo"><span>Alíquota de referência da CBS (%)</span><input type="text" inputmode="decimal" value="{{ rqRfCbs }}" sc-camel-on-input="{{ onRqRfCbs }}"></label>
                 <label class="lmo-campo"><span>Alíquota de referência do IBS (%, estimativa)</span><input type="text" inputmode="decimal" value="{{ rqRfIbs }}" sc-camel-on-input="{{ onRqRfIbs }}"></label>
               </div>
+              <div class="rt-vinc"><span>{{ rqRtTxt }}</span><button type="button" class="lve-voltar" sc-camel-on-click="{{ rqRtEscolher }}">Escolher na base oficial</button><sc-if value="{{ rqRtTem }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ rqRtTirar }}">Tirar a redução</button></sc-if></div>
               <p class="lmo-nota">CBS: 11,3% é a referência calculada pelo TCU para 2027. IBS: 18,7% é estimativa. Atualize os dois campos quando as alíquotas forem publicadas.</p>
               <sc-if value="{{ rqAnoEdit }}" hint-placeholder-val="{{ false }}">
                 <div class="lmo-campos" style="margin-top: 8px">
@@ -5034,13 +5040,16 @@
               <h2 class="lmo-h2">2. Classificação tributária (cClassTrib)</h2>
               <p class="rt-sel"><b>{{ rtSelCod }}</b>{{ rtSelD }}</p>
               <p class="lmo-nota">{{ rtSelNota }}</p>
+              <sc-if value="{{ rtDestinoTxt }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso" style="margin-top: 8px">{{ rtDestinoTxt }}</p></sc-if>
               <div class="rt-cards"><sc-for list="{{ rtClasses }}" as="k" hint-placeholder-count="2">
                 <article class="rt-card" data-ativo="{{ k.ativo }}">
                   <header><span class="rt-cod">{{ k.c }}</span><span class="rt-red" data-tem="{{ k.temRed }}">{{ k.redTxt }}</span><span class="rt-cst">CST {{ k.cst }} · {{ k.cstD }}</span></header>
                   <p>{{ k.d }}</p>
                   <p class="rt-meta">{{ k.meta }}</p>
                   <details><summary>Fundamentação: {{ k.fundCurto }}</summary><p>{{ k.fundTexto }}</p></details>
-                  <div><button type="button" class="lve-voltar" style="padding: 6px 12px; font-size: 13px" aria-pressed="{{ k.ativo }}" sc-camel-on-click="{{ k.usar }}">Usar na tabela abaixo</button></div>
+                  <div class="rt-acoes"><button type="button" class="lve-voltar" aria-pressed="{{ k.ativo }}" sc-camel-on-click="{{ k.usar }}">Usar na tabela abaixo</button>
+                    <sc-if value="{{ k.levavel }}" hint-placeholder-val="{{ true }}"><button type="button" class="{{ k.moCls }}" sc-camel-on-click="{{ k.paraMo }}">Levar à planilha de custos</button><button type="button" class="{{ k.rqCls }}" sc-camel-on-click="{{ k.paraRq }}">Levar ao reequilíbrio</button></sc-if>
+                    <sc-if value="{{ k.naoLevavel }}" hint-placeholder-val="{{ false }}"><small class="rt-meta">Regra própria de alíquota: não se leva à planilha.</small></sc-if></div>
                 </article>
               </sc-for></div>
             </section>
@@ -8574,6 +8583,27 @@ function moSimples(rbt12) {
 // e IBS 0,1%, PIS/COFINS extintos; 2029 a 2032: ISS a 90%, 80%, 70% e 60% da alíquota, com o IBS crescendo na mesma proporção
 // (ADCT, arts. 125 a 133); 2033: ISS extinto, IBS integral
 const MO_ISS_TRANSICAO = { 2029: 0.9, 2030: 0.8, 2031: 0.7, 2032: 0.6 };
+// Redução oficial da classificação tributária (cClassTrib) escolhida na aba "Reforma tributária" da Calculadora:
+// d.rf_cclass, d.rf_red_cbs e d.rf_red_ibs (em %). Vale de 2027 em diante (2026 é teste, compensável), sobre a CBS e o IBS do ano.
+function moReducao(tr, d) {
+  const lim = (k) => Math.min(100, Math.max(0, moNum(d && d[k]) || 0)) / 100, rc = lim("rf_red_cbs"), ri = lim("rf_red_ibs");
+  if (!tr || tr.antigos || !(d && d.rf_cclass) || !(rc || ri)) return tr;
+  return { ...tr, cbs: tr.cbs * (1 - rc), ibs: tr.ibs * (1 - ri), redCbs: rc, redIbs: ri };
+}
+function rtRedPct(v) { return (Number(v) || 0).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%"; }
+// frase para a memória de cálculo e as notas técnicas (vazia sem classificação escolhida)
+function rtRedTexto(d) {
+  if (!d || !d.rf_cclass) return "";
+  return " Classificação tributária (cClassTrib) " + d.rf_cclass + (d.rf_cclass_d ? " – " + d.rf_cclass_d : "") + ": redução de " + rtRedPct(moNum(d.rf_red_cbs)) + " da CBS e de "
+    + rtRedPct(moNum(d.rf_red_ibs)) + " do IBS" + (d.rf_cclass_fund ? " (" + d.rf_cclass_fund + ")" : "") + ", conforme a base oficial da calculadora de tributos da Receita Federal" + (d.rf_cclass_ver ? ", versão " + d.rf_cclass_ver : "") + ".";
+}
+// texto e ações do vínculo com a base oficial, na Planilha de custos e no Reequilíbrio
+function rtVinculo(d, escolher, tirar) {
+  const tem = !!(d && d.rf_cclass);
+  return { tem, escolher, tirar,
+    txt: tem ? "Classificação tributária " + d.rf_cclass + (d.rf_cclass_d ? " (" + d.rf_cclass_d + ")" : "") + ": redução de " + rtRedPct(moNum(d.rf_red_cbs)) + " da CBS e de " + rtRedPct(moNum(d.rf_red_ibs)) + " do IBS, aplicada de 2027 em diante. Fonte: base oficial da Receita Federal" + (d.rf_cclass_ver ? ", versão " + d.rf_cclass_ver : "") + "."
+      : "Sem classificação tributária escolhida: CBS e IBS com alíquota cheia (regra geral, cClassTrib 000001). Se o serviço tem redução na LC 214/2025, escolha a classificação na base oficial." };
+}
 function moTransicao(ano, cbsRef, ibsRef) {
   if (ano <= 2026) return { ano, antigos: true, cbs: 0, ibs: 0, issF: 1, teste: ano === 2026 };
   if (ano <= 2028) return { ano, antigos: false, cbs: Math.max(0, cbsRef - 0.001), ibs: 0.001, issF: 1 };
@@ -9911,7 +9941,7 @@ function rqCalcular(d) {
   const red = simp ? 0 : P0 * pc("ins") * pc("ins_red");      // insumos que ficam mais baratos com a não cumulatividade
   const cbsRef = pc("rf_cbs"), ibsRef = pc("rf_ibs");
   const anos = MO_ANOS_REFORMA.map((ano) => {
-    const tr = { ...moTransicao(ano, cbsRef, ibsRef) };
+    const tr = { ...moReducao(moTransicao(ano, cbsRef, ibsRef), d) };
     // alíquotas do ano analisado digitadas: substituem as da transição (só para esse ano)
     if (!simp && !tr.antigos && String(ano) === String(d.ano || "2027")) { if (tem("ano_cbs")) tr.cbs = pc("ano_cbs"); if (tem("ano_ibs")) tr.ibs = pc("ano_ibs"); }
     let P1, cbs = 0, ibs = 0, iss = 0, pis = 0, PoY = Po;
@@ -9923,7 +9953,7 @@ function rqCalcular(d) {
     return { ano, tr, P1, dif, pct: dif / P0, carga: P1 ? (P1 - PoY) / P1 : 0, cbs, ibs, iss, pis, PoY };
   });
   const sel = anos.find((x) => String(x.ano) === String(d.ano)) || anos[1];
-  const ref = moTransicao(sel.ano, cbsRef, ibsRef);
+  const ref = moReducao(moTransicao(sel.ano, cbsRef, ibsRef), d);
   if (!simp && !ref.antigos) [["ano_cbs", "CBS", ref.cbs], ["ano_ibs", "IBS", ref.ibs]].forEach(([k, rot, v]) => {
     if (tem(k) && Math.abs(pc(k) - v) > 0.0000005) alertas.push(rot + " de " + p4(pc(k)) + " digitada para " + sel.ano + "; pela transição da LC 214/2025 (ADCT, arts. 125 a 133), com as referências informadas, seria " + p4(v) + "."); });
   if (!simp && d.regime === "presumido" && ((tem("pis") && Math.abs(aPis - 0.0065) > 0.0000005) || (tem("cofins") && Math.abs(aCof - 0.03) > 0.0000005)))
@@ -10009,7 +10039,7 @@ function moCalcular(d, modo, rj) {
   if (simp) { aPis = simp.pis; aCof = simp.cofins; if (!simp.issFora) aIss = simp.iss; }
   // percentuais do Simples digitados à mão (sp_*): substituem os da tabela do Anexo IV; a conferência aponta a diferença
   if (simp) { if (tem("sp_pis")) aPis = pc("sp_pis"); if (tem("sp_cofins")) aCof = pc("sp_cofins"); if (!simp.issFora && tem("sp_iss")) aIss = pc("sp_iss"); }
-  const tr = d.reforma === "depois" ? moTransicao(n("rf_ano") || new Date().getFullYear(), pc("rf_cbs"), pc("rf_ibs")) : null;
+  const tr = d.reforma === "depois" ? moReducao(moTransicao(n("rf_ano") || new Date().getFullYear(), pc("rf_cbs"), pc("rf_ibs")), d) : null;
   r.simp = simp; r.tr = tr; r.aPis = aPis; r.aCof = aCof; r.aIss = aIss; r.aCbs = 0; r.aIbs = 0; r.aIssT = aIss; r.cbs = 0; r.ibs = 0; r.porFora = false;
   if (!tr || tr.antigos) {
     // PIS, COFINS e ISS "por dentro": P1 = Po ÷ (1 − tributos) (em 2026, a CBS de 0,9% e o IBS de 0,1% são compensados com PIS/COFINS)
@@ -10461,7 +10491,7 @@ class Component extends DCLogic {
     cmp: { cols: [], info: {}, ok: "", erro: "" },
     pca: { lista: [], carregado: false, ano: new Date().getFullYear(), form: null, colar: null, setor: "", msg: "", erro: "", excluir: "", todos: false },
     ct: { lista: [], eventos: {}, carregado: false, carregando: false, atual: "", form: null, ev: null, erro: "", ok: "", excluir: "" },
-    rt: { tipo: "servico", q: "", sel: null, cl: "", ente: "municipio", valor: "10.000,00", cbs: "11,3", ibs: "18,7", base: null, ncmOk: false, carregando: false, erro: "" },
+    rt: { destino: "", volta: "", tipo: "servico", q: "", sel: null, cl: "", ente: "municipio", valor: "10.000,00", cbs: "11,3", ibs: "18,7", base: null, ncmOk: false, carregando: false, erro: "" },
     rq: { d: (() => { try { return { ...RQ_PADRAO, ...(JSON.parse(localStorage.getItem("lv-rq") || "{}") || {}) }; } catch (e) { return { ...RQ_PADRAO }; } })(), erro: "", baixando: false },
     mo: { modo: "planejamento", d: (() => { try { return { ...MO_PADRAO, ...(JSON.parse(localStorage.getItem("lv-mo-planejamento") || "{}") || {}) }; } catch (e) { return { ...MO_PADRAO }; } })(), enviando: false, agente: false, erro: "", ok: "", obs: [] },
     indices: null, indicesErro: false, mpAberto: "", mpAno: 0, mpMes: 0, mpVista: "dias",
@@ -12963,7 +12993,7 @@ class Component extends DCLogic {
     const fund = ["LC 214/2025, arts. 373 a 377: reequilíbrio dos contratos administrativos pela mudança da carga tributária efetiva da CBS e do IBS, inclusive na transição, considerando a não cumulatividade, o repasse e os benefícios extintos (art. 374, § 1º); a matriz de riscos não afasta o direito (art. 374, § 2º).",
       "Pedido da contratada durante a vigência e antes da prorrogação, instruído com os cálculos (art. 376); decisão fundamentada em até 90 dias, prorrogáveis uma vez (art. 376, § 1º); recomposição provisória possível (art. 376, §§ 4º e 5º); revisão de ofício quando a carga diminuir (art. 375).",
       "Lei 14.133/2021, arts. 124, II, d, e 134, e Lei 13.303/2016, aplicadas subsidiariamente (LC 214/2025, art. 377). " + leiDe(d).tribForm,
-      "Alíquotas de referência: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa). Confira as alíquotas publicadas e o texto oficial da LC 214/2025 antes de juntar ao processo."];
+      "Alíquotas de referência: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa)." + rtRedTexto(d) + " Confira as alíquotas publicadas e o texto oficial da LC 214/2025 antes de juntar ao processo."];
     const alertasB = r.alertas.length ? [{ t: "texto", titulo: "PERCENTUAIS DIGITADOS FORA DA LEGISLAÇÃO", paragrafos: r.alertas }] : [];
     const base0 = "reequilibrio-tributario" + (d.contrato ? "-contrato-" + String(d.contrato).replace(/[^0-9a-z]+/gi, "-") : "");
     const sub = "Reequilíbrio tributário · " + (d.contratada || "Contrato") + (d.contrato ? " · contrato " + d.contrato : "");
@@ -13436,6 +13466,28 @@ class Component extends DCLogic {
   }
   // ------------------------------------------------------------ Calculadora → Reforma tributária (base oficial da Receita)
   rtSet(o) { this.setState((x) => ({ rt: { ...x.rt, ...o } })); }
+  // a Planilha de custos ("mo") ou o Reequilíbrio ("rq") pede a classificação: abre a aba e volta com ela
+  rtEscolherPara(destino) {
+    const ativo = this.state.calcAba === "mo" ? this.state.mo.modo : "reequilibrio";
+    this.rtSet({ destino, volta: destino === "mo" ? ativo : "reequilibrio" });
+    this.calcFerramenta("reforma");
+    try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) {}
+  }
+  rtAplicar(destino, k) {
+    const r = k.red || {}, num = (v) => String(Number(v) || 0).replace(".", ","), b = this.state.rt.base;
+    const vals = { rf_cclass: k.c, rf_cclass_d: k.d.length > 140 ? k.d.slice(0, 137) + "…" : k.d, rf_cclass_fund: k.fund.map((x) => x.curto).filter(Boolean).join("; ").slice(0, 120),
+      rf_cclass_ver: b ? b.versao : "", rf_red_cbs: num(r.cbs), rf_red_ibs: num(r.ibsuf) };
+    if (destino === "mo") {
+      Object.keys(vals).forEach((key) => this.moSet(key)(vals[key]));
+      const modo = this.state.rt.destino === "mo" && this.state.rt.volta ? this.state.rt.volta : this.state.mo.modo || "planejamento";
+      this.rtSet({ destino: "", volta: "" }); this.calcFerramenta(modo);
+      this.aviso("Classificação " + k.c + " aplicada à planilha de custos." + (this.state.mo.d.reforma === "depois" ? "" : " Ela vale quando a planilha calcula os tributos depois da reforma (Módulo 6)."), "ok");
+    } else {
+      Object.keys(vals).forEach((key) => this.rqSet(key)(vals[key]));
+      this.rtSet({ destino: "", volta: "" }); this.calcFerramenta("reequilibrio");
+      this.aviso("Classificação " + k.c + " aplicada ao reequilíbrio.", "ok");
+    }
+  }
   rtCarregar() {
     if (this.state.rt.base || this._rtCarregando) return;
     this._rtCarregando = true; this.rtSet({ carregando: true, erro: "" });
@@ -13494,7 +13546,11 @@ class Component extends DCLogic {
         const meta = [a.locais.length ? "Local da operação: " + a.locais.join("; ") : "", a.nbs.length ? "NBS: " + a.nbs.slice(0, 6).join(", ") + (a.nbs.length > 6 ? "…" : "") : "",
           k.tomador ? "Só quando o comprador é: " + k.tomador : "", a.anexos.length ? a.anexos.slice(0, 2).join(" · ") : "", k.tipo ? "Tipo de alíquota: " + k.tipo : ""].filter(Boolean).join(" · ");
         return { c: k.c, cst: k.cst, cstD: k.cstD, d: k.d, redTxt: redTxt(k), temRed: redTxt(k) !== "Sem redução", meta, ativo: !!on,
-          fundCurto: k.fund.map((x) => x.curto).join("; ") || "LC 214/2025", fundTexto: k.fund.map((x) => x.texto).join("\n\n"), usar: () => this.rtSet({ cl: k.c }) }; }),
+          fundCurto: k.fund.map((x) => x.curto).join("; ") || "LC 214/2025", fundTexto: k.fund.map((x) => x.texto).join("\n\n"), usar: () => this.rtSet({ cl: k.c }),
+          levavel: k.tipo === "Padrão", naoLevavel: k.tipo !== "Padrão",
+          paraMo: () => this.rtAplicar("mo", k), paraRq: () => this.rtAplicar("rq", k),
+          moCls: "lve-voltar" + (rt.destino === "mo" ? " rt-prim" : ""), rqCls: "lve-voltar" + (rt.destino === "rq" ? " rt-prim" : "") }; }),
+      rtDestinoTxt: rt.destino === "mo" ? "Escolha a classificação e clique em \"Levar à planilha de custos\" para voltar com ela." : rt.destino === "rq" ? "Escolha a classificação e clique em \"Levar ao reequilíbrio\" para voltar com ela." : "",
       rtAtivoTxt: ativo ? ativo.k.c + " · " + redTxt(ativo.k) : "",
       rtEntes: RT_ENTES.map(([id, nome]) => ({ nome, ativo: rt.ente === id, ...corBotao(rt.ente === id), escolher: () => this.rtSet({ ente: id }) })),
       rtValor: rt.valor, onRtValor: (e) => this.rtSet({ valor: e.target.value }),
@@ -13661,7 +13717,7 @@ class Component extends DCLogic {
       .concat(P.moDimAtivo && P.moDimResumo ? ["Dimensionamento da equipe (IN 05/2017, " + (P.moDimLimpeza ? "Anexo VI-B" : "Anexo VI-A") + "): " + P.moDimResumo] : [])
       .concat(P.moLiderTxt ? [P.moLiderTxt] : [])
       .concat(r && r.simp ? [P.moSimplesTxt + " (LC 123/2006, arts. 13, § 3º, e 18, §§ 5º-C e 5º-H)."] : [])
-      .concat(d.reforma === "depois" ? ["Reforma tributária (EC 132/2023; LC 214/2025): 2026, teste com CBS 0,9% e IBS 0,1% compensáveis com PIS/COFINS; 2027 e 2028, CBS pela referência reduzida em 0,1 p.p. e IBS de 0,1%, sem PIS/COFINS; 2029 a 2032, ISS a 90%, 80%, 70% e 60% da alíquota, com o IBS crescendo na mesma proporção; 2033, IBS integral, sem ISS. CBS e IBS calculados por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º). Referências usadas: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa); confira as alíquotas publicadas. A mudança de tributos em contrato vigente pede reequilíbrio (LC 214/2025, arts. 374 a 378)."] : [])
+      .concat(d.reforma === "depois" ? ["Reforma tributária (EC 132/2023; LC 214/2025): 2026, teste com CBS 0,9% e IBS 0,1% compensáveis com PIS/COFINS; 2027 e 2028, CBS pela referência reduzida em 0,1 p.p. e IBS de 0,1%, sem PIS/COFINS; 2029 a 2032, ISS a 90%, 80%, 70% e 60% da alíquota, com o IBS crescendo na mesma proporção; 2033, IBS integral, sem ISS. CBS e IBS calculados por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º). Referências usadas: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa); confira as alíquotas publicadas." + rtRedTexto(d) + " A mudança de tributos em contrato vigente pede reequilíbrio (LC 214/2025, arts. 374 a 378)."] : [])
       .concat(gtTxt ? [gtTxt] : [])
       .concat(retro ? retro.alertas.map((a) => (a.ok ? "" : "Atenção: ") + a.t) : [])
       .concat(exeqItens.map((a) => "Exequibilidade: " + a.t))
@@ -13702,7 +13758,7 @@ class Component extends DCLogic {
       if (d.regime === "real" && !(r && r.tr && !r.tr.antigos)) n.push("Lucro Real (não cumulativo): PIS e COFINS pela alíquota efetiva recolhida, descontados os créditos, comprovada pela EFD-Contribuições (TCU, Acórdão 2.647/2009-Plenário).");
       if (r && r.simp) n.push(P.moSimplesTxt + " (LC 123/2006, arts. 13, § 3º, e 18, §§ 5º-C e 5º-H).");
       n.push("Bases de cálculo dos encargos, dos benefícios e dos tributos e o dimensionamento da equipe estão no documento Memória de cálculo.");
-      if (d.reforma === "depois") n.push("Reforma tributária (EC 132/2023; LC 214/2025): 2026, teste com CBS 0,9% e IBS 0,1% compensáveis; 2027 e 2028, CBS pela referência reduzida em 0,1 p.p. (art. 347) e IBS de 0,1% (art. 344), sem PIS/COFINS (ADCT, art. 126, II); 2029 a 2032, ISS a 90%, 80%, 70% e 60% da alíquota, com o IBS crescendo na mesma proporção (ADCT, arts. 128 e 130); 2033, IBS integral, sem ISS (ADCT, art. 129). CBS e IBS por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º). Referências usadas: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa). A mudança de tributos em contrato vigente pede reequilíbrio (LC 214/2025, arts. 374 a 378).");
+      if (d.reforma === "depois") n.push("Reforma tributária (EC 132/2023; LC 214/2025): 2026, teste com CBS 0,9% e IBS 0,1% compensáveis; 2027 e 2028, CBS pela referência reduzida em 0,1 p.p. (art. 347) e IBS de 0,1% (art. 344), sem PIS/COFINS (ADCT, art. 126, II); 2029 a 2032, ISS a 90%, 80%, 70% e 60% da alíquota, com o IBS crescendo na mesma proporção (ADCT, arts. 128 e 130); 2033, IBS integral, sem ISS (ADCT, art. 129). CBS e IBS por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º). Referências usadas: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa)." + rtRedTexto(d) + " A mudança de tributos em contrato vigente pede reequilíbrio (LC 214/2025, arts. 374 a 378).");
       n.push("ISS: alíquota do município onde o serviço é prestado, entre 2% e 5% (LC 116/2003, arts. 3º, 8º e 8º-A)" + (fontesD.iss ? "; " + fontesD.iss : "") + ".");
       if (falhas.length) n.push(falhas.length + " falha(s) apontada(s) na planilha " + (prop ? "da proposta" : "da contratação") + ": ver o documento Falhas e inconsistências.");
       if (gtTxt) n.push(gtTxt);
@@ -14353,8 +14409,8 @@ class Component extends DCLogic {
       simp && !simp.issFora ? L("C.3", "ISS", { k: "sp_iss", ph: ph3(r.simp.iss), v: r.iss, ov: "iss", nota: notaSimp }) : L("C.3", "ISS", { k: "iss", v: r.iss, ov: "iss", nota: issMun })
     ] : [
       L("C.1", "PIS e COFINS", { p: "-", v: 0, nota: "Extintos a partir de 2027." }),
-      L("C.2", "CBS – Contribuição sobre Bens e Serviços", { k: "tr_cbs", ph: ph3(simp ? r.simp.pis + r.simp.cofins : tr.cbs), v: r.cbs, ov: "cbs", nota: simp ? "Dentro do DAS (Simples Nacional)." : "Por fora, sobre o valor sem tributos." }),
-      L("C.3", "IBS – Imposto sobre Bens e Serviços", { k: "tr_ibs", ph: ph3(simp ? r.simp.iss * (1 - tr.issF) : tr.ibs), v: r.ibs, ov: "ibs", nota: simp ? "Dentro do DAS (Simples Nacional)." : tr.ano <= 2028 ? "0,1% em 2027 e 2028." : "Referência × " + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + "." }),
+      L("C.2", "CBS – Contribuição sobre Bens e Serviços", { k: "tr_cbs", ph: ph3(simp ? r.simp.pis + r.simp.cofins : tr.cbs), v: r.cbs, ov: "cbs", nota: simp ? "Dentro do DAS (Simples Nacional)." : "Por fora, sobre o valor sem tributos." + (tr.redCbs ? " Redução de " + rtRedPct(tr.redCbs * 100) + " (cClassTrib " + d.rf_cclass + ")." : "") }),
+      L("C.3", "IBS – Imposto sobre Bens e Serviços", { k: "tr_ibs", ph: ph3(simp ? r.simp.iss * (1 - tr.issF) : tr.ibs), v: r.ibs, ov: "ibs", nota: simp ? "Dentro do DAS (Simples Nacional)." : (tr.ano <= 2028 ? "0,1% em 2027 e 2028." : "Referência × " + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + ".") + (tr.redIbs ? " Redução de " + rtRedPct(tr.redIbs * 100) + " (cClassTrib " + d.rf_cclass + ")." : "") }),
       L("C.4", "ISS" + (tr.issF < 1 ? " (" + Math.round(tr.issF * 100) + "% da alíquota em " + tr.ano + ")" : ""), simp ? { p: r.aIssT, v: r.iss, auto: true, ov: "iss", nota: notaSimp } : { k: "iss", v: r.iss, ov: "iss", nota: tr.issF === 0 ? "Extinto em 2033." : issMun })
     ];
     const modulos = [
@@ -14461,8 +14517,8 @@ class Component extends DCLogic {
       simp && !simp.issFora ? L("C.3", "ISS", { k: "sp_iss", ph: ph3(r.simp.iss), v: r.iss, ov: "iss", nota: notaSimp }) : L("C.3", "ISS", { k: "iss", v: r.iss, ov: "iss", nota: issMun })
     ] : [
       L("C.1", "PIS e COFINS", { p: "-", v: 0, nota: "Extintos a partir de 2027." }),
-      L("C.2", "CBS – Contribuição sobre Bens e Serviços", { k: "tr_cbs", ph: ph3(simp ? r.simp.pis + r.simp.cofins : tr.cbs), v: r.cbs, ov: "cbs", nota: simp ? "Dentro do DAS (Simples Nacional)." : "Por fora, sobre o valor sem tributos." }),
-      L("C.3", "IBS – Imposto sobre Bens e Serviços", { k: "tr_ibs", ph: ph3(simp ? r.simp.iss * (1 - tr.issF) : tr.ibs), v: r.ibs, ov: "ibs", nota: simp ? "Dentro do DAS (Simples Nacional)." : tr.ano <= 2028 ? "0,1% em 2027 e 2028." : "Referência × " + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + "." }),
+      L("C.2", "CBS – Contribuição sobre Bens e Serviços", { k: "tr_cbs", ph: ph3(simp ? r.simp.pis + r.simp.cofins : tr.cbs), v: r.cbs, ov: "cbs", nota: simp ? "Dentro do DAS (Simples Nacional)." : "Por fora, sobre o valor sem tributos." + (tr.redCbs ? " Redução de " + rtRedPct(tr.redCbs * 100) + " (cClassTrib " + d.rf_cclass + ")." : "") }),
+      L("C.3", "IBS – Imposto sobre Bens e Serviços", { k: "tr_ibs", ph: ph3(simp ? r.simp.iss * (1 - tr.issF) : tr.ibs), v: r.ibs, ov: "ibs", nota: simp ? "Dentro do DAS (Simples Nacional)." : (tr.ano <= 2028 ? "0,1% em 2027 e 2028." : "Referência × " + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + ".") + (tr.redIbs ? " Redução de " + rtRedPct(tr.redIbs * 100) + " (cClassTrib " + d.rf_cclass + ")." : "") }),
       L("C.4", "ISS" + (tr.issF < 1 ? " (" + Math.round(tr.issF * 100) + "% da alíquota em " + tr.ano + ")" : ""), simp ? { p: r.aIssT, v: r.iss, auto: true, ov: "iss", nota: notaSimp } : { k: "iss", v: r.iss, ov: "iss", nota: tr.issF === 0 ? "Extinto em 2033." : issMun })
     ];
     const modulos = [
@@ -14829,7 +14885,7 @@ class Component extends DCLogic {
         : moNum(String(d.rbt12 || "").replace(/\.(?=\d{3}(\D|$))/g, "")) > 4800000 ? "Receita acima de R$ 4.800.000,00: a empresa não pode estar no Simples Nacional (LC 123/2006, art. 3º, II)." : "Informe a receita bruta dos últimos 12 meses para calcular a alíquota efetiva e a parcela de PIS, COFINS e ISS.",
       moSimplesVedado: vedado ? "Atenção: o Simples Nacional é vedado à empresa que presta serviço por cessão de mão de obra (LC 123/2006, art. 17, XII), salvo vigilância, limpeza ou conservação (art. 18, § 5º-H). Para este serviço, a empresa deve ser tributada pelo Lucro Real ou Presumido; se contratada, deve pedir a exclusão do Simples (IN SEGES/MP nº 5/2017, Anexo VII-A, item 5.2)." : "",
       moRfAnos: MO_ANOS_REFORMA.map((a) => ({ id: String(a), nome: a + (a === 2026 ? " – teste (sem custo adicional)" : a <= 2028 ? " – CBS + IBS de 0,1%" : a <= 2032 ? " – transição ISS → IBS (" + Math.round(MO_ISS_TRANSICAO[a] * 100) + "% do ISS)" : " – IBS integral, sem ISS"), sel: a === anoPlan })),
-      onMoRfAno: SET("rf_ano"), moRfCbs: d.rf_cbs || "", onMoRfCbs: SET("rf_cbs"), moRfIbs: d.rf_ibs || "", onMoRfIbs: SET("rf_ibs"),
+      onMoRfAno: SET("rf_ano"), ...(() => { const v = rtVinculo(d, () => this.rtEscolherPara("mo"), () => ["rf_cclass", "rf_cclass_d", "rf_cclass_fund", "rf_cclass_ver", "rf_red_cbs", "rf_red_ibs"].forEach((k) => SET(k)(""))); return { moRtTxt: v.txt, moRtTem: v.tem, moRtEscolher: v.escolher, moRtTirar: v.tirar, moRtEscolhe: !ov }; })(), moRfCbs: d.rf_cbs || "", onMoRfCbs: SET("rf_cbs"), moRfIbs: d.rf_ibs || "", onMoRfIbs: SET("rf_ibs"),
       moTransicao: transicao,
       moTransicaoNota: "Clique no ano para calculá-lo na planilha. Cada linha refaz o Módulo 6 com as alíquotas do ano; os Módulos 1 a 5 e o lucro são os mesmos. A mudança de tributos em contrato vigente pede reequilíbrio econômico-financeiro (LC 214/2025, arts. 374 a 378; Lei 14.133/2021, art. 134).",
       calcAbaCmp: s.calcAba === "cmp", calcAbaIndice: s.calcAba === "indice", calcAbaMo: s.calcAba === "mo", calcAbaRq: s.calcAba === "rq", calcAbaRt: s.calcAba === "rt", ...(s.calcAba === "rt" ? this.rtProps() : {}),
@@ -15357,6 +15413,7 @@ class Component extends DCLogic {
           rqRegimeTxt: d.regime === "presumido" ? "Lucro Presumido: PIS 0,65% e COFINS 3% (cumulativos). Ajuste se a proposta usou outros percentuais."
             : d.regime === "real" ? "Lucro Real: informe o PIS e a COFINS efetivos usados na proposta (depois dos créditos), não as alíquotas nominais de 1,65% e 7,6%."
             : d.regime === "simples" ? "Simples Nacional: a CBS e o IBS ficam dentro do DAS e a alíquota efetiva não muda na transição. Se a contratada optar pelo regime regular da CBS e do IBS (LC 214/2025, art. 41), calcule pelo Lucro Presumido ou Real." : "",
+          ...(() => { const v = rtVinculo(d, () => this.rtEscolherPara("rq"), () => ["rf_cclass", "rf_cclass_d", "rf_cclass_fund", "rf_cclass_ver", "rf_red_cbs", "rf_red_ibs"].forEach((k) => this.rqSet(k)(""))); return { rqRtTxt: v.txt, rqRtTem: v.tem, rqRtEscolher: v.escolher, rqRtTirar: v.tirar }; })(),
           rqAnos: MO_ANOS_REFORMA.map((ano) => ({ id: String(ano), nome: String(ano), sel: String(d.ano) === String(ano) })), onRqAno: this.rqSet("ano"),
           rqPronto: r.pronto, rqFalta: r.pronto ? "" : r.falta,
           rqSimpPh: r.simp ? { pis: pct(r.simp.pis), cofins: pct(r.simp.cofins), iss: r.simp.issFora ? "fora do DAS" : pct(r.simp.iss) } : { pis: "", cofins: "", iss: "" },
