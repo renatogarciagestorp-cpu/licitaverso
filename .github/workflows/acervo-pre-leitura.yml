@@ -32,6 +32,8 @@ jobs:
           sudo apt-get update -qq >/dev/null
           sudo apt-get install -y -qq poppler-utils tesseract-ocr tesseract-ocr-por >/dev/null
       - name: Ler as fontes
+        env:
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
         run: |
           dia=$(TZ=America/Sao_Paulo date +%Y%m%d)
           rm -rf lidas/rj-$dia* lidas/nacional-$dia*
