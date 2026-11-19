@@ -15,18 +15,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Baixar a calculadora oficial da Receita Federal
-        run: git clone --depth 1 https://github.com/ReceitaFederal/calculadora-rtc-regime-regular.git "$RUNNER_TEMP/rtc"
+        run: git clone --depth 1 https://github.com/ReceitaFederal/calculadora-rtc-regime-regular.git .rtc   # dentro do repositório: o cache do Maven exige; não é gravado (só dados/reforma entra no commit)
       - uses: actions/setup-java@v4
-        with: { distribution: temurin, java-version: "21", cache: maven, cache-dependency-path: "${{ runner.temp }}/rtc/pom.xml" }
+        with: { distribution: temurin, java-version: "21", cache: maven, cache-dependency-path: ".rtc/pom.xml" }
       - name: Montar o banco oficial (Flyway)
-        working-directory: ${{ runner.temp }}/rtc
+        working-directory: .rtc
         run: |
           mkdir -p calculadora/db
           chmod +x mvnw
           ./mvnw -q flyway:migrate -Dflyway.configFiles=./flyway/flyway-pro.conf --batch-mode --errors
           ls -lh calculadora/db/calculadora-pro.db
       - name: Exportar os dados do site
-        run: python3 scripts/reforma/exportar-rtc.py "$RUNNER_TEMP/rtc/calculadora/db/calculadora-pro.db" --commit "$(git -C "$RUNNER_TEMP/rtc" rev-parse HEAD)"
+        run: python3 scripts/reforma/exportar-rtc.py .rtc/calculadora/db/calculadora-pro.db --commit "$(git -C .rtc rev-parse HEAD)"
       - name: Publicar se mudou
         run: |
           if git diff --quiet -- dados/reforma; then echo "nada a publicar"; exit 0; fi
