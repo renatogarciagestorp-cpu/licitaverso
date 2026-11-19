@@ -4385,8 +4385,10 @@
                   <label class="lmo-campo"><span>Ano de execução calculado na planilha</span><select sc-camel-on-change="{{ onMoRfAno }}"><sc-for list="{{ moRfAnos }}" as="o" hint-placeholder-count="8"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
                   <label class="lmo-campo"><span>Alíquota de referência da CBS (%)</span><input type="text" inputmode="decimal" value="{{ moRfCbs }}" sc-camel-on-input="{{ onMoRfCbs }}"></label>
                   <label class="lmo-campo"><span>Alíquota de referência do IBS (%, estimativa)</span><input type="text" inputmode="decimal" value="{{ moRfIbs }}" sc-camel-on-input="{{ onMoRfIbs }}"></label>
+                  <label class="lmo-campo"><span>Redutor das compras governamentais (%)</span><input type="text" inputmode="decimal" value="{{ moRfRedutor }}" sc-camel-on-input="{{ onMoRfRedutor }}" placeholder="Ainda não fixado" title="Redutor das compras governamentais (LC 214/2025, art. 472): reduz por igual a CBS e o IBS nas compras de órgãos e entidades de direito público, de 2027 em diante. Ainda não foi fixado; deixe em branco até a publicação. Não vale para empresas estatais, compras presenciais com dispensa de licitação, itens com alíquota nacional uniforme e fornecedores do Simples Nacional ou MEI (art. 472, parágrafo único)."></label>
                 </div>
                 <sc-if value="{{ moRtEscolhe }}" hint-placeholder-val="{{ true }}"><div class="rt-vinc"><span>{{ moRtTxt }}</span><button type="button" class="lve-voltar" sc-camel-on-click="{{ moRtEscolher }}">Escolher na base oficial</button><sc-if value="{{ moRtTem }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ moRtTirar }}">Tirar a redução</button></sc-if></div></sc-if>
+                <p class="lmo-nota">Redutor das compras governamentais (LC 214/2025, art. 472): reduz por igual a CBS e o IBS nas compras de órgãos e entidades de direito público, de 2027 em diante. Ainda não foi fixado; deixe em branco até a publicação. Não vale para empresas estatais, compras presenciais com dispensa de licitação, itens com alíquota nacional uniforme e fornecedores do Simples Nacional ou MEI (art. 472, parágrafo único).</p>
                 <p class="lmo-nota">CBS: 11,3% é a referência calculada pelo TCU para 2027 (o Senado deve fixá-la até 15/12/2026). IBS: a referência ainda não foi fixada; 18,7% é estimativa. Atualize os dois campos quando as alíquotas forem publicadas.</p>
                 <div class="lmo-tabela" style="margin-top: 10px" role="table" aria-label="Período de transição">
                   <div class="lmo-lin lmo-trans lmo-cab" role="row"><span>Ano</span><span>PIS e COFINS</span><span>CBS</span><span>IBS</span><span>ISS</span><span>Tributos no preço</span><span>Preço por empregado</span><span>Valor mensal</span></div>
@@ -4817,6 +4819,7 @@
                           <label class="lmo-campo"><span>Ano de execução calculado na planilha</span><select sc-camel-on-change="{{ c.P.onMoRfAno }}"><sc-for list="{{ c.P.moRfAnos }}" as="o" hint-placeholder-count="8"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
                           <label class="lmo-campo"><span>Alíquota de referência da CBS (%)</span><input type="text" inputmode="decimal" value="{{ c.P.moRfCbs }}" sc-camel-on-input="{{ c.P.onMoRfCbs }}"></label>
                           <label class="lmo-campo"><span>Alíquota de referência do IBS (%, estimativa)</span><input type="text" inputmode="decimal" value="{{ c.P.moRfIbs }}" sc-camel-on-input="{{ c.P.onMoRfIbs }}"></label>
+                          <label class="lmo-campo"><span>Redutor das compras governamentais (%)</span><input type="text" inputmode="decimal" value="{{ c.P.moRfRedutor }}" sc-camel-on-input="{{ c.P.onMoRfRedutor }}" placeholder="Ainda não fixado" title="Redutor das compras governamentais (LC 214/2025, art. 472): reduz por igual a CBS e o IBS nas compras de órgãos e entidades de direito público, de 2027 em diante. Ainda não foi fixado; deixe em branco até a publicação. Não vale para empresas estatais, compras presenciais com dispensa de licitação, itens com alíquota nacional uniforme e fornecedores do Simples Nacional ou MEI (art. 472, parágrafo único)."></label>
                         </div>
                         <p class="lmo-nota">CBS: 11,3% é a referência calculada pelo TCU para 2027 (o Senado deve fixá-la até 15/12/2026). IBS: a referência ainda não foi fixada; 18,7% é estimativa. Atualize os dois campos quando as alíquotas forem publicadas.</p>
                         <div class="lmo-tabela" style="margin-top: 10px" role="table" aria-label="Período de transição">
@@ -4974,8 +4977,11 @@
                 <label class="lmo-campo"><span>Ano analisado</span><select sc-camel-on-change="{{ onRqAno }}"><sc-for list="{{ rqAnos }}" as="o" hint-placeholder-count="8"><option value="{{ o.id }}" selected="{{ o.sel }}">{{ o.nome }}</option></sc-for></select></label>
                 <label class="lmo-campo"><span>Alíquota de referência da CBS (%)</span><input type="text" inputmode="decimal" value="{{ rqRfCbs }}" sc-camel-on-input="{{ onRqRfCbs }}"></label>
                 <label class="lmo-campo"><span>Alíquota de referência do IBS (%, estimativa)</span><input type="text" inputmode="decimal" value="{{ rqRfIbs }}" sc-camel-on-input="{{ onRqRfIbs }}"></label>
+                <label class="lmo-campo"><span>Redutor das compras governamentais (%)</span><input type="text" inputmode="decimal" value="{{ rqRfRedutor }}" sc-camel-on-input="{{ onRqRfRedutor }}" placeholder="Ainda não fixado"></label>
               </div>
               <div class="rt-vinc"><span>{{ rqRtTxt }}</span><button type="button" class="lve-voltar" sc-camel-on-click="{{ rqRtEscolher }}">Escolher na base oficial</button><sc-if value="{{ rqRtTem }}" hint-placeholder-val="{{ false }}"><button type="button" class="lve-voltar" sc-camel-on-click="{{ rqRtTirar }}">Tirar a redução</button></sc-if></div>
+              <p class="lmo-nota">Redutor das compras governamentais (LC 214/2025, art. 472): reduz por igual a CBS e o IBS nas compras de órgãos e entidades de direito público, de 2027 em diante. Ainda não foi fixado; deixe em branco até a publicação. Não vale para empresas estatais, compras presenciais com dispensa de licitação, itens com alíquota nacional uniforme e fornecedores do Simples Nacional ou MEI (art. 472, parágrafo único).</p>
+              <sc-if value="{{ rqLeiAviso }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso" role="note" style="margin-top: 8px">{{ rqLeiAviso }}</p></sc-if>
               <p class="lmo-nota">CBS: 11,3% é a referência calculada pelo TCU para 2027. IBS: 18,7% é estimativa. Atualize os dois campos quando as alíquotas forem publicadas.</p>
               <sc-if value="{{ rqAnoEdit }}" hint-placeholder-val="{{ false }}">
                 <div class="lmo-campos" style="margin-top: 8px">
@@ -5056,13 +5062,16 @@
             <section class="lmo-bloco">
               <h2 class="lmo-h2">3. Para quem vai o tributo na compra pública</h2>
               <p class="lmo-nota" style="margin-top: 0">Classificação usada: <b>{{ rtAtivoTxt }}</b>. Quem compra:</p>
+              <div class="lmo-modos" role="group" aria-label="Forma da compra" style="margin-bottom: 8px"><sc-for list="{{ rtPresencialOpts }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
               <div class="lmo-modos" role="group" aria-label="Ente comprador"><sc-for list="{{ rtEntes }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
               <div class="lmo-campos" style="margin-top: 12px">
                 <label class="lmo-campo"><span>Valor da contratação (R$)</span><input type="text" inputmode="decimal" value="{{ rtValor }}" sc-camel-on-input="{{ onRtValor }}" placeholder="0,00"></label>
                 <label class="lmo-campo"><span>Alíquota de referência da CBS (%)</span><input type="text" inputmode="decimal" value="{{ rtCbs }}" sc-camel-on-input="{{ onRtCbs }}"></label>
                 <label class="lmo-campo"><span>Alíquota de referência do IBS (%, estimativa)</span><input type="text" inputmode="decimal" value="{{ rtIbs }}" sc-camel-on-input="{{ onRtIbs }}"></label>
+                <label class="lmo-campo"><span>Redutor das compras governamentais (%)</span><input type="text" inputmode="decimal" value="{{ rtRedutorCampo }}" sc-camel-on-input="{{ onRtRedutor }}" placeholder="Ainda não fixado"></label>
               </div>
               <p class="lmo-nota">A base oficial só traz as alíquotas de 2026 (ano de teste: CBS 0,9% e IBS 0,1%). Para 2027 em diante, use 11,3% de CBS (referência calculada pelo TCU) e 18,7% de IBS (estimativa) até a publicação oficial. A transição segue a LC 214/2025: em 2027 e 2028, IBS de 0,1%; de 2029 a 2032, IBS crescendo 10% ao ano enquanto o ICMS e o ISS diminuem.</p>
+              <sc-if value="{{ rtPresencial }}" hint-placeholder-val="{{ false }}"><p class="lve-aviso" role="note">Compra presencial com dispensa de licitação: não se aplica a destinação ao ente comprador (LC 214/2025, art. 473, § 2º) nem o redutor das compras governamentais (art. 472, parágrafo único, I). A CBS fica com a União e o IBS com o estado e o município, pelas regras gerais.</p></sc-if>
               <sc-if value="{{ rtTemLinhas }}" hint-placeholder-val="{{ false }}">
                 <div class="rt-tab-wrap" role="table" aria-label="Destino da CBS e do IBS por ano">
                   <div class="rt-lin rt-cab" role="row"><span>Ano</span><span>CBS efetiva</span><span>IBS efetivo</span><span>CBS + IBS</span><span>Fica com a União</span><span>Fica com o estado</span><span>Fica com o município</span></div>
@@ -5071,7 +5080,7 @@
                   </sc-for>
                 </div>
               </sc-if>
-              <p class="lmo-nota">* 2026 é o ano de teste: a CBS e o IBS são destacados na nota, mas podem ser compensados com o PIS e a COFINS, e cada ente fica com o seu. A partir de 2027, nas compras da administração direta, autarquias e fundações, a União compradora fica com tudo; o estado ou o município comprador fica com o IBS inteiro e com a parcela da CBS da tabela oficial de transferência: 0% até 2028, 10% em 2029, 20% em 2030, 30% em 2031, 40% em 2032 e 100% a partir de 2033 (LC 214/2025, arts. 472 e 473). O valor total não muda, só o destino. O ICMS, o ISS, o PIS e a COFINS que ainda existirem no ano não entram nesta tabela.</p>
+              <p class="lmo-nota">* 2026 é o ano de teste: a CBS e o IBS são destacados na nota, mas podem ser compensados com o PIS e a COFINS, e cada ente fica com o seu. A partir de 2027, nas compras da administração direta, autarquias e fundações, a União compradora fica com tudo; o estado ou o município comprador fica com o IBS inteiro e com a parcela da CBS da tabela oficial de transferência: 0% até 2028, 10% em 2029, 20% em 2030, 30% em 2031, 40% em 2032 e 100% a partir de 2033 (LC 214/2025, arts. 372 e 473). O valor total não muda, só o destino. Quem compra o Distrito Federal fica com o IBS inteiro (estadual e municipal); o consórcio público de direito público é tratado como o município da sede, e a arrecadação é dividida entre os entes consorciados pela participação de cada um (art. 473, § 4º). A destinação vale para a administração direta, as autarquias e as fundações públicas; nas compras de empresas públicas e sociedades de economia mista, a CBS e o IBS seguem as regras gerais. O ICMS, o ISS, o PIS e a COFINS que ainda existirem no ano não entram nesta tabela.</p>
               <p class="lmo-nota">{{ rtRedutor }}</p>
             </section>
             </sc-if>
@@ -8585,16 +8594,21 @@ function moSimples(rbt12) {
 const MO_ISS_TRANSICAO = { 2029: 0.9, 2030: 0.8, 2031: 0.7, 2032: 0.6 };
 // Redução oficial da classificação tributária (cClassTrib) escolhida na aba "Reforma tributária" da Calculadora:
 // d.rf_cclass, d.rf_red_cbs e d.rf_red_ibs (em %). Vale de 2027 em diante (2026 é teste, compensável), sobre a CBS e o IBS do ano.
+// Também o redutor das compras governamentais (LC 214/2025, art. 472; d.rf_redutor, em %), que reduz de modo uniforme a CBS e o IBS
+// nas aquisições por pessoa jurídica de direito público interno de 2027 em diante; não vale para estatais (Lei 13.303/2016).
 function moReducao(tr, d) {
-  const lim = (k) => Math.min(100, Math.max(0, moNum(d && d[k]) || 0)) / 100, rc = lim("rf_red_cbs"), ri = lim("rf_red_ibs");
-  if (!tr || tr.antigos || !(d && d.rf_cclass) || !(rc || ri)) return tr;
-  return { ...tr, cbs: tr.cbs * (1 - rc), ibs: tr.ibs * (1 - ri), redCbs: rc, redIbs: ri };
+  const lim = (k) => Math.min(100, Math.max(0, moNum(d && d[k]) || 0)) / 100, cl = !!(d && d.rf_cclass);
+  const rc = cl ? lim("rf_red_cbs") : 0, ri = cl ? lim("rf_red_ibs") : 0, rd = d && d.lei === "13303" ? 0 : lim("rf_redutor");
+  if (!tr || tr.antigos || !(rc || ri || rd)) return tr;
+  return { ...tr, cbs: tr.cbs * (1 - rc) * (1 - rd), ibs: tr.ibs * (1 - ri) * (1 - rd), redCbs: rc, redIbs: ri, redutor: rd };
 }
 function rtRedPct(v) { return (Number(v) || 0).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%"; }
 // frase para a memória de cálculo e as notas técnicas (vazia sem classificação escolhida)
 function rtRedTexto(d) {
-  if (!d || !d.rf_cclass) return "";
-  return " Classificação tributária (cClassTrib) " + d.rf_cclass + (d.rf_cclass_d ? " – " + d.rf_cclass_d : "") + ": redução de " + rtRedPct(moNum(d.rf_red_cbs)) + " da CBS e de "
+  const rd = d && d.lei !== "13303" ? moNum(d.rf_redutor) || 0 : 0;
+  const red = rd > 0 ? " Redutor das compras governamentais de " + rtRedPct(rd) + " sobre a CBS e o IBS, de 2027 em diante (LC 214/2025, art. 472)." : "";
+  if (!d || !d.rf_cclass) return red;
+  return red + " Classificação tributária (cClassTrib) " + d.rf_cclass + (d.rf_cclass_d ? " – " + d.rf_cclass_d : "") + ": redução de " + rtRedPct(moNum(d.rf_red_cbs)) + " da CBS e de "
     + rtRedPct(moNum(d.rf_red_ibs)) + " do IBS" + (d.rf_cclass_fund ? " (" + d.rf_cclass_fund + ")" : "") + ", conforme a base oficial da calculadora de tributos da Receita Federal" + (d.rf_cclass_ver ? ", versão " + d.rf_cclass_ver : "") + ".";
 }
 // texto e ações do vínculo com a base oficial, na Planilha de custos e no Reequilíbrio
@@ -10116,7 +10130,7 @@ const CALC_FERRAMENTAS = [
     lead: "Busque o serviço (pela lista da LC 116, a mesma do ISS, ou pela NBS) ou o produto (pela NCM) e veja a classificação tributária oficial, a redução de alíquota, a fundamentação na LC 214/2025 e, ano a ano, para qual ente federativo vai o tributo quando quem compra é a União, um estado ou um município.",
     beneficios: ["Classificação tributária (cClassTrib) e CST de cada serviço ou produto, direto da base oficial da calculadora da Receita Federal", "Redução de alíquota da CBS e do IBS (30%, 60%, 100%…) com o artigo da LC 214/2025 e o item do anexo",
       "Serviços pela lista da LC 116/2003, a mesma do ISS, ligados à NBS, com o local da operação", "Produtos pela NCM, com aviso dos itens sujeitos ao Imposto Seletivo",
-      "Compras governamentais: para quem vai a CBS e o IBS de 2026 a 2033 quando compra a União, um estado ou um município (LC 214/2025, art. 473)", "Versão da base oficial exibida na tela, atualizada quando a Receita publica uma nova"],
+      "Compras governamentais: para quem vai a CBS e o IBS de 2026 a 2033 quando compra a União, um estado, o DF ou um município (LC 214/2025, arts. 372 e 473), com o redutor do art. 472 e as exceções da lei", "Versão da base oficial exibida na tela, atualizada quando a Receita publica uma nova"],
     plano: "Grátis para quem tem conta, no plano Gratuito e em todos os planos." },
   { id: "comparar", nome: "Comparar planilhas", curto: "Linha do tempo das planilhas de mão de obra: planejamento, contratação e cada repactuação, lado a lado, com o relatório do que mudou.",
     h1: "Linha do tempo das planilhas, do planejamento ao fim do contrato.",
@@ -10407,12 +10421,14 @@ function rtClassesDo(sel, base, ncm) {
 // destino da CBS e do IBS por ano numa compra pública (regra do TributacaoCompraGovernamentalDomain da calculadora oficial):
 // até 2026 cada ente fica com o seu; a partir de 2027 a União compradora fica com tudo; o estado (ou município) comprador fica com
 // o IBS inteiro mais a parcela da CBS da tabela oficial de transferência (0% até 2028, 10% a 40% de 2029 a 2032, 100% a partir de 2033).
-function rtDestinos(base, V, cbsRef, ibsRef, redC, redI, ente) {
+function rtDestinos(base, V, cbsRef, ibsRef, redC, redI, ente, redutor) {
   const ref26 = (base.aliquotaReferencia || {})["2026"] || { cbs: 0.9, ibsuf: 0.1, ibsmun: 0 };
   return MO_ANOS_REFORMA.map((ano) => {
     const t = moTransicao(ano, cbsRef, ibsRef);
     let cbs = t.cbs, ibs = t.ibs;
     if (ano === 2026) { cbs = ref26.cbs / 100; ibs = (ref26.ibsuf + ref26.ibsmun) / 100; }
+    const fr = ano >= 2027 ? 1 - (redutor || 0) / 100 : 1;   // redutor das compras governamentais (art. 472), de 2027 em diante
+    cbs *= fr; ibs *= fr;
     const vC = V * cbs * (1 - redC / 100), vI = V * ibs * (1 - redI / 100);
     const p = (Number((base.compraGov.transferenciaCbs || {})[String(ano)]) || 0) / 100;
     let uniao = vC, estado = vI, mun = 0;
@@ -10491,7 +10507,7 @@ class Component extends DCLogic {
     cmp: { cols: [], info: {}, ok: "", erro: "" },
     pca: { lista: [], carregado: false, ano: new Date().getFullYear(), form: null, colar: null, setor: "", msg: "", erro: "", excluir: "", todos: false },
     ct: { lista: [], eventos: {}, carregado: false, carregando: false, atual: "", form: null, ev: null, erro: "", ok: "", excluir: "" },
-    rt: { destino: "", volta: "", tipo: "servico", q: "", sel: null, cl: "", ente: "municipio", valor: "10.000,00", cbs: "11,3", ibs: "18,7", base: null, ncmOk: false, carregando: false, erro: "" },
+    rt: { redutor: "", presencial: false, destino: "", volta: "", tipo: "servico", q: "", sel: null, cl: "", ente: "municipio", valor: "10.000,00", cbs: "11,3", ibs: "18,7", base: null, ncmOk: false, carregando: false, erro: "" },
     rq: { d: (() => { try { return { ...RQ_PADRAO, ...(JSON.parse(localStorage.getItem("lv-rq") || "{}") || {}) }; } catch (e) { return { ...RQ_PADRAO }; } })(), erro: "", baixando: false },
     mo: { modo: "planejamento", d: (() => { try { return { ...MO_PADRAO, ...(JSON.parse(localStorage.getItem("lv-mo-planejamento") || "{}") || {}) }; } catch (e) { return { ...MO_PADRAO }; } })(), enviando: false, agente: false, erro: "", ok: "", obs: [] },
     indices: null, indicesErro: false, mpAberto: "", mpAno: 0, mpMes: 0, mpVista: "dias",
@@ -13523,7 +13539,7 @@ class Component extends DCLogic {
     const seletivo = sel && sel.tipo === "ncm" && ncm && ncm.seletivo.some((c) => sel.cod.startsWith(c));
     const V = rqN(rt.valor), cbsRef = moNum(rt.cbs) / 100, ibsRef = moNum(rt.ibs) / 100;
     const rk = ativo ? ativo.k.red || {} : {};
-    const linhas = b && ativo && V > 0 && cbsRef > 0 && ibsRef >= 0 ? rtDestinos(b, V, cbsRef, ibsRef, ativo.k.tipo === "Sem alíquota" ? 100 : Number(rk.cbs) || 0, ativo.k.tipo === "Sem alíquota" ? 100 : Number(rk.ibsuf) || 0, rt.ente) : [];
+    const linhas = b && ativo && V > 0 && cbsRef > 0 && ibsRef >= 0 ? rtDestinos(b, V, cbsRef, ibsRef, ativo.k.tipo === "Sem alíquota" ? 100 : Number(rk.cbs) || 0, ativo.k.tipo === "Sem alíquota" ? 100 : Number(rk.ibsuf) || 0, rt.ente, Math.min(100, Math.max(0, moNum(rt.redutor) || 0))) : [];
     const pc2 = (v) => (v * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%";
     const status = rt.erro ? rt.erro : rt.carregando ? "Carregando a base oficial…" : !b ? "" :
       rt.q.trim().length < 2 ? (rt.tipo === "servico" ? "Digite o nome do serviço (ex.: limpeza, vigilância, software) ou o código da LC 116 ou da NBS." : "Digite o nome do produto (ex.: arroz, papel, medicamento) ou o código NCM.") :
@@ -13555,11 +13571,13 @@ class Component extends DCLogic {
       rtEntes: RT_ENTES.map(([id, nome]) => ({ nome, ativo: rt.ente === id, ...corBotao(rt.ente === id), escolher: () => this.rtSet({ ente: id }) })),
       rtValor: rt.valor, onRtValor: (e) => this.rtSet({ valor: e.target.value }),
       rtCbs: rt.cbs, onRtCbs: (e) => this.rtSet({ cbs: e.target.value }), rtIbs: rt.ibs, onRtIbs: (e) => this.rtSet({ ibs: e.target.value }),
-      rtTemLinhas: linhas.length > 0,
+      rtTemLinhas: linhas.length > 0 && !rt.presencial, rtPresencial: !!rt.presencial,
+      rtPresencialOpts: [["nao", "Licitação ou contratação direta não presencial"], ["sim", "Compra presencial com dispensa de licitação"]].map(([id, nome]) => ({ nome, ativo: (id === "sim") === !!rt.presencial, ...corBotao((id === "sim") === !!rt.presencial), escolher: () => this.rtSet({ presencial: id === "sim" }) })),
+      rtRedutorCampo: rt.redutor, onRtRedutor: (e) => this.rtSet({ redutor: e.target.value }),
       rtLinhas: linhas.map((l) => ({ ano: String(l.ano) + (l.ano === 2026 ? "*" : ""), cbs: pc2(l.cbs), ibs: pc2(l.ibs), total: brlSimples(l.total),
         uniao: brlSimples(l.uniao), estado: brlSimples(l.estado), mun: brlSimples(l.mun),
         dU: l.ano >= 2027 && rt.ente === "uniao", dE: l.ano >= 2027 && rt.ente === "estado", dM: l.ano >= 2027 && rt.ente === "municipio" })),
-      rtRedutor: b && b.compraGov.redutor ? "Redutor das compras governamentais na base oficial: " + pct(b.compraGov.redutor) + "." : "O redutor de alíquota das compras governamentais (LC 214/2025, art. 370) ainda não foi fixado: está em 0% na base oficial. Quando for publicado, a base é atualizada e a tabela passa a considerá-lo.",
+      rtRedutor: b && b.compraGov.redutor ? "Redutor das compras governamentais na base oficial: " + pct(b.compraGov.redutor) + "." : "O redutor das compras governamentais (LC 214/2025, art. 472, calculado pelo art. 370) ainda não foi fixado: está em 0% na base oficial. Quando for publicado, digite-o no campo acima. Ele não vale para compras presenciais com dispensa de licitação, itens com alíquota nacional uniforme e fornecedores do Simples Nacional ou MEI (art. 472, parágrafo único).",
       rtVersao: b ? "Fonte: " + b.fonte + ", versão " + b.versao + " de " + dataBR(b.versaoData) + ", registros vigentes em " + dataBR(b.vigenteEm) + "." : ""
     };
   }
@@ -13717,7 +13735,7 @@ class Component extends DCLogic {
       .concat(P.moDimAtivo && P.moDimResumo ? ["Dimensionamento da equipe (IN 05/2017, " + (P.moDimLimpeza ? "Anexo VI-B" : "Anexo VI-A") + "): " + P.moDimResumo] : [])
       .concat(P.moLiderTxt ? [P.moLiderTxt] : [])
       .concat(r && r.simp ? [P.moSimplesTxt + " (LC 123/2006, arts. 13, § 3º, e 18, §§ 5º-C e 5º-H)."] : [])
-      .concat(d.reforma === "depois" ? ["Reforma tributária (EC 132/2023; LC 214/2025): 2026, teste com CBS 0,9% e IBS 0,1% compensáveis com PIS/COFINS; 2027 e 2028, CBS pela referência reduzida em 0,1 p.p. e IBS de 0,1%, sem PIS/COFINS; 2029 a 2032, ISS a 90%, 80%, 70% e 60% da alíquota, com o IBS crescendo na mesma proporção; 2033, IBS integral, sem ISS. CBS e IBS calculados por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º). Referências usadas: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa); confira as alíquotas publicadas." + rtRedTexto(d) + " A mudança de tributos em contrato vigente pede reequilíbrio (LC 214/2025, arts. 374 a 378)."] : [])
+      .concat(d.reforma === "depois" ? ["Reforma tributária (EC 132/2023; LC 214/2025): 2026, teste com CBS 0,9% e IBS 0,1% compensáveis com PIS/COFINS; 2027 e 2028, CBS pela referência reduzida em 0,1 p.p. e IBS de 0,1%, sem PIS/COFINS; 2029 a 2032, ISS a 90%, 80%, 70% e 60% da alíquota, com o IBS crescendo na mesma proporção; 2033, IBS integral, sem ISS. CBS e IBS calculados por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º). Referências usadas: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa); confira as alíquotas publicadas." + rtRedTexto(d) + " A mudança de tributos em contrato vigente pede reequilíbrio (LC 214/2025, arts. 373 a 377)."] : [])
       .concat(gtTxt ? [gtTxt] : [])
       .concat(retro ? retro.alertas.map((a) => (a.ok ? "" : "Atenção: ") + a.t) : [])
       .concat(exeqItens.map((a) => "Exequibilidade: " + a.t))
@@ -13758,7 +13776,7 @@ class Component extends DCLogic {
       if (d.regime === "real" && !(r && r.tr && !r.tr.antigos)) n.push("Lucro Real (não cumulativo): PIS e COFINS pela alíquota efetiva recolhida, descontados os créditos, comprovada pela EFD-Contribuições (TCU, Acórdão 2.647/2009-Plenário).");
       if (r && r.simp) n.push(P.moSimplesTxt + " (LC 123/2006, arts. 13, § 3º, e 18, §§ 5º-C e 5º-H).");
       n.push("Bases de cálculo dos encargos, dos benefícios e dos tributos e o dimensionamento da equipe estão no documento Memória de cálculo.");
-      if (d.reforma === "depois") n.push("Reforma tributária (EC 132/2023; LC 214/2025): 2026, teste com CBS 0,9% e IBS 0,1% compensáveis; 2027 e 2028, CBS pela referência reduzida em 0,1 p.p. (art. 347) e IBS de 0,1% (art. 344), sem PIS/COFINS (ADCT, art. 126, II); 2029 a 2032, ISS a 90%, 80%, 70% e 60% da alíquota, com o IBS crescendo na mesma proporção (ADCT, arts. 128 e 130); 2033, IBS integral, sem ISS (ADCT, art. 129). CBS e IBS por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º). Referências usadas: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa)." + rtRedTexto(d) + " A mudança de tributos em contrato vigente pede reequilíbrio (LC 214/2025, arts. 374 a 378).");
+      if (d.reforma === "depois") n.push("Reforma tributária (EC 132/2023; LC 214/2025): 2026, teste com CBS 0,9% e IBS 0,1% compensáveis; 2027 e 2028, CBS pela referência reduzida em 0,1 p.p. (art. 347) e IBS de 0,1% (art. 344), sem PIS/COFINS (ADCT, art. 126, II); 2029 a 2032, ISS a 90%, 80%, 70% e 60% da alíquota, com o IBS crescendo na mesma proporção (ADCT, arts. 128 e 130); 2033, IBS integral, sem ISS (ADCT, art. 129). CBS e IBS por fora, sobre o valor sem eles e sem o ISS (LC 214/2025, art. 12, § 2º). Referências usadas: CBS " + (d.rf_cbs || "") + "% e IBS " + (d.rf_ibs || "") + "% (estimativa)." + rtRedTexto(d) + " A mudança de tributos em contrato vigente pede reequilíbrio (LC 214/2025, arts. 373 a 377).");
       n.push("ISS: alíquota do município onde o serviço é prestado, entre 2% e 5% (LC 116/2003, arts. 3º, 8º e 8º-A)" + (fontesD.iss ? "; " + fontesD.iss : "") + ".");
       if (falhas.length) n.push(falhas.length + " falha(s) apontada(s) na planilha " + (prop ? "da proposta" : "da contratação") + ": ver o documento Falhas e inconsistências.");
       if (gtTxt) n.push(gtTxt);
@@ -14409,8 +14427,8 @@ class Component extends DCLogic {
       simp && !simp.issFora ? L("C.3", "ISS", { k: "sp_iss", ph: ph3(r.simp.iss), v: r.iss, ov: "iss", nota: notaSimp }) : L("C.3", "ISS", { k: "iss", v: r.iss, ov: "iss", nota: issMun })
     ] : [
       L("C.1", "PIS e COFINS", { p: "-", v: 0, nota: "Extintos a partir de 2027." }),
-      L("C.2", "CBS – Contribuição sobre Bens e Serviços", { k: "tr_cbs", ph: ph3(simp ? r.simp.pis + r.simp.cofins : tr.cbs), v: r.cbs, ov: "cbs", nota: simp ? "Dentro do DAS (Simples Nacional)." : "Por fora, sobre o valor sem tributos." + (tr.redCbs ? " Redução de " + rtRedPct(tr.redCbs * 100) + " (cClassTrib " + d.rf_cclass + ")." : "") }),
-      L("C.3", "IBS – Imposto sobre Bens e Serviços", { k: "tr_ibs", ph: ph3(simp ? r.simp.iss * (1 - tr.issF) : tr.ibs), v: r.ibs, ov: "ibs", nota: simp ? "Dentro do DAS (Simples Nacional)." : (tr.ano <= 2028 ? "0,1% em 2027 e 2028." : "Referência × " + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + ".") + (tr.redIbs ? " Redução de " + rtRedPct(tr.redIbs * 100) + " (cClassTrib " + d.rf_cclass + ")." : "") }),
+      L("C.2", "CBS – Contribuição sobre Bens e Serviços", { k: "tr_cbs", ph: ph3(simp ? r.simp.pis + r.simp.cofins : tr.cbs), v: r.cbs, ov: "cbs", nota: simp ? "Dentro do DAS (Simples Nacional)." : "Por fora, sobre o valor sem tributos." + (tr.redCbs ? " Redução de " + rtRedPct(tr.redCbs * 100) + " (cClassTrib " + d.rf_cclass + ")." : "") + (tr.redutor ? " Redutor de compras governamentais de " + rtRedPct(tr.redutor * 100) + " (LC 214/2025, art. 472)." : "") }),
+      L("C.3", "IBS – Imposto sobre Bens e Serviços", { k: "tr_ibs", ph: ph3(simp ? r.simp.iss * (1 - tr.issF) : tr.ibs), v: r.ibs, ov: "ibs", nota: simp ? "Dentro do DAS (Simples Nacional)." : (tr.ano <= 2028 ? "0,1% em 2027 e 2028." : "Referência × " + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + ".") + (tr.redIbs ? " Redução de " + rtRedPct(tr.redIbs * 100) + " (cClassTrib " + d.rf_cclass + ")." : "") + (tr.redutor ? " Redutor de compras governamentais de " + rtRedPct(tr.redutor * 100) + " (LC 214/2025, art. 472)." : "") }),
       L("C.4", "ISS" + (tr.issF < 1 ? " (" + Math.round(tr.issF * 100) + "% da alíquota em " + tr.ano + ")" : ""), simp ? { p: r.aIssT, v: r.iss, auto: true, ov: "iss", nota: notaSimp } : { k: "iss", v: r.iss, ov: "iss", nota: tr.issF === 0 ? "Extinto em 2033." : issMun })
     ];
     const modulos = [
@@ -14517,8 +14535,8 @@ class Component extends DCLogic {
       simp && !simp.issFora ? L("C.3", "ISS", { k: "sp_iss", ph: ph3(r.simp.iss), v: r.iss, ov: "iss", nota: notaSimp }) : L("C.3", "ISS", { k: "iss", v: r.iss, ov: "iss", nota: issMun })
     ] : [
       L("C.1", "PIS e COFINS", { p: "-", v: 0, nota: "Extintos a partir de 2027." }),
-      L("C.2", "CBS – Contribuição sobre Bens e Serviços", { k: "tr_cbs", ph: ph3(simp ? r.simp.pis + r.simp.cofins : tr.cbs), v: r.cbs, ov: "cbs", nota: simp ? "Dentro do DAS (Simples Nacional)." : "Por fora, sobre o valor sem tributos." + (tr.redCbs ? " Redução de " + rtRedPct(tr.redCbs * 100) + " (cClassTrib " + d.rf_cclass + ")." : "") }),
-      L("C.3", "IBS – Imposto sobre Bens e Serviços", { k: "tr_ibs", ph: ph3(simp ? r.simp.iss * (1 - tr.issF) : tr.ibs), v: r.ibs, ov: "ibs", nota: simp ? "Dentro do DAS (Simples Nacional)." : (tr.ano <= 2028 ? "0,1% em 2027 e 2028." : "Referência × " + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + ".") + (tr.redIbs ? " Redução de " + rtRedPct(tr.redIbs * 100) + " (cClassTrib " + d.rf_cclass + ")." : "") }),
+      L("C.2", "CBS – Contribuição sobre Bens e Serviços", { k: "tr_cbs", ph: ph3(simp ? r.simp.pis + r.simp.cofins : tr.cbs), v: r.cbs, ov: "cbs", nota: simp ? "Dentro do DAS (Simples Nacional)." : "Por fora, sobre o valor sem tributos." + (tr.redCbs ? " Redução de " + rtRedPct(tr.redCbs * 100) + " (cClassTrib " + d.rf_cclass + ")." : "") + (tr.redutor ? " Redutor de compras governamentais de " + rtRedPct(tr.redutor * 100) + " (LC 214/2025, art. 472)." : "") }),
+      L("C.3", "IBS – Imposto sobre Bens e Serviços", { k: "tr_ibs", ph: ph3(simp ? r.simp.iss * (1 - tr.issF) : tr.ibs), v: r.ibs, ov: "ibs", nota: simp ? "Dentro do DAS (Simples Nacional)." : (tr.ano <= 2028 ? "0,1% em 2027 e 2028." : "Referência × " + Math.round((1 - tr.issF) * 100) + "% em " + tr.ano + ".") + (tr.redIbs ? " Redução de " + rtRedPct(tr.redIbs * 100) + " (cClassTrib " + d.rf_cclass + ")." : "") + (tr.redutor ? " Redutor de compras governamentais de " + rtRedPct(tr.redutor * 100) + " (LC 214/2025, art. 472)." : "") }),
       L("C.4", "ISS" + (tr.issF < 1 ? " (" + Math.round(tr.issF * 100) + "% da alíquota em " + tr.ano + ")" : ""), simp ? { p: r.aIssT, v: r.iss, auto: true, ov: "iss", nota: notaSimp } : { k: "iss", v: r.iss, ov: "iss", nota: tr.issF === 0 ? "Extinto em 2033." : issMun })
     ];
     const modulos = [
@@ -14885,9 +14903,9 @@ class Component extends DCLogic {
         : moNum(String(d.rbt12 || "").replace(/\.(?=\d{3}(\D|$))/g, "")) > 4800000 ? "Receita acima de R$ 4.800.000,00: a empresa não pode estar no Simples Nacional (LC 123/2006, art. 3º, II)." : "Informe a receita bruta dos últimos 12 meses para calcular a alíquota efetiva e a parcela de PIS, COFINS e ISS.",
       moSimplesVedado: vedado ? "Atenção: o Simples Nacional é vedado à empresa que presta serviço por cessão de mão de obra (LC 123/2006, art. 17, XII), salvo vigilância, limpeza ou conservação (art. 18, § 5º-H). Para este serviço, a empresa deve ser tributada pelo Lucro Real ou Presumido; se contratada, deve pedir a exclusão do Simples (IN SEGES/MP nº 5/2017, Anexo VII-A, item 5.2)." : "",
       moRfAnos: MO_ANOS_REFORMA.map((a) => ({ id: String(a), nome: a + (a === 2026 ? " – teste (sem custo adicional)" : a <= 2028 ? " – CBS + IBS de 0,1%" : a <= 2032 ? " – transição ISS → IBS (" + Math.round(MO_ISS_TRANSICAO[a] * 100) + "% do ISS)" : " – IBS integral, sem ISS"), sel: a === anoPlan })),
-      onMoRfAno: SET("rf_ano"), ...(() => { const v = rtVinculo(d, () => this.rtEscolherPara("mo"), () => ["rf_cclass", "rf_cclass_d", "rf_cclass_fund", "rf_cclass_ver", "rf_red_cbs", "rf_red_ibs"].forEach((k) => SET(k)(""))); return { moRtTxt: v.txt, moRtTem: v.tem, moRtEscolher: v.escolher, moRtTirar: v.tirar, moRtEscolhe: !ov }; })(), moRfCbs: d.rf_cbs || "", onMoRfCbs: SET("rf_cbs"), moRfIbs: d.rf_ibs || "", onMoRfIbs: SET("rf_ibs"),
+      onMoRfAno: SET("rf_ano"), ...(() => { const v = rtVinculo(d, () => this.rtEscolherPara("mo"), () => ["rf_cclass", "rf_cclass_d", "rf_cclass_fund", "rf_cclass_ver", "rf_red_cbs", "rf_red_ibs"].forEach((k) => SET(k)(""))); return { moRtTxt: v.txt, moRtTem: v.tem, moRtEscolher: v.escolher, moRtTirar: v.tirar, moRtEscolhe: !ov }; })(), moRfCbs: d.rf_cbs || "", onMoRfCbs: SET("rf_cbs"), moRfIbs: d.rf_ibs || "", onMoRfIbs: SET("rf_ibs"), moRfRedutor: d.rf_redutor || "", onMoRfRedutor: SET("rf_redutor"),
       moTransicao: transicao,
-      moTransicaoNota: "Clique no ano para calculá-lo na planilha. Cada linha refaz o Módulo 6 com as alíquotas do ano; os Módulos 1 a 5 e o lucro são os mesmos. A mudança de tributos em contrato vigente pede reequilíbrio econômico-financeiro (LC 214/2025, arts. 374 a 378; Lei 14.133/2021, art. 134).",
+      moTransicaoNota: "Clique no ano para calculá-lo na planilha. Cada linha refaz o Módulo 6 com as alíquotas do ano; os Módulos 1 a 5 e o lucro são os mesmos. A mudança de tributos em contrato vigente pede reequilíbrio econômico-financeiro (LC 214/2025, arts. 373 a 377; Lei 14.133/2021, art. 134).",
       calcAbaCmp: s.calcAba === "cmp", calcAbaIndice: s.calcAba === "indice", calcAbaMo: s.calcAba === "mo", calcAbaRq: s.calcAba === "rq", calcAbaRt: s.calcAba === "rt", ...(s.calcAba === "rt" ? this.rtProps() : {}),
       calcAbaIdxCls: "lvc-aba" + (s.calcAba === "indice" ? " ativo" : ""), calcAbaMoCls: "lvc-aba" + (s.calcAba === "mo" ? " ativo" : ""),
       calcIrIndice: () => this.setState({ calcAba: "indice" }), calcIrMo: () => { this.setState({ calcAba: "mo" }); this.carregarIndices(); },
@@ -15375,7 +15393,7 @@ class Component extends DCLogic {
         const pct = (v) => (v * 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + "%";
         const sinal = (v) => (v > 0 ? "+" : "") + brl(v);
         const campos = {};
-        ["contrato", "contratada", "objeto", "valor", "proposta", "meses", "rbt12", "pis", "cofins", "iss", "sp_pis", "sp_cofins", "sp_iss", "ano_cbs", "ano_ibs", "rf_cbs", "rf_ibs", "ins", "ins_red", "fs_fato", "fs_data", "fs_reaj", "fs_bdi"].forEach((k) => {
+        ["contrato", "contratada", "objeto", "valor", "proposta", "meses", "rbt12", "pis", "cofins", "iss", "sp_pis", "sp_cofins", "sp_iss", "ano_cbs", "ano_ibs", "rf_cbs", "rf_ibs", "rf_redutor", "ins", "ins_red", "fs_fato", "fs_data", "fs_reaj", "fs_bdi"].forEach((k) => {
           const nome = "rq" + k.split("_").map((x) => x[0].toUpperCase() + x.slice(1)).join("");
           campos[nome] = d[k] || ""; campos["on" + nome[0].toUpperCase() + nome.slice(1)] = this.rqSet(k);
         });
@@ -15414,6 +15432,14 @@ class Component extends DCLogic {
             : d.regime === "real" ? "Lucro Real: informe o PIS e a COFINS efetivos usados na proposta (depois dos créditos), não as alíquotas nominais de 1,65% e 7,6%."
             : d.regime === "simples" ? "Simples Nacional: a CBS e o IBS ficam dentro do DAS e a alíquota efetiva não muda na transição. Se a contratada optar pelo regime regular da CBS e do IBS (LC 214/2025, art. 41), calcule pelo Lucro Presumido ou Real." : "",
           ...(() => { const v = rtVinculo(d, () => this.rtEscolherPara("rq"), () => ["rf_cclass", "rf_cclass_d", "rf_cclass_fund", "rf_cclass_ver", "rf_red_cbs", "rf_red_ibs"].forEach((k) => this.rqSet(k)(""))); return { rqRtTxt: v.txt, rqRtTem: v.tem, rqRtEscolher: v.escolher, rqRtTirar: v.tirar }; })(),
+          rqLeiAviso: (() => {
+            const a = [], mp = String(d.proposta || "").match(/^(\d{1,2})\/(\d{4})$/);
+            if (mp) { const ym = Number(mp[2]) * 100 + Number(mp[1]);
+              if (ym > 202501) a.push("Proposta de " + d.proposta + ", depois da publicação da LC 214/2025 (16/01/2025). O reequilíbrio dos arts. 373 a 377 vale para os contratos vigentes em 16/01/2025 e para os firmados depois com proposta anterior (art. 373, caput e § 1º). Com proposta posterior, a reforma já era conhecida: avalie o pedido pela legislação do contrato (Lei 14.133/2021, art. 134) e pela matriz de riscos.");
+              else if (ym === 202501) a.push("Proposta de janeiro de 2025: confira se foi apresentada antes de 16/01/2025, data da LC 214/2025. O reequilíbrio dos arts. 373 a 377 alcança os contratos com proposta anterior (art. 373, § 1º)."); }
+            if (d.lei === "13303" && moNum(d.rf_redutor) > 0) a.push("O redutor das compras governamentais (art. 472) vale só para pessoas jurídicas de direito público interno: não foi aplicado a este contrato de empresa estatal.");
+            return a.join(" ");
+          })(),
           rqAnos: MO_ANOS_REFORMA.map((ano) => ({ id: String(ano), nome: String(ano), sel: String(d.ano) === String(ano) })), onRqAno: this.rqSet("ano"),
           rqPronto: r.pronto, rqFalta: r.pronto ? "" : r.falta,
           rqSimpPh: r.simp ? { pis: pct(r.simp.pis), cofins: pct(r.simp.cofins), iss: r.simp.issFora ? "fora do DAS" : pct(r.simp.iss) } : { pis: "", cofins: "", iss: "" },
