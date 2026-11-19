@@ -59,6 +59,7 @@
 ## 4. Últimas mudanças (mais recentes primeiro)
 - 19/11: TCE-RJ e TJ-RJ pelo Firecrawl na leitura antecipada; instruções das coletas do RJ ajustadas (leituras
   identificadas pela url). Teste deu 402 (conta Firecrawl sem créditos até 09/12) — esperado.
+- 19/11: 1ª limpeza de armazenamento conferida: pareceres e minutas apagados de 7 análises prontas há mais de 7 dias, sem erro.
 - 19/11: recuperação do atraso do acervo (TCU, PGE-RJ, TCM-RJ); `CLAUDE.md` e este `ESTADO.md` criados.
 - 17–18/11: leitura antecipada das coletas do RJ; TCU pela API; Lei 13.019 incluída em todas as coletas e na Biblioteca.
 - 16–17/11: Elaborador com modelos AGU (DEMO, locação, obras/Projeto Básico), documentos de apoio até 300 páginas por ação,
@@ -68,6 +69,4 @@
 - **14/12/2026 10h**: conferir se o TCE-RJ e o TJ-RJ voltaram a ser lidos pelo Firecrawl (lembrete agendado
   trig_01K2qKM6tZVmba9G16xcNR3y). Até 09/12 essas duas fontes falham com 402 (sem custo).
 - **23/11/2026**: primeira segunda real da leitura antecipada (7h50) e das coletas do RJ (8h07/8h37) — conferir resultados.
-- Conferir a limpeza LGPD de 19/11 (lembrete trig_01CKgijG88cjMXr69xHuPzK6): linha "Armazenamento: pareceres e minutas
-  apagados de N análise(s)" no log de `limpeza-lgpd.yml`.
 - TCE-RJ: a página do Firecrawl mostra só os 10 registros mais recentes; se uma semana tiver mais, a coleta avisa "possível lacuna".
