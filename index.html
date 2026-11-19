@@ -1580,6 +1580,28 @@
   .pp-entrada-txt { display: grid; gap: 4px; } .pp-entrada-txt b { font-size: 17px; color: #0A1F2A; } .pp-entrada-txt span { font-size: 14px; color: #3D5058; line-height: 1.5; } .pp-entrada-txt small { font-size: 12px; color: #0A7A50; font-weight: 700; }
   .pp-entrada-cta { font-weight: 800; color: #0A7A50; white-space: nowrap; }
   @media (max-width: 700px) { .pp-entrada { grid-template-columns: 1fr; } .pp-pares div { grid-template-columns: 1fr; } }
+  /* ===== Calculadora → Reforma tributária nas compras públicas (base oficial da Receita) ===== */
+  .rt-res { display: grid; gap: 8px; margin-top: 12px; max-height: 420px; overflow: auto; padding-right: 4px; }
+  .rt-item { display: grid; gap: 2px; text-align: left; border: 1px solid #DDE4E3; background: #FBFCFC; border-radius: 12px; padding: 10px 14px; cursor: pointer; font: inherit; color: #0A1F2A; }
+  .rt-item:hover { border-color: #0FA36B; } .rt-item[aria-pressed="true"] { border-color: #0A1F2A; background: #EEF5F2; }
+  .rt-item b { font-size: 13px; color: #0F6B7E; font-variant-numeric: tabular-nums; } .rt-item span { font-size: 14.5px; font-weight: 600; } .rt-item small { font-size: 12.5px; color: #5F7077; }
+  .rt-sel { font-size: 16px; margin: 4px 0 6px; } .rt-sel b { color: #0F6B7E; margin-right: 6px; font-variant-numeric: tabular-nums; }
+  .rt-cards { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); margin-top: 12px; min-width: 0; }
+  .rt-card { border: 1px solid #DDE4E3; border-radius: 14px; padding: 14px 16px; background: #FFFFFF; display: grid; gap: 8px; align-content: start; }
+  .rt-card[data-ativo="true"] { border: 2px solid #0FA36B; box-shadow: 0 6px 18px rgba(15,163,107,.12); }
+  .rt-card header { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+  .rt-cod { font-weight: 800; font-size: 17px; font-variant-numeric: tabular-nums; color: #0A1F2A; } .rt-cst { font-size: 12.5px; color: #5F7077; }
+  .rt-red { font-size: 12.5px; font-weight: 800; border-radius: 999px; padding: 3px 10px; background: #EEF2F1; color: #3D5058; }
+  .rt-red[data-tem="true"] { background: #E3F6EE; color: #0A7A50; }
+  .rt-card p { margin: 0; font-size: 14px; line-height: 1.45; overflow-wrap: anywhere; } .rt-card { min-width: 0; } .rt-item { min-width: 0; overflow-wrap: anywhere; } .rt-meta { color: #5F7077; font-size: 12.5px !important; }
+  .rt-card details summary { cursor: pointer; font-size: 13px; font-weight: 700; color: #0F6B7E; } .rt-card details p { margin-top: 6px; font-size: 13px; color: #3D5058; white-space: pre-line; }
+  .rt-tab-wrap { max-width: 100%; min-width: 0; overflow-x: auto; margin-top: 12px; border: 1px solid #DDE4E3; border-radius: 12px; }
+  .rt-lin { display: grid; grid-template-columns: 70px repeat(6, minmax(96px, 1fr)); min-width: 720px; border-top: 1px solid #EDF2F1; }
+  .rt-lin:first-child { border-top: 0; } .rt-lin span { padding: 9px 10px; font-size: 13.5px; font-variant-numeric: tabular-nums; text-align: right; }
+  .rt-lin span:first-child { text-align: left; font-weight: 800; } .rt-cab span { font-size: 12px; font-weight: 800; color: #5F7077; background: #F6F8F7; }
+  .rt-lin span[data-destino="true"] { background: #E3F6EE; font-weight: 800; color: #0A7A50; }
+  .rt-aba, .rt-aba > *, .rt-aba .lmo-bloco { min-width: 0; max-width: 100%; }
+  .rt-fonte { font-size: 12.5px; color: #5F7077; margin-top: 14px; }
   /* ===== Pesquisa de preços: camada visual (neurodesign) ===== */
   .pp-fundo { background: radial-gradient(1100px 380px at 50% -120px, rgba(15,163,107,.10), transparent 70%), linear-gradient(#F3F7F5, #F6F8F7 420px); }
   .pp-selos { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
@@ -4992,6 +5014,59 @@
               <p class="lmo-nota">Estimativa para instruir o processo: confira as alíquotas publicadas, a regulamentação da metodologia e o texto oficial da LC 214/2025. <button type="button" class="lve-voltar" style="padding: 4px 10px; font-size: 12.5px" sc-camel-on-click="{{ rqLimpar }}">Limpar dados</button></p>
             </section>
             </sc-if>
+          </div>
+          </sc-if>
+          <sc-if value="{{ calcAbaRt }}" hint-placeholder-val="{{ false }}">
+          <div class="lmo rt-aba">
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">1. O que está sendo contratado</h2>
+              <div class="lmo-modos" role="group" aria-label="Serviço ou produto"><sc-for list="{{ rtTipos }}" as="m" hint-placeholder-count="2"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
+              <div class="lmo-campos" style="margin-top: 12px">
+                <label class="lmo-campo" style="grid-column: 1 / -1"><span>{{ rtBuscaRot }}</span><input type="search" value="{{ rtQ }}" sc-camel-on-input="{{ onRtQ }}" placeholder="{{ rtBuscaPh }}" autocomplete="off"></label>
+              </div>
+              <p class="lmo-nota" aria-live="polite">{{ rtStatus }}</p>
+              <sc-if value="{{ rtTemResultados }}" hint-placeholder-val="{{ false }}">
+                <div class="rt-res"><sc-for list="{{ rtResultados }}" as="r" hint-placeholder-count="3"><button type="button" class="rt-item" aria-pressed="{{ r.ativo }}" sc-camel-on-click="{{ r.escolher }}"><b>{{ r.cod }}</b><span>{{ r.d }}</span><small>{{ r.ctx }}</small></button></sc-for></div>
+              </sc-if>
+            </section>
+            <sc-if value="{{ rtTemSel }}" hint-placeholder-val="{{ false }}">
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">2. Classificação tributária (cClassTrib)</h2>
+              <p class="rt-sel"><b>{{ rtSelCod }}</b>{{ rtSelD }}</p>
+              <p class="lmo-nota">{{ rtSelNota }}</p>
+              <div class="rt-cards"><sc-for list="{{ rtClasses }}" as="k" hint-placeholder-count="2">
+                <article class="rt-card" data-ativo="{{ k.ativo }}">
+                  <header><span class="rt-cod">{{ k.c }}</span><span class="rt-red" data-tem="{{ k.temRed }}">{{ k.redTxt }}</span><span class="rt-cst">CST {{ k.cst }} · {{ k.cstD }}</span></header>
+                  <p>{{ k.d }}</p>
+                  <p class="rt-meta">{{ k.meta }}</p>
+                  <details><summary>Fundamentação: {{ k.fundCurto }}</summary><p>{{ k.fundTexto }}</p></details>
+                  <div><button type="button" class="lve-voltar" style="padding: 6px 12px; font-size: 13px" aria-pressed="{{ k.ativo }}" sc-camel-on-click="{{ k.usar }}">Usar na tabela abaixo</button></div>
+                </article>
+              </sc-for></div>
+            </section>
+            <section class="lmo-bloco">
+              <h2 class="lmo-h2">3. Para quem vai o tributo na compra pública</h2>
+              <p class="lmo-nota" style="margin-top: 0">Classificação usada: <b>{{ rtAtivoTxt }}</b>. Quem compra:</p>
+              <div class="lmo-modos" role="group" aria-label="Ente comprador"><sc-for list="{{ rtEntes }}" as="m" hint-placeholder-count="3"><button type="button" sc-camel-on-click="{{ m.escolher }}" aria-pressed="{{ m.ativo }}" style="border: 1px solid {{ m.borda }}; background: {{ m.fundo }}; color: {{ m.cor }}; font-size: 13.5px; padding: 8px 14px">{{ m.nome }}</button></sc-for></div>
+              <div class="lmo-campos" style="margin-top: 12px">
+                <label class="lmo-campo"><span>Valor da contratação (R$)</span><input type="text" inputmode="decimal" value="{{ rtValor }}" sc-camel-on-input="{{ onRtValor }}" placeholder="0,00"></label>
+                <label class="lmo-campo"><span>Alíquota de referência da CBS (%)</span><input type="text" inputmode="decimal" value="{{ rtCbs }}" sc-camel-on-input="{{ onRtCbs }}"></label>
+                <label class="lmo-campo"><span>Alíquota de referência do IBS (%, estimativa)</span><input type="text" inputmode="decimal" value="{{ rtIbs }}" sc-camel-on-input="{{ onRtIbs }}"></label>
+              </div>
+              <p class="lmo-nota">A base oficial só traz as alíquotas de 2026 (ano de teste: CBS 0,9% e IBS 0,1%). Para 2027 em diante, use 11,3% de CBS (referência calculada pelo TCU) e 18,7% de IBS (estimativa) até a publicação oficial. A transição segue a LC 214/2025: em 2027 e 2028, IBS de 0,1%; de 2029 a 2032, IBS crescendo 10% ao ano enquanto o ICMS e o ISS diminuem.</p>
+              <sc-if value="{{ rtTemLinhas }}" hint-placeholder-val="{{ false }}">
+                <div class="rt-tab-wrap" role="table" aria-label="Destino da CBS e do IBS por ano">
+                  <div class="rt-lin rt-cab" role="row"><span>Ano</span><span>CBS efetiva</span><span>IBS efetivo</span><span>CBS + IBS</span><span>Fica com a União</span><span>Fica com o estado</span><span>Fica com o município</span></div>
+                  <sc-for list="{{ rtLinhas }}" as="l" hint-placeholder-count="8">
+                    <div class="rt-lin" role="row"><span>{{ l.ano }}</span><span>{{ l.cbs }}</span><span>{{ l.ibs }}</span><span>{{ l.total }}</span><span data-destino="{{ l.dU }}">{{ l.uniao }}</span><span data-destino="{{ l.dE }}">{{ l.estado }}</span><span data-destino="{{ l.dM }}">{{ l.mun }}</span></div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <p class="lmo-nota">* 2026 é o ano de teste: a CBS e o IBS são destacados na nota, mas podem ser compensados com o PIS e a COFINS, e cada ente fica com o seu. A partir de 2027, nas compras da administração direta, autarquias e fundações, a União compradora fica com tudo; o estado ou o município comprador fica com o IBS inteiro e com a parcela da CBS da tabela oficial de transferência: 0% até 2028, 10% em 2029, 20% em 2030, 30% em 2031, 40% em 2032 e 100% a partir de 2033 (LC 214/2025, arts. 472 e 473). O valor total não muda, só o destino. O ICMS, o ISS, o PIS e a COFINS que ainda existirem no ano não entram nesta tabela.</p>
+              <p class="lmo-nota">{{ rtRedutor }}</p>
+            </section>
+            </sc-if>
+            <p class="rt-fonte">{{ rtVersao }} Estimativa para orientar o planejamento e a instrução do processo; o cálculo do documento fiscal é o da calculadora oficial da Receita Federal.</p>
           </div>
           </sc-if>
           <sc-if value="{{ calcAbaIndice }}" hint-placeholder-val="{{ true }}">
@@ -10006,6 +10081,13 @@ const CALC_FERRAMENTAS = [
       "Indica se a contratada pode pedir o reequilíbrio (LC 214/2025, art. 376) ou se a Administração deve revisar de ofício (art. 375)", "Considera a não cumulatividade: insumos que ficam mais baratos com o crédito da CBS e do IBS",
       "Roteiro do pedido: prazo, decisão em até 90 dias, recomposição provisória e termo aditivo", "Importa os valores de uma planilha de mão de obra da Calculadora", "Fato superveniente: requisitos do art. 124, II, d, e da matriz de riscos, com Sim, Não ou A comprovar", "Quadro item a item (custo na proposta × custo atual), com o documento de cada valor, compensação dos itens que baixaram e desconto do reajuste já concedido", "Memória de cálculo e nota técnica em Excel e PDF"],
     plano: "Em todos os planos pagos e no teste grátis de 7 dias." },
+  { id: "reforma", nome: "Reforma tributária", curto: "Classificação tributária oficial (cClassTrib) do serviço ou produto e para qual ente vai a CBS e o IBS em cada ano, nas compras públicas.",
+    h1: "Reforma tributária nas compras públicas, com a base oficial da Receita Federal.",
+    lead: "Busque o serviço (pela lista da LC 116, a mesma do ISS, ou pela NBS) ou o produto (pela NCM) e veja a classificação tributária oficial, a redução de alíquota, a fundamentação na LC 214/2025 e, ano a ano, para qual ente federativo vai o tributo quando quem compra é a União, um estado ou um município.",
+    beneficios: ["Classificação tributária (cClassTrib) e CST de cada serviço ou produto, direto da base oficial da calculadora da Receita Federal", "Redução de alíquota da CBS e do IBS (30%, 60%, 100%…) com o artigo da LC 214/2025 e o item do anexo",
+      "Serviços pela lista da LC 116/2003, a mesma do ISS, ligados à NBS, com o local da operação", "Produtos pela NCM, com aviso dos itens sujeitos ao Imposto Seletivo",
+      "Compras governamentais: para quem vai a CBS e o IBS de 2026 a 2033 quando compra a União, um estado ou um município (LC 214/2025, art. 473)", "Versão da base oficial exibida na tela, atualizada quando a Receita publica uma nova"],
+    plano: "Grátis para quem tem conta, no plano Gratuito e em todos os planos." },
   { id: "comparar", nome: "Comparar planilhas", curto: "Linha do tempo das planilhas de mão de obra: planejamento, contratação e cada repactuação, lado a lado, com o relatório do que mudou.",
     h1: "Linha do tempo das planilhas, do planejamento ao fim do contrato.",
     lead: "Coloque lado a lado a planilha da fase de planejamento, a da contratação e as de cada repactuação, no mesmo formato das planilhas da Calculadora. O que mudou de uma para outra fica destacado, e o relatório detalha cada alteração.",
@@ -10258,6 +10340,61 @@ function lsLer(k) { try { return localStorage.getItem("licitaverso:" + k); } cat
 function lsGravar(k, v) { try { localStorage.setItem("licitaverso:" + k, v); } catch (e) { /* sem armazenamento */ } }
 const corBotao = (ativo) => ({ borda: ativo ? "#0A1F2A" : "#DDE4E3", fundo: ativo ? "#0A1F2A" : "#FBFCFC", cor: ativo ? "#FFFFFF" : "#3D5058" });
 
+// ===================================================================== Calculadora → Reforma tributária nas compras públicas
+// Dados: dados/reforma/rtc.json e ncm.json, gerados por scripts/reforma/exportar-rtc.py a partir da base oficial da
+// calculadora de tributos da Receita Federal. Nada de alíquota é inventado aqui: reduções e percentuais vêm da base.
+const RT_ENTES = [["uniao", "União"], ["estado", "Estado ou DF"], ["municipio", "Município"]];
+function rtNorm(t) { return String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+function rtNcmFmt(c) { return c.length === 8 ? c.slice(0, 4) + "." + c.slice(4, 6) + "." + c.slice(6) : c; }
+function rtBuscar(tipo, q, base, ncmIdx) {
+  const t = rtNorm(q).trim(); if (t.length < 2 || !base) return [];
+  const dig = t.replace(/[.\-\s]/g, ""), soNum = /^\d+$/.test(dig), termos = t.split(/\s+/).filter(Boolean);
+  const casa = (txt) => { const x = rtNorm(txt); return termos.every((w) => x.includes(w)); };
+  const out = [];
+  if (tipo === "servico") {
+    base.lc116.forEach((x) => { if (!x.c.includes(".")) return; if (soNum ? x.c.replace(/\./g, "").startsWith(dig) || x.c.startsWith(t) : casa(x.d)) out.push({ tipo: "lc", cod: x.c, d: x.d, ctx: "Lista de serviços da LC 116/2003 (a mesma do ISS)" }); });
+    Object.keys(base.nbs).forEach((c) => { if (c.length < 7) return; if (soNum ? c.startsWith(dig) : casa(base.nbs[c])) out.push({ tipo: "nbs", cod: c, d: base.nbs[c], ctx: "NBS · " + (base.nbs[c.slice(0, 5)] || base.nbs[c.slice(0, 3)] || "") }); });
+  } else if (ncmIdx) {
+    for (const x of ncmIdx) { if (soNum ? x.c.startsWith(dig) : casa(x.full)) out.push({ tipo: "ncm", cod: x.c, d: x.d, ctx: "NCM · " + x.cap }); if (out.length >= 60) break; }
+  }
+  return out.slice(0, 60);
+}
+// classificações aplicáveis ao item escolhido (a regra geral 000001 sempre aparece primeiro)
+function rtClassesDo(sel, base, ncm) {
+  if (!sel || !base) return [];
+  const porCod = {}; base.classificacoes.forEach((k) => { porCod[k.c] = k; });
+  const achados = new Map(), add = (cl, extra) => { if (!porCod[cl]) return; const a = achados.get(cl) || { k: porCod[cl], nbs: [], locais: [], anexos: [] }; if (extra.nbs && !a.nbs.includes(extra.nbs)) a.nbs.push(extra.nbs); if (extra.local && !a.locais.includes(extra.local)) a.locais.push(extra.local); if (extra.anexo && !a.anexos.includes(extra.anexo)) a.anexos.push(extra.anexo); achados.set(cl, a); };
+  if (sel.tipo === "lc") (base.lc116Nbs[sel.cod] || []).forEach((r) => add(r.cl, { nbs: r.nbs, local: r.local }));
+  if (sel.tipo === "nbs") {
+    Object.values(base.lc116Nbs).forEach((l) => l.forEach((r) => { if (r.nbs === sel.cod) add(r.cl, { local: r.local }); }));
+    base.nbsAplicavel.forEach((r) => { if (sel.cod.startsWith(r.p)) add(r.cl, { anexo: r.anexo }); });
+  }
+  if (sel.tipo === "ncm" && ncm) ncm.regras.forEach((r) => { if (sel.cod.startsWith(r.p) && !(r.exceto || []).includes(sel.cod)) add(r.cl, { anexo: r.anexo }); });
+  if (!achados.has("000001")) add("000001", {});
+  const l = [...achados.values()];
+  return [l.find((a) => a.k.c === "000001"), ...l.filter((a) => a.k.c !== "000001")].filter(Boolean);
+}
+// destino da CBS e do IBS por ano numa compra pública (regra do TributacaoCompraGovernamentalDomain da calculadora oficial):
+// até 2026 cada ente fica com o seu; a partir de 2027 a União compradora fica com tudo; o estado (ou município) comprador fica com
+// o IBS inteiro mais a parcela da CBS da tabela oficial de transferência (0% até 2028, 10% a 40% de 2029 a 2032, 100% a partir de 2033).
+function rtDestinos(base, V, cbsRef, ibsRef, redC, redI, ente) {
+  const ref26 = (base.aliquotaReferencia || {})["2026"] || { cbs: 0.9, ibsuf: 0.1, ibsmun: 0 };
+  return MO_ANOS_REFORMA.map((ano) => {
+    const t = moTransicao(ano, cbsRef, ibsRef);
+    let cbs = t.cbs, ibs = t.ibs;
+    if (ano === 2026) { cbs = ref26.cbs / 100; ibs = (ref26.ibsuf + ref26.ibsmun) / 100; }
+    const vC = V * cbs * (1 - redC / 100), vI = V * ibs * (1 - redI / 100);
+    const p = (Number((base.compraGov.transferenciaCbs || {})[String(ano)]) || 0) / 100;
+    let uniao = vC, estado = vI, mun = 0;
+    if (ano >= 2027) {
+      if (ente === "uniao") { uniao = vC + vI; estado = 0; mun = 0; }
+      else if (ente === "estado") { uniao = vC * (1 - p); estado = vI + vC * p; mun = 0; }
+      else { uniao = vC * (1 - p); estado = 0; mun = vI + vC * p; }
+    }
+    return { ano, cbs: cbs * (1 - redC / 100), ibs: ibs * (1 - redI / 100), total: vC + vI, uniao, estado, mun, p };
+  });
+}
+
 class Component extends DCLogic {
   state = {
     page: "home",
@@ -10324,6 +10461,7 @@ class Component extends DCLogic {
     cmp: { cols: [], info: {}, ok: "", erro: "" },
     pca: { lista: [], carregado: false, ano: new Date().getFullYear(), form: null, colar: null, setor: "", msg: "", erro: "", excluir: "", todos: false },
     ct: { lista: [], eventos: {}, carregado: false, carregando: false, atual: "", form: null, ev: null, erro: "", ok: "", excluir: "" },
+    rt: { tipo: "servico", q: "", sel: null, cl: "", ente: "municipio", valor: "10.000,00", cbs: "11,3", ibs: "18,7", base: null, ncmOk: false, carregando: false, erro: "" },
     rq: { d: (() => { try { return { ...RQ_PADRAO, ...(JSON.parse(localStorage.getItem("lv-rq") || "{}") || {}) }; } catch (e) { return { ...RQ_PADRAO }; } })(), erro: "", baixando: false },
     mo: { modo: "planejamento", d: (() => { try { return { ...MO_PADRAO, ...(JSON.parse(localStorage.getItem("lv-mo-planejamento") || "{}") || {}) }; } catch (e) { return { ...MO_PADRAO }; } })(), enviando: false, agente: false, erro: "", ok: "", obs: [] },
     indices: null, indicesErro: false, mpAberto: "", mpAno: 0, mpMes: 0, mpVista: "dias",
@@ -13296,11 +13434,85 @@ class Component extends DCLogic {
       return { mo: { ...x.mo, d } };
     });
   }
+  // ------------------------------------------------------------ Calculadora → Reforma tributária (base oficial da Receita)
+  rtSet(o) { this.setState((x) => ({ rt: { ...x.rt, ...o } })); }
+  rtCarregar() {
+    if (this.state.rt.base || this._rtCarregando) return;
+    this._rtCarregando = true; this.rtSet({ carregando: true, erro: "" });
+    fetch("dados/reforma/rtc.json", { cache: "no-cache" }).then((r) => r.ok ? r.json() : Promise.reject(r.status))
+      .then((j) => this.rtSet({ base: j, carregando: false }))
+      .catch(() => this.rtSet({ carregando: false, erro: "Não foi possível carregar a base oficial. Confira a internet e tente de novo." }))
+      .finally(() => { this._rtCarregando = false; });
+  }
+  rtCarregarNcm() {
+    if (this._rtNcm || this._rtNcmCarregando) return;
+    this._rtNcmCarregando = true; this.rtSet({ carregando: true, erro: "" });
+    fetch("dados/reforma/ncm.json", { cache: "no-cache" }).then((r) => r.ok ? r.json() : Promise.reject(r.status))
+      .then((j) => {
+        const d = j.ncm, cap = (c) => d[c.slice(0, 4)] || d[c.slice(0, 2)] || "";
+        j.idx = Object.keys(d).filter((c) => c.length === 8).sort().map((c) => ({ c, d: d[c], cap: cap(c),
+          full: [d[c.slice(0, 2)], d[c.slice(0, 4)], d[c.slice(0, 5)], d[c.slice(0, 6)], d[c.slice(0, 7)], d[c]].filter(Boolean).join(" ") }));
+        this._rtNcm = j; this.rtSet({ ncmOk: true, carregando: false });
+      })
+      .catch(() => this.rtSet({ carregando: false, erro: "Não foi possível carregar a tabela NCM. Confira a internet e tente de novo." }))
+      .finally(() => { this._rtNcmCarregando = false; });
+  }
+  rtProps() {
+    const rt = this.state.rt, b = rt.base, ncm = this._rtNcm;
+    const chave = rt.tipo + "|" + rt.q + "|" + (b ? 1 : 0) + "|" + (rt.ncmOk ? 1 : 0);
+    if (this._rtBuscaChave !== chave) { this._rtBuscaChave = chave; this._rtBusca = rtBuscar(rt.tipo, rt.q, b, ncm && ncm.idx); }
+    const res = this._rtBusca, sel = rt.sel;
+    const cls = rtClassesDo(sel, b, ncm), ativo = cls.find((a) => a.k.c === rt.cl) || cls[0];
+    const pct = (v) => (Number(v) || 0).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%";
+    const redTxt = (k) => { const r = k.red || {}, c = Number(r.cbs) || 0, i = Number(r.ibsuf) || 0;
+      if (k.tipo === "Sem alíquota") return "Sem alíquota";
+      if (!c && !i) return "Sem redução";
+      return c === i ? "Redução de " + pct(c) : "Redução: CBS " + pct(c) + " · IBS " + pct(i); };
+    const seletivo = sel && sel.tipo === "ncm" && ncm && ncm.seletivo.some((c) => sel.cod.startsWith(c));
+    const V = rqN(rt.valor), cbsRef = moNum(rt.cbs) / 100, ibsRef = moNum(rt.ibs) / 100;
+    const rk = ativo ? ativo.k.red || {} : {};
+    const linhas = b && ativo && V > 0 && cbsRef > 0 && ibsRef >= 0 ? rtDestinos(b, V, cbsRef, ibsRef, ativo.k.tipo === "Sem alíquota" ? 100 : Number(rk.cbs) || 0, ativo.k.tipo === "Sem alíquota" ? 100 : Number(rk.ibsuf) || 0, rt.ente) : [];
+    const pc2 = (v) => (v * 100).toLocaleString("pt-BR", { maximumFractionDigits: 2 }) + "%";
+    const status = rt.erro ? rt.erro : rt.carregando ? "Carregando a base oficial…" : !b ? "" :
+      rt.q.trim().length < 2 ? (rt.tipo === "servico" ? "Digite o nome do serviço (ex.: limpeza, vigilância, software) ou o código da LC 116 ou da NBS." : "Digite o nome do produto (ex.: arroz, papel, medicamento) ou o código NCM.") :
+      res.length ? (res.length >= 60 ? "Mostrando os 60 primeiros resultados. Refine a busca se não achar." : res.length + (res.length === 1 ? " resultado." : " resultados.")) : "Nada encontrado. Tente outra palavra ou o código.";
+    return {
+      rtTipos: [["servico", "Serviço"], ["produto", "Produto"]].map(([id, nome]) => ({ nome, ativo: rt.tipo === id, ...corBotao(rt.tipo === id),
+        escolher: () => { this.rtSet({ tipo: id, sel: null, cl: "" }); if (id === "produto") this.rtCarregarNcm(); } })),
+      rtBuscaRot: rt.tipo === "servico" ? "Serviço contratado" : "Produto comprado",
+      rtBuscaPh: rt.tipo === "servico" ? "Ex.: limpeza, 7.10, vigilância, 11.02" : "Ex.: arroz, 1006.30, papel A4",
+      rtQ: rt.q, onRtQ: (e) => this.rtSet({ q: e && e.target ? e.target.value : "" }), rtStatus: status,
+      rtTemResultados: res.length > 0,
+      rtResultados: res.map((r) => { const on = !!sel && sel.cod === r.cod && sel.tipo === r.tipo;
+        return { cod: r.tipo === "ncm" ? rtNcmFmt(r.cod) : r.cod, d: r.d, ctx: r.ctx, ativo: on, escolher: () => this.rtSet({ sel: r, cl: "" }) }; }),
+      rtTemSel: !!(sel && b),
+      rtSelCod: sel ? (sel.tipo === "ncm" ? "NCM " + rtNcmFmt(sel.cod) : sel.tipo === "nbs" ? "NBS " + sel.cod : "LC 116, item " + sel.cod) : "",
+      rtSelD: sel ? sel.d : "",
+      rtSelNota: !sel ? "" : (cls.length > 1 ? "A regra geral (000001, alíquota cheia) vale para a maioria das operações. As demais classificações só se aplicam quando o item, a operação ou o comprador atendem à descrição e à fundamentação; confira antes de usar. Clique em uma classificação para ver o destino do tributo." : "Nenhuma redução ou regime específico na base oficial para este item: vale a regra geral, com alíquota cheia.")
+        + (seletivo ? " Atenção: esta NCM está na lista do Imposto Seletivo (LC 214/2025, arts. 409 a 434)." : ""),
+      rtClasses: cls.map((a) => { const k = a.k, on = ativo && ativo.k.c === k.c, f = k.fund[0] || { curto: "", texto: "" };
+        const meta = [a.locais.length ? "Local da operação: " + a.locais.join("; ") : "", a.nbs.length ? "NBS: " + a.nbs.slice(0, 6).join(", ") + (a.nbs.length > 6 ? "…" : "") : "",
+          k.tomador ? "Só quando o comprador é: " + k.tomador : "", a.anexos.length ? a.anexos.slice(0, 2).join(" · ") : "", k.tipo ? "Tipo de alíquota: " + k.tipo : ""].filter(Boolean).join(" · ");
+        return { c: k.c, cst: k.cst, cstD: k.cstD, d: k.d, redTxt: redTxt(k), temRed: redTxt(k) !== "Sem redução", meta, ativo: !!on,
+          fundCurto: k.fund.map((x) => x.curto).join("; ") || "LC 214/2025", fundTexto: k.fund.map((x) => x.texto).join("\n\n"), usar: () => this.rtSet({ cl: k.c }) }; }),
+      rtAtivoTxt: ativo ? ativo.k.c + " · " + redTxt(ativo.k) : "",
+      rtEntes: RT_ENTES.map(([id, nome]) => ({ nome, ativo: rt.ente === id, ...corBotao(rt.ente === id), escolher: () => this.rtSet({ ente: id }) })),
+      rtValor: rt.valor, onRtValor: (e) => this.rtSet({ valor: e.target.value }),
+      rtCbs: rt.cbs, onRtCbs: (e) => this.rtSet({ cbs: e.target.value }), rtIbs: rt.ibs, onRtIbs: (e) => this.rtSet({ ibs: e.target.value }),
+      rtTemLinhas: linhas.length > 0,
+      rtLinhas: linhas.map((l) => ({ ano: String(l.ano) + (l.ano === 2026 ? "*" : ""), cbs: pc2(l.cbs), ibs: pc2(l.ibs), total: brlSimples(l.total),
+        uniao: brlSimples(l.uniao), estado: brlSimples(l.estado), mun: brlSimples(l.mun),
+        dU: l.ano >= 2027 && rt.ente === "uniao", dE: l.ano >= 2027 && rt.ente === "estado", dM: l.ano >= 2027 && rt.ente === "municipio" })),
+      rtRedutor: b && b.compraGov.redutor ? "Redutor das compras governamentais na base oficial: " + pct(b.compraGov.redutor) + "." : "O redutor de alíquota das compras governamentais (LC 214/2025, art. 370) ainda não foi fixado: está em 0% na base oficial. Quando for publicado, a base é atualizada e a tabela passa a considerá-lo.",
+      rtVersao: b ? "Fonte: " + b.fonte + ", versão " + b.versao + " de " + dataBR(b.versaoData) + ", registros vigentes em " + dataBR(b.vigenteEm) + "." : ""
+    };
+  }
   // troca de ferramenta da calculadora (subpágina com endereço próprio: ?p=calculadora&f=…)
   calcFerramenta(id) {
     if (!this.state.moCota) this.moCotaCarregar();
     if (id === "reajuste") { this.setState({ calcAba: "indice" }); this.ctCarregar(); }
     else if (id === "reequilibrio") { this.setState({ calcAba: "rq" }); this.ctCarregar(); }
+    else if (id === "reforma") { this.setState({ calcAba: "rt" }); this.rtCarregar(); }
     else if (id === "comparar") { this.cmpIniciar(); this.setState({ calcAba: "cmp" }); }
     else if (id === "contratos") { this.irPara("contratos"); return; }
     else { if (this.state.mo.modo !== id) this.moModo(id); this.setState({ calcAba: "mo" }); }
@@ -14620,11 +14832,11 @@ class Component extends DCLogic {
       onMoRfAno: SET("rf_ano"), moRfCbs: d.rf_cbs || "", onMoRfCbs: SET("rf_cbs"), moRfIbs: d.rf_ibs || "", onMoRfIbs: SET("rf_ibs"),
       moTransicao: transicao,
       moTransicaoNota: "Clique no ano para calculá-lo na planilha. Cada linha refaz o Módulo 6 com as alíquotas do ano; os Módulos 1 a 5 e o lucro são os mesmos. A mudança de tributos em contrato vigente pede reequilíbrio econômico-financeiro (LC 214/2025, arts. 374 a 378; Lei 14.133/2021, art. 134).",
-      calcAbaCmp: s.calcAba === "cmp", calcAbaIndice: s.calcAba === "indice", calcAbaMo: s.calcAba === "mo", calcAbaRq: s.calcAba === "rq",
+      calcAbaCmp: s.calcAba === "cmp", calcAbaIndice: s.calcAba === "indice", calcAbaMo: s.calcAba === "mo", calcAbaRq: s.calcAba === "rq", calcAbaRt: s.calcAba === "rt", ...(s.calcAba === "rt" ? this.rtProps() : {}),
       calcAbaIdxCls: "lvc-aba" + (s.calcAba === "indice" ? " ativo" : ""), calcAbaMoCls: "lvc-aba" + (s.calcAba === "mo" ? " ativo" : ""),
       calcIrIndice: () => this.setState({ calcAba: "indice" }), calcIrMo: () => { this.setState({ calcAba: "mo" }); this.carregarIndices(); },
       ...(() => {
-        const atual = s.calcAba === "mo" ? mo.modo : s.calcAba === "rq" ? "reequilibrio" : s.calcAba === "cmp" ? "comparar" : "reajuste", f = CALC_FERRAMENTAS.find((x) => x.id === atual) || CALC_FERRAMENTAS[0];
+        const atual = s.calcAba === "mo" ? mo.modo : s.calcAba === "rq" ? "reequilibrio" : s.calcAba === "rt" ? "reforma" : s.calcAba === "cmp" ? "comparar" : "reajuste", f = CALC_FERRAMENTAS.find((x) => x.id === atual) || CALC_FERRAMENTAS[0];
         const ir = (id) => () => this.calcFerramenta(id);
         return { calcH1: "Cálculos de contratos e planilhas de mão de obra, com a fundamentação pronta.",
           calcLead: "Reajuste por índice, planilha de custos no formato da IN 05/2017, repactuação, análise da proposta da licitante, reequilíbrio econômico-financeiro e a linha do tempo das planilhas: índices oficiais atualizados todos os dias, memória de cálculo, falhas apontadas com o fundamento e documentos em Excel e PDF para juntar ao processo.",
@@ -16539,7 +16751,7 @@ class Component extends DCLogic {
       })(),
       // calculadora de reajuste
       ...(() => {
-        const c = s.calc, liberada = !!s.admin || !!s.plano || !s.sb || (!!s.usuario && s.calcAba === "indice"); // reajuste: grátis com conta; planilhas e reequilíbrio: plano ou teste
+        const c = s.calc, liberada = !!s.admin || !!s.plano || !s.sb || (!!s.usuario && (s.calcAba === "indice" || s.calcAba === "rt")); // reajuste: grátis com conta; planilhas e reequilíbrio: plano ou teste
         const r = liberada ? this.calcularReajuste() : { pronto: false };
         const brlN = (v) => "R$ " + v.toFixed(2).replace(".", ",").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         const pct = (f) => ((f - 1) * 100).toFixed(2).replace(".", ",") + "%";
@@ -16559,8 +16771,8 @@ class Component extends DCLogic {
         const ultimoCiclo = r.pronto && r.ciclos.length ? r.ciclos[r.ciclos.length - 1] : null;
         return {
           calcLiberada: liberada, calcBloqueada: !liberada,
-          calcBloqTexto: s.calcAba === "indice" ? "Crie sua conta grátis para calcular e baixar a nota técnica. É de graça e sem cartão." : s.usuario ? "Comece o teste grátis de 7 dias ou escolha um plano para usar " + (s.calcAba === "rq" ? "o reequilíbrio tributário." : "as planilhas de mão de obra.") : "Entre na sua conta para usar. Se ainda não assina, o teste de 7 dias é grátis e sem cartão.",
-          calcBloqTag: s.calcAba === "indice" ? "Grátis com a sua conta" : "Exclusivo para assinantes",
+          calcBloqTexto: s.calcAba === "rt" ? "Crie sua conta grátis para consultar a classificação tributária oficial e o destino do tributo nas compras públicas. É de graça e sem cartão." : s.calcAba === "indice" ? "Crie sua conta grátis para calcular e baixar a nota técnica. É de graça e sem cartão." : s.usuario ? "Comece o teste grátis de 7 dias ou escolha um plano para usar " + (s.calcAba === "rq" ? "o reequilíbrio tributário." : "as planilhas de mão de obra.") : "Entre na sua conta para usar. Se ainda não assina, o teste de 7 dias é grátis e sem cartão.",
+          calcBloqTag: s.calcAba === "indice" || s.calcAba === "rt" ? "Grátis com a sua conta" : "Exclusivo para assinantes",
           calcBloqCta: s.usuario ? "Começar o teste grátis" : "Criar conta grátis", calcVerPlanos: this.nav("planos"), calcBloqAcao: s.usuario ? this.nav("planos") : () => { this.setState({ volta: "calculadora" }); this.irPara("cadastro"); },
           calcRegimes: opt([["14133", "Lei 14.133/2021"], ["13303", "Lei 13.303/2016 (estatais)"], ["13019", "Lei 13.019/2014 (parcerias)"]], c.regime, "regime"),
           calcIndices: opt(idxNomes, c.indice, "indice"),
