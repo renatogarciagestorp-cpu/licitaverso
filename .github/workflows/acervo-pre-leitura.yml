@@ -1,10 +1,11 @@
 name: Acervo — leitura antecipada das coletas do RJ
-# Toda segunda às 7h50 (Brasília), antes das coletas "Nacional e RJ" (8h07) e "TCE-RJ e TCM-RJ" (8h37): lê as fontes
-# delas e deixa as leituras em lidas/rj-<data>* e lidas/nacional-<data>* no ramo coleta-fontes. Assim as coletas
+# Domingo ao meio-dia (Brasília), véspera das coletas "Nacional e RJ" (seg 8h07) e "TCE-RJ e TCM-RJ" (seg 8h37): lê as
+# fontes delas e deixa as leituras em lidas/rj-<data da segunda>* e lidas/nacional-<data da segunda>* no ramo
+# coleta-fontes. Roda na véspera porque o agendamento do GitHub atrasa horas (em 23/11 não rodou antes das coletas). Assim as coletas
 # funcionam mesmo sem permissão de envio ao GitHub (só leem o ramo). Não toca no main nem no site.
 on:
   schedule:
-    - cron: "50 10 * * 1"
+    - cron: "0 15 * * 0"
   workflow_dispatch:
 concurrency:
   group: acervo-fontes
@@ -35,7 +36,8 @@ jobs:
         env:
           FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
         run: |
-          dia=$(TZ=America/Sao_Paulo date +%Y%m%d)
+          # data da próxima segunda (ou de hoje, se já for segunda): é a pasta que as coletas procuram
+          dia=$(TZ=America/Sao_Paulo date -d "$(( (8 - $(TZ=America/Sao_Paulo date +%u)) % 7 )) days" +%Y%m%d)
           rm -rf lidas/rj-$dia* lidas/nacional-$dia*
           python3 .codigo/scripts/agente/pre-leitura.py .codigo/acervo-completo.json lidas "$dia"
       - name: Devolver as leituras

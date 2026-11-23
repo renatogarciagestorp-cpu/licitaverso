@@ -1,7 +1,7 @@
 # Licitacon — estado atual do projeto
 
 > Documento vivo. **Leia no início de cada conversa nova** (junto com `CLAUDE.md`) e **atualize no fim** de toda conversa
-> que mudar algo: seção "Últimas mudanças", "Pendências" e o que mais tiver mudado. Última atualização: **19/11/2026**.
+> que mudar algo: seção "Últimas mudanças", "Pendências" e o que mais tiver mudado. Última atualização: **23/11/2026**.
 
 ## 1. Como começar uma conversa nova
 - Anexe só o repositório **renatogarciagestorp-cpu/licitaverso** (ele já traz `CLAUDE.md`, este arquivo e todo o código).
@@ -27,14 +27,15 @@
 
 ## 3. Acervo de jurisprudência (Biblioteca)
 - Base: artifact https://claude.ai/artifact/Lxz5Pk53S7V4hdAtKBw4wW (coleções `decisoes` e `meta`). Site: `acervo-completo.json`
-  (**2.263 itens** em 19/11/2026). Novos itens: `acervo-novos/*.json` → workflow `acervo-mesclar` → `acervo-completo.json`.
+  (**2.376 itens** em 23/11/2026). Novos itens: `acervo-novos/*.json` → workflow `acervo-mesclar` → `acervo-completo.json`.
   Reconciliação nos dias úteis às 9h03 (tarefa "Atualizar site") publica o que estiver na base.
 - Foco: licitações e contratos (adm. direta e indireta) + **tudo da Lei 13.019** (tema "Parcerias com OSC (Lei 13.019)").
   Fora: pessoal, concursos, contas de governo, LRF, orçamento, tributos, teses só processuais.
 - Leitura de sites: leitor de fontes do GitHub (`acervo-fontes.yml` + `scripts/agente/ler-fontes.py`, ramo `coleta-fontes`,
   pastas `lidas/`). Detalhes em `coletas/acesso-aos-sites.md`.
-- **Leitura antecipada** (`acervo-pre-leitura.yml` + `scripts/agente/pre-leitura.py`): segundas 7h50 (Brasília), deixa em
-  `lidas/rj-<data>*` e `lidas/nacional-<data>*` as fontes das coletas do RJ. TCU pela API pública da Jurisprudência
+- **Leitura antecipada** (`acervo-pre-leitura.yml` + `scripts/agente/pre-leitura.py`): **domingo ao meio-dia** (Brasília),
+  véspera das coletas, porque o agendamento do GitHub atrasa horas; deixa em `lidas/rj-<data da segunda>*` e
+  `lidas/nacional-<data da segunda>*` as fontes das coletas do RJ. Pode ser rodada à mão (workflow_dispatch) numa segunda. TCU pela API pública da Jurisprudência
   Selecionada. **TCE-RJ e TJ-RJ bloqueiam o GitHub** → lidos pelo Firecrawl (segredo `FIRECRAWL_API_KEY` no GitHub;
   plano gratuito de 500 créditos/mês, renova dia 9). TJ-RJ: confere a data de atualização (1 crédito) e só baixa a lista
   inteira (~27 créditos) quando muda; marca em `lidas/tjrj-inconstitucionalidades-atualizacao.txt`.
@@ -57,6 +58,9 @@
 - Ambiente de nuvem `licitaverso`: rede limitada; tribunais não estão liberados (por isso o leitor do GitHub).
 
 ## 4. Últimas mudanças (mais recentes primeiro)
+- 23/11: a leitura antecipada (segunda 7h50) não rodou antes das coletas do RJ (atraso do agendamento do GitHub); as
+  coletas de 8h07/8h37 terminaram sem leituras. Leitura passou para o domingo (data da segunda) e foi recuperada à mão.
+- 19/11: `CLAUDE.md` e `ESTADO.md` publicados no `main`.
 - 19/11: TCE-RJ e TJ-RJ pelo Firecrawl na leitura antecipada; instruções das coletas do RJ ajustadas (leituras
   identificadas pela url). Teste deu 402 (conta Firecrawl sem créditos até 09/12) — esperado.
 - 19/11: 1ª limpeza de armazenamento conferida: pareceres e minutas apagados de 7 análises prontas há mais de 7 dias, sem erro.
@@ -68,5 +72,7 @@
 ## 5. Pendências
 - **14/12/2026 10h**: conferir se o TCE-RJ e o TJ-RJ voltaram a ser lidos pelo Firecrawl (lembrete agendado
   trig_01K2qKM6tZVmba9G16xcNR3y). Até 09/12 essas duas fontes falham com 402 (sem custo).
-- **23/11/2026**: primeira segunda real da leitura antecipada (7h50) e das coletas do RJ (8h07/8h37) — conferir resultados.
+- **30/11/2026**: primeira leitura antecipada de domingo (29/11) e coletas do RJ de segunda — conferir `lidas/rj-20261130` e
+  `lidas/nacional-20261130` e o resumo das coletas.
+- Publicar a mudança do agendamento da leitura antecipada para o domingo (está no ramo de trabalho; precisa de "Publique").
 - TCE-RJ: a página do Firecrawl mostra só os 10 registros mais recentes; se uma semana tiver mais, a coleta avisa "possível lacuna".
