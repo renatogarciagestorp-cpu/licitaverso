@@ -7,6 +7,7 @@ agente/normas/<id>.json com a estrutura: artigos → dispositivos (caput, inciso
 - Só usa a biblioteca padrão do Python.
 Uso: python3 scripts/agente/baixar-normas.py [id ...]     (sem id = todas; o Planalto bloqueia servidores na nuvem)
      python3 scripts/agente/baixar-normas.py --arquivo pagina.html --id lei-14133   (página salva pelo navegador)
+     python3 scripts/agente/baixar-normas.py --pdf norma.pdf --id lc-214   (PDF da "norma atualizada" da Câmara; usa o pdftotext)
 """
 import datetime, hashlib, html.parser, json, pathlib, re, sys, urllib.request
 
@@ -82,7 +83,7 @@ def estruturar(linhas, norma):
             nivel = ln.split()[0].upper()
             ordem = ["LIVRO", "TÍTULO", "CAPÍTULO", "SEÇÃO", "SUBSEÇÃO"]
             n = ordem.index(nivel) if nivel in ordem else 4
-            caminho = [c for c in caminho if ordem.index(c[0]) < n] + [(nivel, ln)]
+            caminho = [c for c in caminho if (ordem.index(c[0]) if c[0] in ordem else 4) < n] + [(nivel, ln)]
             continue
         m = R_ART.match(ln)
         if m and (m.group(3) or "").strip():
@@ -200,6 +201,28 @@ def gravar(norma, html_txt):
     return artigos
 
 
+def linhas_do_pdf(pdf):
+    """Texto do PDF da Câmara (norma atualizada) em parágrafos: tira cabeçalho e números de página, junta as linhas
+    quebradas pelo layout e para no primeiro anexo (os anexos são tabelas, fora da estrutura de artigos)."""
+    import subprocess
+    bruto = subprocess.run(["pdftotext", str(pdf), "-"], capture_output=True, text=True, check=True).stdout
+    novo = lambda ln: bool(R_ART.match(ln) or R_PAR.match(ln) or R_INC.match(ln) or R_ALI.match(ln)
+                           or re.match(r"^(LIVRO|TÍTULO|CAPÍTULO|Seção|SEÇÃO|Subseção|SUBSEÇÃO)\s+([IVXLCDM]+|ÚNIC[OA])\b", ln) or re.match(r"^(ANEXO|O PRESIDENTE|Faço saber|Brasília,)", ln))
+    linhas = []
+    for ln in bruto.replace("\f", "\n").split("\n"):
+        ln = re.sub(r"\s+", " ", ln).strip()
+        if not ln or re.fullmatch(r"\d{1,3}", ln) or ln in ("CÂMARA DOS DEPUTADOS", "Centro de Documentação e Informação"):
+            continue
+        if re.match(r"^ANEXO I\b", ln) and any(l.startswith("Art.") for l in linhas):
+            break
+        ant = linhas[-1] if linhas else ""
+        if not linhas or novo(ln) or (ant.endswith((".", ";", ":")) and not ln[:1].islower() and not re.match(r"^(Complementar|Lei|de \d)", ln)) or (ant.isupper() and ln.isupper()):
+            linhas.append(ln)
+        else:
+            linhas[-1] = (ant[:-1] if ant.endswith("-") and ln[:1].islower() else ant + " ") + ln
+    return linhas
+
+
 def main(args):
     fontes = json.loads((PASTA / "fontes.json").read_text(encoding="utf-8"))["normas"]
     if args[:1] == ["--arquivo"]:
@@ -214,6 +237,21 @@ def main(args):
         arts = gravar(norma, texto)
         print("artigos:", len(arts))
         return 0 if len(arts) >= 10 else 1
+    if args[:1] == ["--pdf"]:
+        norma = next((n for n in fontes if n["id"] == args[3]), None)
+        if not norma:
+            sys.exit("Inclua a norma " + args[3] + " em agente/normas/fontes.json antes.")
+        linhas = linhas_do_pdf(args[1])
+        artigos = estruturar(linhas, norma)
+        if len(artigos) < 10:
+            sys.exit("Poucos artigos reconhecidos no PDF: " + str(len(artigos)))
+        dados = {"id": norma["id"], "nome": norma["nome"], "apelido": norma.get("apelido", ""), "fonte": norma["url"],
+                 "baixado_em": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
+                 "hash_fonte": hashlib.sha256(pathlib.Path(args[1]).read_bytes()).hexdigest()[:16],
+                 "total_artigos": len(artigos), "artigos": artigos}
+        (PASTA / (norma["id"] + ".json")).write_text(json.dumps(dados, ensure_ascii=False, indent=1), encoding="utf-8")
+        print(f"{norma['id']}: {len(artigos)} artigos (PDF)")
+        return 0
     falhas, log = 0, []
     for n in fontes:
         if args and n["id"] not in args:

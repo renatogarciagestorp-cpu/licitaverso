@@ -1,0 +1,36 @@
+name: Reforma tributária (base oficial da Receita)
+# Atualiza dados/reforma/*.json (aba "Reforma tributária" da Calculadora) a partir da base oficial da
+# calculadora de tributos da Receita Federal. Só monta o banco SQLite com o Flyway (não compila nem roda a
+# aplicação) e só publica se o conteúdo mudou: nova versão da base ou registros que entraram/saíram de vigência.
+on:
+  schedule:
+    - cron: "41 11 * * 1"   # toda segunda, 8h41 (Brasília)
+  workflow_dispatch:
+permissions: { contents: write }
+concurrency: { group: reforma-tributaria, cancel-in-progress: false }
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Baixar a calculadora oficial da Receita Federal
+        run: git clone --depth 1 https://github.com/ReceitaFederal/calculadora-rtc-regime-regular.git .rtc   # dentro do repositório: o cache do Maven exige; não é gravado (só dados/reforma entra no commit)
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: "21", cache: maven, cache-dependency-path: ".rtc/pom.xml" }
+      - name: Montar o banco oficial (Flyway)
+        working-directory: .rtc
+        run: |
+          mkdir -p calculadora/db
+          chmod +x mvnw
+          ./mvnw -q flyway:migrate -Dflyway.configFiles=./flyway/flyway-pro.conf --batch-mode --errors
+          ls -lh calculadora/db/calculadora-pro.db
+      - name: Exportar os dados do site
+        run: python3 scripts/reforma/exportar-rtc.py .rtc/calculadora/db/calculadora-pro.db --commit "$(git -C .rtc rev-parse HEAD)"
+      - name: Publicar se mudou
+        run: |
+          if git diff --quiet -- dados/reforma; then echo "nada a publicar"; exit 0; fi
+          VER=$(python3 -c "import json;print(json.load(open('dados/reforma/rtc.json'))['versao'])")
+          git config user.name "Licitacon — reforma tributária" && git config user.email "actions@users.noreply.github.com"
+          git add dados/reforma && git commit -q -m "Reforma tributária: base oficial da Receita atualizada ($VER)"
+          for i in 1 2 3; do git pull -q --rebase && git push -q && break; sleep 10; done
