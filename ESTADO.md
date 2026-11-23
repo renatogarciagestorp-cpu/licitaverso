@@ -59,7 +59,8 @@
 
 ## 4. Últimas mudanças (mais recentes primeiro)
 - 23/11: a leitura antecipada (segunda 7h50) não rodou antes das coletas do RJ (atraso do agendamento do GitHub); as
-  coletas de 8h07/8h37 terminaram sem leituras. Leitura passou para o domingo (data da segunda) e foi recuperada à mão.
+  coletas de 8h07/8h37 terminaram sem leituras. Leitura passou para o domingo (data da segunda, publicado) e foi recuperada à mão; as duas coletas do RJ foram
+  disparadas de novo às 8h40/8h47.
 - 19/11: `CLAUDE.md` e `ESTADO.md` publicados no `main`.
 - 19/11: TCE-RJ e TJ-RJ pelo Firecrawl na leitura antecipada; instruções das coletas do RJ ajustadas (leituras
   identificadas pela url). Teste deu 402 (conta Firecrawl sem créditos até 09/12) — esperado.
@@ -74,5 +75,4 @@
   trig_01K2qKM6tZVmba9G16xcNR3y). Até 09/12 essas duas fontes falham com 402 (sem custo).
 - **30/11/2026**: primeira leitura antecipada de domingo (29/11) e coletas do RJ de segunda — conferir `lidas/rj-20261130` e
   `lidas/nacional-20261130` e o resumo das coletas.
-- Publicar a mudança do agendamento da leitura antecipada para o domingo (está no ramo de trabalho; precisa de "Publique").
 - TCE-RJ: a página do Firecrawl mostra só os 10 registros mais recentes; se uma semana tiver mais, a coleta avisa "possível lacuna".
