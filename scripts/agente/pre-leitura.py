@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Leitura antecipada das fontes das coletas do RJ (roda no GitHub Actions, toda segunda às 7h50 de Brasília).
+"""Leitura antecipada das fontes das coletas do RJ (roda no GitHub Actions aos domingos, véspera das coletas de segunda).
 
 As coletas "Nacional e RJ" (8h07) e "TCE-RJ e TCM-RJ" (8h37) rodam com a rede filtrada e, às vezes, sem permissão de
 envio ao GitHub; sem envio, não conseguem pedir leituras ao leitor de fontes. Esta automação faz os pedidos por elas,
