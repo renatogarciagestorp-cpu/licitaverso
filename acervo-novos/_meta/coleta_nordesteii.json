@@ -1,0 +1,222 @@
+{
+ "observacao": "Execução de 25/11/2026: leitor de fontes do GitHub funcionou (2 rodadas). 40 itens gravados (PGE-BA 15, TJ-AL 20, TCE-SE 5; Lei 13.019: 3). TCE-AL, PGE-AL, TCE-BA, TCM-BA e TJ-SE não tentados (bloqueio conhecido; tentar em dezembro). PGE-SE fora do ar ao leitor. Execução de 18/11/2026: leitor de fontes do GitHub funcionou (2 rodadas). 47 itens gravados (TCE-SE 9, PGE-SE 1, PGE-BA 12, TJ-AL 25; Lei 13.019: 5). Execução de 11/11/2026: leitura pelo leitor de fontes do GitHub (ramo coleta-fontes). Hosts tceal.tc.br, pge.al.gov.br, procuradoria.al.gov.br, tce.ba.gov.br, tcm.ba.gov.br e tjse.jus.br deram timeout no leitor (o 1º pedido levou ~30 min por isso; evitar misturá-los com outros endereços).",
+ "orgaos": {
+  "PGE-AL": {
+   "carga_ate": "2024-07-04",
+   "carga_concluida": false,
+   "falhas": "Não tentado em 25/11/2026 (bloqueio conhecido desde 12/11/2026: o site não responde aos servidores do GitHub; tentar de novo em dezembro/2026). Sondagem de 12/11/2026: o site não responde aos servidores do GitHub (leitor de fontes) em nenhuma variação (http/https, com e sem www); provável bloqueio de acesso de fora do país ou de datacenters. Sem fonte pública acessível pela automação.",
+   "fontes": [
+    "https://portal.sei.al.gov.br/baixarDocumento/19"
+   ],
+   "pendentes": [
+    "Consultar o site da PGE-AL (pge.al.gov.br / procuradoria.al.gov.br), na área de pareceres referenciais, enunciados e orientações, depois de liberar o domínio",
+    "Procurar no Diário Oficial de Alagoas (imprensaoficial.al.gov.br) atos da PGE-AL de 2024 a 2026 (pareceres referenciais, portarias de minutas padrão da Lei 14.133/2021)"
+   ],
+   "ultima_execucao": "2026-11-25T11:50:00Z",
+   "ultima_qtd": 0,
+   "ultimo": "Despacho PGE-AL, Processo E:35032.0000001543/2024 (Protocolo 868670), de 04/07/2024"
+  },
+  "PGE-BA": {
+   "carga_ate": "2024-01-12",
+   "carga_concluida": false,
+   "falhas": "Índice oficial sem itens novos desde 27/10/2026 (conferido em 25/11/2026). Os pareceres de 2024 do índice não têm data na lista (precisam do PDF). Despacho PA-028-2026 é PDF digitalizado sem texto.",
+   "fontes": [
+    "https://www.ba.gov.br/pge/biblioteca-documentos/consulta-de-pareceres",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-03/06-%20DESPACHO-DE-QUALIFICACAO-PA-008-2024-completo_0.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-03/07-%20DESPACHO_DE_QUALIFICACAO_PA_001_2025-Completo.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-03/09-%20DESPACHO-DE-QUALIFICACAO-PA-106-2024-Completo-EDITADO-1.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-03/12-%20DESPACHO-DE-QUALIFICACAO-PA-098-2024-Completo.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-03/13-%20DESPACHO-DE-QUALIFICACAO-PA-099-2024-Completo-1.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-03/16-%20DESPACHO_DE_QUALIFICACAO_PA_086_2024-Completo.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-03/17-%20DESPACHO-DE-QUALIFICACAO-PA-084-2024-Completo.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-03/20-%20DESPACHO-DE-QUALIFICACAO-PA-076-2024-Completo.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-03/25-%20DESPACHO-DE-QUALIFICACAO-PA-065-2024-Completo_0.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-03/38-%20DESPACHO-DE-QUALIFICACAO-PA-034-2024-Completo.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-03/49-%20DESPACHO-DE-QUALIFICACAO-PA-003-2024-completo.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-07/DESPACHO%20DE%20QUALIFICACAO%20PA-020-2025%20-%20Completo.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-07/PARECER-PA-NLC-276-2025-Completo.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-07/PARECER_PA_NSESAB_188_2025.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-10/PARECER_PA_NSESAB_253_2025.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-11/DESPACHO%20DE%20QUALIFICACAO%20PA-047-2025%20-%20Completo.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-11/PARECER%20PA-NLC-422-2025.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-12/PGE-PORTARIA-270-2025_0.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2026-02/DESPACHO%20DE%20QUALIFICACAO%20PA-001-2026%20-%20Completo.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2026-04/DESPACHO%20DE%20QUALIFICACAO%20PA-012-2026%20-%20COMPLETO.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2026-09/DESPACHO%20DE%20QUALIFICACAO%20PA-035-2026-completo.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-11/DESPACHO%20DE%20QUALIFICACAO%20PA-044-2025%20-%20Completo.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-09/DESPACHO%20DE%20QUALIFICACAO%20PA-035-2025%20-%20Completo.pdf",
+    "https://www.ba.gov.br/pge/sites/site-pge/files/2025-03/48-%20DESPACHO-DE-QUALIFICACAO-PA-005-2024-completo.pdf"
+   ],
+   "pendentes": [
+    "Despachos de Qualificação lidos em 25/11/2026 e não gravados: PA-019-2025 e PA-040-2025 (mesma tese dos Pareceres NSESAB-188/253-2025 já no acervo), PA-046-2025 (= PA-NSAS-245-2025), PA-053-2025 (enunciado sobre retenção de faturas por irregularidade fiscal – mesmo processo do PA-NLC-597-2025; pode ser gravado como complemento), PA-038-2025 (lavanderia hospitalar – caso concreto), PA-039-2025 e PA-045-2025 (BID/PROSUS II – limite de carga), PA-074-2024, PA-027-2024 e PA-020-2024 (pessoal – fora do foco)",
+    "Pareceres datados ainda não gravados (índice oficial): PA-NLC-537-2026 (serviços técnicos de natureza intelectual – modalidade e critério; proposta de enunciado), PA-NLC-232-2026 (reajuste e aditivos – enunciados), PA-NLC-101-2026 (serviço postal), PA-NSESAB-227-2026, PA-NLC-506-2026, PA-NLC-477-2026, PA-NLC-420-2026, PA-NLC-450-2026, PA-NLC-743-2025, PA-NLC-598-2025, PA-NSSP-334-2025, PA-NLC-517-2025, PA-NLC-439-2025, PA-NSAS-167-2025, PA-NLC-422-2025, PA-NSAS-148-2025, PA-NLC-396-2025, PA-NLC-371-2025, PA-NSESAB-245-2025 e os pareceres NLC de 2025 (123, 198, 241, 276, 300, 308)",
+    "Pareceres de 2024 listados no índice sem data (PA-NLC-029/049/054/076/089/119/132/167/171/233/263/278/280/334/429/463/465/467/480/495/505/509/512/517/536/566/602/653/707/719/803/822/828-2024, NSESAB/NSAS/NSSP de 2024): ler os PDFs para obter a data",
+    "Lei 13.019 (Núcleo de Parcerias): verificar no índice se há outros pareceres sobre termos de colaboração/fomento de 2024 (ex.: PA-NPA-145-2024 – Programa Bahia Viva, prorrogação e novas metas; data não exibida no índice)",
+    "PA-028-2026: PDF sem texto (digitalizado) – conteúdo não lido; PA-033-2026 (acumulação de cargos) e PA-036-2026 (convênio com município) lidos e descartados (fora do foco)",
+    "Despachos de Qualificação de 2024 ainda não lidos (PDFs listados no índice): PA-001, 004, 007, 013, 016, 017, 026, 029, 030, 031, 037, 038, 041, 043, 046, 047, 048, 051, 058, 059, 063, 066, 068, 069, 071, 075, 079, 080, 081, 082, 089, 090, 091, 097, 100, 102, 103, 104, 105, 107-2024; e 2025: PA-002, 003, 004, 005, 007, 008, 009-2025 (muitos podem ser de pessoal/disciplinar)"
+   ],
+   "ultima_execucao": "2026-11-25T11:50:00Z",
+   "ultima_qtd": 15,
+   "ultimo": "Despacho de Qualificação PA-040-2026, de 27/10/2026 (Parecer PA-NCAD-473-2025)"
+  },
+  "PGE-SE": {
+   "carga_ate": "2024-07-30",
+   "carga_concluida": false,
+   "falhas": "Em 18/11 e 25/11/2026 pge.se.gov.br/pareceres-referenciais/ e pgedev.se.gov.br (cartilha 2026) não responderam ao leitor (URLError). Tentar de novo na próxima execução; se persistir, tratar como bloqueio.",
+   "fontes": [
+    "https://pge.se.gov.br/wp-content/uploads/2025/07/Portaria-PGE-n%C2%B0-2322-2025-Regulamenta-a-emissao-de-Parecer-Referencial-e-a-dispensa-de-emissao-de-Parece-Juridico-pela-PGE.pdf",
+    "https://pge.se.gov.br/portarias/",
+    "https://www.se.gov.br/anexos/uploads/download/filename_novo/15442/c2506aea662eb62dab6d90f731416186.pdf",
+    "https://pge.se.gov.br/wp-content/uploads/2025/09/Parecer-Referencial-no-5365.2025-CCAC.pdf"
+   ],
+   "pendentes": [
+    "Cartilha de Licitações, Contratos e Convênios 2026 da PGE-SE: https://pgedev.se.gov.br/wp-content/uploads/2026/05/CARTILHA-LICITACOES-CONTRATOS-E-CONVENIOS.2026.pdf (não lida)",
+    "Procurar no site pge.se.gov.br os pareceres referenciais de licitações aprovados pelo Conselho Superior (art. 2º da Portaria 2322/2025)",
+    "Parecer PGE nº 179 (CODISE) – robots; ano não confirmado",
+    "Procurar outros pareceres referenciais aprovados pelo CONSUP (Portaria PGE 2322/2025), inclusive sobre MROSC e licitações"
+   ],
+   "ultima_execucao": "2026-11-25T11:50:00Z",
+   "ultima_qtd": 0,
+   "ultimo": "Parecer Referencial nº 5365/2025-CCAC (MROSC – emendas parlamentares impositivas), aprovado pelo Conselho Superior em 27/08/2025"
+  },
+  "TCE-AL": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Não tentado em 25/11/2026 (bloqueio conhecido desde 12/11/2026: o site não responde aos servidores do GitHub; tentar de novo em dezembro/2026). Sondagem de 12/11/2026: o site não responde aos servidores do GitHub (leitor de fontes) em nenhuma variação (http/https, com e sem www); provável bloqueio de acesso de fora do país ou de datacenters. Sem fonte pública acessível pela automação.",
+   "fontes": [
+    "https://doe.tceal.tc.br/api/api/editions/downloadPdf/9176"
+   ],
+   "pendentes": [
+    "Ata da 24ª Sessão Ordinária do Pleno (www.tceal.tc.br/view/documentos/doc26082026101706636_38480045.pdf) – bloqueada",
+    "Página de súmulas e jurisprudência do TCE-AL – bloqueada"
+   ],
+   "ultima_execucao": "2026-11-25T11:50:00Z",
+   "ultima_qtd": 0,
+   "ultimo": ""
+  },
+  "TCE-BA": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Não tentado em 25/11/2026 (bloqueio conhecido desde 12/11/2026: o site não responde aos servidores do GitHub; tentar de novo em dezembro/2026). Sondagem de 12/11/2026: http://www.tce.ba.gov.br responde 403 (acesso negado) e https não responde aos servidores do GitHub. Sem fonte pública acessível pela automação.",
+   "fontes": [],
+   "pendentes": [
+    "TCE-BA: cautelar ratificada pelo Plenário que suspendeu pregão eletrônico do Detran-BA (~R$ 28 mi), conhecida só por notícia (bahianoticias.com.br, nº 312253) e por título de página em tce.ba.gov.br/noticias; número do processo e data não confirmados",
+    "TCE-BA: cautelar ratificada pelo Plenário que suspendeu licitação da Cerb, conhecida só pelo título de página em tce.ba.gov.br/noticias (bloqueada por robots); número e data não confirmados",
+    "TCE-BA: determinação para que a Agerba não prorrogue o contrato de operação de ônibus elétricos na RMS, conhecida só por notícia (bahianoticias nº 291868; correio24horas); número e data não confirmados",
+    "TCE-BA: cautelar ratificada que obrigou a SEC a suprimir item e republicar edital de pregão eletrônico, conhecida só por notícia (bahianoticias nº 278536); número e data não confirmados; pode ser anterior a 2024",
+    "TCE-BA: Resolução nº 000097/2025 (Plano de Diretrizes de Controle), PDF em tce.ba.gov.br/images/legislacao/resolucoes_normativas/resolucao_097_2025.pdf, não lida (robots); provavelmente fora do foco",
+    "TCE-BA: página 'Consulta ao TCE' (tce.ba.gov.br/jurisprudencia/consulta-ao-tce) bloqueada por robots; respostas a consultas de 2024+ não verificadas"
+   ],
+   "ultima_execucao": "2026-11-25T11:50:00Z",
+   "ultima_qtd": 0,
+   "ultimo": ""
+  },
+  "TCE-SE": {
+   "carga_ate": "2024-03-31",
+   "carga_concluida": true,
+   "falhas": "Boletim Ano 3, nº 3 (jul–set/2026) ainda não publicado (404 em 25/11/2026). A página boletim.aspx é montada por script e não lista os PDFs ao leitor. Datas = último dia do trimestre.",
+   "fontes": [
+    "https://tce.se.gov.br/jurisprudencia/Boletins/Boletim%20de%20Jurisprudencia%20-%20Abril%20-%20Junho%20de%202024.pdf",
+    "https://www.tce.se.gov.br/jurisprudencia/Boletins/Boletim%20de%20Jurisprud%C3%AAncia%20-%20Janeiro%20-%20Mar%C3%A7o%20de%202024.pdf",
+    "https://www.tce.se.gov.br/jurisprudencia/Boletins/Boletim%20de%20Jurisprud%C3%AAncia%20-%20Julho%20-%20Setembro%20de%202025.pdf",
+    "https://www.tce.se.gov.br/jurisprudencia/Boletins/Boletim%20de%20Jurisprud%C3%AAncia%20-%20Janeiro%20-%20Mar%C3%A7o%20de%202026.pdf",
+    "https://www.tce.se.gov.br/jurisprudencia/Boletins/Boletim%20de%20Jurisprud%C3%AAncia%20-%20Abril%20-%20Junho%20de%202026.pdf",
+    "https://www.tce.se.gov.br/jurisprudencia/Boletins/Boletim%20de%20Jurisprud%C3%AAncia%20-%20Outubro%20-%20Dezembro%202025.pdf",
+    "https://www.tce.se.gov.br/jurisprudencia/Boletins/Boletim%20de%20Jurisprud%C3%AAncia%20%20-%20Abril%20-%20junho%20de%202025.pdf",
+    "https://www.tce.se.gov.br/jurisprudencia/Boletins/Boletim%20de%20Jurisprud%C3%AAncia%20-%20Janeiro%20-%20Mar%C3%A7o%20de%202025.pdf",
+    "https://www.tce.se.gov.br/jurisprudencia/Boletins/Boletim%20de%20Jurisprud%C3%AAncia%20-%20Outubro%20-%20Dezembro%202024.pdf",
+    "https://www.tce.se.gov.br/jurisprudencia/Boletins/Boletim%20de%20Jurisprud%C3%AAncia%20-%20Julho%20-%20Setembro%20de%202024.pdf",
+    "https://www.tce.se.gov.br/jurisprudencia/SitePages/boletim.aspx",
+    "https://www.tce.se.gov.br/consultas/resolucoes.aspx",
+    "https://www.tce.se.gov.br/consultas/ResolucaoLer.aspx?r=364%2F2024"
+   ],
+   "pendentes": [
+    "Boletim jul–set/2025: gravadas em 25/11/2026 as Decisões 26028, 25959, 25912, 25897 e 52.647; não gravadas por serem só processuais (perda de objeto): 26003 e 25946; 25969 (convênio com EMURB – terceirização de obras, Lei 8.666 art. 116) pode ser avaliada",
+    "Boletim Ano 3, nº 3 (jul–set/2026) – verificar publicação em https://www.tce.se.gov.br/jurisprudencia/SitePages/boletim.aspx",
+    "Decisão 26633 (TC/010119/2024) não gravada: mesma tese do mesmo processo já no acervo (Decisão 25222)",
+    "Itens antigos não incluídos dos boletins de 2024–2025: Decisões 25032, 25094, 3953, 3956, 3957, 25067, 25402, 25343, 25332, 25431, 40.256, 51.826, 25474, 25503, 25518, 25634, Acórdão 4011, 51.935, 51.967",
+    "Lei 13.019: nenhum item próprio do TCE-SE sobre MROSC encontrado nos boletins de 2024–2026 lidos (Decisão 26108/2025 trata de OS/OSCIP – Leis 9.637 e 9.790)"
+   ],
+   "ultima_execucao": "2026-11-25T11:50:00Z",
+   "ultima_qtd": 5,
+   "ultimo": "Boletim de Jurisprudência TCE-SE Ano 3, nº 2 (abr–jun/2026) – Decisão nº 26784 (Pleno, TC/002349/2026)"
+  },
+  "TCM-BA": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Não tentado em 25/11/2026 (bloqueio conhecido desde 12/11/2026: o site não responde aos servidores do GitHub; tentar de novo em dezembro/2026). Sondagem de 12/11/2026: o site não responde aos servidores do GitHub (leitor de fontes) em nenhuma variação (http/https, com e sem www); provável bloqueio de acesso de fora do país ou de datacenters. Sem fonte pública acessível pela automação.",
+   "fontes": [],
+   "pendentes": [
+    "Informativo de Jurisprudência do TCM-BA – nova edição divulgada em notícia de 07/05/2026 (cgm.salvador.ba.gov.br/?p=10043, que remete a https://www.tcm.ba.gov.br/tcm-disponibiliza-nova-edicao-do-informativo-de-jurisprudencia-4/); número da edição e conteúdo não confirmados.",
+    "Notícia oficial 'TCM divulga duas súmulas para orientar gestores municipais' (https://www.tcm.ba.gov.br/aviso-post/tcm-divulga-duas-sumulas-para-orientar-gestores-municipais/) – números, data e pertinência a licitações não confirmados.",
+    "Resposta a consulta do TCM-BA sobre o Plano de Contratações Anual (PCA) na Lei 14.133/2021 (descoberta via ronnycharles.com.br/?p=9741) – número do parecer e data não confirmados na fonte oficial.",
+    "Orientações da Diretoria de Assistência aos Municípios sobre a nova Lei de Licitações e modalidades de licitação (páginas em tcm.ba.gov.br) e informe DAM 'Dispensa de licitação por emergência' – números/datas não confirmados."
+   ],
+   "ultima_execucao": "2026-11-25T11:50:00Z",
+   "ultima_qtd": 0,
+   "ultimo": ""
+  },
+  "TJ-AL": {
+   "carga_ate": "2024-01-24",
+   "carga_concluida": false,
+   "falhas": "Consulta Completa do eSAJ (POST) funcionou pelo leitor. Limite do tribunal: janela de julgamento de no máximo 1 ano (janelas maiores voltam vazias). Termos com várias palavras sem aspas trazem ruído; usar aspas (%22...%22) e pesquisarComSinonimos=N.",
+   "fontes": [
+    "POST https://www2.tjal.jus.br/cjsg/resultadoCompleta.do conversationId=&dados.buscaInteiroTeor=&dados.pesquisarComSinonimos=S&dados.buscaEmenta=licita%C3%A7%C3%A3o&dados.nuProcOrigem=&dados.nuRegistro=&agenteSelectedEntitiesList=&contadoragente=0&contadorMaioragente=0&dados.dtJulgamentoInicio=DD%2FMM%2FAAAA&dados.dtJulgamentoFim=DD%2FMM%2FAAAA&dados.dtPublicacaoInicio=&dados.dtPublicacaoFim=&dados.origensSelecionadas=T&tipoDecisaoSelecionados=A&dados.ordenarPor=dtPublicacao",
+    "https://www.tjal.jus.br/NUGEP/nugepArq/43.Retificacao.do.BOLETIM.DE.PRECEDENTES.NUGEP.AL.setembro.2024.pdf"
+   ],
+   "pendentes": [
+    "Carga: com 'licitação' a faixa 01/01–28/02/2024 foi esgotada (15 resultados); falta varrer 2024–2025 por trimestre com 'pregão', '\"contrato administrativo\"', 'dispensa', 'inexigibilidade', 'reequilíbrio' (só a 1ª página de cada consulta é lida).",
+    "Lei 13.019: já consultados (25/11/2026) '13.019', '\"termo de colaboração\"', '\"termo de fomento\"' e '\"chamamento público\"' por ano 2024–2026; tentar '\"organização da sociedade civil\"' e 'MROSC'. Candidato não gravado: 0805603-19.2025 (chamamento PNAB – Lei Aldir Blanc, vinculação ao edital) e 0800028-54.2021 (contrato com organização social – só processual).",
+    "Candidatos lidos e não gravados: 0801703-91.2026 (litisconsórcio do licitante vencedor – processual), 0000550-51.2018, 0736122-73.2019, 0700569-26.2021, 0700889-59.2019 (cobranças contratuais – teses já representadas), 0700370-71.2016 (via inadequada).",
+    "Candidatos antigos ainda não gravados: 0811768-82.2025, 0001778-59.2009, 0741386-66.2022, 0805886-42.2025, 0700828-22.2024, 0727892-08.2020."
+   ],
+   "ultima_execucao": "2026-11-25T11:50:00Z",
+   "ultima_qtd": 20,
+   "ultimo": "Remessa Necessária nº 0710066-55.2021.8.02.0058 (3ª Câmara Cível, julg. 24/09/2026)"
+  },
+  "TJ-BA": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Súmulas TJBA de 2024–2026 (nº 18 a 29) fora do foco. jurisprudencia.tjba.jus.br devolve página vazia ao leitor (aplicação em script) em 25/11/2026. Próximo passo: descobrir a API pública de jurisprudenciaws.tjba.jus.br (consulta por ementa) ou ementários em PDF.",
+   "fontes": [
+    "https://www.tjba.jus.br/portal/sumulas/",
+    "https://www.tjba.jus.br/nugep/wp-content/uploads/2021/09/Informativo-11-NUGEPNAC-2025.pdf",
+    "https://www.tjba.jus.br/portal/incidentes-de-resolucao-de-demandas-repetitivas/",
+    "https://www.tjba.jus.br/portal/jurisprudencia/",
+    "https://jurisprudenciaws.tjba.jus.br/inteiroTeor/8bf4f391-fcda-3ede-b549-648341f2ef58"
+   ],
+   "pendentes": [
+    "TJBA – Boletim Informativo NUGEPNAC nº 11/2025 (período 01 a 15/06/2025): noticia o trânsito em julgado, em 03/06/2025, do Tema 1001 de Repercussão Geral do STF (RE 910552). A tese diz ser constitucional a norma municipal que proíbe a participação em licitação ou a contratação de agentes eleitos, comissionados, parentes até o 3º grau e demais servidores municipais. Trata-se de precedente do STF, não do TJ-BA, e o boletim não traz data oficial de publicação. https://www.tjba.jus.br/nugep/wp-content/uploads/2021/09/Informativo-11-NUGEPNAC-2025.pdf",
+    "Súmulas do TJBA (https://www.tjba.jus.br/portal/sumulas/): não foi possível ler a página para verificar se há súmula sobre licitação/contratos aprovada desde 2024.",
+    "Busca temática na plataforma de jurisprudência do TJBA (jurisprudencia.tjba.jus.br) por 'licitação', 'Lei 14.133', 'pregão', 'reequilíbrio' etc. em 2024–2026: requer acesso não disponível nesta sessão.",
+    "Demais edições do Boletim Informativo NUGEPNAC de 2024–2026 (ex.: nº 16/2024, 18/2024, 19/2024, 02/2025) e Informativo 2VP: não lidas. Podem conter temas STF/STJ sobre licitação, mas não jurisprudência própria do TJ-BA."
+   ],
+   "ultima_execucao": "2026-11-25T11:50:00Z",
+   "ultima_qtd": 0,
+   "ultimo": ""
+  },
+  "TJ-SE": {
+   "carga_ate": null,
+   "carga_concluida": false,
+   "falhas": "Não tentado em 25/11/2026 (bloqueio conhecido desde 12/11/2026: o site não responde aos servidores do GitHub; tentar de novo em dezembro/2026). Sondagem de 12/11/2026: o site não responde aos servidores do GitHub (leitor de fontes) em nenhuma variação (http/https, com e sem www); provável bloqueio de acesso de fora do país ou de datacenters. Sem fonte pública acessível pela automação.",
+   "fontes": [
+    "https://www.tjse.jus.br/portal/publicacoes/sumulas",
+    "https://www.tjse.jus.br/portal/consultas/novo-cpc/incidentes-de-resolucao-de-demandas-repetitivas",
+    "https://www.tjse.jus.br/portal/consultas/nucleo-de-gerenciamento-de-precedentes-e-de-acoes-coletivas",
+    "https://agencia.tjse.jus.br/noticias/item/15668-tjse-disponibiliza-informacoes-sobre-incidentes-de-resolucao-de-demandas-repetitivas-irdr",
+    "https://agencia.tjse.jus.br/noticias/item/15859-tjse-disponibiliza-informacoes-sobre-julgamento-dos-incidentes-de-resolucao-de-demandas-repetitivas-irdr-s-105-e-109",
+    "https://www.tjse.jus.br/portal/publicacoes/centro-de-inteligencia-da-justica-estadual-de-sergipe-cijese",
+    "https://www.tjse.jus.br/portal/transparencia/licitacoes-e-contratos/modelos-da-lei-n-14-133-2021"
+   ],
+   "pendentes": [
+    "Portaria Normativa nº 23/2024 GP1 (TJSE) – enquadramento de bens de consumo como de luxo (art. 20 da Lei 14.133/2021). Listada na página oficial 'Modelos da Lei nº 14.133/2021', mas a data não foi confirmada e o texto está hospedado no Google Drive, fora de domínio oficial. Além disso, é ato administrativo interno, não jurisprudência."
+   ],
+   "ultima_execucao": "2026-11-25T11:50:00Z",
+   "ultima_qtd": 0,
+   "ultimo": ""
+  }
+ },
+ "proximo_orgao": "TCE-AL",
+ "total_gravado": 130,
+ "ultima_execucao": "2026-11-25T11:50:00Z"
+}
