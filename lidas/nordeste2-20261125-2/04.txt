@@ -1,0 +1,5352 @@
+URL: https://www2.tjal.jus.br/cjsg/resultadoCompleta.do
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Nodo 3 -->
+
+<html> 
+	<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+        
+
+		
+
+
+
+
+
+
+
+
+	<script language="javascript" type="text/JavaScript" src="https://www2.tjal.jus.br/sajcas/verificarLogin.js?script=1795603501846"></script>
+
+	<script language="javascript">
+		if(window.sajcas && window.sajcas.usuarioLogadoNoCasServer) {
+			var urlRetornoSistema = 'https://www2.tjal.jus.br/cjsg/consultaCompleta.do';
+			if(urlRetornoSistema === '') {
+				urlRetornoSistema = window.location.href;
+			}
+
+			if(urlRetornoSistema.lastIndexOf('?') != -1) {
+				urlRetornoSistema += '&';
+			} else {
+				urlRetornoSistema += '?';
+			}
+			urlRetornoSistema+= 'gateway=true';
+			window.location.href = urlRetornoSistema;
+		}
+	</script>
+
+
+		
+
+
+
+
+
+
+
+	<title>Consulta de Jurisprudência do Segundo Grau</title>
+	<script>
+		window.saj = window.saj || {};
+		window.saj.env = window.saj.env || {};
+		window.saj.env.root = '/cjsg';
+		window.saj.env.css = '/cjsg/css';
+		window.saj.env.js = '/cjsg/js';
+		window.saj.env.imagens = '/cjsg/imagens';
+		window.saj.env.cliente = 'AL';
+	</script>
+ 	<script src="/cjsg/js/jquery/jquery.min.js?n=b5d78a2c-2a08-468c-99ae-3769404dce38"></script>
+ 	
+ 	
+ 	<script type="text/JavaScript" src="/cjsg/js/saj/saj-web-2.2.41-4.js?n=6951c1f3-a82b-4673-9bb6-d52002a59308"></script>
+ 	
+ 	
+ 	<script>var localeJS = "pt_BR"; </script> 
+<script language="javascript" type="text/JavaScript" src="/cjsg/js/spw/spwResourceMsg.js"></script> 
+<script language="javascript" type="text/JavaScript" src="/cjsg/js/spw/spwResourceMap_pt.js"></script>
+	<script src="/cjsg/js/jquery/jquery.browser.min.js?n=74a8f43c-7969-44ab-8fbf-ca28740913d2"></script>
+ 	<script src="/cjsg/js/spw/spwConcatenado.js?n=27c52ebe-9241-4c43-a21b-3ddbc0b7d1df"></script>
+ 	<link href="/cjsg/css/spw/spwConcatenado.css" rel="stylesheet" type="text/css" />
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<meta http-equiv="pragma" content="no-cache"/>
+<meta http-equiv="cache-control" content="no-cache"/>
+<meta http-equiv="expires" content="0"/>
+
+<link href="https://www2.tjal.jus.br/esaj-layout/tema/padrao/css/esajComum.css" rel="stylesheet" type="text/css" />
+<link href="https://www2.tjal.jus.br/esaj-layout/tema/padrao/css/esajLayout.css" rel="stylesheet" type="text/css" />
+<link href="https://www2.tjal.jus.br/esaj-layout/tema/padrao/clientes/AL/css/esajLayoutAL.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+<!--
+/* botao default means o mais claro, que seria o "botï¿½o principal" */
+.spwBotaoDefault, .spwBotaoDefault-o {
+	background-image: url(https://www2.tjal.jus.br/esaj-layout/tema/padrao/clientes/AL/imagens/layout/fundoBotaoDefault.gif);
+}
+/* o botao secundario, menos provavel de ser clicado, mais escuro */
+.spwBotao, .spwBotao-o {
+	background-image: url(https://www2.tjal.jus.br/esaj-layout/tema/padrao/imagens/layout/fundoBotao.gif);
+}
+-->
+</style>
+
+
+<script language="javascript" type="text/JavaScript" src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/js/menu.js?n=2553626853"></script>
+
+<link rel="shortcut icon" href="https://www2.tjal.jus.br/esaj-layout/tema/padrao/clientes/AL/imagens/favicon.ico" type="image/x-icon" />
+
+
+
+
+<script>
+    var dict = {
+        'certificado.tituloCertificadoDigital': 'Certificado digital',
+        'certificado.msgCarregandoCertificado': 'Carregando certificados...',
+        'certificado.msgNenhumCertificadoEncontrado': 'Nenhum certificado encontrado',
+        'certificado.msgErroCarregarCertificado': 'Erro ao carregar certificados',
+        'certificado.msgCertificadoExpirado': '[Expirado]',
+        'certificado.msgCertificadoNaoValido': '[Ainda não válido]',
+        'certificado.msgCertificadoNaoIcpBrasil': '[Não ICP-Brasil]',
+        'certificado.tituloProblemasAoAssinar': 'Falha de comunicação com o dispositivo de assinatura digital',
+
+        'label.contato': 'Contato',
+        'label.identificarSe': 'Identificar-se ',
+
+        'mensagem.aguarde': 'Por favor, aguarde.',
+        'mensagem.paginaNaoCarregada': 'Não foi possível carregar a página.',
+        'mensagem.marcarLido': 'Marcar como lido',
+        'mensagem.registrosSelecionados': 'Registros selecionados',
+        'mensagem.registroJaSelecionado': 'Este registro já está selecionado',
+
+        'mensagem.data.invalida': 'A data digitada é inválida.',
+        'mensagem.data.anoInvalido': 'O ano informado deve ser maior que',
+        'mensagem.data.mesInvalido': 'O mês não pode ser maior que 12.',
+        'mensagem.data.mes': 'O mês',
+        'mensagem.data.mesMaior29dias': 'não pode ter mais que 29 dias.',
+        'mensagem.data.mesMaior28dias': 'não pode ter mais que 28 dias.',
+        'mensagem.data.mesMaior31dias': 'não pode ter mais que 31 dias.',
+        'mensagem.data.mesMaior30dias': 'não pode ter mais que 30 dias.',
+
+        'mensagem.email.invalido': 'O formato do endereço de e-mail não é válido. Verifique se ele tem o formato "usuario@dominio".',
+        'mensagem.email.caracteresInvalidos': 'O endereço de e-mail possui caracteres inválidos',
+        'mensagem.email.usuarioInvalido': 'O formato do usuário informado no endereço de e-mail não é válido.',
+        'mensagem.email.ipInvalido': 'O endereço IP informado no endereço de e-mail não é válido.',
+        'mensagem.email.dominioInvalido': 'O formato do domínio informado no endereço de e-mail não é válido.',
+        'mensagem.email.dominioIncompleto': 'O domínio informado no endereço de e-mail deve possuir pelo menos duas partes. Por exemplo: "usuario@empresa.com.br".',
+
+        'mensagem.texto.tamanhoInvalido': 'O tamanho do texto digitado é maior do que o tamanho permitido. Tamanho permitido:',
+        'mensagem.texto.caracter': 'O caracter',
+        'mensagem.texto.caracterPosicaoInvalida': 'não está permitido na posição',
+
+        'mensagem.numero.numeroInvalido': 'O valor digitado não é um número válido.',
+        'mensagem.numero.numeroNaoPodeCasasDecimais': 'O número não pode conter casas decimais',
+        'mensagem.numero.numeroCasaDecimaisInvalidas': 'O número de casas decimais é inválido. O número pode conter apenas',
+        'mensagem.numero.casaDecimais': 'casas decimais',
+        'mensagem.numero.numeroInteiroInvalido': 'O número de dígitos inteiros é inválido. O número pode conter apenas',
+        'mensagem.numero.digitosInteiros': 'dígitos inteiros',
+        'mensagem.numero.numeroTamanhoInvalido': 'O número digitado não pode ser maior que',
+        'mensagem.numero.numeroZeroInvalido': 'O número digitado deve ser diferente de zero.'
+    }
+</script>
+
+
+	
+
+
+  
+
+
+ 	
+ 	<script type="text/JavaScript" src="/cjsg/js/cjsg-2.2.5-0.js?n=260410155"></script>
+ 	<link rel="stylesheet" type="text/css" href="/cjsg/css/tema/AL/cjsg.css" />
+	<link rel="stylesheet" type="text/css" href="/cjsg/css/tema/AL/link.css" />
+
+		
+		<link rel="stylesheet" type="text/css" href="/cjsg/css/spw/spwTab.css" />
+		<link rel="stylesheet" type="text/css" href="/cjsg/css/saj/saj-popup-modal.css" />
+		<link rel="stylesheet" type="text/css" href="/cjsg/css/saj/saj-tree.css" />
+		<link rel="stylesheet" type="text/css" href="/cjsg/css/cjsg.css" />
+		
+		
+		<script type="text/JavaScript" src="/cjsg/js/jquery/jquery.blockUI.min.js?n=c5ffc7ba-4326-4414-b73c-417e0a6d4191"></script>
+		<script type="text/JavaScript" src="/cjsg/js/saj/saj-tooltip.js?n=df275a5c-c641-4c60-a60c-034d4d36a519"></script>
+		<script type="text/JavaScript" src="/cjsg/js/spw/spwTab.js?n=2803951349"></script>
+		<script type="text/javascript" src="/cjsg/js/saj/saj-popup-modal-1.0.0-1.js?n=ad7b132a-be56-48a3-a7dc-68ed4400000d"></script>
+		<script type="text/JavaScript" src="/cjsg/js/saj/saj-popup.js?n=2538966893"></script>
+		<script type="text/JavaScript" src="/cjsg/js/saj/saj-tree-2.5.1-1.js?n=13698285-becd-4e70-9ec7-27800642f308"></script>
+
+		<!-- remover valor da versao na proxima versao do sistema -->
+		<script type="text/JavaScript" src="/cjsg/js/filtrosLaterais.js?n=2874483102?c=123"></script>
+		<script type="text/JavaScript" src="/cjsg/jsp/completa/consultaCompleta.js?n=769933514"></script>
+	</head>
+	
+	<body style="margin: 0px;">
+	
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="esajTabelaCabecalhoCliente" summary=" " role="presentation">
+	<tr>
+		<td><a href="http://www.tjal.jus.br"><img src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/clientes/AL/imagens/layout/cabecalhoLogo.jpg" width="433" height="58" alt="Tribunal de Justi&ccedil;a de Alagoas" /></a></td>
+		<td align="right" valign="top"><img src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/clientes/AL/imagens/layout/cabecalhoImagem.jpg" alt=" " width="353" height="58" /></td>
+	</tr>
+</table>
+<script language="javascript" type="text/JavaScript" src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/js/libras.js?n=369456521"></script>
+	
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+
+
+<!-- cabecalho e-Saj -->
+<table width="100%" cellpadding="0" cellspacing="0" class="esajTabelaCabecalhoServico" summary=" " role="presentation">
+	<tr>
+		<td class="esajCelulaCabecalhoServicoLogo">
+
+
+
+
+<a href="https://www2.tjal.jus.br/esaj-layout/redirecionarNovoEsaj.do"><img src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/imagens/layout/eSajServico.gif" title="Voltar para página inicial do e-SAJ" alt="Voltar para página inicial do e-SAJ" width="255" height="53" border="0" /></a><img src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/imagens/layout/eSajServicoInf.gif" alt=" " width="255" height="28" border="0" />
+</td>
+		<td class="esajCelulaCabecalhoServicoMenu">
+		    <table width="100%" border="0" cellpadding="0" cellspacing="0" summary=" " role="presentation">
+				<tr>
+					<td align="right">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+
+    
+        <div id="divopupContato" style="display: none;">
+                Os números para contato com o suporte ao e-SAJ no Tribunal de Justiça do Estado de Alagoas são:
+(82) 4009-3056/3057/3058/3059
+Alternativamente, é possível o contato pelo e-mail sajpg5@tjal.jus.br
+        </div>
+    
+
+<!-- Devido ao alinhamento inline das imagens, elas nÃ£o podem ter nenhum tipo de espaÃ§amento entre elas, portanto Ã© necessÃ¡rio finalizar a linha iniciando um comentÃ¡rio e fechar o comentÃ¡rio imediatamente antes da abertura da nova tag-->
+<img height="24" width="47" alt=" " src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/imagens/layout/inicioMenuSup.jpg"/><a href="https://www2.tjal.jus.br/caixapostal"><!--
+
+    --><img height="24" width="83" border="0" alt="Caixa Postal" src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/imagens/layout/caixaPostal.gif"/></a><!--
+    --><img height="24" width="4" alt=" " src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/imagens/layout/menuSeparador.jpg"/><a href="https://www2.tjal.jus.br/esaj/cadastro.do"><!--
+
+--><img src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/imagens/layout/cadastro.gif" alt="Cadastro" width="81" height="24" border="0" /></a><!--
+
+    --><img height="24" width="4" alt=" " src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/imagens/layout/menuSeparador.jpg"/><a id="linkContato" href="#"><!--
+    --><img height="24" width="68" border="0" alt="Contato" src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/imagens/layout/contato.gif"/></a><!--
+
+
+    --><img height="24" width="4" alt=" " src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/imagens/layout/menuSeparador.jpg"/><a target="blank" href="https://www2.tjal.jus.br/WebHelp/"><!--
+    --><img height="24" width="61" border="0" alt="Ajuda do e-Saj" src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/imagens/layout/ajuda.gif"/></a><!--
+
+
+-->
+</td>
+				</tr>
+				<tr>
+					<td class="esajCelulaIdentificacaoServico" >
+
+
+
+
+<style>
+
+    td.esajCelulaIdentificacao, td.esajCelulaIdentificacaoServico {
+        position: relative;
+    }
+
+    button.escolhaBeta {
+        border: 0;
+        background: #0078D7;
+        color: #fff;
+        margin-right: 5px;
+        font-family: verdana;
+        font-size: 12px;
+        height: 27px;
+        line-height: 14px;
+        border-radius: 0;
+        text-shadow: 1px 1px 1px #797979;
+        position: absolute;
+        top: 30px;
+        right: 3px;
+        padding: 7px 12px;
+        cursor: pointer;
+    }
+
+    button.escolhaBeta:hover {
+        background-color: #0b5c9c;
+    }
+</style>
+
+<span id="identificacao"></span>
+
+<button style="display: none" class="escolhaBeta"></button>
+
+
+
+
+    
+    
+        <script language="javascript" type="text/JavaScript" src="https://www2.tjal.jus.br/sajcas/conteudoIdentificacao?script=1795592255592"></script>
+    
+
+</td>
+				</tr>
+				<tr>
+					<td class="esajCelulaCabecalhoServicoCaminho" >
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+<a href="" class="esajCaminhoLink"></a>
+
+ &gt;
+
+
+<a href="https://www2.tjal.jus.br/esaj?servico=740000" class="esajCaminhoLink">Bem-vindo</a>
+
+ &gt;
+
+
+<a href="https://www2.tjal.jus.br/esaj?servico=780000" class="esajCaminhoLink">Consultas de Jurisprudência</a>
+
+ &gt;
+
+
+
+Consulta Completa
+</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+<!-- CONTEUDO -->
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="esajTabelaTitulo" role="presentation">
+	<tr>
+		<td class="esajCelulaMenuSuspenso">
+		<a href="#" onclick="return showMenuSuspenso()"><img src="https://www2.tjal.jus.br/esaj-layout/tema/padrao/imagens/layout/menuSuspenso.gif" alt="Menu de servi&ccedil;os" width="243" height="21" style="display:block" /></a>
+		<div id="layerMenu" style="display:none">
+			
+
+<!-- MENU -->
+<ul id="esajMenuArea">
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Consultas</a>
+<ul>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/cpopg/open.do">Processos de 1º Grau</a></li>
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Ordem de Processos</a>
+<ul>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/cop/abrirConsultaDeOrdemDeAtoPg.do">Publicação e Cumprimento de Atos de 1º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/cop/abrirConsultaDeOrdemDeJulgamentoPg.do">Julgamento do 1º Grau</a></li>
+</ul>
+  </li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/cposg5/open.do">Processos de 2º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/pauta-julgamento-virtual">Pauta de Julgamento Virtual do Segundo Grau</a></li>
+</ul>
+  </li>
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Recolhimento de Custas</a>
+<ul>
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Custas de 1º Grau</a>
+<ul>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/ccpweb/abrirConsultaCustas.do">Consulta de Custas de 1º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/ccpweb/iniciarCalculoDeCustas.do?cdTipoCusta=20&flTipoCusta=0&cdServicoCalculoCusta=690003">Custas Iniciais de 1º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/ccpweb/iniciarCalculoDeCustas.do?cdTipoCusta=26&flTipoCusta=5&cdServicoCalculoCusta=690004">Atos Avulsos de 1º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/ccpweb/iniciarCalculoDeCustas.do?cdTipoCusta=21&flTipoCusta=1&cdServicoCalculoCusta=690005">Custas de Preparo de 1º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/ccpweb/iniciarCalculoDeCustas.do?cdTipoCusta=24&flTipoCusta=0&cdServicoCalculoCusta=690006">Custas Juizado Especial - Recurso Inominado</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/ccpweb/iniciarCalculoDeCustas.do?cdTipoCusta=28&flTipoCusta=1&cdServicoCalculoCusta=690009">Custas Intermediárias de 1º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/ccpweb/iniciarCalculoDeCustas.do?cdTipoCusta=29&flTipoCusta=1&cdServicoCalculoCusta=690010">Custas Intermediárias de 1º Grau</a></li>
+</ul>
+  </li>
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Custas de 2º Grau</a>
+<ul>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/ccpweb/abrirConsultaCustasSg.do">Consulta de Custas de 2º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/ccpweb/iniciarCalculoDeCustasSg.do?cdServicoCalculoCusta=690205&flTipoCusta=0&cdTipoCusta=19">Custas iniciais de 2º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/ccpweb/iniciarCalculoDeCustasSg.do?cdServicoCalculoCusta=690206&flTipoCusta=5&cdTipoCusta=20">Custas iniciais de 2º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/ccpweb/iniciarCalculoDeCustasSg.do?cdServicoCalculoCusta=690207&flTipoCusta=1&cdTipoCusta=21">Custas iniciais de 2º Grau</a></li>
+</ul>
+  </li>
+</ul>
+  </li>
+	<li class="esajMenuAberto"><a href="#" onclick="return esajMenu(this)">Jurisprudência</a>
+<ul>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/cjsg/consultaSimples.do">Simples</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/cjsg/consultaCompleta.do">Completa</a></li>
+</ul>
+  </li>
+  <li class="esajMenuFechado"><a href="https://www2.tjal.jus.br/cdje">Diário da Justiça Eletrônico</a></li>
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Push</a>
+<ul>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/pushpg">1º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/pushsg5">2º Grau</a></li>
+</ul>
+  </li>
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Pauta de Julgamento</a>
+<ul>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/pauta-julgamento/consulta">Consulta da Pauta de Julgamento</a></li>
+</ul>
+  </li>
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Certidões</a>
+<ul>
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Certidões de 1º grau</a>
+<ul>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/sco/abrirCadastro.do">Pedido de Certidão de 1º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/sco/abrirConferencia.do">Conferência de Certidão de 1º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/sco/abrirDownload.do">Baixar Certidão de 1º Grau</a></li>
+</ul>
+  </li>
+</ul>
+  </li>
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Conferência de Documentos</a>
+<ul>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/pastadigital/pg/abrirConferenciaDocumento.do">Documento Digital do 1º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/pastadigital/sg/abrirConferenciaDocumento.do">Documento Digital do 2º Grau</a></li>
+</ul>
+  </li>
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Intimação e Citação Eletrônica</a>
+<ul>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/intimacoesweb/abrirConsultaAtosRecebidos.do">Consulta de Recebidas</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/intimacoesweb/abrirConsultaAtosNaoRecebidos.do">Recebimento</a></li>
+</ul>
+  </li>
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Peticionamento Eletrônico</a>
+<ul>
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Peticionamento Eletrônico de 1º Grau</a>
+<ul>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/petpg/abrirNovaPeticaoInicial.do?instancia=PG">Peticionamento Inicial de 1º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/petpg/abrirNovaPeticaoIntermediaria.do?instancia=PG">Peticionamento Intermediário de 1º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/petpg/abrirConsultaPeticoes.do">Consulta de Petições de 1º Grau</a></li>
+</ul>
+  </li>
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Peticionamento Eletrônico de 2º Grau</a>
+<ul>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/petsg/abrirNovaPeticaoInicial.do?instancia=SG">Peticionamento Inicial de 2º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/petsg/abrirNovaPeticaoIntermediaria.do?instancia=SG">Peticionamento Intermediário de 2º Grau</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/petsg/abrirConsultaPeticoes.do">Consulta de Petições de 2º Grau</a></li>
+</ul>
+  </li>
+	<li class="esajMenuFechado"><a href="#" onclick="return esajMenu(this)">Peticionamento Eletrônico de Turmas Recursais / Plantão (2º Grau)/ Precatórios</a>
+<ul>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/petcr/abrirNovaPeticaoInicial.do?instancia=CR">Peticionamento Inicial - TR/ Plantão TJ/ Precat.</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/petcr/abrirNovaPeticaoIntermediaria.do?instancia=CR">Peticionamento Intermediário - TR/ Plantão TJ/ Precat.</a></li>
+  <li class="esajMenuItem"><a href="https://www2.tjal.jus.br/petcr/abrirConsultaPeticoes.do">Consulta de Petições - TR/ Plantão TJ/ Precat.</a></li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+
+		</div>
+		</td>
+		<td class="esajCelulaTituloServico"><h1 class="esajTituloPagina">Consulta Completa</h1></td>
+	</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0" summary=" " role="presentation">
+	<tr>
+		<td class="esajCelulaConteudoServico" >
+		
+	
+
+
+  
+
+
+
+		
+
+
+
+
+
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="esajTituloOrientacoes">Orientações</span>
+
+    
+        
+        
+            <ul class="esajUlOrientacoes" id="">
+                
+				
+				
+				
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	<li>
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+
+
+Para detalhes sobre cada campo de busca, selecione o campo específico.
+
+
+		
+	</li>
+
+
+
+			
+            </ul>
+        
+    
+
+    
+    <br>
+
+
+			
+			
+			
+
+
+
+
+
+
+
+
+
+<form name="consultaCompletaForm" method="post" action="/cjsg/resultadoCompleta.do;jsessionid=1C62FBC13E9A56480D5BF26B57578E5A.cjsg2" autocomplete="off" enctype="" onsubmit="return applySubmit(this, eval('function spwSubmit(t, e){decodificaInputMulSelOnSubmit();if (!IS_enableSubmit) return false; return BENV_isCamposValidos(t); } spwSubmit(this, event);'));" id="" target="">
+	<input type="hidden" name="conversationId" value="">
+
+			
+				
+
+
+<div style="display: none;"> 
+	
+	<div id="inteiroTeor">
+		<b>"Pesquisa Livre"</b> <br />Busca acórdãos que contenham as <br /> palavras/expressões desejadas no seu inteiro teor.
+	</div>
+	
+	<div id="ementa">
+		<b>"Ementa"</b><br>Busca acórdaos que contenham as palavras/express&otilde;es<br />desejadas na ementa do acórdão.
+	</div>
+	
+	<div id="classesTooltip">
+		<b>"Classe"</b><br />Busca decisões que sejam de uma determinada classe processual.<br> Exemplo: Ação Penal.
+	</div>
+	
+	<div id="assuntosTooltip">
+		<b>"Assuntos"</b><br />Busca acórdãos que sejam de um determinado assunto.
+	</div>
+	
+	<div id="secoesTooltip">
+		<b>"Orgão julgadores"</b><br /> Busca acórdãos que sejam de uma determinado orgão julgador.
+	</div>
+	
+	<div id="dtJulgamentoInicioTooltip">
+		<b>"Data do Julgamento"</b><br>Busca acórdãos de julgamentos<br /> que tenham sido realizados em determinado per&iacute;odo.
+	</div>
+	
+	<div id="dtJulgamentoFimTooltip">
+		<b>"Data do Julgamento"</b><br>Busca acórdãos de julgamentos<br /> que tenham sido realizados em determinado per&iacute;odo.
+	</div>
+	
+	<div id="dtPublicacaoInicioTooltip">
+		<b>&quot;Data de Publicação&quot;</b><br> Busca acórdãos que tenham sido publicados em determinado per&iacute;odo.
+	</div>
+
+	<div id="dtPublicacaoFimTooltip">
+		<b>&quot;Data de Publicação&quot;</b><br> Busca acórdãos que tenham sido publicados em determinado per&iacute;odo.
+	</div>
+	
+	<div id="dtRegistroInicioTooltip">
+		<b>&quot;Data de Registro&quot;</b><br> Busca acórdãos que tenham sido registradas em determinado per&iacute;odo.
+	</div>
+
+	<div id="dtRegistroFimTooltip">
+		<b>&quot;Data de Registro&quot;</b><br> Busca acórdãos que tenham sido registradas em determinado per&iacute;odo.
+	</div>
+	
+	<div id="orgaoJulgador">
+		<b>"Órgão Julgador"</b><br />Busca acórdãos que sejam de um determinado órgão julgador.<br />Exemplo: 10ª Câmara de Direito Público.
+	</div>
+	
+	<div id="comarcaTooltip">
+		<b>"Comarca"</b><br>Busca acórdãos que sejam de uma determinada comarca de origem.<br> Exemplo: São Paulo.
+	</div>
+	
+	<div id="agenteTooltip">
+		<b>"Relator"</b><br>Busca acórdãos que sejam de um determinado relator.
+	</div>
+	
+	<div id="juizProlatorTooltip">
+		<b>"Juiz prolator"</b><br>Busca acórdãos para o juiz prolator selecionado.<br />
+	</div>
+	
+	<div id="nuRegistro">
+		<b>&quot;N&uacute;mero do Registro&quot;</b><br>Busca acórdãos que tenham sido registrados<br />com o número informado.
+	</div>
+	
+	<div id="nuProcOrigem">
+		<b>"Número do recurso"</b><br/>Busca acórdãos que se referem ao<br/>número de recurso informado. 
+	</div>
+
+
+</div>	
+
+			
+				
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+		
+			
+		
+		
+	
+	
+	<div class="">
+		
+			<br/>
+			
+			
+				
+				
+					
+
+
+
+
+
+
+
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr valign="top">
+		<td height="21" valign="top" nowrap background="/cjsg/imagens/spw/fundo_subtitulo.gif"> 
+			
+				
+				
+					<h2 class="subtitle">
+						Consulta Completa
+						
+					</h2>
+				
+			
+		</td>
+		<td background="/cjsg/imagens/spw/fundo_subtitulo2.gif" width="90%" aria-hidden="true">
+			<img src="/cjsg/imagens/spw/final_subtitulo.gif" width="16" height="20" tabindex="-1">
+		</td>
+	</tr>
+</table>
+
+				
+			
+			<br/>
+		
+		<table id="" class="secaoFormBody" width="100%" style="" cellpadding="2" cellspacing="0" border="0">
+			
+					
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+<style>
+	/* remove borda vermelha de elementos required */
+	input:invalid {
+		box-shadow:none;
+	}
+</style>
+
+<script type="text/javascript">
+	(function($){
+		$(function() {
+			var saj = $.saj;
+			var id = 'iddados.buscaInteiroTeor';
+			var idObjetoReferencia = '#' + id;
+			if ('' !== '' && !false) {
+				$(idObjetoReferencia).registrarTooltip({
+					conteudoTooltip: '',
+					posicaoTooltip: 'direita',
+					objReferenciaPosicaoTooltip:$(idObjetoReferencia)
+				});
+			}
+			//remove comportamento de exibir mensagem de erro típica do html5
+			$('form:visible').attr('novalidate','');
+			if (''){
+				$(idObjetoReferencia).attr('aria-required','true').attr('required','');
+			}
+		});		
+	})(jQuery);
+	
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+		
+		
+			
+				<tr class="">
+				
+			
+		
+		
+		
+		  <td id="" width="150" valign="top">
+			
+			  
+		  	  
+				
+				<label for="iddados.buscaInteiroTeor" class="" style="float:left;font-weight:bold;margin-top:3px;">Pesquisa livre</label><div style="text-align:right;font-weight:bold;margin-top:3px;">: </div>
+			  
+		      
+		    
+		  </td>
+		
+		
+		
+		  
+		  
+		    <td valign="top">
+		  
+		
+			
+	
+	
+	
+	
+	
+	<input type="text" name="dados.buscaInteiroTeor" size="100" value="" formatType="TEXT" formato="120" obrigatorio="" rotulo="Pesquisa livre" onkeypress="CT_KPS(this, event);" onblur="CT_BLR(this);" onkeydown="CT_KDN(this, event);" onmousemove="CT_MMOV(this, event);" onmouseout="CT_MOUT(this, event);" onmouseover="CT_MOV(this, event);" onfocus="C_OFC(this, event);" style="" class="spwCampoTexto " id="iddados.buscaInteiroTeor" title="" alt="">
+		
+	
+	
+	
+		
+	    
+						
+						<div class="botoesOperadores" style="margin-top: 3px;">	
+							<input type="button" value=" E " name="E" />
+							<input type="button" value=" OU " name="OU" />
+							<input type="button" value=" N&Atilde;O " name="NAO" />
+							<input type="button" value='"&nbsp;&nbsp;"' name="ASP" />
+							<a style="font-size: 11px; font-weight: bold; padding-left: 10px; padding-right: 2px;" href="https://www2.tjal.jus.br/WebHelp//#id_operadores_logicos.htm" target="_blank">
+								
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+
+	
+	
+	
+	
+	
+		<span id="">
+		
+	
+	
+	<span id="">Como utilizar os filtros</span>
+	
+	
+	
+	    
+    
+	
+	
+		
+	
+	
+	
+	
+		</span>
+	
+
+
+
+							</a>							
+							<input type="checkbox" name="dados.pesquisarComSinonimos" value="S" uncheckedValue="N"  onclick="CH_updateHiddenValue(this);" style="width: 10px" id="checkBoxSinonimos"><input type="hidden" value="N" name="dados.pesquisarComSinonimos" inputCheckBox="true">
+							<label for="checkBoxSinonimos" >
+								Pesquisar por sinônimos
+							</label>
+							&nbsp;&nbsp;&nbsp;
+						</div>
+					
+    
+	
+	
+	
+	
+		
+		</td>
+		
+			</tr>
+		
+	
+	
+
+
+
+
+
+								
+				
+		</table>
+	</div>
+	
+	
+	
+
+					 
+				
+				
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+	
+		
+			
+		
+		
+	
+	
+	<div class="">
+		
+			<br/>
+			
+			
+				
+				
+					
+
+
+
+
+
+
+
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr valign="top">
+		<td height="21" valign="top" nowrap background="/cjsg/imagens/spw/fundo_subtitulo.gif"> 
+			
+				
+				
+					<h2 class="subtitle">
+						Pesquisa por campos específicos
+						
+					</h2>
+				
+			
+		</td>
+		<td background="/cjsg/imagens/spw/fundo_subtitulo2.gif" width="90%" aria-hidden="true">
+			<img src="/cjsg/imagens/spw/final_subtitulo.gif" width="16" height="20" tabindex="-1">
+		</td>
+	</tr>
+</table>
+
+				
+			
+			<br/>
+		
+		<table id="" class="secaoFormBody" width="100%" style="" cellpadding="2" cellspacing="0" border="0">
+			
+					
+					
+					
+					
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+<style>
+	/* remove borda vermelha de elementos required */
+	input:invalid {
+		box-shadow:none;
+	}
+</style>
+
+<script type="text/javascript">
+	(function($){
+		$(function() {
+			var saj = $.saj;
+			var id = 'iddados.buscaEmenta';
+			var idObjetoReferencia = '#' + id;
+			if ('' !== '' && !false) {
+				$(idObjetoReferencia).registrarTooltip({
+					conteudoTooltip: '',
+					posicaoTooltip: 'direita',
+					objReferenciaPosicaoTooltip:$(idObjetoReferencia)
+				});
+			}
+			//remove comportamento de exibir mensagem de erro típica do html5
+			$('form:visible').attr('novalidate','');
+			if (''){
+				$(idObjetoReferencia).attr('aria-required','true').attr('required','');
+			}
+		});		
+	})(jQuery);
+	
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+		
+		
+			
+				<tr class="">
+				
+			
+		
+		
+		
+		  <td id="" width="150" valign="">
+			
+			  
+		  	  
+				
+				<label for="iddados.buscaEmenta" class="" style="float:left;font-weight:bold;">Ementa</label><div style="text-align:right;font-weight:bold;">: </div>
+			  
+		      
+		    
+		  </td>
+		
+		
+		
+		  
+		  
+		    <td valign="">
+		  
+		
+			
+	
+	
+	
+	
+	
+	<input type="text" name="dados.buscaEmenta" size="100%" value="&quot;termo de colaboração&quot;" formatType="TEXT" formato="120" obrigatorio="" rotulo="Ementa" onkeypress="CT_KPS(this, event);" onblur="CT_BLR(this);" onkeydown="CT_KDN(this, event);" onmousemove="CT_MMOV(this, event);" onmouseout="CT_MOUT(this, event);" onmouseover="CT_MOV(this, event);" onfocus="C_OFC(this, event);" style="" class="spwCampoTexto " id="iddados.buscaEmenta" title="" alt="">
+		
+	
+	
+	
+		
+	    
+    
+	
+	
+	
+	
+		
+		</td>
+		
+			</tr>
+		
+	
+	
+
+
+
+
+
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+<style>
+	/* remove borda vermelha de elementos required */
+	input:invalid {
+		box-shadow:none;
+	}
+</style>
+
+<script type="text/javascript">
+	(function($){
+		$(function() {
+			var saj = $.saj;
+			var id = 'iddados.nuProcOrigem';
+			var idObjetoReferencia = '#' + id;
+			if ('' !== '' && !false) {
+				$(idObjetoReferencia).registrarTooltip({
+					conteudoTooltip: '',
+					posicaoTooltip: 'direita',
+					objReferenciaPosicaoTooltip:$(idObjetoReferencia)
+				});
+			}
+			//remove comportamento de exibir mensagem de erro típica do html5
+			$('form:visible').attr('novalidate','');
+			if (''){
+				$(idObjetoReferencia).attr('aria-required','true').attr('required','');
+			}
+		});		
+	})(jQuery);
+	
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+		
+		
+			
+				<tr class="">
+				
+			
+		
+		
+		
+		  <td id="" width="150" valign="">
+			
+			  
+		  	  
+				
+				<label for="iddados.nuProcOrigem" class="" style="float:left;font-weight:bold;">Número do recurso</label><div style="text-align:right;font-weight:bold;">: </div>
+			  
+		      
+		    
+		  </td>
+		
+		
+		
+		  
+		  
+		    <td valign="">
+		  
+		
+			
+	
+	
+	
+	
+	
+	<input type="text" name="dados.nuProcOrigem" size="100%" value="" formatType="TEXT" formato="120" obrigatorio="" rotulo="Número do recurso" onkeypress="CT_KPS(this, event);" onblur="CT_BLR(this);" onkeydown="CT_KDN(this, event);" onmousemove="CT_MMOV(this, event);" onmouseout="CT_MOUT(this, event);" onmouseover="CT_MOV(this, event);" onfocus="C_OFC(this, event);" style="" class="spwCampoTexto " id="iddados.nuProcOrigem" title="" alt="">
+		
+	
+	
+	
+		
+	    
+    
+	
+	
+	
+	
+		
+		</td>
+		
+			</tr>
+		
+	
+	
+
+
+
+
+
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+	
+
+
+
+	
+
+
+<style>
+	/* remove borda vermelha de elementos required */
+	input:invalid {
+		box-shadow:none;
+	}
+</style>
+
+<script type="text/javascript">
+	(function($){
+		$(function() {
+			var saj = $.saj;
+			var id = 'iddados.nuRegistro';
+			var idObjetoReferencia = '#' + id;
+			if ('' !== '' && !false) {
+				$(idObjetoReferencia).registrarTooltip({
+					conteudoTooltip: '',
+					posicaoTooltip: 'direita',
+					objReferenciaPosicaoTooltip:$(idObjetoReferencia)
+				});
+			}
+			//remove comportamento de exibir mensagem de erro típica do html5
+			$('form:visible').attr('novalidate','');
+			if (''){
+				$(idObjetoReferencia).attr('aria-required','true').attr('required','');
+			}
+		});		
+	})(jQuery);
+	
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+
+
+
+
+
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+		
+		
+			
+				<tr class="">
+				
+			
+		
+		
+		
+		  <td id="" width="150" valign="">
+			
+			  
+		  	  
+				
+				<label for="cjsg.consultaCompleta.label.relator" class="" style="float:left;font-weight:bold;">Relator(a)</label><div style="text-align:right;font-weight:bold;">: </div>
+			  
+		      
+		    
+		  </td>
+		
+		
+		
+		  
+		  
+		    <td valign="">
+		  
+		
+			
+	
+	
+	
+	
+	
+	<table cellpadding="0" cellspacing="0" border="0" width="518">
+		<tr>
+			<td>
+				
+				
+				
+						
+
+
+
+
+
+
+
+<table width="100%" cellspacing="0" cellpadding="0">
+	<tr>
+		<td class="inputSelectPersonalizado" width="*">
+			
+							
+								
+								
+								
+							<script>
+
+var agenteNomeCamposArray = new Array();
+ agenteNomeCamposArray[0] = 'codigoCr';
+ agenteNomeCamposArray[1] = 'codigoTr';
+ agenteNomeCamposArray[2] = 'nmAgente';
+ var codigoCrNomeCamposArray = agenteNomeCamposArray;
+ var codigoTrNomeCamposArray = agenteNomeCamposArray;
+ var nmAgenteNomeCamposArray = agenteNomeCamposArray;</script>
+
+<table class="spwInputSelect" width="100%" border="0" cellspacing="0" cellpadding="0" id="agente" idPai="null" filtroPai="null" url="jsp/search/searchAgente.jsp" input-select="agente" property="dados.agentes" name="codigoCr" title="Relatores" ctxPath="/cjsg" multiplaSelecao="true"  useAction="false" bindings="&bind_codigoCr=codigoCr&bind_codigoTr=codigoTr&bind_nmAgente=nmAgente"  entityPKClass="agentePK" idIframe="" altura="300" largura="500" useModulo="true" desabilitarSelecionados="false" carregaFilho="false"><tbody>
+<input type="hidden" name="agenteSelectedEntitiesList"  value="" id="agenteSelectedEntitiesList" />
+<input type="hidden" name="contadoragente"  value="0" id="contadoragente" />
+<input type="hidden" name="contadorMaioragente"  value="0" id="contadorMaioragente" />
+    <tr>
+								<td >
+            <input type="text" name="codigoCr" id="codigoCr" bindingReference="codigoCr" value="" formatType="TEXT" obrigatorio="false" pk="true" onkeypress="CT_KPS(this, event);" onblur="CT_BLR(this);" onkeydown="CT_KDN(this, event);" onmousemove="CT_MMOV(this, event);" onmouseout="CT_MOUT(this, event);" onmouseover="CT_MOV(this, event);" onfocus="C_OFC(this, event);" onchange="IS_request('agente','/AjaxServlet.ajax', 'agente', 'codigoCr', this.value,'/cjsg','jsp/search/searchAgente.jsp', 'true', 'Relatores','300','500', '&bind_codigoCr=codigoCr&bind_codigoTr=codigoTr&bind_nmAgente=nmAgente', 'false', event, 'InputSelectAutoComplete', '','false'); " style="width:100%" class="hidden" input-select="agente" idIframe=""></td>
+								<td >
+            <input type="text" name="codigoTr" id="codigoTr" bindingReference="codigoTr" value="" formatType="TEXT" obrigatorio="false" pk="true" onkeypress="CT_KPS(this, event);" onblur="CT_BLR(this);" onkeydown="CT_KDN(this, event);" onmousemove="CT_MMOV(this, event);" onmouseout="CT_MOUT(this, event);" onmouseover="CT_MOV(this, event);" onfocus="C_OFC(this, event);" onchange="IS_request('agente','/AjaxServlet.ajax', 'agente', 'codigoTr', this.value,'/cjsg','jsp/search/searchAgente.jsp', 'true', 'Relatores','300','500', '&bind_codigoCr=codigoCr&bind_codigoTr=codigoTr&bind_nmAgente=nmAgente', 'false', event, 'InputSelectAutoComplete', '','false'); " style="width:100%" class="hidden" input-select="agente" idIframe=""></td>
+								<td >
+            <input type="text" name="nmAgente" id="nmAgente" bindingReference="nmAgente" value="" formatType="TEXT" obrigatorio="false" onkeypress="CT_KPS(this, event);" onblur="CT_BLR(this);" onkeydown="CT_KDN(this, event);" onmousemove="CT_MMOV(this, event);" onmouseout="CT_MOUT(this, event);" onmouseover="CT_MOV(this, event);" onfocus="C_OFC(this, event);" onchange="IS_request('agente','/AjaxServlet.ajax', 'agente', 'nmAgente', this.value,'/cjsg','jsp/search/searchAgente.jsp', 'true', 'Relatores','300','500', '&bind_codigoCr=codigoCr&bind_codigoTr=codigoTr&bind_nmAgente=nmAgente', 'false', event, 'InputSelectAutoComplete', '','false'); " style="width: 477px;" input-select="agente" idIframe=""></td>
+							
+        <td width="20" align="center"><img src="/cjsg/imagens/spw/botProcurar.gif" width="16" height="17" border="0" title="Abre a consulta" onmouseover="IH_mOver(this)" onmouseout="IH_mOut(this)" onclick="IS_request('agente','/AjaxServlet.ajax', 'agente', 'codigoCr','','/cjsg','jsp/search/searchAgente.jsp', 'true', 'Relatores','300','500', '&bind_codigoCr=codigoCr&bind_codigoTr=codigoTr&bind_nmAgente=nmAgente', 'true', event, 'InputSelectSearchGrid','','false')" ><img src="/cjsg/imagens/spw/botProcurar-d.gif" width="16" height="17" border="0" style="display:none" >
+        </td>
+    </tr>
+</tbody>
+</table>
+<script>
+
+</script>
+
+						
+		</td>
+		<td width="16" valign="middle">
+			<img src="/cjsg/imagens/spw/botLimpar.gif" width="16" height="17" border="0" title="Limpar campo"
+				onclick="jQuery.saj.limparInputSelect('agente');"
+				onmouseout="IH_mOut(this)" onmouseover="IH_mOver(this)"
+				style="cursor:pointer;" id="agenteLimpar" />
+		</td>
+	</tr>
+</table>
+
+					
+				
+			</td>
+		</tr>
+	  </table>
+	
+	
+	
+	
+	
+	
+		
+		</td>
+		
+			</tr>
+		
+	
+	
+
+
+
+					
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+		
+		
+			
+				<tr class="">
+				
+			
+		
+		
+		
+		  <td id="" width="150" valign="">
+			
+			  
+		  	  
+				
+				<label for="cjsg.consultaCompleta.label.juizProlator" class="" style="float:left;font-weight:bold;">Magistrado prolator</label><div style="text-align:right;font-weight:bold;">: </div>
+			  
+		      
+		    
+		  </td>
+		
+		
+		
+		  
+		  
+		    <td valign="">
+		  
+		
+			
+	
+	
+	
+	
+	
+	<table cellpadding="0" cellspacing="0" border="0" width="518">
+		<tr>
+			<td>
+				
+				
+				
+						
+
+
+
+
+
+
+
+<table width="100%" cellspacing="0" cellpadding="0">
+	<tr>
+		<td class="inputSelectPersonalizado" width="*">
+			
+							
+								
+								
+								
+							<script>
+
+var juizProlatorNomeCamposArray = new Array();
+ juizProlatorNomeCamposArray[0] = 'codigoJuizCr';
+ juizProlatorNomeCamposArray[1] = 'codigoJuizTr';
+ juizProlatorNomeCamposArray[2] = 'nmJuiz';
+ var codigoJuizCrNomeCamposArray = juizProlatorNomeCamposArray;
+ var codigoJuizTrNomeCamposArray = juizProlatorNomeCamposArray;
+ var nmJuizNomeCamposArray = juizProlatorNomeCamposArray;</script>
+
+<table class="spwInputSelect" width="100%" border="0" cellspacing="0" cellpadding="0" id="juizProlator" idPai="null" filtroPai="null" url="jsp/search/searchJuizProlator.jsp" input-select="juizProlator" property="dados.juizesProlatores" name="codigoJuizCr" title="Juizes prolatores" ctxPath="/cjsg" multiplaSelecao="true"  useAction="false" bindings="&bind_codigoJuizCr=codigoJuizCr&bind_codigoJuizTr=codigoJuizTr&bind_nmJuiz=nmJuiz"  entityPKClass="agentePK" idIframe="" altura="300" largura="500" useModulo="true" desabilitarSelecionados="false" carregaFilho="false"><tbody>
+<input type="hidden" name="juizProlatorSelectedEntitiesList"  value="" id="juizProlatorSelectedEntitiesList" />
+<input type="hidden" name="contadorjuizProlator"  value="0" id="contadorjuizProlator" />
+<input type="hidden" name="contadorMaiorjuizProlator"  value="0" id="contadorMaiorjuizProlator" />
+    <tr>
+								<td >
+            <input type="text" name="codigoJuizCr" id="codigoJuizCr" bindingReference="codigoJuizCr" value="" formatType="TEXT" obrigatorio="false" pk="true" onkeypress="CT_KPS(this, event);" onblur="CT_BLR(this);" onkeydown="CT_KDN(this, event);" onmousemove="CT_MMOV(this, event);" onmouseout="CT_MOUT(this, event);" onmouseover="CT_MOV(this, event);" onfocus="C_OFC(this, event);" onchange="IS_request('juizProlator','/AjaxServlet.ajax', 'juizProlator', 'codigoJuizCr', this.value,'/cjsg','jsp/search/searchJuizProlator.jsp', 'true', 'Juizes prolatores','300','500', '&bind_codigoJuizCr=codigoJuizCr&bind_codigoJuizTr=codigoJuizTr&bind_nmJuiz=nmJuiz', 'false', event, 'InputSelectAutoComplete', '','false'); " style="width:100%" class="hidden" input-select="juizProlator" idIframe=""></td>
+								<td >
+            <input type="text" name="codigoJuizTr" id="codigoJuizTr" bindingReference="codigoJuizTr" value="" formatType="TEXT" obrigatorio="false" pk="true" onkeypress="CT_KPS(this, event);" onblur="CT_BLR(this);" onkeydown="CT_KDN(this, event);" onmousemove="CT_MMOV(this, event);" onmouseout="CT_MOUT(this, event);" onmouseover="CT_MOV(this, event);" onfocus="C_OFC(this, event);" onchange="IS_request('juizProlator','/AjaxServlet.ajax', 'juizProlator', 'codigoJuizTr', this.value,'/cjsg','jsp/search/searchJuizProlator.jsp', 'true', 'Juizes prolatores','300','500', '&bind_codigoJuizCr=codigoJuizCr&bind_codigoJuizTr=codigoJuizTr&bind_nmJuiz=nmJuiz', 'false', event, 'InputSelectAutoComplete', '','false'); " style="width:100%" class="hidden" input-select="juizProlator" idIframe=""></td>
+								<td >
+            <input type="text" name="nmJuiz" id="nmJuiz" bindingReference="nmJuiz" value="" formatType="TEXT" obrigatorio="false" onkeypress="CT_KPS(this, event);" onblur="CT_BLR(this);" onkeydown="CT_KDN(this, event);" onmousemove="CT_MMOV(this, event);" onmouseout="CT_MOUT(this, event);" onmouseover="CT_MOV(this, event);" onfocus="C_OFC(this, event);" onchange="IS_request('juizProlator','/AjaxServlet.ajax', 'juizProlator', 'nmJuiz', this.value,'/cjsg','jsp/search/searchJuizProlator.jsp', 'true', 'Juizes prolatores','300','500', '&bind_codigoJuizCr=codigoJuizCr&bind_codigoJuizTr=codigoJuizTr&bind_nmJuiz=nmJuiz', 'false', event, 'InputSelectAutoComplete', '','false'); " style="width: 477px;" input-select="juizProlator" idIframe=""></td>
+							
+        <td width="20" align="center"><img src="/cjsg/imagens/spw/botProcurar.gif" width="16" height="17" border="0" title="Abre a consulta" onmouseover="IH_mOver(this)" onmouseout="IH_mOut(this)" onclick="IS_request('juizProlator','/AjaxServlet.ajax', 'juizProlator', 'codigoJuizCr','','/cjsg','jsp/search/searchJuizProlator.jsp', 'true', 'Juizes prolatores','300','500', '&bind_codigoJuizCr=codigoJuizCr&bind_codigoJuizTr=codigoJuizTr&bind_nmJuiz=nmJuiz', 'true', event, 'InputSelectSearchGrid','','false')" ><img src="/cjsg/imagens/spw/botProcurar-d.gif" width="16" height="17" border="0" style="display:none" >
+        </td>
+    </tr>
+</tbody>
+</table>
+<script>
+
+</script>
+
+						
+		</td>
+		<td width="16" valign="middle">
+			<img src="/cjsg/imagens/spw/botLimpar.gif" width="16" height="17" border="0" title="Limpar campo"
+				onclick="jQuery.saj.limparInputSelect('juizProlator');"
+				onmouseout="IH_mOut(this)" onmouseover="IH_mOver(this)"
+				style="cursor:pointer;" id="juizLimpar" />
+		</td>
+	</tr>
+</table>
+
+					
+				
+			</td>
+		</tr>
+	  </table>
+	
+	
+	
+	
+	
+	
+		
+		</td>
+		
+			</tr>
+		
+	
+	
+
+
+
+					
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+		
+		
+			
+				<tr class="">
+				
+			
+		
+		
+		
+		  <td id="" width="150" valign="">
+			
+			  
+		  	  
+				
+				<label for="classes_selectionText" class="" style="float:left;font-weight:bold;">Classe</label><div style="text-align:right;font-weight:bold;">: </div>
+			  
+		      
+		    
+		  </td>
+		
+		
+		
+		  
+		  
+		    <td valign="">
+		  
+		
+			
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table id="classesId" cellspacing="0" cellpadding="0" width="517" class="treeSelect">
+	<tr>
+		<td width="*">
+			<table cellspacing="0" cellpadding="0" width="100%">
+				<tr>
+					<td>
+						<input type="hidden" name="classesTreeSelection.values" value="" id="classes">
+						<span id="classes_action" value="/cjsg/classesTreeSelect.do" />
+						
+						<input type="text" name="classesTreeSelection.text" value="" formatType="TEXT" onkeypress="CT_KPS(this, event);" onblur="CT_BLR(this);" onkeydown="CT_KDN(this, event);" onmousemove="CT_MMOV(this, event);" onmouseout="CT_MOUT(this, event);" onmouseover="CT_MOV(this, event);" onfocus="C_OFC(this, event);" onchange="$.saj.tree.onTextPropertyChangeEvent({data:{ campoId: 'classes', 
+								treeSelectId: 'classesId',
+								url: '/cjsg/classesTreeSelect.do', 
+								processandoImgUrl: '/cjsg/imagens/spw/processandoNovo.gif', 
+								width: 600,
+								expectedHeight: 400, 
+								reload: '' }}, event);" style="width:100%;" id="classes_selectionText">
+					     
+					</td>
+					<td align="center" width="20">
+						<img id="botaoProcurar_classes"
+						src="/cjsg/imagens/spw/botProcurar.gif" class="treeSelect_botaoHabilitado" height="17" border="0" width="16" title="Abre a consulta" style="cursor: pointer; margin-left: 4px;" onmouseout="IH_mOut(this)" onmouseover="IH_mOver(this)" /><img
+						src="/cjsg/imagens/spw/botProcurar-d.gif" class="treeSelect_botaoDesabilitado" height="17" border="0" width="16" style="display:none; margin-left: 8px;" />
+					</td>
+				</tr>
+			</table>
+        </td>
+		<td width="16" valign="middle">
+			<img id="botaoLimpar_classes" 
+			src="/cjsg/imagens/spw/botLimpar.gif" class="treeSelect_botaoHabilitado" height="17" width="16" border="0" title="Limpa campo" onmouseout="IH_mOut(this)" onmouseover="IH_mOver(this)" /><img
+			src="/cjsg/imagens/spw/botLimpar-d.gif" class="treeSelect_botaoDesabilitado" height="17" width="16" border="0" style="display:none" />
+		</td>
+		
+		
+    </tr>
+</table>
+<script>
+	(function($) {
+				
+		var bindTreeSelect = function() {
+			var options = {
+				campoId: 'classes',
+				treeSelectId: 'classesId',
+				url: '/cjsg/classesTreeSelect.do',
+				processandoImgUrl: '/cjsg/imagens/spw/processandoNovo.gif',
+				width: 600,
+				expectedHeight: 400,
+				reload: '',
+				mostrarBotoesSelecaoRapida: true
+			};
+
+			$.saj.tree.updateSelectionText(options);
+			
+			$('#botaoProcurar_classes').bind('click', options, $.saj.tree.onPopupEvent);
+			$('#botaoLimpar_classes').bind('click', options, $.saj.tree.onClearSelection);
+			
+			
+		};
+
+		bindTreeSelect();
+
+		
+		
+	})(jQuery);
+</script>
+	
+
+	
+	
+	
+	
+	
+	
+		
+		</td>
+		
+			</tr>
+		
+	
+	
+
+
+
+					
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+		
+		
+			
+				<tr class="">
+				
+			
+		
+		
+		
+		  <td id="" width="150" valign="">
+			
+			  
+		  	  
+				
+				<label for="assuntos_selectionText" class="" style="float:left;font-weight:bold;">Assunto</label><div style="text-align:right;font-weight:bold;">: </div>
+			  
+		      
+		    
+		  </td>
+		
+		
+		
+		  
+		  
+		    <td valign="">
+		  
+		
+			
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table id="assuntosId" cellspacing="0" cellpadding="0" width="517" class="treeSelect">
+	<tr>
+		<td width="*">
+			<table cellspacing="0" cellpadding="0" width="100%">
+				<tr>
+					<td>
+						<input type="hidden" name="assuntosTreeSelection.values" value="" id="assuntos">
+						<span id="assuntos_action" value="/cjsg/assuntosTreeSelect.do" />
+						
+						<input type="text" name="assuntosTreeSelection.text" value="" formatType="TEXT" onkeypress="CT_KPS(this, event);" onblur="CT_BLR(this);" onkeydown="CT_KDN(this, event);" onmousemove="CT_MMOV(this, event);" onmouseout="CT_MOUT(this, event);" onmouseover="CT_MOV(this, event);" onfocus="C_OFC(this, event);" onchange="$.saj.tree.onTextPropertyChangeEvent({data:{ campoId: 'assuntos', 
+								treeSelectId: 'assuntosId',
+								url: '/cjsg/assuntosTreeSelect.do', 
+								processandoImgUrl: '/cjsg/imagens/spw/processandoNovo.gif', 
+								width: 600,
+								expectedHeight: 400, 
+								reload: '' }}, event);" style="width:100%;" id="assuntos_selectionText">
+					     
+					</td>
+					<td align="center" width="20">
+						<img id="botaoProcurar_assuntos"
+						src="/cjsg/imagens/spw/botProcurar.gif" class="treeSelect_botaoHabilitado" height="17" border="0" width="16" title="Abre a consulta" style="cursor: pointer; margin-left: 4px;" onmouseout="IH_mOut(this)" onmouseover="IH_mOver(this)" /><img
+						src="/cjsg/imagens/spw/botProcurar-d.gif" class="treeSelect_botaoDesabilitado" height="17" border="0" width="16" style="display:none; margin-left: 8px;" />
+					</td>
+				</tr>
+			</table>
+        </td>
+		<td width="16" valign="middle">
+			<img id="botaoLimpar_assuntos" 
+			src="/cjsg/imagens/spw/botLimpar.gif" class="treeSelect_botaoHabilitado" height="17" width="16" border="0" title="Limpa campo" onmouseout="IH_mOut(this)" onmouseover="IH_mOver(this)" /><img
+			src="/cjsg/imagens/spw/botLimpar-d.gif" class="treeSelect_botaoDesabilitado" height="17" width="16" border="0" style="display:none" />
+		</td>
+		
+		
+    </tr>
+</table>
+<script>
+	(function($) {
+				
+		var bindTreeSelect = function() {
+			var options = {
+				campoId: 'assuntos',
+				treeSelectId: 'assuntosId',
+				url: '/cjsg/assuntosTreeSelect.do',
+				processandoImgUrl: '/cjsg/imagens/spw/processandoNovo.gif',
+				width: 600,
+				expectedHeight: 400,
+				reload: '',
+				mostrarBotoesSelecaoRapida: true
+			};
+
+			$.saj.tree.updateSelectionText(options);
+			
+			$('#botaoProcurar_assuntos').bind('click', options, $.saj.tree.onPopupEvent);
+			$('#botaoLimpar_assuntos').bind('click', options, $.saj.tree.onClearSelection);
+			
+			
+		};
+
+		bindTreeSelect();
+
+		
+		
+	})(jQuery);
+</script>
+	
+
+	
+	
+	
+	
+	
+	
+		
+		</td>
+		
+			</tr>
+		
+	
+	
+
+
+
+					
+					
+						
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+		
+		
+			
+				<tr class="">
+				
+			
+		
+		
+		
+		  <td id="" width="150" valign="">
+			
+			  
+		  	  
+				
+				<label for="secoes_selectionText" class="" style="float:left;font-weight:bold;">Órgão julgador</label><div style="text-align:right;font-weight:bold;">: </div>
+			  
+		      
+		    
+		  </td>
+		
+		
+		
+		  
+		  
+		    <td valign="">
+		  
+		
+			
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table id="secaoId" cellspacing="0" cellpadding="0" width="517" class="treeSelect">
+	<tr>
+		<td width="*">
+			<table cellspacing="0" cellpadding="0" width="100%">
+				<tr>
+					<td>
+						<input type="hidden" name="secoesTreeSelection.values" value="" id="secoes">
+						<span id="secoes_action" value="/cjsg/secaoTreeSelect.do" />
+						
+						<input type="text" name="secoesTreeSelection.text" value="" formatType="TEXT" onkeypress="CT_KPS(this, event);" onblur="CT_BLR(this);" onkeydown="CT_KDN(this, event);" onmousemove="CT_MMOV(this, event);" onmouseout="CT_MOUT(this, event);" onmouseover="CT_MOV(this, event);" onfocus="C_OFC(this, event);" onchange="$.saj.tree.onTextPropertyChangeEvent({data:{ campoId: 'secoes', 
+								treeSelectId: 'secaoId',
+								url: '/cjsg/secaoTreeSelect.do', 
+								processandoImgUrl: '/cjsg/imagens/spw/processandoNovo.gif', 
+								width: 600,
+								expectedHeight: 400, 
+								reload: '' }}, event);" style="width:100%;" id="secoes_selectionText">
+					     
+					</td>
+					<td align="center" width="20">
+						<img id="botaoProcurar_secoes"
+						src="/cjsg/imagens/spw/botProcurar.gif" class="treeSelect_botaoHabilitado" height="17" border="0" width="16" title="Abre a consulta" style="cursor: pointer; margin-left: 4px;" onmouseout="IH_mOut(this)" onmouseover="IH_mOver(this)" /><img
+						src="/cjsg/imagens/spw/botProcurar-d.gif" class="treeSelect_botaoDesabilitado" height="17" border="0" width="16" style="display:none; margin-left: 8px;" />
+					</td>
+				</tr>
+			</table>
+        </td>
+		<td width="16" valign="middle">
+			<img id="botaoLimpar_secoes" 
+			src="/cjsg/imagens/spw/botLimpar.gif" class="treeSelect_botaoHabilitado" height="17" width="16" border="0" title="Limpa campo" onmouseout="IH_mOut(this)" onmouseover="IH_mOver(this)" /><img
+			src="/cjsg/imagens/spw/botLimpar-d.gif" class="treeSelect_botaoDesabilitado" height="17" width="16" border="0" style="display:none" />
+		</td>
+		
+		
+    </tr>
+</table>
+<script>
+	(function($) {
+				
+		var bindTreeSelect = function() {
+			var options = {
+				campoId: 'secoes',
+				treeSelectId: 'secaoId',
+				url: '/cjsg/secaoTreeSelect.do',
+				processandoImgUrl: '/cjsg/imagens/spw/processandoNovo.gif',
+				width: 600,
+				expectedHeight: 400,
+				reload: '',
+				mostrarBotoesSelecaoRapida: true
+			};
+
+			$.saj.tree.updateSelectionText(options);
+			
+			$('#botaoProcurar_secoes').bind('click', options, $.saj.tree.onPopupEvent);
+			$('#botaoLimpar_secoes').bind('click', options, $.saj.tree.onClearSelection);
+			
+			
+		};
+
+		bindTreeSelect();
+
+		
+		
+	})(jQuery);
+</script>
+	
+
+	
+	
+	
+	
+	
+	
+		
+		</td>
+		
+			</tr>
+		
+	
+	
+
+
+
+				
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+		
+		
+			
+				<tr class="">
+				
+			
+		
+		
+		
+		  <td id="" width="150" valign="">
+			
+			  
+		  	  
+				
+				<label for="cjsg.consultaCompleta.label.dtJulgamento" class="" style="float:left;font-weight:bold;">Data do julgamento</label><div style="text-align:right;font-weight:bold;">: </div>
+			  
+		      
+		    
+		  </td>
+		
+		
+		
+		  
+		  
+		    <td valign="">
+		  
+		
+			
+	
+	
+	
+	
+	
+	<table cellpadding="0" cellspacing="0" border="0" width="600">
+		<tr>
+			<td>
+				
+				
+				
+							
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+	
+
+
+<style>
+	/* remove borda vermelha de elementos required */
+	input:invalid {
+		box-shadow:none;
+	}
+</style>
+
+<script type="text/javascript">
+	(function($){
+		$(function() {
+			var saj = $.saj;
+			var id = 'iddados.dtJulgamentoInicio';
+			var idObjetoReferencia = '#' + id;
+			if ('' !== '' && !false) {
+				$(idObjetoReferencia).registrarTooltip({
+					conteudoTooltip: '',
+					posicaoTooltip: 'direita',
+					objReferenciaPosicaoTooltip:$(idObjetoReferencia)
+				});
+			}
+			//remove comportamento de exibir mensagem de erro típica do html5
+			$('form:visible').attr('novalidate','');
+			if (''){
+				$(idObjetoReferencia).attr('aria-required','true').attr('required','');
+			}
+		});		
+	})(jQuery);
+	
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+	
+	
+	
+		<span id="dtJulgamentoInicio">
+		
+	
+	
+	<input type="text" name="dados.dtJulgamentoInicio" size="" value="01/01/2025" formatType="DATE" formato="" obrigatorio="" rotulo="(dd/mm/aaaa) " onkeypress="CD_KPS(this, event);" onblur="CD_BLR(this);" onkeydown="CD_KDN(this, event);" onmousemove="CD_MMOV(this, event);" onmouseout="CD_MOUT(this, event);" onmouseover="CD_MOV(this, event);" onfocus="CD_OFC(this, event);" style="" class="spwCampoTexto " id="iddados.dtJulgamentoInicio" title="" alt="">
+		
+	
+	
+	
+		
+	    
+    
+	
+	
+	
+		
+	
+	
+	
+	
+		</span>
+	
+
+
+
+
+
+							até
+							
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+	
+
+
+<style>
+	/* remove borda vermelha de elementos required */
+	input:invalid {
+		box-shadow:none;
+	}
+</style>
+
+<script type="text/javascript">
+	(function($){
+		$(function() {
+			var saj = $.saj;
+			var id = 'iddados.dtJulgamentoFim';
+			var idObjetoReferencia = '#' + id;
+			if ('' !== '' && !false) {
+				$(idObjetoReferencia).registrarTooltip({
+					conteudoTooltip: '',
+					posicaoTooltip: 'direita',
+					objReferenciaPosicaoTooltip:$(idObjetoReferencia)
+				});
+			}
+			//remove comportamento de exibir mensagem de erro típica do html5
+			$('form:visible').attr('novalidate','');
+			if (''){
+				$(idObjetoReferencia).attr('aria-required','true').attr('required','');
+			}
+		});		
+	})(jQuery);
+	
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+	
+	
+	
+		<span id="dtJulgamentoFim">
+		
+	
+	
+	<input type="text" name="dados.dtJulgamentoFim" size="" value="31/12/2025" formatType="DATE" formato="" obrigatorio="" rotulo="(dd/mm/aaaa) " onkeypress="CD_KPS(this, event);" onblur="CD_BLR(this);" onkeydown="CD_KDN(this, event);" onmousemove="CD_MMOV(this, event);" onmouseout="CD_MOUT(this, event);" onmouseover="CD_MOV(this, event);" onfocus="CD_OFC(this, event);" style="" class="spwCampoTexto " id="iddados.dtJulgamentoFim" title="" alt="">
+		
+	
+	
+	
+		
+	    
+    
+	
+	
+	
+		
+	
+	
+	
+	
+		</span>
+	
+
+
+
+
+
+							<span id="dtJulgamentoFormato"> 
+								(dd/mm/aaaa) 
+							</span>
+					
+				
+			</td>
+		</tr>
+	  </table>
+	
+	
+	
+	
+	
+	
+		
+		</td>
+		
+			</tr>
+		
+	
+	
+
+
+	
+				
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+		
+		
+			
+				<tr class="">
+				
+			
+		
+		
+		
+		  <td id="" width="150" valign="">
+			
+			  
+		  	  
+				
+				<label for="cjsg.consultaCompleta.label.dtPublicacao" class="" style="float:left;font-weight:bold;">Data de publicação</label><div style="text-align:right;font-weight:bold;">: </div>
+			  
+		      
+		    
+		  </td>
+		
+		
+		
+		  
+		  
+		    <td valign="">
+		  
+		
+			
+	
+	
+	
+	
+	
+	<table cellpadding="0" cellspacing="0" border="0" width="600">
+		<tr>
+			<td>
+				
+				
+				
+						
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+	
+
+
+<style>
+	/* remove borda vermelha de elementos required */
+	input:invalid {
+		box-shadow:none;
+	}
+</style>
+
+<script type="text/javascript">
+	(function($){
+		$(function() {
+			var saj = $.saj;
+			var id = 'iddados.dtPublicacaoInicio';
+			var idObjetoReferencia = '#' + id;
+			if ('' !== '' && !false) {
+				$(idObjetoReferencia).registrarTooltip({
+					conteudoTooltip: '',
+					posicaoTooltip: 'direita',
+					objReferenciaPosicaoTooltip:$(idObjetoReferencia)
+				});
+			}
+			//remove comportamento de exibir mensagem de erro típica do html5
+			$('form:visible').attr('novalidate','');
+			if (''){
+				$(idObjetoReferencia).attr('aria-required','true').attr('required','');
+			}
+		});		
+	})(jQuery);
+	
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+	
+	
+	
+		<span id="dtPublicacaoInicio">
+		
+	
+	
+	<input type="text" name="dados.dtPublicacaoInicio" size="" value="" formatType="DATE" formato="" obrigatorio="" rotulo="(dd/mm/aaaa) " onkeypress="CD_KPS(this, event);" onblur="CD_BLR(this);" onkeydown="CD_KDN(this, event);" onmousemove="CD_MMOV(this, event);" onmouseout="CD_MOUT(this, event);" onmouseover="CD_MOV(this, event);" onfocus="CD_OFC(this, event);" style="" class="spwCampoTexto " id="iddados.dtPublicacaoInicio" title="" alt="">
+		
+	
+	
+	
+		
+	    
+    
+	
+	
+	
+		
+	
+	
+	
+	
+		</span>
+	
+
+
+
+
+
+						até
+						
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+	
+
+
+<style>
+	/* remove borda vermelha de elementos required */
+	input:invalid {
+		box-shadow:none;
+	}
+</style>
+
+<script type="text/javascript">
+	(function($){
+		$(function() {
+			var saj = $.saj;
+			var id = 'iddados.dtPublicacaoFim';
+			var idObjetoReferencia = '#' + id;
+			if ('' !== '' && !false) {
+				$(idObjetoReferencia).registrarTooltip({
+					conteudoTooltip: '',
+					posicaoTooltip: 'direita',
+					objReferenciaPosicaoTooltip:$(idObjetoReferencia)
+				});
+			}
+			//remove comportamento de exibir mensagem de erro típica do html5
+			$('form:visible').attr('novalidate','');
+			if (''){
+				$(idObjetoReferencia).attr('aria-required','true').attr('required','');
+			}
+		});		
+	})(jQuery);
+	
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+	
+	
+	
+		<span id="dtPublicacaoFim">
+		
+	
+	
+	<input type="text" name="dados.dtPublicacaoFim" size="" value="" formatType="DATE" formato="" obrigatorio="" rotulo="(dd/mm/aaaa) " onkeypress="CD_KPS(this, event);" onblur="CD_BLR(this);" onkeydown="CD_KDN(this, event);" onmousemove="CD_MMOV(this, event);" onmouseout="CD_MOUT(this, event);" onmouseover="CD_MOV(this, event);" onfocus="CD_OFC(this, event);" style="" class="spwCampoTexto " id="iddados.dtPublicacaoFim" title="" alt="">
+		
+	
+	
+	
+		
+	    
+    
+	
+	
+	
+		
+	
+	
+	
+	
+		</span>
+	
+
+
+
+
+
+						<span id="dtPublicacaoFormato">
+							(dd/mm/aaaa) 
+						</span>
+					
+				
+			</td>
+		</tr>
+	  </table>
+	
+	
+	
+	
+	
+	
+		
+		</td>
+		
+			</tr>
+		
+	
+	
+
+
+
+					
+					
+					
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+		
+		
+			
+				<tr class="">
+				
+			
+		
+		
+		
+		  <td id="" width="150" valign="">
+			
+			  
+		  	  
+				
+				<label for="cjsg.consultaCompleta.label.origem" class="" style="float:left;font-weight:bold;">Origem</label><div style="text-align:right;font-weight:bold;">: </div>
+			  
+		      
+		    
+		  </td>
+		
+		
+		
+		  
+		  
+		    <td valign="">
+		  
+		
+			
+	
+	
+	
+	
+	
+	<table cellpadding="0" cellspacing="0" border="0" width="100%">
+		<tr>
+			<td>
+				
+				
+				
+						<input type="checkbox" name="dados.origensSelecionadas" value="T" checked="checked" id="origem2grau">
+						<label for="origem2grau">
+							2° grau
+						</label>
+						<input type="checkbox" name="dados.origensSelecionadas" value="R" id="origemRecursal">
+						<label for="origemRecursal">
+							
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+	
+		
+		
+					
+
+
+		
+
+
+Colégios Recursais
+
+
+						</label>
+					
+				
+			</td>
+		</tr>
+	  </table>
+	
+	
+	
+	
+	
+	
+		
+		</td>
+		
+			</tr>
+		
+	
+	
+
+
+
+					
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+		
+		
+			
+				<tr class="">
+				
+			
+		
+		
+		
+		  <td id="" width="150" valign="">
+			
+			  
+		  	  
+				
+				<label for="cjsg.consultaCompleta.label.tpDecisao" class="" style="float:left;font-weight:bold;">Tipo de Publicação</label><div style="text-align:right;font-weight:bold;">: </div>
+			  
+		      
+		    
+		  </td>
+		
+		
+		
+		  
+		  
+		    <td valign="">
+		  
+		
+			
+	
+	
+	
+	
+	
+	<table cellpadding="0" cellspacing="0" border="0" width="100%">
+		<tr>
+			<td>
+				
+				
+				
+						<div id="linhaTipoDecisao">
+							
+								<input type="checkbox" name="tipoDecisaoSelecionados" value="A" checked="checked" id="Acheckbox">
+								<label for="Acheckbox">
+									Acórdãos
+								</label>
+							
+						</div>
+					
+				
+			</td>
+		</tr>
+	  </table>
+	
+	
+	
+	
+	
+	
+		
+		</td>
+		
+			</tr>
+		
+	
+	
+
+
+
+					
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+		
+	
+
+
+
+
+
+
+	
+	
+		
+		
+			
+				<tr class="">
+				
+			
+		
+		
+		
+		  <td id="" width="150" valign="">
+			
+			  
+		  	  
+				
+				<label for="cjsg.consultaCompleta.label.ordenar" class="" style="float:left;font-weight:bold;">Ordenar por</label><div style="text-align:right;font-weight:bold;">: </div>
+			  
+		      
+		    
+		  </td>
+		
+		
+		
+		  
+		  
+		    <td valign="">
+		  
+		
+			
+	
+	
+	
+	
+	
+	<table cellpadding="0" cellspacing="0" border="0" width="600">
+		<tr>
+			<td>
+				
+				
+				
+						
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	
+
+
+
+	
+
+
+
+	
+
+
+
+
+
+	<span id="">
+		<label for="id_cjsg.consultaCompleta.label.ordenardtPublicacao">
+			<input type="radio" name="dados.ordenarPor" id="id_cjsg.consultaCompleta.label.ordenardtPublicacao" value="dtPublicacao" style="vertical-align:middle;" onclick="" class="" title=""  checked/>
+			Data de publicação
+		</label>
+		
+	</span>
+
+
+						
+						
+						
+						
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+	
+
+
+
+	
+
+
+
+
+
+
+
+	<span id="">
+		<label for="id_cjsg.consultaCompleta.label.ordenarRelevancia">
+			<input type="radio" name="dados.ordenarPor" id="id_cjsg.consultaCompleta.label.ordenarRelevancia" value="relevancia" style="vertical-align:middle;" onclick="" class="" title=""  />
+			Relevância 
+		</label>
+		
+	</span>
+
+
+					
+				
+			</td>
+		</tr>
+	  </table>
+	
+	
+	
+	
+	
+	
+		
+		</td>
+		
+			</tr>
+		
+	
+	
+
+
+
+									
+				
+		</table>
+	</div>
+	
+	
+	
+
+
+				
+				
+				
+
+
+
+
+
+
+
+
+
+
+
+	<table id="" class="secaoBotoesBody" width="100%" style="" cellpadding="2" cellspacing="0" border="0">
+		<tr>
+ 			
+ 				<td width="150">&nbsp;</td>
+ 			
+			<td align="">
+			
+			    	
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+		
+	
+	<input type="submit" name="pbSubmit" value="Pesquisar" onclick="" onmouseover="B_mOver(this);" onmouseout="B_mOut(this);" onmouseover="B_mOver(this);" onmouseout="B_mOut(this);" class="spwBotaoDefault " id="pbSubmit">
+
+
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+		
+	
+	
+	    
+	<input type="button" name="pbLimpar" value="Limpar" onclick="" onmouseover="B_mOver(this);" onmouseout="B_mOut(this);" class="spwBotao " id="pbLimpar">
+
+
+				
+			</td>
+		</tr>
+	</table>
+
+
+				
+				
+				
+			
+</form>
+
+			
+			
+			
+			<!-- Resultado consulta -->
+			
+				<!-- Tabs -->
+				<div id="tabs">
+					<ul>
+						
+							<li tipo="A" >
+								<a href="A">
+									<span  id="nomeAba-A" >Acórdãos(3)</span>
+									<input id="totalResultadoAba-A" type="hidden" value="3" />
+								</a> 
+							</li> 
+						
+					</ul>
+					
+						<div id="tabs-A">
+						
+						 
+							
+
+
+
+
+
+
+
+<div id="paginacaoSuperior-A" style="padding-bottom: 15px;" >
+	
+
+
+
+
+
+
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" >
+	<tr height="20">
+		<td bgcolor="#EEEEEE">
+			Resultados
+
+			<strong>
+				1 a 3
+			</strong>
+			de 3
+		</td>
+			
+		<td bgcolor="#EEEEEE" align="right">
+
+		<div class="trocaDePagina">
+		
+
+		
+		
+
+		
+		
+			
+		
+		
+			
+				
+					<span class="paginaAtual" >
+						1
+					</span>
+				
+				
+			
+		
+
+		
+
+		</div>
+
+		</td>
+	</tr>
+
+	<tr>
+		<td height="1" bgcolor="#999999" colspan="2"></td>
+	</tr>
+</table>
+&nbsp;
+</div>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td height="1" valign="top" id="tdResultados" width="*" >
+			<div id="divDadosResultado-A" >							
+				
+
+
+
+
+
+
+
+
+	<table cellspacing="0" cellpadding="0" class="" width="100%">
+		
+			<tr class="fundocinza1">
+				<td width="40" align="left" valign="top" class="ementaClass">
+					<strong>1&nbsp;-</strong>
+				</td>
+				<td valign="top">
+					<table cellspacing="0" cellpadding="0" width="100%"  >									
+						<tr class="ementaClass" >
+							<td colspan="2" align="left">
+								
+									<a class="esajLinkLogin downloadEmenta" style="vertical-align: top" title="Visualizar Inteiro Teor" cdAcordao="726071" cdForo="0" >
+										0727955-28.2023.8.02.0001
+									</a>
+									
+									<a class="downloadEmenta" cdAcordao="726071" cdForo="0">&nbsp;
+										<img src="imagens/saj/ico_pdf.gif" border="0" title="Visualizar inteiro teor"/> <span class="downloadEmenta"></span>
+									</a>
+									<a class="textoSemFormatacao" onclick="abrirPopUpDadosSemFormatacao(726071);" >&nbsp;										
+										<img src="imagens/saj/ico_txt.gif" border="0" title="Visualizar ementa sem formatação"/> <span class="textoSemFormatacao"></span>
+										
+
+
+
+
+
+
+<div id="dadosSemFormatacao_726071" style="display: none;" >									
+	<div id="textAreaDados_726071" class="mensagemSemFormatacao" >
+		DIREITO PROCESSUAL CIVIL. APELA&Ccedil;&Atilde;O C&Iacute;VEL. A&Ccedil;&Atilde;O DE INTERDITO PROIBIT&Oacute;RIO. CONTRATO DE COMODATO. INTERVEN&Ccedil;&Atilde;O DE TERCEIRO EM FASE RECURSAL. POSSIBILIDADE. JULGAMENTO ANTECIPADO DO M&Eacute;RITO COM BASE EM PROVA EMPRESTADA. AUS&Ecirc;NCIA DA FASE DE SANEAMENTO DO FEITO. CERCEAMENTO DE DEFESA RECONHECIDA. SENTEN&Ccedil;A ANULADA. RETORNO DOS AUTOS PARA INSTRU&Ccedil;&Atilde;O PROBAT&Oacute;RIA E JULGAMENTO CONJUNTO DE A&Ccedil;&Otilde;ES CONEXAS. RECURSO PROVIDO.
+
+I. Caso em exame
+01. Apela&ccedil;&atilde;o C&iacute;vel interposta pela Campanha Nacional de Escolas da Comunidade &ndash; CNEC contra senten&ccedil;a que julgou improcedente a&ccedil;&atilde;o de interdito proibit&oacute;rio proposta em face do Departamento de Estradas de Rodagem de Alagoas &ndash; DER/AL, visando impedir turba&ccedil;&atilde;o ou esbulho de im&oacute;vel objeto de contrato de comodato com prazo de 50 anos, firmado em 1982. Senten&ccedil;a fundamentada em prova emprestada (reportagem jornal&iacute;stica) produzida em a&ccedil;&atilde;o possess&oacute;ria conexa, reconhecendo risco estrutural e afastando ilicitude na conduta do r&eacute;u.
+II. Quest&otilde;es em discuss&atilde;o
+02. H&aacute; tr&ecirc;s quest&otilde;es em discuss&atilde;o:
+(i) definir se &eacute; admiss&iacute;vel a interven&ccedil;&atilde;o de terceiro (Munic&iacute;pio de Macei&oacute;) em fase recursal, na qualidade de assistente simples;
+(ii) estabelecer se houve cerceamento de defesa pelo julgamento antecipado do m&eacute;rito com supress&atilde;o de instru&ccedil;&atilde;o probat&oacute;ria necess&aacute;ria;
+(iii) determinar se a senten&ccedil;a violou a regra da conex&atilde;o ao julgar isoladamente a&ccedil;&atilde;o possess&oacute;ria conexa a outra de reintegra&ccedil;&atilde;o de posse.
+III. Raz&otilde;es de decidir
+03. O C&oacute;digo de Processo Civil (art. 119, par&aacute;grafo &uacute;nico) autoriza a assist&ecirc;ncia simples em qualquer grau de jurisdi&ccedil;&atilde;o, desde que demonstrado interesse jur&iacute;dico concreto na solu&ccedil;&atilde;o da lide, o que se verifica no caso diante de Termo de Colabora&ccedil;&atilde;o firmado entre Munic&iacute;pio e CNEC para instala&ccedil;&atilde;o de creche no im&oacute;vel litigioso.
+04. O cerceamento de defesa configura-se quando o magistrado julga antecipadamente a causa sem permitir a produ&ccedil;&atilde;o de provas essenciais &agrave; solu&ccedil;&atilde;o da controv&eacute;rsia, violando os princ&iacute;pios constitucionais do contradit&oacute;rio e da ampla defesa (CF, art. 5&ordm;, LV).
+05. A prova emprestada somente pode ser utilizada se garantido o contradit&oacute;rio, o que n&atilde;o ocorreu, sendo indevido o julgamento antecipado baseado exclusivamente em reportagem jornal&iacute;stica de outro processo, sem oportunizar a produ&ccedil;&atilde;o de contraprova.
+06. A reuni&atilde;o de processos conexos &eacute; obrigat&oacute;ria (CPC, art. 55, &sect; 1&ordm;) para evitar decis&otilde;es conflitantes, n&atilde;o se aplicando a exce&ccedil;&atilde;o da senten&ccedil;a j&aacute; proferida, pois ambas as a&ccedil;&otilde;es tramitavam na mesma jurisdi&ccedil;&atilde;o e estavam pendentes de julgamento.
+07. A senten&ccedil;a, proferida isoladamente, afronta a regra da conex&atilde;o e incorre em error in procedendo, impondo a sua anula&ccedil;&atilde;o.
+IV. Dispositivo e Teses
+08. Recurso conhecido e provido.
+
+Teses de julgamento:
+09. A assist&ecirc;ncia simples pode ser admitida em qualquer fase processual, inclusive recursal, desde que demonstrado interesse jur&iacute;dico concreto e direto no desfecho da lide.
+10. Configura cerceamento de defesa o julgamento antecipado do m&eacute;rito com base em prova emprestada sem oportunizar o contradit&oacute;rio e a produ&ccedil;&atilde;o de provas requeridas.
+11. A viola&ccedil;&atilde;o &agrave; regra da conex&atilde;o, com julgamento isolado de a&ccedil;&otilde;es conexas pendentes de decis&atilde;o, gera nulidade absoluta da senten&ccedil;a.
+
+Dispositivos relevantes citados: CF/1988, art. 5&ordm;, LV, e art. 208, IV; CPC, arts. 55, &sect; 1&ordm; e &sect; 3&ordm;, 119, par&aacute;grafo &uacute;nico, 120, par&aacute;grafo &uacute;nico, 355, 357, 372 e 996; CC, art. 581.
+
+Jurisprud&ecirc;ncia relevante citada: STJ, REsp 1.852.165/MG, Rel. Min. Antonio Carlos Ferreira, Quarta Turma, j. 23.04.2024, DJe 30.04.2024. <br><br>(N&uacute;mero do Processo: 0727955-28.2023.8.02.0001; Relator (a):&nbsp;Des. Fernando Tourinho de Omena Souza; Comarca:&nbsp;Foro de Macei&oacute;; &Oacute;rg&atilde;o julgador: 3&ordf; C&acirc;mara C&iacute;vel; Data do julgamento: 29/08/2025; Data de registro: 29/08/2025)<br>
+	</div>
+</div>
+
+									</a>
+								
+									
+									
+								
+							</td>
+						</tr>
+						
+						<span class="assuntoClasse">&nbsp;
+							
+								
+									<tr class="ementaClass2">
+										<td align="left">
+											<strong>
+												Classe/Assunto:
+											</strong> Apelação Cível / Esbulho / Turbação / Ameaça											
+										</td>
+									</tr>									
+								
+								
+																		
+							
+						</span>						
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Relator(a):
+									</strong> Des. Fernando Tourinho de Omena Souza
+									
+								</td>
+							</tr>
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Comarca:
+									</strong> 
+									Maceió
+								</td>
+							</tr>
+											
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Órgão julgador:
+									</strong>
+									3ª Câmara Cível
+								</td>
+							</tr>
+						
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Data do julgamento:
+									</strong>
+									29/08/2025
+								</td>
+							</tr>
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Data de publicação:
+									</strong>
+									29/08/2025
+								</td>
+							</tr>
+						
+						
+						
+																
+						
+													
+														
+									<tr class="ementaClass2">
+										<td colspan="2" align="left">
+											<div align="justify">
+												<strong>Ementa: </strong>DIREITO PROCESSUAL CIVIL. APELAÇÃO CÍVEL. AÇÃO DE INTERDITO PROIBITÓRIO. CONTRATO DE COMODATO. INTERVENÇÃO DE TERCEIRO EM FASE RECURSAL. POSSIBILIDADE. JULGAMENTO ANTECIPADO DO MÉRITO COM BASE EM PROVA EMPRESTADA. AUSÊNCIA DA FASE DE SANEAMENTO DO FEITO. CERCEAMENTO DE DEFESA RECONHECIDA. SENTENÇA ANULADA. RETORNO DOS AUTOS PARA INSTRUÇÃO PROBATÓRIA E JULGAMENTO CONJUNTO DE AÇÕES CONEXAS. RECURSO
+											 	<a >
+											 		<img class="mostrarOcultarEmenta cursorPointer" src="/cjsg/imagens/saj/icoMais.png" height="12" width="12" border="0" title="Visualizar Ementa Completa"/>
+												</a>														
+											</div>		
+											<div align="justify" style="display: none;">
+												<strong>Ementa: </strong>DIREITO PROCESSUAL CIVIL. APELAÇÃO CÍVEL. AÇÃO DE INTERDITO PROIBITÓRIO. CONTRATO DE COMODATO. INTERVENÇÃO DE TERCEIRO EM FASE RECURSAL. POSSIBILIDADE. JULGAMENTO ANTECIPADO DO MÉRITO COM BASE EM PROVA EMPRESTADA. AUSÊNCIA DA FASE DE SANEAMENTO DO FEITO. CERCEAMENTO DE DEFESA RECONHECIDA. SENTENÇA ANULADA. RETORNO DOS AUTOS PARA INSTRUÇÃO PROBATÓRIA E JULGAMENTO CONJUNTO DE AÇÕES CONEXAS. RECURSO PROVIDO.
+
+I. Caso em exame
+01. Apelação Cível interposta pela Campanha Nacional de Escolas da Comunidade – CNEC contra sentença que julgou improcedente ação de interdito proibitório proposta em face do Departamento de Estradas de Rodagem de Alagoas – DER/AL, visando impedir turbação ou esbulho de imóvel objeto de contrato de comodato com prazo de 50 anos, firmado em 1982. Sentença fundamentada em prova emprestada (reportagem jornalística) produzida em ação possessória conexa, reconhecendo risco estrutural e afastando ilicitude na conduta do réu.
+II. Questões em discussão
+02. Há três questões em discussão:
+(i) definir se é admissível a intervenção de terceiro (Município de Maceió) em fase recursal, na qualidade de assistente simples;
+(ii) estabelecer se houve cerceamento de defesa pelo julgamento antecipado do mérito com supressão de instrução probatória necessária;
+(iii) determinar se a sentença violou a regra da conexão ao julgar isoladamente ação possessória conexa a outra de reintegração de posse.
+III. Razões de decidir
+03. O Código de Processo Civil (art. 119, parágrafo único) autoriza a assistência simples em qualquer grau de jurisdição, desde que demonstrado interesse jurídico concreto na solução da lide, o que se verifica no caso diante de <em>Termo</em> <em>de</em> <em>Colaboração</em> firmado entre Município e CNEC para instalação de creche no imóvel litigioso.
+04. O cerceamento de defesa configura-se quando o magistrado julga antecipadamente a causa sem permitir a produção de provas essenciais à solução da controvérsia, violando os princípios constitucionais do contraditório e da ampla defesa (CF, art. 5º, LV).
+05. A prova emprestada somente pode ser utilizada se garantido o contraditório, o que não ocorreu, sendo indevido o julgamento antecipado baseado exclusivamente em reportagem jornalística de outro processo, sem oportunizar a produção de contraprova.
+06. A reunião de processos conexos é obrigatória (CPC, art. 55, § 1º) para evitar decisões conflitantes, não se aplicando a exceção da sentença já proferida, pois ambas as ações tramitavam na mesma jurisdição e estavam pendentes de julgamento.
+07. A sentença, proferida isoladamente, afronta a regra da conexão e incorre em error in procedendo, impondo a sua anulação.
+IV. Dispositivo e Teses
+08. Recurso conhecido e provido.
+
+Teses de julgamento:
+09. A assistência simples pode ser admitida em qualquer fase processual, inclusive recursal, desde que demonstrado interesse jurídico concreto e direto no desfecho da lide.
+10. Configura cerceamento de defesa o julgamento antecipado do mérito com base em prova emprestada sem oportunizar o contraditório e a produção de provas requeridas.
+11. A violação à regra da conexão, com julgamento isolado de ações conexas pendentes de decisão, gera nulidade absoluta da sentença.
+
+Dispositivos relevantes citados: CF/1988, art. 5º, LV, e art. 208, IV; CPC, arts. 55, § 1º e § 3º, 119, parágrafo único, 120, parágrafo único, 355, 357, 372 e 996; CC, art. 581.
+
+Jurisprudência relevante citada: STJ, REsp 1.852.165/MG, Rel. Min. Antonio Carlos Ferreira, Quarta Turma, j. 23.04.2024, DJe 30.04.2024.								
+												<a >
+													<img class="mostrarOcultarEmenta cursorPointer" src="/cjsg/imagens/saj/icoMenos.png" height="12" width="12" border="0" title="Visualizar Ementa Completa"/>
+												</a>	
+											</div>					
+										</td>
+									</tr>						
+								
+															
+								
+							
+						
+					</table>
+					<br /><br />
+				</td>
+			</tr>
+		
+			<tr class="fundocinza1">
+				<td width="40" align="left" valign="top" class="ementaClass">
+					<strong>2&nbsp;-</strong>
+				</td>
+				<td valign="top">
+					<table cellspacing="0" cellpadding="0" width="100%"  >									
+						<tr class="ementaClass" >
+							<td colspan="2" align="left">
+								
+									<a class="esajLinkLogin downloadEmenta" style="vertical-align: top" title="Visualizar Inteiro Teor" cdAcordao="682567" cdForo="0" >
+										0800028-54.2021.8.02.0005
+									</a>
+									
+									<a class="downloadEmenta" cdAcordao="682567" cdForo="0">&nbsp;
+										<img src="imagens/saj/ico_pdf.gif" border="0" title="Visualizar inteiro teor"/> <span class="downloadEmenta"></span>
+									</a>
+									<a class="textoSemFormatacao" onclick="abrirPopUpDadosSemFormatacao(682567);" >&nbsp;										
+										<img src="imagens/saj/ico_txt.gif" border="0" title="Visualizar ementa sem formatação"/> <span class="textoSemFormatacao"></span>
+										
+
+
+
+
+
+
+<div id="dadosSemFormatacao_682567" style="display: none;" >									
+	<div id="textAreaDados_682567" class="mensagemSemFormatacao" >
+		DIREITO ADMINISTRATIVO E PROCESSUAL CIVIL. APELA&Ccedil;&Atilde;O C&Iacute;VEL. CONTRATO ENTRE MUNIC&Iacute;PIO E ORGANIZA&Ccedil;&Atilde;O SOCIAL. JULGAMENTO ANTECIPADO DA LIDE. CERCEAMENTO DE DEFESA CONFIGURADO. NECESSIDADE DE PRODU&Ccedil;&Atilde;O PROBAT&Oacute;RIA. NULIDADE DA SENTEN&Ccedil;A. RETORNO DOS AUTOS &Agrave; ORIGEM. INTEMPESTIVIDADE DO RECURSO INTERPOSTO PELO MUNIC&Iacute;PIO. &Agrave; UNANIMIDADE.
+I. CASO EM EXAME
+Apela&ccedil;&otilde;es C&iacute;veis interpostas pelo Instituto de Gest&atilde;o de Pol&iacute;ticas P&uacute;blicas Sociais &ndash; IGPS e pelo Munic&iacute;pio de Boca da Mata contra senten&ccedil;a que declarou a nulidade do Termo de Colabora&ccedil;&atilde;o firmado entre as partes e determinou a realiza&ccedil;&atilde;o de concurso p&uacute;blico. O IGPS alega cerceamento de defesa pelo julgamento antecipado da lide e sustenta a regularidade do contrato. O Munic&iacute;pio argumenta a aus&ecirc;ncia de ilegalidade na parceria e aponta viola&ccedil;&atilde;o ao contradit&oacute;rio e &agrave; ampla defesa.
+H&aacute; duas quest&otilde;es em discuss&atilde;o: (i) verificar se houve cerceamento de defesa pelo julgamento antecipado da lide, sem a devida instru&ccedil;&atilde;o probat&oacute;ria; (ii) analisar a tempestividade do recurso interposto pelo Munic&iacute;pio de Boca da Mata.
+O recurso interposto pelo Munic&iacute;pio de Boca da Mata &eacute; intempestivo, pois foi protocolado fora do prazo legal de 15 dias &uacute;teis, dobrado em favor da Fazenda P&uacute;blica, conforme os arts. 1.003, &sect; 5&ordm;, e 183, do CPC.
+O julgamento antecipado da lide somente &eacute; poss&iacute;vel quando n&atilde;o houver necessidade de produ&ccedil;&atilde;o de outras provas, conforme o art. 355, I, do CPC, o que n&atilde;o ocorre no caso concreto, uma vez que tanto a parte apelante quanto o Minist&eacute;rio P&uacute;blico requereram expressamente a produ&ccedil;&atilde;o de prova pericial e testemunhal.
+A distin&ccedil;&atilde;o entre terceiriza&ccedil;&atilde;o e parceria administrativa exige an&aacute;lise aprofundada dos fatos e documentos, sendo indispens&aacute;vel a produ&ccedil;&atilde;o probat&oacute;ria para esclarecer a natureza das atividades desempenhadas pelo IGPS no contrato firmado com o Munic&iacute;pio.
+A senten&ccedil;a deve ser anulada para que seja dada oportunidade &agrave;s partes de produzirem as provas requeridas, garantindo-se o contradit&oacute;rio e a ampla defesa.
+Recurso do Instituto de Gest&atilde;o de Pol&iacute;ticas P&uacute;blicas Sociais &ndash; IGPS conhecido e provido, com a anula&ccedil;&atilde;o da senten&ccedil;a e o retorno dos autos &agrave; origem para instru&ccedil;&atilde;o probat&oacute;ria e novo julgamento. Recurso do Munic&iacute;pio de Boca da Mata n&atilde;o conhecido por intempestividade.
+O julgamento antecipado da lide configura cerceamento de defesa quando h&aacute; necessidade de produ&ccedil;&atilde;o probat&oacute;ria requerida pelas partes para a correta an&aacute;lise dos fatos.
+A distin&ccedil;&atilde;o entre terceiriza&ccedil;&atilde;o e parceria administrativa exige exame aprofundado das atividades exercidas, demandando a realiza&ccedil;&atilde;o de prova pericial e testemunhal.
+Recurso interposto fora do prazo legal deve ser considerado intempestivo, n&atilde;o podendo ser conhecido.
+Jurisprud&ecirc;ncia relevante citada: N&atilde;o h&aacute; cita&ccedil;&atilde;o expressa de precedentes no voto. <br><br>(N&uacute;mero do Processo: 0800028-54.2021.8.02.0005; Relator (a):&nbsp;Desa. Elisabeth Carvalho Nascimento; Comarca:&nbsp;Foro de Boca da Mata; &Oacute;rg&atilde;o julgador: 2&ordf; C&acirc;mara C&iacute;vel; Data do julgamento: 07/05/2025; Data de registro: 15/05/2025)<br>
+	</div>
+</div>
+
+									</a>
+								
+									
+									
+								
+							</td>
+						</tr>
+						
+						<span class="assuntoClasse">&nbsp;
+							
+								
+									<tr class="ementaClass2">
+										<td align="left">
+											<strong>
+												Classe/Assunto:
+											</strong> Apelação Cível / Anulação											
+										</td>
+									</tr>									
+								
+								
+																		
+							
+						</span>						
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Relator(a):
+									</strong> Desa. Elisabeth Carvalho Nascimento
+									
+								</td>
+							</tr>
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Comarca:
+									</strong> 
+									Boca da Mata
+								</td>
+							</tr>
+											
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Órgão julgador:
+									</strong>
+									2ª Câmara Cível
+								</td>
+							</tr>
+						
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Data do julgamento:
+									</strong>
+									07/05/2025
+								</td>
+							</tr>
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Data de publicação:
+									</strong>
+									15/05/2025
+								</td>
+							</tr>
+						
+						
+						
+																
+						
+													
+														
+									<tr class="ementaClass2">
+										<td colspan="2" align="left">
+											<div align="justify">
+												<strong>Ementa: </strong>DIREITO ADMINISTRATIVO E PROCESSUAL CIVIL. APELAÇÃO CÍVEL. CONTRATO ENTRE MUNICÍPIO E ORGANIZAÇÃO SOCIAL. JULGAMENTO ANTECIPADO DA LIDE. CERCEAMENTO DE DEFESA CONFIGURADO. NECESSIDADE DE PRODUÇÃO PROBATÓRIA. NULIDADE DA SENTENÇA. RETORNO DOS AUTOS À ORIGEM. INTEMPESTIVIDADE DO RECURSO INTERPOSTO PELO MUNICÍPIO. À UNANIMIDADE.
+I. CASO EM EXAME
+Apelações Cíveis interpostas pelo Instituto de
+											 	<a >
+											 		<img class="mostrarOcultarEmenta cursorPointer" src="/cjsg/imagens/saj/icoMais.png" height="12" width="12" border="0" title="Visualizar Ementa Completa"/>
+												</a>														
+											</div>		
+											<div align="justify" style="display: none;">
+												<strong>Ementa: </strong>DIREITO ADMINISTRATIVO E PROCESSUAL CIVIL. APELAÇÃO CÍVEL. CONTRATO ENTRE MUNICÍPIO E ORGANIZAÇÃO SOCIAL. JULGAMENTO ANTECIPADO DA LIDE. CERCEAMENTO DE DEFESA CONFIGURADO. NECESSIDADE DE PRODUÇÃO PROBATÓRIA. NULIDADE DA SENTENÇA. RETORNO DOS AUTOS À ORIGEM. INTEMPESTIVIDADE DO RECURSO INTERPOSTO PELO MUNICÍPIO. À UNANIMIDADE.
+I. CASO EM EXAME
+Apelações Cíveis interpostas pelo Instituto de Gestão de Políticas Públicas Sociais – IGPS e pelo Município de Boca da Mata contra sentença que declarou a nulidade do <em>Termo</em> <em>de</em> <em>Colaboração</em> firmado entre as partes e determinou a realização de concurso público. O IGPS alega cerceamento de defesa pelo julgamento antecipado da lide e sustenta a regularidade do contrato. O Município argumenta a ausência de ilegalidade na parceria e aponta violação ao contraditório e à ampla defesa.
+Há duas questões em discussão: (i) verificar se houve cerceamento de defesa pelo julgamento antecipado da lide, sem a devida instrução probatória; (ii) analisar a tempestividade do recurso interposto pelo Município de Boca da Mata.
+O recurso interposto pelo Município de Boca da Mata é intempestivo, pois foi protocolado fora do prazo legal de 15 dias úteis, dobrado em favor da Fazenda Pública, conforme os arts. 1.003, § 5º, e 183, do CPC.
+O julgamento antecipado da lide somente é possível quando não houver necessidade de produção de outras provas, conforme o art. 355, I, do CPC, o que não ocorre no caso concreto, uma vez que tanto a parte apelante quanto o Ministério Público requereram expressamente a produção de prova pericial e testemunhal.
+A distinção entre terceirização e parceria administrativa exige análise aprofundada dos fatos e documentos, sendo indispensável a produção probatória para esclarecer a natureza das atividades desempenhadas pelo IGPS no contrato firmado com o Município.
+A sentença deve ser anulada para que seja dada oportunidade às partes de produzirem as provas requeridas, garantindo-se o contraditório e a ampla defesa.
+Recurso do Instituto de Gestão de Políticas Públicas Sociais – IGPS conhecido e provido, com a anulação da sentença e o retorno dos autos à origem para instrução probatória e novo julgamento. Recurso do Município de Boca da Mata não conhecido por intempestividade.
+O julgamento antecipado da lide configura cerceamento de defesa quando há necessidade de produção probatória requerida pelas partes para a correta análise dos fatos.
+A distinção entre terceirização e parceria administrativa exige exame aprofundado das atividades exercidas, demandando a realização de prova pericial e testemunhal.
+Recurso interposto fora do prazo legal deve ser considerado intempestivo, não podendo ser conhecido.
+Jurisprudência relevante citada: Não há citação expressa de precedentes no voto.								
+												<a >
+													<img class="mostrarOcultarEmenta cursorPointer" src="/cjsg/imagens/saj/icoMenos.png" height="12" width="12" border="0" title="Visualizar Ementa Completa"/>
+												</a>	
+											</div>					
+										</td>
+									</tr>						
+								
+															
+								
+							
+						
+					</table>
+					<br /><br />
+				</td>
+			</tr>
+		
+			<tr class="fundocinza1">
+				<td width="40" align="left" valign="top" class="ementaClass">
+					<strong>3&nbsp;-</strong>
+				</td>
+				<td valign="top">
+					<table cellspacing="0" cellpadding="0" width="100%"  >									
+						<tr class="ementaClass" >
+							<td colspan="2" align="left">
+								
+									<a class="esajLinkLogin downloadEmenta" style="vertical-align: top" title="Visualizar Inteiro Teor" cdAcordao="646360" cdForo="0" >
+										0800058-57.2021.8.02.0048
+									</a>
+									
+									<a class="downloadEmenta" cdAcordao="646360" cdForo="0">&nbsp;
+										<img src="imagens/saj/ico_pdf.gif" border="0" title="Visualizar inteiro teor"/> <span class="downloadEmenta"></span>
+									</a>
+									<a class="textoSemFormatacao" onclick="abrirPopUpDadosSemFormatacao(646360);" >&nbsp;										
+										<img src="imagens/saj/ico_txt.gif" border="0" title="Visualizar ementa sem formatação"/> <span class="textoSemFormatacao"></span>
+										
+
+
+
+
+
+
+<div id="dadosSemFormatacao_646360" style="display: none;" >									
+	<div id="textAreaDados_646360" class="mensagemSemFormatacao" >
+		PENAL E PROCESSO PENAL. APELA&Ccedil;&Atilde;O. RECURSO DO MINIST&Eacute;RIO P&Uacute;BLICO E DA DEFESA. PECULATO. NULIDADE DA COLABORA&Ccedil;&Atilde;O PREMIADA. INCOMPET&Ecirc;NCIA DO JU&Iacute;ZO. CONDENA&Ccedil;&Atilde;O. ABSOLVI&Ccedil;&Atilde;O. DESCLASSIFICA&Ccedil;&Atilde;O DO CRIME DE PECULATO. CONCESS&Atilde;O DO DIREITO DE RECORRER EM LIBERDADE. PRESCRI&Ccedil;&Atilde;O NO CRIME DE PECULATO CULPOSO. RECURSOS DESPROVIDOS.
+I. CASO EM EXAME.
+Apela&ccedil;&atilde;o criminal contra senten&ccedil;a que condenou os r&eacute;us Givaldo e Wendell pela pr&aacute;tica do crime de peculato, nos termos do art. 312. J&aacute; o r&eacute;u Klevison foi absolvido, nos termos do art. 386, VII, do CPP. 
+2. Do recurso do Minist&eacute;rio P&uacute;blico: (i) Pleito de condena&ccedil;&atilde;o do r&eacute;u Klevison no delito de peculato.
+3. Do recurso da Defesa:  i) preliminar de nulidade da dela&ccedil;&atilde;o premiada; ii) incompet&ecirc;ncia do ju&iacute;zo; iii) absolvi&ccedil;&atilde;o; vi) desclassifica&ccedil;&atilde;o do crime de peculato; v) concess&atilde;o do direito de recorrer em liberdade; vi) prescri&ccedil;&atilde;o do crime de peculato culposo.
+III. RAZ&Otilde;ES DE DECIDIR.
+4. No que tange &agrave; tese recursal, o termo&nbsp;de&nbsp;colabora&ccedil;&atilde;o&nbsp;premiada celebrado com o colaborador R. J. da S., foi firmado na presen&ccedil;a&nbsp;de&nbsp;seu advogado, tendo posteriormente sido submetido &agrave; aprecia&ccedil;&atilde;o do Ju&iacute;zo competente, a qual analisou a regularidade, a legalidade e voluntariedade&nbsp;do&nbsp;ato, tendo-o homologado, nos termos da lei, n&atilde;o h&aacute; que se falar em&nbsp;nulidade&nbsp;do&nbsp;ato.&nbsp;Preliminar rejeitada.
+5. No caso em tela, verifica-se que as verbas p&uacute;blicas foram transferidas e incorporadas ao patrim&ocirc;nio municipal, o que resulta na compet&ecirc;ncia da Justi&ccedil;a Estadual. Nesse sentido, &eacute; o verbete sumular 209 do STJ. Preliminar de incompet&ecirc;ncia do Ju&iacute;zo rejeitada.
+6. Analisando os autos, constata-se que n&atilde;o foi imputado aos recorrentes o delito de peculato culposo, o que impossibilita a an&aacute;lise do pedido formulado. Desse modo, o pedido resta prejudicado.
+7. Da an&aacute;lise da senten&ccedil;a condenat&oacute;ria, constata-se que na senten&ccedil;a foi concedido aos recorrentes o direito de recorrer em liberdade, de modo que o pleito n&atilde;o &eacute; conhecido por restar prejudicado.
+8. In caso, verifica-se que os apelantes se apropriaram de numer&aacute;rios p&uacute;blicos ap&oacute;s emiss&atilde;o de notas fiscais falsas. Nesse contexto, demonstradas sobremaneira a materialidade e a autoria do delito de peculato, bem como os elementos objetivos e subjetivos do tipo, impondo-se a manuten&ccedil;&atilde;o do &eacute;dito condenat&oacute;rio.
+9. Conforme os argumentos trazidos aos autos, n&atilde;o existem provas produzidas em ju&iacute;zo que atestem a autoria delitiva em rela&ccedil;&atilde;o ao crime imputado ao acusado Klevison, devendo ser mantida sua absolvi&ccedil;&atilde;o, com base no princ&iacute;pio do in dubio pro reo. Portanto, improcedente o apelo do Minist&eacute;rio P&uacute;blico
+IV. DISPOSITIVO.
+11. Apela&ccedil;&atilde;o do Minist&eacute;rio P&uacute;blico conhecida e desprovida. Apela&ccedil;&atilde;o da Defesa parcialmente conhecida e, nesse particular, desprovida.
+__________
+Dispositivos relevantes citados: art. 312 do CP. <br><br>(N&uacute;mero do Processo: 0800058-57.2021.8.02.0048; Relator (a):&nbsp;Des. Jo&atilde;o Luiz Azevedo Lessa; Comarca:&nbsp;Foro de P&atilde;o de A&ccedil;&uacute;car; &Oacute;rg&atilde;o julgador: C&acirc;mara Criminal; Data do julgamento: 05/02/2025; Data de registro: 10/02/2025)<br>
+	</div>
+</div>
+
+									</a>
+								
+									
+									
+								
+							</td>
+						</tr>
+						
+						<span class="assuntoClasse">&nbsp;
+							
+								
+									<tr class="ementaClass2">
+										<td align="left">
+											<strong>
+												Classe/Assunto:
+											</strong> Apelação Criminal / Rejeição											
+										</td>
+									</tr>									
+								
+								
+																		
+							
+						</span>						
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Relator(a):
+									</strong> Des. João Luiz Azevedo Lessa
+									
+								</td>
+							</tr>
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Comarca:
+									</strong> 
+									Pão de Açúcar
+								</td>
+							</tr>
+											
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Órgão julgador:
+									</strong>
+									Câmara Criminal
+								</td>
+							</tr>
+						
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Data do julgamento:
+									</strong>
+									05/02/2025
+								</td>
+							</tr>
+						
+						
+							<tr class="ementaClass2">
+								<td align="left">
+									<strong>
+										Data de publicação:
+									</strong>
+									10/02/2025
+								</td>
+							</tr>
+						
+						
+						
+																
+						
+													
+														
+									<tr class="ementaClass2">
+										<td colspan="2" align="left">
+											<div align="justify">
+												<strong>Ementa: </strong>PENAL E PROCESSO PENAL. APELAÇÃO. RECURSO DO MINISTÉRIO PÚBLICO E DA DEFESA. PECULATO. NULIDADE DA COLABORAÇÃO PREMIADA. INCOMPETÊNCIA DO JUÍZO. CONDENAÇÃO. ABSOLVIÇÃO. DESCLASSIFICAÇÃO DO CRIME DE PECULATO. CONCESSÃO DO DIREITO DE RECORRER EM LIBERDADE. PRESCRIÇÃO NO CRIME DE PECULATO CULPOSO. RECURSOS DESPROVIDOS.
+I. CASO EM EXAME.
+Apelação criminal contra sentença que condenou os réus
+											 	<a >
+											 		<img class="mostrarOcultarEmenta cursorPointer" src="/cjsg/imagens/saj/icoMais.png" height="12" width="12" border="0" title="Visualizar Ementa Completa"/>
+												</a>														
+											</div>		
+											<div align="justify" style="display: none;">
+												<strong>Ementa: </strong>PENAL E PROCESSO PENAL. APELAÇÃO. RECURSO DO MINISTÉRIO PÚBLICO E DA DEFESA. PECULATO. NULIDADE DA COLABORAÇÃO PREMIADA. INCOMPETÊNCIA DO JUÍZO. CONDENAÇÃO. ABSOLVIÇÃO. DESCLASSIFICAÇÃO DO CRIME DE PECULATO. CONCESSÃO DO DIREITO DE RECORRER EM LIBERDADE. PRESCRIÇÃO NO CRIME DE PECULATO CULPOSO. RECURSOS DESPROVIDOS.
+I. CASO EM EXAME.
+Apelação criminal contra sentença que condenou os réus Givaldo e Wendell pela prática do crime de peculato, nos termos do art. 312. Já o réu Klevison foi absolvido, nos termos do art. 386, VII, do CPP. 
+2. Do recurso do Ministério Público: (i) Pleito de condenação do réu Klevison no delito de peculato.
+3. Do recurso da Defesa:  i) preliminar de nulidade da delação premiada; ii) incompetência do juízo; iii) absolvição; vi) desclassificação do crime de peculato; v) concessão do direito de recorrer em liberdade; vi) prescrição do crime de peculato culposo.
+III. RAZÕES DE DECIDIR.
+4. No que tange à tese recursal, o <em>termo</em> <em>de</em> <em>colaboração</em> premiada celebrado com o colaborador R. J. da S., foi firmado na presença de seu advogado, tendo posteriormente sido submetido à apreciação do Juízo competente, a qual analisou a regularidade, a legalidade e voluntariedade do ato, tendo-o homologado, nos termos da lei, não há que se falar em nulidade do ato. Preliminar rejeitada.
+5. No caso em tela, verifica-se que as verbas públicas foram transferidas e incorporadas ao patrimônio municipal, o que resulta na competência da Justiça Estadual. Nesse sentido, é o verbete sumular 209 do STJ. Preliminar de incompetência do Juízo rejeitada.
+6. Analisando os autos, constata-se que não foi imputado aos recorrentes o delito de peculato culposo, o que impossibilita a análise do pedido formulado. Desse modo, o pedido resta prejudicado.
+7. Da análise da sentença condenatória, constata-se que na sentença foi concedido aos recorrentes o direito de recorrer em liberdade, de modo que o pleito não é conhecido por restar prejudicado.
+8. In caso, verifica-se que os apelantes se apropriaram de numerários públicos após emissão de notas fiscais falsas. Nesse contexto, demonstradas sobremaneira a materialidade e a autoria do delito de peculato, bem como os elementos objetivos e subjetivos do tipo, impondo-se a manutenção do édito condenatório.
+9. Conforme os argumentos trazidos aos autos, não existem provas produzidas em juízo que atestem a autoria delitiva em relação ao crime imputado ao acusado Klevison, devendo ser mantida sua absolvição, com base no princípio do in dubio pro reo. Portanto, improcedente o apelo do Ministério Público
+IV. DISPOSITIVO.
+11. Apelação do Ministério Público conhecida e desprovida. Apelação da Defesa parcialmente conhecida e, nesse particular, desprovida.
+__________
+Dispositivos relevantes citados: art. 312 do CP.								
+												<a >
+													<img class="mostrarOcultarEmenta cursorPointer" src="/cjsg/imagens/saj/icoMenos.png" height="12" width="12" border="0" title="Visualizar Ementa Completa"/>
+												</a>	
+											</div>					
+										</td>
+									</tr>						
+								
+															
+								
+							
+						
+					</table>
+					<br /><br />
+				</td>
+			</tr>
+		
+	</table>
+	
+
+			</div>
+		</td>
+		<td width="20px">
+			&nbsp;
+		</td>
+		<td valign="top" width="230px">
+			<div id="adicionarPesquisa-A">
+				
+
+
+
+
+
+
+<table id="abaAdicionar-A" style="cursor: pointer;" width="100%" border="0" cellpadding="0" cellspacing="1" align="center" bgcolor="#CCCCCC">
+	<tr>
+		<td width="*" height="20" bgcolor="#CCCCCC">
+			<span id="spanTermosRelacionados" >
+				<strong>
+					Termos mais freqüentes
+				</strong>
+			</span>
+		</td>
+		<td width="50px" align="center">
+			<img id="imgAdicionar" src="imagens/saj/fecharFiltro.gif" border="0"
+				align="middle" style="cursor: pointer;">
+		</td>
+	</tr>
+</table>
+
+	<table width="100%" border="0" cellpadding="0" cellspacing="1" align="center" bgcolor="#CCCCCC">
+		<tr>
+			<td bgcolor="#EEEEEE">
+								
+					<table width="100%" cellpadding="0" cellspacing="0" class="termosRelacionados">
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo1" value="APELAÇÃO">
+									<label for="ckTermo1">
+										APELAÇÃO
+									</label>
+								</td>			
+							</tr>
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo2" value="DEFESA">
+									<label for="ckTermo2">
+										DEFESA
+									</label>
+								</td>			
+							</tr>
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo3" value="DIREITO">
+									<label for="ckTermo3">
+										DIREITO
+									</label>
+								</td>			
+							</tr>
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo4" value="RECURSO">
+									<label for="ckTermo4">
+										RECURSO
+									</label>
+								</td>			
+							</tr>
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo5" value="caso">
+									<label for="ckTermo5">
+										caso
+									</label>
+								</td>			
+							</tr>
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo6" value="conhecido">
+									<label for="ckTermo6">
+										conhecido
+									</label>
+								</td>			
+							</tr>
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo7" value="contra">
+									<label for="ckTermo7">
+										contra
+									</label>
+								</td>			
+							</tr>
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo8" value="firmado">
+									<label for="ckTermo8">
+										firmado
+									</label>
+								</td>			
+							</tr>
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo9" value="nulidade">
+									<label for="ckTermo9">
+										nulidade
+									</label>
+								</td>			
+							</tr>
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo10" value="provas">
+									<label for="ckTermo10">
+										provas
+									</label>
+								</td>			
+							</tr>
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo11" value="sentença">
+									<label for="ckTermo11">
+										sentença
+									</label>
+								</td>			
+							</tr>
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo12" value="ANTECIPADO">
+									<label for="ckTermo12">
+										ANTECIPADO
+									</label>
+								</td>			
+							</tr>
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo13" value="AUTOS">
+									<label for="ckTermo13">
+										AUTOS
+									</label>
+								</td>			
+							</tr>
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo14" value="Apelação">
+									<label for="ckTermo14">
+										Apelação
+									</label>
+								</td>			
+							</tr>
+						
+							<tr>
+								<td width="*" style="padding-left: 12px;">			
+									<input type="checkbox" id="ckTermo15" value="CASO">
+									<label for="ckTermo15">
+										CASO
+									</label>
+								</td>			
+							</tr>
+						
+						
+					</table>
+	
+			</td>
+		</tr>
+		<tr>
+			<td height="20" bgcolor="#DDDDDD">
+				<table width="100%" cellpadding="0" cellspacing="0">
+					<tr>
+						<td align="center" style="padding-left: 10px;">
+							<input type="button" class="conJurisBotaoSec"
+								value="Adicionar à pesquisa" >
+						</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+
+			</div>
+			
+		</td>
+	</tr>
+</table>	
+<div id="paginacaoInferior-A">
+	
+
+
+
+
+
+
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" >
+	<tr height="20">
+		<td bgcolor="#EEEEEE">
+			Resultados
+
+			<strong>
+				1 a 3
+			</strong>
+			de 3
+		</td>
+			
+		<td bgcolor="#EEEEEE" align="right">
+
+		<div class="trocaDePagina">
+		
+
+		
+		
+
+		
+		
+			
+		
+		
+			
+				
+					<span class="paginaAtual" >
+						1
+					</span>
+				
+				
+			
+		
+
+		
+
+		</div>
+
+		</td>
+	</tr>
+
+	<tr>
+		<td height="1" bgcolor="#999999" colspan="2"></td>
+	</tr>
+</table>
+&nbsp;
+</div>
+
+							<script>
+							$(function(){
+								$.saj.cjsg.bindsAbaInicial('A'); 
+							});
+							</script>
+						 
+						 
+						
+						</div>
+					
+				</div>
+			
+			<!-- Resultado consulta -->
+		
+
+	
+
+
+
+
+
+
+
+
+
+
+	
+		
+
+
+
+
+
+
+
+
+
+
+
+	
+	
+		
+
+
+
+</td>
+</tr>
+</table>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" class="esajTabelaRodape" summary=" " role="presentation">
+    <tr>
+        <td class="esajCelulaRodapeCentro">
+            Desenvolvido pela Softplan em parceria com o Tribunal de Justiça de Alagoas
+            
+        </td>
+    </tr>
+</table>
+<link href="https://www2.tjal.jus.br/esaj-layout/tema/padrao/css/saj-popup-modal.css" rel="stylesheet" type="text/css">
+<link href="https://www2.tjal.jus.br/esaj-layout/tema/padrao/css/popup-beta.css" rel="stylesheet" type="text/css">
+
+
+<script>
+    var appEsajLayout = appEsajLayout || {};
+    appEsajLayout.tituloCertificadoDigital = 'Certificado digital';
+    appEsajLayout.cliente = 'AL';
+    appEsajLayout.emailParaContato = '';
+    appEsajLayout.utilizarBotaoContato = 'true';
+    appEsajLayout.contexto = 'https://www2.tjal.jus.br/esaj-layout';
+    appEsajLayout.webSignerParametro = '';
+
+    if(window.jQuery) {
+        jQuery.saj = jQuery.saj || {};
+        jQuery.saj.certificado = jQuery.saj.certificado || {};
+        jQuery.saj.certificado.cliente = 'AL';
+        jQuery.saj.certificado.urlConteudoAjudaWebSigner = appEsajLayout.contexto + '/ajudaWebSigner.do';
+        jQuery.saj.certificado.licenca = 'AqYAKi5zYWphZG0udGpzcC5qdXMuYnIsKi5zZWEuc2MuZ292LmJyLCouc29mdHBsYW4uY29tLmJyLCoudGphYy5qdXMuYnIsKi50amFsLmp1cy5iciwqLnRqYW0uanVzLmJyLCoudGpjZS5qdXMuYnIsKi50am1zLmp1cy5iciwqLnRqcHIuanVzLmJyLCoudGpzYy5qdXMuYnIsKi50anNwLmp1cy5ickMAaXA0OjEwLjAuMC4wLzgsaXA0OjEyNy4wLjAuMC84LGlwNDoxNzIuMTYuMC4wLzEyLGlwNDoxOTIuMTY4LjAuMC8xNggAU3RhbmRhcmQAAAABcfpZUu/QD3s2bqedB8v9T7MiMQxcHNu0pUzGzO+7Ta++o+BbAVgPau7lzj6IUFI7RPFkPSnm0ZbCFAVBnKrqinyvE8MwEvmQhFcjlhGK+FfVV5mhVkkxSC3khDEUR8gsAPVvFncyyW2vTU2ODkyGdU0S/g62wHFtSwfGP6OFqlWpZTqbxbEGd1vfe9yHHulTYI7RcsGxaTMD6XgtPlStbOn9DxSYhN3S+4oTtIq7pUR6ETavPqYlXh5hwkxIpTe3Sf4awQucSigQ95sS9g7QpcGyVUVscm0J/rah9YwPCnHShzsttWA9aCmKrNdgFSTTo8TUOmESEP93TH6Z3dss+A==';
+        jQuery.saj.certificado.webSignerParametro = '';
+        jQuery.saj.certificado.cofreDigital = jQuery.saj.certificado.cofreDigital || {};
+        jQuery.saj.certificado.cofreDigital.habilitado = 'true' === 'true';
+        jQuery.saj.certificado.cofreDigital.enderecoBase = 'https://www2.tjal.jus.br/esaj-layout';
+    }
+
+</script>
+<script src="https://www2.tjal.jus.br/esaj-layout/js/app-bundle.js?n=2978165087"></script>
+<script src="https://www2.tjal.jus.br/esaj-layout/seletorVersaoBeta.js?n=32db3647-04d8-4058-8c7b-79513d6c2143&versao=1"></script>
+<script language="javascript" type="text/JavaScript" src="https://www2.tjal.jus.br/esaj-layout/js/softplan-websigner-2.5.1.js?n=736057767"></script>
+<script language="javascript" type="text/JavaScript" src=""></script>
+
+<script language="javascript" type="text/JavaScript" src="https://www2.tjal.jus.br/esaj-layout/js/saj-certificado.js?n=47741893"></script>
+
+
+
+<div id="webSignerNaoInstalado" style="display: none;">
+    <p>Para utilização do certificado digital no Portal e-SAJ é necessário a instalação do plug-in Web Signer. Por favor, realize a instalação antes de continuar.</p>
+    <div class="footer_certificado">
+        <button id="redirecionarParaPaginaInstalacao" class="actionPrincipal spwBotaoDefault">Instalar</button>
+        <button class="fecharModalInstalacao spwBotao">Cancelar</button>
+        <button class="spwBotao" onclick="window.open('https://www2.tjal.jus.br/WebHelp//#id_instalacao_lacuna.htm','_blank')">Ajuda</button>
+    </div>
+</div>
+
+<div id="webSignerNaoSuportado" style="display: none;">
+    <p>O navegador utilizado não é compatível com a tecnologia (Web Signer) necessária para utilização do certificado digital. Por favor, utilize um dos navegadores homologados. Em caso de dúvidas, efetue a validação de requisitos <a href="https://www2.tjal.jus.br/petpg/abrirVerificacaoRequisitosPet.do" target="_blank">aqui</a>.</p>
+    <div class="footer_certificado">
+        <button class="fecharModalInstalacao spwBotaoDefault actionPrincipal">OK</button>
+    </div>
+</div>
+
+
+	
+
+
+  
+	
+	
+
+
+	
+	</body>
+</html>
+
+
